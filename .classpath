@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="hapi-base/src/main/java"/>
+	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
+	<classpathentry kind="src" path="hapi-test/src/test/java"/>
+	<classpathentry kind="src" path="hapi-examples/src/main/java"/>
+	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.0.2/maven-plugin-api-2.0.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.0.1/maven-core-2.0.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.0.1/maven-project-2.0.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.0.1/maven-settings-2.0.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hapi"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/0.6-SNAPSHOT/hapi-structures-v21-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/0.6-SNAPSHOT/hapi-structures-v22-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/0.6-SNAPSHOT/hapi-structures-v23-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/0.6-SNAPSHOT/hapi-structures-v231-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/0.6-SNAPSHOT/hapi-structures-v24-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/0.6-SNAPSHOT/hapi-structures-v25-0.6-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

@@ -1,0 +1,42 @@
+
+Code Submission Guidelines
+
+  First of all, thank you for taking an interest in contributing to the HAPI project. We enthusiastically encourage patches from anyone, whether they are new features, bug fixes, code samples, documentation, or anything else you think might be of general interest to the HAPI community.
+
+* Introduction
+
+  These guidelines apply if you want to write code for inclusion in the HAPI product.
+
+  The last thing we want is for you to offer us code that we can't include. We want to ensure that HAPI is highly useable, robust, and maintainable, so we review the code we receive, and if we don't believe we should include it, then we don't. But we want to make the criteria clear up-front, so that we can avoid rejecting your hard work.
+
+  You may disagree with us on some of these points. Keep in mind that under the GPL and MPL you are welcome to change or add to HAPI, and redistribute the modified code yourself (although you have to reference us). It is only if you want your work to be redistributed as part of HAPI that we ask you to follow these guidelines.
+
+* Guidelines
+
+  Guidelines for submitting source-code to the HAPI project are as follows:
+
+  [[1]] Code should be written in Java
+
+  [[1]] Code should follow the {{{http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html}Java Code Conventions}} (minor deviations are OK). Particularly, public class members should be documented in JavaDoc style.
+
+  [[1]] Code should not duplicate functionality that already exists. If there is something lacking about existing functionality, consider improving it instead instead of creating an alternative (which would make maintenance more difficult and might be confusing to users of the API).
+
+  [[1]] If you want to make changes to existing public interfaces (Java interfaces, not HL7 interfaces), we should discuss it first (we will probably want to avoid this).
+
+  [[1]] Code must be related to HL7 message processing, and it should complement existing HAPI code. If you want to add completely new functionality, the safest approach is to discuss it with us first to make sure it fits.  Keep in mind that you are also free to release it yourself, even if we don't think it fits with the main HAPI distribution. 
+
+  [[1]] Where possible, new code should build on old code. For example, if you want to add a SOAP messaging module, it should perform error logging using HAPI's existing log framework (if you found HAPI's logging framework inadequate, the best approach would be to improve it, then use the improved version).
+
+  [[1]] You must own the copyright for the code you submit, and you must release it under the GPL and MPL licenses by including a license header of the same form as that appearing in existing HAPI code.
+
+
+
+  If you write code that conforms to these guildelines, we will gladly include it. If you want to contribute code that doesn't follow these guidelines, feel free to do so. We will appreciate your good intentions just the same, and we may make exceptions, but please understand if we say no.
+
+* How to Submit Code
+
+  If your code relates to a tracker item such as a bug report or feature request, attach it to the item.  Otherwise email it to the contact below.  If you are working on something large, it's a good idea to submit interim products (e.g. class diagrams, use cases) as you work.  
+
+* Contact for Clarification & Submission
+
+  If you have any questions please contact {{mailto:jamesagnew@sourceforge.net}}.

@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<parent>
+		<artifactId>hapi</artifactId>
+		<groupId>ca.uhn.hapi</groupId>
+		<version>0.6-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v231</artifactId>
+	<name>HAPI - Generated Structures v2.3.1</name>
+	
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>0.6-SNAPSHOT</version>
+		</dependency>		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>				
+				<executions>
+					<execution>
+						<id>v231</id>						
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>sourcegen</goal>
+						</goals>
+						<configuration>
+							<version>2.3.1</version>
+							<targetDirectory>${basedir}/target/classes/v231</targetDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<sourceDirectory></sourceDirectory>
+	</build>
+	
+</project>

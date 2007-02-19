@@ -1,0 +1,93 @@
+package ca.uhn.hl7v2.conf.parser;
+
+import junit.framework.*;
+import java.io.*;
+import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.conf.spec.message.*;
+
+/**
+ * JUnit tests for conformance profile parser 
+ * @author bryan
+ */
+public class ProfileParserTest extends TestCase {
+    
+    String profileString;
+    
+    public ProfileParserTest(java.lang.String testName) {
+        super(testName);
+    }
+    
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite(ProfileParserTest.class);
+        return suite;
+    }
+    
+    public void setUp() throws Exception {
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/example_ack.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        profileString = buf.toString();
+        //System.out.println(profileString);
+    }
+    
+    public void testParse() throws Exception {
+        ProfileParser pp = new ProfileParser(true);
+        RuntimeProfile rp = pp.parse(profileString);
+        assertEquals("2.4", rp.getHL7Version());
+        StaticDef p = rp.getMessage();
+        
+        assertEquals("ACK", p.getMsgType());
+        assertEquals("ACK", p.getMsgStructID());
+        assertTrue(p.getEventDesc().indexOf("general") > 1);
+        
+        Seg sp = (Seg) p.getChild(1);
+        assertEquals("MSH", sp.getName());
+        assertEquals("Message Header", sp.getLongName());
+        assertEquals("R", sp.getUsage());
+        assertEquals(1, sp.getMin());
+        assertEquals(1, sp.getMax());
+        Field fieldSep = sp.getField(1);
+        assertEquals("Field Separator", fieldSep.getName());
+        assertEquals("R", fieldSep.getUsage());
+        assertEquals(1, fieldSep.getMin());
+        assertEquals(1, fieldSep.getMax());
+        assertEquals("ST", fieldSep.getDatatype());
+        assertEquals(1, fieldSep.getLength());
+        assertEquals(1, fieldSep.getItemNo());
+        assertEquals("2.16.9.1", fieldSep.getReference());
+        Field VID = sp.getField(12);
+        Component vid = VID.getComponent(1);
+        assertEquals("version ID", vid.getName());
+        assertEquals("O", vid.getUsage());
+        assertEquals("ID", vid.getDatatype());
+        assertEquals(3, vid.getLength());
+        assertEquals("0104", vid.getTable());
+        assertEquals(3, VID.getComponents());
+        assertEquals(6, VID.getComponent(2).getSubComponents());
+        SubComponent name = VID.getComponent(2).getSubComponent(3);
+        assertEquals("name of coding system", name.getName());        
+        assertEquals("O", name.getUsage());
+        assertEquals("IS", name.getDatatype());
+        assertEquals(3, name.getLength());
+        assertEquals("0396-X", name.getTable());
+
+        sp = (Seg) p.getChild(2);
+        assertEquals("MSA", sp.getName());
+
+        sp = (Seg) p.getChild(3);
+        assertEquals("ERR", sp.getName());
+        
+    }
+        
+    
+}

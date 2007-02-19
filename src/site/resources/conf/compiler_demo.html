@@ -1,0 +1,118 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="Generator" content="Microsoft FrontPage 4.0" />
+<title>HAPI Demo.html</title>
+<style type="text/css">
+BODY
+{
+  background-color: #FFFFFF
+}
+.Standard
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: normal; font-size: 10pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Document\20 Title
+{
+  text-align:center; text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: bold; font-size: 24pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Head\20 1
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: bold; font-size: 20pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Head\20 2
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: bold; font-size: 16pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Head\20 3
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: bold; font-size: 12pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Enumerated\20 List
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: normal; font-size: 10pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Alphabetical\20 List
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: normal; font-size: 10pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+.Bullet\20 List
+{
+  text-indent:0pt; text-shadow:none; font-family: Arial; font-style: normal; font-weight: normal; font-size: 10pt; text-decoration: none; text-transform: none; font-variant:none; 
+}
+@page
+{
+  size: 8.5inch 11.0inch;
+  margin-top: 42.5198pt;
+  margin-left: 56.693pt;
+  margin-bottom: 42.5198pt;
+  margin-right: 56.693pt;
+}
+</style>
+</head>
+<body>
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<p class="Document\20 Title">HAPI Conformance Classes Demo Application</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; ">Author: 	James Agnew ( jait214@yahoo.ca ), Algonquin College</p> 
+<p class="Standard" style="text-align:left; ">Date:	27-May-2003</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; font-weight: bold; ">Introduction:</p>
+<p class="Standard" style="text-align:left; ">This application is a small example of the use of the Conformance Class Set Generation System combined with the HL7 API (HAPI) to generate HL7 messages. It is not intended to be a complete, fully functional, or well thought out design; it is only to illustrate the ease of programming using this system.</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; font-weight: bold; ">Requirements:</p>
+<p class="Standard" style="text-align:left; ">In order for the demo to succeed, the following system requirements must be met.</p>
+<ul style="list-style-type:disc">
+<li class="Standard" style="text-align:left; "><span style="color: #2f6eb1; text-transform: none; font-variant:none; ">Java SDK 1.4</span></li>
+<li class="Standard" style="text-align:left; "><span style="color: #2f6eb1; text-transform: none; font-variant:none; ">Xerces 2.4.x XML Parser</span> or better (<span style="font-weight: bold; text-transform: none; font-variant:none; ">xercesImpl.jar</span> must be on your CLASSPATH)</li>
+<li class="Standard" style="text-align:left; "><span style="color: #2f6eb1; text-transform: none; font-variant:none; ">HAPI 
+  0.3</span> or better (HAPI jar must be on your CLASSPATH)</li> 
+<li class="Standard" style="text-align:left; "><span style="color: #2f6eb1; text-transform: none; font-variant:none; ">Apache ANT</span> Build Tool</li>
+</ul>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; font-weight: bold; ">Installation instructions:</p> 
+<ol style="list-style-type:decimal">
+<li class="Standard" style="text-align:left; "><a href="hapi_ccsgs_demo.zip">Download</a> 
+  the demo</li>
+<li class="Standard" style="text-align:left; ">Unpack the demo archive into a directory. Open a console window (or DOS shell) in the base directory into which the archive was extracted. Add the demo directory.</li> 
+</ol>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; font-family: Courier New; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">$ mkdir /home/james/demo</span></p> 
+<p class="Standard" style="text-align:left; font-family: Courier New; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">$ unzip ccsgs_demo.zip /home/james/demo</span></p>
+<p class="Standard" style="text-align:left; font-family: Courier New; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">cd /home/james/demo</span></p>
+<p class="Standard" style="text-align:left; font-family: Courier New; color: #0f5e28; ">export CLASSPATH=&quot;$CLASSPATH:/home/james/demo&quot;</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<ol style="list-style-type:decimal" start="3">
+<li class="Standard" style="text-align:left; ">Activate the conformance class set generation system to build the Conformance Classes:</li> 
+</ol>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; "><span style="font-family: Courier New; color: #0f5e28; text-transform: none; font-variant:none; ">$ java ca.uhn.hl7v2.conf.classes.generator.builders.ConfGen -v adt_a01_profile.xml build demo</span></p> 
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; ">This command instructs the C.C.S.G.S. to generate a set of conformance classes corresponding to the adt_a01_profile.xml file. </p> 
+<p class="Standard" style="text-align:left; ">The &quot;-v&quot; flag instructs the system to display progress information as it works. </p>
+<p class="Standard" style="text-align:left; ">The &quot;build&quot; argument instructs the system to create all output in a path named &quot;.\build\&quot;.</p>
+<p class="Standard" style="text-align:left; ">The &quot;demo&quot; argument instructs the system to create all classes in a package named &quot;demo&quot;.</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<ol style="list-style-type:decimal" start="4">
+<li class="Standard" style="text-align:left; ">Call ANT to generate a JAR containing the resulting conformance classes. Add the resulting jar (which will be placed in build/dist) to the classpath.</li> 
+</ol>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; "><span style="font-family: Courier New; color: #0f5e28; text-transform: none; font-variant:none; ">$ ant</span></p> 
+<p class="Standard" style="text-align:left; font-family: Courier New; color: #0f5e28; ">$ export CLASSPATH=&quot;$CLASSPATH:/home/james/demo/build/dist/demo.jar&quot;</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<ol style="list-style-type:decimal" start="5">
+<li class="Standard" style="text-align:left; ">Compile and execute the demo application.</li> 
+</ol>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">$ cd app</span></p> 
+<p class="Standard" style="text-align:left; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">$ javac DemoView.java</span></p>
+<p class="Standard" style="text-align:left; "><span style="color: #0f5e28; text-transform: none; font-variant:none; ">$ java DemoView</span></p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; font-weight: bold; ">Using the demo:</p> 
+<p class="Standard" style="text-align:left; ">The demo presents several text boxes. These test boxes represent the areas into which data is entered. Note that <span style="font-weight: bold; color: #b01f43; text-transform: none; font-variant:none; ">you must press enter</span> in the text box to store the data. This signals to the application that you wish to store the data in a message.</p>
+<p class="Standard" style="text-align:left; ">&nbsp;</p>
+<p class="Standard" style="text-align:left; ">When you have entered any data you wish to store, you may click on the &quot;Generate Message&quot; button to generate an HL7 message in XML format.</p> 
+</body>
+</html>

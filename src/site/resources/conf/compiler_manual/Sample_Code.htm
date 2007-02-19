@@ -1,0 +1,555 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./Sample_Code_files/filelist.xml">
+<link rel=Edit-Time-Data href="./Sample_Code_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>HAPI Conformance Classes System</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>WENDY HALL</o:Author>
+  <o:Template>Normal</o:Template>
+  <o:LastAuthor>WENDY HALL</o:LastAuthor>
+  <o:Revision>5</o:Revision>
+  <o:TotalTime>5</o:TotalTime>
+  <o:Created>2003-03-26T05:39:00Z</o:Created>
+  <o:LastSaved>2003-03-27T04:45:00Z</o:LastSaved>
+  <o:Pages>4</o:Pages>
+  <o:Words>461</o:Words>
+  <o:Characters>2628</o:Characters>
+  <o:Lines>21</o:Lines>
+  <o:Paragraphs>5</o:Paragraphs>
+  <o:CharactersWithSpaces>3227</o:CharactersWithSpaces>
+  <o:Version>9.3821</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-update:auto;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+span.msoIns
+	{mso-style-type:export-only;
+	mso-style-name:"";
+	text-decoration:underline;
+	text-underline:single;
+	color:teal;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1028"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:130.5pt;
+ height:49.5pt'>
+ <v:imagedata src="./Sample_Code_files/image001.gif" o:title="hapilogo5"/>
+</v:shape><![endif]--><![if !vml]><img width=174 height=66
+src="./Sample_Code_files/image001.gif" v:shapes="_x0000_i1025"><![endif]></h1>
+
+<h1 align=center style='text-align:center'>HAPI Conformance Classes System</h1>
+
+<h1 align=center style='text-align:center'>User Manual</h1>
+
+<p class=MsoNormal align=center style='text-align:center'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1026" style='position:absolute;
+ z-index:1' from="-3.45pt,17.45pt" to="527.55pt,17.45pt" coordsize="21600,21600"
+ strokecolor="#339" strokeweight="6pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:relative;z-index:0;left:-10px;top:18px;
+width:719px;height:29px'><img width=719 height=11
+src="./Sample_Code_files/image002.gif" v:shapes="_x0000_s1026"></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h3><span style='color:green'>Sample Code<o:p></o:p></span></h3>
+
+<p class=MsoNormal><span style='font-size:14.0pt;mso-bidi-font-size:12.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal>The following system uses a <a href="Glossary.htm#JAR">compiled
+profile Java Archive</a> (JAR). When creating an HL7 application, a programmer
+will write something like this code when he or she wants to use <a
+href="Glossary.htm#classes">conformance classes</a>.</p>
+
+<p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>/*<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>* Created on Mar 16, 2003<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>*<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>* Example HL7 program, which uses the
+&quot;Compiled Profile JAR&quot;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>* <o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>import
+test.*;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>import
+ca.uhn.hl7v2.conf.classes.exceptions.*;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>* @author Shawn Dyck<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style="mso-spacerun: yes"> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>public
+class Sample_Using_Conformance_Classes {<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>   </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>   </span>public static void main(String[] args){<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>     </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>   </span><span style='mso-tab-count:1'>   </span>MsgACK
+msgAck = new MsgACK();<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>     </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>     </span>try{<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;Here is the max
+length for &quot; +<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">             </span>&quot;the Sub-Component,Identifier\n&quot; +<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">             </span>&quot;that is contained within the Component, &quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">             </span>&quot;VersionID \nthat is contained within the Field,
+&quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:7'>                   </span>&quot;VersionID \n&quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">             </span>&quot;that is contained within the segment MSH:
+&quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes"> 
+</span>msgAck.getMSH().getVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">                 </span>.getInternationalVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">                 </span>.getIdentifier()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun:
+yes">                 </span>.getMaxLength());<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;Constant value
+for Identifier:&quot; +<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>msgAck.getMSH().getVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getInternationalVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getIdentifier().getConstantValue());</span><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>          </span><span style="mso-spacerun:
+yes">                 </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>          </span></span><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Courier New"'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;\nAbout to set the
+value for the Identifyer to: 555&quot;);<span style="mso-spacerun:
+yes">                 </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>msgAck.getMSH().getVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getInternationalVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getIdentifier().setValue(&quot;555&quot;);</span><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>          </span><span style='mso-tab-count:1'>   </span></span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>System.out.println(&quot;\nAbout
+to read back the value...&quot;); <o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>try {<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes">  
+</span>ca.uhn.hl7v2.parser.XMLParser xmlParser = new
+ca.uhn.hl7v2.parser.DefaultXMLParser();<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes">  
+</span>String ackMessageInXML = xmlParser.encode(msgAck.getHAPIMessage());<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes">  
+</span>System.out.println(&quot;Identifier: &quot; + ackMessageInXML);<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>} catch (Exception e) {<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes">  
+</span>e.printStackTrace();<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><span style="mso-spacerun: yes">  
+</span>System.out.println(&quot;\nERR: &quot; + e.toString() );<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;\nHere is the
+max length for &quot; +<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">   </span>&quot;the Sub-Component,AlternateText\n&quot; +<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">   </span>&quot;that is contained within the Component, &quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">   </span>&quot;VersionID \nthat is contained within the Field, &quot;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:7'>                   </span>&quot;VersionID \n&quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">   </span>&quot;that is contained within the segment MSH: &quot;+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>msgAck.getMSH().getVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getInternationalizationCode()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getAlternateText()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getMaxLength());<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>// will throw an exception because the
+length is tool long<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;\nAbout to set
+the value for the AlternateText to: 5555&quot;);<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.out.println(&quot;please note, an
+exception will be thrown&quot;);<span style="mso-spacerun:
+yes">                 </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>msgAck.getMSH().getVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getInternationalVersionID()<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:6'>                </span><span style="mso-spacerun:
+yes">  </span>.getAlternateText().setValue(&quot;5555&quot;);<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>     </span>}catch(ConfRepException cre){<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.err.println(&quot;ConformanceRepException&quot;
++<o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-list:none;mso-list-ins:"Bryan Tripp" 20030325T1514;
+tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:5'>             </span>cre.toString());<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>     </span>}catch(ConfDataException cde){<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:3'>        </span>System.err.println(&quot;ConformanceDataException&quot;
++ cde.toString());</span><span style='font-size:8.0pt;mso-bidi-font-size:12.0pt;
+font-family:"Courier New"'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>       </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>   </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><!--[if gte vml 1]><v:line
+ id="_x0000_s1027" style='position:absolute;z-index:2;
+ mso-position-horizontal:absolute;mso-position-vertical:absolute' from="-3.45pt,3.25pt"
+ to="527.55pt,3.25pt" coordsize="21600,21600" strokecolor="#339"
+ strokeweight="6pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:relative;z-index:1'><span style='position:absolute;left:-10px;
+top:-1px;width:719px;height:11px'><img width=719 height=11
+src="./Sample_Code_files/image003.gif" v:shapes="_x0000_s1027"></span></span><![endif]><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal align=center style='text-align:center;tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal align=center style='text-align:center;tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center;tab-stops:.25in .5in .75in 1.0in 1.25in 1.5in 1.75in 2.0in 2.25in 2.5in 2.75in 3.0in 3.25in 3.5in'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:66pt;height:23.25pt'>
+ <v:imagedata src="./Sample_Code_files/image004.png" o:title="sourceforge"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=88 height=31
+src="./Sample_Code_files/image005.jpg" v:shapes="_x0000_i1026"><![endif]><span
+style='font-size:8.0pt;mso-bidi-font-size:12.0pt;font-family:"Courier New"'><o:p></o:p></span></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>
