@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -223,6 +223,20 @@ public class PipeParserTest extends TestCase {
                 "OBX|1|CE|^^^60101058^CULTURE,SALMONELLA/SHIGELLA,STOOL^L|1|^^^SASP^Salmonella sp., not typhi^L||||||F|||200608011318|33D0123456^Big Laboratory^CLIA";
         Message message = parser.parse(msg);
         
+    }
+    
+    
+    public void testNonPipeDelimitor() throws EncodingNotSupportedException, HL7Exception {
+    	String msg = "MSH^~|\\&^HDRVTLS^552~DAYTDEV.FO-BAYPINES.MED.VA.GOV~DNS^GMRV VDEF IESIDE^200HD~HDR.MED.VA.GOV~DNS^20061006151615-0800^^ORU~R01^55253408603^T^2.4^^^AL^NE^US\r\n" + 
+    			"ORC^RE^^6240020~552_120.5^^^^^^^^^^OBS23~325~~~~~~~23 HOUR OBSERVATION^^^^552~DAYTON~L^^^^DAYTON\r\n" + 
+    			"OBR^^^6240020~552_120.5^4500635~PAIN~99VA120.51^^^200610061445-0800^20061006144607-0800^^^^^^^^^^^^^^20061006144607-0800^^^E^^^^^^^^^123456~NURSE~THREE~A~III~MS~RN~VistA200\r\n" + 
+    			"OBX^^ST^4500635~PAIN~99VA120.51^^3^~~L^^^^^W^^^^^123456~NURSE~THREE~A~III~MS~RN~VistA200\r\n" + 
+    			"OBX^^CE^Error Reasons^^4500627~INCORRECT READING~99VA8985.1^^^^^^W^^^^^123456~NURSE~THREE~A~III~MS~RN~VistA200\r\n" + 
+    			"ZSC^^291^OBSERVATION SURGERY";
+    	
+    	PipeParser p = new PipeParser();
+    	p.parse(msg);
+    	
     }
     
     
