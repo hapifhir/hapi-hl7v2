@@ -1,0 +1,44 @@
+Conformance
+
+  Version 0.4 of HAPI introduces several features related to the HL7 conformance framework.  There are also several non-HAPI conformance tools. 
+
+  The conformance framework was introduced in HL7 2.5.  In a nutshell, it defines a way of writing detailed message specifications using XML.  An XML message specification is called a "profile".  For more information on conformance, please refer to HL7 2.5 section 2.12 or the {{{http://www.hl7.org/Special/committees/conformance/conform.htm}Conformance SIG}}. 
+
+  <<HAPI 0.4 introduces the following conformance tools>>: 
+  
+*-----------------------+------------------------------------------------------------+
+| {{{http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/check/}Message Validator}} | This is not a stand-alone tool but a part of the HAPI framework.   It checks messages against profiles and produces a list of non-conformances (if any).  Problems can be written to a log or report, or they can trigger an email to an interface engine administrator.  
+*-----------------------+------------------------------------------------------------+
+| {{{conf/compiler.html}Profile Compiler}} | Turns a profile into a Java JAR.  The JAR contains an API with all the constraints of the profile, so that coding against it will prevent you from producing non-compliant messages.  Many non-conformances are caught at compile time, the rest at run-time.  
+*-----------------------+------------------------------------------------------------+
+| {{{conf/constraint_analyzer.html}Constraint Analyzer}} | Determines whether one profile properly constrains another. 
+*-----------------------+------------------------------------------------------------+
+| {{{http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/store/}Profile Store}} | In progress.  Currently saves/loads profiles to/from local disk.  Will load profiles from HL7's on-line registry and cache them locally in next version.   
+*-----------------------+------------------------------------------------------------+
+
+
+  <<By the way, non-HAPI conformance tools include the following>>:
+  
+  
+*-----------------------+------------------------------------------------------------+
+| {{{http://www.hl7.org/lib_admin/docs.cfm?dir=library/committees/conf&comm=conf}The Messaging Workbench}} | This is a graphical profile editor created by Peter Rontey of the US Veteran's Administration.    It can be downloaded from the HL7 Conformance SIG's documents page.  
+*-----------------------+------------------------------------------------------------+
+| {{{conf/darius}Custom Z API Generator}} | An XSL tool by Darius Kemeklis that generates custom Z segment API classes for HAPI based on a conformance profile.  Standalone as well as integrated into the Messaging Workbench.   
+*-----------------------+------------------------------------------------------------+
+| {{{http://www.nist.gov/messagemaker}Message Maker}} | This tool by Rob Snelick and colleagues (NIST) generates test messages from a conformance profile.    
+*-----------------------+------------------------------------------------------------+
+| {{{http://hl7api.sourceforge.net/conf/Conf_FOP.zip}PDF Transform}} | Lloyd McKenzie and Jennifer Puyenbroek's XSL stylesheet which transforms a profile into PDF or HTML.  
+*-----------------------+------------------------------------------------------------+
+| {{{http://www.ahml.com.au/}Australian Healthcare Messaging Laboratory}} | A service by which messages can be checked for conformance to a profile or to HL7 in general. 
+*-----------------------+------------------------------------------------------------+
+| {{{http://www.hl7.org/Library/Committees/Conf/HL7v2GlobalMessageProfileLibraryjan2003V3.pdf}HL7 Global Profile Registry}} | A service with which HL7 members can share profiles for their products or regions.  This is a link to the users guide which has instructions for accessing the registry. 
+*-----------------------+------------------------------------------------------------+
+| {{{http://www.orionhealth.com/symphonia_overview.htm}Orion Tools}}             | Closed-source tools in the same vein as HAPI.   
+*-----------------------+------------------------------------------------------------+
+
+
+  <<Possible future work includes>>:
+
+*-----------------------+------------------------------------------------------------+
+| Profile Generator     | Currently the Messaging Workbench (above) can reverse-engineer a profile from a message.  There has been some talk about extending this so that a profile can be created from a set of messages, which would be very useful in that it would allow us to create status quo profiles for legacy interfaces.  If Peter doesn't do it, maybe we'll implement this into HAPI at some point. 
+*-----------------------+------------------------------------------------------------+

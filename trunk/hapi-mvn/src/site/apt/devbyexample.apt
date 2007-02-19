@@ -1,0 +1,36 @@
+Developing using HAPI - By Example
+
+  This page is intended to explain how to develop an application
+  that uses HAPI to send or receive messages, using straightforward
+  examples. 
+  
+  It is a new section of the HAPI documentation, and is still
+  very much a work in progress. If you have any 
+  comments/suggestions/corrections, please send them to
+  {{mailto:jamesagnew@sourceforge.net}}.
+
+  Please note that this page assumes at least a basic familiarity 
+  with {{{http://hl7.org}HL7}} and it's terminology.
+
+* Parsing a message
+
+  A good starting point with regards to using HAPI would be to
+  {{{xref/ca/uhn/hl7v2/examples/ExampleParseMessages.html}parse a message}}.
+  
+* Creating messages
+
+  Next, let's try {{{xref/ca/uhn/hl7v2/examples/CreateAMessage.html}creating a new message}}
+  from scratch.
+
+* Sending and receiving
+  
+  Now, let's introduce some {{{xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
+
+* Advanced
+
+  Another way of reading and writing to message objects is to use 
+  a {{{xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
+  
+  
+  
+  

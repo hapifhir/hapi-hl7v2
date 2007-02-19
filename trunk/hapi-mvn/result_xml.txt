@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ACK>
+    <MSH>
+        <MSH.1>|</MSH.1>
+        <MSH.2>^~\&amp;</MSH.2>
+        <MSH.3>
+            <HD.1>Fake Sending App</HD.1>
+        </MSH.3>
+        <MSH.4>
+            <HD.1>Fake Sending Facility</HD.1>
+        </MSH.4>
+        <MSH.6>
+            <HD.1>Fake Receiving Facility</HD.1>
+        </MSH.6>
+        <MSH.7>
+            <TS.1>200108151718-0500</TS.1>
+        </MSH.7>
+        <MSH.9>
+            <CM_MSG.1>ACK</CM_MSG.1>
+            <CM_MSG.2>A01</CM_MSG.2>
+            <CM_MSG.3>ACK</CM_MSG.3>
+        </MSH.9>
+        <MSH.10>20</MSH.10>
+        <MSH.11>
+            <PT.1>P</PT.1>
+        </MSH.11>
+        <MSH.12>
+            <VID.1>2.4</VID.1>
+        </MSH.12>
+    </MSH>
+    <MSA>
+        <MSA.1>AA</MSA.1>
+    </MSA>
+</ACK>

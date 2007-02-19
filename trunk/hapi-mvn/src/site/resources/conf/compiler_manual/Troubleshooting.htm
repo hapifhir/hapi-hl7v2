@@ -1,0 +1,501 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./Troubleshooting_files/filelist.xml">
+<link rel=Edit-Time-Data href="./Troubleshooting_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>HAPI Conformance Classes System</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>WENDY HALL</o:Author>
+  <o:Template>Normal</o:Template>
+  <o:LastAuthor>WENDY HALL</o:LastAuthor>
+  <o:Revision>7</o:Revision>
+  <o:TotalTime>9</o:TotalTime>
+  <o:Created>2003-03-26T05:43:00Z</o:Created>
+  <o:LastSaved>2003-04-02T04:03:00Z</o:LastSaved>
+  <o:Pages>3</o:Pages>
+  <o:Words>231</o:Words>
+  <o:Characters>1321</o:Characters>
+  <o:Lines>11</o:Lines>
+  <o:Paragraphs>2</o:Paragraphs>
+  <o:CharactersWithSpaces>1622</o:CharactersWithSpaces>
+  <o:Version>9.3821</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-update:auto;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:13.0pt;
+	font-family:Arial;
+	color:green;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p.FigureandTable, li.FigureandTable, div.FigureandTable
+	{mso-style-name:"Figure and Table";
+	mso-style-update:auto;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1032"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:130.5pt;
+ height:49.5pt'>
+ <v:imagedata src="./Troubleshooting_files/image001.gif" o:title="hapilogo5"/>
+</v:shape><![endif]--><![if !vml]><img width=174 height=66
+src="./Troubleshooting_files/image001.gif" v:shapes="_x0000_i1025"><![endif]></h1>
+
+<h1 align=center style='text-align:center'>HAPI Conformance Classes System</h1>
+
+<h1 align=center style='text-align:center'>User Manual</h1>
+
+<p class=MsoNormal align=center style='text-align:center'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1026" style='position:absolute;
+ z-index:1;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ from="-3.45pt,13pt" to="527.55pt,13pt" strokecolor="#339" strokeweight="6pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:relative;z-index:0;left:-10px;top:12px;
+width:719px;height:23px'><img width=719 height=11
+src="./Troubleshooting_files/image002.gif" v:shapes="_x0000_s1026"></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h2>Troubleshooting</h2>
+
+<p class=MsoNormal><b><span style='font-size:13.0pt;mso-bidi-font-family:Arial'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+
+<p class=MsoNormal>This section provides a description of error codes.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=FigureandTable>Table 3<span style='mso-tab-count:1'>          </span>Command
+Line Troubleshooting</p>
+
+<p class=MsoNormal><b><span style='font-size:13.0pt;mso-bidi-font-family:Arial'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<table border=1 cellspacing=0 cellpadding=0 align=left style='border-collapse:
+ collapse;border:none;mso-border-top-alt:solid green 1.5pt;mso-border-bottom-alt:
+ solid green 1.5pt;mso-table-lspace:9.0pt;mso-table-rspace:9.0pt;mso-table-anchor-vertical:
+ page;mso-table-anchor-horizontal:margin;mso-table-left:left;mso-table-top:
+ 162.05pt;mso-padding-alt:0in 5.4pt 0in 5.4pt'>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border-top:solid green 1.5pt;
+  border-left:none;border-bottom:solid green .75pt;border-right:none;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <h3>Problem</h3>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border-top:solid green 1.5pt;
+  border-left:none;border-bottom:solid green .75pt;border-right:none;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <h3>Probable Cause</h3>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border-top:solid green 1.5pt;
+  border-left:none;border-bottom:solid green .75pt;border-right:none;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <h3>Solution</h3>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;mso-border-top-alt:
+  solid green .75pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>File
+  already exists error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;mso-border-top-alt:
+  solid green .75pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>There
+  already is a generated file in the directory that was specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;mso-border-top-alt:
+  solid green .75pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Either
+  change the destination directory on the command line, or remove all previous
+  generated files in the directory.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Invalid
+  command line option error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>An
+  invalid flag was specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Type
+  </span><span style='font-size:10.0pt;mso-bidi-font-size:12.0pt;font-family:
+  "Courier New"'>ConfGen –h</span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt;mso-bidi-font-family:Arial'> to get a list of all valid command line
+  options.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Source
+  path required error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  path to the XML profile was not specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Add
+  the XML source path as the first argument on the command line.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Destination
+  path required error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  path for the generated source was not specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Add
+  a valid path where the generated source will be put.<span
+  style="mso-spacerun: yes">  </span>Add the path as the second argument on the
+  command line.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Package
+  name required error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  name of the package was not specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Add
+  a package name as the last argument on the command line.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Invalid
+  destination path error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  destination path that was specified doesn’t exist.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  destination path must be a valid system path, and it must exist.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=197 valign=top style='width:2.05in;border:none;border-bottom:solid green 1.5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Invalid
+  source file error<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;border-bottom:solid green 1.5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>The
+  XML source file doesn’t exist or isn’t in the directory specified.<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:2.05in;border:none;border-bottom:solid green 1.5pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'>Make
+  sure that the XML source file is in the specified directory.<o:p></o:p></span></p>
+  <p class=MsoNormal style='mso-element:frame;mso-element-frame-hspace:9.0pt;
+  mso-element-wrap:around;mso-element-anchor-vertical:page;mso-element-anchor-horizontal:
+  margin;mso-element-top:162.05pt;mso-height-rule:exactly'><![if !supportEmptyParas]>&nbsp;<![endif]><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:Arial'><o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span style='mso-bidi-font-family:Arial'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='mso-bidi-font-family:Arial'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='mso-bidi-font-family:Arial'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1027" style='position:absolute;
+ z-index:2;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ from="-3.45pt,11.45pt" to="527.55pt,11.45pt" strokecolor="#339"
+ strokeweight="6pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:relative;z-index:1;left:-10px;top:10px;width:719px;height:21px'><img
+width=719 height=11 src="./Troubleshooting_files/image003.gif" v:shapes="_x0000_s1027"></span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal align=center style='text-align:center'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:66pt;height:23.25pt'>
+ <v:imagedata src="./Troubleshooting_files/image004.png" o:title="sourceforge"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=88 height=31
+src="./Troubleshooting_files/image005.jpg" v:shapes="_x0000_i1026"><![endif]></p>
+
+</div>
+
+</body>
+
+</html>

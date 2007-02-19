@@ -1,0 +1,20 @@
+How To Get Involved
+
+  HAPI is very much a collaborative project, we would love for you to get involved.
+  
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| <<Who you are>>                                      | <<How to get involved>> |
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| HAPI user who has found a bug                        | Report the bug {{{http://sourceforge.net/tracker/?atid=423835&group_id=38899&func=browse}here}}.  Check the list first to see if someone else has already submitted it. |
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| HAPI user who has thought of a useful enhancement    | Submit a feature request {{{http://sourceforge.net/tracker/?atid=423838&group_id=38899&func=browse}here}}. |
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| HAPI user who has fixed a bug or made a functional improvement to HAPI | If your work addresses an existing bug report or feature request, go to that item (see links above), and attach your code to it with a comment that you are submitting code for review.  Please follow these {{{submissions.html}code submission guidelines}}.  If this is a new bug/request, use "submit new" under the links above to create the item first.  
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Company that would like to build a product using HAPI | Knock yourself out.  We would enjoy hearing about how you use HAPI, but there is no obligation.   
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| A programmer who would like to help out | A good way to get started is to take on an existing bug report or feature request (see above).  Please contact James Agnew with your SourceForge user ID, and you will be endowed with the privileges of "technician" on the bug and feature request trackers.  This lets you assign items to yourself and others.  When you find something you want to work on, assign it to yourself (so nobody else starts working on it), do the work, attach your code to the item, and then assign it to jamesagnew for review.   Please follow the code submission guidelines. 
+|                                         | 
+|                                         | 
+|                                         | If you want to work on something more meaty, check out the task list, particularly the "0.5" section.  Contact James Agnew to discuss logistics.  
+*------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+

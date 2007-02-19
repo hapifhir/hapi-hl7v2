@@ -1,0 +1,173 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi</artifactId>
+	<packaging>pom</packaging>
+	<version>0.6-SNAPSHOT</version>
+	<name>HAPI</name>
+	<url>http://hl7api.sourceforge.net/</url>
+	<description>
+		HAPI (HL7 application programming interface; pronounced "happy") is an open-source, 
+		object-oriented HL7 2.x parser for Java.  HL7 (http://hl7org)  is a messaging 
+		specification for healthcare information systems.  This project is not affiliated with 
+		the HL7 organization; we are just writing some software that conforms to their 
+		specification.  The project was initiated by University Health Network 
+		(a large multi-site teaching hospital in Toronto, Canada).   		
+	</description>
+	
+	<mailingLists>
+		<mailingList>
+			<name>hl7api-devel</name>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_id=4433</archive>
+			<post>mailto:hl7api-devel@lists.sourceforge.net</post>
+			<subscribe>https://lists.sourceforge.net/lists/listinfo/hl7api-devel</subscribe>
+			<unsubscribe>https://lists.sourceforge.net/lists/listinfo/hl7api-devel</unsubscribe>
+		</mailingList>	
+	</mailingLists>
+	
+	<developers>
+		<developer>
+			<name>Bryan Tripp</name>
+			<email>bryan_tripp@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>James Agnew</name>
+			<email>jamesagnew@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Alexei Guevara</name>
+			<email>aguevara@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Charles D. Fisher</name>
+			<email>cdfisher@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Abraham Tio</name>
+			<email>jazzhammer@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Leslie Mann</name>
+			<email>lmann@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Neal Acharya</name>
+			<email>nacharya@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<name>Nico Vannieuwenhuyze</name>
+			<email>nicovn@users.sourceforge.net</email>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>sourceforge</system>
+		<url>http://sourceforge.net/tracker/?group_id=38899</url>
+	</issueManagement>		
+	
+	<ciManagement>
+	</ciManagement>
+	
+	<licenses>
+		<license>
+			<name>Mozilla Public License 1.1</name>
+			<url>http://www.mozilla.org/MPL/</url>
+		</license>
+		<license>
+			<name>GNU General Public License</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+		</license>
+	</licenses>	
+	
+	<scm>
+		<connection>
+			scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi
+		</connection>
+	</scm>
+	
+	<repositories>
+	</repositories>
+	
+	<organization>
+		<name>University Health Network</name>
+		<url>http://www.uhn.ca</url>
+	</organization>
+		
+	<pluginRepositories>
+	</pluginRepositories>
+	
+	<dependencies>
+	</dependencies>
+	
+	<modules>
+		<module>hapi-base</module>
+		<module>hapi-sourcegen</module>
+		<module>hapi-examples</module>
+	</modules>
+	
+	<distributionManagement>
+		<site>
+			<id>website</id>
+			<url>scp://www.mycompany.com/www/docs/project/</url>
+		</site>
+	</distributionManagement>
+	
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.4</source>
+					<target>1.4</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<executions>
+					
+				</executions>
+			</plugin>
+		</plugins>
+		<extensions>
+		</extensions>
+	</build>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+    	</plugins>
+	</reporting>	
+	
+	<profiles>
+		<profile>
+			<id>GEN</id>
+			<build>
+			</build>
+			<modules>
+				<module>hapi-structures-v21</module>
+				<module>hapi-structures-v22</module>
+				<module>hapi-structures-v23</module>
+				<module>hapi-structures-v231</module>
+				<module>hapi-structures-v24</module>
+				<module>hapi-structures-v25</module>
+			</modules>
+		</profile>
+	</profiles>	
+	
+</project>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="HAPI">
+
+	<bannerLeft>
+		<name>HAPI</name>
+		<src>images/hapilogo5.gif</src>
+		<href>http://hl7api.sourceforge.net/</href>
+	</bannerLeft>
+
+	<bannerRight>
+		<name>Sourceforge</name>
+		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2</src>
+		<href>http://sourceforge.net/</href>
+	</bannerRight>
+	
+	<poweredBy>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=1"/>
+		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
+	</poweredBy>	
+	
+	<body>
+	  
+		<links>
+			<item name="hl7.org" href="http://hl7.org/" />
+			<item name="University Health Network" href="http://www.uhn.ca/" />
+		</links>
+	
+		<menu name="Welcome">
+			<item name="Introduction" href="index.html"/>
+			<item name="What's New" href="whatsnew.html"/>
+			<item name="Get Involved" href="getinvolved.html"/>
+		</menu>
+	
+		<menu name="Using HAPI">
+			<item name="Download" href="http://sourceforge.net/project/showfiles.php?group_id=38899"/>
+			<item name="JavaDocs" href="apidocs/index.html"/>
+			<item name="Source XRef" href="xref/index.html"/>
+		</menu>
+	
+		<menu name="Developer Guides">
+			<item name="HAPI By Example" href="devbyexample.html"/>
+			<item name="Using the Test Panel" href="testpanel.html"/>
+			<item name="Parsing Messages" href="parsing.html"/>		
+			<item name="Installation" href="installation.html"/>
+			<item name="Conformance Tools" href="conformance.html"/>
+		</menu>
+			
+		<menu name="Contributing to HAPI">
+		  <item name="Submitting Code" href="submissions.html"/>
+		</menu>
+				
+		${reports}
+	
+		...
+	</body>
+</project>

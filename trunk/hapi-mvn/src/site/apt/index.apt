@@ -1,0 +1,63 @@
+Welcome
+
+  This is the home page for the HAPI project.  HAPI (HL7 application programming interface; 
+  pronounced "happy") is an open-source, object-oriented HL7 2.x parser for Java.  
+  HL7 ({{http://hl7.org}})  is a messaging specification for healthcare information systems.  
+  This project is not affiliated with the HL7 organization; we are just writing some software 
+  that conforms to their specification.  The project was initiated by {{{http://www.uhn.ca}University Health Network}} 
+  (a large multi-site teaching hospital in Toronto, Canada).  
+
+What's New
+
+  * February 18, 2007
+  
+    * HAPI 0.5.1 Released.  See details {{{whatsnew.html}here}}. 
+    
+    * Also, a new section has been added to the HAPI website: {{{devbyexample.html}HAPI By Example}}
+  
+  * December 14, 2006 
+  
+    * HAPI 0.5 Released.
+
+  
+Get Involved 
+
+  There are several ways you can get involved and help this project along.  See details {{{getinvolved.html}here}}.  
+  
+
+Contact
+
+  Please send development-related questions to the mailing list at 
+  {{hl7api-devel@lists.sourceforge.net}}.  
+  For anything else, please contact {{jamesagnew@users.sourceforge.net}}
+  
+Project Overview
+
+  HAPI is a parser and encoder for HL7 version 2.x (i.e. 2.1, 2.2, 2.3, 2.3.1, 2.4) messages.  HL7 is a widely used messaging specification for healthcare information systems.  For more information on HL7 please visit {{{http://hl7.org}hl7.org}}. 
+
+  Prior to HAPI, we parsed HL7 messages using very generic objects (e.g. "Message", "Segment").  However there are many different types of messages and segments defined in the HL7 specification.  Each has a different structure, of which the generic objects were unaware.  This made development very slow, for the following reasons:   
+
+  [[1]] The generic objects were unable to enforce the majority of the specification at compile time.  We had to verify message validity manually. 
+  
+  [[1]] We had to refer to the specification constantly while programming.  The specification is very extensive and not well-suited for quick reference in this sense.  
+
+  []
+
+  The HAPI object model defines Java classes for every HL7 2.x data type, segment, and message.  This means that we can take a lot if mistakes that previously would have resulted in invalid messages and turn them into compile-time errors or Java Exceptions, which are apparent much more quickly.  For example, to create an ADT_A01 message (a message that a registration system sends when a patient is admitted to hospital), and set it's time to right now, we would use code like this:
+
+-----------
+ADT_A01 testMessage = new ADT_A01();
+  
+testMessage.getMSH().getDateTimeOfMessage().setValue("foo");  //throws exception because "foo" is not a valid date
+testMessage.getMSH().getDateTimeOfMessage().setValue(ValidTS.toHL7TSFormat(System.currentTimeMillis()));  //OK
+// ... set other fields ... 
+
+Parser parser = new PipeParser();
+
+existingWriter.write(parser.encode(testMessage));   //assuming "existingWriter" belongs to a socket that points to a remote system
+-----------
+  
+  If it compiles and runs without error, we know the message structure is valid.  Likewise, when incoming messages (from other systems) are parsed, we do not have to check the message structure ourselves because the parser throws meaningful exceptions if there is a problem.  The other advantage of encoding message structures directly in Java is that we can use code completion and JavaDocs most of the time, instead of flipping through the specification. 
+
+  The API is composed of a group of core classes that are hand-written, and hundreds of version-specific classes that are generated automatically.  The automatically generated classes correspond to specific messages, segments, and datatypes.  HL7 defines all of these components in a relational database.  We have simply written scripts that create Java source code from the database entries (see ca.uhn.hl7v2.sourcegen.SourceGenerator) instead of writing all of this code by hand.    
+  
