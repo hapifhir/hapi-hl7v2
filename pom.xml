@@ -123,6 +123,8 @@
 				<configuration>
 					<source>1.4</source>
 					<target>1.4</target>
+					<fork>true</fork>
+					<maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
 			<plugin>
