@@ -34,9 +34,9 @@
 			<optional>true</optional>
 		</dependency>		
 		<dependency>
-			<groupId>jdom</groupId>
+			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>		
 		<dependency>
 			<groupId>log4j</groupId>

@@ -49,8 +49,5 @@
 		  <item name="Submitting Code" href="submissions.html"/>
 		</menu>
 				
-		${reports}
-	
-		...
 	</body>
 </project>
