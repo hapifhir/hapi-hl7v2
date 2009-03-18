@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -42,7 +42,9 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -54,9 +56,7 @@ import ca.uhn.log.HapiLogFactory;
 public abstract class Parser {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(Parser.class);
-
-    private static Map messageStructures = null;
-    
+    private static Map messageStructures = null;    
     private static final String[] versions = { "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5" };
     
     private ModelClassFactory myFactory;
@@ -67,8 +67,7 @@ public abstract class Parser {
      * Uses DefaultModelClassFactory for model class lookup. 
      */
     public Parser() {
-        myFactory = new DefaultModelClassFactory();
-        setValidationContext(new DefaultValidation());
+        this(new DefaultModelClassFactory());
     }
     
     /**
@@ -76,7 +75,15 @@ public abstract class Parser {
      */
     public Parser(ModelClassFactory theFactory) {
         myFactory = theFactory;
-        setValidationContext(new DefaultValidation());
+        ValidationContext validationContext;
+		try {
+			validationContext = ValidationContextFactory.getContext();
+		} catch (ValidationException e) {
+			log.warn("Failed to get a validation context from the " + 
+					"ValidationContextFactory", e);
+			validationContext = new DefaultValidation();
+		}
+        setValidationContext(validationContext);
     }
     
     /**
@@ -87,7 +94,7 @@ public abstract class Parser {
     }
     
     /**
-     * @return the set of validation rules that is applied to messages parsed or encoded by this parser
+     * @return the set of validation rules that is applied to messages parsed or encoded by this parser. Note that this method may return <code>null</code>
      */
     public ValidationContext getValidationContext() {
         return myContext;

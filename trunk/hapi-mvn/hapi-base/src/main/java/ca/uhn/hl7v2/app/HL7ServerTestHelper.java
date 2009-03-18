@@ -36,11 +36,10 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * Messasges are sent using MLLP and ACK protocal
  * 
- * <mailto:laura.bright@uhn.on.ca>Laura Bright</mailto>
- * <mailto:neal.acharya@uhn.on.ca>Neal Acharya</mailto>
- * <mailto:james.agnew@uhn.on.ca>James Agnew</mailto>
+ * @author Laura Bright
+ * @author Neal Acharya
  * 
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:37 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-18 23:27:58 $ by $Author: jamesagnew $
  */
 public class HL7ServerTestHelper {
     

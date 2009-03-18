@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -44,11 +44,21 @@ import ca.uhn.log.HapiLogFactory;
  * <p><code>CN cn = new CN();<br>
  * variesObject.setData(cn);<br>
  * cn.getIDNumber().setValue("foo");</code></p>
- * @author Bryan Tripp (bryan_tripp@users.sourceforge.net) 
+ * 
+ * @author Bryan Tripp (bryan_tripp@users.sourceforge.net)
+ * @author Andy Pardue 
+ * 
  */
 public class Varies implements Type {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(Varies.class);
+	/** 
+	 * System property key. The value may be set to provide a default
+	 * datatype ("ST", "NM", etc) for an OBX segment with a missing
+	 * OBX-2 value.
+	 */	
+	public static final String DEFAULT_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_obx2_type";
+
+	private static final HapiLog log = HapiLogFactory.getHapiLog(Varies.class);
 
     private Type data;
     private Message message;
@@ -119,6 +129,17 @@ public class Varies implements Type {
             Type[] reps = segment.getField(5);
             for (int i = 0; i < reps.length; i++) {
                 Varies v = (Varies)reps[i];
+
+                // If we don't have a value for OBX-2, a default
+                // can be supplied via a System property
+                if (obx2.getValue() == null) {
+	                String defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
+					if (defaultOBX2Type != null) {
+	                    log.debug("setting default obx2 type to " + defaultOBX2Type);
+	                    obx2.setValue(defaultOBX2Type);
+	                }
+                } // if
+                
                 if (obx2.getValue() == null) {
                     if (v.getData() != null) {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
@@ -134,6 +155,16 @@ public class Varies implements Type {
 //                    Class c = ca.uhn.hl7v2.parser.Parser.findClass(obx2.getValue(), 
 //                                                    segment.getMessage().getVersion(), 
 //                                                    "datatype");
+                    if (c == null) {
+                    	Primitive obx1 = (Primitive) segment.getField(1, 0);
+                    	HL7Exception h = new HL7Exception("\'" +
+                    		obx2.getValue() + "\' in record " +
+                    		obx1.getValue() + " is invalid",
+                    		HL7Exception.DATA_TYPE_ERROR);
+                    	h.setSegmentName("OBX");
+                    	h.setFieldPosition(2);
+                    	throw h;
+                    }
                     v.setData((Type) c.getConstructor(new Class[]{Message.class})
                             .newInstance(new Object[]{v.getMessage()}));
                 }

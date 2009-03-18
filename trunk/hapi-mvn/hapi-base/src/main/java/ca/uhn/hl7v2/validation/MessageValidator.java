@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -40,7 +40,9 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class MessageValidator {
 
-    private static final HapiLog ourLog = HapiLogFactory.getHapiLog(MessageValidator.class);
+    private static final MessageRule[] EMPTY_MESSAGE_RULES_ARRAY = new MessageRule[0];
+    private static final EncodingRule[] EMPTY_ENCODING_RULES_ARRAY = new EncodingRule[0];
+	private static final HapiLog ourLog = HapiLogFactory.getHapiLog(MessageValidator.class);
     
     private ValidationContext myContext;
     private boolean failOnError;
@@ -61,7 +63,11 @@ public class MessageValidator {
      */
     public boolean validate(Message message) throws HL7Exception {
         Terser t = new Terser(message);
-        MessageRule[] rules = myContext.getMessageRules(message.getVersion(), t.get("MSH-9-1"), t.get("MSH-9-2"));
+        
+        MessageRule[] rules = EMPTY_MESSAGE_RULES_ARRAY;
+        if (myContext != null) {
+        	rules = myContext.getMessageRules(message.getVersion(), t.get("MSH-9-1"), t.get("MSH-9-2"));
+        }
         
         ValidationException toThrow = null;
         boolean result = true;
@@ -91,7 +97,12 @@ public class MessageValidator {
      * @throws HL7Exception if there is at least one error and this validator is set to fail on errors
      */
     public boolean validate(String message, boolean isXML, String version) throws HL7Exception {
-        EncodingRule[] rules = myContext.getEncodingRules(version, isXML ? "XML" : "ER7");
+        
+    	EncodingRule[] rules = EMPTY_ENCODING_RULES_ARRAY;
+        if (myContext != null) {
+        	rules = myContext.getEncodingRules(version, isXML ? "XML" : "ER7");
+        }
+    	
         ValidationException toThrow = null;
         boolean result = true;
         for (int i = 0; i < rules.length; i++) {
