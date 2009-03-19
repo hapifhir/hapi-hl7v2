@@ -30,6 +30,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.sourcegen;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -78,7 +79,7 @@ public class GroupGenerator extends java.lang.Object {
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) { 
             baseDirectory = baseDirectory + "/";
         }
-        File targetDir = SourceGenerator.makeDirectory(baseDirectory + SourceGenerator.getVersionPackagePath(version) + "group"); 
+        File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "group"); 
 
         GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message);
         BufferedWriter out = new BufferedWriter(new FileWriter(targetDir.getPath() + "/" 
@@ -220,13 +221,13 @@ public class GroupGenerator extends java.lang.Object {
     public static String makePreamble(GroupDef group, String version) throws HL7Exception {
         StringBuffer preamble = new StringBuffer();
         preamble.append("package ");
-        preamble.append(SourceGenerator.getVersionPackageName(version));
+        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
         preamble.append("group;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
         preamble.append("import ca.uhn.hl7v2.HL7Exception;\r\n");
         preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
         preamble.append("import ");
-        preamble.append(SourceGenerator.getVersionPackageName(version));
+        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
         preamble.append("segment.*;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.model.*;\r\n");
         preamble.append("/**\r\n");

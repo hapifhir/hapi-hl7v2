@@ -35,6 +35,8 @@ import java.sql.SQLException;
 import ca.uhn.hl7v2.NormativeDatabase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -64,7 +66,7 @@ public class DataTypeGenerator extends Object {
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) { 
             baseDirectory = baseDirectory + "/";
         }
-        File targetDir = SourceGenerator.makeDirectory(baseDirectory + SourceGenerator.getVersionPackagePath(version) + "datatype"); 
+        File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "datatype"); 
         
         //get list of data types
         ArrayList types = new ArrayList();
@@ -208,7 +210,7 @@ public class DataTypeGenerator extends Object {
         StringBuffer source = new StringBuffer();
         
         source.append("package ");
-        source.append(SourceGenerator.getVersionPackageName(version));
+        source.append(DefaultModelClassFactory.getVersionPackageName(version));
         source.append("datatype;\r\n\r\n");
         source.append("import ca.uhn.hl7v2.model.Primitive;\r\n");
         source.append("import ca.uhn.hl7v2.model.DataTypeException;\r\n");
@@ -288,7 +290,7 @@ public class DataTypeGenerator extends Object {
             String[] descriptions, int[] tables, String version) throws HL7Exception {
         StringBuffer source = new StringBuffer();
         source.append("package ");
-        source.append(SourceGenerator.getVersionPackageName(version));
+        source.append(DefaultModelClassFactory.getVersionPackageName(version));
         source.append("datatype;\r\n\r\n");
         source.append("import ca.uhn.hl7v2.model.Composite;\r\n");
         source.append("import ca.uhn.hl7v2.model.DataTypeException;\r\n");

@@ -31,8 +31,6 @@ package ca.uhn.hl7v2.sourcegen;
 import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.Parser;
 
 /**
  * <p>Manages automatic generation of HL7 API source code for all data types,
@@ -193,39 +191,6 @@ public class SourceGenerator extends Object {
         }*/
         
         return ret;
-    }
-    
-    /**
-     * Returns the path to the base package for model elements of the given version
-     * - e.g. "ca/uhn/hl7v2/model/v24/".
-     * This package should have the packages datatype, segment, group, and message
-     * under it. The path ends in with a slash.
-     */
-    public static String getVersionPackagePath(String ver) throws HL7Exception {
-        if (Parser.validVersion(ver) == false) { 
-            throw new HL7Exception("The HL7 version " + ver + " is not recognized", HL7Exception.UNSUPPORTED_VERSION_ID);
-        }
-        StringBuffer path = new StringBuffer("ca/uhn/hl7v2/model/v");
-        char[] versionChars = new char[ver.length()];
-        ver.getChars(0, ver.length(), versionChars, 0);
-        for (int i = 0; i < versionChars.length; i++) {
-            if (versionChars[i] != '.') path.append(versionChars[i]);
-        }
-        path.append('/');
-        return path.toString();
-    }
-    
-    /**
-     * Returns the package name for model elements of the given version - e.g.
-     * "ca.uhn.hl7v2.model.v24.".  This method
-     * is identical to <code>getVersionPackagePath(...)</code> except that path
-     * separators are replaced with dots.
-     */
-    public static String getVersionPackageName(String ver) throws HL7Exception {
-        String path = getVersionPackagePath(ver);
-        String packg = path.replace('/', '.');
-        packg = packg.replace('\\', '.');
-        return packg;
     }
     
     public static void main(String[] args) {
