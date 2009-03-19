@@ -35,20 +35,24 @@
 			<item name="Download" href="http://sourceforge.net/project/showfiles.php?group_id=38899"/>
 			<item name="JavaDocs" href="apidocs/index.html"/>
 			<item name="Source XRef" href="xref/index.html"/>
+			<item name="License" href="license.html"/>
+			<item name="HAPI By Example / FAQ" href="devbyexample.html"/>
+			<item name="Using the Test Panel" href="testpanel.html"/>
+			<item name="Helpful Links" href="links.html"/>
 		</menu>
 	
-		<menu name="Developer Guides">
-			<item name="HAPI By Example" href="devbyexample.html"/>
-			<item name="Using the Test Panel" href="testpanel.html"/>
+		<menu name="Contributing to HAPI">
+		  <item name="Building HAPI" href="submissions.html"/>
+		  <item name="Submitting Code" href="submissions.html"/>
+		  <item name="Submitting Bug Reports" href="https://sourceforge.net/tracker/?group_id=38899&amp;atid=423835"/>
+		</menu>
+
+		<menu name="Older Documentation">
 			<item name="Parsing Messages" href="parsing.html"/>		
 			<item name="Installation" href="installation.html"/>
 			<item name="Conformance Tools" href="conformance.html"/>
-			<item name="Links" href="links.html"/>
 		</menu>
 			
-		<menu name="Contributing to HAPI">
-		  <item name="Submitting Code" href="submissions.html"/>
-		</menu>
 				
 	</body>
 </project>
