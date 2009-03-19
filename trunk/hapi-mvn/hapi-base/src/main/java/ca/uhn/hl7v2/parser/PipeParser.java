@@ -237,8 +237,12 @@ public class PipeParser extends Parser {
                     name = segments[i].substring(0, 3);
                     delim = segments[i].charAt(3);
                 } else {
-                    name = segments[i].substring(0, segments[i].indexOf(delim));
-                }
+                    if (segments[i].indexOf(delim) >= 0 ) {
+                        name = segments[i].substring(0, segments[i].indexOf(delim));
+                      } else {
+                        name = segments[i];
+                      }
+                 }
                 
                 log.debug("Parsing segment " + name);
                 
