@@ -1,0 +1,7 @@
+Helpful Links
+
+  Here are some helpful links for HL7 developers and HAPI users.
+  
+  {{{http://ihe.univ-rennes1.fr/HL7/}}IHE Europe Message Validation Service}. Click the tabs along the top for a very useful interactive reference to HL7 structures, datatypes, etc.
+
+  {{{http://www.mirthproject.org/}}Mirth Project}. An open-sourced, full featured integration engine built on HAPI.
