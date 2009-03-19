@@ -2,12 +2,14 @@
 <document xmlns="urn:changes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:changes changes.xsd">
 	<properties>
-		<title>Changes Tester Project</title>
+		<title>HAPI</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 	<body>
 		<release version="0.6" date="TBA"
 			description="This version will be released at some time in the future">
+			<action type="add" due-to="Chris Horneck" issue="1890219">Add single argument constructor to ID datatype, to allow it to be used in OBX-5</action>
+			<action type="add" dev="jagnew">New HAPI maven repository now available at http://hl7api.sourceforge.net/m2/</action>
 			<action type="fix" due-to="Frédéric Dubru">Make PipeParser not crash on empty segments (meaning segments with just a segment name, no field separator or fields)</action>
 			<action type="fix" due-to="Greg Groves" issue="1662979">NullPointerException if OBX-2 is invalid and OBX-5 is set</action>
 			<action type="fix" dev="btripp" issue="1657929">Parsing fails when (pipe) is used as non-field separator</action>

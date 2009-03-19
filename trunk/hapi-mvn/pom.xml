@@ -6,7 +6,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.6-beta1</version>
 	<name>HAPI</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -91,6 +91,11 @@
 	</scm>
 	
 	<repositories>
+		<repository>
+			<id>hapi-sf</id>
+			<name>HAPI Sourceforge Repository</name>
+			<url>http://hl7api.sourceforge.net/m2</url>
+		</repository>
 	</repositories>
 	
 	<organization>
@@ -105,9 +110,6 @@
 	</dependencies>
 	
 	<modules>
-		<module>hapi-base</module>
-		<module>hapi-sourcegen</module>
-		<module>hapi-examples</module>
 	</modules>
 	
 	<distributionManagement>
@@ -160,6 +162,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
 				<configuration>
 					<aggregate>true</aggregate>
 		          <groups>
@@ -200,10 +203,24 @@
 	
 	<profiles>
 		<profile>
+			<id>CORE</id>
+			<build>
+			</build>
+			<modules>
+				<module>hapi-base</module>
+				<module>hapi-examples</module>
+				<module>hapi-test</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>GEN</id>
 			<build>
 			</build>
 			<modules>
+				<module>hapi-base</module>
+				<module>hapi-examples</module>
+				<module>hapi-test</module>
+				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
