@@ -29,9 +29,6 @@ package ca.uhn.hl7v2.examples;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v22.datatype.PN;
-import ca.uhn.hl7v2.model.v22.message.ADT_A01;
-import ca.uhn.hl7v2.model.v22.segment.MSH;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
@@ -41,7 +38,7 @@ import ca.uhn.hl7v2.util.Terser;
  * Example code for using the {@link Terser}
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:46 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-19 13:09:26 $ by $Author: jamesagnew $
  */
 public class ExampleUseTerser
 {
