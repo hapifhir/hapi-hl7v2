@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.parser;
 
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.v23.message.ADT_A31;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
@@ -104,6 +105,19 @@ public class PipeParserTest extends TestCase {
         assertEquals("test", val);        
     }
 
+    
+    /**
+     * Check that parsing an empty segment doesn't crash
+     */
+    public void testParseEmptySegment() throws EncodingNotSupportedException, HL7Exception {
+        String message = "MSH|^~\\&|||||20080627102031.292+0100||ADT^A31^ADT_A31|EJ557600005480760|P|2.3|||||BE|8859/1|FR\r\n" + 
+        		"EVN||20080627101943+0100\r\n" + 
+        		"PID|||M07869D^^^ADMISSION^^ISSTLUC||DUPONT^JEAN||19701004000000+0100|M\r\n" + 
+        		"PD1\r\n" + 
+        		"PV1||N";
+        parser.parse(message);
+    }
+    
     /**
      * If there is a potential location for a segment in a certain group, but the 
      * entire group is out of order, the segment should not be placed there (in a 
