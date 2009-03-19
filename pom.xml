@@ -19,13 +19,13 @@
 	</description>
 	
 	<mailingLists>
-		<mailingList>
-			<name>hl7api-devel</name>
-			<archive>http://sourceforge.net/mailarchive/forum.php?forum_id=4433</archive>
-			<post>mailto:hl7api-devel@lists.sourceforge.net</post>
-			<subscribe>https://lists.sourceforge.net/lists/listinfo/hl7api-devel</subscribe>
-			<unsubscribe>https://lists.sourceforge.net/lists/listinfo/hl7api-devel</unsubscribe>
-		</mailingList>	
+        <mailingList>
+            <name>HAPI Develepors Mailing List</name>
+            <subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
+            <archive>https://sourceforge.net/mailarchive/forum.php?forum_name=hl7api-devel</archive>
+            <post>mailto:hl7api-devel@lists.sourceforge.net</post>
+        </mailingList>
 	</mailingLists>
 	
 	<developers>
@@ -62,6 +62,7 @@
 			<email>nicovn@users.sourceforge.net</email>
 		</developer>
 	</developers>
+	<inceptionYear>2001</inceptionYear>
 
 	<issueManagement>
 		<system>sourceforge</system>
@@ -82,10 +83,11 @@
 		</license>
 	</licenses>	
 	
+	
 	<scm>
-		<connection>
-			scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi
-		</connection>
+		<connection>scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi</connection>
+		<url>http://hl7api.cvs.sourceforge.net/hl7api/</url>
+		<tag>HEAD</tag>
 	</scm>
 	
 	<repositories>
@@ -110,8 +112,6 @@
 	
 	<distributionManagement>
 		<site>
-			<id>website</id>
-			<url>scp://www.mycompany.com/www/docs/project/</url>
 		</site>
 	</distributionManagement>
 	
@@ -144,6 +144,16 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
 					<aggregate>true</aggregate>
+		          <groups>
+		            <group>
+		              <title>HL7 Model Packages</title>
+		              <packages>ca.uhn.hl7v2.model</packages>
+		            </group>
+		            <group>
+		              <title>HAPI Core Library</title>
+		              <packages>ca.uhn.hl7v2</packages>
+		            </group>
+		          </groups>
 				</configuration>
 			</plugin>			
 			<plugin>
@@ -153,6 +163,20 @@
 					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+						    <report>changes-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+                    <issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
+				</configuration>
+			</plugin>			
     	</plugins>
 	</reporting>	
 	
