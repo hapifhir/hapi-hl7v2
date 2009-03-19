@@ -19,8 +19,12 @@ Developing using HAPI - By Example
   
 * Creating messages
 
-  Next, let's try {{{xref/ca/uhn/hl7v2/examples/CreateAMessage.html}creating a new message}}
+  Next, let's try 
+  {{{xref/ca/uhn/hl7v2/examples/CreateAMessage.html}creating a new message}} 
   from scratch.
+  
+  Another common problem is to 
+  {{{xref/ca/uhn/hl7v2/examples/PopulateOBXSegment.html}populate an ORU message's OBX segment}}.
 
 * Sending and receiving
   

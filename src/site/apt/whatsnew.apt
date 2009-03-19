@@ -1,5 +1,7 @@
 What's New
 
+  Allow PipeParser to parse empty segments without crashing (Thanks to Frédéric Dubru!) 
+
 * February 18 2007
 
   On February 18 2007, HAPI 0.5.1 was released. This release fixes only one issue. In the

@@ -10,7 +10,7 @@
 	<bannerRight>
 		<name>Sourceforge</name>
 		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2</src>
-		<href>http://sourceforge.net/</href>
+		<href>https://sourceforge.net/projects/hl7api/</href>
 	</bannerRight>
 	
 	<poweredBy>
@@ -43,6 +43,7 @@
 			<item name="Parsing Messages" href="parsing.html"/>		
 			<item name="Installation" href="installation.html"/>
 			<item name="Conformance Tools" href="conformance.html"/>
+			<item name="Links" href="links.html"/>
 		</menu>
 			
 		<menu name="Contributing to HAPI">
