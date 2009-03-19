@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.NormativeDatabase;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -139,7 +140,7 @@ public class MessageGenerator extends Object {
             }
             File targetDir =
                 SourceGenerator.makeDirectory(
-                    baseDirectory + SourceGenerator.getVersionPackagePath(version) + "message");
+                    baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
             System.out.println("Writing " + message + " to " + targetDir.getPath());
             BufferedWriter out =
                 new BufferedWriter(new FileWriter(targetDir.getPath() + "/" + message + ".java", false));
@@ -247,14 +248,14 @@ public class MessageGenerator extends Object {
         throws HL7Exception {
         StringBuffer preamble = new StringBuffer();
         preamble.append("package ");
-        preamble.append(SourceGenerator.getVersionPackageName(version));
+        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
         preamble.append("message;\r\n\r\n");
         preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
         preamble.append("import ");
-        preamble.append(SourceGenerator.getVersionPackageName(version));
+        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
         preamble.append("group.*;\r\n\r\n");
         preamble.append("import ");
-        preamble.append(SourceGenerator.getVersionPackageName(version));
+        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
         preamble.append("segment.*;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.HL7Exception;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n\r\n");

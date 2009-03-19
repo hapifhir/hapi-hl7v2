@@ -14,7 +14,6 @@ import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericMessage;
-import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -22,7 +21,7 @@ import ca.uhn.log.HapiLogFactory;
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-03-18 23:27:58 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-03-19 00:34:01 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -93,7 +92,40 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         return findClass(theName, theVersion, "datatype");
     }
 
-    /** 
+    /**
+	 * Returns the path to the base package for model elements of the given version
+	 * - e.g. "ca/uhn/hl7v2/model/v24/".
+	 * This package should have the packages datatype, segment, group, and message
+	 * under it. The path ends in with a slash.
+	 */
+	public static String getVersionPackagePath(String ver) throws HL7Exception {
+	    if (Parser.validVersion(ver) == false) { 
+	        throw new HL7Exception("The HL7 version " + ver + " is not recognized", HL7Exception.UNSUPPORTED_VERSION_ID);
+	    }
+	    StringBuffer path = new StringBuffer("ca/uhn/hl7v2/model/v");
+	    char[] versionChars = new char[ver.length()];
+	    ver.getChars(0, ver.length(), versionChars, 0);
+	    for (int i = 0; i < versionChars.length; i++) {
+	        if (versionChars[i] != '.') path.append(versionChars[i]);
+	    }
+	    path.append('/');
+	    return path.toString();
+	}
+
+	/**
+	 * Returns the package name for model elements of the given version - e.g.
+	 * "ca.uhn.hl7v2.model.v24.".  This method
+	 * is identical to <code>getVersionPackagePath(...)</code> except that path
+	 * separators are replaced with dots.
+	 */
+	public static String getVersionPackageName(String ver) throws HL7Exception {
+	    String path = DefaultModelClassFactory.getVersionPackagePath(ver);
+	    String packg = path.replace('/', '.');
+	    packg = packg.replace('\\', '.');
+	    return packg;
+	}
+
+	/** 
      * <p>Lists all the packages (user-definable) where classes for standard and custom 
      * messages may be found.  Each package has subpackages called "message", 
      * "group", "segment", and "datatype" in which classes for these message elements 
@@ -170,7 +202,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         }
 
         //add standard package
-        packageList.add( SourceGenerator.getVersionPackageName(version) );
+        packageList.add( getVersionPackageName(version) );
         retVal = (String[]) packageList.toArray( new String[] {} );
 
         return retVal;
@@ -227,24 +259,6 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 
 
     /**
-     * Temporary delegate method for mavenizing
-     * 
-     * @see SourceGenerator#getVersionPackageName(String) 
-     */
-	public static String getVersionPackageName(String ver) throws HL7Exception {
-		return SourceGenerator.getVersionPackageName(ver);
-	}
-
-	/**
-     * Temporary delegate method for mavenizing
-     * 
-     * @see SourceGenerator#getVersionPackagePath(String) 
-	 */
-	public static String getVersionPackagePath(String ver) throws HL7Exception {
-		return SourceGenerator.getVersionPackagePath(ver);
-	}
-
-	/**
 	 * Reloads the packages. Note that this should not be performed
 	 * after and messages have been parsed or otherwise generated,
 	 * as undetermined behaviour may result. 

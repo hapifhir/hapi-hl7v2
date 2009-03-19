@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import ca.uhn.hl7v2.NormativeDatabase;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -62,7 +63,7 @@ public class SegmentGenerator extends java.lang.Object {
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
             baseDirectory = baseDirectory + "/";
         }
-        File targetDir = SourceGenerator.makeDirectory(baseDirectory + SourceGenerator.getVersionPackagePath(version) + "segment");
+        File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "segment");
         
         //get list of data types
         Connection conn = NormativeDatabase.getInstance().getConnection();
@@ -170,11 +171,11 @@ public class SegmentGenerator extends java.lang.Object {
             
             //write imports, class documentation, etc ...
             source.append("package ");
-            source.append(SourceGenerator.getVersionPackageName(version));
+            source.append(DefaultModelClassFactory.getVersionPackageName(version));
             source.append("segment;\r\n\r\n");
             source.append("import ca.uhn.hl7v2.model.*;\r\n");
             source.append("import ");
-            source.append(SourceGenerator.getVersionPackageName(version));
+            source.append(DefaultModelClassFactory.getVersionPackageName(version));
             source.append("datatype.*;\r\n\r\n");
             source.append("import ca.uhn.log.HapiLogFactory;\r\n");
             source.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
