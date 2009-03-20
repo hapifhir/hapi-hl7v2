@@ -53,6 +53,11 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class SimpleServer extends HL7Service {
 
+    /**
+     * Socket timeout for simple server
+     */
+    public static final int SO_TIMEOUT = 3000;
+
     private static final HapiLog log = HapiLogFactory.getHapiLog(SimpleServer.class);
 
     private int port;
@@ -73,7 +78,7 @@ public class SimpleServer extends HL7Service {
     public void run() {
         try {
             ServerSocket ss = new ServerSocket(port);
-            ss.setSoTimeout(3000);
+            ss.setSoTimeout(SO_TIMEOUT);
             log.info("SimpleServer running on port " + ss.getLocalPort());
             while (keepRunning()) {
                 try {

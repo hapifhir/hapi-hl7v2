@@ -151,7 +151,7 @@ public class ConnectionHub {
             Object val = connections.get(key);
             if (val.hashCode() == c.hashCode()) { 
                 connections.remove(key);
-                numRefs.remove(key);
+                numRefs.remove(new Integer(c.hashCode()));
                 removed = true;
             }
         }

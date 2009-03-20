@@ -343,12 +343,13 @@ public abstract class Parser {
         Properties p = null; 
         try {
             p = (Properties) getMessageStructures().get(version);            
+            
+            if (p == null) 
+                throw new HL7Exception("No map found for version " + version + ". Only the following are available: " + getMessageStructures().keySet());
+            
         } catch (IOException ioe) {
             throw new HL7Exception(ioe);
         }
-        
-        if (p == null) 
-            throw new HL7Exception("No map found for version " + version);
         
         structure = p.getProperty(name);
         

@@ -81,7 +81,7 @@ public class SourceGenMojo extends AbstractMojo
     public void execute() throws MojoExecutionException, MojoFailureException {
         SourceGenerator.makeAll(targetDirectory, version);
         
-        project.addCompileSourceRoot(targetDirectory);
+//        project.addCompileSourceRoot(targetDirectory);
     }
 
 }
