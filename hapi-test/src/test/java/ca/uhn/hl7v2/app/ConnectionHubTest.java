@@ -28,9 +28,31 @@ public class ConnectionHubTest extends TestCase {
     public void tearDown() {
         ss1.stop();
         ss2.stop();
+        
+        try {
+            Thread.sleep(SimpleServer.SO_TIMEOUT + 1000);
+        } catch (InterruptedException e) {
+            // nothing
+        }
     }
     
-    public void test() throws Exception {
+    
+    public void testDiscard() throws Exception {
+        PipeParser pipeParser = new PipeParser();
+        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1again = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        ConnectionHub.getInstance().discard(i1);
+        Connection i1thrice = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        assertTrue(i1thrice.hashCode() != i1.hashCode());
+        
+        ConnectionHub.getInstance().discard(i1thrice);
+    }
+    
+    /**
+     * 
+     * @throws Exception
+     */
+    public void testAttach() throws Exception {
         PipeParser pipeParser = new PipeParser();
         Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
         Connection i1again = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
@@ -44,18 +66,10 @@ public class ConnectionHubTest extends TestCase {
         ConnectionHub.getInstance().detach(i1again);
         ConnectionHub.getInstance().detach(i2);
         Connection i1OnceMore = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        assertTrue(i1OnceMore.hashCode() != i1.hashCode());
+        int onceMoreHashCode = i1OnceMore.hashCode();
+        int i1HashCode = i1.hashCode();
+        assertTrue(onceMoreHashCode != i1HashCode);
         ConnectionHub.getInstance().detach(i1OnceMore);        
     }
-    
-    public void testDiscard() throws Exception {
-        PipeParser pipeParser = new PipeParser();
-        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        Connection i1again = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        ConnectionHub.getInstance().discard(i1);
-        Connection i1thrice = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        assertTrue(i1thrice.hashCode() != i1.hashCode());
-    }
-    
-    
+
 }

@@ -38,7 +38,9 @@ public class ProfileStoreFactoryTest extends TestCase {
         ProfileStoreFactory.addCodeStore(cs2, ".*test.*"); 
         ProfileStoreFactory.addCodeStore(cs3);  //for all profiles
         
-        assertTrue(ProfileStoreFactory.getCodeStore("foo", "HL70001").knowsCodes("HL70396"));
+        CodeStore codeStore = ProfileStoreFactory.getCodeStore("foo", "HL70001");
+        assertTrue(codeStore.knowsCodes("HL70396"));
+        
         assertTrue( ! ProfileStoreFactory.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061") );
         assertTrue( ! ProfileStoreFactory.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
         assertTrue(null == ProfileStoreFactory.getCodeStore("xxx", "xxx"));
