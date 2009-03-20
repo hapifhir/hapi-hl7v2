@@ -190,6 +190,14 @@ public class Connection {
         open = false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        int hashCode = super.hashCode();
+        return hashCode;
+    }
+
     /** Returns false if the Connection has been closed. */
     public boolean isOpen() {
         return open;
