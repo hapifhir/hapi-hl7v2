@@ -24,6 +24,18 @@
 		</dependency>		
 	</dependencies>
 
+	<!-- <reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<sourcepath>target/sourcegen</sourcepath>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>  -->
+
 	<build>
 		<plugins>
 			<plugin>
@@ -38,8 +50,51 @@
 						</goals>
 						<configuration>
 							<version>2.1</version>
-							<targetDirectory>${basedir}/target/classes/v21</targetDirectory>
+							<targetDirectory>src/main/java</targetDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>src</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<configuration>
+							<tasks>
+								<echo message="Copying resources"/>
+								<copy todir="../target/site/v21/apidocs">
+									<fileset dir="target/site/apidocs">
+										<include name="**/*"/>
+									</fileset>
+								</copy>
+								<copy todir="../target/site/v21/xref">
+									<fileset dir="target/site/xref">
+										<include name="**/*"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -50,7 +105,7 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-		<sourceDirectory></sourceDirectory>
+		<!-- <sourceDirectory></sourceDirectory>  -->
 	</build>
 	
 </project>

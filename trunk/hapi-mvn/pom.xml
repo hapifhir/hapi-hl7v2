@@ -75,7 +75,7 @@
 	<licenses>
 		<license>
 			<name>Mozilla Public License 1.1</name>
-			<url>http://www.mozilla.org/MPL/</url>
+			<url>http://www.mozilla.org/MPL/MPL-1.1.txt</url>
 		</license>
 		<license>
 			<name>GNU General Public License</name>
@@ -164,24 +164,23 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-					<aggregate>true</aggregate>
-		          <groups>
-		            <group>
-		              <title>HL7 Model Packages</title>
-		              <packages>ca.uhn.hl7v2.model</packages>
-		            </group>
-		            <group>
-		              <title>HAPI Core Library</title>
-		              <packages>ca.uhn.hl7v2</packages>
-		            </group>
-		          </groups>
+					<aggregate>false</aggregate>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<!-- <excludePackageNames>ca.uhn.hl7v2.model.v21.*:ca.uhn.hl7v2.model.v22.*:ca.uhn.hl7v2.model.v23.*:ca.uhn.hl7v2.model.v231.*:ca.uhn.hl7v2.model.v24.*:ca.uhn.hl7v2.model.v25.*:ca.uhn.hl7v2.model.v251.*:ca.uhn.hl7v2.model.v26.*</excludePackageNames>  -->
 				</configuration>
 			</plugin>			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<configuration>
-					<aggregate>true</aggregate>
+					<aggregate>false</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<configuration>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -221,6 +220,22 @@
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
 				<module>hapi-sourcegen</module>
+				<module>hapi-structures-v21</module>
+				<module>hapi-structures-v22</module>
+				<module>hapi-structures-v23</module>
+				<module>hapi-structures-v231</module>
+				<module>hapi-structures-v24</module>
+				<module>hapi-structures-v25</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>SITE</id>
+			<build>
+			</build>
+			<modules>
+				<module>hapi-base</module>
+				<module>hapi-examples</module>
+				<module>hapi-test</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>

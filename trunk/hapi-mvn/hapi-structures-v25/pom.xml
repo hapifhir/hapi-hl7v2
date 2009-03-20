@@ -38,8 +38,34 @@
 						</goals>
 						<configuration>
 							<version>2.5</version>
-							<targetDirectory>${basedir}/target/classes/v25</targetDirectory>
+							<targetDirectory>src/main/java</targetDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<configuration>
+							<tasks>
+								<echo message="Copying resources"/>
+								<copy todir="../target/site/v25/apidocs">
+									<fileset dir="target/site/apidocs">
+										<include name="**/*"/>
+									</fileset>
+								</copy>
+								<copy todir="../target/site/v25/xref">
+									<fileset dir="target/site/xref">
+										<include name="**/*"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
