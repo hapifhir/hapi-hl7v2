@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  * Unit tests for <code>ApplicationRouterImpl</code>.
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:39 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
  */
 public class ApplicationRouterImplTest extends TestCase {
 
@@ -53,7 +53,7 @@ public class ApplicationRouterImplTest extends TestCase {
         app.setNextResponse(parser.parse(response));
         
         Transportable result = myRouter.processMessage(new TransportableImpl(message1));
-        assertTrue(result.getMessage().indexOf("MSA|AA|a") > 0);
+        assertTrue(result.getMessage(), result.getMessage().indexOf("MSA|AA|a") > 0);
         assertEquals("UNICODE", result.getMetadata().get("MSH-18"));
         
         //note that this test assumes DefaultApplication is being used and returns a certain message
@@ -168,7 +168,7 @@ public class ApplicationRouterImplTest extends TestCase {
      * way to check which application the router is routing to.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:39 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
      */
     private class MockApplication implements ReceivingApplication {
 

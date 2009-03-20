@@ -18,7 +18,6 @@ public class ParserTestSuite extends TestCase {
     
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTestSuite(DefaultXMLParserTest.class);
         suite.addTestSuite(EscapeTest.class);
         suite.addTestSuite(ParserTest.class);
         suite.addTestSuite(PipeParserTest.class);

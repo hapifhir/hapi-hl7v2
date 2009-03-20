@@ -4,6 +4,7 @@
 package ca.uhn.hl7v2.validation.impl;
 
 import java.io.IOException;
+import java.net.URL;
 
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -13,7 +14,7 @@ import junit.framework.TestCase;
  * Unit tests for <code>ValidatesAgainstSchema</code>.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:32 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
  */
 public class XMLSchemaRuleTest extends TestCase {
 
@@ -25,8 +26,12 @@ public class XMLSchemaRuleTest extends TestCase {
     }
 
     public void testTest() throws IOException {
+        
+        URL res = XMLSchemaRuleTest.class.getClassLoader().getResource("ca/uhn/hl7v2/validation/impl/ACK.xsd");
+        String resPath = res.toString().replace("file:/", "").replace("/ACK.xsd", "");
+        
         System.setProperty("ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation.2.5", 
-                "ca/uhn/hl7v2/validation/impl");
+                resPath);
         
         EncodingRule rule = new XMLSchemaRule();
         ValidationException[] errors = rule.test(getMessage1());
