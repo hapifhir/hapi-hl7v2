@@ -1,5 +1,15 @@
-Welcome
+Hacking HAPI
 
+  As of version 0.6, HAPI uses the {{http://maven.apache.org}Maven}} build system to build
+  it's source code. Generating the source takes the following steps.
+  
+Getting the Source
+
+     
+  
+  
+  
+  
   This is the home page for the HAPI project.  HAPI (HL7 application programming interface; 
   pronounced "happy") is an open-source, object-oriented HL7 2.x parser for Java.  
   HL7 ({{http://hl7.org}})  is a messaging specification for healthcare information systems.  

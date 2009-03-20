@@ -68,6 +68,17 @@
 			<artifactId>junit-addons</artifactId>
 			<version>1.4</version>
 		</dependency>		
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.0-FCS</version>
+		</dependency>
+		<dependency>
+			<groupId>saxpath</groupId>
+			<artifactId>saxpath</artifactId>
+			<version>1.0-FCS</version>
+		</dependency>
+
 		
 	</dependencies>
 

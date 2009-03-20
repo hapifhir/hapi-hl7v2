@@ -18,6 +18,8 @@
 		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
 	</poweredBy>	
 	
+	<version position="right"/>
+	
 	<body>
 	  
 		<links>
@@ -53,6 +55,7 @@
 			<item name="Conformance Tools" href="conformance.html"/>
 		</menu>
 			
+		<menu ref="reports" />
 				
 	</body>
 </project>
