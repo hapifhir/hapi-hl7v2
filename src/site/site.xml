@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="HAPI">
+<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.0.0.xsd" 
+    name="HAPI">
 
 	<bannerLeft>
 		<name>HAPI</name>
@@ -14,11 +16,11 @@
 	</bannerRight>
 	
 	<poweredBy>
-		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=1"/>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16"/>
 		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
 	</poweredBy>	
 	
-	<version position="right"/>
+	<version position="left"/>
 	
 	<body>
 	  
@@ -29,54 +31,40 @@
 	
 		<menu name="Welcome">
 			<item name="Introduction" href="index.html"/>
-			<item name="What's New" href="whatsnew.html"/>
+			<item name="What's New" href="changes-report.html"/>
 			<item name="Get Involved" href="getinvolved.html"/>
 			<item name="Mailing List" href="mail-lists.html"/>
 		</menu>
 	
 		<menu name="Using HAPI">
-			<item name="Download" href="http://sourceforge.net/project/showfiles.php?group_id=38899"/>
+			<item name="Download" href="downloading.html"/>
 			<item name="License" href="license.html"/>
-			<item name="HAPI By Example / FAQ" href="devbyexample.html"/>
+			<item name="HAPI By Example" href="devbyexample.html"/>
+            <item name="FAQ" href="hapi-faq.html"/>
 			<item name="Using the Test Panel" href="testpanel.html"/>
 			<item name="Helpful Links" href="links.html"/>
 		</menu>
 
+        <menu name="Contributing to HAPI">
+          <item name="Building HAPI" href="building.html"/>
+          <item name="Submitting Code" href="submissions.html"/>
+          <item name="Issue Tracking" href="issue-tracking.html"/>
+          <item name="Source Code" href="source-repository.html"/>
+        </menu>
+
 		<menu name="Reference">
-			<item name="JavaDocs" href="base/apidocs/index.html"/>
-			<item name="Source XRef" href="base/xref/index.html"/>
-			<menu name="v21">
-				<item name="JavaDocs" href="v21/apidocs/index.html"/>
-				<item name="Source XRef" href="v21/xref/index.html"/>
-			</menu>
-			<menu name="v22">
-				<item name="JavaDocs" href="v22/apidocs/index.html"/>
-				<item name="Source XRef" href="v22/xref/index.html"/>
-			</menu>
-			<menu name="v23">
-				<item name="JavaDocs" href="v23/apidocs/index.html"/>
-				<item name="Source XRef" href="v23/xref/index.html"/>
-			</menu>
-			<menu name="v231">
-				<item name="JavaDocs" href="v231/apidocs/index.html"/>
-				<item name="Source XRef" href="v231/xref/index.html"/>
-			</menu>
-			<menu name="v24">
-				<item name="JavaDocs" href="v24/apidocs/index.html"/>
-				<item name="Source XRef" href="v24/xref/index.html"/>
-			</menu>
-			<menu name="v25">
-				<item name="JavaDocs" href="v25/apidocs/index.html"/>
-				<item name="Source XRef" href="v25/xref/index.html"/>
-			</menu>
+            <item name="JavaDocs" href="base/apidocs/index.html">
+                <item name="HAPI Core" href="base/apidocs/index.html"/>
+                <item name="v2.1 Messages" href="v21/apidocs/index.html"/>
+                <item name="v2.2 Messages" href="v22/apidocs/index.html"/>
+                <item name="v2.3 Messages" href="v23/apidocs/index.html"/>
+                <item name="v2.3.1 Messages" href="v231/apidocs/index.html"/>
+                <item name="v2.4 Messages" href="v24/apidocs/index.html"/>
+                <item name="v2.5 Messages" href="v25/apidocs/index.html"/>
+            </item>
+            <item name="Source XRef" href="xref/index.html"/>
 		</menu>
 	
-		<menu name="Contributing to HAPI">
-		  <item name="Building HAPI" href="submissions.html"/>
-		  <item name="Submitting Code" href="submissions.html"/>
-		  <item name="Issue Tracking" href="issue-tracking.html"/>
-		</menu>
-
 		<menu name="Older Documentation">
 			<item name="Parsing Messages" href="parsing.html"/>		
 			<item name="Installation" href="installation.html"/>
@@ -84,9 +72,14 @@
 		</menu>
 			
 		<menu name="Reports">
-			<item name="Unit Test Report" href="test-surefire-report.html"/>
-			<item name="Unit Test Report" href="test-surefire-report.html"/>
+			<item name="Unit Test Report" href="surefire-report.html"/>
+            <item name="Team List" href="team-list.html"/>
 		</menu>
-				
+		
+		<!-- <head>
+			<script type="text/javascript" src="http://www.google-analytics.com/urchin.js"></script>
+			<script type="text/javascript">_uacct = "UA-1395874-1"; urchinTracker();</script>		  
+		</head>  -->		
+		
 	</body>
 </project>

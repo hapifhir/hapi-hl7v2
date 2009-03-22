@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<faqs xmlns="http://maven.apache.org/FML/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+  title="Frequently Asked Questions"
+  toplink="false">
+
+
+  <part id="Developing">
+    <title>Developing HL7 Applications</title>
+
+    <faq id="missing_messages">
+      <question>
+        Why are some message classes missing? For example, I can find the class ADT_A01, but not the class ADT_A04.
+      </question>
+      <answer>
+        <p>
+	        HL7 defines that some message triggers reuse the same structure. So, for example, the ADT^A04
+	        message has the exact same structure as an ADT^A01 message. Therefore, when an ADT^A04 message
+	        is parsed, or when you want to create one, you will actually use the ADT_A01 message class,
+	        but the "triggerEvent" property of MSH-9 will be set to A04. 
+        </p>
+        <p>
+            HAPI uses property files in the following package:         
+            <source>ca.uhn.hl7v2.parser.eventmap</source>
+            ...with the name...
+            <source>[version].properties</source>
+            to determine the mapping between trigger event and message structure.
+        </p>
+      </answer>
+    </faq>
+
+  </part>
+  
+
+
+  <part id="General">
+    <title>General Questions</title>
+
+    <faq id="production_use">
+      <question>
+        Is HAPI ready for production use?
+      </question>
+      <answer>
+        <p>
+            We make no guarantees that HAPI is perfect. That said, HAPI has been in use at
+            University Health Network for close to 10 years, and we use it almost daily in
+            developing applications which collectively handle thousands of transactions
+            each hour, 24 hours a day. 
+        </p>
+        <p>
+            These applications include an eMPI system, lab and clinical document messaging
+            systems, and various point-of-service applications used in a clinical setting.
+        </p>
+        <p>
+            Our best suggestion is to make sure you devise good unit tests for any HL7
+            messaging code that uses HAPI. This is good practise in any software development
+            activity, but it is especially important when you are doing something as
+            complicated as HL7 messaging. 
+        </p>
+      </answer>
+    </faq>
+
+    <faq id="who_else">
+      <question>
+        Who else uses HAPI?
+      </question>
+      <answer>
+        <p>
+            That is something we would love to know. If you are using HAPI, we are trying to
+            compile a list, and would love to hear from you. Please <a href="mailto:jamesagnew@users.sourceforge.net">email us</a>
+            and tell us your story!
+        </p>
+        <p>
+            Based on our website logs, we know that HAPI is used on all continents. A few hot 
+            spots include the United States, Canada, Brazil, India, China, and Japan.
+        </p>
+      </answer>
+    </faq>
+
+  </part>  
+  
+  
+</faqs>

@@ -1,0 +1,9 @@
+Downloading HAPI
+
+  HAPI can be downloaded at our {{{http://}Sourceforge Download Site}}.
+
+  Note that if you use Maven as your build system, you may alternately wish to use our
+  {{{http://hl7api.sourceforge.net/m2/}Maven Repository}} to add to your POM.
+
+Which Release to Choose
+
