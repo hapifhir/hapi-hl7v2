@@ -35,6 +35,6 @@ Developing using HAPI - By Example
   Another way of reading and writing to message objects is to use 
   a {{{xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
   
-  
+* 
   
   

@@ -78,11 +78,11 @@
 										<include name="**/*"/>
 									</fileset>
 								</copy>
-								<copy todir="../target/site/base/xref">
+								<!-- <copy todir="../target/site/base/xref">
 									<fileset dir="target/site/xref">
 										<include name="**/*"/>
 									</fileset>
-								</copy>
+								</copy>  -->
 							</tasks>
 						</configuration>
 						<goals>

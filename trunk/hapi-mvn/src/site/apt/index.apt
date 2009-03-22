@@ -9,9 +9,11 @@ Welcome
 
 What's New
 
+  * April 1, 
+
   * February 18, 2007
   
-    * HAPI 0.5.1 Released.  See details {{{whatsnew.html}here}}. 
+    * HAPI 0.5.1 Released.  See details {{{changes-report.html}here}}. 
     
     * Also, a new section has been added to the HAPI website: {{{devbyexample.html}HAPI By Example}}
   
@@ -28,8 +30,8 @@ Get Involved
 Contact
 
   Please send development-related questions to the mailing list at 
-  {{hl7api-devel@lists.sourceforge.net}}.  
-  For anything else, please contact {{jamesagnew@users.sourceforge.net}}
+  {{mailto:hl7api-devel@lists.sourceforge.net}}.  
+  For anything else, please contact {{mailto:jamesagnew@users.sourceforge.net}}
   
 Project Overview
 

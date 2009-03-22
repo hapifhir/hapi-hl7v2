@@ -20,7 +20,7 @@
 	
 	<mailingLists>
         <mailingList>
-            <name>HAPI Develepors Mailing List</name>
+            <name>HAPI Developers Mailing List</name>
             <subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
             <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
             <archive>https://sourceforge.net/mailarchive/forum.php?forum_name=hl7api-devel</archive>
@@ -73,6 +73,18 @@
 	</ciManagement>
 	
 	<licenses>
+	    <license>
+            <name>HAPI is dual licensed (MPL, GPL)</name>
+			<comments><![CDATA[
+			   HAPI is dual licensed under both the Mozilla Public License and the GNU General Public License.
+			   What this means is that you may choose to use HAPI under the terms of either license.
+			   You are both permitted and encouraged to use HAPI, royalty-free, within your applications,
+			   whether they are free/open-source or commercial/closed-source, provided you abide by the 
+			   terms of one of the licenses below.
+			   You are under no obligations to inform the HAPI project about what you are doing with
+			   HAPI, but we would love to hear about it anyway!
+			]]></comments>
+	    </license>
 		<license>
 			<name>Mozilla Public License 1.1</name>
 			<url>http://www.mozilla.org/MPL/MPL-1.1.txt</url>
@@ -139,8 +151,8 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
+                <inherited>false</inherited>
 				<executions>
-					
 				</executions>
 			</plugin>
 		</plugins>
@@ -157,6 +169,10 @@
 			</extension>
 		</extensions>
 	</build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 	
 	<reporting>
 		<plugins>
@@ -164,28 +180,32 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-					<aggregate>false</aggregate>
 					<minmemory>128m</minmemory>
 					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
 					<!-- <excludePackageNames>ca.uhn.hl7v2.model.v21.*:ca.uhn.hl7v2.model.v22.*:ca.uhn.hl7v2.model.v23.*:ca.uhn.hl7v2.model.v231.*:ca.uhn.hl7v2.model.v24.*:ca.uhn.hl7v2.model.v25.*:ca.uhn.hl7v2.model.v251.*:ca.uhn.hl7v2.model.v26.*</excludePackageNames>  -->
 				</configuration>
 			</plugin>			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
+				<inherited>false</inherited>
 				<configuration>
-					<aggregate>false</aggregate>
+					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<configuration>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
+                <inherited>false</inherited>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -196,7 +216,7 @@
 				<configuration>
                     <issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
 				</configuration>
-			</plugin>			
+			</plugin>
     	</plugins>
 	</reporting>	
 	
