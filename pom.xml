@@ -171,16 +171,6 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<minmemory>128m</minmemory>
-					<maxmemory>1g</maxmemory>
-					<linksource>true</linksource>
-					<!-- <excludePackageNames>ca.uhn.hl7v2.model.v21.*:ca.uhn.hl7v2.model.v22.*:ca.uhn.hl7v2.model.v23.*:ca.uhn.hl7v2.model.v231.*:ca.uhn.hl7v2.model.v24.*:ca.uhn.hl7v2.model.v25.*:ca.uhn.hl7v2.model.v251.*:ca.uhn.hl7v2.model.v26.*</excludePackageNames>  -->
-				</configuration>
-			</plugin>			
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<inherited>false</inherited>
