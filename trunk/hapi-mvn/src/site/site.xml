@@ -11,12 +11,12 @@
 
 	<bannerRight>
 		<name>Sourceforge</name>
-		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2</src>
+		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16</src>
 		<href>https://sourceforge.net/projects/hl7api/</href>
 	</bannerRight>
 	
 	<poweredBy>
-		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16"/>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2"/>
 		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
 	</poweredBy>	
 	
@@ -46,7 +46,7 @@
 		</menu>
 
         <menu name="Contributing to HAPI">
-          <item name="Building HAPI" href="building.html"/>
+          <item name="Hacking HAPI" href="building.html"/>
           <item name="Submitting Code" href="submissions.html"/>
           <item name="Issue Tracking" href="issue-tracking.html"/>
           <item name="Source Code" href="source-repository.html"/>
