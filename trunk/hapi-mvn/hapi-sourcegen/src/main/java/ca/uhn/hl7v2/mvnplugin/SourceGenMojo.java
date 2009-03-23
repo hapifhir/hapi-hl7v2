@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s):  James Agnew 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -27,6 +27,9 @@ this file under either the MPL or the GPL.
 */
 
 package ca.uhn.hl7v2.mvnplugin;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,6 +50,8 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  */
 public class SourceGenMojo extends AbstractMojo
 {
+    private static final Set alreadyMade = new HashSet();
+    
     /**
      * The maven project.
      * 
@@ -79,9 +84,17 @@ public class SourceGenMojo extends AbstractMojo
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        SourceGenerator.makeAll(targetDirectory, version);
+
+        if (!alreadyMade.contains(version)) {
+            // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
+            alreadyMade.add(version);
+            SourceGenerator.makeAll(targetDirectory, version);
+        } else {
+            getLog().warn("Already made version " + version + ", skipping!");
+        }
         
-//        project.addCompileSourceRoot(targetDirectory);
+        project.addCompileSourceRoot(targetDirectory);
+        
     }
 
 }

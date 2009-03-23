@@ -24,6 +24,20 @@
 		</dependency>		
 	</dependencies>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>			
+		</plugins>
+	</reporting>
+
 	<!-- <reporting>
 		<plugins>
 			<plugin>
@@ -50,7 +64,7 @@
 						</goals>
 						<configuration>
 							<version>2.1</version>
-							<targetDirectory>src/main/java</targetDirectory>
+							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -82,11 +96,6 @@
 								<echo message="Copying resources"/>
 								<copy todir="../target/site/v21/apidocs">
 									<fileset dir="target/site/apidocs">
-										<include name="**/*"/>
-									</fileset>
-								</copy>
-								<copy todir="../target/site/v21/xref">
-									<fileset dir="target/site/xref">
 										<include name="**/*"/>
 									</fileset>
 								</copy>

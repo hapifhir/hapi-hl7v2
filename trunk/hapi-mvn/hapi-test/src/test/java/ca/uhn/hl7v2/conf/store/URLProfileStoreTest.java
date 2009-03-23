@@ -44,12 +44,12 @@ public class URLProfileStoreTest extends TestCase {
     public void testWithHTTP() throws Exception {
         URLProfileStore store = new URLProfileStore() {
             public URL getURL(String ID) throws MalformedURLException {
-                return new URL("http://hl7api.sourceforge.net/index.html");
+                return new URL("http://google.com");
             }
         };
         
         String in = store.getProfile("test");
-        assertTrue(in.indexOf("HAPI") >= 0);
+        assertTrue(in.indexOf("Google") >= 0);
     }
     
     /*public void testWithFile() throws Exception {
