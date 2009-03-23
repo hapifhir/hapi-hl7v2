@@ -16,7 +16,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -81,6 +81,7 @@ public abstract class XMLParser extends Parser {
     private static final HapiLog log = HapiLogFactory.getHapiLog(XMLParser.class);
 
     private DOMParser parser;
+    private String textEncoding;
 
     /**
      * The nodes whose names match these strings will be kept as original, 
@@ -257,7 +258,10 @@ public abstract class XMLParser extends Parser {
         StringWriter out = new StringWriter();
 
         OutputFormat outputFormat = new OutputFormat("", null, true);
-
+        if (textEncoding != null) {
+        	outputFormat.setEncoding(textEncoding);
+        }
+        
         XMLSerializer ser = new XMLSerializer(out, outputFormat); //default output format
         try {
             ser.serialize(doc);
@@ -783,5 +787,21 @@ public abstract class XMLParser extends Parser {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Returns the text encoding to be used in generating new messages. Note that this affects encoding to string only, not parsing.
+     * @return
+     */
+	public String getTextEncoding() {
+		return textEncoding;
+	}
+
+	/**
+	 * Sets the text encoding to be used in generating new messages. Note that this affects encoding to string only, not parsing.
+	 * @param textEncoding The encoding. Default is the platform default.
+	 */
+	public void setTextEncoding(String textEncoding) {
+		this.textEncoding = textEncoding;
+	}
 
 }

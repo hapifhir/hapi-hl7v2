@@ -15,7 +15,7 @@
  * Contributor(s): James Agnew
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -31,13 +31,15 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
+import ca.uhn.hl7v2.parser.DefaultXMLParser;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Example transmitting a message
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:46 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-23 00:10:21 $ by $Author: jamesagnew $
  */
 public class CreateAMessage
 {
@@ -70,11 +72,10 @@ public class CreateAMessage
         /*
          * In a real situation, of course, many more segments and fields would be populated
          */
-        
-        PipeParser pipeParser = new PipeParser();
-        
+                
         // Now, let's encode the message and look at the output
-        String encodedMessage = pipeParser.encode(adt);
+        Parser parser = new PipeParser();
+        String encodedMessage = parser.encode(adt);
         System.out.println(encodedMessage);
         
         /*
@@ -83,7 +84,47 @@ public class CreateAMessage
          * MSH|^~\&|TestSendingSystem||||200701011539||ADT^A01^ADT A01||||123
          * PID|||123456||Doe^John
          */
+
+        // Next, let's use the XML parser to encode as XML
+        parser = new DefaultXMLParser();
+        encodedMessage = parser.encode(adt);
+        System.out.println(encodedMessage);
         
+        /*
+         * Prints:
+         * 
+         * <?xml version="1.0" encoding="UTF-8"?>
+			<ADT_A01 xmlns="urn:hl7-org:v2xml">
+			    <MSH>
+			        <MSH.1>|</MSH.1>
+			        <MSH.2>^~\&amp;</MSH.2>
+			        <MSH.3>
+			            <HD.1>TestSendingSystem</HD.1>
+			        </MSH.3>
+			        <MSH.7>
+			            <TS.1>200701011539</TS.1>
+			        </MSH.7>
+			        <MSH.9>
+			            <MSG.1>ADT</MSG.1>
+			            <MSG.2>A01</MSG.2>
+			            <MSG.3>ADT A01</MSG.3>
+			        </MSH.9>
+			        <MSH.13>123</MSH.13>
+			    </MSH>
+			    <PID>
+			        <PID.3>
+			            <CX.1>123456</CX.1>
+			        </PID.3>
+			        <PID.5>
+			            <XPN.1>
+			                <FN.1>Doe</FN.1>
+			            </XPN.1>
+			            <XPN.2>John</XPN.2>
+			        </PID.5>
+			    </PID>
+			</ADT_A01>
+         */
+
     }
 
 }
