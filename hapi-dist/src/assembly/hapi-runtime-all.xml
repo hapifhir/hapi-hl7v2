@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<assembly xmlns="urn:assembly" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:assembly http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+    <id>hapi-runtime-all</id>
+    
+    <formats>
+        <format>jar</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../hapi-base/target/classes</directory>
+        </fileSet>
+    </fileSets>
+</assembly>

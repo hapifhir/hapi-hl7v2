@@ -149,12 +149,6 @@
 					<maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-                <inherited>false</inherited>
-				<executions>
-				</executions>
-			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
