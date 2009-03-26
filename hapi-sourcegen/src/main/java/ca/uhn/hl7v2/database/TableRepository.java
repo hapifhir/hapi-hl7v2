@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -25,7 +25,15 @@ this file under either the MPL or the GPL.
 
 */
 
-package ca.uhn.hl7v2;
+package ca.uhn.hl7v2.database;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import ca.uhn.hl7v2.LookupException;
+import ca.uhn.hl7v2.UndefinedTableException;
+import ca.uhn.hl7v2.UnknownValueException;
 
 /**
  * A place where table keys and values are stored.  This may be implemented
@@ -36,18 +44,17 @@ package ca.uhn.hl7v2;
  */
 public abstract class TableRepository {
 
-  private static TableRepository rep = null;
+  private static Map reps = new HashMap();
 
   /**
    * Returns a TableRepository object.
    */
-  public static TableRepository getInstance() {
-    if (rep == null) {
-      //currently using DBTableRepository ... 
-      rep = new DBTableRepository();
-    }
-
-    return rep;
+  public static TableRepository getInstance(String jdbcUrl) throws SQLException {
+      if (reps.containsKey(jdbcUrl) == false) {
+          reps.put(jdbcUrl, new DBTableRepository(jdbcUrl));
+      }
+      
+    return (TableRepository)reps.get(jdbcUrl);
   }
 
   /**

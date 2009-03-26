@@ -230,6 +230,8 @@
 				<module>hapi-structures-v231</module>
 				<module>hapi-structures-v24</module>
 				<module>hapi-structures-v25</module>
+				<module>hapi-structures-v251</module>
+				<module>hapi-structures-v26</module>
 			</modules>
 		</profile>
 		<profile>

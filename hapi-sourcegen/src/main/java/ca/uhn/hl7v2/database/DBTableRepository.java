@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -26,7 +26,7 @@ this file under either the MPL or the GPL.
 
 */
 
-package ca.uhn.hl7v2;
+package ca.uhn.hl7v2.database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,6 +34,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import ca.uhn.hl7v2.LookupException;
+import ca.uhn.hl7v2.UndefinedTableException;
+import ca.uhn.hl7v2.UnknownValueException;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -49,10 +52,12 @@ public class DBTableRepository extends TableRepository {
     private int[] tableList;
     private HashMap tables;
     private final int bufferSize = 3000; //max # of tables or values that can be cached at a time
+    private NormativeDatabase normativeDatabase;
 
-    protected DBTableRepository() {
+    protected DBTableRepository(String jdbcUrl) throws SQLException {
         tableList = null;
         tables = new HashMap();
+        normativeDatabase = NormativeDatabase.getInstance(jdbcUrl);
     }
 
     /**
@@ -61,7 +66,7 @@ public class DBTableRepository extends TableRepository {
     public int[] getTables() throws LookupException {
         if (this.tableList == null) {
             try {
-                Connection conn = NormativeDatabase.getInstance().getConnection();
+                Connection conn = normativeDatabase.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("select distinct table_id from TableValues");
                 int[] roomyList = new int[bufferSize];
@@ -70,7 +75,7 @@ public class DBTableRepository extends TableRepository {
                     roomyList[c++] = rs.getInt(1);
                 }
                 stmt.close();
-                NormativeDatabase.getInstance().returnConnection(conn);
+                normativeDatabase.returnConnection(conn);
 
                 this.tableList = new int[c];
                 System.arraycopy(roomyList, 0, this.tableList, 0, c);
@@ -118,7 +123,7 @@ public class DBTableRepository extends TableRepository {
             String[] roomyValues = new String[bufferSize];
 
             try {
-                Connection conn = NormativeDatabase.getInstance().getConnection();
+                Connection conn = normativeDatabase.getConnection();
                 Statement stmt = conn.createStatement();
                 StringBuffer sql = new StringBuffer("select table_value from TableValues where table_id = ");
                 sql.append(table);
@@ -130,7 +135,7 @@ public class DBTableRepository extends TableRepository {
                 }
 
                 stmt.close();
-                NormativeDatabase.getInstance().returnConnection(conn);
+                normativeDatabase.returnConnection(conn);
             }
             catch (SQLException sqle) {
                 throw new LookupException("Couldn't look up values for table " + table + ": " + sqle.getMessage());
@@ -163,7 +168,7 @@ public class DBTableRepository extends TableRepository {
         sql.append("'");
 
         try {
-            Connection conn = NormativeDatabase.getInstance().getConnection();
+            Connection conn = normativeDatabase.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql.toString());
             if (rs.next()) {
@@ -174,7 +179,7 @@ public class DBTableRepository extends TableRepository {
                     "The value " + value + " could not be found in the table " + table + " - SQL: " + sql.toString());
             }
             stmt.close();
-            NormativeDatabase.getInstance().returnConnection(conn);
+            normativeDatabase.returnConnection(conn);
         }
         catch (SQLException e) {
             throw new LookupException( "Can't find value " + value + " in table " + table, e );

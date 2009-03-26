@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -33,7 +33,7 @@ import ca.uhn.hl7v2.validation.Rule;
  * This can be used as-is for a reasonable level of primitive type validation.   
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-03-26 00:39:49 $ by $Author: jamesagnew $
  */
 public class DefaultValidation extends ValidationContextImpl {
     public DefaultValidation() {
@@ -73,5 +73,8 @@ public class DefaultValidation extends ValidationContextImpl {
         Rule datetime = new RegexPrimitiveRule(datetimePattern, "Version 2.5 Section 2.16.25");
         getPrimitiveRuleBindings().add(new RuleBinding("*", "TSComponentOne", datetime));
         getPrimitiveRuleBindings().add(new RuleBinding("*", "DTM", datetime));
+        
+        // NULLDT shouldn't have a value
+        getPrimitiveRuleBindings().add(new RuleBinding("*", "NULLDT", new SizeRule(0)));
     }
 }

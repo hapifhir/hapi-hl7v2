@@ -236,7 +236,7 @@ public class SourceGeneratorTest extends TestCase {
 			
 			public boolean executeTest() {
 				try {
-					String retval = SourceGenerator.makeAccessorName(fieldDesc);
+					String retval = SourceGenerator.makeAccessorName(fieldDesc, "");
 					if (retval != null) {
 						return retval.equals(outcome);
 					} else {

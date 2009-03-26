@@ -15,7 +15,7 @@
  * Contributor(s):  Eric Poiseau. 
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -36,8 +36,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
-import ca.uhn.hl7v2.NormativeDatabase;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
@@ -58,7 +64,7 @@ public class SegmentGenerator extends java.lang.Object {
      * <p>Creates skeletal source code (without correct data structure but no business
      * logic) for all segments found in the normative database.  </p>
      */
-    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
+    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) throws IOException, SQLException, HL7Exception {
         //make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
             baseDirectory = baseDirectory + "/";
@@ -66,7 +72,8 @@ public class SegmentGenerator extends java.lang.Object {
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "segment");
         
         //get list of data types
-        Connection conn = NormativeDatabase.getInstance().getConnection();
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         String sql = "SELECT seg_code, section from HL7Segments, HL7Versions where HL7Segments.version_id = HL7Versions.version_id AND hl7_version = '" + version + "'";
         //System.out.println(sql);
@@ -78,7 +85,7 @@ public class SegmentGenerator extends java.lang.Object {
             if (Character.isLetter(segName.charAt(0))) segments.add(altSegName(segName));
         }
         stmt.close();
-        NormativeDatabase.getInstance().returnConnection(conn);
+        normativeDatabase.returnConnection(conn);
         
         if (segments.size() == 0) { 
             log.warn("No version " + version + " segments found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
@@ -87,7 +94,7 @@ public class SegmentGenerator extends java.lang.Object {
         for (int i = 0; i < segments.size(); i++) {
             try {
                 String seg = (String)segments.get(i);
-                String source = makeSegment(seg, version);
+                String source = makeSegment(seg, version, normativeDatabase);
                 BufferedWriter w = new BufferedWriter(new FileWriter(targetDir.toString() + "/" + seg + ".java", false));
                 w.write(source);
                 w.flush();
@@ -108,17 +115,18 @@ public class SegmentGenerator extends java.lang.Object {
     public static String altSegName(String segmentName) {
         String ret = segmentName;
         if (ret.equals("Z..")) ret = "Z";
+        if (ret.equals("CON")) ret = "CON_";
         return ret;
     }
     
     /**
      * Returns the Java source code for a class that represents the specified segment.
      */
-    public static String makeSegment(String name, String version) throws HL7Exception {
+    public static String makeSegment(String name, String version, NormativeDatabase normativeDatabase) throws HL7Exception {
         
         StringBuffer source = new StringBuffer();
         try {
-            Connection conn = NormativeDatabase.getInstance().getConnection();
+            Connection conn = normativeDatabase.getConnection();
             
             StringBuffer sql = new StringBuffer();
             sql.append("SELECT HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no, ");
@@ -142,6 +150,8 @@ public class SegmentGenerator extends java.lang.Object {
             ArrayList elements = new ArrayList();
             String segDesc = null;
             SegmentElement se;
+            
+            List usedFieldDescs = new ArrayList();
             while (rs.next()) {
                 if (segDesc == null) segDesc = rs.getString(9);
                 se = new SegmentElement();
@@ -154,6 +164,14 @@ public class SegmentGenerator extends java.lang.Object {
                     }
                 }
                 se.desc = rs.getString(5);
+                
+                // If two fields have the same name, add "Rep 1" or "Rep 2" etc to the name
+                String originalSeDesc = se.desc;
+                if (usedFieldDescs.contains(se.desc)) {
+                    se.desc = se.desc + " Number " + (Collections.frequency(usedFieldDescs, originalSeDesc) + 1);
+                }
+                usedFieldDescs.add(originalSeDesc);
+                
                 se.length = rs.getInt(6);
                 se.table = rs.getInt(7);
                 se.opt = rs.getString(8);
@@ -161,13 +179,17 @@ public class SegmentGenerator extends java.lang.Object {
                 //shorten CE_x to CE
                 if (se.type.startsWith("CE")) se.type = "CE";
                 
+                if (se.type.equals("-") || se.type.equals("NUL")) {
+                    se.type.equals("NULLDT");
+                }
+                
                 elements.add(se);
                 /*System.out.println("Segment: " + name + " Field: " + se.field + " Rep: " + se.rep +
                     " Repetitions: " + se.repetitions + " Desc: " + se.desc + " Length: " + se.length +
                     " Table: " + se.table + " Segment Desc: " + segDesc);*/
             }
             stmt.close();
-            NormativeDatabase.getInstance().returnConnection(conn);
+            normativeDatabase.returnConnection(conn);
             
             //write imports, class documentation, etc ...
             source.append("package ");
@@ -298,7 +320,7 @@ public class SegmentGenerator extends java.lang.Object {
                 source.append("  public ");
                 source.append(type);
                 source.append(" ");
-                source.append(SourceGenerator.makeAccessorName(se.desc));
+                source.append(SourceGenerator.makeAccessorName(se.desc, name));
                 source.append("(");
                 if (se.repetitions != 1) source.append("int rep");
                 source.append(") ");
@@ -347,7 +369,7 @@ public class SegmentGenerator extends java.lang.Object {
                     source.append("  public ");
                     source.append(type);
                     source.append("[] ");
-                    source.append(SourceGenerator.makeAccessorName(se.desc));
+                    source.append(SourceGenerator.makeAccessorName(se.desc, name));
                     source.append("() {\r\n");
                     source.append("     ");
                     source.append(type);
@@ -391,19 +413,13 @@ public class SegmentGenerator extends java.lang.Object {
     
     
     public static void main(String args[]) {
-        if (args.length != 1 && args.length != 2) {
-            System.out.println("Usage: SegmentGenerator target_dir [segment_name]");
-            System.exit(1);
-        }
-        
-        //System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
-        
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            NormativeDatabase normativeDatabase = NormativeDatabase.getInstance("jdbc:odbc:hl7v65");
             if (args.length == 1) {
-                makeAll(args[0], "2.4");
+                makeAll("tmp", "2.5.1", "jdbc:odbc:hl7v65");
             } else {
-                String source = makeSegment(args[1], "2.4");
+                String source = makeSegment(args[1], "2.5.1", normativeDatabase);
                 BufferedWriter w = new BufferedWriter(new FileWriter(args[0] + "/" + args[1] + ".java", false));
                 w.write(source);
                 w.flush();

@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -27,6 +27,8 @@ this file under either the MPL or the GPL.
 */
 
 package ca.uhn.hl7v2;
+
+import java.sql.SQLException;
 
 import ca.uhn.log.*;
 import ca.uhn.hl7v2.util.Terser;
@@ -196,7 +198,7 @@ public class HL7Exception extends Exception {
     /**
      * Populates the given error segment with information from this Exception.
      */
-    public void populate(Segment errorSegment) throws HL7Exception {
+    public void populate(Segment errorSegment, String theJdbcUrl) throws HL7Exception {
         //make sure it's an ERR
         if (!errorSegment.getName().equals("ERR"))
             throw new HL7Exception(
@@ -218,13 +220,16 @@ public class HL7Exception extends Exception {
         Terser.set(errorSegment, 1, rep, 4, 5, this.getMessage());
 
         //try to get error condition text
-        try {
-            String desc = TableRepository.getInstance().getDescription(357, String.valueOf(this.errCode));
+//        try {
+            // FIXME: make this work
+            String desc = "ERROR"; // TableRepository.getInstance(theJdbcUrl).getDescription(357, String.valueOf(this.errCode));
             Terser.set(errorSegment, 1, rep, 4, 2, desc);
-        }
-        catch (LookupException e) {
-            ourLog.debug(
-                "Warning: LookupException getting error condition text (are we connected to a TableRepository?)", e);
-        }
+//        }
+//        catch (LookupException e) {
+//            ourLog.debug(
+//                "Warning: LookupException getting error condition text (are we connected to a TableRepository?)", e);
+//        } catch (SQLException e) {
+//            throw new HL7Exception(e);
+//        }
     }
 }

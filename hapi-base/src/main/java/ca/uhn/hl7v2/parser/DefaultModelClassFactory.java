@@ -21,7 +21,7 @@ import ca.uhn.log.HapiLogFactory;
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.3 $ updated on $Date: 2009-03-19 00:34:01 $ by $Author: jamesagnew $
+ * @version $Revision: 1.4 $ updated on $Date: 2009-03-26 00:39:49 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -264,7 +264,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	 * as undetermined behaviour may result. 
 	 */
 	public static void reloadPackages() {
-        String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5" };
+        String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
         packages.clear();
         for (int i = 0; i < versions.length; i++) {
             try {
