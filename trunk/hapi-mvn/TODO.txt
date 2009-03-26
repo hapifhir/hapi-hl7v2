@@ -1,0 +1,3 @@
+- Fix DefaultModelClassFactory and Parser to not hardcode defaults?
+- Update datatypes for new versions
+- Update mappings for new versions

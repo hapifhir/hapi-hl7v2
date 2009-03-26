@@ -96,7 +96,7 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
         
         Segment err = (Segment) ack.get("ERR");
         for (int i = 0; i < problems.length; i++) {
-            problems[i].populate(err);
+            // problems[i].populate(err); FIXME: broken! needs database
         }
     }
     

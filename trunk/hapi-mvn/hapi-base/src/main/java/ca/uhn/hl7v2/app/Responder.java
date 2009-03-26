@@ -16,7 +16,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -306,7 +306,7 @@ public class Responder {
             //see if it's an HL7Exception (so we can get specific information) ...
             if (e.getClass().equals(HL7Exception.class)) {
                 Segment err = (Segment) out.get("ERR");
-                ((HL7Exception) e).populate(err);
+                // ((HL7Exception) e).populate(err); // FIXME: this is broken, it relies on the database in a place where it's not available
             }
             else {
                 t.set("/ERR-1-4-1", "207");

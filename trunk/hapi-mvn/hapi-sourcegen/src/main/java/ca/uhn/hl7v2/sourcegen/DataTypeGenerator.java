@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s):  Eric Poiseau. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -32,8 +32,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import ca.uhn.hl7v2.NormativeDatabase;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
@@ -61,7 +61,7 @@ public class DataTypeGenerator extends Object {
      * logic) for all data types found in the normative database.  For versions > 2.2, Primitive data types
      * are not generated, because they are coded manually (as of HAPI 0.3).  
      */
-    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
+    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) throws IOException, SQLException, HL7Exception {
         //make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) { 
             baseDirectory = baseDirectory + "/";
@@ -70,7 +70,8 @@ public class DataTypeGenerator extends Object {
         
         //get list of data types
         ArrayList types = new ArrayList();
-        Connection conn = NormativeDatabase.getInstance().getConnection();
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         //get normal data types ... 
         ResultSet rs = stmt.executeQuery("select data_type_code from HL7DataTypes, HL7Versions where HL7Versions.version_id = HL7DataTypes.version_id and HL7Versions.hl7_version = '" + version + "'");
@@ -92,7 +93,7 @@ public class DataTypeGenerator extends Object {
         }
         
         stmt.close();
-        NormativeDatabase.getInstance().returnConnection(conn);
+        normativeDatabase.returnConnection(conn);
         
         System.out.println("Generating " + types.size() + " datatypes for version " + version);
         if (types.size() == 0) { 
@@ -101,7 +102,7 @@ public class DataTypeGenerator extends Object {
                 
         for (int i = 0; i < types.size(); i++) {
             try {
-                make(targetDir, (String)types.get(i), version);
+                make(targetDir, (String)types.get(i), version, theJdbcUrl);
             } catch (DataTypeException dte) {
                 log.warn(dte.getClass().getName() + " - " + dte.getMessage());
             } catch (Exception e) {
@@ -116,14 +117,16 @@ public class DataTypeGenerator extends Object {
      * @param targetDirectory the directory into which the file will be written
      * @param datatype the name (e.g. ST, ID, etc.) of the data type to be created
      * @param version the HL7 version of the intended data type
+     * @param theJdbcUrl 
      */
-    public static void make(File targetDirectory, String dataType, String version) throws SQLException, DataTypeException, IOException, HL7Exception {
+    public static void make(File targetDirectory, String dataType, String version, String theJdbcUrl) throws SQLException, DataTypeException, IOException, HL7Exception {
         //make sure that targetDirectory is a directory ... 
         if (!targetDirectory.isDirectory()) throw new IOException("Can't create file in " + 
             targetDirectory.toString() + " - it is not a directory.");
                 
         //get any components for this data type
-        Connection conn = NormativeDatabase.getInstance().getConnection();
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         StringBuffer sql = new StringBuffer();
         //this query is adapted from the XML SIG informative document
@@ -161,7 +164,7 @@ public class DataTypeGenerator extends Object {
             tables.add(new Integer(ta));
         }
         stmt.close();
-        NormativeDatabase.getInstance().returnConnection(conn);
+        normativeDatabase.returnConnection(conn);
         
         //if there is only one component make a Primitive, otherwise make a Composite
         String source = null;
@@ -186,6 +189,10 @@ public class DataTypeGenerator extends Object {
             }
             source = makeComposite(dataType, description, type, desc, table, version);
         } else {
+            if (dataType.equals("var")) {
+                return; // Varies isn't actually a type
+            }
+            
             //no components?  
             throw new DataTypeException("The data type " + dataType + " could not be found");
         }
@@ -391,7 +398,7 @@ public class DataTypeGenerator extends Object {
             source.append("\tpublic ");
             source.append(dtName);
             source.append(" ");
-            source.append(SourceGenerator.makeAccessorName(descriptions[i]));
+            source.append(SourceGenerator.makeAccessorName(descriptions[i], dataType));
             source.append("() {\r\n");
             source.append("\t   ");
             source.append(dtName);
@@ -425,7 +432,7 @@ public class DataTypeGenerator extends Object {
             //System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7v25");        
             //make(new File("c:/testsourcegen"), args[0], args[1]);
             //make(new File("c:/testsourcegen"), "CE_0048", "2.3");
-            makeAll("c:/testsourcegen", "2.5");
+            makeAll("c:/testsourcegen", "2.5", "jdbc:odbc:hl7v25");
         } catch (Exception e) {
             e.printStackTrace();
         }

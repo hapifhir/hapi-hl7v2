@@ -57,7 +57,7 @@ public abstract class Parser {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(Parser.class);
     private static Map messageStructures = null;    
-    private static final String[] versions = { "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5" };
+    private static final String[] versions = { "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
     
     private ModelClassFactory myFactory;
     private ValidationContext myContext;

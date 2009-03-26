@@ -79,7 +79,15 @@ public class SourceGenMojo extends AbstractMojo
     private String version;
     
     
+    /**
+     * The JDBC URL for the HL7 database
+     * 
+     * @parameter
+     * @required
+     */
+    private String jdbcUrl;
 
+    
     /**
      * {@inheritDoc}
      */
@@ -88,7 +96,9 @@ public class SourceGenMojo extends AbstractMojo
         if (!alreadyMade.contains(version)) {
             // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
             alreadyMade.add(version);
-            SourceGenerator.makeAll(targetDirectory, version);
+            
+            SourceGenerator.makeAll(targetDirectory, version, jdbcUrl);
+            
         } else {
             getLog().warn("Already made version " + version + ", skipping!");
         }

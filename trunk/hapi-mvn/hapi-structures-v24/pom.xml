@@ -52,6 +52,7 @@
 						</goals>
 						<configuration>
 							<version>2.4</version>
+							<jdbcUrl>jdbc:odbc:hl7v25</jdbcUrl>
 							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
 						</configuration>
 					</execution>

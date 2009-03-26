@@ -16,7 +16,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -47,8 +47,9 @@ public class SourceGenerator extends Object {
     /**
      * Generates source code for all data types, segments, groups, and messages.
      * @param baseDirectory the directory where source should be written
+     * @param theJdbcUrl The JDBC URL
      */
-    public static void makeAll(String baseDirectory, String version) {
+    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) {
         //load driver and set DB URL
         /*if (System.getProperty("ca.on.uhn.hl7.database.url") == null) {
             System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
@@ -56,9 +57,9 @@ public class SourceGenerator extends Object {
         
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            DataTypeGenerator.makeAll(baseDirectory, version);
-            SegmentGenerator.makeAll(baseDirectory, version);
-            MessageGenerator.makeAll(baseDirectory, version);
+            DataTypeGenerator.makeAll(baseDirectory, version, theJdbcUrl);
+            SegmentGenerator.makeAll(baseDirectory, version, theJdbcUrl);
+            MessageGenerator.makeAll(baseDirectory, version, theJdbcUrl);
             // group and message not implemented
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,7 +75,7 @@ public class SourceGenerator extends Object {
      * information is in brackets, so we can't omit everything in brackets.  The approach
      * taken here is to eliminate bracketed text if a it looks like a data type.
      */
-    public static String makeAccessorName(String fieldDesc) {
+    public static String makeAccessorName(String fieldDesc, String parentName) {
         StringBuffer aName = new StringBuffer("get");
         char[] chars = fieldDesc.toCharArray();
         boolean lastCharWasNotLetter = true;
@@ -107,7 +108,17 @@ public class SourceGenerator extends Object {
             }
         }
         aName.append(capitalize(filterBracketedText(bracketContents.toString())));        
-        return aName.toString();
+        String retVal = aName.toString();
+
+        // Accessors with these two names conflict with existing superclass accessor names
+        if (retVal.equals("getParent")) {
+            retVal = "get" + parentName + "Parent";
+        }
+        if (retVal.equals("getName")) {
+            retVal = "get" + parentName + "Name";
+        }
+        
+        return retVal;
     }
     
     /**
@@ -180,6 +191,10 @@ public class SourceGenerator extends Object {
         //convert to varies to Varies
         if (ret.equals("varies")) ret = "Varies";
         
+        // Null/withdrawn
+        if (ret.equals("NUL")) ret = "NULLDT";
+        if (ret.equals("-")) ret = "NULLDT";
+        
         //Valid.. classes are removed as of HAPI 0.3 (validating code implemented directly in Primitive classes
         /*try {
             Class.forName(getVersionPackageName(version) + "datatype.Valid" + dataTypeName);
@@ -194,11 +209,7 @@ public class SourceGenerator extends Object {
     }
     
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: SourceGenerator base_directory version");
-            System.exit(1);
-        }
-        makeAll(args[0], args[1]);
+        makeAll("tmp", "2.5.1", "jdbc:odbc:hl7v65");
     }
     
 }
