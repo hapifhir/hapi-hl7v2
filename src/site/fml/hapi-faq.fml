@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<faqs xmlns="http://maven.apache.org/FML/1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
-  title="Frequently Asked Questions"
-  toplink="false">
-
-
-  <part id="Developing">
-    <title>Developing HL7 Applications</title>
-
-    <faq id="missing_messages">
+<faqs xmlns="http://maven.apache.org/FML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd"
+	title="Frequently Asked Questions" toplink="false">
+	<part id="Developing">
+		<title>Developing HL7 Applications</title>
+		<faq id="missing_messages">
       <question>
         Why are some message classes missing? For example, I can find the class ADT_A01, but not the class ADT_A04.
       </question>
@@ -29,15 +24,27 @@
         </p>
       </answer>
     </faq>
-
-  </part>
-  
-
-
-  <part id="General">
-    <title>General Questions</title>
-
-    <faq id="production_use">
+		<faq id="leading_space">
+      <question>
+         Why is leading space disappearing from strings in my messages?
+      </question>
+      <answer>
+        <p>
+          HAPI's default validation settings include a rule which trims leading spaces from FT, ST, and 
+          TX fields. In fact, even the less string NoValidation rule still contains this particular
+          setting.    
+        </p>
+        <p>
+            See the 
+            <a href="xref/ca/uhn/hl7v2/examples/MessageValidation.html">message validation example</a>
+            for more information about how to disable this.
+        </p>
+      </answer>
+    </faq>
+	</part>
+	<part id="General">
+		<title>General Questions</title>
+		<faq id="production_use">
       <question>
         Is HAPI ready for production use?
       </question>
@@ -60,15 +67,15 @@
         </p>
       </answer>
     </faq>
-
-    <faq id="who_else">
+		<faq id="who_else">
       <question>
         Who else uses HAPI?
       </question>
       <answer>
         <p>
             That is something we would love to know. If you are using HAPI, we are trying to
-            compile a list, and would love to hear from you. Please <a href="mailto:jamesagnew@users.sourceforge.net">email us</a>
+            compile a list, and would love to hear from you. Please <a
+			href="mailto:jamesagnew@users.sourceforge.net">email us</a>
             and tell us your story!
         </p>
         <p>
@@ -77,8 +84,5 @@
         </p>
       </answer>
     </faq>
-
-  </part>  
-  
-  
+	</part>
 </faqs>

@@ -57,7 +57,7 @@ public class DBTableRepository extends TableRepository {
     protected DBTableRepository(String jdbcUrl) throws SQLException {
         tableList = null;
         tables = new HashMap();
-        normativeDatabase = NormativeDatabase.getInstance(jdbcUrl);
+        normativeDatabase = NormativeDatabase.getInstance();
     }
 
     /**

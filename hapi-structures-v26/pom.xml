@@ -11,8 +11,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-structures-v22</artifactId>
-	<name>HAPI - Generated Structures v2.2</name>
+	<artifactId>hapi-structures-v26</artifactId>
+	<name>HAPI - Generated Structures v2.6</name>
 	
 	<packaging>jar</packaging>
 
@@ -45,16 +45,16 @@
 				<artifactId>hapi-sourcegen</artifactId>				
 				<executions>
 					<execution>
-						<id>v22</id>						
+						<id>v251</id>						
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>sourcegen</goal>
 						</goals>
 						<configuration>
-							<version>2.2</version>
+							<version>2.6</version>
                             
                             <!-- <jdbcUrl>jdbc:odbc:hl7v25</jdbcUrl>  -->
-                            <jdbcUrl>jdbc:mysql://localhost:3306/hl7v25</jdbcUrl>
+                            <jdbcUrl>jdbc:mysql://localhost:3306/hl7v65</jdbcUrl>
                             <jdbcUser>hl7</jdbcUser>
                             <jdbcPassword>hl7</jdbcPassword>
                             
@@ -71,7 +71,7 @@
 						<configuration>
 							<tasks>
 								<echo message="Copying resources"/>
-								<copy todir="../target/site/v22/apidocs">
+								<copy todir="../target/site/v25/apidocs">
 									<fileset dir="target/site/apidocs">
 										<include name="**/*"/>
 									</fileset>

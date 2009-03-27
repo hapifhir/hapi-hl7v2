@@ -71,9 +71,9 @@ public class MessageGenerator extends Object {
      * Creates and writes source code for all Messages and Groups.
      * @param theJdbcUrl 
      */
-    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) throws IOException, SQLException {
+    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException {
         //get list of messages ...
-        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         String sql = getMessageListQuery(version);
@@ -81,7 +81,11 @@ public class MessageGenerator extends Object {
         ArrayList messages = new ArrayList();
         ArrayList chapters = new ArrayList();
         while (rs.next()) {
-            messages.add(rs.getString(1));
+            String name = rs.getString(1);
+            if ("0".equals(name)) {
+            	continue;
+            }
+			messages.add(name );
             chapters.add(rs.getString(2));
         }
         stmt.close();
@@ -95,7 +99,7 @@ public class MessageGenerator extends Object {
         }
 
         for (int i = 0; i < messages.size(); i++) {
-            make((String) messages.get(i), baseDirectory, (String) chapters.get(i), version, theJdbcUrl);
+            make((String) messages.get(i), baseDirectory, (String) chapters.get(i), version);
         }
     }
 
@@ -105,7 +109,8 @@ public class MessageGenerator extends Object {
      */
     private static String getMessageListQuery(String version) {
         // UNION because the messages are defined in different tables for different versions.
-        return "SELECT distinct  [message_type]+'_'+[event_code] AS msg_struct, '?'" //no chapters in DB
+// ACCESS       return "SELECT distinct  [message_type]+'_'+[event_code] AS msg_struct, '?'" //no chapters in DB
+        return "SELECT distinct  message_type + '_' + event_code AS msg_struct, '?'" //no chapters in DB
         +" FROM HL7Versions RIGHT JOIN HL7EventMessageTypeSegments ON HL7EventMessageTypeSegments.version_id = HL7Versions.version_id "
             + "WHERE HL7Versions.hl7_version ='"        
             + version
@@ -127,11 +132,11 @@ public class MessageGenerator extends Object {
      *      for this message in the normative database
      * @param theJdbcUrl 
      */
-    public static void make(String message, String baseDirectory, String chapter, String version, String theJdbcUrl)
+    public static void make(String message, String baseDirectory, String chapter, String version)
         throws IllegalArgumentException {
 
         try {
-            SegmentDef[] segments = getSegments(message, version, theJdbcUrl);
+            SegmentDef[] segments = getSegments(message, version);
             //System.out.println("Making: " + message + " with " + segments.length + " segments (not writing message code - just groups)");
 
             GroupDef group = GroupGenerator.getGroupDef(segments, null, baseDirectory, version, message);
@@ -180,7 +185,7 @@ public class MessageGenerator extends Object {
      * populated can't be handled by the class structure, and should be handled elsewhere.
      * @param theJdbcUrl 
      */
-    private static SegmentDef[] getSegments(String message, String version, String theJdbcUrl) throws SQLException {
+    private static SegmentDef[] getSegments(String message, String version) throws SQLException {
         /*String sql = "select HL7Segments.seg_code, repetitional, optional, description " +
             "from (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code " +
             "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) " +
@@ -188,7 +193,7 @@ public class MessageGenerator extends Object {
         String sql = getSegmentListQuery(message, version);
 	    //System.out.println(sql.toString()); 	
         SegmentDef[] segments = new SegmentDef[200]; //presumably there won't be more than 200
-        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -237,9 +242,11 @@ public class MessageGenerator extends Object {
                 + "WHERE (((HL7Versions.hl7_version)= '"
                 + version
                 + "') "
-                + "AND (([message_type]+'_'+[event_code])='"
+// ACCESS               + "AND (([message_type]+'_'+[event_code])='"
+              + "AND ((message_type + '_' + event_code)='"
                 + message
-                + "')) order by seq_no UNION "
+//                + "')) order by seq_no UNION "
+                + "')) UNION "
                 + "select HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname  "
                 + "from HL7Versions RIGHT JOIN (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
                 + "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) "
@@ -370,10 +377,12 @@ public class MessageGenerator extends Object {
         }
         String mess = args[0];
         System.out.println("Testing source gen for message " + mess);
-        //System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
+        System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:mysql://localhost/hl7v25");
+        System.setProperty("ca.on.uhn.hl7.database.user", "hl7");
+        System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            make(mess, args[2], "0", args[1], "jdbc:odbc:hl7v25");
+            make(mess, args[2], "0", args[1]);
             //makeAll(args[2], args[1]);            
         }
         catch (Exception e) {

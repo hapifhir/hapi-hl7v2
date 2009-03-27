@@ -61,7 +61,7 @@ public class DataTypeGenerator extends Object {
      * logic) for all data types found in the normative database.  For versions > 2.2, Primitive data types
      * are not generated, because they are coded manually (as of HAPI 0.3).  
      */
-    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) throws IOException, SQLException, HL7Exception {
+    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
         //make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) { 
             baseDirectory = baseDirectory + "/";
@@ -70,7 +70,7 @@ public class DataTypeGenerator extends Object {
         
         //get list of data types
         ArrayList types = new ArrayList();
-        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         //get normal data types ... 
@@ -102,7 +102,7 @@ public class DataTypeGenerator extends Object {
                 
         for (int i = 0; i < types.size(); i++) {
             try {
-                make(targetDir, (String)types.get(i), version, theJdbcUrl);
+                make(targetDir, (String)types.get(i), version);
             } catch (DataTypeException dte) {
                 log.warn(dte.getClass().getName() + " - " + dte.getMessage());
             } catch (Exception e) {
@@ -119,13 +119,13 @@ public class DataTypeGenerator extends Object {
      * @param version the HL7 version of the intended data type
      * @param theJdbcUrl 
      */
-    public static void make(File targetDirectory, String dataType, String version, String theJdbcUrl) throws SQLException, DataTypeException, IOException, HL7Exception {
+    public static void make(File targetDirectory, String dataType, String version) throws SQLException, DataTypeException, IOException, HL7Exception {
         //make sure that targetDirectory is a directory ... 
         if (!targetDirectory.isDirectory()) throw new IOException("Can't create file in " + 
             targetDirectory.toString() + " - it is not a directory.");
                 
         //get any components for this data type
-        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         StringBuffer sql = new StringBuffer();
@@ -432,7 +432,7 @@ public class DataTypeGenerator extends Object {
             //System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7v25");        
             //make(new File("c:/testsourcegen"), args[0], args[1]);
             //make(new File("c:/testsourcegen"), "CE_0048", "2.3");
-            makeAll("c:/testsourcegen", "2.5", "jdbc:odbc:hl7v25");
+            makeAll("c:/testsourcegen", "2.5");
         } catch (Exception e) {
             e.printStackTrace();
         }
