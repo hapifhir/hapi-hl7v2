@@ -4,9 +4,9 @@
 	<classpathentry kind="src" path="hapi-base/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
 	<classpathentry kind="src" path="hapi-examples/src/main/java"/>
+	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-test/src/test/java"/>
 	<classpathentry kind="src" path="hapi-test/src/test/resources"/>
-	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.0.2/maven-plugin-api-2.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.0.1/maven-core-2.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.0.1/maven-project-2.0.1.jar"/>

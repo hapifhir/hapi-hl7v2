@@ -92,7 +92,6 @@ public class SourceGenMojo extends AbstractMojo
      * The JDBC User for the HL7 database
      * 
      * @parameter
-     * @required
      */
     private String jdbcUser;
 
@@ -100,7 +99,6 @@ public class SourceGenMojo extends AbstractMojo
      * The JDBC Password for the HL7 database
      * 
      * @parameter
-     * @required
      */
     private String jdbcPassword;
 
@@ -113,6 +111,13 @@ public class SourceGenMojo extends AbstractMojo
         if (!alreadyMade.contains(version)) {
             // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
             alreadyMade.add(version);
+            
+            if (jdbcUser == null) {
+                jdbcUser = "";
+            }
+            if (jdbcPassword == null) {
+                jdbcPassword = "";
+            }
             
            System.setProperty(NormativeDatabase.PROP_DATABASE_USER, jdbcUser);
            System.setProperty(NormativeDatabase.PROP_DATABASE_PASSWORD, jdbcPassword);
