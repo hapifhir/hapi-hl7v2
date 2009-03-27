@@ -26,6 +26,7 @@
 
 	<reporting>
 		<plugins>
+			<!-- 
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
@@ -34,21 +35,10 @@
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
 				</configuration>
-			</plugin>			
+			</plugin>
+			 -->			
 		</plugins>
 	</reporting>
-
-	<!-- <reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<sourcepath>target/sourcegen</sourcepath>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>  -->
 
 	<build>
 		<plugins>
@@ -63,13 +53,10 @@
 							<goal>sourcegen</goal>
 						</goals>
 						<configuration>
-							<version>2.1</version>
-							
-							<!-- <jdbcUrl>jdbc:odbc:hl7v25</jdbcUrl>  -->
-                            <jdbcUrl>jdbc:mysql://localhost:3306/hl7v25</jdbcUrl>
-                            <jdbcUser>hl7</jdbcUser>
-                            <jdbcPassword>hl7</jdbcPassword>
-                            
+							<version>2.1</version>							
+                            <jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
+                            <jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
+                            <jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
 							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
 						</configuration>
 					</execution>

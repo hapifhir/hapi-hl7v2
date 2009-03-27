@@ -171,6 +171,16 @@
 	<reporting>
 		<plugins>
 			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<inherited>true</inherited>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<inherited>false</inherited>
@@ -251,6 +261,28 @@
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>MYSQL</id>
+			<properties>
+				<sourcegen.jdbcUrl.old>jdbc:mysql://localhost:3306/hl7v25</sourcegen.jdbcUrl.old>
+				<sourcegen.jdbcUser.old>hl7</sourcegen.jdbcUser.old>
+				<sourcegen.jdbcPassword.old>hl7</sourcegen.jdbcPassword.old>
+				<sourcegen.jdbcUrl.new>jdbc:mysql://localhost:3306/hl7v65</sourcegen.jdbcUrl.new>
+				<sourcegen.jdbcUser.new>hl7</sourcegen.jdbcUser.new>
+				<sourcegen.jdbcPassword.new>hl7</sourcegen.jdbcPassword.new>
+			</properties>
+		</profile>
+		<profile>
+			<id>ACCESS</id>
+			<properties>
+				<sourcegen.jdbcUrl.old>jdbc:odbc:hl7v25</sourcegen.jdbcUrl.old>
+				<sourcegen.jdbcUser.old></sourcegen.jdbcUser.old>
+				<sourcegen.jdbcPassword.old></sourcegen.jdbcPassword.old>
+				<sourcegen.jdbcUrl.new>jdbc:odbc:hl7v65</sourcegen.jdbcUrl.new>
+				<sourcegen.jdbcUser.new></sourcegen.jdbcUser.new>
+				<sourcegen.jdbcPassword.new></sourcegen.jdbcPassword.new>
+			</properties>
 		</profile>
 	</profiles>	
 	

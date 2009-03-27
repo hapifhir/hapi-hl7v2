@@ -58,6 +58,7 @@
 
 	<reporting>
 		<plugins>
+			<!-- 
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
@@ -66,7 +67,8 @@
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
 				</configuration>
-			</plugin>			
+			</plugin>
+			 -->			
 		</plugins>
 	</reporting>
 

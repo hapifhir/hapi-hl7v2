@@ -52,12 +52,9 @@
 						</goals>
 						<configuration>
 							<version>2.3.1</version>
-                            
-                            <!-- <jdbcUrl>jdbc:odbc:hl7v25</jdbcUrl>  -->
-                            <jdbcUrl>jdbc:mysql://localhost:3306/hl7v25</jdbcUrl>
-                            <jdbcUser>hl7</jdbcUser>
-                            <jdbcPassword>hl7</jdbcPassword>
-                            
+                            <jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
+                            <jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
+                            <jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
 							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
 						</configuration>
 					</execution>

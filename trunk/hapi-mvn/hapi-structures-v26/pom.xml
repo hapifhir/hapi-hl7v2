@@ -52,12 +52,9 @@
 						</goals>
 						<configuration>
 							<version>2.6</version>
-                            
-                            <!-- <jdbcUrl>jdbc:odbc:hl7v25</jdbcUrl>  -->
-                            <jdbcUrl>jdbc:mysql://localhost:3306/hl7v65</jdbcUrl>
-                            <jdbcUser>hl7</jdbcUser>
-                            <jdbcPassword>hl7</jdbcPassword>
-                            
+                            <jdbcUrl>${sourcegen.jdbcUrl.new}</jdbcUrl>
+                            <jdbcUser>${sourcegen.jdbcUser.new}</jdbcUser>
+                            <jdbcPassword>${sourcegen.jdbcPassword.new}</jdbcPassword>
 							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
 						</configuration>
 					</execution>
@@ -71,7 +68,7 @@
 						<configuration>
 							<tasks>
 								<echo message="Copying resources"/>
-								<copy todir="../target/site/v25/apidocs">
+								<copy todir="../target/site/v26/apidocs">
 									<fileset dir="target/site/apidocs">
 										<include name="**/*"/>
 									</fileset>
