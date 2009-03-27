@@ -17,7 +17,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s):  Eric Poiseau. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -470,7 +470,9 @@ public class GroupGenerator extends java.lang.Object {
         } catch (IndexOutOfBoundsException e) {
             throw new HL7Exception("Couldn't find end of group", HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
-        if (!endMarker.equals(segName)) throw new HL7Exception("Group markers are not nested properly", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        if (!endMarker.equals(segName)) {
+        	throw new HL7Exception("Group markers are not nested properly", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
         return groupStart + offset;        
     }
 

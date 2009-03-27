@@ -64,7 +64,7 @@ public class SegmentGenerator extends java.lang.Object {
      * <p>Creates skeletal source code (without correct data structure but no business
      * logic) for all segments found in the normative database.  </p>
      */
-    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) throws IOException, SQLException, HL7Exception {
+    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
         //make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
             baseDirectory = baseDirectory + "/";
@@ -72,7 +72,7 @@ public class SegmentGenerator extends java.lang.Object {
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "segment");
         
         //get list of data types
-        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance(theJdbcUrl);
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
         String sql = "SELECT seg_code, section from HL7Segments, HL7Versions where HL7Segments.version_id = HL7Versions.version_id AND hl7_version = '" + version + "'";
@@ -415,9 +415,9 @@ public class SegmentGenerator extends java.lang.Object {
     public static void main(String args[]) {
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            NormativeDatabase normativeDatabase = NormativeDatabase.getInstance("jdbc:odbc:hl7v65");
+            NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
             if (args.length == 1) {
-                makeAll("tmp", "2.5.1", "jdbc:odbc:hl7v65");
+                makeAll("tmp", "2.5.1");
             } else {
                 String source = makeSegment(args[1], "2.5.1", normativeDatabase);
                 BufferedWriter w = new BufferedWriter(new FileWriter(args[0] + "/" + args[1] + ".java", false));

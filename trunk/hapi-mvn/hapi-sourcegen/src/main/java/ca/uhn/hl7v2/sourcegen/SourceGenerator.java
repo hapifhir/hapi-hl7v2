@@ -49,7 +49,7 @@ public class SourceGenerator extends Object {
      * @param baseDirectory the directory where source should be written
      * @param theJdbcUrl The JDBC URL
      */
-    public static void makeAll(String baseDirectory, String version, String theJdbcUrl) {
+    public static void makeAll(String baseDirectory, String version) {
         //load driver and set DB URL
         /*if (System.getProperty("ca.on.uhn.hl7.database.url") == null) {
             System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
@@ -57,9 +57,9 @@ public class SourceGenerator extends Object {
         
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            DataTypeGenerator.makeAll(baseDirectory, version, theJdbcUrl);
-            SegmentGenerator.makeAll(baseDirectory, version, theJdbcUrl);
-            MessageGenerator.makeAll(baseDirectory, version, theJdbcUrl);
+            DataTypeGenerator.makeAll(baseDirectory, version);
+            SegmentGenerator.makeAll(baseDirectory, version);
+            MessageGenerator.makeAll(baseDirectory, version);
             // group and message not implemented
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,8 +208,12 @@ public class SourceGenerator extends Object {
         return ret;
     }
     
-    public static void main(String[] args) {
-        makeAll("tmp", "2.5.1", "jdbc:odbc:hl7v65");
+    public static void main(String[] args) throws ClassNotFoundException {
+    	Class.forName("com.mysql.jdbc.Driver");
+    	System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:mysql://localhost:3306/hl7v65");
+        System.setProperty("ca.on.uhn.hl7.database.user", "hl7");
+        System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
+        makeAll("tmp", "2.5.1");
     }
     
 }

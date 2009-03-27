@@ -67,44 +67,38 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class NormativeDatabase
 {
+	/** User system property constant */
+    public static final String PROP_DATABASE_USER = "ca.on.uhn.hl7.database.user";
+	/** User system property constant */
+    public static final String PROP_DATABASE_URL = "ca.on.uhn.hl7.database.url";
+	/** User system property constant */
+    public static final String PROP_DATABASE_PASSWORD = "ca.on.uhn.hl7.database.password";
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(NormativeDatabase.class);
+	private static final HapiLog log = HapiLogFactory.getHapiLog(NormativeDatabase.class);
 
-    private static Map dbs = new HashMap();
+    private static final NormativeDatabase INSTANCE = new NormativeDatabase();
 
-    private String dbUrl = "jdbc:odbc:hl7v25";
-    private String dbUser = "";
-    private String dbPassword = "";
+    private String dbUrl;
+    private String dbUser;
+    private String dbPassword;
 
-    Stack connections;
+    private Connection connection;
+	private SQLException checkedOut;
 
 
     /**
-     * Private constructor ... checks system properties for connection information
-     * @param theJdbcUrl 
+     * Private constructor
      */
-    private NormativeDatabase(String theJdbcUrl) {
-        this.dbUrl = theJdbcUrl;
-        String user = System.getProperty("ca.on.uhn.hl7.database.user");
-        if (user != null)
-            this.dbUser = user;
-        String password = System.getProperty("ca.on.uhn.hl7.database.password");
-        if (password != null)
-            this.dbPassword = password;
-
-        connections = new Stack();
+    private NormativeDatabase() {
+    	// nothing
     }
 
 
     /**
      * Returns the singleton instance of NormativeDatabase.
      */
-    public synchronized static NormativeDatabase getInstance(String theJdbcUrl) throws SQLException {
-        if (!dbs.containsKey(theJdbcUrl)) {
-            dbs.put(theJdbcUrl, new NormativeDatabase(theJdbcUrl));
-        }
-
-        return (NormativeDatabase)dbs.get(theJdbcUrl);
+    public static NormativeDatabase getInstance() throws SQLException {
+    	return INSTANCE;
     }
 
 
@@ -113,23 +107,26 @@ public class NormativeDatabase
      * available.
      */
     public synchronized Connection getConnection() throws SQLException {
-        Connection conn = null;
+    	if (checkedOut != null) {
+    		throw checkedOut;
+    	}
 
-        // create a new one if there are none left
-        if (connections.empty()) {
-            try {
-                conn = DriverManager.getConnection(this.dbUrl, this.dbUser, this.dbPassword);
-            } catch (SQLException sqle) {
-                // add a little information and rethrow ...
-                throw new SQLException("Can't connect to normative database with current connection settings. "
-                        + "System.getProperty(\"ca.on.uhn.hl7.database.url\") currently returns: "
-                        + System.getProperty("ca.on.uhn.hl7.database.url") + ". Error message: " + sqle.getMessage());
-            }
-        } else {
-            conn = (Connection)connections.pop();
-        }
+		String user = System.getProperty(PROP_DATABASE_USER);
+		String pass = System.getProperty(PROP_DATABASE_PASSWORD);
+		String url = System.getProperty(PROP_DATABASE_URL);
 
-        return conn;
+		if (!url.equals(dbUrl) || !pass.equals(dbPassword) || !user.equals(dbUser)) {
+			if (connection != null) {
+				connection.close();
+			}
+			connection = DriverManager.getConnection(url, user, pass);
+			dbUrl = url;
+			dbPassword = pass;
+			dbUser = user;
+		}
+		
+		checkedOut = new SQLException("COnnection already checked out");
+		return connection;
     }
 
 
@@ -138,15 +135,7 @@ public class NormativeDatabase
      * connection is not in fact a connection to the normative database, it is discarded.
      */
     public void returnConnection(Connection conn) {
-        // check if this is a normative DB connection
-        try {
-            String connUrl = conn.getMetaData().getURL();
-            if (connUrl.equals(this.dbUrl)) {
-                this.connections.push(conn);
-            }
-        } catch (SQLException e) {
-            log.error("Error while crating database connection: ", e);
-        }
+    	checkedOut = null;
     }
 
 
@@ -154,7 +143,7 @@ public class NormativeDatabase
     public static void main(String[] args) {
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            Connection conn = NormativeDatabase.getInstance("jdbc:odbc:hl7v25").getConnection();
+            Connection conn = NormativeDatabase.getInstance().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from TableValues");
             while (rs.next()) {

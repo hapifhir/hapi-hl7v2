@@ -12,10 +12,11 @@ Developing using HAPI - By Example
   Please note that this page assumes at least a basic familiarity 
   with {{{http://hl7.org}HL7}} and it's terminology.
 
-* Parsing a message
+* The Basics
 
   A good starting point with regards to using HAPI would be to
   {{{xref/ca/uhn/hl7v2/examples/ExampleParseMessages.html}parse a message}}.
+  
   
 * Creating messages
 
@@ -26,9 +27,22 @@ Developing using HAPI - By Example
   Another common problem is to 
   {{{xref/ca/uhn/hl7v2/examples/PopulateOBXSegment.html}populate an ORU message's OBX segment}}.
 
+
 * Sending and receiving
   
   Now, let's introduce some {{{xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
+
+
+* Parsing Messages
+
+  Once we're parsing messages, we can 
+  {{{xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
+  to make sure they contain no invalid data.
+  
+  To be even more advanced, we can
+  {{{xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfiles.html}validate messages}}
+  using conformance profiles.
+
 
 * Advanced
 

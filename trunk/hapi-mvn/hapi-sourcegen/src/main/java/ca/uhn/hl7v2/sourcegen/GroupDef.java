@@ -166,7 +166,7 @@ public class GroupDef implements StructureDef {
         System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            MessageGenerator.makeAll("c:/java/adapter/source/", "2.4", "jdbc:odbc:hl7v25");
+            MessageGenerator.makeAll("c:/java/adapter/source/", "2.4");
         } catch (Exception e) {
             e.printStackTrace();
         }

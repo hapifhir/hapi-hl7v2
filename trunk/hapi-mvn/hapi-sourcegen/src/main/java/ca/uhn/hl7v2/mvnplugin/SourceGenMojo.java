@@ -36,6 +36,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
+import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 
 /**
@@ -87,6 +88,22 @@ public class SourceGenMojo extends AbstractMojo
      */
     private String jdbcUrl;
 
+    /**
+     * The JDBC User for the HL7 database
+     * 
+     * @parameter
+     * @required
+     */
+    private String jdbcUser;
+
+    /**
+     * The JDBC Password for the HL7 database
+     * 
+     * @parameter
+     * @required
+     */
+    private String jdbcPassword;
+
     
     /**
      * {@inheritDoc}
@@ -97,7 +114,11 @@ public class SourceGenMojo extends AbstractMojo
             // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
             alreadyMade.add(version);
             
-            SourceGenerator.makeAll(targetDirectory, version, jdbcUrl);
+           System.setProperty(NormativeDatabase.PROP_DATABASE_USER, jdbcUser);
+           System.setProperty(NormativeDatabase.PROP_DATABASE_PASSWORD, jdbcPassword);
+           System.setProperty(NormativeDatabase.PROP_DATABASE_URL, jdbcUrl);
+            
+            SourceGenerator.makeAll(targetDirectory, version);
             
         } else {
             getLog().warn("Already made version " + version + ", skipping!");
