@@ -116,6 +116,11 @@
 	</organization>
 		
 	<pluginRepositories>
+       <pluginRepository>
+           <id>codehaus</id>
+           <name>Codehaus Repo</name>
+           <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+       </pluginRepository>
 	</pluginRepositories>
 	
 	<dependencies>

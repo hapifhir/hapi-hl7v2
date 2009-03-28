@@ -2,7 +2,10 @@
 	<target name="site">
 		<echo>Running Maven</echo>
 		<exec executable="mvn.bat">
-			<arg line="-P SITE,ACCESS clean site"/>
+			<arg line="-P SITE,ACCESS clean"/>
+		</exec>
+		<exec executable="mvn.bat">
+			<arg line="-P SITE,ACCESS site"/>
 		</exec>
         <echo>Adding Google analytics in target/site</echo>
         <replace dir="target/site" summary="true">

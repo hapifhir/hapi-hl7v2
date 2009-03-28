@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.conf.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -148,6 +149,47 @@ public class ProfileParser {
         return dtd.toString();
     }
 
+    
+    /**
+     * Parses an XML profile string into a RuntimeProfile object.
+     * 
+     * Input is a path pointing to a textual file on the classpath. Note that
+     * the file will be read using the thread context class loader.
+     * 
+     * For example, if you had a file called PROFILE.TXT in package com.foo.stuff,
+     * you would pass in "com/foo/stuff/PROFILE.TXT"
+     * 
+     * @throws IOException If the resource can't be read
+     */
+    public RuntimeProfile parseClasspath(String classPath) throws ProfileException, IOException {
+    	
+    	InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(classPath);
+    	if (stream == null) {
+    		throw new FileNotFoundException(classPath);
+    	}
+    	
+    	StringBuffer profileString = new StringBuffer();
+    	byte[] buffer = new byte[1000];
+    	int bytesRead;
+    	while ((bytesRead = stream.read(buffer)) > 0) {
+    		profileString.append(new String(buffer, 0, bytesRead));
+    	}
+    	
+        RuntimeProfile profile = new RuntimeProfile();
+        Document doc = parseIntoDOM(profileString.toString());
+
+        Element root = doc.getDocumentElement();
+        profile.setHL7Version(root.getAttribute("HL7Version"));
+
+        //get static definition
+        NodeList nl = root.getElementsByTagName("HL7v2xStaticDef");
+        Element staticDef = (Element) nl.item(0);
+        StaticDef sd = parseStaticProfile(staticDef);
+        profile.setMessage(sd);
+        return profile;
+    }
+
+    
     /**
      * Parses an XML profile string into a RuntimeProfile object.  
      */
