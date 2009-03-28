@@ -67,8 +67,21 @@
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
 				</configuration>
+			</plugin>	
+			 -->		
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<!-- <version>2.3</version>  -->
+				<configuration>
+					<tags>
+						<tag>TODO</tag>
+						<tag>FIXME</tag>
+						<tag>@todo</tag>
+						<tag>@deprecated</tag>
+					</tags>
+				</configuration>
 			</plugin>
-			 -->			
 		</plugins>
 	</reporting>
 
@@ -94,6 +107,8 @@
 										<include name="**/*"/>
 									</fileset>
 								</copy>
+                                <copy todir="../target/site/" file="target/site/taglist.html">
+                                </copy>
 							</tasks>
 						</configuration>
 						<goals>

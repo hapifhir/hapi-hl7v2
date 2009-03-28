@@ -61,6 +61,8 @@
                 <item name="v2.3.1 Messages" href="v231/apidocs/index.html"/>
                 <item name="v2.4 Messages" href="v24/apidocs/index.html"/>
                 <item name="v2.5 Messages" href="v25/apidocs/index.html"/>
+                <item name="v2.5.1 Messages" href="v251/apidocs/index.html"/>
+                <item name="v2.6 Messages" href="v26/apidocs/index.html"/>
             </item>
             <item name="Source XRef" href="xref/index.html"/>
 		</menu>
@@ -74,6 +76,7 @@
 		<menu name="Reports">
 			<item name="Unit Test Report" href="surefire-report.html"/>
             <item name="Team List" href="team-list.html"/>
+            <item name="Source Tag List" href="taglist.html"/>
 		</menu>
 		
 		<!-- <head>
