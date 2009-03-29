@@ -154,6 +154,15 @@
 					<maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+		                <configuration>
+		                  <descriptors>
+		                    <descriptor>src/assembly/hapi-all.xml</descriptor>
+		                  </descriptors>
+		                </configuration>
+            </plugin>
 		</plugins>
 		<extensions>
 			<extension>
@@ -249,6 +258,23 @@
 				<module>hapi-structures-v26</module>
 			</modules>
 		</profile>
+        <profile>
+            <id>DIST</id>
+            <build>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-examples</module>
+                <module>hapi-structures-v21</module>
+                <module>hapi-structures-v22</module>
+                <module>hapi-structures-v23</module>
+                <module>hapi-structures-v231</module>
+                <module>hapi-structures-v24</module>
+                <module>hapi-structures-v25</module>
+                <module>hapi-structures-v251</module>
+                <module>hapi-structures-v26</module>
+            </modules>
+        </profile>
 		<profile>
 			<id>SITE</id>
 			<build>

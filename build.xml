@@ -77,4 +77,13 @@
     <frameset]]></replacevalue>
         </replace>
 	</target>
+    <target name="package">
+        <echo>Running Maven</echo>
+        <exec executable="mvn.bat">
+            <arg line="-P GEN,ACCESS clean"/>
+        </exec>
+        <exec executable="mvn.bat">
+            <arg line="-P GEN,ACCESS package assembly:assembly"/>
+        </exec>
+    </target>
 </project>

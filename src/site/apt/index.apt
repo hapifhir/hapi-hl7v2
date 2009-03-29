@@ -9,18 +9,28 @@ Welcome
 
 What's New
 
-  * April 1, 
-
-  * February 18, 2007
+  * March 30, 2009
   
-    * HAPI 0.5.1 Released.  See details {{{changes-report.html}here}}. 
+    HAPI 0.6-beta1 has been relased! This release is the first attempt at incorporating support for
+    HL7 v2.5.1 and v2.6.
     
-    * Also, a new section has been added to the HAPI website: {{{devbyexample.html}HAPI By Example}}
-  
-  * December 14, 2006 
-  
-    * HAPI 0.5 Released.
+    <<Please note that this release is NOT PRODUCTION READY>>. It is a beta release designed only to
+    allow the HAPI community to test the new library and report any issues found. I am tentatively
+    hoping to release a final version on May 1st, 2009. 
 
+    Note that a number of things have changed with this release:
+    
+      * Support for HL7 {{{v251/apidocs/index.html}v2.5.1}} and {{{v26/apidocs/index.html}v2.6}} has been added.
+      
+      * A number of {{{changes-report.html}bugfixes and enhancements}} have been added.
+      
+      * A new {{{building.html}build system}} has been introduced, with a new CVS repository layout to go with it.
+      
+      * The HAPI {{{using_hapi.html}release JARs}} have changed from one monolithic JAR to a number of version specific ones. 
+
+    We owe a huge thanks to Frank Oemig and Karen Van Hentenryck for their
+    help in providing an updated HL7 database, from which HAPI's source libraries are built.
+    
   
 Get Involved 
 

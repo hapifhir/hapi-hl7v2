@@ -1,0 +1,69 @@
+Developing Using HAPI
+
+Downloading HAPI
+
+  HAPI can be downloaded at our {{{http://sourceforge.net/project/showfiles.php?group_id=38899}Sourceforge Download Site}}.
+
+  Note that if you use Maven as your build system, you may alternately wish to use our
+  {{{http://hl7api.sourceforge.net/m2/}Maven Repository}} to add to your POM.
+
+Adding HAPI to your application
+
+  Adding HAPI to your application requires one or more HAPI JARs to be added to your application
+  classpath.
+  
+* HAPI Libraries
+
+*-----------------------------+----------------------------------------------------------------------------------+ 
+| hapi-base-0.6.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
+*-----------------------------+----------------------------------------------------------------------------------+
+| hapi-structures-vXX-0.6.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
+*-----------------------------+----------------------------------------------------------------------------------+
+
+* HAPI Dependencies
+
+  HAPI also requires the following JARs to function. Newer versions of these JARs *should* also work.
+  
+*-----------------------------+----------------------------------------------------------------------------------+ 
+| log4j-1.29.jar              | HAPI uses {{{http://logging.apache.org/log4j/}log4j}} and {{{http://commons.apache.org/logging/}Commons Logging}}  for logging and will not work without them. Note that our intention is to remove the dependency on log4j at some point, but this is not yet complete. 
+| commons-logging-1.0.4.jar   | 
+|                             | 
+|                             | 
+*-----------------------------+----------------------------------------------------------------------------------+
+| xercesImpl-2.4.0.jar        | These JARs are used for the various XML operations within HAPI, including generation of XML encoded messages, parsing conformance profiles.  If you are not using XML in your application, you may not need them.
+| xmlParserAPIs-2.6.2.jar     | 
+| xalan-2.7.0.jar             | 
+| jaxen-1.0-FCS-2.7.0.jar     | 
+| saxpath-1.0-FCS.jar         | 
+| jdom-1.1.jar                | 
+*-----------------------------+----------------------------------------------------------------------------------+
+  
+* Using Maven
+
+  If you use Maven to build your application, adding HAPI is as easy as adding the following to your
+  repository section:
+
+---
+        <repository>
+            <id>hapi-sf</id>
+            <name>HAPI Sourceforge Repository</name>
+            <url>http://hl7api.sourceforge.net/m2</url>
+        </repository>
+---
+
+  And then adding the following to your dependencies section (add the structures versions you need):
+  
+---
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>0.6</version>
+        </dependency>       
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v21</artifactId>
+            <version>0.6</version>
+        </dependency>       
+---
+
+  
