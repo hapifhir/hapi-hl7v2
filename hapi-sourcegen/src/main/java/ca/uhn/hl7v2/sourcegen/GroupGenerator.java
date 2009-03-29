@@ -35,9 +35,11 @@ import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Creates source code for Group classes - these are aggregations of 
@@ -82,8 +84,8 @@ public class GroupGenerator extends java.lang.Object {
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "group"); 
 
         GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message);
-        BufferedWriter out = new BufferedWriter(new FileWriter(targetDir.getPath() + "/" 
-                + group.getName() + ".java", false));
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetDir.getPath() + "/" 
+                + group.getName() + ".java", false), SourceGenerator.ENCODING));
         out.write(makePreamble(group, version));
         out.write(makeConstructor(group, version));
         
