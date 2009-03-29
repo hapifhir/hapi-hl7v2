@@ -26,15 +26,6 @@
 
 	<reporting>
 		<plugins>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<minmemory>128m</minmemory>
-					<maxmemory>1g</maxmemory>
-					<linksource>true</linksource>
-				</configuration>
-			</plugin>			
 		</plugins>
 	</reporting>
 
@@ -60,6 +51,23 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <goals>
+                            <goal>single</goal> <!-- goals == mojos -->
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>../src/assembly/structures-source.xml</descriptor>
+                            </descriptors>
+                        </configuration>                        
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>

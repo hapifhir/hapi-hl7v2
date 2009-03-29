@@ -37,7 +37,7 @@
 		</menu>
 	
 		<menu name="Using HAPI">
-			<item name="Download" href="downloading.html"/>
+			<item name="Developing" href="using_hapi.html"/>
 			<item name="License" href="license.html"/>
 			<item name="HAPI By Example" href="devbyexample.html"/>
             <item name="FAQ" href="hapi-faq.html"/>

@@ -136,8 +136,8 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.3", "ca/uhn/hl7v2/model/v23/"),
 			new TestSpec("2.3.1", "ca/uhn/hl7v2/model/v231/"),
 			new TestSpec("2.4", "ca/uhn/hl7v2/model/v24/"),
-			new TestSpec("2.5", "ca/uhn/hl7v2/model/v25/"),
-			new TestSpec("2.6", HL7Exception.class),
+			new TestSpec("2.5", "ca/uhn/hl7v2/model/v25/") /*,
+			new TestSpec("2.6", HL7Exception.class),*/
 		};
 		
 		ArrayList failedTests = new ArrayList();
@@ -202,8 +202,8 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.3", "ca.uhn.hl7v2.model.v23."),
 			new TestSpec("2.3.1", "ca.uhn.hl7v2.model.v231."),
 			new TestSpec("2.4", "ca.uhn.hl7v2.model.v24."),
-			new TestSpec("2.5", "ca.uhn.hl7v2.model.v25."),
-			new TestSpec("2.6", HL7Exception.class),
+			new TestSpec("2.5", "ca.uhn.hl7v2.model.v25.")/*,
+			new TestSpec("2.6", HL7Exception.class),*/
 		};
 		
 		ArrayList failedTests = new ArrayList();

@@ -22,11 +22,26 @@
 			<artifactId>hapi-base</artifactId>
 			<version>0.6-beta1</version>
 		</dependency>		
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v21</artifactId>
+            <version>0.6-beta1</version>
+        </dependency>       
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v22</artifactId>
 			<version>0.6-beta1</version>
 		</dependency>		
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v23</artifactId>
+            <version>0.6-beta1</version>
+        </dependency>       
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v231</artifactId>
+            <version>0.6-beta1</version>
+        </dependency>       
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v24</artifactId>

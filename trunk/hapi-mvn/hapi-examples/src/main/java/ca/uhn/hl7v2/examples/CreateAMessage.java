@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * Example transmitting a message
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-03-23 00:10:21 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-03-29 16:55:33 $ by $Author: jamesagnew $
  */
 public class CreateAMessage
 {
@@ -76,6 +76,7 @@ public class CreateAMessage
         // Now, let's encode the message and look at the output
         Parser parser = new PipeParser();
         String encodedMessage = parser.encode(adt);
+        System.out.println("Printing ER7 Encoded Message:");
         System.out.println(encodedMessage);
         
         /*
@@ -88,6 +89,7 @@ public class CreateAMessage
         // Next, let's use the XML parser to encode as XML
         parser = new DefaultXMLParser();
         encodedMessage = parser.encode(adt);
+        System.out.println("Printing XML Encoded Message:");
         System.out.println(encodedMessage);
         
         /*
