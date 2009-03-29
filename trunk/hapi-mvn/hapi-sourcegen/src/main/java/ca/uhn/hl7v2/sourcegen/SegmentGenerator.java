@@ -32,9 +32,11 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -95,7 +97,7 @@ public class SegmentGenerator extends java.lang.Object {
             try {
                 String seg = (String)segments.get(i);
                 String source = makeSegment(seg, version, normativeDatabase);
-                BufferedWriter w = new BufferedWriter(new FileWriter(targetDir.toString() + "/" + seg + ".java", false));
+                BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetDir.toString() + "/" + seg + ".java", false), SourceGenerator.ENCODING));
                 w.write(source);
                 w.flush();
                 w.close();

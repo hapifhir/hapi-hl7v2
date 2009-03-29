@@ -40,6 +40,8 @@ import java.io.IOException;
  */
 public class SourceGenerator extends Object {
     
+	public static final String ENCODING = "UTF-8";
+	
     /** Creates new SourceGenerator */
     public SourceGenerator() {
     }

@@ -38,10 +38,13 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 import java.util.ArrayList;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
+import java.io.OutputStreamWriter;
+
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -202,7 +205,7 @@ public class DataTypeGenerator extends Object {
         //write to file ... 
         if (source != null) {
             String targetFile = targetDirectory.toString() + "/" + dataType + ".java";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, false));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING));
             writer.write(source);
             writer.flush();
         }

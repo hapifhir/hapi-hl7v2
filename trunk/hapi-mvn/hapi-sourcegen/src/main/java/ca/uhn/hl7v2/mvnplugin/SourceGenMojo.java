@@ -28,6 +28,7 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.mvnplugin;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -108,7 +109,9 @@ public class SourceGenMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        if (!alreadyMade.contains(version)) {
+    	if (new File(targetDirectory).exists()) {
+            getLog().warn("Already exists version " + version + ", skipping!");
+    	} else if (!alreadyMade.contains(version)) {
             // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
             alreadyMade.add(version);
             

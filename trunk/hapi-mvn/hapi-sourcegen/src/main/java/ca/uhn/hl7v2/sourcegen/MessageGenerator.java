@@ -29,8 +29,10 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -150,8 +152,7 @@ public class MessageGenerator extends Object {
                 SourceGenerator.makeDirectory(
                     baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
             System.out.println("Writing " + message + " to " + targetDir.getPath());
-            BufferedWriter out =
-                new BufferedWriter(new FileWriter(targetDir.getPath() + "/" + message + ".java", false));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetDir.getPath() + "/" + message + ".java", false), SourceGenerator.ENCODING));
             out.write(makePreamble(contents, message, chapter, version));
             out.write(makeConstructor(contents, message, version));
             for (int i = 0; i < contents.length; i++) {
