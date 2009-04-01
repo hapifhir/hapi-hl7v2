@@ -1,3 +1,4 @@
 - Fix DefaultModelClassFactory and Parser to not hardcode defaults?
 - Update datatypes for new versions
 - Update mappings for new versions
+- Site build to copy example conf profile to the right spot
