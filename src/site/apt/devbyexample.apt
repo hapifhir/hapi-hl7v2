@@ -40,7 +40,7 @@ Developing using HAPI - By Example
   to make sure they contain no invalid data.
   
   To be even more advanced, we can
-  {{{xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfiles.html}validate messages}}
+  {{{xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfile.html}validate messages}}
   using conformance profiles. Note that the conformance profile used in this
   example can be seen {{{xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}.
 
