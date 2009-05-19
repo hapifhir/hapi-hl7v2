@@ -252,6 +252,14 @@ public class PipeParserTest extends TestCase {
     	p.parse(msg);
     	
     }
+ 
+    public void testEmptySegment() throws EncodingNotSupportedException, HL7Exception {
+        String msg = "MSH|^~\\&|1444-ADT|1444|S-ADT|SIMS|20071023160622||ADT^A03^ADT_A05|Q67084255T54052896X2|P^T|2.5|||NE|AL|CAN|8859/1\r\n" + 
+        		"EVN|A03|20071023160622\r\n" + 
+        		"PID|1||00J8804997^^^1444^MR~165640^^^CANON^JHN^^^^^WT||Aalan^Angus^^^^^L||19620404|F|||101 Ames Ave^^Toronto^CA- ON^M2N7J6^CAN^H||^PRN^PH^^1^416^5551545|^PRN^PH^^1^416^2227788|| C||||||||||||||N\r\n" + 
+        		"PV1";
+        Message message = parser.parse(msg);
+    }
     
     
     private static class FooEncodingRule implements EncodingRule {
