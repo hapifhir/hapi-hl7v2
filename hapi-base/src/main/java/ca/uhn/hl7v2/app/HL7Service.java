@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): Kyle Buza 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -73,8 +73,19 @@ public abstract class HL7Service implements Runnable {
      */
     public abstract void run();
 
-    /** Returns true if the thread should continue to run, false otherwise (ie if stop() has been called). */
+    /** 
+     * Returns true if the thread should continue to run, false otherwise (ie if stop() has been called).
+     * 
+     * @deprecated Use {@link #isRunning()}. Deprecated as of version 0.6.
+     */
     protected boolean keepRunning() {
+        return keepRunning;
+    }
+
+    /**
+     * @return Returns <code>true</code> if the server has been started, and has not yet been stopped.
+     */
+    public boolean isRunning() {
         return keepRunning;
     }
 
@@ -101,7 +112,7 @@ public abstract class HL7Service implements Runnable {
             ((Connection) connections.get(i)).close();
         }
     }
-
+    
     /** 
      * Called by subclasses when a new Connection is made.  Registers the 
      * MessageTypeRouter with the given Connection and stores it. 

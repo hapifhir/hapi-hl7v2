@@ -30,6 +30,5 @@
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/0.6-beta1/hapi-structures-v24-0.6-beta1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/0.6-beta1/hapi-structures-v25-0.6-beta1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
