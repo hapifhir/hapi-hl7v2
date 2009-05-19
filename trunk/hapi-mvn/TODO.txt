@@ -2,3 +2,5 @@
 - Update datatypes for new versions
 - Update mappings for new versions
 - Site build to copy example conf profile to the right spot
+- Better javadoc of defaultvalidation and maybe an FAQ entry
+- Version based validation contexts?
