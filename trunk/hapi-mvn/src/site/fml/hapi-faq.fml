@@ -5,84 +5,116 @@
 	<part id="Developing">
 		<title>Developing HL7 Applications</title>
 		<faq id="missing_messages">
-      <question>
-        Why are some message classes missing? For example, I can find the class ADT_A01, but not the class ADT_A04.
-      </question>
-      <answer>
-        <p>
-	        HL7 defines that some message triggers reuse the same structure. So, for example, the ADT^A04
-	        message has the exact same structure as an ADT^A01 message. Therefore, when an ADT^A04 message
-	        is parsed, or when you want to create one, you will actually use the ADT_A01 message class,
-	        but the "triggerEvent" property of MSH-9 will be set to A04. 
-        </p>
-        <p>
-            HAPI uses property files in the following package:         
-            <source>ca.uhn.hl7v2.parser.eventmap</source>
-            ...with the name...
-            <source>[version].properties</source>
-            to determine the mapping between trigger event and message structure.
-        </p>
-      </answer>
-    </faq>
+			<question>
+				Why are some message classes missing? For example, I can find the class ADT_A01, but not the class ADT_A04.
+			</question>
+			<answer>
+				<p>
+					HL7 defines that some message triggers reuse the same structure. So, for example, the ADT^A04
+					message has the exact same structure as an ADT^A01 message. Therefore, when an ADT^A04 message
+					is parsed, or when you want to create one, you will actually use the ADT_A01 message class,
+					but the "triggerEvent" property of MSH-9 will be set to A04. 
+				</p>
+				<p>
+					HAPI uses property files in the following package:         
+					<source>ca.uhn.hl7v2.parser.eventmap</source>
+					...with the name...
+					<source>[version].properties</source>
+					to determine the mapping between trigger event and message structure.
+				</p>
+			</answer>
+		</faq>
 		<faq id="leading_space">
-      <question>
-         Why is leading space disappearing from strings in my messages?
-      </question>
-      <answer>
-        <p>
-          HAPI's default validation settings include a rule which trims leading spaces from FT, ST, and 
-          TX fields. In fact, even the less string NoValidation rule still contains this particular
-          setting.    
-        </p>
-        <p>
-            See the 
-            <a href="xref/ca/uhn/hl7v2/examples/MessageValidation.html">message validation example</a>
-            for more information about how to disable this.
-        </p>
-      </answer>
-    </faq>
+			<question>
+				Why is leading space disappearing from strings in my messages?
+			</question>
+			<answer>
+				<p>
+					HAPI's default validation settings include a rule which trims leading spaces from FT, ST, and 
+					TX fields. In fact, even the less string NoValidation rule still contains this particular
+					setting.    
+				</p>
+				<p>
+					See the 
+					<a href="xref/ca/uhn/hl7v2/examples/MessageValidation.html">message validation example</a>
+					for more information about how to disable this.
+				</p>
+			</answer>
+		</faq>
 	</part>
 	<part id="General">
 		<title>General Questions</title>
 		<faq id="production_use">
-      <question>
-        Is HAPI ready for production use?
-      </question>
-      <answer>
-        <p>
-            We make no guarantees that HAPI is perfect. That said, HAPI has been in use at
-            University Health Network for close to 10 years, and we use it almost daily in
-            developing applications which collectively handle thousands of transactions
-            each hour, 24 hours a day. 
-        </p>
-        <p>
-            These applications include an eMPI system, lab and clinical document messaging
-            systems, and various point-of-service applications used in a clinical setting.
-        </p>
-        <p>
-            Our best suggestion is to make sure you devise good unit tests for any HL7
-            messaging code that uses HAPI. This is good practise in any software development
-            activity, but it is especially important when you are doing something as
-            complicated as HL7 messaging. 
-        </p>
-      </answer>
-    </faq>
+		<question>
+	    	Is HAPI ready for production use?
+	    </question>
+	      <answer>
+	        <p>
+	            We make no guarantees that HAPI is perfect. That said, HAPI has been in use at
+	            University Health Network for close to 10 years, and we use it almost daily in
+	            developing applications which collectively handle thousands of transactions
+	            each hour, 24 hours a day. 
+	        </p>
+	        <p>
+	            These applications include an eMPI system, lab and clinical document messaging
+	            systems, and various point-of-service applications used in a clinical setting.
+	        </p>
+	        <p>
+	            Our best suggestion is to make sure you devise good unit tests for any HL7
+	            messaging code that uses HAPI. This is good practise in any software development
+	            activity, but it is especially important when you are doing something as
+	            complicated as HL7 messaging. 
+	        </p>
+	      </answer>
+	    </faq>
 		<faq id="who_else">
-      <question>
-        Who else uses HAPI?
-      </question>
-      <answer>
-        <p>
-            That is something we would love to know. If you are using HAPI, we are trying to
-            compile a list, and would love to hear from you. Please <a
-			href="mailto:jamesagnew@users.sourceforge.net">email us</a>
-            and tell us your story!
-        </p>
-        <p>
-            Based on our website logs, we know that HAPI is used on all continents. A few hot 
-            spots include the United States, Canada, Brazil, India, China, and Japan.
-        </p>
-      </answer>
-    </faq>
+			<question>
+				Who else uses HAPI?
+			</question>
+			<answer>
+				<p>
+				    That is something we would love to know. If you are using HAPI, we are trying to
+				    compile a list, and would love to hear from you. Please <a
+					href="mailto:jamesagnew@users.sourceforge.net">email us</a>
+				    and tell us your story!
+				</p>
+				<p>
+				    Based on our website logs, we know that HAPI is used on all continents. A few hot 
+				    spots include the United States, Canada, Brazil, India, China, and Japan.
+				</p>
+			</answer>
+		</faq>
+	</part>
+	<part id="Hacking">
+		<title>Hacking HAPI</title>
+		<faq id="production_use">
+			<question>
+				I am trying to build HAPI using Maven and it is prompting me for a JDBC URL.
+				What does this do? 
+				What is the sourcegen module for? 
+			</question>
+			<answer>
+				<p>
+					The JDBC URL is a reference to the HL7 DB used to build the message libraries for HAPI. 
+					This DB is sold by HL7 international, and unless you have a copy of it this part of the 
+					build won't work.
+				</p>
+				<p>
+					There shouldn't be any reason for you to need to though, this part of the build 
+					generates the hl7-structures-vXX parts of the library, and both the source and 
+					compiled versions of these are already available.
+				</p>
+				<p>
+					If you are trying to build HAPI yourself (you have made modifications of some kind 
+					or want to test somethying), you can build HAPI using the following command:
+				</p>
+				<p>
+					mvn -P CORE install
+				</p>
+				<p>
+					This skips the sourcegen modules and only builds the core library.
+				</p>
+			</answer>
+	    </faq>
 	</part>
 </faqs>
