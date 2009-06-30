@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -49,7 +49,7 @@ import ca.uhn.log.HapiLogFactory;
  * A TCP/IP based server. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-06-30 13:30:45 $ by $Author: jamesagnew $
  */
 public class HL7Server {
 
@@ -201,6 +201,12 @@ public class HL7Server {
     }
     
     /**
+     * Returns <code>true</code> between when start() returns and when stop() is called.
+     * 
+     * Note that this is not the same as checking whether there are any active connections to
+     * this server. To determine this, call {@link #getProcessors()} and check whether the array
+     * returned is non-empty.
+     * 
      * @return true between when start() returns and when stop() is called.  
      */
     public boolean isRunning() {
