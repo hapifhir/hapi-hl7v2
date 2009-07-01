@@ -39,7 +39,7 @@ import ca.uhn.log.HapiLogFactory;
  * at once) is needed, you may want to pool some FastParsers or use separate ones in separate threads. 
  *    
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:32 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
  */
 public class FastParser extends Parser {
 
@@ -59,6 +59,21 @@ public class FastParser extends Parser {
      *      segments can be included as needed.   
      */
     public FastParser(Map theEventGuideMap) {
+    	this(null, theEventGuideMap);
+    }
+
+    /**
+     * @param theFactory custom factory to use for model class lookup 
+     * @param theEventGuideMap a map with keys in the form "type^event" (like MSH-9 
+     *      components 1 and 2).  Values are corresponding parsing guides for those events.  
+     *      A parsing guide is a group of StructRef that identify which segments to parse, 
+     *      the relationships between them, and where to find them in a message hierarchy.
+     *      The value in the map is the RootRef of the message root.  It must return the 
+     *      StructRef for the MSH segment from getSuccessor("MSH").  References to other 
+     *      segments can be included as needed.   
+     */
+    public FastParser(ModelClassFactory theFactory, Map theEventGuideMap) {
+    	super(theFactory);
         myEventGuideMap = theEventGuideMap;
         myPipeParser = new PipeParser();
     }
@@ -446,7 +461,7 @@ public class FastParser extends Parser {
      * A pointer to a distinct segment or group position in a message.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:32 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
      */
     public static class StructRef {
 
@@ -590,7 +605,7 @@ public class FastParser extends Parser {
      * A convenience StructRef that points to a message root.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:32 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
      */
     public static class RootRef extends StructRef {
         public RootRef() {

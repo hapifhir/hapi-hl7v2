@@ -67,13 +67,17 @@ public abstract class Parser {
      * Uses DefaultModelClassFactory for model class lookup. 
      */
     public Parser() {
-        this(new DefaultModelClassFactory());
+        this(null);
     }
     
     /**
      * @param theFactory custom factory to use for model class lookup 
      */
     public Parser(ModelClassFactory theFactory) {
+    	if (theFactory == null) {
+    		theFactory = new DefaultModelClassFactory();
+    	}
+    	
         myFactory = theFactory;
         ValidationContext validationContext;
 		try {
