@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -71,9 +72,12 @@ public class MessageGenerator extends Object {
 
     /**
      * Creates and writes source code for all Messages and Groups.
+     * @param failOnError 
      * @param theJdbcUrl 
+     * @throws HL7Exception 
+     * @throws IllegalArgumentException 
      */
-    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException {
+    public static void makeAll(String baseDirectory, String version, boolean failOnError) throws IOException, SQLException, IllegalArgumentException, HL7Exception {
         //get list of messages ...
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
@@ -101,7 +105,16 @@ public class MessageGenerator extends Object {
         }
 
         for (int i = 0; i < messages.size(); i++) {
-            make((String) messages.get(i), baseDirectory, (String) chapters.get(i), version);
+    		String message = (String) messages.get(i);
+        	try {
+				make(message, baseDirectory, (String) chapters.get(i), version);
+        	} catch (HL7Exception e) {
+        		if (failOnError) {
+        			throw e;
+        		} else {
+        			log.error("Failed to generate message " + message + ": ", e);
+        		}
+        	}
         }
     }
 
@@ -133,11 +146,15 @@ public class MessageGenerator extends Object {
      * throws IllegalArgumentException if there is no message structure
      *      for this message in the normative database
      * @param theJdbcUrl 
+     * @throws HL7Exception 
      */
     public static void make(String message, String baseDirectory, String chapter, String version)
-        throws IllegalArgumentException {
+        throws IllegalArgumentException, HL7Exception {
 
-        try {
+    	// Make sure this structure has a corresponding definition in the structure map
+//    	Parser.getMessageStructureForEvent(message, version);
+    	
+    	try {
             SegmentDef[] segments = getSegments(message, version);
             //System.out.println("Making: " + message + " with " + segments.length + " segments (not writing message code - just groups)");
 
@@ -164,17 +181,21 @@ public class MessageGenerator extends Object {
             out.write("}\r\n");
             out.flush();
             out.close();
+        } catch (SQLException e) {
+        	throw new HL7Exception(e);
+        } catch (IOException e) {
+        	throw new HL7Exception(e);
         }
-        catch (Exception e) {
-            log.error("Error while creating source code", e);
-
-            log.warn("Warning: could not write source code for message structure "
-                    + message
-                    + " - "
-                    + e.getClass().getName()
-                    + ": "
-                    + e.getMessage());
-        }
+//        catch (Exception e) {
+//            log.error("Error while creating source code", e);
+//
+//            log.warn("Warning: could not write source code for message structure "
+//                    + message
+//                    + " - "
+//                    + e.getClass().getName()
+//                    + ": "
+//                    + e.getMessage());
+//        }
     }
 
     /**
@@ -246,8 +267,8 @@ public class MessageGenerator extends Object {
 // ACCESS               + "AND (([message_type]+'_'+[event_code])='"
               + "AND ((message_type + '_' + event_code)='"
                 + message
-//                + "')) order by seq_no UNION "
-                + "')) UNION "
+                + "')) order by seq_no UNION "
+//                + "')) UNION "
                 + "select HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname  "
                 + "from HL7Versions RIGHT JOIN (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
                 + "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) "

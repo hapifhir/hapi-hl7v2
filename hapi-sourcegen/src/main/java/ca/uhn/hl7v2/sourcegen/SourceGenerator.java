@@ -32,6 +32,8 @@ import java.util.StringTokenizer;
 import java.io.File;
 import java.io.IOException;
 
+import ca.uhn.hl7v2.HL7Exception;
+
 /**
  * <p>Manages automatic generation of HL7 API source code for all data types,
  * segments, groups, and message structures. </p>
@@ -50,8 +52,9 @@ public class SourceGenerator extends Object {
      * Generates source code for all data types, segments, groups, and messages.
      * @param baseDirectory the directory where source should be written
      * @param theJdbcUrl The JDBC URL
+     * @throws HL7Exception - 
      */
-    public static void makeAll(String baseDirectory, String version) {
+    public static void makeAll(String baseDirectory, String version, boolean failOnError) throws HL7Exception  {
         //load driver and set DB URL
         /*if (System.getProperty("ca.on.uhn.hl7.database.url") == null) {
             System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
@@ -61,10 +64,10 @@ public class SourceGenerator extends Object {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
             DataTypeGenerator.makeAll(baseDirectory, version);
             SegmentGenerator.makeAll(baseDirectory, version);
-            MessageGenerator.makeAll(baseDirectory, version);
+            MessageGenerator.makeAll(baseDirectory, version, failOnError);
             // group and message not implemented
         } catch (Exception e) {
-            e.printStackTrace();
+        	throw new HL7Exception(e);
         }
         
     }
@@ -210,12 +213,12 @@ public class SourceGenerator extends Object {
         return ret;
     }
     
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) throws ClassNotFoundException, HL7Exception {
     	Class.forName("com.mysql.jdbc.Driver");
     	System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:mysql://localhost:3306/hl7v65");
         System.setProperty("ca.on.uhn.hl7.database.user", "hl7");
         System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
-        makeAll("tmp", "2.5.1");
+        makeAll("tmp", "2.5.1", true);
     }
     
 }

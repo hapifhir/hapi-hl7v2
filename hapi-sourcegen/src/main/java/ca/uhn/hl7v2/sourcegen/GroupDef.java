@@ -40,7 +40,7 @@ import java.util.HashMap;
  */
 public class GroupDef implements StructureDef {
 
-    private ArrayList elements; 
+	private ArrayList elements; 
     private String messageName;
     private String groupName;
     private String description;
@@ -151,29 +151,6 @@ public class GroupDef implements StructureDef {
     }
      
     /**
-     * Test harness ... 
-     */
-    public static void main(String args[]) {
-        /*GroupDef def = new GroupDef("ADT_FAKE", true, false);
-        def.addStructure(new SegmentDef("MSH", true, false));
-        def.addStructure(new SegmentDef("PID", false, false));
-        def.addStructure(new SegmentDef("PV1", false, true));
-        System.out.println(def.makeConstructor());
-        System.out.println(def.makeAccessor(0));
-        System.out.println(def.makeAccessor(1));
-        System.out.println(def.makeAccessor(2));
-        */
-        System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
-        try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            MessageGenerator.makeAll("c:/java/adapter/source/", "2.4");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-    }
-    
-    /**
      * Returns a text description of the structure.
      */
     public String getDescription() {
@@ -202,5 +179,12 @@ public class GroupDef implements StructureDef {
         }
         return result; 
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+	public String toString() {
+		return "GroupDef[" + groupName +"]";
+	}
+
 }
