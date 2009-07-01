@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ADT_A17 xmlns="urn:hl7-org:v2xml">MICASA
-    <MSH>
-        <MSH.1 LongName="Field Separator">|</MSH.1>
-        <MSH.2 LongName="Encoding Characters">^~\&amp;</MSH.2>
+<ADT_A17 xmlns="urn:hl7-org:v2xml">
+	<MSH>
+		<MSH.1 LongName="Field Separator">|</MSH.1>
+		<MSH.2 LongName="Encoding Characters">^~\&amp;</MSH.2>
         <MSH.3 LongName="Sending Application">
             <HD.1>HIS</HD.1>
         </MSH.3>
@@ -26,7 +25,6 @@
         <MSH.12 LongName="Version ID"><VID.1>2.5</VID.1></MSH.12>
         <MSH.15 LongName="Accept Acknowledgment Type">AL</MSH.15>
         <MSH.16 LongName="Application Acknowledgment Type">ER</MSH.16>
-        
     </MSH>
     <EVN>
         <EVN.2 LongName="Recorded Date/Time"><TS.1>20080427092100</TS.1></EVN.2>
@@ -175,10 +173,10 @@
         <PID.11 LongName="Patient Address">
             <XAD.1 LongName="Street Address">
                 <SAD.1>C</SAD.1>
-                <SAD.2 >NiNa Bonita</SAD.2>
-                <SAD.3 >78</SAD.3>
+                <SAD.2>NiNa Bonita</SAD.2>
+                <SAD.3>78</SAD.3>
             </XAD.1>
-            <XAD.2 LongName="Other Designation" >4º Izquierda</XAD.2>
+            <XAD.2 LongName="Other Designation" >4 Izquierda</XAD.2>
             <XAD.3 LongName="City">051159</XAD.3> <!-- Municipio -->
             <XAD.4 LongName="State or Province">5</XAD.4> <!-- Provincia -->
             <XAD.5 LongName="Zip or Postal Code">5291</XAD.5> <!-- CP -->
@@ -197,7 +195,6 @@
             <CE.2>EspaNa</CE.2>
             <CE.3>ISO3166</CE.3>
         </PID.26>
-        
     </PID>
     <PV1>
         <PV1.1 LongName="Set ID - PV1">2</PV1.1>
@@ -220,7 +217,4 @@
             </CX.9>
         </PV1.19>
     </PV1>
-    
 </ADT_A17>
-
- 	  	 

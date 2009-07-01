@@ -6,14 +6,17 @@
 
 package ca.uhn.hl7v2.parser;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import org.w3c.dom.Document;
+
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.v21.segment.MSH;
-
+ 
 /**
  * JUnit test harness for XMLParser
  * @author Bryan Tripp
@@ -33,6 +36,38 @@ public class XMLParserTest extends TestCase {
     
     public void tearDown() throws Exception {
         
+    }
+
+    /**
+     * Tests a fix to bug 2164291
+     * 
+     * XML parsing of segments which appear twice in a message structure definition (e.g. the
+     * duplicate PID segments in a swap patient message) should be handled correctly.
+     */
+    public void testParseDuplicateSegment() throws IOException, EncodingNotSupportedException, HL7Exception {
+    	InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a17.xml");
+    	byte[] bytes = new byte[10000];
+    	StringBuffer buffer = new StringBuffer();
+    	int count;
+    	while ((count = stream.read(bytes)) > 0) {
+    		buffer.append(new String(bytes), 0, count);
+    	}
+    	
+    	String xmlMessage = buffer.toString();
+    	Message message = new DefaultXMLParser().parse(xmlMessage);
+    	
+    	String er7Message = new PipeParser().encode(message).replaceAll("\\r", "\r\n");
+
+    	System.out.println("Re-encoded:\r\n" + er7Message);
+    	
+    	// We should have only two reps of PID
+    	int firstIndex = er7Message.indexOf("PID");
+    	int secondIndex = er7Message.indexOf("PID", firstIndex + 1);
+    	int thirdIndex = er7Message.indexOf("PID", secondIndex + 1);
+    	assertTrue(firstIndex > 0);
+    	assertTrue(secondIndex > firstIndex);
+    	assertTrue("Found third PID " + firstIndex + " " + secondIndex + " " + thirdIndex + ":\r\n" + er7Message, thirdIndex == -1);
+    	
     }
     
     public void testGetAckID() throws HL7Exception {
