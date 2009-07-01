@@ -1,2 +1,2 @@
-export MAVEN_OPTS=-Xmx1024M
-
+#!/bin/sh
+export MAVEN_OPTS=-Xmx1024m

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>0.6-beta1</version>
+		<version>0.6</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -20,22 +20,22 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>0.6-beta1</version>
+            <version>0.6</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v22</artifactId>
-            <version>0.6-beta1</version>
+            <version>0.6</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v24</artifactId>
-            <version>0.6-beta1</version>
+            <version>0.6</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
-            <version>0.6-beta1</version>
+            <version>0.6</version>
         </dependency>
     </dependencies>
 
@@ -52,6 +52,7 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/hapi-all.xml</descriptor>
+                                <descriptor>src/assembly/hapi-src.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>0.6-beta1</version>
+		<version>0.6</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
-			<version>0.6-beta1</version>
+			<version>0.6</version>
 		</dependency>		
 	</dependencies>
 
@@ -47,6 +47,7 @@
                             <jdbcUser>${sourcegen.jdbcUser.new}</jdbcUser>
                             <jdbcPassword>${sourcegen.jdbcPassword.new}</jdbcPassword>
 							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
+                            <targetResourceDirectory>${basedir}/target/resourcegen</targetResourceDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -95,6 +96,10 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
+            <resource>
+                <directory>${basedir}/target/resourcegen</directory>
+                <filtering>false</filtering>
+            </resource>
 		</resources>
 		<sourceDirectory></sourceDirectory>
 	</build>

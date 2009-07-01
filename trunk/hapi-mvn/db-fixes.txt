@@ -1,0 +1,1 @@
+BRP_O30 version 2.6 needs a closing ] for group PATIENT at position 19
