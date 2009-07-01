@@ -29,4 +29,18 @@ What's in this distribution?
 Including HAPI in your application
 
     For information about including HAPI in your application, please visit 
-    http://hl7api.sourceforge.net/using_hapi.html 
+    http://hl7api.sourceforge.net/using_hapi.html
+    
+    Incidentally, we would love to hear success (and non-success) stories!
+    
+-------
+Getting help
+
+    HAPI's website has examples covering a number of things you might want to 
+    do using HAPI. See http://hl7api.sourceforge.net/devbyexample.html
+    
+    In addition, the HAPI Developer's mailing list is a great place to ask
+    questions and look for answers: 
+    https://sourceforge.net/mailarchive/forum.php?forum_name=hl7api-devel
+
+

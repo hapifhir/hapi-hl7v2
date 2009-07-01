@@ -6,8 +6,10 @@
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 	<body>
-		<release version="0.6" date="TBA"
-			description="This version will be released at some time in the future">
+		<release version="0.6" date="2009-06-28"
+			description="This release adds support for HL7 2.5.1 and 2.6, as well as fixing a number of issues and introducing a new build system.">			
+			<action type="add" due-to="Christian Ohr" issue="2793054">Add constructors to all parser types allowing a custom model factory</action>
+			<action type="fix" due-to="Gerald Bortis, Polloloco" issue="2164291">Fix XML parsing of seg groups containing more than one instance of the same segment (e.g. A17)</action>
             <action type="add" due-to="Peter Gershkovich">Added isRunning() method to SimpleServer</action>
             <action type="add" dev="jagnew">Add NULLDT datatype, to be used in withdrawn fields. Note that default validation expects this datatype to be empty, but custom validation does not need to enforce this.</action>
             <action type="add" dev="jagnew">Add setEncoding method to XmlParser to allow text encoding to be specified when creating XML messages. In response to mailing list query from Fernando Ramírez Sánchez</action>

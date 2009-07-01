@@ -9,15 +9,11 @@ Welcome
 
 What's New
 
-  * April 1, 2009
+  * June 28, 2009
   
-    HAPI 0.6-beta1 has been relased! This release is the first attempt at incorporating support for
+    HAPI 0.6 has been relased! This release is the first release incorporating support for
     HL7 v2.5.1 and v2.6.
     
-    <<Please note that this release is NOT PRODUCTION READY>>. It is a beta release designed only to
-    allow the HAPI community to test the new library and report any issues found. I am tentatively
-    hoping to release a final version on May 1st, 2009. 
-
     Note that a number of things have changed with this release:
     
       * Support for HL7 {{{v251/apidocs/index.html}v2.5.1}} and {{{v26/apidocs/index.html}v2.6}} has been added.

@@ -51,7 +51,9 @@ Adding HAPI to your application
         </repository>
 ---
 
-  And then adding the following to your dependencies section (add the structures versions you need):
+  And then adding the following to your dependencies section (add the structures versions you need).
+  Note that the example below assumes you are using HAPI release 0.6. Adjust the version accordingly
+  if you are using a different release.
   
 ---
         <dependency>
@@ -63,7 +65,11 @@ Adding HAPI to your application
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
             <version>0.6</version>
-        </dependency>       
+        </dependency>
+        <!-- 
+             Add hapi-structures-v22, v23, etc. depending on which versions 
+             of HL7 you need to create or parse 
+        -->     
 ---
 
   

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<assembly xmlns="urn:assembly" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:assembly http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+    <id>src</id>
+    
+    <formats>
+        <format>zip</format>
+        <format>tar.bz2</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/hapi-base</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+            <outputDirectory>hapi-base</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/hapi-base/src</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>hapi-base/src</outputDirectory>
+        </fileSet>        
+
+        <fileSet>
+            <directory>${project.basedir}/hapi-examples</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+            <outputDirectory>hapi-examples</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/hapi-examples/src</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>hapi-examples/src</outputDirectory>
+        </fileSet>        
+
+        <fileSet>
+            <directory>${project.basedir}/hapi-test</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+            <outputDirectory>hapi-test</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/hapi-test/src</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>hapi-test/src</outputDirectory>
+        </fileSet>        
+
+        <fileSet>
+            <directory>${project.basedir}/src/docs</directory>
+            <includes>
+                <include>license.txt</include>
+                <include>acknowledgements.txt</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/srcdocs</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+
+    </fileSets>
+</assembly>

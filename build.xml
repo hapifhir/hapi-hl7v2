@@ -83,7 +83,88 @@
             <arg line="-P GEN,ACCESS clean"/>
         </exec>
         <exec executable="mvn.bat">
-            <arg line="-P GEN,ACCESS package assembly:assembly"/>
+            <arg line="-P GEN,ACCESS install assembly:assembly"/>
         </exec>
+    </target>
+    <target name="all">
+        <echo>Running Maven</echo>
+        <exec executable="mvn.bat">
+            <arg line="-P GEN,ACCESS clean"/>
+        </exec>
+        <exec executable="mvn.bat">
+            <arg line="-P GEN,ACCESS install"/>
+        </exec>
+        <exec executable="mvn.bat">
+            <arg line="-P DIST,ACCESS package assembly:assembly site"/>
+        </exec>
+        <echo>Adding Google analytics in target/site</echo>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacefilter token="#build#" value="${label}"/>
+            <replacefilter token="#version#" value="${version}"/>
+            <replacetoken><![CDATA[</body>]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body>
+                ]]></replacevalue>
+        </replace>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</BODY>]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </BODY>
+                ]]></replacevalue>
+        </replace>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</HEAD>
+<FRAMESET]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </HEAD>
+                <FRAMESET]]></replacevalue>
+        </replace>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</head>
+    <frameset]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </head>
+    <frameset]]></replacevalue>
+        </replace>
     </target>
 </project>

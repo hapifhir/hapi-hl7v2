@@ -6,7 +6,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6-beta1</version>
+	<version>0.6</version>
 	<name>HAPI</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -133,7 +133,8 @@
 		<repository>
 			<id>hapi</id>
 			<name>HAPI Sourceforge</name>
-			<url>file://C:/wagon</url>
+			<!-- <url>file://C:/wagon</url> -->
+			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
 		</repository>
 		<snapshotRepository>
 			<id>hapi</id>
@@ -157,11 +158,12 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <inherited>false</inherited>
-		                <configuration>
-		                  <descriptors>
-		                    <descriptor>src/assembly/hapi-all.xml</descriptor>
-		                  </descriptors>
-		                </configuration>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assembly/hapi-all.xml</descriptor>
+						<descriptor>src/assembly/hapi-src.xml</descriptor>
+					</descriptors>
+				</configuration>
             </plugin>
 		</plugins>
 		<extensions>
@@ -236,6 +238,9 @@
 	<profiles>
 		<profile>
 			<id>CORE</id>
+			<activation>
+			     <activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
 			</build>
 			<modules>
@@ -251,7 +256,6 @@
 			<modules>
 				<module>hapi-base</module>
 				<module>hapi-examples</module>
-				<module>hapi-test</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
@@ -270,6 +274,7 @@
             <modules>
                 <module>hapi-base</module>
                 <module>hapi-examples</module>
+                <module>hapi-sourcegen</module>
                 <module>hapi-structures-v21</module>
                 <module>hapi-structures-v22</module>
                 <module>hapi-structures-v23</module>
@@ -278,6 +283,7 @@
                 <module>hapi-structures-v25</module>
                 <module>hapi-structures-v251</module>
                 <module>hapi-structures-v26</module>
+                <module>hapi-test</module>
             </modules>
         </profile>
 		<profile>
