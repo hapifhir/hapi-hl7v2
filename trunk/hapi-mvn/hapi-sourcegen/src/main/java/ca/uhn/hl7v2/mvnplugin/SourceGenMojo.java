@@ -29,6 +29,8 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.mvnplugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +39,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
+import ca.uhn.hl7v2.sourcegen.EventMapGenerator;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 
 /**
@@ -71,6 +75,14 @@ public class SourceGenMojo extends AbstractMojo
      * @required
      */
     private String targetDirectory;
+
+    /**
+     * The target directory for the generated resources
+     * 
+     * @parameter
+     * @required
+     */
+    private String targetResourceDirectory;
 
     /**
      * The version for the generated source
@@ -112,7 +124,10 @@ public class SourceGenMojo extends AbstractMojo
     	if (new File(targetDirectory).exists()) {
             getLog().warn("Already exists version " + version + ", skipping!");
     	} else if (!alreadyMade.contains(version)) {
-            // I haven't entirely figured out why, but Maven runs this several times for each version, which takes forever
+
+    		// I haven't entirely figured out why, but Maven runs this plugin 
+    		// several times for each version, which takes forever, so we assume
+    		// that if the directory exists, we don't need to generate again
             alreadyMade.add(version);
             
             if (jdbcUser == null) {
@@ -126,7 +141,16 @@ public class SourceGenMojo extends AbstractMojo
            System.setProperty(NormativeDatabase.PROP_DATABASE_PASSWORD, jdbcPassword);
            System.setProperty(NormativeDatabase.PROP_DATABASE_URL, jdbcUrl);
             
-            SourceGenerator.makeAll(targetDirectory, version);
+            try {
+				EventMapGenerator.generateEventMap(targetResourceDirectory, version);
+				SourceGenerator.makeAll(targetDirectory, version, false);
+			} catch (HL7Exception e) {
+				throw new MojoExecutionException("Failed to build source ", e);
+			} catch (SQLException e) {
+				throw new MojoExecutionException("Failed to build source ", e);
+			} catch (IOException e) {
+				throw new MojoExecutionException("Failed to build source ", e);
+			}
             
         } else {
             getLog().warn("Already made version " + version + ", skipping!");

@@ -29,17 +29,17 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.sourcegen;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 /**
  * Creates source code for Group classes - these are aggregations of 
@@ -131,13 +131,13 @@ public class GroupGenerator extends java.lang.Object {
             String structLastName = structures[len-1].getName();
             String structSecondLastName = structures[len-2].getName();
             
-            if (optMarkers(struct0name, structLastName) && (findGroupEnd(structures, 0) == len-1)) required = false;
-            if (repMarkers(struct0name, structLastName) && (findGroupEnd(structures, 0) == len-1)) repeating = true;
-            if (repoptMarkers(struct0name, structLastName) && (findGroupEnd(structures, 0) == len-1)) rep_opt= true;
+            if (optMarkers(struct0name, structLastName) && (findGroupEnd(message, structures, 0) == len-1)) required = false;
+            if (repMarkers(struct0name, structLastName) && (findGroupEnd(message, structures, 0) == len-1)) repeating = true;
+            if (repoptMarkers(struct0name, structLastName) && (findGroupEnd(message, structures, 0) == len-1)) rep_opt= true;
             
             if (repeating  || !required  ) {
-                if (optMarkers(struct1name, structSecondLastName) && (findGroupEnd(structures, 1) == len-2)) required = false;
-                if (repMarkers(struct1name, structSecondLastName) && (findGroupEnd(structures, 1) == len-2)) repeating = true;
+                if (optMarkers(struct1name, structSecondLastName) && (findGroupEnd(message, structures, 1) == len-2)) required = false;
+                if (repMarkers(struct1name, structSecondLastName) && (findGroupEnd(message, structures, 1) == len-2)) repeating = true;
             }
             
             //loop through, recurse nested groups, and build short list of structures for this group
@@ -151,7 +151,7 @@ public class GroupGenerator extends java.lang.Object {
                 if (currSegName.equals("[") || currSegName.equals("{") || currSegName.equals("[{")) {                    
                     //this is the opening of a new group ... 
                     String name = ((SegmentDef) structures[currLongListPos]).getGroupName();
-                    int endOfNewGroup = findGroupEnd(structures, currLongListPos);
+                    int endOfNewGroup = findGroupEnd(message, structures, currLongListPos);
                     StructureDef[] newGroupStructures = new StructureDef[endOfNewGroup - currLongListPos + 1];
                     System.arraycopy(structures, currLongListPos, newGroupStructures, 0, newGroupStructures.length);
                     shortList[currShortListPos] = writeGroup(newGroupStructures, name, baseDirectory, version, message);
@@ -427,17 +427,19 @@ public class GroupGenerator extends java.lang.Object {
      * Given a list of structures and the position of a SegmentDef that 
      * indicates the start of a group (ie "{" or "["), returns the position
      * of the corresponding end of the group.  Nested group markers are ignored.  
+     * @param message The current message
      * @throws IllegalArgumentException if groupStart is out of range or does not 
      *      point to a group opening marker. 
      * @throws HL7Exception if the end of the group is not found or if other pairs 
      *      are not properly nested inside this one.  
      */ 
-    public static int findGroupEnd(StructureDef[] structures, int groupStart) throws IllegalArgumentException, HL7Exception {
+    public static int findGroupEnd(String message, StructureDef[] structures, int groupStart) throws IllegalArgumentException, HL7Exception {
         
         //  {} is rep; [] is optionality
         String endMarker = null;
+        String startMarker;
         try {
-            String startMarker = structures[groupStart].getName();
+            startMarker = structures[groupStart].getName();
             if (startMarker.equals("[")) {
                 endMarker = "]";
             } else if (startMarker.equals("{")) {
@@ -470,10 +472,15 @@ public class GroupGenerator extends java.lang.Object {
                 } 
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new HL7Exception("Couldn't find end of group", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Couldn't find end of group index " + groupStart + " for msg " + message, HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
         if (!endMarker.equals(segName)) {
-        	throw new HL7Exception("Group markers are not nested properly", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        	StringBuffer buf = new StringBuffer();
+        	for (int i = 0; i < structures.length; i++) {
+        		buf.append("\r\n").append(i).append(" - ").append(structures[i].toString());
+        	}
+        	String msg = "Group markers for group indexes " + groupStart + "-" + (groupStart + offset) + " are not nested properly for message " + message + ": " + buf.toString();
+			throw new HL7Exception(msg, HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
         return groupStart + offset;        
     }
