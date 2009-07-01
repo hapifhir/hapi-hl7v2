@@ -22,7 +22,16 @@ public class GenericParser extends Parser {
 
     /** Creates a new instance of GenericParser */
     public GenericParser() {
-        super();
+        this(null);
+    }
+
+    /** 
+     * Creates a new instance of GenericParser
+     *  
+     * @param theFactory custom factory to use for model class lookup 
+     */
+    public GenericParser(ModelClassFactory theFactory) {
+        super(theFactory);
         
         pipeParser = new PipeParser();
         xmlParser = new DefaultXMLParser();

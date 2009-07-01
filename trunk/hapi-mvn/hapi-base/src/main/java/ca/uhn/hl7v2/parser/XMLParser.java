@@ -94,7 +94,17 @@ public abstract class XMLParser extends Parser {
      */
     private String concatKeepAsOriginalNodes = "";
 
+    /** Constructor */
     public XMLParser() {
+        this(null);
+    }
+
+    /** 
+     * Constructor
+     *  
+     * @param theFactory custom factory to use for model class lookup 
+     */
+    public XMLParser(ModelClassFactory theFactory) {
         parser = new DOMParser(new StandardParserConfiguration());
         try {
             parser.setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
@@ -103,7 +113,7 @@ public abstract class XMLParser extends Parser {
             log.error("Can't exclude whitespace from XML DOM", e);
         }
     }
-
+    
     /**
      * Returns a String representing the encoding of the given message, if
      * the encoding is recognized.  For example if the given message appears

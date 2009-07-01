@@ -45,6 +45,15 @@ public class DefaultXMLParser extends XMLParser {
     public DefaultXMLParser() {
     }
 
+    /** 
+     * Creates a new instance of DefaultXMLParser 
+     *  
+     * @param theFactory custom factory to use for model class lookup 
+     */
+    public DefaultXMLParser(ModelClassFactory theFactory) {
+    	super(theFactory);
+    }
+    
     /**
      * <p>Creates an XML Document that corresponds to the given Message object. </p>
      * <p>If you are implementing this method, you should create an XML Document, and insert XML Elements
@@ -144,10 +153,18 @@ public class DefaultXMLParser extends XMLParser {
             }
         }
         
-        //we're not too fussy about order here (all occurances get parsed as repetitions) ... 
+        //we're not too fussy about order here (all occurrences get parsed as repetitions) ... 
         for (int i = 0; i < childNames.length; i++) {
             unparsedElementList.remove(childNames[i]);
-            parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
+            
+            // 4 char segment names are second occurrences of a segment within a single message
+            // structure. e.g. the second PID segment in an A17 patient swap message is known
+            // to hapi's code represenation as PID2
+            if (childNames[i].length() != 4) {   
+            	parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
+            } else {
+            	log.debug("Skipping rep segment: " + childNames[i]);
+            }
         }
         
         for (int i = 0; i < unparsedElementList.size(); i++) {
@@ -174,12 +191,30 @@ public class DefaultXMLParser extends XMLParser {
 				parseRep((Element) reps.get(0), groupObject.get(childIndexName, 0));				
 			}
 
-			if (reps.size() > 1) {			
-				String newIndexName = groupObject.addNonstandardSegment(childName);			
-				for (int i = 1; i < reps.size(); i++) {
-					parseRep((Element) reps.get(i), groupObject.get(newIndexName, i-1));
-				}        			        			
+//			if (reps.size() > 1) {			
+//				String newIndexName = groupObject.addNonstandardSegment(childName);			
+//				for (int i = 1; i < reps.size(); i++) {
+//					parseRep((Element) reps.get(i), groupObject.get(newIndexName, i-1));
+//				}        			        			
+//			}
+			if (reps.size() > 1) {
+				String newIndexName = "";
+				int i=1;
+				try	{
+					for (i = 1; i < reps.size(); i++) {
+						newIndexName = childName+(i+1);
+						Structure st = groupObject.get(newIndexName);
+						parseRep((Element) reps.get(i), st);
+					}
+				} catch(Throwable t) {
+					log.info("Issue Parsing: " + t);
+					newIndexName = groupObject.addNonstandardSegment(childName);
+					for (int j = i; j < reps.size(); j++) {
+						parseRep((Element) reps.get(j), groupObject.get(newIndexName, j-i));
+					}
+				}
 			}
+			
 		}
     }
     
