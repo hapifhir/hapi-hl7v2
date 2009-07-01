@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -39,7 +39,9 @@ import ca.uhn.hl7v2.validation.ValidationContext;
 public abstract class AbstractMessage extends AbstractGroup implements Message {
     
     private ValidationContext myContext;
-
+	private static final Pattern ourVersionPattern = Pattern.compile("\\.(v2[0-9][0-9]?)\\.");
+	private String myVersion;
+	
     /**
      * @param theFactory factory for model classes (e.g. group, segment) for this message 
      */
@@ -63,8 +65,12 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * @returns 2.4 if not obvious from package name
      */
     public String getVersion() {
+    	if (myVersion != null) {
+    		return myVersion;
+    	}
+    	
         String version = null;
-        Pattern p = Pattern.compile("\\.(v2[0-9][0-9]?)\\.");
+        Pattern p = ourVersionPattern;
         Matcher m = p.matcher(this.getClass().getName());
         if (m.find()) {
             String verFolder = m.group(1);
@@ -82,6 +88,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         if (version == null) 
             version = "2.4";
         
+        myVersion = version;
         return version;
     }
     
