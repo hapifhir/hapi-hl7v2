@@ -31,7 +31,10 @@ package ca.uhn.hl7v2.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -317,7 +320,7 @@ public abstract class Parser {
 
     /** 
      * Returns true if the given string represents a valid 2.x version.  Valid versions 
-     * include "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5". 
+     * include "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", etc 
      */
     public static boolean validVersion(String version) {
         boolean versionOK = false;
@@ -328,6 +331,16 @@ public abstract class Parser {
         }
         return versionOK;
     }
+    
+    
+    /**
+     * @return A list of strings containing the valid versions of HL7 supported by HAPI ("2.1", "2.2", etc)
+     */
+    public static List getValidVersions() {
+        return Collections.unmodifiableList(Arrays.asList(versions));
+    }
+    
+    
     
     /**
      * Given a concatenation of message type and event (e.g. ADT_A04), and the 
