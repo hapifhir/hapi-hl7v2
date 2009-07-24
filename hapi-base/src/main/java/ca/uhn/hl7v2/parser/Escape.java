@@ -36,12 +36,23 @@ import java.util.*;
  * highlighting, hexademical, and locally defined escape sequences are also
  * unsupported.
  * 
+ * 
+ * 
  * @author Bryan Tripp
  */
 public class Escape {
 
-	private static HashMap variousEncChars = new HashMap(5);
-
+    /**
+     * limits the size of variousEncChars to 1000, can be overridden by system property.
+     */
+    private static Map<EncodingCharacters, Map<String, String>> variousEncChars = Collections.synchronizedMap(new LinkedHashMap<EncodingCharacters, Map<String, String>>(5, 0.75f, true) {
+        private static final long serialVersionUID = 1L;
+        final int maxSize=new Integer(System.getProperty(Escape.class.getName()+".maxSize","1000"));
+        protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, Map<String, String>> eldest) {
+            return this.size() > maxSize;
+        }
+    });
+    
 	/** Creates a new instance of Escape */
 	public Escape() {
 	}
@@ -191,7 +202,7 @@ public class Escape {
 		// character
 
 		// see if this has already been done for this set of encoding characters
-		HashMap escapeSequences = null;
+		HashMap<String, String> escapeSequences = null;
 		Object o = variousEncChars.get(encChars);
 		if (o == null) {
 			// this means we haven't got the sequences for these encoding
@@ -200,7 +211,7 @@ public class Escape {
 			variousEncChars.put(encChars, escapeSequences);
 		} else {
 			// we already have escape sequences for these encoding characters
-			escapeSequences = (HashMap) o;
+			escapeSequences = (HashMap<String, String>) o;
 		}
 		return escapeSequences;
 	}
