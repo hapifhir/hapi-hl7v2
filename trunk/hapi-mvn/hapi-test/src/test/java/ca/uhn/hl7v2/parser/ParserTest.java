@@ -80,6 +80,12 @@ public class ParserTest extends TestCase
 
         PipeParser p = new PipeParser();
         Message m = p.parse(message);
+        p.encode(m);
+        p.encode(m);
+        p.encode(m);
+        p.encode(m);
+        p.encode(m);
+        p.encode(m);
 
         assertEquals(GenericMessage.V22.class, m.getClass());
         Terser t = new Terser(m);
