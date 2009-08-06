@@ -93,6 +93,28 @@ public class ParserTest extends TestCase
         assertEquals("NM", t.get("/OBX-2"));
     }
 
+    
+    public void testUnknownVersionMessage() throws Exception {
+        // a valid ORU_R01 message in which MSH-9 has been changed
+        String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ORU^R01|LABGL1199510021852632|P|2.999\r"
+                + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
+                + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r"
+                + "OBR|1||09527539437000040|7000040^ETHANOL^^^ETOH|||19951002180500|||||||19951002182500||||1793561||0952753943||19951002185200||100|F||^^^^^RT\r"
+                + "OBX||NM|7000040^ETHANOL^^^ETOH|0001|224|mg/dL|||||F|||19951002185200||182\r"
+                + "NTE|||          Reference Ranges\r" + "NTE|||          ****************\r"
+                + "NTE|||           Normal:              Negative\r"
+                + "NTE|||           Toxic Concentration: >80 mg/dL\r";
+
+        PipeParser p = new PipeParser();
+        Message m = p.parse(message);
+        p.encode(m);
+
+        assertEquals(GenericMessage.V22.class, m.getClass());
+        Terser t = new Terser(m);
+        assertEquals("DMCRES", t.get("/MSH-5"));
+        assertEquals("NM", t.get("/OBX-2"));
+    }
+
 
     public void testGenericMessageAllVersions() throws Exception {
         List versions = Parser.getValidVersions();
