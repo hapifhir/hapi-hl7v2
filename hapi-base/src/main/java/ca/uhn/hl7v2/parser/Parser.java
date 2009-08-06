@@ -397,9 +397,9 @@ public abstract class Parser {
             if (in != null) {            
                 structures = new Properties();
                 structures.load(in);
+                map.put(versions[i], structures);
             }
             
-            map.put(versions[i], structures);
         }
         return map;
     }
