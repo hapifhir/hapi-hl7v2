@@ -130,17 +130,16 @@
 	</modules>
 	
 	<distributionManagement>
-		<repository>
+		<!-- <repository>
 			<id>hapi</id>
 			<name>HAPI Sourceforge</name>
-			<!-- <url>file://C:/wagon</url> -->
 			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
 		</repository>
 		<snapshotRepository>
 			<id>hapi</id>
 			<name>HAPI Sourceforge</name>
 			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
-		</snapshotRepository>
+		</snapshotRepository>  -->
 	</distributionManagement>
 	
 	<build>
@@ -149,8 +148,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.4</source>
-					<target>1.4</target>
+					<source>1.5</source>
+					<target>1.5</target>
 					<fork>true</fork>
 					<maxmem>1024m</maxmem>
 				</configuration>
@@ -167,21 +166,6 @@
             </plugin>
 		</plugins>
 		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-file</artifactId>
-				<version>1.0-beta-5</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-5</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh-external</artifactId>
-				<version>1.0-beta-1</version>
-			</extension>
 		</extensions>
 	</build>
 
