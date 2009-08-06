@@ -15,7 +15,7 @@
  * Contributor(s): James Agnew
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.examples;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
@@ -38,7 +39,7 @@ import ca.uhn.hl7v2.util.Terser;
  * Example code for using the {@link Terser}
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-03-19 13:09:26 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-08-06 22:43:33 $ by $Author: jamesagnew $
  */
 public class ExampleUseTerser
 {
@@ -56,11 +57,12 @@ public class ExampleUseTerser
                 + "PV1|0001|I|D.ER^1F^M950^01|ER|P000998|11B^M011^02|070615^BATMAN^GEORGE^L|555888^OKNEL^BOB^K^DR^MD|777889^NOTREAL^SAM^T^DR^MD^PHD|ER|D.WT^1A^M010^01|||ER|AMB|02|070615^VOICE^BILL^L|ER|000001916994|D||||||||||||||||GDD|WA|NORM|02|O|02|E.IN^02D^M090^01|E.IN^01D^M080^01|199904072124|199904101200|||||5555112333|||666097^DNOTREAL^MANNY^P\r"
                 + "PV2|||0112^TESTING|55555^PATIENT IS NORMAL|NONE|||19990225|19990226|1|1|TESTING|555888^NOTREAL^BOB^K^DR^MD||||||||||PROD^003^099|02|ER||NONE|19990225|19990223|19990316|NONE\r"
                 + "AL1||SEV|001^POLLEN\r"
+                + "AL1||SEV|003^DUST\r"
                 + "GT1||0222PL|NOTREAL^BOB^B||STREET^OTHER STREET^CITY^ST^77787|(444)999-3333|(222)777-5555||||MO|111-33-5555||||NOTREAL GILL N|STREET^OTHER STREET^CITY^ST^99999|(111)222-3333\r"
                 + "IN1||022254P|4558PD|BLUE CROSS|STREET^OTHER STREET^CITY^ST^00990||(333)333-6666||221K|LENIX|||19980515|19990515|||PATIENT01 TEST D||||||||||||||||||02LL|022LP554";
         Parser p = new GenericParser();
         Message hapiMsg = p.parse(msg);
-
+        
         /*
          * Another way of reading messages is to use a Terser. The terser 
          * accepts a particular syntax to retrieve segments. See the API
@@ -74,10 +76,43 @@ public class ExampleUseTerser
          */ 
         String sendingApplication = terser.get("/.MSH-3-1");
         System.out.println(sendingApplication);
-
+        // HIS
+        
+        /*
+         * We can use brackets to get particular repetitions
+         */
+        String secondAllergyType = terser.get("/AL1(1)-3-2");
+        System.out.println(secondAllergyType);
+        // DUST
+        
         // We can also use the terser to set values
         terser.set("/.MSH-3-1", "new_sending_app");
         
+        // Let's try something more complicated, adding values to an OBX in an ORU^R01
+        ORU_R01 oru = new ORU_R01();
+        oru.getMSH().getEncodingCharacters().setValue("^~\\&");
+        oru.getMSH().getFieldSeparator().setValue("|");
+        oru.getMSH().getMessageType().getMessageCode().setValue("ORU");
+        oru.getMSH().getMessageType().getTriggerEvent().setValue("R01");
+        oru.getMSH().getVersionID().getVersionID().setValue("2.5");
+        
+        terser = new Terser(oru);
+        for (int i = 0; i < 5; i++) {
+            terser.set("/PATIENT_RESULT/ORDER_OBSERVATION/OBSERVATION(" + i + ")/OBX-1", "" + (i + 1));
+            terser.set("/PATIENT_RESULT/ORDER_OBSERVATION/OBSERVATION(" + i + ")/OBX-3", "ST");
+            terser.set("/PATIENT_RESULT/ORDER_OBSERVATION/OBSERVATION(" + i + ")/OBX-5", "This is the value for rep " + i);
+        }
+        
+        System.out.println(p.encode(oru));
+        
+        /*
+         *   MSH|^~\&|||||||ORU^R01|||2.5
+         *   OBX|1||ST||This is the value for rep 0
+         *   OBX|2||ST||This is the value for rep 1
+         *   OBX|3||ST||This is the value for rep 2
+         *   OBX|4||ST||This is the value for rep 3
+         *   OBX|5||ST||This is the value for rep 4
+         */
     }
 
 }
