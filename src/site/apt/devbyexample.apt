@@ -42,14 +42,15 @@ Developing using HAPI - By Example
   To be even more advanced, we can
   {{{xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfile.html}validate messages}}
   using conformance profiles. Note that the conformance profile used in this
-  example can be seen {{{xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}.
+  example can be seen {{{xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}. See the FAQ for 
+  notes on using this in your own applications. 
 
 
 * Advanced
 
   Another way of reading and writing to message objects is to use 
-  a {{{xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
+  a {{{xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}.
   
-
+  We can use a subclassed parser to {{{CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
   
   
