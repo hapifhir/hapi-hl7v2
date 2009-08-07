@@ -21,7 +21,7 @@ import ca.uhn.log.HapiLogFactory;
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.4 $ updated on $Date: 2009-03-26 00:39:49 $ by $Author: jamesagnew $
+ * @version $Revision: 1.5 $ updated on $Date: 2009-08-07 22:41:07 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -29,6 +29,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     
     private static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
     private static final HashMap packages = new HashMap();
+    private static List<String> ourVersions = null;
 
     static {
         reloadPackages();
@@ -266,14 +267,31 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	public static void reloadPackages() {
         String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
         packages.clear();
+        ourVersions = new ArrayList<String>();
         for (int i = 0; i < versions.length; i++) {
             try {
-                packages.put(versions[i], loadPackages(versions[i]));
+                String[] versionPackages = loadPackages(versions[i]);
+                if (versionPackages.length > 0) {
+                    ourVersions.add(versions[i]);
+                }
+                packages.put(versions[i], versionPackages);
             } catch (HL7Exception e) {
                 throw new Error("Version \"" + versions[i] + "\" is invalid. This is a programming error: ", e);
             }
         }		
 	}
 
-
+	
+	/**
+	 * Returns a string containing the highest known version of HL7 known to HAPI (i.e. "2.6"). Note that this
+	 * is determined by checking which structure JARs are available on the classpath, so if this release of
+	 * HAPI supports version 2.6, but only the hapi-structures-v23.jar is available on the classpath,
+	 * "2.3" will be returned
+	 */
+	public static String getHighestKnownVersion() {
+	    if (ourVersions == null || ourVersions.size() == 0) {
+	        return null;
+	    }
+	    return ourVersions.get(ourVersions.size() - 1);
+	}
 }
