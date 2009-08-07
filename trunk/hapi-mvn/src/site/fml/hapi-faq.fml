@@ -42,6 +42,23 @@
 			</answer>
 		</faq>
 	</part>
+	<part id="Message Validation">
+		<faq id="invalid_conformance_profile">
+			<question>
+				I generated a conformance profile using the Messaging Workbench (MWB) but HAPI says it is invalid,
+				or doesn't seem to be applying it.
+			</question>
+			<answer>
+				<p>
+					The most likely problem is that you have generated the conformance profile incorrectly. Try opening
+					the XML conformance profile in a text editor, and look at the root tag. If it isn't a 
+					"HL7v2xConformanceProfile" tag, you have the wrong format of file.
+					See the documentation for the <a href="http://hl7api.sourceforge.net/conf/compiler.html">Profile Compiler</a>
+					for information on how to generate conformance profile files.		
+				</p>
+			</answer>
+		</faq>
+	</part>
 	<part id="General">
 		<title>General Questions</title>
 		<faq id="production_use">
