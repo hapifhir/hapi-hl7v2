@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -29,6 +29,8 @@ package ca.uhn.hl7v2.protocol.impl;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.preparser.PreParser;
@@ -44,7 +46,7 @@ import ca.uhn.log.HapiLogFactory;
  * A default implementation of <code>Processor</code>.  
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
  */
 public class ProcessorImpl implements Processor {
 
@@ -57,6 +59,7 @@ public class ProcessorImpl implements Processor {
     private boolean myThreaded; //true if separate threads are calling cycle()  
     private Cycler ackCycler;
     private Cycler nonAckCycler;
+    private ExecutorService myResponseExecutorService;
     
     /**
      * @param theContext source of supporting services 
@@ -88,6 +91,8 @@ public class ProcessorImpl implements Processor {
             nonAckCycler = new Cycler(this, false);
             Thread nonAckThd = new Thread(nonAckCycler);
             nonAckThd.start();
+            
+            myResponseExecutorService = Executors.newSingleThreadExecutor(); 
         }
     }
     
@@ -98,6 +103,8 @@ public class ProcessorImpl implements Processor {
         if (myThreaded) {
             ackCycler.stop();
             nonAckCycler.stop();
+
+            myResponseExecutorService.shutdownNow();
         }
     }
 
@@ -316,8 +323,7 @@ public class ProcessorImpl implements Processor {
         };
         
         if (myThreaded) {
-            Thread thd = new Thread(sender);
-            thd.start();
+            myResponseExecutorService.execute(sender);
         } else {
             sender.run();
         }
@@ -425,7 +431,7 @@ public class ProcessorImpl implements Processor {
      * A struct for Transportable collection entries that time out.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
      */
     class ExpiringTransportable {
         public Transportable transportable;
@@ -441,7 +447,7 @@ public class ProcessorImpl implements Processor {
      * A Runnable that repeatedly calls the cycle() method of this class.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
      */
     private static class Cycler implements Runnable {
 
