@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -86,6 +86,16 @@ public interface Segment extends Structure {
    */
   public int numFields();
 
-  
+  /**
+   * Returns the names of the fields in this segment.
+   * 
+   * @since 1.0 - Note that if 
+   * user defined types are being used, there is a possibility
+   * that some entries may be null. All official hapi structures will
+   * have all entries populated, but older user defined structures
+   * may not have populated all values, since this feature did not
+   * exist prior to release 1.0.
+   */
+  public String[] getNames();
   
 } 

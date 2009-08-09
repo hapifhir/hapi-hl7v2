@@ -27,5 +27,13 @@ public class GenericSegment extends AbstractSegment {
     public String getName() {
         return this.name;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+	protected Type createNewTypeWithoutReflection(int field) {
+		return new Varies(getMessage());
+	}
     
 }
