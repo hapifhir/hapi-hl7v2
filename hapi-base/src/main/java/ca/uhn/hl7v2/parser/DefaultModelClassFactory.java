@@ -21,7 +21,7 @@ import ca.uhn.log.HapiLogFactory;
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.5 $ updated on $Date: 2009-08-07 22:41:07 $ by $Author: jamesagnew $
+ * @version $Revision: 1.6 $ updated on $Date: 2009-08-09 13:58:04 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -30,6 +30,8 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     private static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
     private static final HashMap packages = new HashMap();
     private static List<String> ourVersions = null;
+
+    private static final String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
 
     static {
         reloadPackages();
@@ -225,6 +227,10 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         //get list of packages to search for the corresponding message class 
         String[] packages = packageList(version);
 
+        if (packages == null) {
+        	return null;
+        }
+        
         //get subpackage for component type
         String types = "message|group|segment|datatype";
         if (types.indexOf(type) < 0) 
@@ -265,7 +271,6 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	 * as undetermined behaviour may result. 
 	 */
 	public static void reloadPackages() {
-        String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
         packages.clear();
         ourVersions = new ArrayList<String>();
         for (int i = 0; i < versions.length; i++) {
