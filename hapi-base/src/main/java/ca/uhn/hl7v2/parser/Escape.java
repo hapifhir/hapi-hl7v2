@@ -27,7 +27,12 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.parser;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles "escaping" and "unescaping" of text according to the HL7 escape
@@ -36,8 +41,6 @@ import java.util.*;
  * highlighting, hexademical, and locally defined escape sequences are also
  * unsupported.
  * 
- * 
- * 
  * @author Bryan Tripp
  */
 public class Escape {
@@ -45,10 +48,10 @@ public class Escape {
     /**
      * limits the size of variousEncChars to 1000, can be overridden by system property.
      */
-    private static Map<EncodingCharacters, Map<String, String>> variousEncChars = Collections.synchronizedMap(new LinkedHashMap<EncodingCharacters, Map<String, String>>(5, 0.75f, true) {
+    private static Map<EncodingCharacters, HashMap<String, String>> variousEncChars = Collections.synchronizedMap(new LinkedHashMap<EncodingCharacters, HashMap<String, String>>(5, 0.75f, true) {
         private static final long serialVersionUID = 1L;
         final int maxSize=new Integer(System.getProperty(Escape.class.getName()+".maxSize","1000"));
-        protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, Map<String, String>> eldest) {
+        protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, HashMap<String, String>> eldest) {
             return this.size() > maxSize;
         }
     });
@@ -58,9 +61,29 @@ public class Escape {
 	}
 
 	public static String escape(String text, EncodingCharacters encChars) {
+
+		// don't bother unless there's something to encode
+		boolean found = false;
+		char c1 = encChars.getComponentSeparator();
+		char c2 = encChars.getEscapeCharacter();
+		char c3 = encChars.getFieldSeparator();
+		char c4 = encChars.getRepetitionSeparator();
+		char c5 = encChars.getSubcomponentSeparator();
+		char c6 = '\r';
+		for (int i = 0; i < text.length(); i++) {
+			char nextChar = text.charAt(i);
+			if (nextChar == c1 || nextChar == c2 || nextChar == c3 || nextChar == c4 || nextChar == c5 || nextChar == c6) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			return text;
+		}
+		
+		HashMap<String, String> esc = getEscapeSequences(encChars);
 		StringBuffer result = new StringBuffer();
 		int textLength = text.length();
-		HashMap esc = getEscapeSequences(encChars);
 		Set keys = esc.keySet();
 		String escChar = String.valueOf(encChars.getEscapeCharacter());
 		int position = 0;
@@ -197,13 +220,13 @@ public class Escape {
 	 * Returns a HashTable with escape sequences as keys, and corresponding
 	 * Strings as values.
 	 */
-	private static HashMap getEscapeSequences(EncodingCharacters encChars) {
+	private static HashMap<String, String> getEscapeSequences(EncodingCharacters encChars) {
 		// escape sequence strings must be assembled using the given escape
 		// character
 
 		// see if this has already been done for this set of encoding characters
 		HashMap<String, String> escapeSequences = null;
-		Object o = variousEncChars.get(encChars);
+		HashMap<String, String> o = variousEncChars.get(encChars);
 		if (o == null) {
 			// this means we haven't got the sequences for these encoding
 			// characters yet - let's make them
@@ -211,7 +234,7 @@ public class Escape {
 			variousEncChars.put(encChars, escapeSequences);
 		} else {
 			// we already have escape sequences for these encoding characters
-			escapeSequences = (HashMap<String, String>) o;
+			escapeSequences = (HashMap) o;
 		}
 		return escapeSequences;
 	}
@@ -221,8 +244,8 @@ public class Escape {
 	 * should only be called by getEscapeCharacter(), which will cache the
 	 * results for subsequent use.
 	 */
-	private static HashMap makeEscapeSequences(EncodingCharacters ec) {
-		HashMap seqs = new HashMap();
+	private static HashMap<String, String> makeEscapeSequences(EncodingCharacters ec) {
+		HashMap<String, String> seqs = new HashMap<String, String>();
 		char[] codes = { 'F', 'S', 'T', 'R', 'E' };
 		char[] values = { ec.getFieldSeparator(), ec.getComponentSeparator(),
 				ec.getSubcomponentSeparator(), ec.getRepetitionSeparator(),
