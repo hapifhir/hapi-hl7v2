@@ -23,7 +23,7 @@
             <name>HAPI Developers Mailing List</name>
             <subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
             <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
-            <archive>https://sourceforge.net/mailarchive/forum.php?forum_name=hl7api-devel</archive>
+            <archive>http://www.nabble.com/HAPI-f3467.html</archive>
             <post>mailto:hl7api-devel@lists.sourceforge.net</post>
         </mailingList>
 	</mailingLists>
