@@ -3,7 +3,7 @@
  * araSpect (araspect.sourceforge.net).  The original copyright follows ...
  *
  * =================================================================
- * Copyright (c) 2001,2002 aragost ag, Zürich, Switzerland.
+ * Copyright (c) 2001,2002 aragost ag, Zï¿½rich, Switzerland.
  * All rights reserved.
  *
  * This software is provided 'as-is', without any express or implied
@@ -40,14 +40,14 @@ package ca.uhn.hl7v2.util;
 
 import java.util.*;
 
-public class FilterIterator implements Iterator {
+public class FilterIterator<T> implements Iterator<T> {
     
-    private Predicate predicate;
-    private Iterator iter;
-    private Object nextObject;
+    private Predicate<T> predicate;
+    private Iterator<T> iter;
+    private T nextObject;
     private boolean nextObjectSet = false;
     
-    public FilterIterator(Iterator iter, Predicate predicate) {
+    public FilterIterator(Iterator<T> iter, Predicate<T> predicate) {
         this.iter = iter;
         this.predicate = predicate;
     }
@@ -60,7 +60,7 @@ public class FilterIterator implements Iterator {
         }
     }
     
-    public Object next() {
+    public T next() {
         if (!nextObjectSet) {
             if (!setNextObject()) {
                 throw new NoSuchElementException();
@@ -76,7 +76,7 @@ public class FilterIterator implements Iterator {
      */
     private boolean setNextObject() {
         while (iter.hasNext()) {
-            Object object = iter.next();
+            T object = iter.next();
             if (predicate.evaluate(object)) {
                 nextObject = object;
                 nextObjectSet = true;
@@ -91,8 +91,11 @@ public class FilterIterator implements Iterator {
         throw new UnsupportedOperationException();
     }
     
-    public interface Predicate {
-        public boolean evaluate(Object obj);
+    /**
+     * Interface for evaluating whether an object should be returned by the iterator
+     */
+    public interface Predicate<T> {
+        public boolean evaluate(T obj);
     }
     
 }
