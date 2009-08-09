@@ -7,28 +7,31 @@
 	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-test/src/test/java"/>
 	<classpathentry kind="src" path="hapi-test/src/test/resources"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.0.2/maven-plugin-api-2.0.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.0.1/maven-core-2.0.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.0.1/maven-project-2.0.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.0.1/maven-settings-2.0.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.0.9/maven-plugin-api-2.0.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.0.9/maven-core-2.0.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.0.9/maven-settings-2.0.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.0.9/maven-project-2.0.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-j2ee/4.0.2/jboss-j2ee-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/2.0.2/xml-apis-2.0.2.pom"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.9/log4j-1.2.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.0-FCS/jaxen-1.0-FCS.jar"/>
-	<classpathentry kind="var" path="M2_REPO/saxpath/saxpath/1.0-FCS/saxpath-1.0-FCS.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v21-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v21-1.0-beta1-src.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/1.0-beta1/hapi-structures-v22-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v22-1.0-beta1-src.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/1.0-beta1/hapi-structures-v23-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v23-1.0-beta1-src.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/1.0-beta1/hapi-structures-v231-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v231-1.0-beta1-src.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.0-beta1/hapi-structures-v24-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.0-beta1/hapi-structures-v24-1.0-beta1-src.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.0-beta1/hapi-structures-v24-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.0-beta1/hapi-structures-v24-1.0-beta1-src.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.0-beta1/hapi-structures-v25-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.0-beta1/hapi-structures-v25-1.0-beta1-src.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.0-beta1/hapi-structures-v251-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.0-beta1/hapi-structures-v251-1.0-beta1-src.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.0-beta1/hapi-structures-v26-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v256/1.0-beta1/hapi-structures-v26-1.0-beta1-src.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4.1/mail-1.4.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.0-FCS/jaxen-1.0-FCS.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/saxpath/saxpath/1.0-FCS/saxpath-1.0-FCS.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
