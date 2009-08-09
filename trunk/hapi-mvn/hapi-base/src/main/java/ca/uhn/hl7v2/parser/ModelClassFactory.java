@@ -6,6 +6,7 @@ package ca.uhn.hl7v2.parser;
 import java.io.Serializable;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Structure;
 
 /**
  * Looks up classes for message model components (e.g. concrete implementations of 
@@ -13,7 +14,7 @@ import ca.uhn.hl7v2.HL7Exception;
  * components. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:31 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-08-09 13:58:20 $ by $Author: jamesagnew $
  */
 public interface ModelClassFactory extends Serializable {
 
@@ -42,7 +43,7 @@ public interface ModelClassFactory extends Serializable {
      * @return a class that implements the specified segment
      * @throws HL7Exception if the version if not recognized or an appropriate class can not be found
      */
-    public Class getSegmentClass(String theName, String theVersion) throws HL7Exception;
+    public Class<? extends Structure> getSegmentClass(String theName, String theVersion) throws HL7Exception;
     
     /**
      * @param theName name of type
