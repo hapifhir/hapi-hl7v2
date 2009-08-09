@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.validation.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +39,9 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  * A default implementation of <code>ValidationContext</code>. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-08-09 13:31:13 $ by $Author: jamesagnew $
  */
-public class ValidationContextImpl implements ValidationContext {
+public class ValidationContextImpl implements ValidationContext, Serializable {
 
     private List myPrimitiveRuleBindings;
     private List myMessageRuleBindings;
