@@ -123,10 +123,10 @@
 				</p>
 				<p>
 					If you are trying to build HAPI yourself (you have made modifications of some kind 
-					or want to test somethying), you can build HAPI using the following command:
+					or want to test something), you can build HAPI using the following command:
 				</p>
 				<p>
-					mvn -P CORE install
+					mvn install
 				</p>
 				<p>
 					This skips the sourcegen modules and only builds the core library.

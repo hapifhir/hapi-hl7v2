@@ -48,7 +48,7 @@ Hacking HAPI
   Building a HAPI base JAR is as simple as typing:
 
 +----------------+
-mvn -P CORE install
+mvn install
 +----------------+
 
   At the end of this build, you should have a compiled JAR in the following
