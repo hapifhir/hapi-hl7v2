@@ -52,6 +52,16 @@
 			<artifactId>hapi-structures-v25</artifactId>
 			<version>1.0-beta1</version>
 		</dependency>		
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v251</artifactId>
+            <version>1.0-beta1</version>
+        </dependency>       
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v26</artifactId>
+            <version>1.0-beta1</version>
+        </dependency>       
 
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
@@ -86,6 +96,18 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
+            <version>1.0-beta1</version>
+            <classifier>src</classifier>
+        </dependency>       
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v251</artifactId>
+            <version>1.0-beta1</version>
+            <classifier>src</classifier>
+        </dependency>       
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v26</artifactId>
             <version>1.0-beta1</version>
             <classifier>src</classifier>
         </dependency>       
