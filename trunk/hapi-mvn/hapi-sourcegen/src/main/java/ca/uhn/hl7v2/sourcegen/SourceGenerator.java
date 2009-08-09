@@ -220,5 +220,47 @@ public class SourceGenerator extends Object {
         System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
         makeAll("tmp", "2.5.1", true);
     }
+
+	public static String makeAlternateAccessorName(String fieldDesc, String parentName, int index) {
+        StringBuffer aName = new StringBuffer("get");
+        
+        aName.append(parentName).append(index);
+        
+        char[] chars = fieldDesc.toCharArray();
+        boolean lastCharWasNotLetter = true;
+        int inBrackets = 0;
+        StringBuffer bracketContents = new StringBuffer();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '(' ) inBrackets++;
+            if (chars[i] == ')' ) inBrackets--;
+            
+            if (Character.isLetterOrDigit(chars[i])) {
+                if (inBrackets > 0) {
+                    //buffer everthing in brackets
+                    bracketContents.append(chars[i]);
+                } else {
+                    //add capitalized bracketed text if appropriate 
+                    if (bracketContents.length() > 0) {
+                        aName.append(capitalize(filterBracketedText(bracketContents.toString())));
+                        bracketContents = new StringBuffer();
+                    }
+                    if (lastCharWasNotLetter) {
+                        //first letter of each word is upper-case
+                        aName.append(Character.toUpperCase(chars[i]));
+                    } else {
+                        aName.append(chars[i]);
+                    }
+                    lastCharWasNotLetter = false;
+                }
+            } else {
+                lastCharWasNotLetter = true;
+            }
+        }
+        aName.append(capitalize(filterBracketedText(bracketContents.toString())));        
+        String retVal = aName.toString();
+
+        
+        return retVal;
+	}
     
 }

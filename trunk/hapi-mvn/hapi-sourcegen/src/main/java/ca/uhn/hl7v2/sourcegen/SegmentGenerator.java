@@ -262,14 +262,6 @@ public class SegmentGenerator extends java.lang.Object {
                     source.append("       this.add(");
                     source.append(type);
                     source.append(".class");
-//                    if (type.equalsIgnoreCase("Varies")) {
-//                    } else {
-//                        source.append("factory.getTypeClass(\"");
-//                        source.append(type);
-//                        source.append("\", \"");
-//                        source.append(version);
-//                        source.append("\")");
-//                    }
                     source.append(", ");
                     if (se.opt == null) {
                         source.append("false");
@@ -292,6 +284,7 @@ public class SegmentGenerator extends java.lang.Object {
                     } else {
                         source.append("new Object[]{message}");                          
                     }
+                    source.append(", \"").append(se.desc.replace("\"", "\\\"")).append("\"");
                     source.append(");\r\n");  
                 }
                 source.append("    } catch (HL7Exception he) {\r\n");
@@ -303,106 +296,39 @@ public class SegmentGenerator extends java.lang.Object {
             //write a datatype-specific accessor for each field
             for (int i = 0; i < elements.size(); i++) {  
               se = (SegmentElement)elements.get(i);
-              if (!se.desc.equalsIgnoreCase("UNUSED")) {  //some entries in 2.1 DB say "unused"
-                String type = SourceGenerator.getAlternateType(se.type, version);
-                source.append("  /**\r\n");
-                source.append("   * Returns ");
-                if (se.repetitions != 1) source.append("a single repetition of ");
-                source.append(se.desc);
-                source.append(" (");
-                source.append(name);
-                source.append("-");
-                source.append(se.field);
-                source.append(").\r\n");
-                if (se.repetitions != 1) {
-                    source.append("   * @param rep the repetition number (this is a repeating field)\r\n");
-                    source.append("   * @throws HL7Exception if the repetition number is invalid.\r\n");
-                }
-                source.append("   */\r\n");
-                source.append("  public ");
-                source.append(type);
-                source.append(" ");
-                source.append(SourceGenerator.makeAccessorName(se.desc, name));
-                source.append("(");
-                if (se.repetitions != 1) source.append("int rep");
-                source.append(") ");
-                if (se.repetitions != 1) source.append("throws HL7Exception");
-                source.append(" {\r\n");
-                source.append("    ");
-                source.append(type);
-                source.append(" ret = null;\r\n");
-                source.append("    try {\r\n");
-                source.append("        Type t = this.getField(");
-                source.append(se.field);
-                source.append(", ");
-                if (se.repetitions == 1) {
-                    source.append("0");
-                } else {
-                    source.append("rep");
-                }
-                source.append(");\r\n");
-                source.append("        ret = (");
-                source.append(type);
-                source.append(")t;\r\n");
-                
-                source.append("    } catch (ClassCastException cce) {\r\n");
-                source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
-                source.append("        throw new RuntimeException(cce);\r\n");
-                if (se.repetitions == 1) {
-                    source.append("    } catch (HL7Exception he) {\r\n");
-                    source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
-                    source.append("        throw new RuntimeException(he);\r\n");
-                }
-                source.append("    }\r\n");
-                source.append("    return ret;\r\n");
-                source.append("  }\r\n\r\n");
-                
-                //add an array accessor as well for repeating fields
-                if (se.repetitions != 1) {
-                    source.append("  /**\r\n");
-                    source.append("   * Returns all repetitions of ");
-                    source.append(se.desc);
-                    source.append(" (");
-                    source.append(name);
-                    source.append("-");
-                    source.append(se.field);
-                    source.append(").\r\n");
-                    source.append("   */\r\n");
-                    source.append("  public ");
-                    source.append(type);
-                    source.append("[] ");
-                    source.append(SourceGenerator.makeAccessorName(se.desc, name));
-                    source.append("() {\r\n");
-                    source.append("     ");
-                    source.append(type);
-                    source.append("[] ret = null;\r\n");
-                    source.append("    try {\r\n");
-                    source.append("        Type[] t = this.getField(");
-                    source.append(se.field);
-                    source.append(");  \r\n");
-                    source.append("        ret = new ");
-                    source.append(type);
-                    source.append("[t.length];\r\n");
-                    source.append("        for (int i = 0; i < ret.length; i++) {\r\n");
-                    source.append("            ret[i] = (");
-                    source.append(type);
-                    source.append(")t[i];\r\n");
-                    source.append("        }\r\n");
-                    source.append("    } catch (ClassCastException cce) {\r\n");
-                    source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
-                    source.append("        throw new RuntimeException(cce);\r\n");
-                    source.append("    } catch (HL7Exception he) {\r\n");
-                    source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
-                    source.append("        throw new RuntimeException(he);\r\n");
-                    source.append("    }\r\n");
-                    source.append("    return ret;\r\n");
-                    source.append("  }\r\n\r\n");
-                }
-              }
+              makeFieldAccessor(name, version, source, se, SourceGenerator.makeAccessorName(se.desc, name));
+              makeFieldAccessor(name, version, source, se, SourceGenerator.makeAlternateAccessorName(se.desc, name, i+1));
             }
             
             //add adapter method code for control package if it exists
             //source.append(Control.getImplementation(correspondingControlInterface, version));
+            
+            // CreatNewType method - To avoid reflection
+            source.append("   protected Type createNewTypeWithoutReflection(int field) {\r\n");
+            source.append("      switch (field) {\r\n");
+            for (int i = 0; i < elements.size(); i++) {
+                se = (SegmentElement)elements.get(i);
+                String type = SourceGenerator.getAlternateType(se.type, version);
+                source.append("         case " + i + ": return new ");
+                if ("Varies".equals(type)) {
+                	source.append("Varies(getMessage());\r\n");
+                } else {
+	                source.append(DefaultModelClassFactory.getVersionPackageName(version));
+	                source.append("datatype.");
+	                source.append(type);
+	                source.append("(getMessage()");
+	                if (se.type.equals("ID") || se.type.equals("IS")) {
+	                    source.append(", new Integer(");
+	                    source.append(se.table);
+	                    source.append(")");
+	                }
+	                source.append(");\r\n");
+                }
+            }
+            source.append("         default: return null;\r\n");
+            source.append("      }\r\n");
+            source.append("   }\r\n");
+            source.append("\r\n");
             
             source.append("}");
             
@@ -412,6 +338,105 @@ public class SegmentGenerator extends java.lang.Object {
         
         return source.toString();
     }
+
+	private static void makeFieldAccessor(String name, String version, StringBuffer source, SegmentElement se, Object accessorName) {
+		if (!se.desc.equalsIgnoreCase("UNUSED")) {  //some entries in 2.1 DB say "unused"
+		    String type = SourceGenerator.getAlternateType(se.type, version);
+		    source.append("  /**\r\n");
+		    source.append("   * Returns ");
+		    if (se.repetitions != 1) source.append("a single repetition of ");
+		    source.append(se.desc);
+		    source.append(" (");
+		    source.append(name);
+		    source.append("-");
+		    source.append(se.field);
+		    source.append(").\r\n");
+		    if (se.repetitions != 1) {
+		        source.append("   * @param rep the repetition number (this is a repeating field)\r\n");
+		        source.append("   * @throws HL7Exception if the repetition number is invalid.\r\n");
+		    }
+		    source.append("   */\r\n");
+		    source.append("  public ");
+		    source.append(type);
+		    source.append(" ");
+		    source.append(accessorName);
+		    source.append("(");
+		    if (se.repetitions != 1) source.append("int rep");
+		    source.append(") ");
+		    if (se.repetitions != 1) source.append("throws HL7Exception");
+		    source.append(" {\r\n");
+		    source.append("    ");
+		    source.append(type);
+		    source.append(" ret = null;\r\n");
+		    source.append("    try {\r\n");
+		    source.append("        Type t = this.getField(");
+		    source.append(se.field);
+		    source.append(", ");
+		    if (se.repetitions == 1) {
+		        source.append("0");
+		    } else {
+		        source.append("rep");
+		    }
+		    source.append(");\r\n");
+		    source.append("        ret = (");
+		    source.append(type);
+		    source.append(")t;\r\n");
+		    
+		    source.append("    } catch (ClassCastException cce) {\r\n");
+		    source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
+		    source.append("        throw new RuntimeException(cce);\r\n");
+		    if (se.repetitions == 1) {
+		        source.append("    } catch (HL7Exception he) {\r\n");
+		        source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
+		        source.append("        throw new RuntimeException(he);\r\n");
+		    }
+		    source.append("    }\r\n");
+		    source.append("    return ret;\r\n");
+		    source.append("  }\r\n\r\n");
+		    
+		    //add an array accessor as well for repeating fields
+		    if (se.repetitions != 1) {
+		        source.append("  /**\r\n");
+		        source.append("   * Returns all repetitions of ");
+		        source.append(se.desc);
+		        source.append(" (");
+		        source.append(name);
+		        source.append("-");
+		        source.append(se.field);
+		        source.append(").\r\n");
+		        source.append("   */\r\n");
+		        source.append("  public ");
+		        source.append(type);
+		        source.append("[] ");
+		        source.append(accessorName);
+		        source.append("() {\r\n");
+		        source.append("     ");
+		        source.append(type);
+		        source.append("[] ret = null;\r\n");
+		        source.append("    try {\r\n");
+		        source.append("        Type[] t = this.getField(");
+		        source.append(se.field);
+		        source.append(");  \r\n");
+		        source.append("        ret = new ");
+		        source.append(type);
+		        source.append("[t.length];\r\n");
+		        source.append("        for (int i = 0; i < ret.length; i++) {\r\n");
+		        source.append("            ret[i] = (");
+		        source.append(type);
+		        source.append(")t[i];\r\n");
+		        source.append("        }\r\n");
+		        source.append("    } catch (ClassCastException cce) {\r\n");
+		        source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
+		        source.append("        throw new RuntimeException(cce);\r\n");
+		        source.append("    } catch (HL7Exception he) {\r\n");
+		        source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
+		        source.append("        throw new RuntimeException(he);\r\n");
+		        source.append("    }\r\n");
+		        source.append("    return ret;\r\n");
+		        source.append("  }\r\n\r\n");
+		    }
+		  }
+	}
     
     
     public static void main(String args[]) {
