@@ -8,6 +8,7 @@
 	<body>
         <release version="1.0" date="TBA" 
             description="This version has not yet been released.">
+            <action type="fix" due-to="Jan Klasser" issue="1809573">Fix NullPointerException in DefaultValidator when no table present for an ID datatype</action>
             <action type="fix" dev="jamesagnew">Allow parsing of unknown message types for 2.5.1 and 2.6 messages</action>
             <action type="update" dev="jamesagnew">Convert HAPI source version JDK 5.0. This allows the use (and begins a gradual conversion) to generics by HAPI's internal structures. Support for JDK1.4 will still remain through version specific JARs produced by RetroTranslator.</action>
             <action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
