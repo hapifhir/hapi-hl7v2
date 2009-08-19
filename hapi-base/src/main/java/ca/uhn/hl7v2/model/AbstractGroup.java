@@ -155,6 +155,10 @@ public abstract class AbstractGroup implements Group {
        
     @Override
 	public String addNonstandardSegment(String theName, int theIndex) throws HL7Exception {
+    	if (this instanceof Message && theIndex == 0) {
+    		throw new HL7Exception("Can not add nonstandard segment \"" + theName + "\" to start of message.");
+    	}
+    	
         String version = this.getMessage().getVersion();
         if (version == null) 
             throw new HL7Exception("Need message version to add segment by name; message.getVersion() returns null");        
