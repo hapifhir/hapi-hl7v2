@@ -25,82 +25,82 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 //		return myPreviousSibling;
 //	}
 //	
-	@Override
+	
 	public Set<String> getAllChildNames() {
 		return Collections.emptySet();
 	}
 
-	@Override
+	
 	public Set<String> getAllPossibleFirstChildren() {
 		return Collections.emptySet();
 	}
 
-	@Override
+	
 	public List<StructureDefinition> getChildren() {
 		return Collections.emptyList();
 	}
 
-	@Override
+	
 	public IStructureDefinition getFirstChild() {
 		return null;
 	}
 
-	@Override
+	
 	public IStructureDefinition getFirstSibling() {
 		return null;
 	}
 
-	@Override
+	
 	public String getName() {
 		return myName;
 	}
 
-	@Override
+	
 	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
 		return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
 	}
 
-	@Override
+	
 	public IStructureDefinition getNextLeaf() {
 		return myPreviousSibling.getNextLeaf();
 	}
 
-	@Override
+	
 	public IStructureDefinition getNextSibling() {
 		return myPreviousSibling.getNextSibling();
 	}
 
-	@Override
+	
 	public IStructureDefinition getParent() {
 		return myParent;
 	}
 
-	@Override
+	
 	public int getPosition() {
 		return myPosition;
 	}
 
-	@Override
+	
 	public boolean hasChildren() {
 		return false;
 	}
 
-	@Override
+	
 	public boolean isFinalChildOfParent() {
 		return myPreviousSibling.isFinalChildOfParent();
 	}
 
-	@Override
+	
 	public boolean isRepeating() {
 		return true;
 	}
 
-	@Override
+	
 	public boolean isRequired() {
 		return false;
 	}
 
-	@Override
+	
 	public boolean isSegment() {
 		return true;
 	}
