@@ -14,7 +14,9 @@
             <action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
             <action type="fix" due-to="Gerald Bortis, Christian Ohr" issue="1263250">Fix serialization of HAPI Message objects. Also added serialVersionUID to a number of core classes.</action>
             <action type="fix" due-to="Chris Busch">Fix a memory leak in Escape.java when lots of different encoding chars are used</action>
-        </release>
+			<action type="fix" dev="jagnew">Modify ProcessorImpl (HL7Server processing class) to use an ExecutorService instead of spawning a new thread for each message to generate ACKs.</action>
+			<action type="fix" due-to="Gerald Bortis, Polloloco" issue="2164291">Fix XML parsing of seg groups containing more than one instance of the same segment (e.g. A17)</action>
+		</release>
 		<release version="0.6" date="2009-07-01"
 			description="This release adds support for HL7 2.5.1 and 2.6, as well as fixing a number of issues and introducing a new build system.">			
 			<action type="add" due-to="Christian Ohr" issue="2793054">Add constructors to all parser types allowing a custom model factory</action>
