@@ -5,6 +5,7 @@ package ca.uhn.hl7v2.validation.impl;
 
 import java.util.ArrayList;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
@@ -15,6 +16,8 @@ import ca.uhn.hl7v2.model.v25.datatype.NM;
 import ca.uhn.hl7v2.model.v25.datatype.SI;
 import ca.uhn.hl7v2.model.v25.datatype.TM;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.PipeParser;
 import junit.framework.TestCase;
 
 /**
@@ -22,7 +25,7 @@ import junit.framework.TestCase;
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Leslie Mann
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:32 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-08-31 20:55:38 $ by $Author: jamesagnew $
  */
 public class DefaultValidationTest extends TestCase {
     
@@ -676,4 +679,27 @@ public class DefaultValidationTest extends TestCase {
             fail("Should fail with value " + value);
         } catch (DataTypeException e) {}
     }
+    
+    /**
+     * Make sure invalid DTs fail correctly, in response to a report from Serbulent Unsal.
+     */
+    public void testValidateTSComponentOne() {
+        String validMessage = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|something wrong here ||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r\n"
+             + "EVN|A31|200903230934\r\n"
+             + "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
+        
+        PipeParser pipeParser = new PipeParser();
+        pipeParser.setValidationContext(new DefaultValidation());
+        try {
+            Message message = pipeParser.parse(validMessage);
+            fail("Parsed successfully despite invalid date");
+        } catch (EncodingNotSupportedException e) {
+            // expected
+        } catch (HL7Exception e) {
+            // expected
+        }
+        
+        
+    }
+    
 }
