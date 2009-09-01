@@ -30,7 +30,7 @@ import ca.uhn.log.HapiLogFactory;
  * property ca.uhn.hl7v2.protocol.impl.check_parse = "TRUE".  </p>
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
  */
 public class ApplicationRouterImpl implements ApplicationRouter {
 
@@ -120,6 +120,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
                 
                 ReceivingApplication app = findApplication(incomingMessageObject);
                 theMetadata.put(RAW_MESSAGE_KEY, incomingMessageString);
+                
+                if (log.isDebugEnabled()) {
+                	log.debug("Sending message to application: " + app.toString());
+                }
                 Message response = app.processMessage(incomingMessageObject, theMetadata);
                 
                 //Here we explicitly use the same encoding as that of the inbound message - this is important with GenericParser, which might use a different encoding by default

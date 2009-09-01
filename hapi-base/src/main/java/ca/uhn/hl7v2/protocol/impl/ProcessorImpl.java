@@ -46,7 +46,7 @@ import ca.uhn.log.HapiLogFactory;
  * A default implementation of <code>Processor</code>.  
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
  */
 public class ProcessorImpl implements Processor {
 
@@ -251,7 +251,9 @@ public class ProcessorImpl implements Processor {
      * @see ca.uhn.hl7v2.protocol.Processor#cycle(boolean)
      */
     public void cycle(boolean expectingAck) throws HL7Exception {
-        cleanReservations();
+        log.debug("In cycle()");
+    	
+    	cleanReservations();
         cleanAcceptAcks();
         cleanReservedMessages();
 
@@ -269,6 +271,16 @@ public class ProcessorImpl implements Processor {
             throw e;
         }
         
+        // log
+        if (log.isDebugEnabled()) {
+        	if (in != null) {
+                log.debug("Received message: " + in.getMessage());
+        	} else {
+        		log.debug("Received no message");
+        	}
+        }
+        
+        // If we have a message, handle it
         if (in != null) { 
             String[] fieldPaths = {"MSH-15", "MSH-16", "MSA-1", "MSA-2"};
             String[] fields = PreParser.getFields(in.getMessage(), fieldPaths);         
@@ -291,21 +303,40 @@ public class ProcessorImpl implements Processor {
   
                 if (ack.isAcceptable()) {
                     if (isReserved(ackId)) {
+                    	
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Received expected ACK message with ACK ID: " + ackId);
+                    	}
+                    	
                         removeReservation(ackId);
                         long expiryTime = System.currentTimeMillis() + 1000 * 60 * 5;                
                         myAvailableMessages.put(ackId, new ExpiringTransportable(in, expiryTime));
+                        
                     } else {
+
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Sending message to router");
+                    	}
+
                         Transportable out = myContext.getRouter().processMessage(in);
                         sendAppResponse(out);
+                        
                     }
+                } else {
+                	// TODO: should we do something more here? Might be nice to 
+                	// allow a configurable handler for this situation
+                	log.warn("Incoming message was not acceptable");
                 }
+                
             }
         } else {
             String transport = expectingAck ? " Locally driven " : "Remotely driven";
             log.debug(transport + " TransportLayer.receive() returned null.");
         }
         
-        sleepIfNeeded();        
+        sleepIfNeeded();
+
+        log.debug("Exiting cycle()");
     }
     
     /** Sends in a new thread if isThreaded, otherwise in current thread */
@@ -314,8 +345,14 @@ public class ProcessorImpl implements Processor {
         Runnable sender = new Runnable() {
             public void run() {
                 try {
+                    
+                	if (log.isDebugEnabled()) {
+                		log.debug("Sending response: " + theResponse);
+                	}
+                	
                     //TODO: make configurable 
-                    processor.send(theResponse, 2, 3000);
+                	processor.send(theResponse, 2, 3000);
+                	
                 } catch (HL7Exception e) {
                     log.error("Error trying to send response from Application", e);
                 }
@@ -431,7 +468,7 @@ public class ProcessorImpl implements Processor {
      * A struct for Transportable collection entries that time out.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
+     * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
      */
     class ExpiringTransportable {
         public Transportable transportable;
@@ -447,7 +484,7 @@ public class ProcessorImpl implements Processor {
      * A Runnable that repeatedly calls the cycle() method of this class.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.2 $ updated on $Date: 2009-08-07 22:41:46 $ by $Author: jamesagnew $
+     * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
      */
     private static class Cycler implements Runnable {
 
