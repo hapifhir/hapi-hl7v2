@@ -46,8 +46,8 @@
                             <jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
                             <jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
                             <jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
-							<targetDirectory>${basedir}/target/sourcegen</targetDirectory>
-                            <targetResourceDirectory>${basedir}/target/resourcegen</targetResourceDirectory>
+							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
+                            <targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
 						</configuration>
 					</execution>
 				</executions>
