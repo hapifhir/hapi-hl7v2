@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<Specification SpecName="admit - visit notification (event ADT^A01^ADT_A01)" OrgName="CCO" HL7Version="2.4" SpecVersion="HL7 2.4" Status="" ConformanceType="HL7" Role="Sender" HL7OID="" ProcRule="HL7">
+
+
+	<Conformance AccAck="NE" AppAck="AL" StaticID="{ConfSig(1) CCO(1) 2.4(7) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(4) HL7 2.4(1) Sender(1)}" DynamicID="{ConfSig(1) CCO(1) 2.4(7) dynamic-profile(2) AccNE_AppAL(2) defer_mode_ack(1)}" MsgAckMode="Deferred" QueryStatus="Event" QueryMode="Non Query"></Conformance><Encodings><Encoding>ER7</Encoding></Encodings>
+
+<Diagrams>
+</Diagrams>
+<hl7tables>
+	<hl7table id="0061" name="Check digit scheme" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ISO" description="ISO 7064: 1983" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="M10" description="Mod 10 algorithm" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="M11" description="Mod 11 algorithm" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="NPI" description="Check digit algorithm in the US National Provider Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+</hl7tables>
+
+</Specification>
