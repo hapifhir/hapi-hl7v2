@@ -16,12 +16,14 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.6 $ updated on $Date: 2009-08-09 13:58:04 $ by $Author: jamesagnew $
+ * @version $Revision: 1.7 $ updated on $Date: 2009-09-15 13:15:54 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -30,8 +32,6 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     private static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
     private static final HashMap packages = new HashMap();
     private static List<String> ourVersions = null;
-
-    private static final String[] versions = { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
 
     static {
         reloadPackages();
@@ -273,15 +273,16 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	public static void reloadPackages() {
         packages.clear();
         ourVersions = new ArrayList<String>();
-        for (int i = 0; i < versions.length; i++) {
+        List<String> versions = Parser.getValidVersions();
+        for (String version : versions) {
             try {
-                String[] versionPackages = loadPackages(versions[i]);
+                String[] versionPackages = loadPackages(version);
                 if (versionPackages.length > 0) {
-                    ourVersions.add(versions[i]);
+                    ourVersions.add(version);
                 }
-                packages.put(versions[i], versionPackages);
+                packages.put(version, versionPackages);
             } catch (HL7Exception e) {
-                throw new Error("Version \"" + versions[i] + "\" is invalid. This is a programming error: ", e);
+                throw new Error("Version \"" + version + "\" is invalid. This is a programming error: ", e);
             }
         }		
 	}
@@ -299,4 +300,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	    }
 	    return ourVersions.get(ourVersions.size() - 1);
 	}
+
+
+
 }
