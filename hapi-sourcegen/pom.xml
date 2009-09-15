@@ -12,7 +12,7 @@
 	
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-sourcegen</artifactId>
-	<name>HAPI - Source Generator Plugin</name>
+	<name>HAPI - 02 - Source Generator Plugin</name>
 	
 	<packaging>maven-plugin</packaging>
 

@@ -12,7 +12,7 @@
 	
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-test</artifactId>
-	<name>HAPI - Test Case Suite</name>
+	<name>HAPI - 06 - Test Case Suite</name>
 	
 	<packaging>jar</packaging>
 
@@ -61,55 +61,6 @@
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v26</artifactId>
             <version>1.0-beta1</version>
-        </dependency>       
-
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v21</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v22</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v23</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v231</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v24</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v25</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v251</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v26</artifactId>
-            <version>1.0-beta1</version>
-            <classifier>src</classifier>
         </dependency>       
 
 		<dependency>
