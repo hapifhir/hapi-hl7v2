@@ -39,7 +39,6 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 import java.util.ArrayList;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
@@ -162,6 +161,14 @@ public class DataTypeGenerator extends Object {
             //trim all CE_x to CE
             if (dt != null) if (dt.startsWith("CE")) dt = "CE";
             //System.out.println("Component: " + de + "  Data Type: " + dt);  //for debugging
+
+            // Prior to HL7 2.5, the first component of a TS was
+            // an undefined component HAPI knows as TSComponentOne, but the
+            // database knows it as an ST
+            if (dataType.equals("TS") && "ST".equals(dt) && dataTypes.isEmpty()) {
+                dt = "TSComponentOne";
+            }
+
             dataTypes.add(dt);
             descriptions.add(de);
             tables.add(new Integer(ta));
