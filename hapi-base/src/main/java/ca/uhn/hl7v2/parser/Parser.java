@@ -59,13 +59,14 @@ import ca.uhn.log.HapiLogFactory;
 public abstract class Parser {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(Parser.class);
-    private static Map messageStructures = null;    
-    private static final String[] versions = { "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" };
+    private static Map<String, Properties> messageStructures = null;
     
     private ModelClassFactory myFactory;
     private ValidationContext myContext;
     private MessageValidator myValidator;
-    
+    private static final List<String> versions = Collections.unmodifiableList(Arrays.asList(new String[] { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" }));
+
+
     /**
      * Uses DefaultModelClassFactory for model class lookup. 
      */
@@ -323,21 +324,15 @@ public abstract class Parser {
      * include "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", etc 
      */
     public static boolean validVersion(String version) {
-        boolean versionOK = false;
-        int c = 0;
-        while (versionOK == false && c < versions.length) {
-            if (versions[c++].equals(version))
-                versionOK = true;
-        }
-        return versionOK;
+        return versions.contains(version);
     }
     
     
     /**
      * @return A list of strings containing the valid versions of HL7 supported by HAPI ("2.1", "2.2", etc)
      */
-    public static List getValidVersions() {
-        return Collections.unmodifiableList(Arrays.asList(versions));
+    public static List<String> getValidVersions() {
+        return versions;
     }
     
     
@@ -376,28 +371,46 @@ public abstract class Parser {
         
         return structure;
     }
+
     
     /**
-     * Returns event->structure maps.  
+     * Returns a copy of the message structure map for a specific version.
+     * Each key is a message type (e.g. ADT_A04) and each value is the
+     * corresponding structure (e.g. ADT_A01).
+     *
+     * @throws IOException If the event map can't be loaded
      */
-    private synchronized static Map getMessageStructures() throws IOException {
+    public static Properties getMessageStructures(String version) throws IOException {
+        Map<String, Properties> msgStructures = getMessageStructures();
+        if (!msgStructures.containsKey(version)) {
+            return null;
+        }
+
+        return (Properties) msgStructures.get(version).clone();
+    }
+
+
+    /**
+     * Returns version->event->structure maps.
+     */
+    private synchronized static Map<String, Properties> getMessageStructures() throws IOException {
         if (messageStructures == null) {
             messageStructures = loadMessageStructures();
         }
         return messageStructures;
     }
     
-    private synchronized static Map loadMessageStructures() throws IOException {
-        Map map = new HashMap();
-        for (int i = 0; i < versions.length; i++) {
-            String resource = "ca/uhn/hl7v2/parser/eventmap/" + versions[i] + ".properties";
+    private static Map<String, Properties> loadMessageStructures() throws IOException {
+        Map<String, Properties> map = new HashMap<String, Properties>();
+        for (String version : versions) {
+            String resource = "ca/uhn/hl7v2/parser/eventmap/" + version + ".properties";
             InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
             
             Properties structures = null;
             if (in != null) {            
                 structures = new Properties();
                 structures.load(in);
-                map.put(versions[i], structures);
+                map.put(version, structures);
             }
             
         }
