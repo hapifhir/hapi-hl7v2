@@ -26,7 +26,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.examples;
 
-import sun.awt.windows.ThemeReader;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -37,7 +36,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * Example
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.1 $ updated on $Date: 2009-08-07 22:40:20 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-09-15 13:14:40 $ by $Author: jamesagnew $
  */
 public class CorrectInvalidMessageBeforeParsing
 {
