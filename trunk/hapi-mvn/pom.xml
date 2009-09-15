@@ -140,6 +140,10 @@
 			<name>HAPI Sourceforge</name>
 			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
 		</snapshotRepository>  -->
+        <site>
+            <id>hl7api.sf.net</id>
+            <url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs</url>
+        </site>
 	</distributionManagement>
 	
 	<build>
@@ -164,6 +168,43 @@
 					</descriptors>
 				</configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+					<!-- Insert analytics script block into all HTML files -->
+                    <execution>
+                        <id>insert-analytics</id>
+                        <phase>site</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <tasks>
+                                <echo>Adding Urchin</echo>
+                                <replace dir="${basedir}/target/site">
+                                    <include name="**/*.html" />
+                                    <replacetoken>
+                    <![CDATA[</body>]]>
+                                    </replacetoken>
+                                    <replacevalue>
+                    <![CDATA[
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1395874-1");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>]]>
+                                    </replacevalue>
+                                </replace>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 		<extensions>
 		</extensions>
@@ -171,8 +212,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-	
+		<netbeans.compile.on.save>all</netbeans.compile.on.save>
+</properties>
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -217,8 +259,8 @@
 				</configuration>
 			</plugin>
     	</plugins>
-	</reporting>	
-	
+	</reporting>
+
 	<profiles>
 		<profile>
 			<id>CORE</id>
@@ -310,6 +352,7 @@
 				<sourcegen.jdbcPassword.new></sourcegen.jdbcPassword.new>
 			</properties>
 		</profile>
-	</profiles>	
-	
+	</profiles>
+
 </project>
+
