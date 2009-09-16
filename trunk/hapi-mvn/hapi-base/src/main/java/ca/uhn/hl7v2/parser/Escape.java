@@ -8,7 +8,7 @@ specific language governing rights and limitations under the License.
 
 The Original Code is "Escape.java".  Description: 
 "Handles "escaping" and "unescaping" of text according to the HL7 escape sequence rules
-   defined in section 2.10 of the standard (version 2.4)" 
+defined in section 2.10 of the standard (version 2.4)" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2001.  All Rights Reserved. 
@@ -24,15 +24,11 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-
 package ca.uhn.hl7v2.parser;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Handles "escaping" and "unescaping" of text according to the HL7 escape
@@ -42,272 +38,145 @@ import java.util.Set;
  * unsupported.
  * 
  * @author Bryan Tripp
+ * @author Mark Lee (Skeva Technologies)
+ * @author Elmar Hinz
+ * @author Christian Ohr
  */
 public class Escape {
 
     /**
      * limits the size of variousEncChars to 1000, can be overridden by system property.
      */
-    private static Map<EncodingCharacters, HashMap<String, String>> variousEncChars = Collections.synchronizedMap(new LinkedHashMap<EncodingCharacters, HashMap<String, String>>(5, 0.75f, true) {
+    private static Map<EncodingCharacters, EncLookup> variousEncChars = Collections.synchronizedMap(new LinkedHashMap<EncodingCharacters, EncLookup>(5, 0.75f, true) {
+
         private static final long serialVersionUID = 1L;
-        final int maxSize=new Integer(System.getProperty(Escape.class.getName()+".maxSize","1000"));
-        protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, HashMap<String, String>> eldest) {
+        final int maxSize = new Integer(System.getProperty(Escape.class.getName() + ".maxSize", "1000"));
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, EncLookup> eldest) {
             return this.size() > maxSize;
         }
     });
-    
-	/** Creates a new instance of Escape */
-	public Escape() {
-	}
 
-	public static String escape(String text, EncodingCharacters encChars) {
+    /** Creates a new instance of Escape */
+    public Escape() {
+    }
 
-		// don't bother unless there's something to encode
-		boolean found = false;
-		char c1 = encChars.getComponentSeparator();
-		char c2 = encChars.getEscapeCharacter();
-		char c3 = encChars.getFieldSeparator();
-		char c4 = encChars.getRepetitionSeparator();
-		char c5 = encChars.getSubcomponentSeparator();
-		char c6 = '\r';
-		for (int i = 0; i < text.length(); i++) {
-			char nextChar = text.charAt(i);
-			if (nextChar == c1 || nextChar == c2 || nextChar == c3 || nextChar == c4 || nextChar == c5 || nextChar == c6) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			return text;
-		}
-		
-		HashMap<String, String> esc = getEscapeSequences(encChars);
-		StringBuffer result = new StringBuffer();
-		int textLength = text.length();
-		Set keys = esc.keySet();
-		String escChar = String.valueOf(encChars.getEscapeCharacter());
-		int position = 0;
-		while (position < textLength) {
-			Iterator it = keys.iterator();
-			boolean isReplaced = false;
-			while (it.hasNext() && !isReplaced) {
-				String seq = (String) it.next();
-				String val = (String) esc.get(seq);
-				if (text.substring(position, position + 1).equals(val)) {
-					result.append(seq);
-					isReplaced = true;
-				}
-			}
-			if (!isReplaced) {
-				result.append(text.substring(position, (position + 1)));
-			}
-			position++;
-		}
-		return result.toString();
-	}
+    public static String escape(String text, EncodingCharacters encChars) {
+        EncLookup esc = getEscapeSequences(encChars);
+        int textLength = text.length();
 
-	public static String unescape(String text, EncodingCharacters encChars) {
+        StringBuilder result = new StringBuilder(textLength);
+        for (int i = 0; i < textLength; i++) {
+            boolean charReplaced = false;
+            char c = text.charAt(i);
+            for (int j = 0; j < 6; j++) {
+                if (text.charAt(i) == esc.characters[j]) {
+                    result.append(esc.encodings[j]);
+                    charReplaced = true;
+                    break;
+                }
+            }
+            if (!charReplaced) {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
 
-		// If the escape char isn't found, we don't need to look for escape sequences 
-		char escapeChar = encChars.getEscapeCharacter();
-		boolean foundEscapeChar = false;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == escapeChar) {
-				foundEscapeChar = true;
-				break;
-			}
-		}
-		if (foundEscapeChar == false) {
-			return text;
-		}
-		
-		StringBuffer result = new StringBuffer();
-		int textLength = text.length();
-		HashMap esc = getEscapeSequences(encChars);
-		Set keys = esc.keySet();
-		String escChar = String.valueOf(encChars.getEscapeCharacter());
-		int position = 0;
-		while (position < textLength) {
-			Iterator it = keys.iterator();
-			boolean isReplaced = false;
-			while (it.hasNext() && !isReplaced) {
-				String seq = (String) it.next();
-				String val = (String) esc.get(seq);
-				int seqLength = seq.length();
-				if (position + seqLength <= textLength) {
-					if (text.substring(position, position + seqLength).equals(
-							seq)) {
-						result.append(val);
-						isReplaced = true;
-						position = position + seq.length();
-					}
-				}
-			}
-			if (!isReplaced) {
-				result.append(text.substring(position, (position + 1)));
-				position++;
-			}
-		}
-		return result.toString();
-	}
+    public static String unescape(String text, EncodingCharacters encChars) {
 
-	/**
-	 * Applies escape sequences so that the given text can be safely transmitted
-	 * in a delimited message. A double escape character (e.g. \\) in the given
-	 * text is not itself escaped (e.g. \E\\E\) but is instead translated into a
-	 * single escape character for transmission (e.g. \). This allows you to add
-	 * escape sequences not handled by this method (e.g. to send \.br\ across
-	 * the wire you would set the text of a field to \\.br\\).
-	 */
+        // If the escape char isn't found, we don't need to look for escape sequences
+        char escapeChar = encChars.getEscapeCharacter();
+        boolean foundEscapeChar = false;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == escapeChar) {
+                foundEscapeChar = true;
+                break;
+            }
+        }
+        if (foundEscapeChar == false) {
+            return text;
+        }
 
-	/*
-	 * public static String escape_old(String text, EncodingCharacters encChars) {
-	 * String result = text; HashMap esc = getEscapeSequences(encChars); Set
-	 * keys = esc.keySet(); Iterator it = keys.iterator();
-	 * 
-	 * //need to do the escape for the escape character first, and skip it in
-	 * the loop result = escapeEscapeCharacters(result, encChars); String
-	 * escChar = String.valueOf(encChars.getEscapeCharacter()); while
-	 * (it.hasNext()) { String seq = (String)it.next(); String val =
-	 * (String)esc.get(seq); if (!val.equals(escChar)) result = replace(result,
-	 * val, seq); //don't escape the escape character here } return result; }
-	 */
+        int textLength = text.length();
+        StringBuilder result = new StringBuilder(textLength + 20);
+        EncLookup esc = getEscapeSequences(encChars);
+        char escape = esc.characters[4];
+        int encodingsCount = esc.characters.length;
+        int i = 0;
+        while (i < textLength) {
+            char c = text.charAt(i);
+            if (c != escape) {
+                result.append(c);
+                i++;
+            } else {
+                boolean foundEncoding = false;
+                for (int j = 0; j < encodingsCount; j++) {
+                    String encoding = esc.encodings[j];
+                    if ((i + encoding.length() < textLength) && text.substring(i, i + encoding.length())
+                            .equals(encoding)) {
+                        result.append(esc.characters[j]);
+                        i += encoding.length();
+                        foundEncoding = true;
+                        break;
+                    }
+                }
 
-	/**
-	 * Removes escape sequences, replacing them with the text they represent.
-	 */
-	/*
-	 * public static String unescape_old(String text, EncodingCharacters
-	 * encChars) { String result = text; HashMap esc =
-	 * getEscapeSequences(encChars); Set keys = esc.keySet(); Iterator it =
-	 * keys.iterator(); while (it.hasNext()) { String seq = (String)it.next();
-	 * String val = (String)esc.get(seq); result = replace(result, seq, val); }
-	 * return result; }
-	 */
+                if (!foundEncoding) {
+                    i++;
+                }
+            }
+        }
+        return result.toString();
+    }
 
-	/**
-	 * Replaces single escape characters with the escape sequence, and double
-	 * escape characters with single escape characters.
-	 */
-	/*
-	 * private static String escapeEscapeCharacters(String text,
-	 * EncodingCharacters encChars) { String result = text; StringBuffer
-	 * escCharSeq = new StringBuffer();
-	 * escCharSeq.append(encChars.getEscapeCharacter()); escCharSeq.append('E');
-	 * escCharSeq.append(encChars.getEscapeCharacter()); String escChar =
-	 * String.valueOf(encChars.getEscapeCharacter()); result = replace(result,
-	 * escChar, escCharSeq.toString()); result = replace(result,
-	 * escCharSeq.toString() + escCharSeq.toString(), escChar); return result; }
-	 */
+    /**
+     * Returns a HashTable with escape sequences as keys, and corresponding
+     * Strings as values.
+     */
+    private static EncLookup getEscapeSequences(EncodingCharacters encChars) {
+        EncLookup escapeSequences = variousEncChars.get(encChars);
+        if (escapeSequences == null) {
+            // this means we haven't got the sequences for these encoding
+            // characters yet - let's make them
+            escapeSequences = new EncLookup(encChars);
+            variousEncChars.put(encChars, escapeSequences);
+        }
+        return escapeSequences;
+    }
 
-	/**
-	 * Replaces all occurences of the string "replace" with the string "with",
-	 * in the string "originalText".
-	 */
-	/*
-	 * private static String replace(String originalText, String replace, String
-	 * with) { StringBuffer result = new StringBuffer(); int replaceLength =
-	 * replace.length(); boolean done = false; int cursor = 0; while (!done) {
-	 * int nextPosition = originalText.indexOf(replace, cursor); if
-	 * (nextPosition < 0) { done = true;
-	 * result.append(originalText.substring(cursor)); break; }
-	 * result.append(originalText.substring(cursor, nextPosition));
-	 * result.append(with); cursor = nextPosition + replaceLength; } return
-	 * result.toString(); }
-	 */
 
-	/**
-	 * Returns a HashTable with escape sequences as keys, and corresponding
-	 * Strings as values.
-	 */
-	private static HashMap<String, String> getEscapeSequences(EncodingCharacters encChars) {
-		// escape sequence strings must be assembled using the given escape
-		// character
 
-		// see if this has already been done for this set of encoding characters
-		HashMap<String, String> escapeSequences = null;
-		HashMap<String, String> o = variousEncChars.get(encChars);
-		if (o == null) {
-			// this means we haven't got the sequences for these encoding
-			// characters yet - let's make them
-			escapeSequences = makeEscapeSequences(encChars);
-			variousEncChars.put(encChars, escapeSequences);
-		} else {
-			// we already have escape sequences for these encoding characters
-			escapeSequences = (HashMap) o;
-		}
-		return escapeSequences;
-	}
 
-	/**
-	 * Constructs escape sequences using the given escape character - this
-	 * should only be called by getEscapeCharacter(), which will cache the
-	 * results for subsequent use.
-	 */
-	private static HashMap<String, String> makeEscapeSequences(EncodingCharacters ec) {
-		HashMap<String, String> seqs = new HashMap<String, String>();
-		char[] codes = { 'F', 'S', 'T', 'R', 'E' };
-		char[] values = { ec.getFieldSeparator(), ec.getComponentSeparator(),
-				ec.getSubcomponentSeparator(), ec.getRepetitionSeparator(),
-				ec.getEscapeCharacter() };
-		for (int i = 0; i < codes.length; i++) {
-			StringBuffer seq = new StringBuffer();
-			seq.append(ec.getEscapeCharacter());
-			seq.append(codes[i]);
-			seq.append(ec.getEscapeCharacter());
-			seqs.put(seq.toString(), String.valueOf(values[i]));
-		}
-		seqs.put("\\X000d\\", String.valueOf('\r'));
-		return seqs;
-	}
+    /**
+     * A performance-optimized replacement for using when
+     * mapping from HL7 special characters to their respective
+     * encodings
+     *
+     * @author Christian Ohr
+     */
+    private static class EncLookup {
 
-	/**
-	 * Test harness
-	 */
-	public static void main(String args[]) {
-		String testString = "foo$r$this is $ $p$test$r$r$ string";
-		// System.out.println(testString);
-		// System.out.println(replace(testString, "$r$", "***"));
-		// System.out.println(replace(testString, "$", "+"));
+        char[] characters = new char[6];
+        String[] encodings = new String[6];
 
-		// test speed gain with cache
-		int n = 100000;
-		HashMap seqs;
-		EncodingCharacters ec = new EncodingCharacters('|', "^~\\&");
-		// warm up the JIT
-		for (int i = 0; i < n; i++) {
-			seqs = makeEscapeSequences(ec);
-		}
-		for (int i = 0; i < n; i++) {
-			seqs = getEscapeSequences(ec);
-		}
-		// time
-		long start = System.currentTimeMillis();
-		for (int i = 0; i < n; i++) {
-			seqs = makeEscapeSequences(ec);
-		}
-		System.out.println("Time to make " + n + " times: "
-				+ (System.currentTimeMillis() - start));
-		start = System.currentTimeMillis();
-		for (int i = 0; i < n; i++) {
-			seqs = getEscapeSequences(ec);
-		}
-		System.out.println("Time to get " + n + " times: "
-				+ (System.currentTimeMillis() - start));
-		start = System.currentTimeMillis();
-		for (int i = 0; i < n; i++) {
-			seqs = makeEscapeSequences(ec);
-		}
-		System.out.println("Time to make " + n + " times: "
-				+ (System.currentTimeMillis() - start));
-
-		// test escape:
-		testString = "this | is ^ a field \\T\\ with & some ~ bad stuff \\T\\";
-		System.out.println("Original:  " + testString);
-		String escaped = escape(testString, ec);
-		System.out.println("Escaped:   " + escaped);
-		System.out.println("Unescaped: " + unescape(escaped, ec));
-
-	}
-
+        EncLookup(EncodingCharacters ec) {
+            characters[0] = ec.getFieldSeparator();
+            characters[1] = ec.getComponentSeparator();
+            characters[2] = ec.getSubcomponentSeparator();
+            characters[3] = ec.getRepetitionSeparator();
+            characters[4] = ec.getEscapeCharacter();
+            characters[5] = '\r';
+            char[] codes = {'F', 'S', 'T', 'R', 'E'};
+            for (int i = 0; i < codes.length; i++) {
+                StringBuffer seq = new StringBuffer();
+                seq.append(ec.getEscapeCharacter());
+                seq.append(codes[i]);
+                seq.append(ec.getEscapeCharacter());
+                encodings[i] = seq.toString();
+            }
+            encodings[5] = "\\X000d\\";
+        }
+    }
 }
