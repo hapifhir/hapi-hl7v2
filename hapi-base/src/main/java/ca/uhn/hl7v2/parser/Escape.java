@@ -114,7 +114,7 @@ public class Escape {
                 boolean foundEncoding = false;
                 for (int j = 0; j < encodingsCount; j++) {
                     String encoding = esc.encodings[j];
-                    if ((i + encoding.length() < textLength) && text.substring(i, i + encoding.length())
+                    if ((i + encoding.length() <= textLength) && text.substring(i, i + encoding.length())
                             .equals(encoding)) {
                         result.append(esc.characters[j]);
                         i += encoding.length();
