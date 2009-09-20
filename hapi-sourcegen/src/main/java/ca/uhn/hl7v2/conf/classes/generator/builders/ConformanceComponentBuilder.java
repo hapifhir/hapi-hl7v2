@@ -35,8 +35,12 @@ import ca.uhn.hl7v2.conf.spec.message.*;
 import ca.uhn.hl7v2.conf.classes.exceptions.*;
 import ca.uhn.hl7v2.conf.*;
 import ca.uhn.hl7v2.model.*;
+import ca.uhn.hl7v2.model.v231.datatype.IS;
 
 import java.lang.reflect.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** This class builds Conformance Component Classes
  * @author <table><tr>James Agnew</tr>
@@ -46,6 +50,9 @@ import java.lang.reflect.*;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class ConformanceComponentBuilder {
+	
+	private static final Log ourLog = LogFactory.getLog(ConformanceComponentBuilder.class);
+	
    private DeploymentManager depManager; // The deployment manager
    private DocumentationBuilder docBuilder;
    private String packageName;
@@ -95,13 +102,22 @@ public class ConformanceComponentBuilder {
 			continue;
 			
 			// The following is a workaround to allow for composite subcomponents. 
-			Class c;
+			Class<?> c;
 			Object instance;
-         try {
-            c = Class.forName("ca.uhn.hl7v2.model." + versionString + ".datatype." + comp.getSubComponent(i).getDatatype());
-            instance = c.getConstructor(null).newInstance(null);
+			try {
+            
+        	 String className = "ca.uhn.hl7v2.model." + versionString + ".datatype." + comp.getSubComponent(i).getDatatype();
+        	 ourLog.info("Analyzing class: "+ className);
+            
+			c = Class.forName(className);
+            Constructor<?> constructor = c.getConstructors()[0];
+			if (constructor.getParameterTypes().length == 1) {
+				instance = constructor.newInstance((Message)null);
+			} else {
+				instance = constructor.newInstance((Message)null, 0);
+			}
          } catch ( Exception e ) {
-				throw new ConformanceError("Could not find underlying SubComponent datatype. This is a bug. Exception: " + e.toString());
+				throw new ConformanceError("Could not find underlying SubComponent datatype. This is a bug. Exception: " + e.toString(), e);
 			}
 
          if ( instance instanceof Composite ) {
