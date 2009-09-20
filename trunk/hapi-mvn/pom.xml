@@ -271,6 +271,7 @@ pageTracker._trackPageview();
 			</build>
 			<modules>
 				<module>hapi-base</module>
+                <module>hapi-sourcegen</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
 			</modules>
