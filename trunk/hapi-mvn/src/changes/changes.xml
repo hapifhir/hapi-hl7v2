@@ -6,14 +6,15 @@
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 	<body>
-        <release version="1.0" date="TBA" 
+		<release version="1.0" date="TBA"
             description="This version has not yet been released.">
-            <action type="fix" due-to="Jan Klasser" issue="1809573">Fix NullPointerException in DefaultValidator when no table present for an ID datatype</action>
-            <action type="fix" dev="jamesagnew">Allow parsing of unknown message types for 2.5.1 and 2.6 messages</action>
-            <action type="update" dev="jamesagnew">Convert HAPI source version JDK 5.0. This allows the use (and begins a gradual conversion) to generics by HAPI's internal structures. Support for JDK1.4 will still remain through version specific JARs produced by RetroTranslator.</action>
-            <action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
-            <action type="fix" due-to="Gerald Bortis, Christian Ohr" issue="1263250">Fix serialization of HAPI Message objects. Also added serialVersionUID to a number of core classes.</action>
-            <action type="fix" due-to="Chris Busch">Fix a memory leak in Escape.java when lots of different encoding chars are used</action>
+			<action type="fix" dev="jamesagnew">Initiator should fail immediately if an attempt to send a message with no control ID (MSH-10) is made, since it will end up timing out waiting for a response. Thanks to Shrinivas N Nirale for reporting.</action>
+			<action type="fix" due-to="Jan Klasser" issue="1809573">Fix NullPointerException in DefaultValidator when no table present for an ID datatype</action>
+			<action type="fix" dev="jamesagnew">Allow parsing of unknown message types for 2.5.1 and 2.6 messages</action>
+			<action type="update" dev="jamesagnew">Convert HAPI source version JDK 5.0. This allows the use (and begins a gradual conversion) to generics by HAPI's internal structures. Support for JDK1.4 will still remain through version specific JARs produced by RetroTranslator.</action>
+			<action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
+			<action type="fix" due-to="Gerald Bortis, Christian Ohr" issue="1263250">Fix serialization of HAPI Message objects. Also added serialVersionUID to a number of core classes.</action>
+			<action type="fix" due-to="Chris Busch">Fix a memory leak in Escape.java when lots of different encoding chars are used</action>
 			<action type="fix" dev="jagnew">Modify ProcessorImpl (HL7Server processing class) to use an ExecutorService instead of spawning a new thread for each message to generate ACKs.</action>
 			<action type="fix" due-to="Gerald Bortis, Polloloco" issue="2164291">Fix XML parsing of seg groups containing more than one instance of the same segment (e.g. A17)</action>
 		</release>
@@ -21,9 +22,9 @@
 			description="This release adds support for HL7 2.5.1 and 2.6, as well as fixing a number of issues and introducing a new build system.">			
 			<action type="add" due-to="Christian Ohr" issue="2793054">Add constructors to all parser types allowing a custom model factory</action>
 			<action type="fix" due-to="Gerald Bortis, Polloloco" issue="2164291">Fix XML parsing of seg groups containing more than one instance of the same segment (e.g. A17)</action>
-            <action type="add" due-to="Peter Gershkovich">Added isRunning() method to SimpleServer</action>
-            <action type="add" dev="jagnew">Add NULLDT datatype, to be used in withdrawn fields. Note that default validation expects this datatype to be empty, but custom validation does not need to enforce this.</action>
-            <action type="add" dev="jagnew">Add setEncoding method to XmlParser to allow text encoding to be specified when creating XML messages. In response to mailing list query from Fernando Ramírez Sánchez</action>
+			<action type="add" due-to="Peter Gershkovich">Added isRunning() method to SimpleServer</action>
+			<action type="add" dev="jagnew">Add NULLDT datatype, to be used in withdrawn fields. Note that default validation expects this datatype to be empty, but custom validation does not need to enforce this.</action>
+			<action type="add" dev="jagnew">Add setEncoding method to XmlParser to allow text encoding to be specified when creating XML messages. In response to mailing list query from Fernando Ramírez Sánchez</action>
 			<action type="add" due-to="Chris Horneck" issue="1890219">Add single argument constructor to ID datatype, to allow it to be used in OBX-5</action>
 			<action type="add" dev="jagnew">New HAPI maven repository now available at http://hl7api.sourceforge.net/m2/</action>
 			<action type="fix" due-to="Frédéric Dubru">Make PipeParser not crash on empty segments (meaning segments with just a segment name, no field separator or fields)</action>

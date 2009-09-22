@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>Performs the initiation role of a message exchange (i.e sender of the first message; 
@@ -97,12 +98,18 @@ public class Initiator {
         HapiLog rawOutbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.outbound");
         HapiLog rawInbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.inbound");
         
-        if (out == null)
+        if (out == null) {
             throw new HL7Exception("Can't encode null message", HL7Exception.REQUIRED_FIELD_MISSING);
+		}
 
         //register message with response Receiver(s) (by message ID)
         Terser t = new Terser(out);
         String messID = t.get("/MSH-10");
+
+		if (StringUtils.isEmpty(messID)) {
+			throw new HL7Exception("MSH segment missing required field Control ID (MSH-10)", HL7Exception.REQUIRED_FIELD_MISSING);
+		}
+
         MessageReceipt mr = this.conn.reserveResponse(messID);
 
         //log and send message 
