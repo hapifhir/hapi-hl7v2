@@ -217,7 +217,7 @@ public class PipeParser extends Parser {
         MessageStructure structure = getStructure(message);
         Message m = instantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
 
-        parse(m, version);
+        parse(m, message);
 
         return m;
     }
@@ -307,7 +307,6 @@ public class PipeParser extends Parser {
      * @param data the field string (including all components and subcomponents; not including field delimiters)
      * @param encodingCharacters the encoding characters used in the message
      */
-    @Override
     public void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
         String[] components = split(data, String.valueOf(encodingCharacters.getComponentSeparator()));
         for (int i = 0; i < components.length; i++) {
@@ -713,7 +712,6 @@ public class PipeParser extends Parser {
     /**
      * {@inheritDoc }
      */
-    @Override
     public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
         return encode(structure, encodingCharacters);
     }
@@ -721,12 +719,10 @@ public class PipeParser extends Parser {
     /**
      * {@inheritDoc }
      */
-    @Override
     public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
         return encode(type, encodingCharacters);
     }
 
-    @Override
     public void parse(Message message, String string) throws HL7Exception {
         //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, "MSH", true);
