@@ -43,7 +43,6 @@ import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>Performs the initiation role of a message exchange (i.e sender of the first message; 
@@ -106,7 +105,7 @@ public class Initiator {
         Terser t = new Terser(out);
         String messID = t.get("/MSH-10");
 
-		if (StringUtils.isEmpty(messID)) {
+		if (messID == null || messID.length() == 0) {
 			throw new HL7Exception("MSH segment missing required field Control ID (MSH-10)", HL7Exception.REQUIRED_FIELD_MISSING);
 		}
 
