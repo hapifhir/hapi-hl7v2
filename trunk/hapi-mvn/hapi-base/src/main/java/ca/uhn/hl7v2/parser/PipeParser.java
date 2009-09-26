@@ -216,63 +216,9 @@ public class PipeParser extends Parser {
         //try to instantiate a message object of the right class
         MessageStructure structure = getStructure(message);
         Message m = instantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
-        
-        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
-        MessageIterator messageIter = new MessageIterator(m, "MSH", true);
-        FilterIterator.Predicate segmentsOnly = new FilterIterator.Predicate() {
-            public boolean evaluate(Object obj) {
-                if (Segment.class.isAssignableFrom(obj.getClass())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
-        
-        String[] segments = split(message, segDelim);
 
-        char delim = '|';
-        for (int i = 0; i < segments.length; i++) {
-            
-            //get rid of any leading whitespace characters ...
-            if (segments[i] != null && segments[i].length() > 0 && Character.isWhitespace(segments[i].charAt(0)))
-                segments[i] = stripLeadingWhitespace(segments[i]);
-            
-            //sometimes people put extra segment delimiters at end of msg ...
-            if (segments[i] != null && segments[i].length() >= 3) {
-                final String name;
-                if (i == 0) {
-                    name = segments[i].substring(0, 3);
-                    delim = segments[i].charAt(3);
-                } else {
-                    if (segments[i].indexOf(delim) >= 0 ) {
-                        name = segments[i].substring(0, segments[i].indexOf(delim));
-                      } else {
-                        name = segments[i];
-                      }
-                 }
-                
-                log.debug("Parsing segment " + name);
-                
-                messageIter.setDirection(name);
-                FilterIterator.Predicate byDirection = new FilterIterator.Predicate() {
-                    public boolean evaluate(Object obj) {
-                        Structure s = (Structure) obj;
-                        log.debug("PipeParser iterating message in direction " + name + " at " + s.getName());
-                        if (s.getName().matches(name + "\\d*")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }                    
-                };
-                FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
-                if (dirIter.hasNext()) {
-                    parse((Segment) dirIter.next(), segments[i], getEncodingChars(message));
-                }
-            }
-        }
+        parse(m, version);
+
         return m;
     }
     
@@ -361,7 +307,8 @@ public class PipeParser extends Parser {
      * @param data the field string (including all components and subcomponents; not including field delimiters)
      * @param encodingCharacters the encoding characters used in the message
      */
-    private static void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
+    @Override
+    public void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
         String[] components = split(data, String.valueOf(encodingCharacters.getComponentSeparator()));
         for (int i = 0; i < components.length; i++) {
             String[] subcomponents = split(components[i], String.valueOf(encodingCharacters.getSubcomponentSeparator()));
@@ -762,6 +709,83 @@ public class PipeParser extends Parser {
         }
         return version;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+        return encode(structure, encodingCharacters);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+        return encode(type, encodingCharacters);
+    }
+
+    @Override
+    public void parse(Message message, String string) throws HL7Exception {
+        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
+        MessageIterator messageIter = new MessageIterator(message, "MSH", true);
+        FilterIterator.Predicate segmentsOnly = new FilterIterator.Predicate() {
+            public boolean evaluate(Object obj) {
+                if (Segment.class.isAssignableFrom(obj.getClass())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
+
+        String[] segments = split(string, segDelim);
+
+        char delim = '|';
+        for (int i = 0; i < segments.length; i++) {
+
+            //get rid of any leading whitespace characters ...
+            if (segments[i] != null && segments[i].length() > 0 && Character.isWhitespace(segments[i].charAt(0)))
+                segments[i] = stripLeadingWhitespace(segments[i]);
+
+            //sometimes people put extra segment delimiters at end of msg ...
+            if (segments[i] != null && segments[i].length() >= 3) {
+                final String name;
+                if (i == 0) {
+                    name = segments[i].substring(0, 3);
+                    delim = segments[i].charAt(3);
+                } else {
+                    if (segments[i].indexOf(delim) >= 0 ) {
+                        name = segments[i].substring(0, segments[i].indexOf(delim));
+                      } else {
+                        name = segments[i];
+                      }
+                 }
+
+                log.debug("Parsing segment " + name);
+
+                messageIter.setDirection(name);
+                FilterIterator.Predicate byDirection = new FilterIterator.Predicate() {
+                    public boolean evaluate(Object obj) {
+                        Structure s = (Structure) obj;
+                        log.debug("PipeParser iterating message in direction " + name + " at " + s.getName());
+                        if (s.getName().matches(name + "\\d*")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                };
+                FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
+                if (dirIter.hasNext()) {
+                    parse((Segment) dirIter.next(), segments[i], getEncodingChars(string));
+                }
+            }
+        }
+    }
+
     
     /**
      * A struct for holding a message class string and a boolean indicating whether it 
