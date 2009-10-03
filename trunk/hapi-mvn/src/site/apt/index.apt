@@ -9,7 +9,38 @@ Welcome
 
 What's New
 
-  * July 1, 2009 (Canada Day for those of us in Canada!)
+* September 7, 2009
+
+   A few announcements on the HAPI front:
+
+   <<OSGi Support>>
+
+   I wanted to let you all know of an exciting new development in the HAPI world: the development of a set of OSGi bundles, enabling HAPI to be deployed in an OSGi container.
+
+   Development is ongoing, led by {{{mailto:niranjansharma@users.sourceforge.net}Niranjan Sharma}} from GE Healthcare. At this point, we have a mostly working set of unit tests and a basic plan of attack for getting the bundles to do something useful. Naturally, HAPI's use of reflection and a few scattered classloaded resource issues are causing some minor hassles, but I'm sure it can all be worked out.
+
+   If anyone is interested in contributing some time in development, testing, documentation, etc., please by all means get in touch with either myself or Niranjan. I'm really excited to see where this is all leading, in my opinion (and many others) OSGi is the future of Java, and it will be really nice to see HAPI playing well in that sandbox.
+
+
+   <<Upcoming Version of HAPI>>
+
+   Just to keep anyone who is interested posted on the development of the core HAPI library, a new version is in the works. I'm still not sure when it will be released, but it is looking promising. Two major things have changes for this cycle:
+
+   [[1]] The codebase is being upgraded to JDK 5, allowing the use of generics and other modern features within the library. We are planning on still supporting JDK1.4 using the retrotranslator maven plugin to product custom 1.4 compliant JARs for anyone needing the legacy support. I have used this approach in the past on other projects with lots of success.
+
+   [[2]] After a great deal of profiling and optimizing, the PipeParser is now 60-70% faster and the XML parser is at least 30% faster as well. The changes involved in these optimizations also fixed a few long standing bugs, such as the first repetition of a repeating segment always being added to a message structure even when it wasn't present in the message, and the fact that unexpected segments early in a message caused the rest of the message to parse into generic segments instead of their correct locations within the message structure.
+
+   []
+
+
+   <<hUnit>>
+
+   hUnit, a new subproject of HAPI, has finally come along far enough for some public consumption. hUnit is an HL7 application unit testing framework, currently geared towards unit testing HL7 ESB applications (i.e. message transformations within interface engines) as well as message procesing applications. hUnit has been developed at UHN to provide repeatable unit tests for our JavaCAPS HL7 message translations, and we are quickly adding features to support our internal needs. At this point, it is starting to become stable enough that it could be publicly consumed- stay tuned (or get in touch if this sounds like something of particular interest to you).
+
+   Check it out at {{{hunit/index.html}hUnit's Site}}.
+
+
+* July 1, 2009 (Canada Day for those of us in Canada!)
   
     HAPI 0.6 has been relased! This release is the first release incorporating support for
     HL7 v2.5.1 and v2.6.

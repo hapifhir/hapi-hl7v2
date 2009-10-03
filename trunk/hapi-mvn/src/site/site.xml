@@ -32,12 +32,14 @@
 	
 		<menu name="Welcome">
 			<item name="Introduction" href="index.html"/>
-			<item name="What's New" href="changes-report.html"/>
+			<item name="What's New" href="whatsnew.html"/>
+			<item name="Changelog" href="changes-report.html"/>
 			<item name="Get Involved" href="getinvolved.html"/>
 			<item name="Mailing List" href="mail-lists.html"/>
 		</menu>
 	
 		<menu name="Using HAPI">
+			<item name="Download" href="http://sourceforge.net/projects/hl7api/files/hl7api/"/>
 			<item name="Developing" href="using_hapi.html"/>
 			<item name="License" href="license.html"/>
 			<item name="HAPI By Example" href="devbyexample.html"/>
