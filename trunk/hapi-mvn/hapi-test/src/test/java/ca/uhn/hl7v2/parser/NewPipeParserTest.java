@@ -19,7 +19,6 @@ import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A03;
-import ca.uhn.hl7v2.parser.ng.NewPipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
@@ -33,7 +32,7 @@ public class NewPipeParserTest extends TestCase {
 	private Parser parser;
 
 	public void setUp() throws Exception {
-		parser = new NewPipeParser();
+		parser = new PipeParser();
 	}
 
 	public void testAL1Reps() throws IOException, EncodingNotSupportedException, HL7Exception {
