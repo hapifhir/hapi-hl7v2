@@ -51,7 +51,9 @@ Developing using HAPI - By Example
   Another way of reading and writing to message objects is to use 
   a {{{xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
 
-  We can use a subclassed parser to {{{CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
+  We can use a subclassed parser to {{{xref/ca/uhn/hl7v2/examples/CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
+
+  {{{xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
 
 
 * Advanced Creating Messages

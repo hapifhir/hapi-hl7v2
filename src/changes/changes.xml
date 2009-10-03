@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<document xmlns="urn:changes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="urn:changes changes.xsd">
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 changes.xsd">
 	<properties>
 		<title>HAPI</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
@@ -8,13 +8,14 @@
 	<body>
 		<release version="1.0" date="TBA"
             description="This version has not yet been released.">
-			<action type="fix" dev="jamesagnew">Initiator should fail immediately if an attempt to send a message with no control ID (MSH-10) is made, since it will end up timing out waiting for a response. Thanks to Shrinivas N Nirale for reporting.</action>
-			<action type="fix" due-to="Jan Klasser" issue="1809573">Fix NullPointerException in DefaultValidator when no table present for an ID datatype</action>
-			<action type="fix" dev="jamesagnew">Allow parsing of unknown message types for 2.5.1 and 2.6 messages</action>
-			<action type="update" dev="jamesagnew">Convert HAPI source version JDK 5.0. This allows the use (and begins a gradual conversion) to generics by HAPI's internal structures. Support for JDK1.4 will still remain through version specific JARs produced by RetroTranslator.</action>
-			<action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
-			<action type="fix" due-to="Gerald Bortis, Christian Ohr" issue="1263250">Fix serialization of HAPI Message objects. Also added serialVersionUID to a number of core classes.</action>
-			<action type="fix" due-to="Chris Busch">Fix a memory leak in Escape.java when lots of different encoding chars are used</action>
+            <action type="add" due-to="Christian Ohr, Niranjan Sharma">Add two new ModelClassFactory implementations: <a href="/apidocs/ca/uhn/hl7v2/parser/CanonicalModelClassFactory.html">CanonicalModelClassFactory</a> (always returns the same version), and <a href="/apidocs/ca/uhn/hl7v2/parser/CustomModelClassFactory.html">CustomModelClassFactory</a> (provides easy way to use custom structure packages)</action>
+            <action type="add" due-to="Christian Ohr">Overhaul Escape class (handles HL7 escape sequences) to dramatically improve performance</action>
+            <action type="fix" due-to="Jan Klasser" issue="1809573">Fix NullPointerException in DefaultValidator when no table present for an ID datatype</action>
+            <action type="fix" dev="jamesagnew">Allow parsing of unknown message types for 2.5.1 and 2.6 messages</action>
+            <action type="update" dev="jamesagnew">Convert HAPI source version JDK 5.0. This allows the use (and begins a gradual conversion) to generics by HAPI's internal structures. Support for JDK1.4 will still remain through version specific JARs produced by RetroTranslator.</action>
+            <action type="add" dev="jamesagnew">Add getNames() method to Segment, to allow programatic access to segment's field names (needed by hUnit)</action>
+            <action type="fix" due-to="Gerald Bortis, Christian Ohr" issue="1263250">Fix serialization of HAPI Message objects. Also added serialVersionUID to a number of core classes.</action>
+            <action type="fix" due-to="Chris Busch">Fix a memory leak in Escape.java when lots of different encoding chars are used</action>
 			<action type="fix" dev="jagnew">Modify ProcessorImpl (HL7Server processing class) to use an ExecutorService instead of spawning a new thread for each message to generate ACKs.</action>
 			<action type="fix" due-to="Gerald Bortis, Polloloco" issue="2164291">Fix XML parsing of seg groups containing more than one instance of the same segment (e.g. A17)</action>
 		</release>
