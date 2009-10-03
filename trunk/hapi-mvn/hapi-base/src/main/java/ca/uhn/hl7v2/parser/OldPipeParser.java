@@ -25,10 +25,9 @@
  *
  */
 
-package ca.uhn.hl7v2.parser.ng;
+package ca.uhn.hl7v2.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -39,32 +38,32 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
-import ca.uhn.hl7v2.parser.EncodingCharacters;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.parser.Escape;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.MessageIterator;
+import ca.uhn.hl7v2.util.FilterIterator;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
 /**
- * An implementation of Parser that supports traditionally encoded (ie delimited with characters
- * like |, ^, and ~) HL7 messages.  Unexpected segments and fields are parsed into generic elements
- * that are added to the message.  
+ * This is a legacy implementation of the PipeParser and should not be used
+ * for new projects.
+ *
+ * In version 1.0 of HAPI, a behaviour was corrected where unexpected segments
+ * would be placed at the tail end of the first segment group encountered. Any
+ * legacy code which still depends on previous behaviour can use this
+ * implementation.
+ *
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated
  */
-public class NewPipeParser extends Parser {
+public class OldPipeParser extends Parser {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(NewPipeParser.class);
+    private static final HapiLog log = HapiLogFactory.getHapiLog(PipeParser.class);
     
     private final static String segDelim = "\r"; //see section 2.8 of spec
     
-    private final static HashMap<Class<? extends Message>, StructureDefinition> myStructureDefinitions = new HashMap<Class<? extends Message>, StructureDefinition>();
-    
     /** Creates a new PipeParser */
-    public NewPipeParser() {
+    public OldPipeParser() {
     }
 
     /** 
@@ -72,7 +71,7 @@ public class NewPipeParser extends Parser {
      *  
      * @param theFactory custom factory to use for model class lookup 
      */
-    public NewPipeParser(ModelClassFactory theFactory) {
+    public OldPipeParser(ModelClassFactory theFactory) {
     	super(theFactory);
     }
     
@@ -223,110 +222,20 @@ public class NewPipeParser extends Parser {
         //try to instantiate a message object of the right class
         MessageStructure structure = getStructure(message);
         Message m = instantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
-        IStructureDefinition structureDef = getStructureDefinition(m.getClass());
-        
-        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
-        MessageIterator messageIter = new MessageIterator(m, structureDef, "MSH", true);
-        
-        String[] segments = split(message, segDelim);
 
-        char delim = '|';
-        for (int i = 0; i < segments.length; i++) {
-            
-            //get rid of any leading whitespace characters ...
-            if (segments[i] != null && segments[i].length() > 0 && Character.isWhitespace(segments[i].charAt(0)))
-                segments[i] = stripLeadingWhitespace(segments[i]);
-            
-            //sometimes people put extra segment delimiters at end of msg ...
-            if (segments[i] != null && segments[i].length() >= 3) {
-                final String name;
-                if (i == 0) {
-                    name = segments[i].substring(0, 3);
-                    delim = segments[i].charAt(3);
-                } else {
-                    if (segments[i].indexOf(delim) >= 0 ) {
-                        name = segments[i].substring(0, segments[i].indexOf(delim));
-                      } else {
-                        name = segments[i];
-                      }
-                 }
-                
-                log.debug("Parsing segment " + name);
-                
-                messageIter.setDirection(name);
+        parse(m, message);
 
-                if (messageIter.hasNext()) {
-                    Segment next = (Segment) messageIter.next();
-                    int nextIndexWithinParent = messageIter.getNextIndexWithinParent();
-                	parse(next, segments[i], getEncodingChars(message), nextIndexWithinParent);
-                }
-            }
-        }
         return m;
     }
     
-    
     /**
-     * Generates (or returns the cached value of) the message 
-     * @param theClazz
-     * @return
-     * @throws HL7Exception 
-     */
-	private IStructureDefinition getStructureDefinition(
-			Class<? extends Message> theClazz) throws HL7Exception {
-    	
-		StructureDefinition retVal = myStructureDefinitions.get(theClazz); 
-		if (retVal != null) {
-			return retVal;
-		}
-		
-    	Message message = ReflectionUtil.instantiateMessage(theClazz, getFactory());
-	    Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
-	    retVal = createStructureDefinition(message, previousLeaf);
-		myStructureDefinitions.put(theClazz, retVal);
-		
-	    return retVal;
-	}
-
-	private StructureDefinition createStructureDefinition(
-			Structure theStructure, Holder<StructureDefinition> thePreviousLeaf) throws HL7Exception {
-		
-		StructureDefinition retVal = new StructureDefinition();
-		retVal.setName(theStructure.getName());
-		
-		if (theStructure instanceof Group) {
-			retVal.setSegment(false);
-			Group group = (Group)theStructure;
-			int index = 0;
-			for (String nextName : group.getNames()) {
-				Structure nextChild = group.get(nextName);
-				StructureDefinition structureDefinition = createStructureDefinition(nextChild, thePreviousLeaf);
-				structureDefinition.setRepeating(group.isRepeating(nextName));
-				structureDefinition.setRequired(group.isRequired(nextName));
-				structureDefinition.setPosition(index++);
-				structureDefinition.setParent(retVal);
-				retVal.addChild(structureDefinition);
-			}
-		} else {
-			if (thePreviousLeaf.getObject() != null) {
-				thePreviousLeaf.getObject().setNextLeaf(retVal);
-			}
-			thePreviousLeaf.setObject(retVal);
-			retVal.setSegment(true);
-		}
-		
-		return retVal;
-	}
-
-	/**
      * Parses a segment string and populates the given Segment object.  Unexpected fields are
      * added as Varies' at the end of the segment.  
-	 *
-	 * @param theRepetition The repetition number of this segment within its group
+     *
      * @throws HL7Exception if the given string does not contain the
      *      given segment or if the string is not encoded properly
      */
-    public void parse(Segment destination, String segment, EncodingCharacters encodingChars, int theRepetition) throws HL7Exception {
+    public void parse(Segment destination, String segment, EncodingCharacters encodingChars) throws HL7Exception {
         int fieldOffset = 0;
         if (isDelimDefSegment(destination.getName())) {
             fieldOffset = 1;
@@ -351,13 +260,11 @@ public class NewPipeParser extends Parser {
             
             for (int j = 0; j < reps.length; j++) {
                 try {
-                	if (log.isDebugEnabled()) {
-	                    StringBuffer statusMessage = new StringBuffer("Parsing field ");
-	                    statusMessage.append(i+fieldOffset);
-	                    statusMessage.append(" repetition ");
-	                    statusMessage.append(j);
-	                    log.debug(statusMessage.toString());
-                	}
+                    StringBuffer statusMessage = new StringBuffer("Parsing field ");
+                    statusMessage.append(i+fieldOffset);
+                    statusMessage.append(" repetition ");
+                    statusMessage.append(j);
+                    log.debug(statusMessage.toString());
                     //parse(destination.getField(i + fieldOffset, j), reps[j], encodingChars, false);
 
                     Type field = destination.getField(i + fieldOffset, j);
@@ -370,7 +277,7 @@ public class NewPipeParser extends Parser {
                 catch (HL7Exception e) {
                     //set the field location and throw again ...
                     e.setFieldPosition(i);
-                    e.setSegmentRepetition(theRepetition);
+                    e.setSegmentRepetition(MessageIterator.getIndex(destination.getParent(), destination).rep);
                     e.setSegmentName(destination.getName());
                     throw e;
                 }
@@ -406,7 +313,7 @@ public class NewPipeParser extends Parser {
      * @param data the field string (including all components and subcomponents; not including field delimiters)
      * @param encodingCharacters the encoding characters used in the message
      */
-    private static void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
+    public void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
         String[] components = split(data, String.valueOf(encodingCharacters.getComponentSeparator()));
         for (int i = 0; i < components.length; i++) {
             String[] subcomponents = split(components[i], String.valueOf(encodingCharacters.getSubcomponentSeparator()));
@@ -767,7 +674,7 @@ public class NewPipeParser extends Parser {
      */
     public String getVersion(String message) throws HL7Exception {
         int startMSH = message.indexOf("MSH");
-        int endMSH = message.indexOf(NewPipeParser.segDelim, startMSH);
+        int endMSH = message.indexOf(OldPipeParser.segDelim, startMSH);
         if (endMSH < 0)
             endMSH = message.length();
         String msh = message.substring(startMSH, endMSH);
@@ -807,6 +714,80 @@ public class NewPipeParser extends Parser {
         }
         return version;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+        return encode(structure, encodingCharacters);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+        return encode(type, encodingCharacters);
+    }
+
+    public void parse(Message message, String string) throws HL7Exception {
+        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
+        MessageIterator messageIter = new MessageIterator(message, "MSH", true);
+        FilterIterator.Predicate segmentsOnly = new FilterIterator.Predicate() {
+            public boolean evaluate(Object obj) {
+                if (Segment.class.isAssignableFrom(obj.getClass())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
+
+        String[] segments = split(string, segDelim);
+
+        char delim = '|';
+        for (int i = 0; i < segments.length; i++) {
+
+            //get rid of any leading whitespace characters ...
+            if (segments[i] != null && segments[i].length() > 0 && Character.isWhitespace(segments[i].charAt(0)))
+                segments[i] = stripLeadingWhitespace(segments[i]);
+
+            //sometimes people put extra segment delimiters at end of msg ...
+            if (segments[i] != null && segments[i].length() >= 3) {
+                final String name;
+                if (i == 0) {
+                    name = segments[i].substring(0, 3);
+                    delim = segments[i].charAt(3);
+                } else {
+                    if (segments[i].indexOf(delim) >= 0 ) {
+                        name = segments[i].substring(0, segments[i].indexOf(delim));
+                      } else {
+                        name = segments[i];
+                      }
+                 }
+
+                log.debug("Parsing segment " + name);
+
+                messageIter.setDirection(name);
+                FilterIterator.Predicate byDirection = new FilterIterator.Predicate() {
+                    public boolean evaluate(Object obj) {
+                        Structure s = (Structure) obj;
+                        log.debug("PipeParser iterating message in direction " + name + " at " + s.getName());
+                        if (s.getName().matches(name + "\\d*")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                };
+                FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
+                if (dirIter.hasNext()) {
+                    parse((Segment) dirIter.next(), segments[i], getEncodingChars(string));
+                }
+            }
+        }
+    }
+
     
     /**
      * A struct for holding a message class string and a boolean indicating whether it 
@@ -821,17 +802,5 @@ public class NewPipeParser extends Parser {
             explicitlyDefined = isExplicitlyDefined;
         }
     }
-
-    private static class Holder<T>
-    {
-    	private T myObject;
-
-		public T getObject() {
-			return myObject;
-		}
-
-		public void setObject(T theObject) {
-			myObject = theObject;
-		}
-    }
+    
 }

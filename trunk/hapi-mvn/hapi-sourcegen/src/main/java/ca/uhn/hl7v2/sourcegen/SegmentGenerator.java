@@ -84,6 +84,7 @@ public class SegmentGenerator extends java.lang.Object {
         ArrayList segments = new ArrayList();
         while (rs.next()) {
             String segName = rs.getString(1);
+            if ("ED".equals(segName)) continue; // v25 has this wacky bit of data
             if (Character.isLetter(segName.charAt(0))) segments.add(altSegName(segName));
         }
         stmt.close();

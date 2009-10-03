@@ -88,7 +88,6 @@ public class SourceGenMojo extends AbstractMojo
      * The version for the generated source
      * 
      * @parameter
-     * @required
      */
     private String version;
     
@@ -97,7 +96,6 @@ public class SourceGenMojo extends AbstractMojo
      * The JDBC URL for the HL7 database
      * 
      * @parameter
-     * @required
      */
     private String jdbcUrl;
 
@@ -117,9 +115,21 @@ public class SourceGenMojo extends AbstractMojo
 
     
     /**
+     * Should build be skipped
+     *
+     * @parameter
+     */
+    private boolean skip;
+
+    
+    /**
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        if (skip) {
+            getLog().warn("Configured to skip");
+        }
 
     	if (new File(targetDirectory).exists()) {
             getLog().warn("Already exists version " + version + ", skipping!");
@@ -156,6 +166,7 @@ public class SourceGenMojo extends AbstractMojo
             getLog().warn("Already made version " + version + ", skipping!");
         }
         
+        getLog().info("Adding " + targetDirectory + " to compile source root");
         project.addCompileSourceRoot(targetDirectory);
         
     }

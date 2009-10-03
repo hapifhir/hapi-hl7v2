@@ -27,10 +27,16 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.app.DefaultApplication;
+import ca.uhn.hl7v2.model.primitive.ID;
 import java.util.regex.*;
 
 import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import java.io.IOException;
 
 /**
  * A default implementation of Message. 
@@ -41,6 +47,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
     private ValidationContext myContext;
 	private static final Pattern ourVersionPattern = Pattern.compile("\\.(v2[0-9][0-9]?)\\.");
 	private String myVersion;
+    private Parser myParser;
 	
     /**
      * @param theFactory factory for model classes (e.g. group, segment) for this message 
@@ -105,4 +112,108 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
     public void setValidationContext(ValidationContext theContext) {
         myContext = theContext;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    public Character getFieldSeparatorValue() throws HL7Exception {
+        Segment firstSegment = (Segment) get(getNames()[0]);
+        Primitive value = (Primitive) firstSegment.getField(1, 0);
+        String valueString = value.getValue();
+        if (valueString == null || valueString.length() == 0) {
+            return null;
+        }
+        return valueString.charAt(0);
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public String getEncodingCharactersValue() throws HL7Exception {
+        Segment firstSegment = (Segment) get(getNames()[0]);
+        Primitive value = (Primitive) firstSegment.getField(2, 0);
+        return value.getValue();
+    }
+
+
+        /**
+     * Sets the parser to be used when parse/encode methods are called on this
+     * Message, as well as its children. It is recommended that if these methods
+     * are going to be called, a parser be supplied with the validation context
+     * wanted. Where possible, the parser should be reused for best performance,
+     * unless thread safety is an issue.
+     *
+     * Note that not all parsers can be used. As of version 1.0, only {@link PipeParser}
+     * supports this functionality
+     */
+    public void setParser(Parser parser) {
+        if (parser == null) {
+            throw new NullPointerException("Value may not be null");
+        }
+
+        myParser = parser;
+    }
+
+
+    /**
+     * Returns the parser to be used when parse/encode methods are called on this
+     * Message, as well as its children. The default value is a new {@link PipeParser}
+     */
+    @Override
+    public Parser getParser() {
+        if (myParser == null) {
+            myParser = new PipeParser();
+        }
+
+        return myParser;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public void parse(String string) throws HL7Exception {
+        getParser().parse(this, string);
+    }
+
+    
+    /**
+     * {@inheritDoc }
+     */
+    public String encode() throws HL7Exception {
+        return getParser().encode(this);
+    }
+
+    
+    /**
+     * {@inheritDoc }
+     */
+    public Message generateACK() throws HL7Exception, IOException {
+        return generateACK(null, null);
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public Message generateACK(String theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
+        Message retVal = DefaultApplication.makeACK((Segment) get(getNames()[0]));
+
+        if (theAcknowledgementCode == null) {
+            theAcknowledgementCode = "AA";
+        }
+
+        Segment msa = (Segment)retVal.get("MSA");
+        ID ackCode = (ID) msa.getField(1, 0);
+        ackCode.setValue(theAcknowledgementCode);
+
+        if (theException != null) {
+            Segment err = (Segment) retVal.get("ERR");
+            theException.populate(err, null);
+        }
+
+        return retVal;
+    }
+
 }

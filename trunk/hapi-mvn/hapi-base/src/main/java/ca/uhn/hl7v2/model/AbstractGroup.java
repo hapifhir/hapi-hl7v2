@@ -34,6 +34,7 @@ import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 
 
 /**
@@ -112,10 +113,10 @@ public abstract class AbstractGroup implements Group {
         Structure ret;
         if (rep < list.size()) {
             // return existing Structure if it exists 
-            ret = (Structure)list.get(rep);
+            ret = list.get(rep);
         } else if (rep == list.size()) {
             //verify that Structure is repeating ... 
-            Boolean repeats = (Boolean)this.repeating.get(name);
+            Boolean repeats = this.repeating.get(name);
             if (!repeats.booleanValue() && list.size() > 0) throw new HL7Exception("Can't create repetition #" + 
                 rep + " of Structure " + name + " - this Structure is non-repeating", HL7Exception.APPLICATION_INTERNAL_ERROR);
             
@@ -178,7 +179,7 @@ public abstract class AbstractGroup implements Group {
     public String[] getNames() {
         String[] retVal = new String[this.names.size()];
         for (int i = 0; i < this.names.size(); i++) {
-            retVal[i] = (String)this.names.get(i);
+            retVal[i] = this.names.get(i);
         }
         return retVal;
     }
@@ -201,7 +202,28 @@ public abstract class AbstractGroup implements Group {
         
         return insert(c, required, repeating, this.names.size(), name);
     }
-        
+
+
+    /**
+     * Adds a new Structure (group or segment) to this Group.  A place for the
+     * Structure is added to the group but there are initially zero repetitions.
+     * This method should be used by the constructors of implementing classes
+     * to specify which Structures the Group contains - Structures should be
+     * added in the order in which they appear.
+     * Note that the class is supplied instead of an instance because we want
+     * there initially to be zero instances of each structure but we want the
+     * AbstractGroup code to be able to create instances as necessary to support
+     * get(...) calls.
+     * @return the actual name used to store this structure (may be appended with
+     *      an integer if there are duplicates in the same Group).
+     */
+    protected String add(Class<? extends Structure> c, boolean required, boolean repeating, int index) throws HL7Exception {
+        String name = getName(c);
+
+        return insert(c, required, repeating, index, name);
+    }
+
+
     /** 
      * Returns true if the class name is already being used. 
      */
@@ -314,11 +336,100 @@ public abstract class AbstractGroup implements Group {
         if (list == null) throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
         Structure[] all = new Structure[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            all[i] = (Structure)list.get(i);
+            all[i] = list.get(i);
         }
         return all;
     }
-    
+
+
+    /**
+     * Removes a repetition of a given Structure objects by name.  For example, if
+     * the Group contains 10 repititions an OBX segment and "OBX" is supplied
+     * with an index of 2, then this call would remove the 3rd repetition. Note that
+     * in this case, the Set ID field in the OBX segments would also need to be
+     * renumbered manually.
+     *
+     * @return The removed structure
+     * @throws HL7Exception if the named Structure is not part of this Group.
+     */
+    protected Structure removeRepetition(String name, int index) throws HL7Exception {
+        ArrayList<Structure> list = structures.get(name);
+        if (list == null) {
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+        if (list.size() == 0) {
+            throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " has no repetitions", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+        if (list.size() <= index) {
+            throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " must be between 0 and " + (list.size() - 1), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+
+        return list.remove(index);
+    }
+
+
+    /**
+     * Inserts a repetition of a given Structure into repetitions of that structure by name.
+     * For example, if the Group contains 10 repititions an OBX segment and an OBX is supplied
+     * with an index of 2, then this call would insert the new repetition at
+     * index 2. Note that
+     * in this case, the Set ID field in the OBX segments would also need to be
+     * renumbered manually.
+     *
+     * @return The removed structure
+     * @throws HL7Exception if the named Structure is not part of this Group.
+     */
+    protected void insertRepetition(Structure structure, int index) throws HL7Exception {
+        if (structure == null) {
+            throw new NullPointerException("Structure may not be null");
+        }
+
+        if (structure.getMessage() != this.getMessage()) {
+            throw new HL7Exception("Structure does not belong to this message", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+
+        String name = structure.getName();
+        ArrayList<Structure> list = structures.get(name);
+
+        if (list == null) {
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+        if (list.size() < index) {
+            throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " must be between 0 and " + (list.size()), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+
+        list.add(index, structure);
+    }
+
+
+    /**
+     * Inserts a repetition of a given Structure into repetitions of that structure by name.
+     * For example, if the Group contains 10 repititions an OBX segment and an OBX is supplied
+     * with an index of 2, then this call would insert the new repetition at
+     * index 2. Note that
+     * in this case, the Set ID field in the OBX segments would also need to be
+     * renumbered manually.
+     *
+     * @return The removed structure
+     * @throws HL7Exception if the named Structure is not part of this Group.
+     */
+    protected Structure insertRepetition(String name, int index) throws HL7Exception {
+        if (name == null || name.length() == 0) {
+            throw new NullPointerException("Name may not be null/empty");
+        }
+
+        Class<? extends Structure> structureClass = this.classes.get(name);
+        if (structureClass == null) {
+            throw new HL7Exception("Group " + this.getClass().getName() + " has no structure named " + name + ": Valid names: " + this.classes.keySet(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+
+        Structure rep = tryToInstantiateStructure(structureClass, name);
+        insertRepetition(rep, index);
+
+        return rep;
+    }
+
+
     /**
      * Returns the Class of the Structure at the given name index.  
      */

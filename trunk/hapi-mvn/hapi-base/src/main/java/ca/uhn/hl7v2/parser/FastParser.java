@@ -1,6 +1,29 @@
-/*
- * Created on 16-May-2005
- */
+/**
+The contents of this file are subject to the Mozilla Public License Version 1.1
+(the "License"); you may not use this file except in compliance with the License.
+You may obtain a copy of the License at http://www.mozilla.org/MPL/
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+specific language governing rights and limitations under the License.
+
+The Original Code is "GroupPointer.java".  Description:
+"A GroupPointer is used when parsing traditionally encoded HL7 messages"
+
+The Initial Developer of the Original Code is University Health Network. Copyright (C)
+2001.  All Rights Reserved.
+
+Contributor(s): ______________________________________.
+
+Alternatively, the contents of this file may be used under the terms of the
+GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+applicable instead of those above.  If you wish to allow use of your version of this
+file only under the terms of the GPL and not to allow others to use your version
+of this file under the MPL, indicate your decision by deleting  the provisions above
+and replace  them with the notice and other provisions required by the GPL License.
+If you do not delete the provisions above, a recipient may use your version of
+this file under either the MPL or the GPL.
+
+*/
 package ca.uhn.hl7v2.parser;
 
 import java.io.BufferedReader;
@@ -39,7 +62,7 @@ import ca.uhn.log.HapiLogFactory;
  * at once) is needed, you may want to pool some FastParsers or use separate ones in separate threads. 
  *    
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
  */
 public class FastParser extends Parser {
 
@@ -456,12 +479,63 @@ public class FastParser extends Parser {
     public String getVersion(String message) throws HL7Exception {
         return myPipeParser.getVersion(message);
     }
+
+    /**
+     * Not supported, throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Not supported, throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Not supported, throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Not supported, throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
+    /**
+     * Not supported, throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void parse(Message message, String string) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     /**
      * A pointer to a distinct segment or group position in a message.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
+     * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
      */
     public static class StructRef {
 
@@ -605,7 +679,7 @@ public class FastParser extends Parser {
      * A convenience StructRef that points to a message root.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.2 $ updated on $Date: 2009-07-01 13:19:06 $ by $Author: jamesagnew $
+     * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
      */
     public static class RootRef extends StructRef {
         public RootRef() {

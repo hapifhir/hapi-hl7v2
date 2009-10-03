@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.parser.ng;
+package ca.uhn.hl7v2.parser;
 
 import java.util.Collections;
 import java.util.List;

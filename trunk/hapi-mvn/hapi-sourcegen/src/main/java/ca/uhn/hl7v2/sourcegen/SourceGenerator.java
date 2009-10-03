@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 
 import ca.uhn.hl7v2.HL7Exception;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>Manages automatic generation of HL7 API source code for all data types,
@@ -224,7 +225,7 @@ public class SourceGenerator extends Object {
 	public static String makeAlternateAccessorName(String fieldDesc, String parentName, int index) {
         StringBuffer aName = new StringBuffer("get");
         
-        aName.append(parentName).append(index);
+        aName.append(StringUtils.capitalize(parentName.toLowerCase())).append(index).append("_");
         
         char[] chars = fieldDesc.toCharArray();
         boolean lastCharWasNotLetter = true;

@@ -43,9 +43,25 @@ public class HL7Exception extends Exception {
 
     private static final HapiLog ourLog = HapiLogFactory.getHapiLog(HL7Exception.class);
 
+
+    /** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept */
     public static final int ACK_AA = 1;
+
+    /** Original mode: Application Error - Enhanced mode: Application acknowledgment: Error */
     public static final int ACK_AE = 2;
+
+    /** Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject */
     public static final int ACK_AR = 3;
+
+    /** Enhanced mode: Accept acknowledgment: Commit Accept */
+    public static final int ACK_CA = 4;
+
+    /** Enhanced mode: Accept acknowledgment: Commit Error */
+    public static final int ACK_CE = 5;
+
+    /** Enhanced mode: Accept acknowledgment: Commit Reject */
+    public static final int ACK_CR = 6;
+
 
     public static final int MESSAGE_ACCEPTED = 0;
     public static final int SEGMENT_SEQUENCE_ERROR = 100;

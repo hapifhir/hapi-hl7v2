@@ -27,7 +27,6 @@
 package ca.uhn.hl7v2.examples;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
@@ -39,7 +38,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * Example transmitting a message
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @version $Revision: 1.3 $ updated on $Date: 2009-03-29 16:55:33 $ by $Author: jamesagnew $
+ * @version $Revision: 1.4 $ updated on $Date: 2009-10-03 15:29:05 $ by $Author: jamesagnew $
  */
 public class CreateAMessage
 {

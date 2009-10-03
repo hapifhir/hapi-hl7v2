@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -165,6 +166,8 @@ public abstract class Parser {
         myValidator.validate(message, encoding.equals("XML"), version);        
         Message result = doParse(message, version);
         myValidator.validate(result);
+
+        result.setParser(this);
         
         return result;
     }
@@ -287,6 +290,67 @@ public abstract class Parser {
      * @throws HL7Exception if the version field can not be found. 
      */
     public abstract String getVersion(String message) throws HL7Exception;
+
+
+    /**
+     * Encodes a particular segment and returns the encoded structure
+     *
+     * @param structure The structure to encode
+     * @param encodingCharacters The encoding characters
+     * @return The encoded segment
+     * @throws HL7Exception If there is a problem encoding
+     * @since 1.0
+     */
+    public abstract String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception;
+
+
+    /**
+     * Encodes a particular type and returns the encoded structure
+     *
+     * @param type The type to encode
+     * @param encodingCharacters The encoding characters
+     * @return The encoded type
+     * @throws HL7Exception If there is a problem encoding
+     * @since 1.0
+     */
+    public abstract String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception;
+
+
+    /**
+     * Parses a particular type and returns the encoded structure
+     *
+     * @param string The string to parse
+     * @param type The type to encode
+     * @param encodingCharacters The encoding characters
+     * @return The encoded type
+     * @throws HL7Exception If there is a problem encoding
+     * @since 1.0
+     */
+    public abstract void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception;
+
+
+    /**
+     * Parses a particular segment and returns the encoded structure
+     *
+     * @param string The string to parse
+     * @param segment The segment to encode
+     * @param encodingCharacters The encoding characters
+     * @return The encoded type
+     * @throws HL7Exception If there is a problem encoding
+     */
+    public abstract void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception;
+
+
+    /**
+     * Parses a particular message and returns the encoded structure
+     *
+     * @param string The string to parse
+     * @param message The message to encode
+     * @return The encoded type
+     * @throws HL7Exception If there is a problem encoding
+     * @since 1.0
+     */
+    public abstract void parse(Message message, String string) throws HL7Exception;
 
 
     /**

@@ -2,7 +2,6 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.log.*;
 
@@ -71,6 +70,7 @@ public abstract class GenericMessage extends AbstractMessage {
         	// FIXME: use from somewhere
         	return "2.6";
         }
+
     }
 
     public static class V21 extends GenericMessage {

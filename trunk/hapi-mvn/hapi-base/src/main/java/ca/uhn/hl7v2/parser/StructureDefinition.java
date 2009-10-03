@@ -24,7 +24,7 @@ If you do not delete the provisions above, a recipient may use your version of
 this file under either the MPL or the GPL. 
 
  */
-package ca.uhn.hl7v2.parser.ng;
+package ca.uhn.hl7v2.parser;
 
 import java.util.ArrayList;
 import java.util.HashSet;

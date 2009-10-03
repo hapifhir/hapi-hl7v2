@@ -48,17 +48,17 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  * JUnit test harness for PipeParser
  * @author Bryan Tripp
  */
-public class PipeParserTest extends TestCase {
+public class OldPipeParserTest extends TestCase {
 
-    PipeParser parser;
+    OldPipeParser parser;
     
     /** Creates a new instance of PipeParserTest */
-    public PipeParserTest(String arg) {
+    public OldPipeParserTest(String arg) {
         super(arg);
     }
     
     public void setUp() throws Exception {
-        parser = new PipeParser();
+        parser = new OldPipeParser();
     }
     
     public void testGetVersion() throws Exception {

@@ -27,6 +27,7 @@
 
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
@@ -88,6 +89,24 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
         }
         
         myValue = theValue;
+    }
+
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String encode() throws HL7Exception {
+        return getValue();
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void parse(String string) throws HL7Exception {
+        setValue(string);
     }
     
 }
