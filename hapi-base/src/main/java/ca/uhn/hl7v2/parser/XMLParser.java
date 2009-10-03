@@ -720,6 +720,58 @@ public abstract class XMLParser extends Parser {
         return value;
     }
 
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+    public void parse(Message message, String string) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+    public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+    public void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+    public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
     /** Test harness */
     public static void main(String args[]) {
         if (args.length != 1) {
@@ -749,6 +801,26 @@ public abstract class XMLParser extends Parser {
                 }
                 public String getVersion(String message) throws HL7Exception {
                     return null;
+                }
+
+                @Override
+                public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
 

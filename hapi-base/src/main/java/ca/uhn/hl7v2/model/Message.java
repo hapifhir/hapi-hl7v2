@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -27,7 +27,11 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import java.io.IOException;
 
 
 /**
@@ -51,4 +55,109 @@ public interface Message extends Group {
      * @param theContext the set of validation rules that are to apply to this message
      */
     public void setValidationContext(ValidationContext theContext);
+
+
+    /**
+     * Convenience method which retrieves the field separator value from the first field of the first segment.
+     *
+     * Typically, the first segment is MSH, so this method will retrieve the
+     * value of MSH-1.
+     *
+     * @return The field separator
+     * @throws HL7Exception If an error occurs
+     * @since 1.0
+     */
+    public Character getFieldSeparatorValue() throws HL7Exception;
+
+
+    /**
+     * Convenience method which retrieves the encoding characters value from the second field of the first segment.
+     *
+     * Typically, the first segment is MSH, so this method will retrieve the
+     * value of MSH-2.
+     *
+     * @return The encoding characters
+     * @throws HL7Exception If an error occurs
+     * @since 1.0
+     */
+    public String getEncodingCharactersValue() throws HL7Exception;
+
+
+    /**
+     * Sets the parser to be used when parse/encode methods are called on this
+     * Message, as well as its children. It is recommended that if these methods
+     * are going to be called, a parser be supplied with the validation context
+     * wanted. Where possible, the parser should be reused for best performance,
+     * unless thread safety is an issue.
+     *
+     * Note that not all parsers can be used. As of version 1.0, only {@link PipeParser}
+     * supports this functionality
+     */
+    public void setParser(Parser parser);
+
+    
+    /**
+     * Returns the parser to be used when parse/encode methods are called on this
+     * Message, as well as its children. The default value is a new {@link PipeParser}
+     */
+    public Parser getParser();
+
+    
+    /**
+     * Parses the string into this message using the parser returned by {@link #getParser() }
+     */
+    public void parse(String string) throws HL7Exception;
+
+
+    /**
+     * Encodes this message using the parser returned by {@link #getParser() }
+     */
+    public String encode() throws HL7Exception;
+
+
+    /**
+     * <p>
+     * Generates and returns an ACK message which would be used to
+     * acknowledge this message successfully, with an MSA-1 code of "AA".
+     * The ACK generated will be of the same version as the value of MSH-12 in this message (as opposed
+     * to the version of the message class instance, if they are different)
+     * </p>
+     *
+     * <p>
+     * Note that this method will fail if it is not possible to
+     * generate an ACK for any reason, such as
+     * <ul>
+     * <li>Message version is invalid</li>
+     * <li>First segment is not an MSH</li>
+     * </p>
+     *
+     * @throws HL7Exception If the message can not be constructed
+     * @throws IOException If a failure occurs in generating a control ID for the message
+     */
+    public Message generateACK() throws HL7Exception, IOException;
+
+
+    /**
+     * <p>
+     * Generates and returns an ACK message which would be used to
+     * acknowledge this message successfully. The ACK generated will be
+     * of the same version as the value of MSH-12 in this message (as opposed
+     * to the version of the message class instance, if they are different)
+     * </p>
+     *
+     * <p>
+     * Note that this method will fail if it is not possible to
+     * generate an ACK for any reason, such as
+     * <ul>
+     * <li>Message version is invalid</li>
+     * <li>First segment is not an MSH</li>
+     * </p>
+     *
+     * @param theAcknowldegementCode The acknowledement code (MSA-1) to supply. If null, defaults to "AA". To generate a typical NAK, use "AE"
+     * @param theException The exceptions used to populate the ERR segment (if any)
+     * @throws HL7Exception If the message can not be constructed
+     * @throws IOException If a failure occurs in generating a control ID for the message
+     */
+    public Message generateACK(String theAcknowldegementCode, HL7Exception theException) throws HL7Exception, IOException;
+
 } 

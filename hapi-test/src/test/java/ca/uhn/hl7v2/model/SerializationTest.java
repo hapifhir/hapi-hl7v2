@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.ng.NewPipeParser;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 public class SerializationTest extends TestCase {
 
@@ -22,7 +22,7 @@ public class SerializationTest extends TestCase {
 				+ "PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r"
 				+ "PR1|1||1111^Mastoplastica|Protesi|20090224|02\r";
 
-		Parser p = new NewPipeParser();
+		Parser p = new PipeParser();
 		Message parsed = p.parse(message);
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();

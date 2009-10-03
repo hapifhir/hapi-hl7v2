@@ -272,7 +272,9 @@ public class GroupGenerator extends java.lang.Object {
        for (int i = 0; i < numStructs; i++) {
            StructureDef def = structs[i];
            
-           if (def.getName().equals("?")) {
+           if (def.getName().equals("ED")) {
+               // ignore this one, it's nonstandard
+           } else if (def.getName().equals("?")) {
                source.append("\t      this.addNonstandardSegment(\"ANY\");\r\n");
            } else  {
                if (useFactory) {
@@ -342,7 +344,11 @@ public class GroupGenerator extends java.lang.Object {
             String unqualifiedName = ((GroupDef) def).getUnqualifiedName();
             getterName = group.getIndexName(unqualifiedName);
         }
-        
+
+        if (def.getName().equals("ED")) {
+            return "";
+        }
+
         //make accessor for first (or only) rep ... 
         source.append("\t/**\r\n");
         source.append("\t * Returns ");
@@ -382,7 +388,7 @@ public class GroupGenerator extends java.lang.Object {
             source.append("\t * (");
             source.append(def.getDescription());
             source.append(") - creates it if necessary\r\n");
-            source.append("\t * throws HL7Exception if the repetition requested is more than one \r\n");
+            source.append("\t * @throws HL7Exception if the repetition requested is more than one \r\n");
             source.append("\t *     greater than the number of existing repetitions.\r\n");
             source.append("\t */\r\n");
             source.append("\tpublic ");
@@ -418,6 +424,71 @@ public class GroupGenerator extends java.lang.Object {
             source.append("\t    } \r\n");
             source.append("\t    return reps; \r\n");
             source.append("\t} \r\n\r\n");
+
+            // Create insert repetition method
+            source.append("\t/**\r\n");
+            source.append("\t * Inserts a specific repetition of ");
+            source.append(indexName);
+            source.append("\r\n");
+            source.append("\t * (");
+            source.append(def.getDescription());
+            source.append(")\r\n");
+            source.append("\t * @see AbstractGroup#insertRepetition(Structure, int) \r\n");
+            source.append("\t */\r\n");
+            source.append("\tpublic void ");
+            source.append(" insert");
+            source.append(getterName);
+            source.append("(");
+            source.append(def.getName());
+            source.append(" structure, int rep) throws HL7Exception { \r\n");
+            source.append("\t   super.insertRepetition( structure");
+            source.append(", rep);\r\n");
+            source.append("\t}\r\n\r\n");
+
+            // Create insert new repetition method
+            source.append("\t/**\r\n");
+            source.append("\t * Inserts a specific repetition of ");
+            source.append(indexName);
+            source.append("\r\n");
+            source.append("\t * (");
+            source.append(def.getDescription());
+            source.append(")\r\n");
+            source.append("\t * @see AbstractGroup#insertRepetition(Structure, int) \r\n");
+            source.append("\t */\r\n");
+            source.append("\tpublic ");
+            source.append(def.getName());
+            source.append(" insert");
+            source.append(getterName);
+            source.append("(int rep) throws HL7Exception { \r\n");
+            source.append("\t   return (");
+            source.append(def.getName());
+            source.append(")super.insertRepetition(\"");
+            source.append(getterName);
+            source.append("\", rep);\r\n");
+            source.append("\t}\r\n\r\n");
+
+            // Create remove repetition method
+            source.append("\t/**\r\n");
+            source.append("\t * Removes a specific repetition of ");
+            source.append(indexName);
+            source.append("\r\n");
+            source.append("\t * (");
+            source.append(def.getDescription());
+            source.append(")\r\n");
+            source.append("\t * @see AbstractGroup#insertremoveRepetition(String, int) \r\n");
+            source.append("\t */\r\n");
+            source.append("\tpublic ");
+            source.append(def.getName());
+            source.append(" remove");
+            source.append(getterName);
+            source.append("(int rep) throws HL7Exception { \r\n");
+            source.append("\t   return (");
+            source.append(def.getName());
+            source.append(")super.removeRepetition(\"");
+            source.append(getterName);
+            source.append("\", rep);\r\n");
+            source.append("\t}\r\n\r\n");
+
         }
         
         return source.toString();

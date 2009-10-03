@@ -1,6 +1,26 @@
-/*
- * Created on 21-Apr-2005
- */
+/**
+The contents of this file are subject to the Mozilla Public License Version 1.1
+(the "License"); you may not use this file except in compliance with the License.
+You may obtain a copy of the License at http://www.mozilla.org/MPL/
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+specific language governing rights and limitations under the License.
+
+The Initial Developer of the Original Code is University Health Network. Copyright (C)
+2001.  All Rights Reserved.
+
+Contributor(s): ______________________________________.
+
+Alternatively, the contents of this file may be used under the terms of the
+GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+applicable instead of those above.  If you wish to allow use of your version of this
+file only under the terms of the GPL and not to allow others to use your version
+of this file under the MPL, indicate your decision by deleting  the provisions above
+and replace  them with the notice and other provisions required by the GPL License.
+If you do not delete the provisions above, a recipient may use your version of
+this file under either the MPL or the GPL.
+
+*/
 package ca.uhn.hl7v2.parser;
 
 import java.io.BufferedReader;
@@ -14,23 +34,27 @@ import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Group;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.7 $ updated on $Date: 2009-09-15 13:15:54 $ by $Author: jamesagnew $
+ * @version $Revision: 1.8 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
+
+    private static final long serialVersionUID = 1;
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultModelClassFactory.class);
     
     private static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
-    private static final HashMap packages = new HashMap();
+    private static final HashMap<String, String[]> packages = new HashMap<String, String[]>();
     private static List<String> ourVersions = null;
 
     static {
@@ -63,12 +87,12 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      *      an alternate structure corresponding to that message type and event.   
      * @return corresponding message subclass if found; GenericMessage otherwise
      */
-    public Class getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
-        Class mc = null;
+    public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
+        Class<? extends Message> mc = null;
         if (!isExplicit) {
             theName = Parser.getMessageStructureForEvent(theName, theVersion);
         } 
-        mc = findClass(theName, theVersion, "message");
+        mc = (Class<? extends Message>) findClass(theName, theVersion, "message");
         if (mc == null) 
             mc = GenericMessage.getGenericMessageClass(theVersion);
         return mc;
@@ -77,22 +101,22 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     /**
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getGroupClass(java.lang.String, java.lang.String)
      */
-    public Class getGroupClass(String theName, String theVersion) throws HL7Exception {
-        return findClass(theName, theVersion, "group");
+    public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
+        return (Class<? extends Group>) findClass(theName, theVersion, "group");
     }
 
     /** 
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getSegmentClass(java.lang.String, java.lang.String)
      */
-    public Class getSegmentClass(String theName, String theVersion) throws HL7Exception {
-        return findClass(theName, theVersion, "segment");
+    public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
+        return (Class<? extends Segment>) findClass(theName, theVersion, "segment");
     }
 
     /** 
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getTypeClass(java.lang.String, java.lang.String)
      */
-    public Class getTypeClass(String theName, String theVersion) throws HL7Exception {
-        return findClass(theName, theVersion, "datatype");
+    public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
+        return (Class<? extends Type>) findClass(theName, theVersion, "datatype");
     }
 
     /**
@@ -165,7 +189,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      */
     public static String[] packageList(String version) throws HL7Exception {
         //get package list for this version 
-        return (String[]) packages.get(version);
+        return packages.get(version);
     }
 
     /**
@@ -182,7 +206,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         
         InputStream resourceInputStream = classLoader.getResourceAsStream( customPackagesResourceName );
         
-        List packageList = new ArrayList();
+        List<String> packageList = new ArrayList<String>();
         
         if ( resourceInputStream != null) {
             BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream));
@@ -206,7 +230,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 
         //add standard package
         packageList.add( getVersionPackageName(version) );
-        retVal = (String[]) packageList.toArray( new String[] {} );
+        retVal = packageList.toArray(new String[]{});
 
         return retVal;
     }
@@ -217,7 +241,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      * @param version the HL7 version
      * @param type 'message', 'group', 'segment', or 'datatype'  
      */
-    private static Class findClass(String name, String version, String type) throws HL7Exception {
+    private static Class<?> findClass(String name, String version, String type) throws HL7Exception {
         if (Parser.validVersion(version) == false) {
             throw new HL7Exception(
                 "The HL7 version " + version + " is not recognized",
@@ -225,9 +249,9 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         }
 
         //get list of packages to search for the corresponding message class 
-        String[] packages = packageList(version);
+        String[] packageList = packageList(version);
 
-        if (packages == null) {
+        if (packageList == null) {
         	return null;
         }
         
@@ -239,11 +263,11 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         String subpackage = type;
         
         //try to load class from each package
-        Class compClass = null;
+        Class<?> compClass = null;
         int c = 0;
-        while (compClass == null && c < packages.length) {
+        while (compClass == null && c < packageList.length) {
             try {
-                String p = packages[c];
+                String p = packageList[c];
                 if (!p.endsWith("."))
                     p = p + ".";
                 String classNameToTry = p + subpackage + "." + name;

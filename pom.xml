@@ -130,16 +130,16 @@
 	</modules>
 	
 	<distributionManagement>
-		<!-- <repository>
-			<id>hapi</id>
+		<repository>
+			<id>hl7api.sf.net</id>
 			<name>HAPI Sourceforge</name>
-			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
+			<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
 		</repository>
 		<snapshotRepository>
-			<id>hapi</id>
+			<id>hl7api.sf.net</id>
 			<name>HAPI Sourceforge</name>
-			<url>scp://web.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
-		</snapshotRepository>  -->
+			<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
+		</snapshotRepository>
         <site>
             <id>hl7api.sf.net</id>
             <url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs</url>
@@ -230,6 +230,7 @@ pageTracker._trackPageview();
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.2-SNAPSHOT</version>
 				<inherited>false</inherited>
 				<configuration>
 					<aggregate>true</aggregate>
@@ -271,7 +272,8 @@ pageTracker._trackPageview();
 			</build>
 			<modules>
 				<module>hapi-base</module>
-                <module>hapi-sourcegen</module>
+				<module>hapi-structures-base</module>
+				<module>hapi-sourcegen</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
 			</modules>
@@ -284,6 +286,7 @@ pageTracker._trackPageview();
 				<module>hapi-base</module>
 				<module>hapi-examples</module>
 				<module>hapi-sourcegen</module>
+				<!--<module>hapi-structures-base</module>-->
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
@@ -302,6 +305,7 @@ pageTracker._trackPageview();
                 <module>hapi-base</module>
                 <module>hapi-examples</module>
                 <module>hapi-sourcegen</module>
+				<module>hapi-structures-base</module>
                 <module>hapi-structures-v21</module>
                 <module>hapi-structures-v22</module>
                 <module>hapi-structures-v23</module>
@@ -321,6 +325,7 @@ pageTracker._trackPageview();
 				<module>hapi-base</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
+				<module>hapi-structures-base</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>

@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
@@ -363,7 +364,7 @@ public abstract class AbstractSegment implements Segment {
      * @throws HL7Exception if the given class does not inherit from Type or if it can 
      *    not be instantiated.
      */
-    protected void add(Class c, boolean required, int maxReps, int length, Object[] constructorArgs, String name)
+    protected void add(Class<? extends Type> c, boolean required, int maxReps, int length, Object[] constructorArgs, String name)
         throws HL7Exception {
         if (!Type.class.isAssignableFrom(c))
             throw new HL7Exception(
@@ -477,5 +478,22 @@ public abstract class AbstractSegment implements Segment {
 	public String[] getNames() {
 		return (String[]) names.toArray(new String[names.size()]);
 	}
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public void parse(String string) throws HL7Exception {
+        getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public String encode() throws HL7Exception {
+        return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
+    }
+
 
 }

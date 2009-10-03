@@ -20,7 +20,7 @@ public class ParserTestSuite extends TestCase {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(EscapeTest.class);
         suite.addTestSuite(ParserTest.class);
-        suite.addTestSuite(PipeParserTest.class);
+        suite.addTestSuite(OldPipeParserTest.class);
         suite.addTestSuite(XMLParserTest.class);
         suite.addTestSuite(ParserPackageLoadingTest.class);
         return suite;

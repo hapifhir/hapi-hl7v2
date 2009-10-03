@@ -29,6 +29,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
@@ -181,6 +182,22 @@ public class Varies implements Type {
                 HL7Exception.APPLICATION_INTERNAL_ERROR,
                 e);
         }
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public void parse(String string) throws HL7Exception {
+        getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public String encode() throws HL7Exception {
+        return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
 
 }

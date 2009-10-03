@@ -8,7 +8,7 @@ specific language governing rights and limitations under the License.
 
 The Original Code is "Segment.java".  Description: 
 "Represents an HL7 message segment, which is a unit of data that contains multiple fields.
-  @author Bryan Tripp (bryan_tripp@sourceforge.net)" 
+@author Bryan Tripp (bryan_tripp@sourceforge.net)" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2001.  All Rights Reserved. 
@@ -24,12 +24,10 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
 
-*/
-
+ */
 package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
-
 
 /**
  * Represents an HL7 message segment, which is a unit of data that contains multiple fields.
@@ -37,65 +35,73 @@ import ca.uhn.hl7v2.HL7Exception;
  */
 public interface Segment extends Structure {
 
-  /**
-   * Returns the array of Fields at the specified index.  The array will be of length 1 for
-   * non-repeating fields, and >1 for repeating fields.  Fields are numbered from 1.
-   * @throws HL7Exception if field index is out of range.
-   */
-  public Type[] getField(int number) throws HL7Exception;
+    /**
+     * Returns the array of Fields at the specified index.  The array will be of length 1 for
+     * non-repeating fields, and >1 for repeating fields.  Fields are numbered from 1.
+     * @throws HL7Exception if field index is out of range.
+     */
+    public Type[] getField(int number) throws HL7Exception;
 
-  /**
-   * Returns a specific repetition of field at the specified index.  If there exist 
-   * fewer repetitions than are required, the number of repetitions can be increased 
-   * by specifying the lowest repetition that does not yet exist.  For example 
-   * if there are two repetitions but three are needed, the third can be created
-   * and accessed using the following code: <br>
-   * <code>Type t = getField(x, 2);</code>
-   * @param number the field number 
-   * @param rep the repetition number (starting at 0)
-   * @throws HL7Exception if field index is out of range, or if the specified  
-   *    repetition is more than 1 greater than the highest index of existing repetitions.  
-   *    NOTE: to facilitate local extensions, no exception is thrown if 
-   *    rep > max cardinality 
-   */
-  public Type getField(int number, int rep) throws HL7Exception;
-  
-  /**
-   * Returns true if the field at the given index is required, false otherwise.
-   * @throws HL7Exception if field index is out of range.
-   */
-  public boolean isRequired(int number) throws HL7Exception;
-  
-  /**
-   * Returns the maximum length of the field at the given index, in characters.
-   * @throws HL7Exception if field index is out of range.
-   */
-  public int getLength(int number) throws HL7Exception;
-  
-  /**
-   * Returns the maximum number of repetitions of this field that are allowed.  
-   * The current cardinality can be obtained by checking the length 
-   * of the array returned by getLength(n).  
-   * @throws HL7Exception if field index is out of range.
-   */  
-  public int getMaxCardinality(int number) throws HL7Exception;
-  
-  /**
-   * Returns the number of fields defined by this segment (repeating 
-   * fields are not counted multiple times).  
-   */
-  public int numFields();
+    /**
+     * Returns a specific repetition of field at the specified index.  If there exist
+     * fewer repetitions than are required, the number of repetitions can be increased
+     * by specifying the lowest repetition that does not yet exist.  For example
+     * if there are two repetitions but three are needed, the third can be created
+     * and accessed using the following code: <br>
+     * <code>Type t = getField(x, 2);</code>
+     * @param number the field number (starting at 1)
+     * @param rep the repetition number (starting at 0)
+     * @throws HL7Exception if field index is out of range, or if the specified
+     *    repetition is more than 1 greater than the highest index of existing repetitions.
+     *    NOTE: to facilitate local extensions, no exception is thrown if
+     *    rep > max cardinality
+     */
+    public Type getField(int number, int rep) throws HL7Exception;
 
-  /**
-   * Returns the names of the fields in this segment.
-   * 
-   * @since 1.0 - Note that if 
-   * user defined types are being used, there is a possibility
-   * that some entries may be null. All official hapi structures will
-   * have all entries populated, but older user defined structures
-   * may not have populated all values, since this feature did not
-   * exist prior to release 1.0.
-   */
-  public String[] getNames();
-  
-} 
+    /**
+     * Returns true if the field at the given index is required, false otherwise.
+     * @throws HL7Exception if field index is out of range.
+     */
+    public boolean isRequired(int number) throws HL7Exception;
+
+    /**
+     * Returns the maximum length of the field at the given index, in characters.
+     * @throws HL7Exception if field index is out of range.
+     */
+    public int getLength(int number) throws HL7Exception;
+
+    /**
+     * Returns the maximum number of repetitions of this field that are allowed.
+     * The current cardinality can be obtained by checking the length
+     * of the array returned by getLength(n).
+     * @throws HL7Exception if field index is out of range.
+     */
+    public int getMaxCardinality(int number) throws HL7Exception;
+
+    /**
+     * Returns the number of fields defined by this segment (repeating
+     * fields are not counted multiple times).
+     */
+    public int numFields();
+
+    /**
+     * Returns the names of the fields in this segment.
+     *
+     * @since 1.0 - Note that if user defined types are being used, there is a possibility that some entries may be null. All official hapi structures will have all entries populated, but older user defined structures may not have populated all values, since this feature did not exist prior to release 1.0.
+     */
+    public String[] getNames();
+
+
+    /**
+     * Parses the string into this segment using the parser returned by {@link Message#getParser() }
+     */
+    public void parse(String string) throws HL7Exception;
+
+
+    /**
+     * Encodes this message using the parser returned by {@link Message#getParser() }
+     */
+    public String encode() throws HL7Exception;
+
+
+}

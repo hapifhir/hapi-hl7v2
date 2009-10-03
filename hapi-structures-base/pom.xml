@@ -25,74 +25,95 @@
 	</dependencies>
 
 	<reporting>
+		<plugins>
+			<!--<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<inherited>true</inherited>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>-->
+		</plugins>
 	</reporting>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>ca.uhn.hapi</groupId>
-				<artifactId>hapi-sourcegen</artifactId>				
-				<executions>
-					<execution>
-						<id>${gen.version}</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>sourcegen</goal>
-						</goals>
-						<inherited>true</inherited>
-						<configuration>
-							<version>${gen.version}</version>
-                            <jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
-                            <jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
-                            <jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
-							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
-                            <targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- append to the packaging phase. -->
-						<goals>
-							<goal>single</goal> <!-- goals == mojos -->
-						</goals>
-						<inherited>true</inherited>
-						<configuration>
-							<descriptors>
-							    <descriptor>../src/assembly/structures-source.xml</descriptor>
-							</descriptors>
-						</configuration>						
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>site</phase>
-						<inherited>true</inherited>
-						<configuration>
-							<tasks>
-								<echo message="Copying resources"/>
-								<copy todir="../target/site/${gen.version.short}/apidocs">
-									<fileset dir="target/site/apidocs">
-										<include name="**/*"/>
-									</fileset>
-								</copy>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<!-- <sourceDirectory></sourceDirectory>  -->
 	</build>
-	
+
+	<profiles>
+		<profile>
+			<id>GEN</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>make-assembly</id> <!-- this is used for inheritance merges -->
+								<phase>package</phase> <!-- append to the packaging phase. -->
+								<goals>
+									<goal>single</goal> <!-- goals == mojos -->
+								</goals>
+								<inherited>true</inherited>
+								<configuration>
+									<descriptors>
+										<descriptor>../src/assembly/structures-source.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>site</phase>
+								<inherited>true</inherited>
+								<configuration>
+									<tasks>
+										<echo message="Copying resources"/>
+										<copy todir="../target/site/${gen.version.short}/apidocs">
+											<fileset dir="target/site/apidocs">
+												<include name="**/*"/>
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-sourcegen</artifactId>
+						<executions>
+							<execution>
+								<id>${gen.version}</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>sourcegen</goal>
+								</goals>
+								<inherited>true</inherited>
+								<configuration>
+									<version>${gen.version}</version>
+									<jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
+									<jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
+									<jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
+									<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
+									<targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
