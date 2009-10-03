@@ -47,4 +47,11 @@ public class ConformanceError extends Error {
       super(val);
    }
 
+   /** Constructor for ConformanceError
+    * @param val the error message to throw
+    */
+   public ConformanceError(String val, Throwable cause) {
+      super(val, cause);
+   }
+
 }
