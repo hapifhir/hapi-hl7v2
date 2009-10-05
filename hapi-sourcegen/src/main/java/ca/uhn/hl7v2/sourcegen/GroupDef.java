@@ -40,7 +40,7 @@ import java.util.HashMap;
  */
 public class GroupDef implements StructureDef {
 
-	private ArrayList elements; 
+	private ArrayList<StructureDef> elements;
     private String messageName;
     private String groupName;
     private String description;
