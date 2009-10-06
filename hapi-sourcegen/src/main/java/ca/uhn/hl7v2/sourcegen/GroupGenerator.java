@@ -31,9 +31,11 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -52,6 +54,20 @@ import ca.uhn.log.HapiLogFactory;
 public class GroupGenerator extends java.lang.Object {
     
     private static final HapiLog log = HapiLogFactory.getHapiLog(GroupGenerator.class);
+
+	public static void writeGroup(String fileName, GroupDef group, String version, String basePackageName) throws FileNotFoundException, IOException, HL7Exception, IndexOutOfBoundsException, UnsupportedEncodingException {
+
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
+		out.write(makePreamble(group, version, basePackageName));
+		out.write(makeConstructor(group, version));
+		StructureDef[] shallow = group.getStructures();
+		for (int i = 0; i < shallow.length; i++) {
+			out.write(makeAccessor(group, i));
+		}
+		out.write("}\r\n");
+		out.flush();
+		out.close();
+	}
     
     /** Creates new GroupGenerator */
     public GroupGenerator() {
@@ -84,18 +100,9 @@ public class GroupGenerator extends java.lang.Object {
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "group"); 
 
         GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message);
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetDir.getPath() + "/" 
-                + group.getName() + ".java", false), SourceGenerator.ENCODING));
-        out.write(makePreamble(group, version));
-        out.write(makeConstructor(group, version));
         
-        StructureDef[] shallow = group.getStructures();
-        for (int i = 0; i < shallow.length; i++) {
-            out.write(makeAccessor(group, i));
-        }
-        out.write("}\r\n");
-        out.flush();
-        out.close();
+		String fileName = targetDir.getPath() + "/" + group.getName() + ".java";
+		writeGroup(fileName, group, version, DefaultModelClassFactory.getVersionPackageName(version));
 
         return group;
     }
@@ -220,16 +227,16 @@ public class GroupGenerator extends java.lang.Object {
      * Returns heading material for class source code (package, imports, JavaDoc, class
      * declaration).
      */
-    public static String makePreamble(GroupDef group, String version) throws HL7Exception {
+    public static String makePreamble(GroupDef group, String version, String basePackageName) throws HL7Exception {
         StringBuffer preamble = new StringBuffer();
         preamble.append("package ");
-        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
+        preamble.append(basePackageName);
         preamble.append("group;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
         preamble.append("import ca.uhn.hl7v2.HL7Exception;\r\n");
         preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
         preamble.append("import ");
-        preamble.append(DefaultModelClassFactory.getVersionPackageName(version));
+        preamble.append(basePackageName);
         preamble.append("segment.*;\r\n\r\n");
         preamble.append("import ca.uhn.hl7v2.model.*;\r\n");
         preamble.append("/**\r\n");
@@ -275,7 +282,7 @@ public class GroupGenerator extends java.lang.Object {
            if (def.getName().equals("ED")) {
                // ignore this one, it's nonstandard
            } else if (def.getName().equals("?")) {
-               source.append("\t      this.addNonstandardSegment(\"ANY\");\r\n");
+			   source.append("\t      this.addNonstandardSegment(\"ANY\");\r\n");
            } else  {
                if (useFactory) {
                    source.append("\t      this.add(factory.get");
