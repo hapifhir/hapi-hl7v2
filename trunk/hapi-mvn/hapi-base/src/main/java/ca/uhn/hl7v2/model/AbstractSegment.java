@@ -53,7 +53,7 @@ public abstract class AbstractSegment implements Segment {
 
 	private static final HapiLog log = HapiLogFactory.getHapiLog(AbstractSegment.class);
 
-    private ArrayList<Type[]> fields;
+    private ArrayList<ArrayList<Type>> fields;
     private ArrayList<Class<? extends Type>> types;
     private ArrayList<Boolean> required;
     private ArrayList<Integer> length;
@@ -74,7 +74,7 @@ public abstract class AbstractSegment implements Segment {
      */
     public AbstractSegment(Group parent, ModelClassFactory factory) {
         this.parent = parent;
-        this.fields = new ArrayList<Type[]>();
+        this.fields = new ArrayList<ArrayList<Type>>();
         this.types = new ArrayList<Class<? extends Type>>();
         this.required = new ArrayList<Boolean>();
         this.length = new ArrayList<Integer>();
@@ -103,7 +103,8 @@ public abstract class AbstractSegment implements Segment {
                 HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
 
-        return (Type[]) fields.get(number - 1); //note: fields are numbered from 1 from the user's perspective
+		ArrayList<Type> retVal = fields.get(number - 1);
+        return retVal.toArray(new Type[retVal.size()]); //note: fields are numbered from 1 from the user's perspective
     }
 
     /**
@@ -113,24 +114,24 @@ public abstract class AbstractSegment implements Segment {
      * if there are two repetitions but three are needed, the third can be created
      * and accessed using the following code: <br>
      * <code>Type t = getField(x, 3);</code>
-     * @param number the field number 
+     * @param number the field number (starting at 1)
      * @param rep the repetition number (starting at 0)
      * @throws HL7Exception if field index is out of range, if the specified 
      *    repetition is greater than the maximum allowed, or if the specified 
      *    repetition is more than 1 greater than the existing # of repetitions.  
      */
     public Type getField(int number, int rep) throws HL7Exception {
-        Type[] arr = this.getField(number);
+        ArrayList<Type> arr = fields.get(number - 1);
 
         //check if out of range ... 
-        if (rep > arr.length)
+        if (rep > arr.size())
             throw new HL7Exception(
                 "Can't get repetition "
                     + rep
                     + " from field "
                     + number
                     + " - there are currently only "
-                    + arr.length
+                    + arr.size()
                     + " reps.",
                 HL7Exception.APPLICATION_INTERNAL_ERROR);
 
@@ -146,19 +147,12 @@ public abstract class AbstractSegment implements Segment {
                 HL7Exception.APPLICATION_INTERNAL_ERROR);*/
 
         //add a rep if necessary ... 
-        if (rep == arr.length) {
-            Type[] newArr = new Type[arr.length + 1];
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            newArr[rep] = createNewType(number);
-            arr = newArr;
-
-            //replace old field array with new one - note: "fields" is #d from 0
-            this.fields.remove(number - 1);
-            this.fields.add(number - 1, arr);
+        if (rep == arr.size()) {
+            Type newType = createNewType(number);
+			arr.add(newType);
         }
 
-        return arr[rep];
-
+        return arr.get(rep);
     }
 
     /**
@@ -371,7 +365,7 @@ public abstract class AbstractSegment implements Segment {
                 "Class " + c.getName() + " does not inherit from " + "ca.on.uhn.datatype.Type",
                 HL7Exception.APPLICATION_INTERNAL_ERROR);
 
-        Type[] arr = new Type[0];
+        ArrayList<Type> arr = new ArrayList<Type>();
         this.types.add(c);
         this.fields.add(arr);
         this.required.add(new Boolean(required));
@@ -388,8 +382,9 @@ public abstract class AbstractSegment implements Segment {
      */
     private void ensureEnoughFields(int fieldRequested) {
         int fieldsToAdd = fieldRequested - this.numFields();
-        if (fieldsToAdd < 0)
+        if (fieldsToAdd < 0) {
             fieldsToAdd = 0;
+		}
 
         try {
             for (int i = 0; i < fieldsToAdd; i++) {
@@ -493,6 +488,52 @@ public abstract class AbstractSegment implements Segment {
      */
     public String encode() throws HL7Exception {
         return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
+    }
+
+
+    /**
+     * Removes a repetition of a given field by name.  For example, if
+     * a PID segment contains 10 repititions a "Patient Identifier List" field and "Patient Identifier List" is supplied
+     * with an index of 2, then this call would remove the 3rd repetition.
+     *
+     * @return The removed structure
+     * @throws HL7Exception if the named Structure is not part of this Group.
+     */
+    protected Type removeRepetition(int fieldNum, int index) throws HL7Exception {
+		if (fieldNum < 1 || fieldNum >= fields.size()) {
+            throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+		}
+
+		String name = names.get(fieldNum - 1);
+		ArrayList<Type> list = fields.get(fieldNum - 1);
+        if (list.size() == 0) {
+            throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " has no repetitions", HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+        if (list.size() <= index) {
+            throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " must be between 0 and " + (list.size() - 1), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
+
+        return list.remove(index);
+    }
+
+
+    /**
+     * Inserts a repetition of a given Field into repetitions of that field by name.
+     *
+     * @return The newly created and inserted field
+     * @throws HL7Exception if the named Structure is not part of this Group.
+     */
+    protected Type insertRepetition(int fieldNum, int index) throws HL7Exception {
+		if (fieldNum < 1 || fieldNum >= fields.size()) {
+            throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+		}
+
+		ArrayList<Type> list = fields.get(fieldNum - 1);
+		Type newType = createNewType(fieldNum);
+
+		list.add(index, newType);
+
+		return newType;
     }
 
 

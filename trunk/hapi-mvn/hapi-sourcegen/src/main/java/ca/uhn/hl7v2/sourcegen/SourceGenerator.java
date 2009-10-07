@@ -82,7 +82,7 @@ public class SourceGenerator extends Object {
      * taken here is to eliminate bracketed text if a it looks like a data type.
      */
     public static String makeAccessorName(String fieldDesc, String parentName) {
-        StringBuffer aName = new StringBuffer("get");
+        StringBuffer aName = new StringBuffer();
         char[] chars = fieldDesc.toCharArray();
         boolean lastCharWasNotLetter = true;
         int inBrackets = 0;
@@ -223,7 +223,7 @@ public class SourceGenerator extends Object {
     }
 
 	public static String makeAlternateAccessorName(String fieldDesc, String parentName, int index) {
-        StringBuffer aName = new StringBuffer("get");
+        StringBuffer aName = new StringBuffer();
         
         aName.append(StringUtils.capitalize(parentName.toLowerCase())).append(index).append("_");
         

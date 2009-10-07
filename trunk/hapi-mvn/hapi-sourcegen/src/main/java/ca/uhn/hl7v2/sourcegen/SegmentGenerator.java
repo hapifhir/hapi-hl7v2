@@ -38,10 +38,7 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
@@ -205,12 +202,17 @@ public class SegmentGenerator extends java.lang.Object {
 			sqle.printStackTrace();
 			return "";
 		}
-		String retVal = createSegmentString(version, name, elements, se, segDesc, DefaultModelClassFactory.getVersionPackageName(version));
+		
+		String basePackageName = DefaultModelClassFactory.getVersionPackageName(version);
+		String[] datatypePackages = { basePackageName + "datatype" };
+		String retVal = createSegmentString(version, name, elements, segDesc, basePackageName, datatypePackages);
 		return retVal;
 	}
 
-	private static void makeFieldAccessor(String name, String version, StringBuffer source, SegmentElement se, Object accessorName) {
-		if (!se.desc.equalsIgnoreCase("UNUSED")) {  //some entries in 2.1 DB say "unused"
+	private static void makeFieldAccessor(String name, String version, StringBuffer source, SegmentElement se, String accessorName) {
+		if (se.desc.equalsIgnoreCase("UNUSED")) {  //some entries in 2.1 DB say "unused"
+			return;
+		}
 			String type = SourceGenerator.getAlternateType(se.type, version);
 			source.append("  /**\r\n");
 			source.append("   * Returns ");
@@ -230,7 +232,7 @@ public class SegmentGenerator extends java.lang.Object {
 			source.append("   */\r\n");
 			source.append("  public ");
 			source.append(type);
-			source.append(" ");
+			source.append(" get");
 			source.append(accessorName);
 			source.append("(");
 			if (se.repetitions != 1) {
@@ -283,7 +285,7 @@ public class SegmentGenerator extends java.lang.Object {
 				source.append("   */\r\n");
 				source.append("  public ");
 				source.append(type);
-				source.append("[] ");
+				source.append("[] get");
 				source.append(accessorName);
 				source.append("() {\r\n");
 				source.append("     ");
@@ -310,21 +312,72 @@ public class SegmentGenerator extends java.lang.Object {
 				source.append("    }\r\n");
 				source.append("    return ret;\r\n");
 				source.append("  }\r\n\r\n");
+
+
+				// Add insert repetition method
+				source.append("  /**\r\n");
+				source.append("   * Inserts a repetition of ");
+				source.append(se.desc);
+				source.append(" (");
+				source.append(name);
+				source.append("-");
+				source.append(se.field);
+				source.append(") at a given index and returns it.\r\n");
+				source.append("   * @param index The index\r\n");
+				source.append("   */\r\n");
+				source.append("  public ");
+				source.append(type);
+				source.append(" insert");
+				source.append(accessorName);
+				source.append("(int index) {\r\n");
+				source.append("     return (");
+				source.append(type);
+				source.append(") super.insertRepetition(");
+				source.append(se.field);
+				source.append(", index);\r\n");
+				source.append("  }\r\n\r\n");
+
+
+				// Add remove repetition method
+				source.append("  /**\r\n");
+				source.append("   * Removes a repetition of ");
+				source.append(se.desc);
+				source.append(" (");
+				source.append(name);
+				source.append("-");
+				source.append(se.field);
+				source.append(") at a given index and returns it.\r\n");
+				source.append("   * @param index The index\r\n");
+				source.append("   */\r\n");
+				source.append("  public ");
+				source.append(type);
+				source.append(" remove");
+				source.append(accessorName);
+				source.append("(int index) {\r\n");
+				source.append("     return (");
+				source.append(type);
+				source.append(") super.removeRepetition(");
+				source.append(se.field);
+				source.append(", index);\r\n");
+				source.append("  }\r\n\r\n");
+
 			}
-		}
+		
 	}
 
 
-		public static String createSegmentString(String version, String name, ArrayList<SegmentElement> elements, SegmentElement se, String segDesc, String basePackage) throws HL7Exception {
+		public static String createSegmentString(String version, String name, ArrayList<SegmentElement> elements, String segDesc, String basePackage, String[] datatypePackageStrings) throws HL7Exception {
 		//write imports, class documentation, etc ...
 		StringBuffer source = new StringBuffer();
 		source.append("package ");
 		source.append(basePackage);
 		source.append("segment;\r\n\r\n");
 		source.append("import ca.uhn.hl7v2.model.*;\r\n");
-		source.append("import ");
-		source.append(basePackage);
-		source.append("datatype.*;\r\n\r\n");
+		
+		for (String string : datatypePackageStrings) {
+			source.append("import " + string + ".*;\r\n");
+		}
+		
 		source.append("import ca.uhn.log.HapiLogFactory;\r\n");
 		source.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
 		source.append("import ca.uhn.hl7v2.HL7Exception;\r\n\r\n");
@@ -333,6 +386,7 @@ public class SegmentGenerator extends java.lang.Object {
 		source.append(name);
 		source.append(" message segment. \r\n");
 		source.append(" * This segment has the following fields:</p><p>\r\n");
+		SegmentElement se;
 		for (int i = 0; i < elements.size(); i++) {
 			se = (SegmentElement) elements.get(i);
 			source.append(" * ");
@@ -452,7 +506,13 @@ public class SegmentGenerator extends java.lang.Object {
 		return retVal;
 	}
 
-
+	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackageString) throws IOException, HL7Exception {
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
+		String string = createSegmentString(version, segmentName, elements, description, basePackage, datatypePackageString);
+		out.write(string);
+		out.flush();
+		out.close();
+	}
 
 	public static void main(String args[]) {
 		try {

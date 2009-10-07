@@ -40,19 +40,18 @@ import org.codehaus.plexus.util.IOUtil;
 
 import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceException;
 import ca.uhn.hl7v2.conf.classes.generator.builders.DeploymentManager;
-import ca.uhn.hl7v2.conf.parser.ProfileParser;
 
 /**
  * Maven Plugin Mojo for generating HAPI conformance classes
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @goal confgen
+ * @goal confgen-classic
  * @phase generate-sources
  * @requiresDependencyResolution runtime
  * @requiresProject
  * @inheritedByDefault false
  */
-public class ConfGenMojo extends AbstractMojo
+public class ClassicConfGenMojo extends AbstractMojo
 {
     
     /**
@@ -101,8 +100,7 @@ public class ConfGenMojo extends AbstractMojo
     		String profileString;
 			FileReader reader = new FileReader(profile);
 			profileString = IOUtil.toString(reader);
-
-//			new ProfileParser(false).
+			
 	    	DeploymentManager dm = new DeploymentManager(targetDirectory, packageName);
 	    	dm.generate(profileString);
 
