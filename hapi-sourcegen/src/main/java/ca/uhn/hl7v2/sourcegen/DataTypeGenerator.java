@@ -407,7 +407,7 @@ public class DataTypeGenerator extends Object {
             source.append("\t */\r\n");
             source.append("\tpublic ");
             source.append(dtName);
-            source.append(" ");
+            source.append(" get");
             source.append(SourceGenerator.makeAccessorName(descriptions[i], dataType));
             source.append("() {\r\n");
             source.append("\t   ");

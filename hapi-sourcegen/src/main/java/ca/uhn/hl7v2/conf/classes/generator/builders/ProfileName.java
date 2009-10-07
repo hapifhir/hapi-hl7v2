@@ -147,7 +147,7 @@ public final class ProfileName {
       if (profileStructureType == PS_SEGG)
          return "get" + this.profileName;
       else
-         return new String(SourceGenerator.makeAccessorName(this.profileName, this.parentName));
+         return "get" + (SourceGenerator.makeAccessorName(this.profileName, this.parentName));
    }
 
    /** Returns the Class name
