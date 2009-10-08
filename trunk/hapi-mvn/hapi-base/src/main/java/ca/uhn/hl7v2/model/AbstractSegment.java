@@ -121,7 +121,17 @@ public abstract class AbstractSegment implements Segment {
      *    repetition is more than 1 greater than the existing # of repetitions.  
      */
     public Type getField(int number, int rep) throws HL7Exception {
-        ArrayList<Type> arr = fields.get(number - 1);
+		if (number >= fields.size()) {
+            throw new HL7Exception(
+                "Can't get field "
+                    + number
+                    + " in segment " + getName() + " - there are currently only "
+                    + fields.size()
+                    + " reps.",
+                HL7Exception.APPLICATION_INTERNAL_ERROR);
+		}
+
+		ArrayList<Type> arr = fields.get(number - 1);
 
         //check if out of range ... 
         if (rep > arr.size())
