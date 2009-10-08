@@ -19,6 +19,7 @@
 	<properties>
 		<gen.version>2.6</gen.version>
 		<gen.version.short>v26</gen.version.short>
+		<sourcegen.jdbcUrl.old>${sourcegen.jdbcUrl.new}</sourcegen.jdbcUrl.old>
 	</properties>
 
 	<build>
