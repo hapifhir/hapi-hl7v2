@@ -28,10 +28,13 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.mvnplugin;
 
+import ca.uhn.hl7v2.conf.ProfileException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,6 +44,8 @@ import org.codehaus.plexus.util.IOUtil;
 import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceException;
 import ca.uhn.hl7v2.conf.classes.generator.builders.DeploymentManager;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
+import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.sourcegen.conf.ProfileSourceGenerator;
 
 /**
  * Maven Plugin Mojo for generating HAPI conformance classes
@@ -102,17 +107,17 @@ public class ConfGenMojo extends AbstractMojo
 			FileReader reader = new FileReader(profile);
 			profileString = IOUtil.toString(reader);
 
-//			new ProfileParser(false).
-	    	DeploymentManager dm = new DeploymentManager(targetDirectory, packageName);
-	    	dm.generate(profileString);
+            ProfileParser profileParser = new ProfileParser(false);
+            RuntimeProfile runtimeProfile = profileParser.parse(profileString);
 
-		} catch (FileNotFoundException e) {
+	    	ProfileSourceGenerator gen = new ProfileSourceGenerator(runtimeProfile, targetDirectory, packageName);
+	    	gen.generate();
+
+            getLog().info("Adding path to compile sources: " + targetDirectory);
+            project.addCompileSourceRoot(targetDirectory);
+		} catch (Exception e) {
 			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ConformanceException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		}
+        }
 		
         project.addCompileSourceRoot(targetDirectory);
 

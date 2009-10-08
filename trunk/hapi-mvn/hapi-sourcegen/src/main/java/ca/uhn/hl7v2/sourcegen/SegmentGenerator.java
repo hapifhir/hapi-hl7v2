@@ -80,6 +80,12 @@ public class SegmentGenerator extends java.lang.Object {
 		ArrayList segments = new ArrayList();
 		while (rs.next()) {
 			String segName = rs.getString(1);
+
+            // The DB has an invalid segment with this name
+            if ("ED".equals(segName)) {
+                continue;
+            }
+
 			if (Character.isLetter(segName.charAt(0))) {
 				segments.add(altSegName(segName));
 			}
@@ -329,7 +335,7 @@ public class SegmentGenerator extends java.lang.Object {
 				source.append(type);
 				source.append(" insert");
 				source.append(accessorName);
-				source.append("(int index) {\r\n");
+				source.append("(int index) throws HL7Exception {\r\n");
 				source.append("     return (");
 				source.append(type);
 				source.append(") super.insertRepetition(");
@@ -353,7 +359,7 @@ public class SegmentGenerator extends java.lang.Object {
 				source.append(type);
 				source.append(" remove");
 				source.append(accessorName);
-				source.append("(int index) {\r\n");
+				source.append("(int index) throws HL7Exception {\r\n");
 				source.append("     return (");
 				source.append(type);
 				source.append(") super.removeRepetition(");

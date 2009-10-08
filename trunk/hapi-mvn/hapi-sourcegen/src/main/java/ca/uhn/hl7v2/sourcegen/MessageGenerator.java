@@ -31,7 +31,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -174,7 +172,7 @@ public class MessageGenerator extends Object {
             System.out.println("Writing " + message + " to " + targetDir.getPath());
 			String fileName = targetDir.getPath() + "/" + message + ".java";
             
-			writeMessage(fileName, contents, message, chapter, version, group, DefaultModelClassFactory.getVersionPackageName(version));
+			writeMessage(fileName, contents, message, chapter, version, group, DefaultModelClassFactory.getVersionPackageName(version), true);
 
         } catch (SQLException e) {
         	throw new HL7Exception(e);
@@ -280,16 +278,20 @@ public class MessageGenerator extends Object {
      * Returns header material for the source code of a Message class (including
      * package, imports, JavaDoc, and class declaration).
      */
-    public static String makePreamble(StructureDef[] contents, String message, String chapter, String version, String basePackageName)
+    public static String makePreamble(StructureDef[] contents, String message, String chapter, String version, String basePackageName, boolean haveGroups)
         throws HL7Exception {
         StringBuffer preamble = new StringBuffer();
         preamble.append("package ");
 		preamble.append(basePackageName);
         preamble.append("message;\r\n\r\n");
         preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
-        preamble.append("import ");
-		preamble.append(basePackageName);
-        preamble.append("group.*;\r\n\r\n");
+        
+        if (haveGroups) {
+            preamble.append("import ");
+        	preamble.append(basePackageName);
+            preamble.append("group.*;\r\n\r\n");
+        }
+
         preamble.append("import ");
 		preamble.append(basePackageName);
         preamble.append("segment.*;\r\n\r\n");
@@ -407,9 +409,9 @@ public class MessageGenerator extends Object {
         }
     }
 
-	public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, GroupDef group, String basePackageName) throws IOException, IndexOutOfBoundsException, UnsupportedEncodingException, FileNotFoundException, HL7Exception {
+	public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, GroupDef group, String basePackageName, boolean haveGroups) throws IOException, IndexOutOfBoundsException, UnsupportedEncodingException, FileNotFoundException, HL7Exception {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
-		out.write(makePreamble(contents, message, chapter, version, basePackageName));
+		out.write(makePreamble(contents, message, chapter, version, basePackageName, haveGroups));
 		out.write(makeConstructor(contents, message, version));
 		for (int i = 0; i < contents.length; i++) {
 			out.write(GroupGenerator.makeAccessor(group, i));

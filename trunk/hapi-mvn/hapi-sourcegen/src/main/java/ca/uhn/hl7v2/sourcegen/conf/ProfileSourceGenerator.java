@@ -92,11 +92,13 @@ public class ProfileSourceGenerator {
 		String basePackageName = DefaultModelClassFactory.getVersionPackageName(version);
 		String[] datatypePackages = { basePackageName + "datatype" };
 
+        boolean haveGroups = myGroupDefs.size() > 0;
+        
 		// Write Message
 		{
 			String fileName = myTargetDirectory + "message/" + staticDef.getMsgStructID() + ".java";
 			ourLog.info("Writing Message file: " + fileName);
-			MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage);
+			MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups);
 		}
 
 		for (GroupDef next : myGroupDefs) {
@@ -210,6 +212,10 @@ public class ProfileSourceGenerator {
 				nextSegmentElement.table = Integer.parseInt(table);
 			}
 			nextSegmentElement.type = nextField.getDatatype();
+
+            if (nextSegmentElement.type.startsWith("CM_")) {
+                nextSegmentElement.type = nextSegmentElement.type.substring(3);
+            }
 
 			segmentElements.add(nextSegmentElement);
 		}
