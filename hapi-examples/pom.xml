@@ -97,6 +97,24 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>
+				<version>${hapi.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<profile>${basedir}/src/main/resources/example_ack.xml</profile>
+							<packageName>com.foo</packageName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>

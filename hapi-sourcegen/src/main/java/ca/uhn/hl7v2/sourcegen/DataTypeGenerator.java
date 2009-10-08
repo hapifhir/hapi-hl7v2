@@ -217,6 +217,38 @@ public class DataTypeGenerator extends Object {
             writer.flush();
         }
     }
+
+    private static void appendAccessor(String[] dataTypes, int i, String version, StringBuffer source, String[] descriptions, final String accessorName) {
+        String dtName = SourceGenerator.getAlternateType(dataTypes[i], version);
+        source.append("\t/**\r\n");
+        source.append("\t * Returns ");
+        source.append(descriptions[i]);
+        source.append(" (component #");
+        source.append(i);
+        source.append(").  This is a convenience method that saves you from \r\n");
+        source.append("\t * casting and handling an exception.\r\n");
+        source.append("\t */\r\n");
+        source.append("\tpublic ");
+        source.append(dtName);
+        source.append(" get");
+        source.append(accessorName);
+        source.append("() {\r\n");
+        source.append("\t   ");
+        source.append(dtName);
+        source.append(" ret = null;\r\n");
+        source.append("\t   try {\r\n");
+        source.append("\t      ret = (");
+        source.append(dtName);
+        source.append(")getComponent(");
+        source.append(i);
+        source.append(");\r\n");
+        source.append("\t   } catch (DataTypeException e) {\r\n");
+        source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem accessing known data type component - this is a bug.\", e);\r\n");
+        source.append("\t      throw new RuntimeException(e);\r\n");
+        source.append("\t   }\r\n");
+        source.append("\t   return ret;\r\n");
+        source.append("\t}\r\n\r\n");
+    }
     
     /**
      * Returns a String containing the complete source code for a Primitive HL7 data
@@ -396,35 +428,11 @@ public class DataTypeGenerator extends Object {
         
         //make type-specific accessors ... 
         for (int i = 0; i < dataTypes.length; i++) {
-            String dtName = SourceGenerator.getAlternateType(dataTypes[i], version);
-            source.append("\t/**\r\n");
-            source.append("\t * Returns ");
-            source.append(descriptions[i]);
-            source.append(" (component #");
-            source.append(i);
-            source.append(").  This is a convenience method that saves you from \r\n");
-            source.append("\t * casting and handling an exception.\r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic ");
-            source.append(dtName);
-            source.append(" get");
-            source.append(SourceGenerator.makeAccessorName(descriptions[i], dataType));
-            source.append("() {\r\n");
-            source.append("\t   ");
-            source.append(dtName);
-            source.append(" ret = null;\r\n");
-            source.append("\t   try {\r\n");
-            source.append("\t      ret = (");
-            source.append(dtName);
-            source.append(")getComponent(");
-            source.append(i);
-            source.append(");\r\n");
-            source.append("\t   } catch (DataTypeException e) {\r\n"); 
-            source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem accessing known data type component - this is a bug.\", e);\r\n");
-            source.append("\t      throw new RuntimeException(e);\r\n");
-            source.append("\t   }\r\n");
-            source.append("\t   return ret;\r\n");
-            source.append("\t}\r\n\r\n");
+            String accessorName = SourceGenerator.makeAccessorName(descriptions[i], dataType);
+            appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
+
+            accessorName = SourceGenerator.makeAlternateAccessorName(descriptions[i], dataType, i);
+            appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
         }
         /*if (correspondingControlInterface != null) {
             source.append(Control.getImplementation(correspondingControlInterface, version));

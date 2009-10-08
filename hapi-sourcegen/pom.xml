@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
-			<version>1.0-beta1</version>
+			<version>${hapi.version}</version>
 		</dependency>		
 
 		<dependency>
@@ -74,5 +74,34 @@
 			</resource>
 		</resources>
 	</build>
-	
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>2.5</version>
+				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1.2</version>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+		</plugins>
+	</reporting>
+
 </project>

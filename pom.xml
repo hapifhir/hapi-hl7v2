@@ -1,6 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.uhn.hapi</groupId>
@@ -127,6 +126,7 @@
 	</dependencies>
 	
 	<modules>
+		<module>hapi-confgen-archetype</module>
 	</modules>
 	
 	<distributionManagement>
@@ -180,7 +180,7 @@
                             <tasks>
                                 <echo>Adding Urchin</echo>
                                 <replace dir="${basedir}/target/site">
-                                    <include name="**/*.html" />
+                                    <include name="**/*.html"/>
                                     <replacetoken>
                     <![CDATA[</body>]]>
                                     </replacetoken>
@@ -213,7 +213,8 @@ pageTracker._trackPageview();
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-</properties>
+		<hapi.version>1.0-beta1</hapi.version>
+	</properties>
 
 	<reporting>
 		<plugins>
@@ -351,14 +352,13 @@ pageTracker._trackPageview();
 			<id>ACCESS</id>
 			<properties>
 				<sourcegen.jdbcUrl.old>jdbc:odbc:hl7v25</sourcegen.jdbcUrl.old>
-				<sourcegen.jdbcUser.old></sourcegen.jdbcUser.old>
-				<sourcegen.jdbcPassword.old></sourcegen.jdbcPassword.old>
+				<sourcegen.jdbcUser.old/>
+				<sourcegen.jdbcPassword.old/>
 				<sourcegen.jdbcUrl.new>jdbc:odbc:hl7v65</sourcegen.jdbcUrl.new>
-				<sourcegen.jdbcUser.new></sourcegen.jdbcUser.new>
-				<sourcegen.jdbcPassword.new></sourcegen.jdbcPassword.new>
+				<sourcegen.jdbcUser.new/>
+				<sourcegen.jdbcPassword.new/>
 			</properties>
 		</profile>
 	</profiles>
 
 </project>
-

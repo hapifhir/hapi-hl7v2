@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+    name="HAPI">
+
+	<bannerLeft>
+		<name>HAPI</name>
+		<src>images/hapilogo5.gif</src>
+		<href>http://hl7api.sourceforge.net/</href>
+	</bannerLeft>
+
+	<bannerRight>
+		<name>Sourceforge</name>
+		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16</src>
+		<href>https://sourceforge.net/projects/hl7api/</href>
+	</bannerRight>
+
+	<poweredBy>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2"/>
+		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
+	</poweredBy>
+
+	<version position="left"/>
+
+	<body>
+
+		<links>
+            <item name="hUnit" href="http://hl7api.sf.net/hunit" />
+			<item name="hl7.org" href="http://hl7.org/" />
+			<item name="University Health Network" href="http://www.uhn.ca/" />
+		</links>
+
+		<menu ref="parent"/>
+
+		<menu name="Plugin">
+			<item name="Goals" href="plugin-info.html"/>
+		</menu>
+
+		<menu name="Reports">
+			<item name="Unit Test Report" href="surefire-report.html"/>
+            <item name="Team List" href="team-list.html"/>
+            <item name="Source Tag List" href="taglist.html"/>
+		</menu>
+
+	</body>
+</project>
