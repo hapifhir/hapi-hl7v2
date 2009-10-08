@@ -31,7 +31,6 @@ package ca.uhn.hl7v2.parser;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import org.apache.commons.lang.StringUtils;
 
 
 
@@ -106,7 +105,7 @@ public class EncodingCharacters extends Object implements Cloneable {
     public static EncodingCharacters getInstance(Message message) throws HL7Exception {
 
         final String encodingCharactersValue = message.getEncodingCharactersValue();
-        if (StringUtils.isEmpty(encodingCharactersValue)) {
+        if (encodingCharactersValue == null || encodingCharactersValue.isEmpty()) {
             throw new HL7Exception("encoding characters not populated");
         }
 
