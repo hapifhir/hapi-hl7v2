@@ -152,7 +152,9 @@ public class Varies implements Type {
                 }
                 else {
                     //set class
-                    Class c = factory.getTypeClass(obx2.getValue(), segment.getMessage().getVersion());
+                    String version = segment.getMessage().getVersion();
+					String obx2Value = obx2.getValue();
+					Class c = factory.getTypeClass(obx2Value, version);
 //                    Class c = ca.uhn.hl7v2.parser.Parser.findClass(obx2.getValue(), 
 //                                                    segment.getMessage().getVersion(), 
 //                                                    "datatype");
@@ -160,7 +162,7 @@ public class Varies implements Type {
                     	Primitive obx1 = (Primitive) segment.getField(1, 0);
                     	HL7Exception h = new HL7Exception("\'" +
                     		obx2.getValue() + "\' in record " +
-                    		obx1.getValue() + " is invalid",
+                    		obx1.getValue() + " is invalid for version " + version,
                     		HL7Exception.DATA_TYPE_ERROR);
                     	h.setSegmentName("OBX");
                     	h.setFieldPosition(2);
