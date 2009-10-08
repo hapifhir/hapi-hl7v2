@@ -117,11 +117,11 @@ public class SourceGenerator extends Object {
         String retVal = aName.toString();
 
         // Accessors with these two names conflict with existing superclass accessor names
-        if (retVal.equals("getParent")) {
-            retVal = "get" + parentName + "Parent";
+        if (retVal.equals("Parent")) {
+            retVal = parentName + "Parent";
         }
-        if (retVal.equals("getName")) {
-            retVal = "get" + parentName + "Name";
+        if (retVal.equals("Name")) {
+            retVal = parentName + "Name";
         }
         
         return retVal;

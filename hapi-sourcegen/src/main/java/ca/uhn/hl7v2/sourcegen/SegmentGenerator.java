@@ -320,6 +320,33 @@ public class SegmentGenerator extends java.lang.Object {
 				source.append("  }\r\n\r\n");
 
 
+				// Add count reps method
+				source.append("  /**\r\n");
+				source.append("   * Returns a count of the number of repetitions of ");
+				source.append(se.desc);
+				source.append(" (");
+				source.append(name);
+				source.append("-");
+				source.append(se.field);
+				source.append(").\r\n");
+				source.append("   */\r\n");
+				source.append("  public int get");
+				source.append(accessorName);
+				source.append("Reps() {\r\n");
+				source.append("    try {\r\n");
+				source.append("        return this.getField(");
+				source.append(se.field);
+				source.append(").length;  \r\n");
+				source.append("    } catch (ClassCastException cce) {\r\n");
+				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
+				source.append("        throw new RuntimeException(cce);\r\n");
+				source.append("    } catch (HL7Exception he) {\r\n");
+				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
+				source.append("        throw new RuntimeException(he);\r\n");
+				source.append("    }\r\n");
+				source.append("  }\r\n\r\n");
+
+
 				// Add insert repetition method
 				source.append("  /**\r\n");
 				source.append("   * Inserts a repetition of ");
