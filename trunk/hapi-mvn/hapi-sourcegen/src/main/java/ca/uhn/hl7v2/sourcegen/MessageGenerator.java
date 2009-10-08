@@ -413,6 +413,12 @@ public class MessageGenerator extends Object {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 		out.write(makePreamble(contents, message, chapter, version, basePackageName, haveGroups));
 		out.write(makeConstructor(contents, message, version));
+
+		out.write("\t/** {@inheritDoc} */\r\n");
+		out.write("\tpublic String getVersion() {\r\n");
+		out.write("\t   return \"" + version + "\";\r\n");
+		out.write("\t}\r\n\r\n");
+
 		for (int i = 0; i < contents.length; i++) {
 			out.write(GroupGenerator.makeAccessor(group, i));
 		}
