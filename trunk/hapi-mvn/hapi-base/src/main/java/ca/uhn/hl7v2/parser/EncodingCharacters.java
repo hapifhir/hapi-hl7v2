@@ -105,7 +105,7 @@ public class EncodingCharacters extends Object implements Cloneable {
     public static EncodingCharacters getInstance(Message message) throws HL7Exception {
 
         final String encodingCharactersValue = message.getEncodingCharactersValue();
-        if (encodingCharactersValue == null || encodingCharactersValue.isEmpty()) {
+        if (encodingCharactersValue == null || encodingCharactersValue.length() == 0) {
             throw new HL7Exception("encoding characters not populated");
         }
 
