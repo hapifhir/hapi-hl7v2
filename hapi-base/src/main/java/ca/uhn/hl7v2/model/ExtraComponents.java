@@ -68,7 +68,16 @@ public class ExtraComponents implements Serializable {
             addRep(comp, j);
         }*/
     }
-    
+
+
+	/**
+	 * Clears all extra components
+	 */
+	void clear() {
+		comps.clear();
+	}
+
+
     /*private void addComp(int comp) {
     }*/
     

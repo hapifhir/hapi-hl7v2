@@ -490,4 +490,17 @@ public abstract class AbstractGroup implements Group {
         
         return name;      
     }
+
+	/**
+	 * Clears all data from this structure.
+	 */
+	public void clear() {
+		for (ArrayList<Structure> next : structures.values()) {
+			if (next != null) {
+				next.clear();
+			}
+		}
+
+	}
+
 } 

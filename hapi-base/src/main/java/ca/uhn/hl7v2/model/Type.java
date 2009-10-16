@@ -62,4 +62,9 @@ public interface Type extends Serializable {
      */
     public String encode() throws HL7Exception;
 
+
+	/**
+	 * Clears all data from this type
+	 */
+	void clear();
 } 

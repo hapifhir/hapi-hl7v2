@@ -121,7 +121,10 @@ public abstract class AbstractSegment implements Segment {
      *    repetition is more than 1 greater than the existing # of repetitions.  
      */
     public Type getField(int number, int rep) throws HL7Exception {
-		if (number >= fields.size()) {
+
+        ensureEnoughFields(number);
+
+		if (number < 1 || number > fields.size()) {
             throw new HL7Exception(
                 "Can't get field "
                     + number
@@ -489,7 +492,8 @@ public abstract class AbstractSegment implements Segment {
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {
-        getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+        clear();
+		getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
     }
 
 
@@ -546,5 +550,14 @@ public abstract class AbstractSegment implements Segment {
 		return newType;
     }
 
+
+	/**
+	 * Clears all data from this segment
+	 */
+	public void clear() {
+		for (ArrayList<Type> next : fields) {
+			next.clear();
+		}
+	}
 
 }
