@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<parent>
-		<artifactId>hapi</artifactId>
+		<artifactId>hapi-structures-base</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
 		<version>1.0-beta1</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../hapi-structures-base/pom.xml</relativePath>
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
