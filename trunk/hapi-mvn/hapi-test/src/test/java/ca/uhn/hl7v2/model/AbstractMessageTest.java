@@ -86,6 +86,12 @@ public class AbstractMessageTest extends TestCase {
         messageType = a01.getMSH().getMessageType().encode();
         assertEquals("ADT^A04", messageType);
 
+        a01.getMSH().getMessageType().parse("");
+
+        messageType = a01.getMSH().getMessageType().encode();
+        assertEquals("", messageType);
+
+
     }
 
     public void testNumberedAccessor() throws HL7Exception, IOException {

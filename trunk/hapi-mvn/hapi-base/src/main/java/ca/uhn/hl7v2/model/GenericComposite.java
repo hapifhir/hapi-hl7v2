@@ -11,14 +11,14 @@ import java.util.ArrayList;
  */
 public class GenericComposite extends AbstractType implements Composite {
     
-    private ArrayList components;
+    private ArrayList<Type> components;
     private Message message;
     
     /** Creates a new instance of GenericComposite */
     public GenericComposite(Message message) {
         super(message);
         this.message = message;
-        components = new ArrayList(20);
+        components = new ArrayList<Type>(20);
     }
     
     /** 
@@ -47,5 +47,18 @@ public class GenericComposite extends AbstractType implements Composite {
     public String getName() {
         return "UNKNOWN";
     }
-    
+
+	
+	/**
+	 * {@inheritDoc }
+	 */
+	public void clear() {
+		for (Type next : components) {
+			next.clear();
+		}
+	}
+
+
+
+
 }

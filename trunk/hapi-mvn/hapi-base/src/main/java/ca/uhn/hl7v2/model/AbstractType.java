@@ -30,13 +30,15 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An abstract Type that provides a default implementation of getName(). 
  * 
  * @author Bryan Tripp
  */
-public class AbstractType implements Type {
+public abstract class AbstractType implements Type {
 
     private ExtraComponents extra;
     private Message message;
@@ -74,7 +76,8 @@ public class AbstractType implements Type {
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {
-        getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+        clear();
+		getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
     }
 
 
@@ -84,5 +87,36 @@ public class AbstractType implements Type {
     public String encode() throws HL7Exception {
         return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
+
+
+	/**
+	 * {@inheritDoc }
+	 */
+	public void clear() {
+		if (this instanceof Composite) {
+
+			Composite composite = (Composite) this;
+			for (Type nextComponent : composite.getComponents()) {
+				nextComponent.clear();
+			}
+
+		} else if (!(this instanceof AbstractPrimitive) && (this instanceof Primitive)) {
+
+			// Most primitives don't hit this block because they extend AbstractPrimitive, which
+			// has an implementation of clear which clears the value without invoking validation
+
+			Primitive primitive = (Primitive) this;
+			try {
+				primitive.setValue("");
+			} catch (DataTypeException ex) {
+				throw new Error("Unable to clear the value of a primitive which does not extend AbstractPrimitive. This is likely a software bug.");
+			}
+		}
+
+		extra.clear();
+	}
+
+
+	
 
 }

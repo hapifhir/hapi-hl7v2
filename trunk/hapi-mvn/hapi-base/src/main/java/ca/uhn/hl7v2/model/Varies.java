@@ -202,4 +202,12 @@ public class Varies implements Type {
         return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
 
+
+	/**
+	 * {@inheritDoc }
+	 */
+	public void clear() {
+		data.clear();
+	}
+
 }

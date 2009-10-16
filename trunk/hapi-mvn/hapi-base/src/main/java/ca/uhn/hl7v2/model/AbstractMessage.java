@@ -174,7 +174,8 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {
-        getParser().parse(this, string);
+        clear();
+		getParser().parse(this, string);
     }
 
     

@@ -106,7 +106,20 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
      */
     @Override
     public void parse(String string) throws HL7Exception {
-        setValue(string);
+        clear();
+		setValue(string);
     }
-    
+
+
+	/**
+	 * {@inheritDoc }
+	 */
+	@Override
+	public void clear() {
+		super.clear();
+		myValue = null;
+	}
+
+
+
 }

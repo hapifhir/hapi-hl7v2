@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import junit.framework.*;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -44,5 +46,28 @@ public class AbstractSegmentTest extends TestCase {
         msh.getField(1, 1);        
         assertEquals(2, msh.getField(1).length);
     }
+
+
+	public void testParseAndDecode() throws HL7Exception {
+
+        String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
+                + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
+                + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
+
+        ADT_A01 a01 = new ADT_A01();
+        a01.parse(string);
+
+		assertEquals(string, a01.encode());
+
+		a01.getPID().parse("PID");
+
+        string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
+                + "PID\r"
+                + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
+
+		assertEquals(string, a01.encode());
+
+	}
+
     
 }
