@@ -109,11 +109,19 @@ public class ProfileSourceGenerator {
 
 		// Write Segments
 		for (SegmentDef next : mySegmentDefs) {
+
 			String fileName = myTargetDirectory + "segment/" + next.getName() + ".java";
 			ourLog.info("Writing Segment file: " + fileName);
 			String segmentName = next.getName();
 			String description = next.getDescription();
 			ArrayList<SegmentElement> elements = mySegmentNameToSegmentElements.get(segmentName);
+
+			for (SegmentElement nextElement : elements) {
+				if ("*".equals(nextElement.type) || "VARIES".equals(nextElement.type)) {
+					nextElement.type = "Varies";
+				}
+			}
+
 			SegmentGenerator.writeSegment(fileName, version, segmentName, elements, description, myBasePackage, datatypePackages );
 		}
 	}
