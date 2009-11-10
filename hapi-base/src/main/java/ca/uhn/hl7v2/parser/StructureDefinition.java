@@ -227,11 +227,15 @@ public class StructureDefinition implements IStructureDefinition {
 			myNamesOfAllPossibleFollowingLeaves.add(nextLeaf.getName());
 			myNamesOfAllPossibleFollowingLeaves.addAll(nextLeaf.getNamesOfAllPossibleFollowingLeaves());
 		}
-		
-		if (myParent.isRepeating()) {
-			myNamesOfAllPossibleFollowingLeaves.addAll(myParent.getAllPossibleFirstChildren());
+
+		IStructureDefinition parent = myParent;
+		while (parent != null) {
+			if (parent.isRepeating()) {
+				myNamesOfAllPossibleFollowingLeaves.addAll(parent.getAllPossibleFirstChildren());
+			}
+			parent = parent.getParent();
 		}
-		
+
 		return myNamesOfAllPossibleFollowingLeaves;
 		
 		

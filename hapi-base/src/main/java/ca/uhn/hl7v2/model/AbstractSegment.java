@@ -492,8 +492,10 @@ public abstract class AbstractSegment implements Segment {
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {
-        clear();
-		getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+		EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
+		clear();
+
+		getMessage().getParser().parse(this, string, encodingCharacters);
     }
 
 
