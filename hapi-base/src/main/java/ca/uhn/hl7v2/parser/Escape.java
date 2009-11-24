@@ -70,8 +70,25 @@ public class Escape {
         for (int i = 0; i < textLength; i++) {
             boolean charReplaced = false;
             char c = text.charAt(i);
-            for (int j = 0; j < 6; j++) {
+
+			for (int j = 0; j < 6; j++) {
                 if (text.charAt(i) == esc.characters[j]) {
+
+					// Formatting escape sequences such as /.br/ should be left alone
+					if (j == 4) {
+						if (i + 1 < textLength) {
+							if (text.charAt(i + 1) == '.') {
+								int nextEscapeIndex = text.indexOf(esc.characters[j], i + 1);
+								if (nextEscapeIndex > 0) {
+									result.append(text.substring(i, nextEscapeIndex + 1));
+									charReplaced = true;
+									i = nextEscapeIndex;
+									break;
+								}
+							}
+						}
+					}
+
                     result.append(esc.encodings[j]);
                     charReplaced = true;
                     break;
@@ -112,20 +129,39 @@ public class Escape {
                 i++;
             } else {
                 boolean foundEncoding = false;
-                for (int j = 0; j < encodingsCount; j++) {
+
+				// Test against the standard encodings
+				for (int j = 0; j < encodingsCount; j++) {
                     String encoding = esc.encodings[j];
-                    if ((i + encoding.length() <= textLength) && text.substring(i, i + encoding.length())
+					int encodingLength = encoding.length();
+					if ((i + encodingLength <= textLength) && text.substring(i, i + encodingLength)
                             .equals(encoding)) {
                         result.append(esc.characters[j]);
-                        i += encoding.length();
+                        i += encodingLength;
                         foundEncoding = true;
                         break;
                     }
                 }
 
                 if (!foundEncoding) {
-                    i++;
+					
+					// If we haven't found this, there is one more option. Escape sequences of /.XXXXX/ are
+					// formatting codes. They should be left intact
+					if ((i + 1 < textLength) && text.charAt(i + 1) == '.') {
+						int closingEscape = text.indexOf(escape, i + 1);
+						if (closingEscape > 0) {
+							String substring = text.substring(i, closingEscape + 1);
+							result.append(substring);
+							i += substring.length();
+						} else {
+							i++;
+						}
+					} else {
+						i++;
+					}
                 }
+
+
             }
         }
         return result.toString();
