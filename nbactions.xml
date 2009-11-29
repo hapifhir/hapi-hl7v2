@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-Quick Site</actionName>
+            <displayName>Quick Site</displayName>
+            <goals>
+                <goal>site</goal>
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <activatedProfiles>
+                <activatedProfile>SITE</activatedProfile>
+            </activatedProfiles>
+        </action>
+    </actions>

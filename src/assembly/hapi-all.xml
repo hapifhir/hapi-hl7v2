@@ -53,7 +53,7 @@
                 <include>ca.uhn.hapi:hapi-structures-v26</include>
             </includes>
             <binaries>
-                <attachmentClassifier>src</attachmentClassifier>
+                <attachmentClassifier>sources</attachmentClassifier>
                 <includeDependencies>false</includeDependencies>
                 <outputDirectory>sources</outputDirectory>
                 <unpack>false</unpack>

@@ -431,7 +431,7 @@ public class DataTypeGenerator extends Object {
             String accessorName = SourceGenerator.makeAccessorName(descriptions[i], dataType);
             appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
 
-            accessorName = SourceGenerator.makeAlternateAccessorName(descriptions[i], dataType, i);
+            accessorName = SourceGenerator.makeAlternateAccessorName(descriptions[i], dataType, i + 1);
             appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
         }
         /*if (correspondingControlInterface != null) {

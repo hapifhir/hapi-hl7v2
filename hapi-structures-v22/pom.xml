@@ -17,11 +17,58 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<gen.skip>false</gen.skip>
 		<gen.version>2.2</gen.version>
 		<gen.version.short>v22</gen.version.short>
 	</properties>
 
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>
+				<executions>
+					<execution>
+						<id>${gen.version}</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>sourcegen</goal>
+						</goals>
+						<inherited>true</inherited>
+						<configuration>
+							<version>${gen.version}</version>
+							<jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
+							<jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
+							<jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
+							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
+							<targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<inherited>true</inherited>
+						<configuration>
+							<tasks>
+								<echo message="Copying resources"/>
+								<copy todir="../target/site/${gen.version.short}/apidocs">
+									<fileset dir="target/site/apidocs">
+										<include name="**/*"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 		<resources>
             <resource>
                 <directory>${basedir}/target/generated-sources/resourcegen</directory>
