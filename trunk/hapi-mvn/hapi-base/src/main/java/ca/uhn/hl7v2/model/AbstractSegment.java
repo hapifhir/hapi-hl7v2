@@ -49,9 +49,9 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class AbstractSegment implements Segment {
 
-	private static final long serialVersionUID = -3085455401321160783L;
+    private static final long serialVersionUID = -3085455401321160783L;
 
-	private static final HapiLog log = HapiLogFactory.getHapiLog(AbstractSegment.class);
+    private static final HapiLog log = HapiLogFactory.getHapiLog(AbstractSegment.class);
 
     private ArrayList<ArrayList<Type>> fields;
     private ArrayList<Class<? extends Type>> types;
@@ -124,17 +124,17 @@ public abstract class AbstractSegment implements Segment {
 
         ensureEnoughFields(number);
 
-		if (number < 1 || number > fields.size()) {
+        if (number < 1 || number > fields.size()) {
             throw new HL7Exception(
                 "Can't get field "
-                    + number
-                    + " in segment " + getName() + " - there are currently only "
-                    + fields.size()
-                    + " reps.",
+                + number
+                + " in segment " + getName() + " - there are currently only "
+                + fields.size()
+                + " reps.",
                 HL7Exception.APPLICATION_INTERNAL_ERROR);
-		}
+        }
 
-		ArrayList<Type> arr = fields.get(number - 1);
+        ArrayList<Type> arr = fields.get(number - 1);
 
         //check if out of range ... 
         if (rep > arr.size())
@@ -483,19 +483,23 @@ public abstract class AbstractSegment implements Segment {
     /**
      * {@inheritDoc}
      */
-	public String[] getNames() {
-		return (String[]) names.toArray(new String[names.size()]);
-	}
+    public String[] getNames() {
+            return (String[]) names.toArray(new String[names.size()]);
+    }
 
 
     /**
      * {@inheritDoc }
+     *
+     * <p><b>Note that this method will not currently work to parse an MSH segment
+     * if the encoding characters are not already set. This limitation should be
+     * resulved in a future version</b></p>
      */
     public void parse(String string) throws HL7Exception {
-		EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
-		clear();
+        EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
+        clear();
 
-		getMessage().getParser().parse(this, string, encodingCharacters);
+        getMessage().getParser().parse(this, string, encodingCharacters);
     }
 
 
@@ -516,12 +520,12 @@ public abstract class AbstractSegment implements Segment {
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
     protected Type removeRepetition(int fieldNum, int index) throws HL7Exception {
-		if (fieldNum < 1 || fieldNum >= fields.size()) {
+        if (fieldNum < 1 || fieldNum >= fields.size()) {
             throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
-		}
+        }
 
-		String name = names.get(fieldNum - 1);
-		ArrayList<Type> list = fields.get(fieldNum - 1);
+        String name = names.get(fieldNum - 1);
+        ArrayList<Type> list = fields.get(fieldNum - 1);
         if (list.size() == 0) {
             throw new HL7Exception("Invalid index: " + index  + ", structure " + name + " has no repetitions", HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
@@ -540,26 +544,26 @@ public abstract class AbstractSegment implements Segment {
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
     protected Type insertRepetition(int fieldNum, int index) throws HL7Exception {
-		if (fieldNum < 1 || fieldNum >= fields.size()) {
+        if (fieldNum < 1 || fieldNum >= fields.size()) {
             throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
-		}
+        }
 
-		ArrayList<Type> list = fields.get(fieldNum - 1);
-		Type newType = createNewType(fieldNum);
+        ArrayList<Type> list = fields.get(fieldNum - 1);
+        Type newType = createNewType(fieldNum);
 
-		list.add(index, newType);
+        list.add(index, newType);
 
-		return newType;
+        return newType;
     }
 
 
-	/**
-	 * Clears all data from this segment
-	 */
-	public void clear() {
-		for (ArrayList<Type> next : fields) {
-			next.clear();
-		}
-	}
+    /**
+     * Clears all data from this segment
+     */
+    public void clear() {
+        for (ArrayList<Type> next : fields) {
+            next.clear();
+        }
+    }
 
 }

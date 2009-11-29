@@ -9,6 +9,21 @@ Welcome
 
 What's New
 
+* November 28, 2009
+
+   A new beta (1.0-beta1) of HAPI has been uploaded to the {{{https://sourceforge.net/projects/hl7api/files/hl7api-unstable/}downloads area}}.
+   This should allow people to try out some of the new features that are coming up, and to
+   report any bugs that are found.
+
+   This release features an overhaul of PipeParser, various speed improvements, and a number
+   of new convenience methods, all of which are outlined on the {{{whatsnew.html}what's new}} page.
+
+   Also worth mentioning, a new release of {{{hunit/index.html}hUnit}} has been released
+   as well. The new release features shiny new UI for defining tests.
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
 * September 7, 2009
 
    A few announcements on the HAPI front:
@@ -17,7 +32,7 @@ What's New
 
    I wanted to let you all know of an exciting new development in the HAPI world: the development of a set of OSGi bundles, enabling HAPI to be deployed in an OSGi container.
 
-   Development is ongoing, led by {{{mailto:niranjansharma@users.sourceforge.net}Niranjan Sharma}} from GE Healthcare. At this point, we have a mostly working set of unit tests and a basic plan of attack for getting the bundles to do something useful. Naturally, HAPI's use of reflection and a few scattered classloaded resource issues are causing some minor hassles, but I'm sure it can all be worked out.
+   Development is ongoing, led by {{{mailto:niranjan.sharma@med.ge.com}Niranjan Sharma}} from GE Healthcare. At this point, we have a mostly working set of unit tests and a basic plan of attack for getting the bundles to do something useful. Naturally, HAPI's use of reflection and a few scattered classloaded resource issues are causing some minor hassles, but I'm sure it can all be worked out.
 
    If anyone is interested in contributing some time in development, testing, documentation, etc., please by all means get in touch with either myself or Niranjan. I'm really excited to see where this is all leading, in my opinion (and many others) OSGi is the future of Java, and it will be really nice to see HAPI playing well in that sandbox.
 

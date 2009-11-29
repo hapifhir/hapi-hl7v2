@@ -1,10 +1,23 @@
 What's New
 
-  This document shows new features for version 1.0 of HAPI
+  This document shows new features for version 1.0 of HAPI. Note that HAPI 1.0 is not yet released,
+  but a beta version is available.
 
 * Version 1.0
 
   Version 1.0 contains a number of bugfixes. See the {{{changes-report.html}Changelog}} for more information.
+
+** Still To Come
+
+  Note documented here, but still being worked on before the release of HAPI 1.0
+  are two useful features:
+
+  * OSGi support, being worked on by {{{mailto:niranjan.sharma@med.ge.com}Niranjan Sharma}} of GE Healthcare.
+
+  * A new framework and maven plugin to generate custom HAPI message classes and structures
+    based on an HL7 conformance profiles generated using Message Workbench. This should make
+    constraining messages easier, but more significantly it should make it much easier to
+    create message classes for custom message definitions (specs using Z-segments, etc.)
 
 ** Parser Speed Improvements
 
@@ -21,7 +34,7 @@ What's New
 
   HAPI structures now have a few new convenience methods to parse and encode various structures. For example,
   messages may have values parsed in through the parse(String) method, and messages may be re-encoded using
-  the encode() method:
+  the encode() method.
 
 +------------+
 String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"

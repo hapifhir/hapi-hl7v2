@@ -1,3 +1,8 @@
 Using HAPI under JDK 1.4
 
-  As of version 1.0 of HAPI, a JDK version 5.0 or newer is needed by default. 
+  As of version 1.0 of HAPI, a JDK version 5.0 or newer is needed by default. Using JDK
+  1.4 is still possible however, using the "JDK14" distribution available on the
+  {{{http://sourceforge.net/projects/hl7api/files/hl7api/}Download}} page.
+
+  This distribution is produced by taking the JDK 5 compiled classes and
+  applying {{{http://mojo.codehaus.org/retrotranslator-maven-plugin/}Retrotranslator}}.

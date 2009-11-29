@@ -127,7 +127,8 @@
 	
 	<modules>
 		<module>hapi-confgen-archetype</module>
-	</modules>
+    	<!--<module>HapiOpenesbEncoder</module>-->
+  </modules>
 	
 	<distributionManagement>
 		<repository>
@@ -165,13 +166,13 @@
 					<descriptors>
 						<descriptor>src/assembly/hapi-all.xml</descriptor>
 						<descriptor>src/assembly/hapi-src.xml</descriptor>
+						<descriptor>src/assembly/hapi-jdk14.xml</descriptor>
 					</descriptors>
 				</configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-					<!-- Insert analytics script block into all HTML files -->
                     <execution>
                         <id>insert-analytics</id>
                         <phase>site</phase>
@@ -195,6 +196,24 @@ try {
 var pageTracker = _gat._getTracker("UA-1395874-1");
 pageTracker._trackPageview();
 } catch(err) {}</script></body>]]>
+                                    </replacevalue>
+                                </replace>
+                                <replace dir="${basedir}/target/site">
+                                    <include name="**/*.html"/>
+                                    <replacetoken>
+                    <![CDATA[</BODY>]]>
+                                    </replacetoken>
+                                    <replacevalue>
+                    <![CDATA[
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1395874-1");
+pageTracker._trackPageview();
+} catch(err) {}</script></BODY>]]>
                                     </replacevalue>
                                 </replace>
                             </tasks>
@@ -260,6 +279,21 @@ pageTracker._trackPageview();
                     <issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
 				</configuration>
 			</plugin>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-project-info-reports-plugin</artifactId>
+                  <reportSets>
+                     <reportSet>
+                        <reports>
+                           <report>project-team</report>
+                           <report>mailing-list</report>
+                           <report>issue-tracking</report>
+                           <report>license</report>
+                           <report>scm</report>
+                        </reports>
+                     </reportSet>
+                  </reportSets>
+              </plugin>
     	</plugins>
 	</reporting>
 
