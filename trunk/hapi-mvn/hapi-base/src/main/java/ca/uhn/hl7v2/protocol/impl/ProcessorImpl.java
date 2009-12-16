@@ -46,7 +46,7 @@ import ca.uhn.log.HapiLogFactory;
  * A default implementation of <code>Processor</code>.  
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
+ * @version $Revision: 1.4 $ updated on $Date: 2009-12-16 19:36:34 $ by $Author: jamesagnew $
  */
 public class ProcessorImpl implements Processor {
 
@@ -85,14 +85,14 @@ public class ProcessorImpl implements Processor {
         myAvailableMessages = new HashMap();
         
         if (isThreaded) {
-            ackCycler = new Cycler(this, true);
+            myResponseExecutorService = Executors.newSingleThreadExecutor(); 
+
+        	ackCycler = new Cycler(this, true);
             Thread ackThd = new Thread(ackCycler);
             ackThd.start();
             nonAckCycler = new Cycler(this, false);
             Thread nonAckThd = new Thread(nonAckCycler);
-            nonAckThd.start();
-            
-            myResponseExecutorService = Executors.newSingleThreadExecutor(); 
+            nonAckThd.start();            
         }
     }
     
@@ -468,7 +468,7 @@ public class ProcessorImpl implements Processor {
      * A struct for Transportable collection entries that time out.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
+     * @version $Revision: 1.4 $ updated on $Date: 2009-12-16 19:36:34 $ by $Author: jamesagnew $
      */
     class ExpiringTransportable {
         public Transportable transportable;
@@ -484,7 +484,7 @@ public class ProcessorImpl implements Processor {
      * A Runnable that repeatedly calls the cycle() method of this class.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.3 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
+     * @version $Revision: 1.4 $ updated on $Date: 2009-12-16 19:36:34 $ by $Author: jamesagnew $
      */
     private static class Cycler implements Runnable {
 
