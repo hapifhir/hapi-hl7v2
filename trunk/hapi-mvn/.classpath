@@ -34,5 +34,6 @@
 	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/saxpath/saxpath/1.0-FCS/saxpath-1.0-FCS.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.2.0/maven-plugin-api-2.2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
