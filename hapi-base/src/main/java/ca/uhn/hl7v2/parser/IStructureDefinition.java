@@ -1,85 +1,157 @@
+/**
+ * The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+ * specific language governing rights and limitations under the License.
+ *
+ * The Original Code is "IStructureDefinition.java"
+ *
+ * The Initial Developer of the Original Code is University Health Network. Copyright (C)
+ * 2001.  All Rights Reserved.
+ *
+ * Contributor(s):
+ *
+ * Alternatively, the contents of this file may be used under the terms of the
+ * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * applicable instead of those above.  If you wish to allow use of your version of this
+ * file only under the terms of the GPL and not to allow others to use your version
+ * of this file under the MPL, indicate your decision by deleting  the provisions above
+ * and replace  them with the notice and other provisions required by the GPL License.
+ * If you do not delete the provisions above, a recipient may use your version of
+ * this file under either the MPL or the GPL.
+ *
+ */
+
+
 package ca.uhn.hl7v2.parser;
 
+import ca.uhn.hl7v2.model.Structure;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Contains information about the composition of a given type of {@link Structure}.
+ * At runtime, parsers will use accessors provided by various structure types (messages, groups,
+ * segments) to determine the structure of a messages. Structure definitions are used
+ * to cache that information between parse calls.
+ */
 public interface IStructureDefinition {
 
-	/**
-	 * @return Returns this structure's first sibling (in other words, its
-	 *         parent's first child). Returns
-	 *         <code>null<code> if this is the first sibling, or if this has no parent
-	 */
-	public abstract IStructureDefinition getFirstSibling();
+    /**
+     * @return Returns this structure's first sibling (in other words, its
+     *         parent's first child). Returns
+     *         <code>null<code> if this is the first sibling, or if this has no parent
+     */
+    IStructureDefinition getFirstSibling();
 
-	public abstract IStructureDefinition getNextLeaf();
+    /**
+     * @return Returns the next leaf (segment) after this one, within the same
+     * group, only if one exists and this structure is also a leaf. Otherwise returns <code>null</code>.
+     */
+    IStructureDefinition getNextLeaf();
 
-	public abstract String getName();
+    /**
+     * @return Returns the name of this structure
+     */
+    String getName();
 
-	public abstract boolean isSegment();
+    /**
+     * @return Returns true if this structure is a segment
+     */
+    boolean isSegment();
 
-	public abstract boolean isRepeating();
+    /**
+     * @return Returns true if this is a repeatable structure
+     */
+    boolean isRepeating();
 
-	public abstract List<StructureDefinition> getChildren();
+    /**
+     * @return Returns all children of this structure definition
+     */
+    List<StructureDefinition> getChildren();
 
-	public abstract int getPosition();
+    /**
+     * @return Returns the index of the position of this structure
+     * within it's parent's children
+     */
+    int getPosition();
 
-	public abstract IStructureDefinition getParent();
+    /**
+     * @return Returns the parent structure of this structure, if one exists.
+     * Otherwise, returns null.
+     */
+    IStructureDefinition getParent();
 
-	public abstract boolean isFinalChildOfParent();
+    /**
+     * @return Returns true if this structure is the final child of it's parent.
+     */
+    boolean isFinalChildOfParent();
 
-	public abstract IStructureDefinition getNextSibling();
+    /**
+     * @return Returns this structure's next sibling within it's parent, if any.
+     */
+    IStructureDefinition getNextSibling();
 
-	public abstract boolean hasChildren();
+    /**
+     * @return Does this structure have children (i.e. is it not a segment)
+     */
+    boolean hasChildren();
 
-	/**
-	 * Should only be called on a leaf node (segment). Returns the names 
-	 * of all valid children which may follow this one, at any level in the 
-	 * hierarchy (including as later siblings of parent structures to 
-	 * this one) 
-	 */
-	public abstract Set<String> getNamesOfAllPossibleFollowingLeaves();
+    /**
+     * Should only be called on a leaf node (segment). Returns the names
+     * of all valid children which may follow this one, at any level in the
+     * hierarchy (including as later siblings of parent structures to
+     * this one)
+     */
+    Set<String> getNamesOfAllPossibleFollowingLeaves();
 
-	/**
-	 * May return null
-	 * @return
-	 */
-	public abstract IStructureDefinition getFirstChild();
+    /**
+     * May return null
+     * @return
+     */
+    IStructureDefinition getFirstChild();
 
-	/**
-	 * Returns the names of any possible children that could be the first
-	 * required child of this group.
-	 * 
-	 * For instance, for the group below "ORC" and "OBR" would both be 
-	 * returned, as they are both potential first children of this group.
-	 * 
-	 * Note that the name returned by {@link #getName() this.getName()} 
-	 * is also returned.
-	 *   
-	 * <code>
-	 *               ORDER_OBSERVATION
-	 *	  {
-	 *	  [ ORC ]
-	 *	  OBR
-	 *	  [ { NTE } ]
-	 *	  [ CTD ]
-	 *	                OBSERVATION
-	 *	     {
-	 *	     [ OBX ]
-	 *	     [ { NTE } ]
-	 *	     }
-	 *	                OBSERVATION
-	 *	  [ { FT1 } ]
-	 *	  [ { CTI } ]
-	 *	  }
-	 *	                ORDER_OBSERVATION
-	 *	   </code>
-	 * 
-	 */
-	public abstract Set<String> getAllPossibleFirstChildren();
+    /**
+     * Returns the names of any possible children that could be the first
+     * required child of this group.
+     *
+     * For instance, for the group below "ORC" and "OBR" would both be
+     * returned, as they are both potential first children of this group.
+     *
+     * Note that the name returned by {@link #getName() this.getName()}
+     * is also returned.
+     *
+     * <code>
+     *               ORDER_OBSERVATION
+     *	  {
+     *	  [ ORC ]
+     *	  OBR
+     *	  [ { NTE } ]
+     *	  [ CTD ]
+     *	                OBSERVATION
+     *	     {
+     *	     [ OBX ]
+     *	     [ { NTE } ]
+     *	     }
+     *	                OBSERVATION
+     *	  [ { FT1 } ]
+     *	  [ { CTI } ]
+     *	  }
+     *	                ORDER_OBSERVATION
+     *	   </code>
+     *
+     */
+    Set<String> getAllPossibleFirstChildren();
 
-	public abstract Set<String> getAllChildNames();
+    /**
+     * @return Returns the names of all children of this structure
+     */
+    Set<String> getAllChildNames();
 
-	public abstract boolean isRequired();
-
+    /**
+     * @return Is this a required structure within it's parent
+     */
+    boolean isRequired();
 }

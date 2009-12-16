@@ -236,9 +236,6 @@ public class PipeParser extends Parser {
 
     /**
      * Generates (or returns the cached value of) the message
-     * @param theClazz
-     * @return
-     * @throws HL7Exception
      */
 	private IStructureDefinition getStructureDefinition(
 			Class<? extends Message> theClazz) throws HL7Exception {
