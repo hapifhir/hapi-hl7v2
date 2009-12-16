@@ -160,7 +160,6 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * Returns the parser to be used when parse/encode methods are called on this
      * Message, as well as its children. The default value is a new {@link PipeParser}
      */
-    @Override
     public Parser getParser() {
         if (myParser == null) {
             myParser = new PipeParser();
