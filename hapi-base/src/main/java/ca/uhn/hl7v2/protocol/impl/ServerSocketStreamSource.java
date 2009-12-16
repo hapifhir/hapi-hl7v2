@@ -41,7 +41,7 @@ import java.net.SocketTimeoutException;
  * party (ie as a TCP/IP server).
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-12-16 19:09:08 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2009-12-16 19:36:57 $ by $Author: jamesagnew $
  */
 public class ServerSocketStreamSource extends SocketStreamSource {
 
@@ -90,7 +90,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
      * we will deadlock.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.2 $ updated on $Date: 2009-12-16 19:09:08 $ by $Author: jamesagnew $
+     * @version $Revision: 1.3 $ updated on $Date: 2009-12-16 19:36:57 $ by $Author: jamesagnew $
      */
     private static class Acceptor {
         
@@ -120,17 +120,19 @@ public class ServerSocketStreamSource extends SocketStreamSource {
                         Socket s;
                         try {
 
-                            s = theServer.accept();
-                            String address = s.getInetAddress().getHostAddress();
-                            if (theAddress == null || address.equals(theAddress)) {
-                                a.setSocket(s);
-                                synchronized (a) {
-                                    a.notifyAll();
-                                }
-                            } else {
-                                log.info("Ignoring connection from " + address + ": expecting " + theAddress);
-                            }
-
+                        	if (!theServer.isClosed()) {
+	                            s = theServer.accept();
+	                            String address = s.getInetAddress().getHostAddress();
+	                            if (theAddress == null || address.equals(theAddress)) {
+	                                a.setSocket(s);
+	                                synchronized (a) {
+	                                    a.notifyAll();
+	                                }
+	                            } else {
+	                                log.info("Ignoring connection from " + address + ": expecting " + theAddress);
+	                            }
+                        	}
+                        	
                         } catch (SocketTimeoutException e) {
                             log.debug("Socket timed out without receiving a connection");
                         } catch (IOException e) {
