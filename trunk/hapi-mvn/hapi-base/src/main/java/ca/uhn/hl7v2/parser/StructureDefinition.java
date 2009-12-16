@@ -56,8 +56,8 @@ public class StructureDefinition implements IStructureDefinition {
 
 	private Set<String> myNamesOfAllPossibleFollowingLeaves;
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getFirstSibling()
+	/**
+	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getFirstSibling() {
 		if (!myFirstSiblingIsSet) {
@@ -74,14 +74,17 @@ public class StructureDefinition implements IStructureDefinition {
 		return myFirstSibling;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getNextLeaf()
+	/**
+	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getNextLeaf() {
 		return myNextLeaf;
 	}
 
-	public void setNextLeaf(IStructureDefinition theNextLeaf) {
+	/**
+	 * Setter
+	 */
+	void setNextLeaf(IStructureDefinition theNextLeaf) {
 		myNextLeaf = theNextLeaf;
 	}
 
@@ -91,72 +94,93 @@ public class StructureDefinition implements IStructureDefinition {
 	public StructureDefinition() {
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getName()
+	/**
+	 * {@inheritDoc }
 	 */
 	public String getName() {
 		return myName;
 	}
 
-	public void setName(String theName) {
+	/**
+	 * Setter
+	 */
+	void setName(String theName) {
 		myName = theName;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#isSegment()
+	/**
+	 * {@inheritDoc }
 	 */
 	public boolean isSegment() {
 		return myIsSegment;
 	}
 
-	public void setSegment(boolean theIsSegment) {
+	/**
+	 * Setter
+	 */
+	void setSegment(boolean theIsSegment) {
 		myIsSegment = theIsSegment;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#isRepeating()
+	/**
+	 * {@inheritDoc }
 	 */
 	public boolean isRepeating() {
 		return myIsRepeating;
 	}
 
-	public void setRepeating(boolean theIsRepeating) {
+	/**
+	 * Setter
+	 */
+	void setRepeating(boolean theIsRepeating) {
 		myIsRepeating = theIsRepeating;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getChildren()
+	/**
+	 * {@inheritDoc }
 	 */
 	public ArrayList<StructureDefinition> getChildren() {
 		return myChildren;
 	}
 
-	public void addChild(StructureDefinition theChild) {
+	/**
+	 * Setter
+	 */
+	void addChild(StructureDefinition theChild) {
 		myChildren.add(theChild);
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getPosition()
+	/**
+	 * {@inheritDoc }
 	 */
 	public int getPosition() {
 		return myPosition;
 	}
 
-	public void setPosition(int thePosition) {
+	/**
+	 * Setter
+	 */
+	void setPosition(int thePosition) {
 		myPosition = thePosition;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getParent()
+	/**
+	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getParent() {
 		return myParent;
 	}
 
-	public void setParent(IStructureDefinition theParent) {
+	/**
+	 * Setter
+	 */
+	void setParent(IStructureDefinition theParent) {
 		myParent = theParent;
 	}
 
+	/**
+	 * {@inheritDoc }
+	 */
 	@Override
 	public boolean equals(Object theObj) {
 		if (theObj == null || !(theObj instanceof StructureDefinition)) {
@@ -166,13 +190,16 @@ public class StructureDefinition implements IStructureDefinition {
 		return o.myName.equals(myName) && o.myPosition == myPosition;
 	}
 
+	/**
+	 * {@inheritDoc }
+	 */
 	@Override
 	public int hashCode() {
 		return 17 * myName.hashCode() * myPosition;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#isFinalChildOfParent()
+	/**
+	 * {@inheritDoc }
 	 */
 	public boolean isFinalChildOfParent() {
 		if (myIsFinalChildOfParent != null) {
@@ -189,8 +216,8 @@ public class StructureDefinition implements IStructureDefinition {
 		return myIsFinalChildOfParent;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getNextSibling()
+	/**
+	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getNextSibling() {
 		if (myNextSibling != null) {
@@ -205,15 +232,15 @@ public class StructureDefinition implements IStructureDefinition {
 		return myNextSibling;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#hasChildren()
+	/**
+	 * {@inheritDoc }
 	 */
 	public boolean hasChildren() {
 		return myChildren.isEmpty() == false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getNamesOfAllPossibleFollowingLeaves()
+	/**
+	 * {@inheritDoc }
 	 */
 	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
 		if (myNamesOfAllPossibleFollowingLeaves != null) {
@@ -241,15 +268,15 @@ public class StructureDefinition implements IStructureDefinition {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getFirstChild()
+	/**
+	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getFirstChild() {
 		return myChildren.get(0);
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getAllPossibleFirstChildren()
+	/**
+	 * {@inheritDoc }
 	 */
 	public HashSet<String> getAllPossibleFirstChildren() {
 		if (myAllFirstLeafNames == null) {
@@ -267,13 +294,16 @@ public class StructureDefinition implements IStructureDefinition {
 		return myAllFirstLeafNames;
 	}
 
+	/**
+	 * {@inheritDoc }
+	 */
 	@Override
 	public String toString() {
-		return getName();
+		return "StructureDefinition[" + getName() + "]";
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#getAllChildNames()
+	/**
+	 * {@inheritDoc }
 	 */
 	public HashSet<String> getAllChildNames() {
 		if (myAllChildrenNames == null) {
@@ -287,14 +317,17 @@ public class StructureDefinition implements IStructureDefinition {
 		return myAllChildrenNames;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.parser.ng.IStructureDefinition#isRequired()
+	/**
+	 * {@inheritDoc }
 	 */
 	public boolean isRequired() {
 		return myIsRequired;
 	}
 
-	public void setRequired(boolean theIsRequired) {
+	/**
+	 * Setter
+	 */
+	void setRequired(boolean theIsRequired) {
 		myIsRequired = theIsRequired;
 	}
 }
