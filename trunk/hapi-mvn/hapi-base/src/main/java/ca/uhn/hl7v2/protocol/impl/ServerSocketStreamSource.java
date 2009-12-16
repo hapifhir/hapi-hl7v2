@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -33,6 +33,7 @@ import java.net.Socket;
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
+import java.net.SocketTimeoutException;
 
 /**
  * A <code>StreamSource</code> that gets streams from ServerSockets.  This 
@@ -40,7 +41,7 @@ import ca.uhn.log.HapiLogFactory;
  * party (ie as a TCP/IP server).
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2009-12-16 19:09:08 $ by $Author: jamesagnew $
  */
 public class ServerSocketStreamSource extends SocketStreamSource {
 
@@ -89,7 +90,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
      * we will deadlock.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
+     * @version $Revision: 1.2 $ updated on $Date: 2009-12-16 19:09:08 $ by $Author: jamesagnew $
      */
     private static class Acceptor {
         
@@ -106,12 +107,19 @@ public class ServerSocketStreamSource extends SocketStreamSource {
          */
         public Acceptor(final ServerSocket theServer, final String theAddress) {
             final Acceptor a = this;
-            
+            if (theAddress != null) {
+                log.info("Server socter is about to try to accept a connection from " + theAddress);
+            } else {
+                log.info("Server socter is about to try to accept a connection from any addess");
+            }
+
             Runnable r = new Runnable() {
                 public void run() {
-                    while (a.getSocket() == null) {
+                    while (true) {
+
                         Socket s;
                         try {
+
                             s = theServer.accept();
                             String address = s.getInetAddress().getHostAddress();
                             if (theAddress == null || address.equals(theAddress)) {
@@ -122,15 +130,28 @@ public class ServerSocketStreamSource extends SocketStreamSource {
                             } else {
                                 log.info("Ignoring connection from " + address + ": expecting " + theAddress);
                             }
+
+                        } catch (SocketTimeoutException e) {
+                            log.debug("Socket timed out without receiving a connection");
                         } catch (IOException e) {
                             log.error("Error accepting remote connection", e); 
+                        } // try-catch
 
-                            //if there's a problem, don't fill up the log at lightning speed  
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e2) {}
+                        if (a.getSocket() != null) {
+                            log.info("Accepted connection from address: " + a.getSocket().getInetAddress());
+                            return;
                         }
-                        
+
+                        if (theServer.isClosed()) {
+                            log.warn("Server socket closed, aborting");
+                            return;
+                        }
+
+                        //if there's a problem, don't fill up the log at lightning speed
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e2) {}
+
                     }
                 }
             };
