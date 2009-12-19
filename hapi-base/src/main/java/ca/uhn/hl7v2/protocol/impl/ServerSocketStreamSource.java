@@ -41,7 +41,7 @@ import java.net.SocketTimeoutException;
  * party (ie as a TCP/IP server).
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.3 $ updated on $Date: 2009-12-16 19:36:57 $ by $Author: jamesagnew $
+ * @version $Revision: 1.4 $ updated on $Date: 2009-12-19 20:01:20 $ by $Author: jamesagnew $
  */
 public class ServerSocketStreamSource extends SocketStreamSource {
 
@@ -90,7 +90,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
      * we will deadlock.  
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.3 $ updated on $Date: 2009-12-16 19:36:57 $ by $Author: jamesagnew $
+     * @version $Revision: 1.4 $ updated on $Date: 2009-12-19 20:01:20 $ by $Author: jamesagnew $
      */
     private static class Acceptor {
         
@@ -108,9 +108,9 @@ public class ServerSocketStreamSource extends SocketStreamSource {
         public Acceptor(final ServerSocket theServer, final String theAddress) {
             final Acceptor a = this;
             if (theAddress != null) {
-                log.info("Server socter is about to try to accept a connection from " + theAddress);
+                log.info("Server socket is about to try to accept a connection from " + theAddress);
             } else {
-                log.info("Server socter is about to try to accept a connection from any addess");
+                log.info("Server socket is about to try to accept a connection from any addess");
             }
 
             Runnable r = new Runnable() {
