@@ -3,10 +3,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<parent>
-		<artifactId>hapi-structures-base</artifactId>
+		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.0-beta1</version>
-		<relativePath>../hapi-structures-base/pom.xml</relativePath>
+		<version>1.0-beta2</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
@@ -17,11 +17,19 @@
 	
 	<packaging>jar</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
+	</dependencies>
+
 	<properties>
 		<gen.skip>false</gen.skip>
 		<gen.version>2.6</gen.version>
 		<gen.version.short>v26</gen.version.short>
-		<sourcegen.jdbcUrl.old>${sourcegen.jdbcUrl.new}</sourcegen.jdbcUrl.old>
+		<sourcegen.jdbcUrl>${sourcegen.jdbcUrl.new}</sourcegen.jdbcUrl>
 	</properties>
 
 	<build>
@@ -39,7 +47,7 @@
 						<inherited>true</inherited>
 						<configuration>
 							<version>${gen.version}</version>
-							<jdbcUrl>${sourcegen.jdbcUrl.old}</jdbcUrl>
+							<jdbcUrl>${sourcegen.jdbcUrl}</jdbcUrl>
 							<jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
 							<jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
 							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
@@ -70,13 +78,61 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+						<inherited>true</inherited>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/structures-source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>retrotranslator-maven-plugin</artifactId>
+				<version>1.0-alpha-4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>translate-project</goal>
+						</goals>
+						<configuration>
+							<attach>true</attach>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<resources>
-			<resource>
-				<directory>${basedir}/target/generated-sources/resourcegen</directory>
-				<filtering>false</filtering>
-			</resource>
+            <resource>
+                <directory>${basedir}/target/generated-sources/resourcegen</directory>
+                <filtering>false</filtering>
+            </resource>
 		</resources>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<inherited>true</inherited>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 	
 </project>
