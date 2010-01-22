@@ -8,6 +8,11 @@
 	<body>
 		<release version="1.0-beta1" date="TBA"
             description="This version has not yet been released.">
+            <action type="fix">Provide default implementation of new abstract method "createNewTypeWithoutReflection" on AbstractSegment class to prevent breaking existing user defined types. Thanks to Christian Ohr for reporting.</action>
+            <action type="update" dev="jamesagnew">Clean up logging in ServerSocketStreamSource (used by HL7Server) so that it doesn't spew unneccesary logs while waiting for a connection</action>
+		</release>
+		<release version="1.0-beta1" date="TBA"
+            description="This version has not yet been released.">
             <action type="add" due-to="Christian Ohr, Niranjan Sharma"><![CDATA[Add two new ModelClassFactory implementations: <a href="base/apidocs/ca/uhn/hl7v2/parser/CanonicalModelClassFactory.html">CanonicalModelClassFactory</a> (always returns the same version), and <a href="base/apidocs/ca/uhn/hl7v2/parser/CustomModelClassFactory.html">CustomModelClassFactory</a> (provides easy way to use custom structure packages)]]></action>
             <action type="fix" dev="jamesagnew">Fix a bug where formatting escape sequences were stripped from messages (i.e. leave sequences such as /.br/ alone)</action>
             <action type="add" due-to="Christian Ohr">Overhaul Escape class (handles HL7 escape sequences) to dramatically improve performance</action>
