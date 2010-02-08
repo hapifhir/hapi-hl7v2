@@ -34,7 +34,6 @@ import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.util.ReflectionUtil;
 
 
 /**
@@ -500,7 +499,10 @@ public abstract class AbstractGroup implements Group {
 				next.clear();
 			}
 		}
-
+	}
+	
+	public final ModelClassFactory getModelClassFactory() {
+		return myFactory;
 	}
 
 } 
