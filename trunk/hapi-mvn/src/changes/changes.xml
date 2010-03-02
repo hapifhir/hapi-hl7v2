@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 changes.xsd">
+	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 ./changes.xsd">
 	<properties>
 		<title>HAPI</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 	<body>
-		<release version="1.0-beta1" date="TBA"
+		<release version="1.0-beta2" date="TBA"
             description="This version has not yet been released.">
+            <action type="fix">Correct regression introduced in 1.0-beta1 where a second segment within a group with the same name (i.e. the two PID segments in an ADT^A17) fails to parse correctly.</action>
             <action type="fix">Provide default implementation of new abstract method "createNewTypeWithoutReflection" on AbstractSegment class to prevent breaking existing user defined types. Thanks to Christian Ohr for reporting.</action>
             <action type="update" dev="jamesagnew">Clean up logging in ServerSocketStreamSource (used by HL7Server) so that it doesn't spew unneccesary logs while waiting for a connection</action>
 		</release>
