@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -75,12 +75,12 @@ public class ConnectionHub {
      * Parser you provide.  If you need explicit access to the Parser the Connection 
      * is using, call <code>Connection.getParser()</code>. 
      */
-    public Connection attach(String host, int port, Parser parser, Class llpClass) throws HL7Exception {
+    public Connection attach(String host, int port, Parser parser, Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
         Connection conn = getExisting(host, port, parser.getClass(), llpClass);
         if (conn == null) {
             try {
                 //Parser p = (Parser) parserClass.newInstance();
-                LowerLayerProtocol llp = (LowerLayerProtocol) llpClass.newInstance();
+                LowerLayerProtocol llp = llpClass.newInstance();
                 conn = connect(host, port, parser, llp);
             } catch (ClassCastException e) {
                 //Log.tryToLog(cce, "Problem opening new connection to " + host + " port " + port);
