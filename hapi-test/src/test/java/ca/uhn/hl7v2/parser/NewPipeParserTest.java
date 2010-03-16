@@ -59,6 +59,23 @@ public class NewPipeParserTest extends TestCase {
 	    Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
 	    
 	}
+
+	public void testUnexpectedSegmentAtEng() throws EncodingNotSupportedException, HL7Exception {
+	    String messageText = "MSH|^~\\&|REG|G|||201002220026||ADT^A14|33186452|P|2.2|||||\r" + 
+	    		"EVN|A14|201002220026|||14380\r" + 
+	    		"PID||^^|222^454554^HN637|324334244^^|TEST^PATIENT^Luis^^Mr.^Mr.|\r" + 
+	    		"PV1||E|^^^^^^^^|^||^^^^^^^^|^^^^^^^|^^^^^^^||^^|||||||^^^^^^^|^|3243^|^|||||||||||||||||||G||||^^^^^^^^|43865896||||||\r" + 
+	    		"PV2||||||||||||||||||^||||N\r" + 
+	    		"NK1|1|TEST^NKGuy^^^^|CHD^ Son|123 Fake Street^^Toronto^ON^M6J 3H2^Can^M|(416)123-4567|(416)123-4567|NK||||||\r" + 
+	    		"IN1|1||0012343001|  OHIP||||||||||||^^^^^|||^^^^^^M|||||||||||||||||||||||||^^^^^^M\r" + 
+	    		"IN2||||||2216\r" + 
+	    		"ZIN||||||||||||||||||";
+	    
+	    parser.setValidationContext(new ValidationContextImpl());
+	    parser.parse(messageText);
+	    
+	}
+	
 	
 	public void testAL1Reps() throws IOException, EncodingNotSupportedException, HL7Exception {
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a03.txt");

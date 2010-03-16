@@ -33,153 +33,162 @@ import java.util.Set;
 /**
  * Structure definition which defines a non-standard structure within a parent
  * structure.
- *
+ * 
  * This class is used more as a runtime placeholder than as something that would
  * be produced by the structure parser.
  */
 public class NonStandardStructureDefinition implements IStructureDefinition {
 
-	private IStructureDefinition myParent;
-	private String myName;
-	private IStructureDefinition myPreviousSibling;
-	private int myPosition;
+    private String myName;
+    private IStructureDefinition myParent;
+    private int myPosition;
+    private IStructureDefinition myPreviousSibling;
+
 
     /**
      * Constructor
      */
-	public NonStandardStructureDefinition(IStructureDefinition theParent, IStructureDefinition thePreviousSibling, String theName, int thePosition) {
-		myParent = theParent;
-		myName = theName;
-		myPreviousSibling = thePreviousSibling;
-		myPosition = thePosition;
-	}
-	
-
-    /**
-     * {@inheritDoc }
-     */
-	public Set<String> getAllChildNames() {
-		return Collections.emptySet();
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public Set<String> getAllPossibleFirstChildren() {
-		return Collections.emptySet();
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public List<StructureDefinition> getChildren() {
-		return Collections.emptyList();
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public IStructureDefinition getFirstChild() {
-		return null;
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public IStructureDefinition getFirstSibling() {
-		return null;
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public String getName() {
-		return myName;
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
-		return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
-	}
-
-	
-    /**
-     * {@inheritDoc }
-     */
-	public IStructureDefinition getNextLeaf() {
-		return myPreviousSibling.getNextLeaf();
-	}
+    public NonStandardStructureDefinition(IStructureDefinition theParent, IStructureDefinition thePreviousSibling, String theName, int thePosition) {
+        myParent = theParent;
+        myName = theName;
+        myPreviousSibling = thePreviousSibling;
+        myPosition = thePosition;
+    }
 
 
     /**
      * {@inheritDoc }
      */
-	public IStructureDefinition getNextSibling() {
-		return myPreviousSibling.getNextSibling();
-	}
+    public Set<String> getAllChildNames() {
+        return Collections.emptySet();
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public IStructureDefinition getParent() {
-		return myParent;
-	}
+    public Set<String> getAllPossibleFirstChildren() {
+        return Collections.emptySet();
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public int getPosition() {
-		return myPosition;
-	}
+    public List<StructureDefinition> getChildren() {
+        return Collections.emptyList();
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public boolean hasChildren() {
-		return false;
-	}
+    public IStructureDefinition getFirstChild() {
+        return null;
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public boolean isFinalChildOfParent() {
-		return myPreviousSibling.isFinalChildOfParent();
-	}
+    public IStructureDefinition getFirstSibling() {
+        return null;
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public boolean isRepeating() {
-		return true;
-	}
+    public String getName() {
+        return myName;
+    }
 
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameAsItAppearsInParent() {
+        return getName();
+    }
+
+
     /**
      * {@inheritDoc }
      */
-	public boolean isRequired() {
-		return false;
-	}
+    public Set<String> getNamesOfAllPossibleFollowingLeaves() {
+        return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
+    }
 
-	
+
     /**
      * {@inheritDoc }
      */
-	public boolean isSegment() {
-		return true;
-	}
+    public IStructureDefinition getNextLeaf() {
+        return myPreviousSibling.getNextLeaf();
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getNextSibling() {
+        return myPreviousSibling.getNextSibling();
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getParent() {
+        return myParent;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public int getPosition() {
+        return myPosition;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean hasChildren() {
+        return false;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isFinalChildOfParent() {
+        return myPreviousSibling.isFinalChildOfParent();
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isRepeating() {
+        return true;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isRequired() {
+        return false;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isSegment() {
+        return true;
+    }
 
 }

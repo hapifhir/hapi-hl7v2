@@ -307,7 +307,6 @@ pageTracker._trackPageview();
 			</build>
 			<modules>
 				<module>hapi-base</module>
-				<module>hapi-structures-base</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
@@ -340,7 +339,6 @@ pageTracker._trackPageview();
                 <module>hapi-base</module>
                 <module>hapi-examples</module>
                 <module>hapi-sourcegen</module>
-				<module>hapi-structures-base</module>
                 <module>hapi-structures-v21</module>
                 <module>hapi-structures-v22</module>
                 <module>hapi-structures-v23</module>
@@ -360,7 +358,6 @@ pageTracker._trackPageview();
 				<module>hapi-base</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
-				<module>hapi-structures-base</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>

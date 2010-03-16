@@ -205,9 +205,8 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             } else {
                 try {
                     IStructureDefinition structureDefinition = next.getStructureDefinition();
-                    int positionIndex = structureDefinition.getPosition();
                     Group currentStructureGroup = (Group) currentStructure;
-                    String nextStructureName = currentStructureGroup.getNames()[positionIndex];
+                    String nextStructureName = structureDefinition.getNameAsItAppearsInParent();
                     currentStructure = currentStructureGroup.get(nextStructureName, next.getRepNumber());
                 } catch (HL7Exception e) {
                     throw new Error("Failed to retrieve structure: ", e);

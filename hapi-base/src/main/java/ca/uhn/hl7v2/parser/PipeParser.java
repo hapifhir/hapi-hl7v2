@@ -45,16 +45,17 @@ import ca.uhn.log.HapiLogFactory;
 import java.util.HashMap;
 
 /**
- * An implementation of Parser that supports traditionally encoded (ie delimited with characters
- * like |, ^, and ~) HL7 messages.  Unexpected segments and fields are parsed into generic elements
- * that are added to the message.  
+ * An implementation of Parser that supports traditionally encoded (ie delimited
+ * with characters like |, ^, and ~) HL7 messages. Unexpected segments and
+ * fields are parsed into generic elements that are added to the message.
+ * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public class PipeParser extends Parser {
-    
+
     private static final HapiLog log = HapiLogFactory.getHapiLog(PipeParser.class);
 
-    private final static String segDelim = "\r"; //see section 2.8 of spec
+    private final static String segDelim = "\r"; // see section 2.8 of spec
 
     private final HashMap<Class<? extends Message>, StructureDefinition> myStructureDefinitions = new HashMap<Class<? extends Message>, StructureDefinition>();
 
@@ -67,43 +68,47 @@ public class PipeParser extends Parser {
 
     private Boolean myLegacyMode = null;
 
+
     /** Creates a new PipeParser */
     public PipeParser() {
     }
 
-    /**
-     * Creates a new PipeParser
-     *
-     * @param theFactory custom factory to use for model class lookup
-     */
-    public PipeParser(ModelClassFactory theFactory) {
-    	super(theFactory);
-    }
 
     /**
-     * Returns a String representing the encoding of the given message, if
-     * the encoding is recognized.  For example if the given message appears
-     * to be encoded using HL7 2.x XML rules then "XML" would be returned.
-     * If the encoding is not recognized then null is returned.  That this
-     * method returns a specific encoding does not guarantee that the
-     * message is correctly encoded (e.g. well formed XML) - just that
-     * it is not encoded using any other encoding than the one returned.
+     * Creates a new PipeParser
+     * 
+     * @param theFactory
+     *            custom factory to use for model class lookup
+     */
+    public PipeParser(ModelClassFactory theFactory) {
+        super(theFactory);
+    }
+
+
+    /**
+     * Returns a String representing the encoding of the given message, if the
+     * encoding is recognized. For example if the given message appears to be
+     * encoded using HL7 2.x XML rules then "XML" would be returned. If the
+     * encoding is not recognized then null is returned. That this method
+     * returns a specific encoding does not guarantee that the message is
+     * correctly encoded (e.g. well formed XML) - just that it is not encoded
+     * using any other encoding than the one returned.
      */
     public String getEncoding(String message) {
         String encoding = null;
 
-        //quit if the string is too short
+        // quit if the string is too short
         if (message.length() < 4)
             return null;
 
-        //see if it looks like this message is | encoded ...
+        // see if it looks like this message is | encoded ...
         boolean ok = true;
 
-        //string should start with "MSH"
+        // string should start with "MSH"
         if (!message.startsWith("MSH"))
             return null;
 
-        //4th character of each segment should be field delimiter
+        // 4th character of each segment should be field delimiter
         char fourthChar = message.charAt(3);
         StringTokenizer st = new StringTokenizer(message, String.valueOf(segDelim), false);
         while (st.hasMoreTokens()) {
@@ -116,7 +121,7 @@ public class PipeParser extends Parser {
             }
         }
 
-        //should be at least 11 field delimiters (because MSH-12 is required)
+        // should be at least 11 field delimiters (because MSH-12 is required)
         int nextFieldDelimLoc = 0;
         for (int i = 0; i < 11; i++) {
             nextFieldDelimLoc = message.indexOf(fourthChar, nextFieldDelimLoc + 1);
@@ -130,6 +135,7 @@ public class PipeParser extends Parser {
         return encoding;
     }
 
+
     /**
      * @return the preferred encoding of this Parser
      */
@@ -137,9 +143,10 @@ public class PipeParser extends Parser {
         return "VB";
     }
 
+
     /**
-     * Returns true if and only if the given encoding is supported
-     * by this Parser.
+     * Returns true if and only if the given encoding is supported by this
+     * Parser.
      */
     public boolean supportsEncoding(String encoding) {
         boolean supports = false;
@@ -147,6 +154,7 @@ public class PipeParser extends Parser {
             supports = true;
         return supports;
     }
+
 
     /**
      * @deprecated this method should not be public
@@ -159,6 +167,7 @@ public class PipeParser extends Parser {
         return getStructure(message).messageStructure;
     }
 
+
     /**
      * @returns the message structure from MSH-9-3
      */
@@ -168,12 +177,13 @@ public class PipeParser extends Parser {
         boolean explicityDefined = true;
         String wholeFieldNine;
         try {
-            String[] fields = split(message.substring(0, Math.max(message.indexOf(segDelim), message.length())),
-                String.valueOf(ec.getFieldSeparator()));
+            String[] fields = split(message.substring(0, Math.max(message.indexOf(segDelim), message.length())), String.valueOf(ec.getFieldSeparator()));
             wholeFieldNine = fields[8];
 
-            //message structure is component 3 but we'll accept a composite of 1 and 2 if there is no component 3 ...
-            //      if component 1 is ACK, then the structure is ACK regardless of component 2
+            // message structure is component 3 but we'll accept a composite of
+            // 1 and 2 if there is no component 3 ...
+            // if component 1 is ACK, then the structure is ACK regardless of
+            // component 2
             String[] comps = split(wholeFieldNine, String.valueOf(ec.getComponentSeparator()));
             if (comps.length >= 3) {
                 messageStructure = comps[2];
@@ -183,9 +193,11 @@ public class PipeParser extends Parser {
                 explicityDefined = false;
                 messageStructure = comps[0] + "_" + comps[1];
             }
-            /*else if (comps.length == 1 && comps[0] != null && comps[0].equals("ACK")) {
-                messageStructure = "ACK"; //it's common for people to only populate component 1 in an ACK msg
-            }*/
+            /*
+             * else if (comps.length == 1 && comps[0] != null &&
+             * comps[0].equals("ACK")) { messageStructure = "ACK"; //it's common
+             * for people to only populate component 1 in an ACK msg }
+             */
             else {
                 StringBuffer buf = new StringBuffer("Can't determine message structure from MSH-9: ");
                 buf.append(wholeFieldNine);
@@ -196,15 +208,13 @@ public class PipeParser extends Parser {
                 }
                 throw new HL7Exception(buf.toString(), HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
             }
-        }
-        catch (IndexOutOfBoundsException e) {
-            throw new HL7Exception(
-            "Can't find message structure (MSH-9-3): " + e.getMessage(),
-            HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+        } catch (IndexOutOfBoundsException e) {
+            throw new HL7Exception("Can't find message structure (MSH-9-3): " + e.getMessage(), HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
         }
 
         return new MessageStructure(messageStructure, explicityDefined);
     }
+
 
     /**
      * Returns object that contains the field separator and encoding characters
@@ -214,17 +224,19 @@ public class PipeParser extends Parser {
         return new EncodingCharacters(message.charAt(3), message.substring(4, 8));
     }
 
+
     /**
-     * Parses a message string and returns the corresponding Message
-     * object.  Unexpected segments added at the end of their group.
-     *
-     * @throws HL7Exception if the message is not correctly formatted.
-     * @throws EncodingNotSupportedException if the message encoded
-     *      is not supported by this parser.
+     * Parses a message string and returns the corresponding Message object.
+     * Unexpected segments added at the end of their group.
+     * 
+     * @throws HL7Exception
+     *             if the message is not correctly formatted.
+     * @throws EncodingNotSupportedException
+     *             if the message encoded is not supported by this parser.
      */
     protected Message doParse(String message, String version) throws HL7Exception, EncodingNotSupportedException {
 
-        //try to instantiate a message object of the right class
+        // try to instantiate a message object of the right class
         MessageStructure structure = getStructure(message);
         Message m = instantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
 
@@ -237,90 +249,96 @@ public class PipeParser extends Parser {
     /**
      * Generates (or returns the cached value of) the message
      */
-	private IStructureDefinition getStructureDefinition(
-			Class<? extends Message> theClazz) throws HL7Exception {
+    private IStructureDefinition getStructureDefinition(Class<? extends Message> theClazz) throws HL7Exception {
 
-		StructureDefinition retVal = myStructureDefinitions.get(theClazz);
-		if (retVal != null) {
-			return retVal;
-		}
+        StructureDefinition retVal = myStructureDefinitions.get(theClazz);
+        if (retVal != null) {
+            return retVal;
+        }
 
-    	Message message = ReflectionUtil.instantiateMessage(theClazz, getFactory());
-	    Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
-	    retVal = createStructureDefinition(message, previousLeaf);
-		myStructureDefinitions.put(theClazz, retVal);
+        Message message = ReflectionUtil.instantiateMessage(theClazz, getFactory());
+        Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
+        retVal = createStructureDefinition(message, previousLeaf);
+        myStructureDefinitions.put(theClazz, retVal);
 
-	    return retVal;
-	}
+        return retVal;
+    }
 
-	private StructureDefinition createStructureDefinition(
-			Structure theStructure, Holder<StructureDefinition> thePreviousLeaf) throws HL7Exception {
 
-		StructureDefinition retVal = new StructureDefinition();
-		retVal.setName(theStructure.getName());
+    private StructureDefinition createStructureDefinition(Structure theStructure, Holder<StructureDefinition> thePreviousLeaf) throws HL7Exception {
 
-		if (theStructure instanceof Group) {
-			retVal.setSegment(false);
-			Group group = (Group)theStructure;
-			int index = 0;
-			for (String nextName : group.getNames()) {
-				Structure nextChild = group.get(nextName);
-				StructureDefinition structureDefinition = createStructureDefinition(nextChild, thePreviousLeaf);
-				structureDefinition.setRepeating(group.isRepeating(nextName));
-				structureDefinition.setRequired(group.isRequired(nextName));
-				structureDefinition.setPosition(index++);
-				structureDefinition.setParent(retVal);
-				retVal.addChild(structureDefinition);
-			}
-		} else {
-			if (thePreviousLeaf.getObject() != null) {
-				thePreviousLeaf.getObject().setNextLeaf(retVal);
-			}
-			thePreviousLeaf.setObject(retVal);
-			retVal.setSegment(true);
-		}
+        StructureDefinition retVal = new StructureDefinition();
+        retVal.setName(theStructure.getName());
 
-		return retVal;
-	}
+        if (theStructure instanceof Group) {
+            retVal.setSegment(false);
+            Group group = (Group) theStructure;
+            int index = 0;
+            for (String nextName : group.getNames()) {
+                Structure nextChild = group.get(nextName);
+                StructureDefinition structureDefinition = createStructureDefinition(nextChild, thePreviousLeaf);
+                structureDefinition.setNameAsItAppearsInParent(nextName);
+                structureDefinition.setRepeating(group.isRepeating(nextName));
+                structureDefinition.setRequired(group.isRequired(nextName));
+                structureDefinition.setPosition(index++);
+                structureDefinition.setParent(retVal);
+                retVal.addChild(structureDefinition);
+            }
+        } else {
+            if (thePreviousLeaf.getObject() != null) {
+                thePreviousLeaf.getObject().setNextLeaf(retVal);
+            }
+            thePreviousLeaf.setObject(retVal);
+            retVal.setSegment(true);
+        }
+
+        return retVal;
+    }
+
 
     /**
-     * Parses a segment string and populates the given Segment object.  Unexpected fields are
-     * added as Varies' at the end of the segment.
-	 *
-	 * @param theRepetition The repetition number of this segment within its group
-     * @throws HL7Exception if the given string does not contain the
-     *      given segment or if the string is not encoded properly
+     * Parses a segment string and populates the given Segment object.
+     * Unexpected fields are added as Varies' at the end of the segment.
+     * 
+     * @param theRepetition
+     *            The repetition number of this segment within its group
+     * @throws HL7Exception
+     *             if the given string does not contain the given segment or if
+     *             the string is not encoded properly
      */
     public void parse(Segment destination, String segment, EncodingCharacters encodingChars) throws HL7Exception {
         parse(destination, segment, encodingChars, null);
     }
 
-	/**
-     * Parses a segment string and populates the given Segment object.  Unexpected fields are
-     * added as Varies' at the end of the segment.
-	 *
-	 * @param theRepetition The repetition number of this segment within its group
-     * @throws HL7Exception if the given string does not contain the
-     *      given segment or if the string is not encoded properly
+
+    /**
+     * Parses a segment string and populates the given Segment object.
+     * Unexpected fields are added as Varies' at the end of the segment.
+     * 
+     * @param theRepetition
+     *            The repetition number of this segment within its group
+     * @throws HL7Exception
+     *             if the given string does not contain the given segment or if
+     *             the string is not encoded properly
      */
     public void parse(Segment destination, String segment, EncodingCharacters encodingChars, Integer theRepetition) throws HL7Exception {
         int fieldOffset = 0;
         if (isDelimDefSegment(destination.getName())) {
             fieldOffset = 1;
-            //set field 1 to fourth character of string
+            // set field 1 to fourth character of string
             Terser.set(destination, 1, 0, 1, 1, String.valueOf(encodingChars.getFieldSeparator()));
         }
 
         String[] fields = split(segment, String.valueOf(encodingChars.getFieldSeparator()));
-        //destination.setName(fields[0]);
+        // destination.setName(fields[0]);
         for (int i = 1; i < fields.length; i++) {
             String[] reps = split(fields[i], String.valueOf(encodingChars.getRepetitionSeparator()));
             if (log.isDebugEnabled()) {
                 log.debug(reps.length + "reps delimited by: " + encodingChars.getRepetitionSeparator());
             }
 
-            //MSH-2 will get split incorrectly so we have to fudge it ...
-            boolean isMSH2 = isDelimDefSegment(destination.getName()) && i+fieldOffset == 2;
+            // MSH-2 will get split incorrectly so we have to fudge it ...
+            boolean isMSH2 = isDelimDefSegment(destination.getName()) && i + fieldOffset == 2;
             if (isMSH2) {
                 reps = new String[1];
                 reps[0] = fields[i];
@@ -328,14 +346,15 @@ public class PipeParser extends Parser {
 
             for (int j = 0; j < reps.length; j++) {
                 try {
-                	if (log.isDebugEnabled()) {
-	                    StringBuffer statusMessage = new StringBuffer("Parsing field ");
-	                    statusMessage.append(i+fieldOffset);
-	                    statusMessage.append(" repetition ");
-	                    statusMessage.append(j);
-	                    log.debug(statusMessage.toString());
-                	}
-                    //parse(destination.getField(i + fieldOffset, j), reps[j], encodingChars, false);
+                    if (log.isDebugEnabled()) {
+                        StringBuffer statusMessage = new StringBuffer("Parsing field ");
+                        statusMessage.append(i + fieldOffset);
+                        statusMessage.append(" repetition ");
+                        statusMessage.append(j);
+                        log.debug(statusMessage.toString());
+                    }
+                    // parse(destination.getField(i + fieldOffset, j), reps[j],
+                    // encodingChars, false);
 
                     Type field = destination.getField(i + fieldOffset, j);
                     if (isMSH2) {
@@ -343,9 +362,8 @@ public class PipeParser extends Parser {
                     } else {
                         parse(field, reps[j], encodingChars);
                     }
-                }
-                catch (HL7Exception e) {
-                    //set the field location and throw again ...
+                } catch (HL7Exception e) {
+                    // set the field location and throw again ...
                     e.setFieldPosition(i);
                     if (theRepetition != null) {
                         e.setSegmentRepetition(theRepetition);
@@ -356,34 +374,38 @@ public class PipeParser extends Parser {
             }
         }
 
-        //set data type of OBX-5
+        // set data type of OBX-5
         if (destination.getClass().getName().indexOf("OBX") >= 0) {
             Varies.fixOBX5(destination, getFactory());
         }
 
     }
 
+
     /**
-     * @return true if the segment is MSH, FHS, or BHS.  These need special treatment
-     *  because they define delimiters.
+     * @return true if the segment is MSH, FHS, or BHS. These need special
+     *         treatment because they define delimiters.
      * @param theSegmentName
      */
     private static boolean isDelimDefSegment(String theSegmentName) {
         boolean is = false;
-        if (theSegmentName.equals("MSH")
-            || theSegmentName.equals("FHS")
-            || theSegmentName.equals("BHS"))
-        {
+        if (theSegmentName.equals("MSH") || theSegmentName.equals("FHS") || theSegmentName.equals("BHS")) {
             is = true;
         }
         return is;
     }
 
+
     /**
      * Fills a field with values from an unparsed string representing the field.
-     * @param destinationField the field Type
-     * @param data the field string (including all components and subcomponents; not including field delimiters)
-     * @param encodingCharacters the encoding characters used in the message
+     * 
+     * @param destinationField
+     *            the field Type
+     * @param data
+     *            the field string (including all components and subcomponents;
+     *            not including field delimiters)
+     * @param encodingCharacters
+     *            the encoding characters used in the message
      */
     @Override
     public void parse(Type destinationField, String data, EncodingCharacters encodingCharacters) throws HL7Exception {
@@ -395,31 +417,35 @@ public class PipeParser extends Parser {
                 if (val != null) {
                     val = Escape.unescape(val, encodingCharacters);
                 }
-                Terser.getPrimitive(destinationField, i+1, j+1).setValue(val);
+                Terser.getPrimitive(destinationField, i + 1, j + 1).setValue(val);
             }
         }
     }
 
-    /** Returns the component or subcomponent separator from the given encoding characters. */
+
+    /**
+     * Returns the component or subcomponent separator from the given encoding
+     * characters.
+     */
     private static char getSeparator(boolean subComponents, EncodingCharacters encodingChars) {
         char separator;
         if (subComponents) {
             separator = encodingChars.getSubcomponentSeparator();
-        }
-        else {
+        } else {
             separator = encodingChars.getComponentSeparator();
         }
         return separator;
     }
 
+
     /**
-     * Splits the given composite string into an array of components using the given
-     * delimiter.
+     * Splits the given composite string into an array of components using the
+     * given delimiter.
      */
     public static String[] split(String composite, String delim) {
         ArrayList<String> components = new ArrayList<String>();
 
-        //defend against evil nulls
+        // defend against evil nulls
         if (composite == null)
             composite = "";
         if (delim == null)
@@ -433,8 +459,7 @@ public class PipeParser extends Parser {
                 if (previousTokenWasDelim)
                     components.add(null);
                 previousTokenWasDelim = true;
-            }
-            else {
+            } else {
                 components.add(thisTok);
                 previousTokenWasDelim = false;
             }
@@ -448,6 +473,7 @@ public class PipeParser extends Parser {
         return ret;
     }
 
+
     /**
      * {@inheritDoc }
      */
@@ -455,6 +481,7 @@ public class PipeParser extends Parser {
     public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
         return encode(structure, encodingCharacters);
     }
+
 
     /**
      * {@inheritDoc }
@@ -466,8 +493,9 @@ public class PipeParser extends Parser {
 
 
     /**
-     * Encodes the given Type, using the given encoding characters.
-     * It is assumed that the Type represents a complete field rather than a component.
+     * Encodes the given Type, using the given encoding characters. It is
+     * assumed that the Type represents a complete field rather than a
+     * component.
      */
     public static String encode(Type source, EncodingCharacters encodingChars) {
         StringBuffer field = new StringBuffer();
@@ -482,8 +510,9 @@ public class PipeParser extends Parser {
             field.append(encodingChars.getComponentSeparator());
         }
         return stripExtraDelimiters(field.toString(), encodingChars.getComponentSeparator());
-        //return encode(source, encodingChars, false);
+        // return encode(source, encodingChars, false);
     }
+
 
     private static String encodePrimitive(Primitive p, EncodingCharacters encodingChars) {
         String val = (p).getValue();
@@ -495,15 +524,16 @@ public class PipeParser extends Parser {
         return val;
     }
 
+
     /**
-     * Removes unecessary delimiters from the end of a field or segment.
-     * This seems to be more convenient than checking to see if they are needed
-     * while we are building the encoded string.
+     * Removes unecessary delimiters from the end of a field or segment. This
+     * seems to be more convenient than checking to see if they are needed while
+     * we are building the encoded string.
      */
     private static String stripExtraDelimiters(String in, char delim) {
         char[] chars = in.toCharArray();
 
-        //search from back end for first occurance of non-delimiter ...
+        // search from back end for first occurance of non-delimiter ...
         int c = chars.length - 1;
         boolean found = false;
         while (c >= 0 && !found) {
@@ -517,13 +547,16 @@ public class PipeParser extends Parser {
         return ret;
     }
 
+
     /**
      * Formats a Message object into an HL7 message string using the given
      * encoding.
-     * @throws HL7Exception if the data fields in the message do not permit encoding
-     *      (e.g. required fields are null)
-     * @throws EncodingNotSupportedException if the requested encoding is not
-     *      supported by this parser.
+     * 
+     * @throws HL7Exception
+     *             if the data fields in the message do not permit encoding
+     *             (e.g. required fields are null)
+     * @throws EncodingNotSupportedException
+     *             if the requested encoding is not supported by this parser.
      */
     protected String doEncode(Message source, String encoding) throws HL7Exception, EncodingNotSupportedException {
         if (!this.supportsEncoding(encoding))
@@ -532,14 +565,17 @@ public class PipeParser extends Parser {
         return encode(source);
     }
 
+
     /**
      * Formats a Message object into an HL7 message string using this parser's
      * default encoding ("VB").
-     * @throws HL7Exception if the data fields in the message do not permit encoding
-     *      (e.g. required fields are null)
+     * 
+     * @throws HL7Exception
+     *             if the data fields in the message do not permit encoding
+     *             (e.g. required fields are null)
      */
     protected String doEncode(Message source) throws HL7Exception {
-        //get encoding characters ...
+        // get encoding characters ...
         Segment msh = (Segment) source.get("MSH");
         String fieldSepString = Terser.get(msh, 1, 0, 1, 1);
 
@@ -556,18 +592,18 @@ public class PipeParser extends Parser {
             throw new HL7Exception("Can't encode message: MSH-2 (encoding characters) is missing");
 
         if (encCharString.length() != 4)
-            throw new HL7Exception(
-            "Encoding characters '" + encCharString + "' invalid -- must be 4 characters",
-            HL7Exception.DATA_TYPE_ERROR);
+            throw new HL7Exception("Encoding characters '" + encCharString + "' invalid -- must be 4 characters", HL7Exception.DATA_TYPE_ERROR);
         EncodingCharacters en = new EncodingCharacters(fieldSep, encCharString);
 
-        //pass down to group encoding method which will operate recursively on children ...
+        // pass down to group encoding method which will operate recursively on
+        // children ...
         return encode((Group) source, en);
     }
 
+
     /**
-     * Returns given group serialized as a pipe-encoded string - this method is called
-     * by encode(Message source, String encoding).
+     * Returns given group serialized as a pipe-encoded string - this method is
+     * called by encode(Message source, String encoding).
      */
     public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
         StringBuffer result = new StringBuffer();
@@ -578,8 +614,7 @@ public class PipeParser extends Parser {
             for (int rep = 0; rep < reps.length; rep++) {
                 if (reps[rep] instanceof Group) {
                     result.append(encode((Group) reps[rep], encodingChars));
-                }
-                else {
+                } else {
                     String segString = encode((Segment) reps[rep], encodingChars);
                     if (segString.length() >= 4) {
                         result.append(segString);
@@ -591,46 +626,52 @@ public class PipeParser extends Parser {
         return result.toString();
     }
 
+
     public static String encode(Segment source, EncodingCharacters encodingChars) {
         StringBuffer result = new StringBuffer();
         result.append(source.getName());
         result.append(encodingChars.getFieldSeparator());
 
-        //start at field 2 for MSH segment because field 1 is the field delimiter
+        // start at field 2 for MSH segment because field 1 is the field
+        // delimiter
         int startAt = 1;
         if (isDelimDefSegment(source.getName()))
             startAt = 2;
 
-        //loop through fields; for every field delimit any repetitions and add field delimiter after ...
+        // loop through fields; for every field delimit any repetitions and add
+        // field delimiter after ...
         int numFields = source.numFields();
         for (int i = startAt; i <= numFields; i++) {
             try {
                 Type[] reps = source.getField(i);
                 for (int j = 0; j < reps.length; j++) {
                     String fieldText = encode(reps[j], encodingChars);
-                    //if this is MSH-2, then it shouldn't be escaped, so unescape it again
+                    // if this is MSH-2, then it shouldn't be escaped, so
+                    // unescape it again
                     if (isDelimDefSegment(source.getName()) && i == 2)
                         fieldText = Escape.unescape(fieldText, encodingChars);
                     result.append(fieldText);
                     if (j < reps.length - 1)
                         result.append(encodingChars.getRepetitionSeparator());
                 }
-            }
-            catch (HL7Exception e) {
+            } catch (HL7Exception e) {
                 log.error("Error while encoding segment: ", e);
             }
             result.append(encodingChars.getFieldSeparator());
         }
 
-        //strip trailing delimiters ...
+        // strip trailing delimiters ...
         return stripExtraDelimiters(result.toString(), encodingChars.getFieldSeparator());
     }
 
+
     /**
-     * Removes leading whitespace from the given string.  This method was created to deal with frequent
-     * problems parsing messages that have been hand-written in windows.  The intuitive way to delimit
-     * segments is to hit <ENTER> at the end of each segment, but this creates both a carriage return
-     * and a line feed, so to the parser, the first character of the next segment is the line feed.
+     * Removes leading whitespace from the given string. This method was created
+     * to deal with frequent problems parsing messages that have been
+     * hand-written in windows. The intuitive way to delimit segments is to hit
+     * <ENTER> at the end of each segment, but this creates both a carriage
+     * return and a line feed, so to the parser, the first character of the next
+     * segment is the line feed.
      */
     public static String stripLeadingWhitespace(String in) {
         StringBuffer out = new StringBuffer();
@@ -647,53 +688,55 @@ public class PipeParser extends Parser {
         return out.toString();
     }
 
+
     /**
-     * <p>Returns a minimal amount of data from a message string, including only the
-     * data needed to send a response to the remote system.  This includes the
-     * following fields:
-     * <ul><li>field separator</li>
+     * <p>
+     * Returns a minimal amount of data from a message string, including only
+     * the data needed to send a response to the remote system. This includes
+     * the following fields:
+     * <ul>
+     * <li>field separator</li>
      * <li>encoding characters</li>
      * <li>processing ID</li>
-     * <li>message control ID</li></ul>
+     * <li>message control ID</li>
+     * </ul>
      * This method is intended for use when there is an error parsing a message,
      * (so the Message object is unavailable) but an error message must be sent
-     * back to the remote system including some of the information in the inbound
-     * message.  This method parses only that required information, hopefully
-     * avoiding the condition that caused the original error.  The other
-     * fields in the returned MSH segment are empty.</p>
+     * back to the remote system including some of the information in the
+     * inbound message. This method parses only that required information,
+     * hopefully avoiding the condition that caused the original error. The
+     * other fields in the returned MSH segment are empty.
+     * </p>
      */
     public Segment getCriticalResponseData(String message) throws HL7Exception {
-        //try to get MSH segment
+        // try to get MSH segment
         int locStartMSH = message.indexOf("MSH");
         if (locStartMSH < 0)
-            throw new HL7Exception(
-            "Couldn't find MSH segment in message: " + message,
-            HL7Exception.SEGMENT_SEQUENCE_ERROR);
+            throw new HL7Exception("Couldn't find MSH segment in message: " + message, HL7Exception.SEGMENT_SEQUENCE_ERROR);
         int locEndMSH = message.indexOf('\r', locStartMSH + 1);
         if (locEndMSH < 0)
             locEndMSH = message.length();
         String mshString = message.substring(locStartMSH, locEndMSH);
 
-        //find out what the field separator is
+        // find out what the field separator is
         char fieldSep = mshString.charAt(3);
 
-        //get field array
+        // get field array
         String[] fields = split(mshString, String.valueOf(fieldSep));
 
         Segment msh = null;
         try {
-            //parse required fields
+            // parse required fields
             String encChars = fields[1];
             char compSep = encChars.charAt(0);
             String messControlID = fields[9];
             String[] procIDComps = split(fields[10], String.valueOf(compSep));
 
-            //fill MSH segment
-            String version = "2.4"; //default
+            // fill MSH segment
+            String version = "2.4"; // default
             try {
                 version = this.getVersion(message);
-            }
-            catch (Exception e) { /* use the default */
+            } catch (Exception e) { /* use the default */
             }
 
             msh = Parser.makeControlMSH(version, getFactory());
@@ -703,29 +746,22 @@ public class PipeParser extends Parser {
             Terser.set(msh, 11, 0, 1, 1, procIDComps[0]);
             Terser.set(msh, 12, 0, 1, 1, version);
 
-            }
-        catch (Exception e) {
-            throw new HL7Exception(
-            "Can't parse critical fields from MSH segment ("
-            + e.getClass().getName()
-            + ": "
-            + e.getMessage()
-            + "): "
-            + mshString,
-            HL7Exception.REQUIRED_FIELD_MISSING, e);
+        } catch (Exception e) {
+            throw new HL7Exception("Can't parse critical fields from MSH segment (" + e.getClass().getName() + ": " + e.getMessage() + "): " + mshString, HL7Exception.REQUIRED_FIELD_MISSING, e);
         }
 
         return msh;
     }
 
+
     /**
-     * For response messages, returns the value of MSA-2 (the message ID of the message
-     * sent by the sending system).  This value may be needed prior to main message parsing,
-     * so that (particularly in a multi-threaded scenario) the message can be routed to
-     * the thread that sent the request.  We need this information first so that any
-     * parse exceptions are thrown to the correct thread.
-     * Returns null if MSA-2 can not be found (e.g. if the message is not a
-     * response message).
+     * For response messages, returns the value of MSA-2 (the message ID of the
+     * message sent by the sending system). This value may be needed prior to
+     * main message parsing, so that (particularly in a multi-threaded scenario)
+     * the message can be routed to the thread that sent the request. We need
+     * this information first so that any parse exceptions are thrown to the
+     * correct thread. Returns null if MSA-2 can not be found (e.g. if the
+     * message is not a response message).
      */
     public String getAckID(String message) {
         String ackID = null;
@@ -739,12 +775,12 @@ public class PipeParser extends Parser {
             if (segEnd > start && segEnd < end)
                 end = segEnd;
 
-            //if there is no field delim after MSH-2, need to go to end of message, but not including end seg delim if it exists
+            // if there is no field delim after MSH-2, need to go to end of
+            // message, but not including end seg delim if it exists
             if (end < 0) {
                 if (message.charAt(message.length() - 1) == '\r') {
                     end = message.length() - 1;
-                }
-                else {
+                } else {
                     end = message.length();
                 }
             }
@@ -756,14 +792,16 @@ public class PipeParser extends Parser {
         return ackID;
     }
 
+
     /**
      * Defaults to <code>false</code>
-     *
+     * 
      * @see #isLegacyMode()
      */
     public void setLegacyMode(boolean legacyMode) {
         this.myLegacyMode = legacyMode;
     }
+
 
     /**
      * {@inheritDoc }
@@ -775,6 +813,7 @@ public class PipeParser extends Parser {
         }
         return super.encode(source);
     }
+
 
     /**
      * {@inheritDoc }
@@ -793,21 +832,21 @@ public class PipeParser extends Parser {
      * Returns <code>true</code> if legacy mode is on.
      * </p>
      * <p>
-     * Prior to release 1.0, when an unexpected segment was encountered in a message,
-     * HAPI would recurse to the deepest nesting in the last group it encountered after
-     * the current position in the message, and deposit the segment there. This could
-     * lead to unusual behaviour where all segments afterward would not be in an
-     * expected spot within the message.
+     * Prior to release 1.0, when an unexpected segment was encountered in a
+     * message, HAPI would recurse to the deepest nesting in the last group it
+     * encountered after the current position in the message, and deposit the
+     * segment there. This could lead to unusual behaviour where all segments
+     * afterward would not be in an expected spot within the message.
      * </p>
      * <p>
      * This should normally be set to false, but any code written before the
-     * release of HAPI 1.0 which depended on this behaviour might need legacy mode
-     * to be set to true.
+     * release of HAPI 1.0 which depended on this behaviour might need legacy
+     * mode to be set to true.
      * </p>
      * <p>
-     * Defaults to <code>false</code>. Note that this method only overrides behaviour of
-     * the {@link #parse(java.lang.String)} and {@link #encode(ca.uhn.hl7v2.model.Message) }
-     * methods
+     * Defaults to <code>false</code>. Note that this method only overrides
+     * behaviour of the {@link #parse(java.lang.String)} and
+     * {@link #encode(ca.uhn.hl7v2.model.Message) } methods
      * </p>
      */
     public boolean isLegacyMode() {
@@ -823,10 +862,13 @@ public class PipeParser extends Parser {
 
 
     /**
-     * Returns the version ID (MSH-12) from the given message, without fully parsing the message.
-     * The version is needed prior to parsing in order to determine the message class
-     * into which the text of the message should be parsed.
-     * @throws HL7Exception if the version field can not be found.
+     * Returns the version ID (MSH-12) from the given message, without fully
+     * parsing the message. The version is needed prior to parsing in order to
+     * determine the message class into which the text of the message should be
+     * parsed.
+     * 
+     * @throws HL7Exception
+     *             if the version field can not be found.
      */
     public String getVersion(String message) throws HL7Exception {
         int startMSH = message.indexOf("MSH");
@@ -837,8 +879,7 @@ public class PipeParser extends Parser {
         String fieldSep = null;
         if (msh.length() > 3) {
             fieldSep = String.valueOf(msh.charAt(3));
-        }
-        else {
+        } else {
             throw new HL7Exception("Can't find field separator in MSH: " + msh, HL7Exception.UNSUPPORTED_VERSION_ID);
         }
 
@@ -846,36 +887,34 @@ public class PipeParser extends Parser {
 
         String compSep = null;
         if (fields.length >= 2 && fields[1] != null && fields[1].length() == 4) {
-            compSep = String.valueOf(fields[1].charAt(0)); //get component separator as 1st encoding char
-        }
-        else {
-            throw new HL7Exception("Invalid or incomplete encoding characters - MSH-2 is " + fields[1],
-                    HL7Exception.REQUIRED_FIELD_MISSING);
+            compSep = String.valueOf(fields[1].charAt(0)); // get component
+                                                           // separator as 1st
+                                                           // encoding char
+        } else {
+            throw new HL7Exception("Invalid or incomplete encoding characters - MSH-2 is " + fields[1], HL7Exception.REQUIRED_FIELD_MISSING);
         }
 
         String version = null;
         if (fields.length >= 12) {
-        	String[] comp = split(fields[11], compSep);
-        	if (comp.length >= 1) {
-        		version = comp[0];
-        	} else {
-        		throw new HL7Exception("Can't find version ID - MSH.12 is " + fields[11],
-        				HL7Exception.REQUIRED_FIELD_MISSING);
-        	}
-        }
-        else {
-            throw new HL7Exception(
-            "Can't find version ID - MSH has only " + fields.length + " fields.",
-            HL7Exception.REQUIRED_FIELD_MISSING);
+            String[] comp = split(fields[11], compSep);
+            if (comp.length >= 1) {
+                version = comp[0];
+            } else {
+                throw new HL7Exception("Can't find version ID - MSH.12 is " + fields[11], HL7Exception.REQUIRED_FIELD_MISSING);
+            }
+        } else {
+            throw new HL7Exception("Can't find version ID - MSH has only " + fields.length + " fields.", HL7Exception.REQUIRED_FIELD_MISSING);
         }
         return version;
     }
+
 
     @Override
     public void parse(Message message, String string) throws HL7Exception {
         IStructureDefinition structureDef = getStructureDefinition(message.getClass());
 
-        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
+        // MessagePointer ptr = new MessagePointer(this, m,
+        // getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, structureDef, "MSH", true);
 
         String[] segments = split(string, segDelim);
@@ -883,23 +922,23 @@ public class PipeParser extends Parser {
         char delim = '|';
         for (int i = 0; i < segments.length; i++) {
 
-            //get rid of any leading whitespace characters ...
+            // get rid of any leading whitespace characters ...
             if (segments[i] != null && segments[i].length() > 0 && Character.isWhitespace(segments[i].charAt(0)))
                 segments[i] = stripLeadingWhitespace(segments[i]);
 
-            //sometimes people put extra segment delimiters at end of msg ...
+            // sometimes people put extra segment delimiters at end of msg ...
             if (segments[i] != null && segments[i].length() >= 3) {
                 final String name;
                 if (i == 0) {
                     name = segments[i].substring(0, 3);
                     delim = segments[i].charAt(3);
                 } else {
-                    if (segments[i].indexOf(delim) >= 0 ) {
+                    if (segments[i].indexOf(delim) >= 0) {
                         name = segments[i].substring(0, segments[i].indexOf(delim));
-                      } else {
+                    } else {
                         name = segments[i];
-                      }
-                 }
+                    }
+                }
 
                 log.debug("Parsing segment " + name);
 
@@ -908,19 +947,20 @@ public class PipeParser extends Parser {
                 if (messageIter.hasNext()) {
                     Segment next = (Segment) messageIter.next();
                     int nextIndexWithinParent = messageIter.getNextIndexWithinParent();
-                	parse(next, segments[i], getEncodingChars(string), nextIndexWithinParent);
+                    parse(next, segments[i], getEncodingChars(string), nextIndexWithinParent);
                 }
             }
         }
     }
 
     /**
-     * A struct for holding a message class string and a boolean indicating whether it
-     * was defined explicitly.
+     * A struct for holding a message class string and a boolean indicating
+     * whether it was defined explicitly.
      */
     private static class MessageStructure {
         public String messageStructure;
         public boolean explicitlyDefined;
+
 
         public MessageStructure(String theMessageStructure, boolean isExplicitlyDefined) {
             messageStructure = theMessageStructure;
@@ -928,17 +968,18 @@ public class PipeParser extends Parser {
         }
     }
 
-    private static class Holder<T>
-    {
-    	private T myObject;
+    private static class Holder<T> {
+        private T myObject;
 
-		public T getObject() {
-			return myObject;
-		}
 
-		public void setObject(T theObject) {
-			myObject = theObject;
-		}
+        public T getObject() {
+            return myObject;
+        }
+
+
+        public void setObject(T theObject) {
+            myObject = theObject;
+        }
     }
-    
+
 }
