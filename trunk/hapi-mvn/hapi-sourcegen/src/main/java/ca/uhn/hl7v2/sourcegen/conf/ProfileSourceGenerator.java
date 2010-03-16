@@ -197,7 +197,7 @@ public class ProfileSourceGenerator {
 		String name = nextSeg.getName();
 		String groupName = null;
 		boolean required = nextSeg.getMin() > 0;
-		boolean repeating = nextSeg.getMax() > 1;
+		boolean repeating = nextSeg.getMax() > 1 || nextSeg.getMax() == -1;
 		String description = nextSeg.getDescription();
 
 		SegmentDef retVal = new SegmentDef(name, groupName, required, repeating, description);

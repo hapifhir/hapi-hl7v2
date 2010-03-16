@@ -38,296 +38,337 @@ import java.util.Set;
  */
 public class StructureDefinition implements IStructureDefinition {
 
-	private IStructureDefinition myParent;
+    private HashSet<String> myAllChildrenNames;
+    private HashSet<String> myAllFirstLeafNames;
+    private ArrayList<StructureDefinition> myChildren = new ArrayList<StructureDefinition>();
+    private IStructureDefinition myFirstSibling;
+    private boolean myFirstSiblingIsSet;
+    private Boolean myIsFinalChildOfParent;
+    private boolean myIsRepeating;
+    private boolean myIsRequired;
+    private boolean myIsSegment;
+    private String myName;
+    private String myNameAsItAppearsInParent;
+    private Set<String> myNamesOfAllPossibleFollowingLeaves;
+    private IStructureDefinition myNextLeaf;
+    private IStructureDefinition myNextSibling;
+    private IStructureDefinition myParent;
+    private int myPosition;
 
-	private String myName;
-	private boolean myIsSegment;
-	private boolean myIsRepeating;
-	private boolean myIsRequired;
-	private int myPosition;
-	private Boolean myIsFinalChildOfParent;
-	private ArrayList<StructureDefinition> myChildren = new ArrayList<StructureDefinition>();
-	private HashSet<String> myAllChildrenNames;
-	private HashSet<String> myAllFirstLeafNames;
-	private IStructureDefinition myNextSibling;
-	private IStructureDefinition myFirstSibling;
-	private IStructureDefinition myNextLeaf;
-	private boolean myFirstSiblingIsSet;
 
-	private Set<String> myNamesOfAllPossibleFollowingLeaves;
+    /**
+     * Constructor
+     */
+    public StructureDefinition() {
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public IStructureDefinition getFirstSibling() {
-		if (!myFirstSiblingIsSet) {
-			if (myParent == null) {
-				myFirstSibling = null;
-			} else if (myParent.getChildren().get(0) == this) {
-				myFirstSibling = null;
-			} else {
-				myFirstSibling = myParent.getChildren().get(0);
-			}
-			myFirstSiblingIsSet = true;
-		}
 
-		return myFirstSibling;
-	}
+    /**
+     * Setter
+     */
+    void addChild(StructureDefinition theChild) {
+        myChildren.add(theChild);
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public IStructureDefinition getNextLeaf() {
-		return myNextLeaf;
-	}
 
-	/**
-	 * Setter
-	 */
-	void setNextLeaf(IStructureDefinition theNextLeaf) {
-		myNextLeaf = theNextLeaf;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object theObj) {
+        if (theObj == null || !(theObj instanceof StructureDefinition)) {
+            return false;
+        }
+        StructureDefinition o = (StructureDefinition) theObj;
+        return o.myName.equals(myName) && o.myPosition == myPosition;
+    }
 
-	/**
-	 * Constructor
-	 */
-	public StructureDefinition() {
-	}
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public String getName() {
-		return myName;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public HashSet<String> getAllChildNames() {
+        if (myAllChildrenNames == null) {
+            myAllChildrenNames = new HashSet<String>();
+            for (IStructureDefinition next : myChildren) {
+                myAllChildrenNames.add(next.getName());
+                myAllChildrenNames.addAll(next.getAllChildNames());
+            }
+        }
 
-	/**
-	 * Setter
-	 */
-	void setName(String theName) {
-		myName = theName;
-	}
+        return myAllChildrenNames;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public boolean isSegment() {
-		return myIsSegment;
-	}
 
-	/**
-	 * Setter
-	 */
-	void setSegment(boolean theIsSegment) {
-		myIsSegment = theIsSegment;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public HashSet<String> getAllPossibleFirstChildren() {
+        if (myAllFirstLeafNames == null) {
+            myAllFirstLeafNames = new HashSet<String>();
+            for (IStructureDefinition next : myChildren) {
+                myAllFirstLeafNames.addAll(next.getAllPossibleFirstChildren());
+                if (next.isRequired()) {
+                    break;
+                }
+            }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public boolean isRepeating() {
-		return myIsRepeating;
-	}
+            myAllFirstLeafNames.add(getName());
+        }
 
-	/**
-	 * Setter
-	 */
-	void setRepeating(boolean theIsRepeating) {
-		myIsRepeating = theIsRepeating;
-	}
+        return myAllFirstLeafNames;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public ArrayList<StructureDefinition> getChildren() {
-		return myChildren;
-	}
 
-	/**
-	 * Setter
-	 */
-	void addChild(StructureDefinition theChild) {
-		myChildren.add(theChild);
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public ArrayList<StructureDefinition> getChildren() {
+        return myChildren;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public int getPosition() {
-		return myPosition;
-	}
 
-	/**
-	 * Setter
-	 */
-	void setPosition(int thePosition) {
-		myPosition = thePosition;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getFirstChild() {
+        return myChildren.get(0);
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public IStructureDefinition getParent() {
-		return myParent;
-	}
 
-	/**
-	 * Setter
-	 */
-	void setParent(IStructureDefinition theParent) {
-		myParent = theParent;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getFirstSibling() {
+        if (!myFirstSiblingIsSet) {
+            if (myParent == null) {
+                myFirstSibling = null;
+            } else if (myParent.getChildren().get(0) == this) {
+                myFirstSibling = null;
+            } else {
+                myFirstSibling = myParent.getChildren().get(0);
+            }
+            myFirstSiblingIsSet = true;
+        }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public boolean equals(Object theObj) {
-		if (theObj == null || !(theObj instanceof StructureDefinition)) {
-			return false;
-		}
-		StructureDefinition o = (StructureDefinition) theObj;
-		return o.myName.equals(myName) && o.myPosition == myPosition;
-	}
+        return myFirstSibling;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public int hashCode() {
-		return 17 * myName.hashCode() * myPosition;
-	}
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public boolean isFinalChildOfParent() {
-		if (myIsFinalChildOfParent != null) {
-			return myIsFinalChildOfParent;
-		}
+    /**
+     * {@inheritDoc }
+     */
+    public String getName() {
+        return myName;
+    }
 
-		if (myParent == null) {
-			myIsFinalChildOfParent = true;
-		} else {
-			myIsFinalChildOfParent = (myPosition == (myParent.getChildren()
-					.size() - 1));
-		}
 
-		return myIsFinalChildOfParent;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameAsItAppearsInParent() {
+        return myNameAsItAppearsInParent;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public IStructureDefinition getNextSibling() {
-		if (myNextSibling != null) {
-			return myNextSibling;
-		}
 
-		if (isFinalChildOfParent()) {
-			throw new IllegalStateException("Final child");
-		}
+    /**
+     * {@inheritDoc }
+     */
+    public Set<String> getNamesOfAllPossibleFollowingLeaves() {
+        if (myNamesOfAllPossibleFollowingLeaves != null) {
+            return myNamesOfAllPossibleFollowingLeaves;
+        }
 
-		myNextSibling = myParent.getChildren().get(myPosition + 1);
-		return myNextSibling;
-	}
+        myNamesOfAllPossibleFollowingLeaves = new HashSet<String>();
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public boolean hasChildren() {
-		return myChildren.isEmpty() == false;
-	}
-	
-	/**
-	 * {@inheritDoc }
-	 */
-	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
-		if (myNamesOfAllPossibleFollowingLeaves != null) {
-			return myNamesOfAllPossibleFollowingLeaves;
-		}
-		
-		myNamesOfAllPossibleFollowingLeaves = new HashSet<String>();
-		
-		IStructureDefinition nextLeaf = getNextLeaf();
-		if (nextLeaf != null) {
-			myNamesOfAllPossibleFollowingLeaves.add(nextLeaf.getName());
-			myNamesOfAllPossibleFollowingLeaves.addAll(nextLeaf.getNamesOfAllPossibleFollowingLeaves());
-		}
+        IStructureDefinition nextLeaf = getNextLeaf();
+        if (nextLeaf != null) {
+            myNamesOfAllPossibleFollowingLeaves.add(nextLeaf.getName());
+            myNamesOfAllPossibleFollowingLeaves.addAll(nextLeaf.getNamesOfAllPossibleFollowingLeaves());
+        }
 
-		IStructureDefinition parent = myParent;
-		while (parent != null) {
-			if (parent.isRepeating()) {
-				myNamesOfAllPossibleFollowingLeaves.addAll(parent.getAllPossibleFirstChildren());
-			}
-			parent = parent.getParent();
-		}
+        IStructureDefinition parent = myParent;
+        while (parent != null) {
+            if (parent.isRepeating()) {
+                myNamesOfAllPossibleFollowingLeaves.addAll(parent.getAllPossibleFirstChildren());
+            }
+            parent = parent.getParent();
+        }
 
-		return myNamesOfAllPossibleFollowingLeaves;
-		
-		
-	}
+        return myNamesOfAllPossibleFollowingLeaves;
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public IStructureDefinition getFirstChild() {
-		return myChildren.get(0);
-	}
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public HashSet<String> getAllPossibleFirstChildren() {
-		if (myAllFirstLeafNames == null) {
-			myAllFirstLeafNames = new HashSet<String>();
-			for (IStructureDefinition next : myChildren) {
-				myAllFirstLeafNames.addAll(next.getAllPossibleFirstChildren());
-				if (next.isRequired()) {
-					break;
-				}
-			}
 
-			myAllFirstLeafNames.add(getName());
-		}
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getNextLeaf() {
+        return myNextLeaf;
+    }
 
-		return myAllFirstLeafNames;
-	}
 
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public String toString() {
-		return "StructureDefinition[" + getName() + "]";
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getNextSibling() {
+        if (myNextSibling != null) {
+            return myNextSibling;
+        }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public HashSet<String> getAllChildNames() {
-		if (myAllChildrenNames == null) {
-			myAllChildrenNames = new HashSet<String>();
-			for (IStructureDefinition next : myChildren) {
-				myAllChildrenNames.add(next.getName());
-				myAllChildrenNames.addAll(next.getAllChildNames());
-			}
-		}
+        if (isFinalChildOfParent()) {
+            throw new IllegalStateException("Final child");
+        }
 
-		return myAllChildrenNames;
-	}
+        myNextSibling = myParent.getChildren().get(myPosition + 1);
+        return myNextSibling;
+    }
 
-	/**
-	 * {@inheritDoc }
-	 */
-	public boolean isRequired() {
-		return myIsRequired;
-	}
 
-	/**
-	 * Setter
-	 */
-	void setRequired(boolean theIsRequired) {
-		myIsRequired = theIsRequired;
-	}
+    /**
+     * {@inheritDoc }
+     */
+    public IStructureDefinition getParent() {
+        return myParent;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public int getPosition() {
+        return myPosition;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean hasChildren() {
+        return myChildren.isEmpty() == false;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        return 17 * myName.hashCode() * myPosition;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isFinalChildOfParent() {
+        if (myIsFinalChildOfParent != null) {
+            return myIsFinalChildOfParent;
+        }
+
+        if (myParent == null) {
+            myIsFinalChildOfParent = true;
+        } else {
+            myIsFinalChildOfParent = (myPosition == (myParent.getChildren().size() - 1));
+        }
+
+        return myIsFinalChildOfParent;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isRepeating() {
+        return myIsRepeating;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isRequired() {
+        return myIsRequired;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    public boolean isSegment() {
+        return myIsSegment;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setName(String theName) {
+        myName = theName;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setNameAsItAppearsInParent(String theName) {
+        myNameAsItAppearsInParent = theName;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setNextLeaf(IStructureDefinition theNextLeaf) {
+        myNextLeaf = theNextLeaf;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setParent(IStructureDefinition theParent) {
+        myParent = theParent;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setPosition(int thePosition) {
+        myPosition = thePosition;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setRepeating(boolean theIsRepeating) {
+        myIsRepeating = theIsRepeating;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setRequired(boolean theIsRequired) {
+        myIsRequired = theIsRequired;
+    }
+
+
+    /**
+     * Setter
+     */
+    void setSegment(boolean theIsSegment) {
+        myIsSegment = theIsSegment;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return "StructureDefinition[" + getName() + "]";
+    }
 }

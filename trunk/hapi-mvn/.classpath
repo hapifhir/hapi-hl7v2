@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="hapi-base/src/main/java"/>
 	<classpathentry kind="src" path="hapi-base/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
+	<classpathentry kind="src" path="hapi-sourcegen/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-examples/src/main/java"/>
 	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-test/src/test/java"/>
@@ -29,7 +30,6 @@
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.0-beta1/hapi-structures-v251-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.0-beta1/hapi-structures-v251-1.0-beta1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.0-beta1/hapi-structures-v26-1.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v256/1.0-beta1/hapi-structures-v26-1.0-beta1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4.1/mail-1.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.0-FCS/jaxen-1.0-FCS.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/saxpath/saxpath/1.0-FCS/saxpath-1.0-FCS.jar"/>

@@ -53,6 +53,14 @@ public interface IStructureDefinition {
     IStructureDefinition getNextLeaf();
 
     /**
+     * @return The name of the segment, as it is known to it's parent. This
+     * will differ from {{@link #getName()}} in the case of multiple segments
+     * with the same name in a group, e.g. the two PID segments in ADT_A17,
+     * where the second one it known as PID2 to it's parent. 
+     */
+    String getNameAsItAppearsInParent();
+    
+    /**
      * @return Returns the name of this structure
      */
     String getName();
