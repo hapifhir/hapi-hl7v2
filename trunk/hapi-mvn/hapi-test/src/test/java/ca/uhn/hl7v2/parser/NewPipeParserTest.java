@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.parser;
 
-import java.io. IOException;
+ import java.io. IOException;
 import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
@@ -20,6 +20,7 @@ import ca.uhn.hl7v2.model.v24.datatype.SI;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
+import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A03;
@@ -58,6 +59,46 @@ public class NewPipeParserTest extends TestCase {
 	    
 	    Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
 	    
+	}
+	
+	/**
+	 * In SIU_S12, Groups begin with RGS and have nested subgroups as well
+	 */
+	public void testNestedRepeatingGroups() throws EncodingNotSupportedException, HL7Exception {
+	    
+	    String messageText = "MSH|^~\\&|ORSOS|G|PRECASE^SCHEDULING||20100406132803||SIU^S14| 38762|P|2.3\r" + // -
+                "SCH|ADS|569576||||G014080|||379|MIN^MINUTES|^^^20100407161000|51873^AL-RADI OO||||ADS||||ADS\r" +
+                "PID||990119205^^^R1^MR|990119205|000533921J^^^R1^VN|TEST MP3^TEST MP3|||||||||||||000533921J\r" +
+                "PV1|1|U|||||51873^AL-RADI OO|51873^AL-RADI OO|||||||||||569576^R1 caseno\r" +
+                "DG1|1|||||U\r" +
+                "RGS|1|1|abc\r" +
+                "AIS|1|1|G014080^BYPASS AXILLOFEMORAL|20100406161000|||255|000000\r" +
+                "AIG|1|1|51873|STAFF|||||20100407164000\r" +
+                "AIL|1|1|OR 4^OR 4||||||40800|0\r" +
+                "AIP|1|1|51873^ALRADI^OSMAN|^1\r" +
+                "RGS|2|2|abc\r" +
+                "AIS|2|2|G11455^BYPASS AORTOCORONARY USING RADIAL ARTERY|20100406161000|||15\r" +
+                "AIG|2|2|33043|STAFF|||||20100407212500\r" +
+                "AIL|2|2|OR 4^OR 4|||||||0\r" +
+                "AIP|2|2|33043^AUNE^KELLY|^1\r" +
+                "RGS|3|3|abc\r" +
+                "AIS|3|3|G014045^ANGIOPLASTY|20100406161000|||5\r" +
+                "AIG|3|3|102694|STAFF|||||20100407214000\r" +
+                "AIL|3|3|OR 4^OR 4|||||||0\r" +
+                "AIP|3|3|102694^ANGELINI^MARK|^1\r" +
+                "RGS|4|4|abc\r" +
+                "AIS|4|4|G11045^BYPASS AORTOCORONARY LITA|20100406161000|||60\r" +
+                "AIG|4|4|T1240UHN|STAFF|||||20100407214500\r" +
+                "AIL|4|4|OR 4^OR 4|||||||0\r" +
+                "AIP|4|4|T1240UHN^ASTA^JOHN|^1\r" ;
+	   
+	    SIU_S12 parsed = (SIU_S12) parser.parse(messageText);
+            Assert.assertEquals("1", parsed.getRESOURCES(0).getRGS().getSetIDRGS().getValue());
+            Assert.assertEquals("2", parsed.getRESOURCES(1).getRGS().getSetIDRGS().getValue());
+            Assert.assertEquals("3", parsed.getRESOURCES(2).getRGS().getSetIDRGS().getValue());
+            Assert.assertEquals("4", parsed.getRESOURCES(3).getRGS().getSetIDRGS().getValue());
+	       
+	        
 	}
 
 	public void testUnexpectedSegmentAtEng() throws EncodingNotSupportedException, HL7Exception {

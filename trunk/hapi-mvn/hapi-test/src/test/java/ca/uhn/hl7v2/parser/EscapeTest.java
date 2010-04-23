@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.parser;
 
-import ca.uhn.hl7v2.HL7Exception;
+ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 import junit.framework.*;
@@ -39,6 +39,17 @@ public class EscapeTest extends TestCase {
         //out.write(result);
         //out.close();
     }
+    
+    public void testEscape() {
+//        String obx = "OBX|1|NM|51597-3^GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN^HL79902|1|14.4|mmol/L|3.0-7.0|H|||F";
+        
+//        ORU_R01 = new 
+
+        String actual = Escape.escape("GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN", enc);
+        String expected = "GLUCOSE\\S\\1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN";
+        
+    }
+    
     
     /** 
      * Loads an escaped, uuencoded string from a file -- this is real data

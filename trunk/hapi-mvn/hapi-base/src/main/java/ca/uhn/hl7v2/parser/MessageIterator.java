@@ -107,7 +107,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             if (structureDefinition.getName().equals(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
                 myNextIsSet = true;
                 currentPosition.incrementRep();
-            } else if (structureDefinition.isSegment() && structureDefinition.getNextLeaf() == null) {
+            } else if (structureDefinition.isSegment() && structureDefinition.getNextLeaf() == null && !structureDefinition.getNamesOfAllPossibleFollowingLeaves().contains(myDirection)) {
                 if (!handleUnexpectedSegments) {
                     return false;
                 }
