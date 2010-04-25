@@ -121,7 +121,7 @@ public class AbstractGroupTest extends TestCase {
 
 
         ORU_R01_OBSERVATION obx = oruR01.getPATIENT_RESULT().getORDER_OBSERVATION().removeOBSERVATION(1);
-        assertEquals("", obx.getOBX().encode());
+        assertEquals("OBX|2", obx.getOBX().encode());
 
         String expected = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.5\r"
 				+ "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"

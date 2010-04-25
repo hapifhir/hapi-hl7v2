@@ -249,8 +249,10 @@ public class OldPipeParserTest extends TestCase {
     			"ZSC^^291^OBSERVATION SURGERY";
     	
     	PipeParser p = new PipeParser();
-    	p.parse(msg);
+    	p.setValidationContext(new ValidationContextImpl());
+    	ORU_R01 parsed = (ORU_R01) p.parse(msg);
     	
+    	assertEquals("OBR^^^6240020~552_120.5^4500635~PAIN~99VA120.51^^^200610061445-0800^20061006144607-0800^^^^^^^^^^^^^^20061006144607-0800^^^E^^^^^^^^^123456~NURSE~THREE~A~III~MS~RN~VistA200" , parsed.getPATIENT_RESULT().getORDER_OBSERVATION(0).getOBR().encode());
     }
  
     public void testEmptySegment() throws EncodingNotSupportedException, HL7Exception {

@@ -45,7 +45,7 @@ public class XMLParserTest extends TestCase {
      * duplicate PID segments in a swap patient message) should be handled correctly.
      */
     public void testParseDuplicateSegment() throws IOException, EncodingNotSupportedException, HL7Exception {
-    	InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a17.xml");
+    	InputStream stream = XMLParserTest.class.getClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a17.xml");
     	byte[] bytes = new byte[10000];
     	StringBuffer buffer = new StringBuffer();
     	int count;

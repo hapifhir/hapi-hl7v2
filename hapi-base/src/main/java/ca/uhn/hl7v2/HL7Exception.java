@@ -187,6 +187,13 @@ public class HL7Exception extends Exception {
     public int getFieldPosition() {
         return this.fieldPosition;
     }
+    
+    /**
+     * @return Returns the error code associated with this exception, or <code>-1</code> if none
+     */
+    public int getErrorCode() {
+        return this.errCode;
+    }
 
     /**
      * Overrides Throwable.getMessage() to add the field location of the problem if 

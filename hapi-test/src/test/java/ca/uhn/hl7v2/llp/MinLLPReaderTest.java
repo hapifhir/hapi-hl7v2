@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -38,231 +38,222 @@ import ca.uhn.hl7v2.util.MessageLibrary;
 
 /**
  * Unit test class for ca.uhn.hl7v2.llp.MinLLPReader
- *
+ * 
  * @author Leslie Mann
  */
 public class MinLLPReaderTest extends TestCase {
     // NB: Per the minimal lower layer protocol.
-	// character indicating the termination of an HL7 message
-    private static final char END_MESSAGE = '\u001c'; 
+    // character indicating the termination of an HL7 message
+    private static final char END_MESSAGE = '\u001c';
     // character indicating the start of an HL7 message
     private static final char START_MESSAGE = '\u000b';
-     // the final character of a message: a carriage return
+    // the final character of a message: a carriage return
     private static final char LAST_CHARACTER = 13;
 
-	private String message;
-	private byte [] sendMessage;
-	private MinLLPReader minLLPReader;
-	private ByteArrayInputStream inputStream;
-	MessageLibrary msgLib;
+    private String message;
+    private byte[] sendMessage;
+    private MinLLPReader minLLPReader;
+    private ByteArrayInputStream inputStream;
 
-	/**
-	 * Constructor for MinLLPReaderTest.
-	 * @param testName
-	 */
-	public MinLLPReaderTest(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructor for MinLLPReaderTest.
+     * 
+     * @param testName
+     */
+    public MinLLPReaderTest(String testName) {
+        super(testName);
+    }
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(MinLLPReaderTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(MinLLPReaderTest.class);
+    }
 
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		message = "This is a test HL7 message";
-		sendMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
-		minLLPReader = new MinLLPReader();
+    /**
+     * @see TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+        message = "This is a test HL7 message";
+        sendMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
+        minLLPReader = new MinLLPReader();
+        inputStream = MinLLPWriterTest.getMessageLib().getAsByteArrayInputStream();
+    }
 
-		//only want to setup once
-		if (msgLib == null) {
-			String path = "ca/uhn/hl7v2/util/messages.txt";
-			msgLib = new MessageLibrary(path, "VB");
-			inputStream = msgLib.getAsByteArrayInputStream();
-		}
-	}
+    /**
+     * @see TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        message = null;
+        sendMessage = null;
+        minLLPReader = null;
+    }
 
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		message = null;
-		sendMessage = null;
-		minLLPReader = null;
-	}
+    /*
+     * *********************************************************
+     * Test Cases*********************************************************
+     */
 
-	/*
-	 ********************************************************** 
-	 * Test Cases
-	 ********************************************************** 
-	 */
-	 
-	/**
-	 * Test default constructor
-	 */
-	public void testConstructor() {
-		assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
-	}
+    /**
+     * Test default constructor
+     */
+    public void testConstructor() {
+        assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
+    }
 
-	/**
-	 * Test constructor with input stream
-	 */
-	public void testConstructorWithInputStream() throws IOException {
-		minLLPReader = new MinLLPReader(inputStream);
-		assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
-	}
+    /**
+     * Test constructor with input stream
+     */
+    public void testConstructorWithInputStream() throws IOException {
+        minLLPReader = new MinLLPReader(inputStream);
+        assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
+    }
 
-	/**
-	 * Ensure constructor validates inputs. Pass a null inputStream
-	 */
-	public void testConstructorWithNullInputStream() {
-		ByteArrayInputStream nullInputStream = null;
-		
-		try {		
-			minLLPReader = new MinLLPReader(nullInputStream);
-			fail("Should not be able to create a MinLLPReader with a null input stream");
-		} catch (IOException ioe) {
-	    } catch (NullPointerException ioe) {
-        }
-	}
+    /**
+     * Ensure constructor validates inputs. Pass a null inputStream
+     */
+    public void testConstructorWithNullInputStream() {
+        ByteArrayInputStream nullInputStream = null;
 
-	/**
-	 * Ensure setInputStream validates inputs. Pass a null inputStream
-	 */
-	public void testSetNullInputStream() {
-		ByteArrayInputStream nullInputStream = null;
-
-		try {		
-			minLLPReader.setInputStream(nullInputStream);
-			fail("Should not be able to set a null input stream");
+        try {
+            minLLPReader = new MinLLPReader(nullInputStream);
+            fail("Should not be able to create a MinLLPReader with a null input stream");
         } catch (IOException ioe) {
         } catch (NullPointerException ioe) {
         }
-	}
+    }
 
-	/**
-	 * Testing readMessage method with a null input stream
-	 */
-	public void testSetReadMessageNullInputStream() throws LLPException {
-		ByteArrayInputStream nullInputStream = null;
+    /**
+     * Ensure setInputStream validates inputs. Pass a null inputStream
+     */
+    public void testSetNullInputStream() {
+        ByteArrayInputStream nullInputStream = null;
 
-		try {
-			minLLPReader.setInputStream(nullInputStream);
-			String recvMessage = minLLPReader.getMessage();
-			assertNull("Should not be able to read message from null input stream", recvMessage);
+        try {
+            minLLPReader.setInputStream(nullInputStream);
+            fail("Should not be able to set a null input stream");
         } catch (IOException ioe) {
         } catch (NullPointerException ioe) {
         }
-	}
+    }
 
-	/**
-	 * Attempt to read a message without calling - <code>setInputStream</code>
-	 */
-	public void testReadMessageWithoutOutputStream() throws LLPException {
-		try {
-			minLLPReader.getMessage();
-			fail("Reader should be initialized before use");
+    /**
+     * Testing readMessage method with a null input stream
+     */
+    public void testSetReadMessageNullInputStream() throws LLPException {
+        ByteArrayInputStream nullInputStream = null;
+
+        try {
+            minLLPReader.setInputStream(nullInputStream);
+            String recvMessage = minLLPReader.getMessage();
+            assertNull("Should not be able to read message from null input stream", recvMessage);
         } catch (IOException ioe) {
         } catch (NullPointerException ioe) {
         }
-	}
+    }
 
-	/**
-	 * Test readMessage with MessageLibrary contents
-	 */
-	public void testReadLibraryMessages() throws IOException, LLPException {
-		minLLPReader.setInputStream(inputStream);
-		int mismatch = 0;
-		for (int i=0; i<10; i++) {
-			String recvMessage = minLLPReader.getMessage();
-			String temp = ((LibraryEntry) msgLib.get(i)).messageString();
-			if (!temp.equals(recvMessage)) {
-				mismatch++;
-			}
-		}
-		
-		assertEquals("HL7 message should equal input llp decoded message", 0, mismatch);
-	}
+    /**
+     * Attempt to read a message without calling - <code>setInputStream</code>
+     */
+    public void testReadMessageWithoutOutputStream() throws LLPException {
+        try {
+            minLLPReader.getMessage();
+            fail("Reader should be initialized before use");
+        } catch (IOException ioe) {
+        } catch (NullPointerException ioe) {
+        }
+    }
 
-	/**
-	 * Testing readMessage with well and malformed llp encoded input
-	 * messages.
-	 */
-	public void testReadMessages() {
-		class TestSpec {
-			byte [] sendMessage;
-			Object outcome;
-			
-			TestSpec(String message, Object outcome) {
-				if (message != null)
-					this.sendMessage = message.getBytes();
-				else
-					this.sendMessage = null;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[" + (sendMessage != null ? sendMessage.toString() : "null") + ":" + outcome + "]";
-			}
-			
-			public boolean executeTest() {
-				try {
-					ByteArrayInputStream inputStream = new ByteArrayInputStream(this.sendMessage);
-					MinLLPReader reader = new MinLLPReader(inputStream);
-					String recvMessage = reader.getMessage();
-					return recvMessage.equals(outcome);
-				} catch (Exception e) {
-					return (e.getClass().equals(outcome));
-				}
-			}
-		}//inner class
-		
-		TestSpec [] tests = {
-			new TestSpec(null, NullPointerException.class),
-			new TestSpec(START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER, message),
-			new TestSpec(START_MESSAGE + message + END_MESSAGE, LLPException.class),
-			new TestSpec(START_MESSAGE + message, LLPException.class),
-			new TestSpec(Integer.toString(START_MESSAGE), LLPException.class),
-			new TestSpec(message, LLPException.class),
-			new TestSpec(message + END_MESSAGE + LAST_CHARACTER, LLPException.class),
-			new TestSpec(Integer.toString(END_MESSAGE) + Integer.toString(LAST_CHARACTER), LLPException.class),
-			new TestSpec(Integer.toString(LAST_CHARACTER), LLPException.class),
-			new TestSpec(Integer.toString(START_MESSAGE) + Integer.toString(END_MESSAGE) + Integer.toString(LAST_CHARACTER), LLPException.class),
-		};
-		
-		ArrayList failedTests = new ArrayList();
+    /**
+     * Test readMessage with MessageLibrary contents
+     */
+    public void testReadLibraryMessages() throws IOException, LLPException {
+        minLLPReader.setInputStream(inputStream);
+        int mismatch = 0;
+        for (int i = 0; i < 10; i++) {
+            String recvMessage = minLLPReader.getMessage();
+            String temp = ((LibraryEntry) MinLLPWriterTest.getMessageLib().get(i)).messageString();
+            if (!temp.equals(recvMessage)) {
+                mismatch++;
+            }
+        }
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
+        assertEquals("HL7 message should equal input llp decoded message", 0, mismatch);
+    }
 
-   		assertEquals("readMessages failures: " + failedTests, 0, failedTests.size()); 
-	}
+    /**
+     * Testing readMessage with well and malformed llp encoded input messages.
+     */
+    public void testReadMessages() {
+        class TestSpec {
+            byte[] sendMessage;
+            Object outcome;
 
-	/**
-	 * Test closing reader
-	 */
-	public void testClose() {
-		try {
-			minLLPReader= new MinLLPReader(inputStream);
-			minLLPReader.close();
-		} catch (IOException ioe) {
-			fail("Problem setting up test conditions");
-		}
-		try {
-			String recvMessage = minLLPReader.getMessage();
-			fail("Input stream should be closed");
-		} catch (IOException ioe) {
-		} catch (LLPException llpe) {}
-	}
-    
+            TestSpec(String message, Object outcome) {
+                if (message != null)
+                    this.sendMessage = message.getBytes();
+                else
+                    this.sendMessage = null;
+                this.outcome = outcome;
+            }
+
+            public String toString() {
+                return "[" + (sendMessage != null ? sendMessage.toString() : "null") + ":" + outcome + "]";
+            }
+
+            public boolean executeTest() {
+                try {
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(this.sendMessage);
+                    MinLLPReader reader = new MinLLPReader(inputStream);
+                    String recvMessage = reader.getMessage();
+                    return recvMessage.equals(outcome);
+                } catch (Exception e) {
+                    return (e.getClass().equals(outcome));
+                }
+            }
+        }// inner class
+
+        TestSpec[] tests = { new TestSpec(null, NullPointerException.class), new TestSpec(START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER, message),
+                new TestSpec(START_MESSAGE + message + END_MESSAGE, LLPException.class), new TestSpec(START_MESSAGE + message, LLPException.class),
+                new TestSpec(Integer.toString(START_MESSAGE), LLPException.class), new TestSpec(message, LLPException.class),
+                new TestSpec(message + END_MESSAGE + LAST_CHARACTER, LLPException.class),
+                new TestSpec(Integer.toString(END_MESSAGE) + Integer.toString(LAST_CHARACTER), LLPException.class),
+                new TestSpec(Integer.toString(LAST_CHARACTER), LLPException.class),
+                new TestSpec(Integer.toString(START_MESSAGE) + Integer.toString(END_MESSAGE) + Integer.toString(LAST_CHARACTER), LLPException.class), };
+
+        ArrayList failedTests = new ArrayList();
+
+        for (int i = 0; i < tests.length; i++) {
+            if (!tests[i].executeTest())
+                failedTests.add(tests[i]);
+        }
+
+        assertEquals("readMessages failures: " + failedTests, 0, failedTests.size());
+    }
+
+    /**
+     * Test closing reader
+     */
+    public void testClose() {
+        try {
+            minLLPReader = new MinLLPReader(inputStream);
+            minLLPReader.close();
+        } catch (IOException ioe) {
+            fail("Problem setting up test conditions");
+        }
+        try {
+            String recvMessage = minLLPReader.getMessage();
+            fail("Input stream should be closed");
+        } catch (IOException ioe) {
+        } catch (LLPException llpe) {
+        }
+    }
+
     public void testReadFromClosedStream() throws LLPException, IOException {
-        InputStream in = new ByteArrayInputStream("".getBytes()); //will return -1 as if closed remotely
+        InputStream in = new ByteArrayInputStream("".getBytes()); // will return
+                                                                  // -1 as if
+                                                                  // closed
+                                                                  // remotely
         MinLLPReader reader = new MinLLPReader(in);
         String message = reader.getMessage();
         assertEquals(null, message);

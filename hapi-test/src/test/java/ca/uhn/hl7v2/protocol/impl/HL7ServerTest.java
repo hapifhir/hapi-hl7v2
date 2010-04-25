@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  * Unit tests for <code>HL7Server</code>. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2010-04-25 16:22:52 $ by $Author: jamesagnew $
  */
 public class HL7ServerTest extends TestCase {
 
@@ -60,19 +60,4 @@ public class HL7ServerTest extends TestCase {
         ss.close();   
     }
     
-    public void testMain() throws Exception {
-        HL7Server.main(new String[] {"9999", "classpath:ca/uhn/hl7v2/protocol/impl/mock_apps"});
-
-        StreamSource sender = new ClientSocketStreamSource(new InetSocketAddress("127.0.0.1", 9999));
-        MLLPTransport transport = new MLLPTransport(sender);
-        transport.connect();
-        
-        String message = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.2\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
-        transport.send(new TransportableImpl(message));
-        Transportable inbound = transport.receive();
-        
-        assertTrue(inbound.getMessage().indexOf("mock") > -1);     
-        
-        transport.disconnect();        
-    }
 }
