@@ -9,6 +9,43 @@ Welcome
 
 What's New
 
+* April 24, 2010
+
+   HAPI 1.0 is released!
+   
+   After a fairly long beta period, I'm excited to announce that HAPI has finally reached
+   1.0. Download it {{{https://sourceforge.net/projects/hl7api/files/hl7api/}here}}! 
+
+   This release packs in a lot of new features, some major speed improvements, and several
+   fixes to long standing (but hard to fix) bugs. For a good summary of what's in this release,
+   see the {{{whatsnew.html}what's new}} page, and the {{{changes-report.html}changelog}}.
+   
+   Questions and answers about this release:
+   
+   * <<Q:>> What is the significance of the 1.0 version number?
+     
+     <<A:>> Absolutely nothing. HAPI has been a production grade library for many years now, and
+     over the years we've received quite a few inquiries from people hesitant to incorporate
+     a library with a pre-release version number into their software. The move to 1.0 is nothing more
+     than a signal that HAPI is good to go.
+   
+   * <<Q:>> Why the long period between releases?
+     
+     <<A:>> This release contained a major rewrite of the internals of the PipeParser, which is
+     pretty much at the heart of most people's use of HAPI. This rewrite was neccesary in order
+     both to speed things up, and to fix a number of problems with the existing logic in handling
+     unexpected custom segments and provide more predictable behaviour. Because of this, we wanted
+     to make sure we got it right. This release has been thoroughly tested in a number of applications,
+     including some heavy duty production use, so we are now confident that it's ready. 
+   
+   * <<Q:>> What's next?
+     
+     <<A:>> Hopefully a new release of hUnit will be out soon, and then hopefully our first HAPI
+     release in this post-1.0 world. :) Let us know what you would like to see in it!
+    
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
 * November 28, 2009
 
    A new beta (1.0-beta1) of HAPI has been uploaded to the {{{https://sourceforge.net/projects/hl7api/files/hl7api-unstable/}downloads area}}.

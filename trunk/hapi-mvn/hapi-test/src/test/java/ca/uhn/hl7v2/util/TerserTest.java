@@ -139,7 +139,14 @@ public class TerserTest extends TestCase {
             "RXE|^BID^X001^200012171800^200308200600|99089^DIGOXIN (LANOXIN) -- 0.25 mg|0.2500|0.2500|mg|TA|111^||||||||||||||222^||||0.0000|||||\r" + 
             "RXR|PO||\r"; 
         
-        PipeParser pipeParser = new PipeParser(); 
+        PipeParser pipeParser = new PipeParser();
+        
+        /*
+         * Note, these test cases assume the old behaviour of handling
+         * unexpected segments
+         */
+        pipeParser.setLegacyMode(true);
+        
         Message message = pipeParser.parse(msg); 
         Terser terser = new Terser(message); 
         //ca.uhn.hl7v2.view.TreePanel.showInNewWindow(message);

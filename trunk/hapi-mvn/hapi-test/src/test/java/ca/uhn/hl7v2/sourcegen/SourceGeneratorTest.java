@@ -202,8 +202,8 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.3.1", "ca.uhn.hl7v2.model.v231."),
 			new TestSpec("2.4", "ca.uhn.hl7v2.model.v24."),
 			new TestSpec("2.5", "ca.uhn.hl7v2.model.v25."),
-			new TestSpec("2.5.1", "ca/uhn/hl7v2/model/v251/"),
-			new TestSpec("2.6", "ca/uhn/hl7v2/model/v26/")
+			new TestSpec("2.5.1", "ca.uhn.hl7v2.model.v251."),
+			new TestSpec("2.6", "ca.uhn.hl7v2.model.v26.")
 		};
 		
 		ArrayList failedTests = new ArrayList();
@@ -236,7 +236,7 @@ public class SourceGeneratorTest extends TestCase {
 			
 			public boolean executeTest() {
 				try {
-					String retval = SourceGenerator.makeAccessorName(fieldDesc, "");
+					String retval = "get" + SourceGenerator.makeAccessorName(fieldDesc, "");
 					if (retval != null) {
 						return retval.equals(outcome);
 					} else {
@@ -268,10 +268,9 @@ public class SourceGeneratorTest extends TestCase {
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
-				failedTests.add( tests[ i ] );
+				fail( tests[ i ].toString() );
 		}
 
-		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
 
