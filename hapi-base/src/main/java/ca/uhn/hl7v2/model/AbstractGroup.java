@@ -378,7 +378,7 @@ public abstract class AbstractGroup implements Group {
      * @return The removed structure
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
-    protected void insertRepetition(Structure structure, int index) throws HL7Exception {
+    protected void insertRepetition(String name, Structure structure, int index) throws HL7Exception {
         if (structure == null) {
             throw new NullPointerException("Structure may not be null");
         }
@@ -387,7 +387,6 @@ public abstract class AbstractGroup implements Group {
             throw new HL7Exception("Structure does not belong to this message", HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
 
-        String name = structure.getName();
         ArrayList<Structure> list = structures.get(name);
 
         if (list == null) {
@@ -423,7 +422,7 @@ public abstract class AbstractGroup implements Group {
         }
 
         Structure rep = tryToInstantiateStructure(structureClass, name);
-        insertRepetition(rep, index);
+        insertRepetition(name, rep, index);
 
         return rep;
     }

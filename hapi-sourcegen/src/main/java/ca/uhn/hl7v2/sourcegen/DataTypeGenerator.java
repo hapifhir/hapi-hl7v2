@@ -36,13 +36,23 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.FileOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
@@ -104,7 +114,8 @@ public class DataTypeGenerator extends Object {
                 
         for (int i = 0; i < types.size(); i++) {
             try {
-                make(targetDir, (String)types.get(i), version);
+                String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
+                make(targetDir, (String)types.get(i), version, basePackage);
             } catch (DataTypeException dte) {
                 log.warn(dte.getClass().getName() + " - " + dte.getMessage());
             } catch (Exception e) {
@@ -121,7 +132,7 @@ public class DataTypeGenerator extends Object {
      * @param version the HL7 version of the intended data type
      * @param theJdbcUrl 
      */
-    public static void make(File targetDirectory, String dataType, String version) throws SQLException, DataTypeException, IOException, HL7Exception {
+    public static void make(File targetDirectory, String dataType, String version, String basePackage) throws Exception {
         //make sure that targetDirectory is a directory ... 
         if (!targetDirectory.isDirectory()) throw new IOException("Can't create file in " + 
             targetDirectory.toString() + " - it is not a directory.");
@@ -182,7 +193,7 @@ public class DataTypeGenerator extends Object {
             if (dataType.equals("FT") || dataType.equals("ST") || dataType.equals("TX") 
                     || dataType.equals("NM") || dataType.equals("SI") || dataType.equals("TN")
                     || dataType.equals("GTS")) { 
-                source = makePrimitive(dataType, description, version);                
+                source = makePrimitive(new DatatypeDef(dataType, description), version, basePackage);                
             } else {
                 source = null; //note: IS, ID, DT, DTM, and TM are coded manually
             }
@@ -192,12 +203,19 @@ public class DataTypeGenerator extends Object {
             String[] type = new String[numComponents];
             String[] desc = new String[numComponents];
             int[] table = new int[numComponents];
+            DatatypeComponentDef[] componentDefs = new DatatypeComponentDef[numComponents];
             for (int i = 0; i < numComponents; i++) {
                 type[i] = (String)dataTypes.get(i);
                 desc[i] = (String)descriptions.get(i);
                 table[i] = ((Integer) tables.get(i)).intValue();
+                
+                String typeName = (String)dataTypes.get(i);
+                typeName = SourceGenerator.getAlternateType(typeName, version);
+                
+                componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, (String)descriptions.get(i), ((Integer) tables.get(i)).intValue());
             }
-            source = makeComposite(dataType, description, type, desc, table, version);
+            
+            source = makeComposite(dataType, description, componentDefs, type, desc, table, version, basePackage);
         } else {
             if (dataType.equals("var")) {
                 return; // Varies isn't actually a type
@@ -254,7 +272,26 @@ public class DataTypeGenerator extends Object {
      * Returns a String containing the complete source code for a Primitive HL7 data
      * type.  Note: this method is no longer used, as all Primitives are now coded manually.  
      */
-    private static String makePrimitive(String datatype, String description, String version) throws HL7Exception {
+    private static String makePrimitive(DatatypeDef theDatatype, String version, String basePackage) throws Exception {
+
+        if (true) {
+            
+            StringWriter out = new StringWriter();
+
+            Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/datatype_primitive.vsm");
+            Context ctx = new VelocityContext();
+            ctx.put("datatype", theDatatype);
+            ctx.put("version", version);
+            ctx.put("basePackageName", basePackage);
+            ctx.put("normalBasePackageName", DefaultModelClassFactory.getVersionPackageName(version));
+            
+            template.merge(ctx, out);
+            return out.toString();
+            
+        }
+        
+        
+        
         //System.out.println("Making primitive: " + datatype);
         StringBuffer source = new StringBuffer();
         
@@ -268,26 +305,28 @@ public class DataTypeGenerator extends Object {
         source.append("import ca.uhn.hl7v2.model.AbstractPrimitive;\r\n\r\n");
         source.append("/**\r\n");
         source.append(" * <p>Represents the HL7 ");
-        source.append(datatype);
+        String description = theDatatype.getName();
+        String dataType = theDatatype.getType();
+        source.append(dataType);
         source.append(" (");
         source.append(description);
         source.append(") datatype.  A ");
-        source.append(datatype);
+        source.append(dataType);
         source.append(" contains a single String value.\r\n");
         source.append(" */\r\n");
         source.append("public class ");
-        source.append(datatype);
+        source.append(dataType);
         source.append(" extends AbstractPrimitive ");
         source.append(" {\r\n\r\n");
         //source.append("\tprotected String value;\r\n\r\n");
         source.append("\t/**\r\n");
         source.append("\t * Constructs an uninitialized ");
-        source.append(datatype);
+        source.append(dataType);
         source.append(".\r\n");
         source.append("\t * @param message the Message to which this Type belongs\r\n");
         source.append("\t */\r\n");
         source.append("\tpublic ");
-        source.append(datatype);
+        source.append(dataType);
         source.append("(Message message) {\r\n");
         source.append("\t\tsuper(message);\r\n");
         source.append("\t}\r\n\r\n");
@@ -335,11 +374,29 @@ public class DataTypeGenerator extends Object {
      * dataTypes array contains the data type names (e.g. ST) of each component. 
      * The descriptions array contains the corresponding descriptions (e.g. string).
      */
-    private static String makeComposite(String dataType, String description, String[] dataTypes, 
-            String[] descriptions, int[] tables, String version) throws HL7Exception {
+    private static String makeComposite(String dataType, String description, DatatypeComponentDef[] componentDefs, String[] dataTypes, 
+            String[] descriptions, int[] tables, String version, String basePackage) throws Exception {
+        
+        if (true) {
+            
+            StringWriter out = new StringWriter();
+
+            Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/datatype_composite.vsm");
+            Context ctx = new VelocityContext();
+            ctx.put("datatypeName", dataType);
+            ctx.put("version", version);
+            ctx.put("basePackageName", basePackage);
+            ctx.put("components", Arrays.asList(componentDefs));
+            ctx.put("description", description);
+            
+            template.merge(ctx, out);
+            return out.toString();
+            
+        }
+        
         StringBuffer source = new StringBuffer();
         source.append("package ");
-        source.append(DefaultModelClassFactory.getVersionPackageName(version));
+        source.append(basePackage);
         source.append("datatype;\r\n\r\n");
         source.append("import ca.uhn.hl7v2.model.Composite;\r\n");
         source.append("import ca.uhn.hl7v2.model.DataTypeException;\r\n");
@@ -461,5 +518,21 @@ public class DataTypeGenerator extends Object {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }*/
+    }
+
+    public static void writeDatatype(String theFileName, String theVersion, DatatypeDef theFieldDef, String theBasePackage) throws Exception {
+        
+        String text;
+        if (theFieldDef.getSubComponentDefs().isEmpty()) {
+            text = makePrimitive(theFieldDef, theVersion, theBasePackage);
+        } else {
+            text = makeComposite(theFieldDef.getType(), theFieldDef.getName(), theFieldDef.getSubComponentDefs().toArray(new DatatypeComponentDef[0]), null, null, null, theVersion, theBasePackage);
+        }
+
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(theFileName, false), SourceGenerator.ENCODING));
+        writer.write(text);
+        writer.flush();
+        writer.close();
+        
     }
 }

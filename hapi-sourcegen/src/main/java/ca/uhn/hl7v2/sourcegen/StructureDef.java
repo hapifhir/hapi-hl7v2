@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -53,6 +53,11 @@ public interface StructureDef {
      * Returns true if this structure can repeat in the Group.  
      */ 
     public boolean isRepeating();
+
+    /**
+     * Returns true if this structure can repeat in the Group.  
+     */ 
+    public boolean isGroup();
     
     /**
      * Returns a list of the names of the segments that are children of this Structure.  
@@ -63,5 +68,28 @@ public interface StructureDef {
      */
     public String[] getChildSegments(); 
     
+    /**
+     * @return Returns the name without any prefix qualification. This is only different for
+     * group definitions, where the qualification is the message type (i.e. this will 
+     * return PROCEDURE instead of ADT_A01_PROCEDURE)
+     */
+    public String getUnqualifiedName();
+    
+    /** 
+     * Returns the name by which a particular structure can be accessed (eg for use 
+     * in writing accessor source code).  This may differ from the class name of the 
+     * structure of there are >1 structures in the same group with the same class.  
+     * For example in ADT_A01 there are two ROL's that are not in sub-groups - AbstractGroup 
+     * stores the first one under the name ROL and the second under the name ROL2.  This 
+     * method returns names using the same naming scheme.  The order in which this 
+     * method is called matters: it should be called ONCE for each element of the group in the 
+     * order in which they appear.  
+     */
+    public String getIndexName();
+    
+    /**
+     * {@see #getIndexName()}
+     */
+    public void setIndexName(String theIndexName);
 }
 

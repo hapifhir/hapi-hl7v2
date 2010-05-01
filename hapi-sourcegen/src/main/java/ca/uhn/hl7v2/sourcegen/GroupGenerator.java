@@ -40,8 +40,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -58,22 +63,31 @@ public class GroupGenerator extends java.lang.Object {
     private static final HapiLog log = HapiLogFactory.getHapiLog(GroupGenerator.class);
 
 
-    public static void writeGroup(String fileName, GroupDef group, String version, String basePackageName) throws FileNotFoundException, IOException, HL7Exception, IndexOutOfBoundsException,
-            UnsupportedEncodingException {
+    public static void writeGroup(String groupName, String fileName, GroupDef group, String version, String basePackageName) throws Exception {
 
-        Map<String, Object> vars = new HashMap<String, Object>();
-        vars.put("basePackageName", basePackageName);
-        
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
-        out.write(makePreamble(group, version, basePackageName));
-        out.write(makeConstructor(group, version));
-        StructureDef[] shallow = group.getStructures();
-        for (int i = 0; i < shallow.length; i++) {
-            out.write(makeAccessor(group, i));
-        }
-        out.write("}\r\n");
+
+        Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/group.vsm");
+        Context ctx = new VelocityContext();
+        ctx.put("groupName", groupName);
+        ctx.put("version", version);
+        ctx.put("basePackageName", basePackageName);
+        ctx.put("groups", Arrays.asList(group.getStructures()));
+        template.merge(ctx, out);
+
         out.flush();
         out.close();
+        
+//        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
+//        out.write(makePreamble(group, version, basePackageName));
+//        out.write(makeConstructor(group, version));
+//        StructureDef[] shallow = group.getStructures();
+//        for (int i = 0; i < shallow.length; i++) {
+//            out.write(makeAccessor(group, i));
+//        }
+//        out.write("}\r\n");
+//        out.flush();
+//        out.close();
     }
 
 
@@ -106,11 +120,9 @@ public class GroupGenerator extends java.lang.Object {
      *            the directory to which files should be written
      * @param message
      *            the message to which this group belongs
-     * @throws HL7Exception
-     *             if the repetition and optionality markers are not properly
-     *             nested.
+     * @throws Exception 
      */
-    public static GroupDef writeGroup(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws HL7Exception, IOException {
+    public static GroupDef writeGroup(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws Exception {
 
         // make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
@@ -121,7 +133,7 @@ public class GroupGenerator extends java.lang.Object {
         GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message);
 
         String fileName = targetDir.getPath() + "/" + group.getName() + ".java";
-        writeGroup(fileName, group, version, DefaultModelClassFactory.getVersionPackageName(version));
+        writeGroup(group.getName(), fileName, group, version, DefaultModelClassFactory.getVersionPackageName(version));
 
         return group;
     }
@@ -146,7 +158,7 @@ public class GroupGenerator extends java.lang.Object {
      * GroupDefs.
      * </p>
      */
-    public static GroupDef getGroupDef(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws HL7Exception, IOException {
+    public static GroupDef getGroupDef(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws Exception {
         GroupDef ret = null;
         boolean required = true;
         boolean repeating = false;

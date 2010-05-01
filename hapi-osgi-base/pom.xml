@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.0-beta1</version>
+		<version>1.1-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -20,53 +20,53 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
-			<version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v22</artifactId>
-			<version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v23</artifactId>
-			<version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v231</artifactId>
-			<version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v24</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+            <version>${hapi.version.structures}</version>
 			<version>1.0-beta1</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v25</artifactId>
+            <version>${hapi.version.structures}</version>
 			<version>1.0-beta1</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v251</artifactId>
-			<version>1.0-beta1</version>
-            <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v26</artifactId>
+            <version>${hapi.version.structures}</version>
 			<version>1.0-beta1</version>
             <scope>provided</scope>
 		</dependency>

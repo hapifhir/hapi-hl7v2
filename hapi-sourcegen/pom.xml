@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.0</version>
+		<version>1.1-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -43,6 +43,17 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.6.3</version>
+        </dependency>
+        <dependency>
+            <!-- Needed by velovity -->
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.5.6</version>
         </dependency>
 
 		<!-- Maven Deps -->		

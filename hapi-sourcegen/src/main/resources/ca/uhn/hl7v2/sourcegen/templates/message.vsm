@@ -1,0 +1,167 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+
+package ${basePackageName}message;
+
+import ${basePackageName}group.*;
+import ${basePackageName}segment.*;
+
+import ca.uhn.log.HapiLogFactory;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.model.AbstractMessage;
+
+/**
+ * <p>Represents a $message message structure (see chapter ${chapter}). This structure contains the 
+ * following elements: </p>
+#foreach ( $segment in $segments )
+    #if (${segment.isRequired()})
+      #set ($reqd = "")
+    #else
+      #set ($reqd = "optional")
+    #end
+    #if (${segment.isRepeating()})
+      #set ($rept = "repeating")
+    #else
+      #set ($rept = "")
+    #end                                                       
+ * ${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b>
+#end
+ */
+public class $message extends AbstractMessage  {
+
+    /** 
+     * Creates a new $message message with custom ModelClassFactory.
+     */
+    public ${message}(ModelClassFactory factory) {
+       super(factory);
+       init(factory);
+    }
+
+    /**
+     * Creates a new $message message with DefaultModelClassFactory. 
+     */ 
+    public ${message}() { 
+       super(new DefaultModelClassFactory());
+       init(new DefaultModelClassFactory());
+    }
+
+    private void init(ModelClassFactory factory) {
+       try {
+#foreach ( $segment in $segments )
+    #if (${segment.required})
+      #set ($reqd = "true")
+    #else
+      #set ($reqd = "false")
+    #end
+    #if ($segment.repeating)
+      #set ($rept = "true")
+    #else
+      #set ($rept = "false")
+    #end
+          this.add(${segment.name}.class, $reqd, $rept);
+#end
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
+       }
+    }
+
+    /** {@inheritDoc} */
+    public String getVersion() {
+       return "$version";
+    }
+
+
+#foreach ( $segment in $segments )
+
+    /**
+     * Returns
+#if ($segment.repeating)
+     * the first repetition of 
+#end      
+     * $segment.indexName (${segment.description}) - creates it if necessary
+     */
+    public $segment.name get${segment.indexName}() { 
+       ${segment.name} ret = null;
+       try {
+          ret = (${segment.name})this.get("${segment.name}");
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          throw new RuntimeException(e);
+       }
+       return ret;
+    }
+
+
+#if ($segment.repeating)
+    /**
+     * Returns a specific repetition of
+     * $segment.indexName (${segment.description}) - creates it if necessary
+     *
+     * @param rep The repetition index (0-indexed, i.e. the first repetition is at index 0)
+     * @throws HL7Exception if the repetition requested is more than one 
+     *     greater than the number of existing repetitions.
+     */
+    public $segment.name get${segment.indexName}(int rep) { 
+       $segment.name ret = null;
+       try {
+          ret = (${segment.name})this.get("${segment.name}", rep);
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          throw new RuntimeException(e);
+       }
+       return ret;
+    }
+
+    /** 
+     * Returns the number of existing repetitions of ${segment.indexName} 
+     */ 
+    public int get${segment.indexName}Reps() { 
+        int reps = -1; 
+        try { 
+            reps = this.getAll("${segment.name}").length; 
+        } catch (HL7Exception e) { 
+            String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
+            HapiLogFactory.getHapiLog(this.getClass()).error(message, e); 
+            throw new RuntimeException(message);
+        } 
+        return reps; 
+    } 
+
+    /**
+     * Inserts a specific repetition of ${segment.indexName} (${segment.description})
+     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     */
+    public void insert${segment.indexName}(${segment.name} structure, int rep) throws HL7Exception { 
+       super.insertRepetition( "${segment.indexName}", structure, rep);
+    }
+
+
+    /**
+     * Inserts a specific repetition of ${segment.indexName} (${segment.description})
+     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     */
+    public ${segment.name} insert${segment.indexName}(int rep) throws HL7Exception { 
+       return (${segment.name})super.insertRepetition("${segment.indexName}", rep);
+    }
+
+
+    /**
+     * Removes a specific repetition of ${segment.indexName} (${segment.description})
+     * @see AbstractGroup\#removeRepetition(String, int) 
+     */
+    public ${segment.name} remove${segment.indexName}(int rep) throws HL7Exception { 
+       return (${segment.name})super.removeRepetition("${segment.indexName}", rep);
+    }
+
+#end
+
+#end
+
+}
+

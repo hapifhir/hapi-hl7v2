@@ -37,12 +37,18 @@ import java.io.IOException;
 import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -162,11 +168,12 @@ public class SegmentGenerator extends java.lang.Object {
 			ResultSet rs = stmt.executeQuery(sql.toString());
 
 			List usedFieldDescs = new ArrayList();
+			int index = 0;
 			while (rs.next()) {
 				if (segDesc == null) {
 					segDesc = rs.getString(9);
 				}
-				se = new SegmentElement();
+				se = new SegmentElement(name, version, index++);
 				se.field = rs.getInt(2);
 				se.rep = rs.getString(3);
 				se.repetitions = rs.getInt(4);
@@ -539,10 +546,22 @@ public class SegmentGenerator extends java.lang.Object {
 		return retVal;
 	}
 
-	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackageString) throws IOException, HL7Exception {
+	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages) throws Exception {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
-		String string = createSegmentString(version, segmentName, elements, description, basePackage, datatypePackageString);
-		out.write(string);
+		
+        Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/segment.vsm");
+        Context ctx = new VelocityContext();
+        ctx.put("segmentName", segmentName);
+        ctx.put("version", version);
+        ctx.put("basePackageName", basePackage);
+        ctx.put("elements", elements);
+        ctx.put("datatypePackages", datatypePackages);
+        
+        template.merge(ctx, out);
+		
+//      String string = createSegmentString(version, segmentName, elements, description, basePackage, datatypePackageString);
+//      out.write(string);
+		
 		out.flush();
 		out.close();
 	}
