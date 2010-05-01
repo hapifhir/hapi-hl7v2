@@ -30,8 +30,6 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An abstract Type that provides a default implementation of getName(). 
@@ -40,8 +38,8 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractType implements Type {
 
-    private ExtraComponents extra;
-    private Message message;
+    private final ExtraComponents extra;
+    private final Message message;
     
     /** 
      * Creates a new instance of AbstractType

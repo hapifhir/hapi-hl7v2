@@ -47,6 +47,7 @@ public class GroupDef implements StructureDef {
     private boolean required;
     private boolean repeating;
     private HashMap existingNames;
+    private String myIndexName;
     
     
     /** Creates new GroupDef */
@@ -97,6 +98,9 @@ public class GroupDef implements StructureDef {
      */
     public void addStructure(StructureDef s) {
         elements.add(s);
+        
+        String indexName = getIndexName(s.getUnqualifiedName());
+        s.setIndexName(indexName);
     }
     
     /**
@@ -136,7 +140,7 @@ public class GroupDef implements StructureDef {
      * method is called matters: it should be called ONCE for each element of the group in the 
      * order in which they appear.  
      */
-    protected String getIndexName(String name) {
+    public String getIndexName(String name) {
         //see if this name is already being used 
         Object o = existingNames.get(name);
         int c = 2;
@@ -187,4 +191,22 @@ public class GroupDef implements StructureDef {
 		return "GroupDef[" + groupName +"]";
 	}
 
+    public boolean isGroup() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getIndexName() {
+        return myIndexName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setIndexName(String theIndexName) {
+        myIndexName = theIndexName;
+    }    
+    
 }

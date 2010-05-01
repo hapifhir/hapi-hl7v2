@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -27,6 +27,11 @@ this file under either the MPL or the GPL.
 */
 
 package ca.uhn.hl7v2.sourcegen;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Information about a message segment used in the creation of 
@@ -42,6 +47,8 @@ public class SegmentDef implements StructureDef {
     private String description;
     private boolean required;
     private boolean repeating;
+    private String myIndexName;
+    private List<DatatypeDef> myFieldDefs = new ArrayList<DatatypeDef>();
     
     /** Creates new SegmentDef */
     public SegmentDef(String name, String groupName, boolean required, boolean repeating, String description) {
@@ -49,7 +56,15 @@ public class SegmentDef implements StructureDef {
         this.groupName = groupName;
         this.required = required;
         this.repeating = repeating;
-        this.description = description;
+        this.description = StringUtils.defaultString(description);
+    }
+
+    public void addFieldDef(DatatypeDef theFieldDef) {
+        myFieldDefs.add(theFieldDef);
+    }
+    
+    public List<DatatypeDef> getFieldDefs() {
+        return myFieldDefs;
     }
 
     /**
@@ -108,6 +123,31 @@ public class SegmentDef implements StructureDef {
      */
     public String toString() {
         return "SegmentDef[name=" + name + ", groupName=" + groupName + ", description=" + description + "]";
+    }
+
+    public boolean isGroup() {
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getUnqualifiedName() {
+        return getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getIndexName() {
+        return myIndexName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setIndexName(String theIndexName) {
+        myIndexName = theIndexName;
     }    
     
 }

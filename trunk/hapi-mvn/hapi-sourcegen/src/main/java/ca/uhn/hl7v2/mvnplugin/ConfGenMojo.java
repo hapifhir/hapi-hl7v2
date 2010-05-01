@@ -24,27 +24,21 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
 
-*/
+ */
 
 package ca.uhn.hl7v2.mvnplugin;
 
-import ca.uhn.hl7v2.conf.ProfileException;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 
-import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceException;
-import ca.uhn.hl7v2.conf.classes.generator.builders.DeploymentManager;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.sourcegen.conf.GenerateDataTypesEnum;
 import ca.uhn.hl7v2.sourcegen.conf.ProfileSourceGenerator;
 
 /**
@@ -57,9 +51,8 @@ import ca.uhn.hl7v2.sourcegen.conf.ProfileSourceGenerator;
  * @requiresProject
  * @inheritedByDefault false
  */
-public class ConfGenMojo extends AbstractMojo
-{
-    
+public class ConfGenMojo extends AbstractMojo {
+
     /**
      * The maven project.
      * 
@@ -69,7 +62,6 @@ public class ConfGenMojo extends AbstractMojo
      */
     private MavenProject project;
 
-    
     /**
      * The target directory for the generated source
      * 
@@ -77,7 +69,6 @@ public class ConfGenMojo extends AbstractMojo
      * @required
      */
     private String targetDirectory;
-
 
     /**
      * The conformance profile (XML file path) to use
@@ -87,7 +78,6 @@ public class ConfGenMojo extends AbstractMojo
      */
     private String profile;
 
-    
     /**
      * The package for the generated source
      * 
@@ -95,31 +85,66 @@ public class ConfGenMojo extends AbstractMojo
      * @required
      */
     private String packageName;
-    
-    
+
+    /**
+     * <p>
+     * Should data types be generated. Valid options are:
+     * </p>
+     * <ul>
+     * <li><b>NONE</b>: Do not generate custom data types, use HAPI's normal
+     * data type classes for the HL7 version that the profile corresponds to
+     * <li><b>SINGLE</b>: Generate a single instance of each data type. In this
+     * case, hapi will generate a custom data type for the first instance of
+     * each type that it finds. So, any customizations that need to be made must
+     * be made in the very first time that a particular data type is used within
+     * a profile.
+     * </ul>
+     * 
+     * @parameter default-value="NONE"
+     */
+    private String generateDataTypes = "NONE";
+
     /**
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-    	try {
-    		String profileString;
-			FileReader reader = new FileReader(profile);
-			profileString = IOUtil.toString(reader);
+        GenerateDataTypesEnum genDt;
+        try {
+            genDt = GenerateDataTypesEnum.valueOf(generateDataTypes);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException("Unknown \"generateDataTypes\" value: " + generateDataTypes);
+        }
+
+        try {
+
+            String profileString;
+            FileReader reader = new FileReader(profile);
+            profileString = IOUtil.toString(reader);
 
             ProfileParser profileParser = new ProfileParser(false);
             RuntimeProfile runtimeProfile = profileParser.parse(profileString);
 
-	    	ProfileSourceGenerator gen = new ProfileSourceGenerator(runtimeProfile, targetDirectory, packageName);
-	    	gen.generate();
+            ProfileSourceGenerator gen = new ProfileSourceGenerator(runtimeProfile, targetDirectory, packageName, genDt);
+            gen.generate();
 
             getLog().info("Adding path to compile sources: " + targetDirectory);
             project.addCompileSourceRoot(targetDirectory);
-		} catch (Exception e) {
-			throw new MojoExecutionException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
-		
+
         project.addCompileSourceRoot(targetDirectory);
+
+    }
+
+    public static void main(String[] args) throws MojoExecutionException, MojoFailureException {
+
+        ConfGenMojo tst = new ConfGenMojo();
+        tst.targetDirectory = "hapi-test/target/generated-sources/confgen";
+        tst.packageName = "ca.uhn.hl7v2.test.conf";
+        tst.profile = "hapi-test/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml";
+        tst.execute();
 
     }
 

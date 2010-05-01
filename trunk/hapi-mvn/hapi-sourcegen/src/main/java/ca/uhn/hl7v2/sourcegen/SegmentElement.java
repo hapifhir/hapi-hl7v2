@@ -41,9 +41,58 @@ public class SegmentElement  {
     public int table;
     public String opt;
     public String type;
+    private String myVersion;
+    private String mySegmentName;
+    private int myIndexWithinSegment;
 
     /** Creates new SegmentElement */
-    public SegmentElement() {
+    public SegmentElement(String theSegmentName, String theVersion, int theIndexWithinSegment) {
+        mySegmentName = theSegmentName;
+        myVersion = theVersion;
+        myIndexWithinSegment = theIndexWithinSegment;
     }
 
+    public boolean isRequired() {
+        return "R".equalsIgnoreCase(opt);
+    }
+    
+    public boolean isRepeating() {
+        return repetitions > 1 || repetitions == -1;
+    }
+    
+    public String getAlternateType() {
+        return SourceGenerator.getAlternateType(type, myVersion);
+    }
+    
+    public boolean isIdType() {
+        return (type.equals("ID") || type.equals("IS"));
+    }
+    
+    public int getField() {
+        return field;
+    }
+
+    public int getRepetitions() {
+        return repetitions;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getTable() {
+        return table;
+    }
+
+    public String getAccessorName() {
+        return SourceGenerator.makeAccessorName(desc, mySegmentName);
+    }
+
+    public String getAlternateAccessorName() {
+        return SourceGenerator.makeAlternateAccessorName(desc, mySegmentName, myIndexWithinSegment);
+    }
 }

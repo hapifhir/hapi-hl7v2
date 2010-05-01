@@ -5,7 +5,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0</version>
+	<version>1.1-beta1</version>
 	<name>HAPI</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -232,7 +232,8 @@ pageTracker._trackPageview();
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<hapi.version>1.0</hapi.version>
+		<hapi.version>1.1-beta1</hapi.version>
+        <hapi.version.structures>1.0</hapi.version.structures>
 	</properties>
 
 	<reporting>

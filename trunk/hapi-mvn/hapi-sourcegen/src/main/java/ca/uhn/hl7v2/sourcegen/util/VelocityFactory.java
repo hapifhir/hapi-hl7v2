@@ -3,6 +3,12 @@
  */
 package ca.uhn.hl7v2.sourcegen.util;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.springframework.ui.velocity.CommonsLoggingLogSystem;
+
 
 /**
  * Simple utility class to generate velocity engines.
@@ -10,7 +16,7 @@ package ca.uhn.hl7v2.sourcegen.util;
  * Copied from UHN internal class under "commons-se"
  * 
  * @author <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew </a>
- * @version $Revision: 1.1 $ updated on $Date: 2010-03-16 17:13:22 $ by $Author:
+ * @version $Revision: 1.2 $ updated on $Date: 2010-05-01 20:10:48 $ by $Author:
  *              jagnew $
  */
 public class VelocityFactory
@@ -32,10 +38,10 @@ public class VelocityFactory
     * @throws Exception
     *                If velocity fails to initialize
     */
-//   public static Template getClasspathTemplateInstance(String theTemplate) throws Exception {
-//      VelocityEngine engine = getEngineInstance();
-//      return engine.getTemplate(theTemplate);
-//   }
+   public static Template getClasspathTemplateInstance(String theTemplate) throws Exception {
+      VelocityEngine engine = getEngineInstance();
+      return engine.getTemplate(theTemplate);
+   }
 
 
    /**
@@ -43,15 +49,17 @@ public class VelocityFactory
     * @throws Exception
     *                If engine fails to initialize
     */
-//   public static VelocityEngine getEngineInstance() throws Exception {
-//      VelocityEngine engine = new VelocityEngine();
-//      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-//      engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ClasspathResourceLoader.class
-//            .getName());
-//      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLoggingLogSystem.class.getName());
-//      engine.setProperty(RuntimeConstants.VM_LIBRARY, "");
-//      engine.init();
-//      return engine;
-//   }
+   public static VelocityEngine getEngineInstance() throws Exception {
+      VelocityEngine engine = new VelocityEngine();
+      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+      engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ClasspathResourceLoader.class
+            .getName());
+      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLoggingLogSystem.class.getName());
+      engine.setProperty(RuntimeConstants.VM_LIBRARY, "");
+      engine.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, Boolean.TRUE);
+      engine.init();
+      engine.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, Boolean.TRUE);
+      return engine;
+   }
 
 }

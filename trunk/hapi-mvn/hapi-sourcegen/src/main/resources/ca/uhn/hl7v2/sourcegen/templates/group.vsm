@@ -1,0 +1,160 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+
+package ${basePackageName}group;
+
+import ${basePackageName}segment.*;
+
+import ca.uhn.log.HapiLogFactory;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.model.AbstractMessage;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.AbstractGroup;
+
+/**
+ * <p>Represents a $groupName group structure. This structure contains the 
+ * following elements: </p>
+#foreach ( $group in $groups )
+    #if (${group.isRequired()})
+      #set ($reqd = "")
+    #else
+      #set ($reqd = "optional")
+    #end
+    #if (${group.isRepeating()})
+      #set ($rept = "repeating")
+    #else
+      #set ($rept = "")
+    #end                                                       
+ * ${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept</b>
+#end
+ */
+public class $groupName extends AbstractGroup {
+
+    /** 
+     * Creates a new $groupName group
+     */
+    public ${groupName}(Group parent, ModelClassFactory factory) {
+       super(parent, factory);
+       init(factory);
+    }
+
+    private void init(ModelClassFactory factory) {
+       try {
+#foreach ( $group in $groups )
+    #if (${group.required})
+      #set ($reqd = "true")
+    #else
+      #set ($reqd = "false")
+    #end
+    #if ($group.repeating)
+      #set ($rept = "true")
+    #else
+      #set ($rept = "false")
+    #end
+          this.add(${group.name}.class, $reqd, $rept);
+#end
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating $groupName - this is probably a bug in the source code generator.", e);
+       }
+    }
+
+    /** {@inheritDoc} */
+    public String getVersion() {
+       return "$version";
+    }
+
+
+#foreach ( $group in $groups )
+
+    /**
+     * Returns
+#if ($group.repeating)
+     * the first repetition of 
+#end      
+     * $group.indexName (${group.description}) - creates it if necessary
+     */
+    public $group.name get${group.indexName}() { 
+       ${group.name} ret = null;
+       try {
+          ret = (${group.name})this.get("${group.indexName}");
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          throw new RuntimeException(e);
+       }
+       return ret;
+    }
+
+
+#if ($group.repeating)
+    /**
+     * Returns a specific repetition of
+     * $group.unqualifiedName (${group.description}) - creates it if necessary
+     *
+     * @param rep The repetition index (0-indexed, i.e. the first repetition is at index 0)
+     * @throws HL7Exception if the repetition requested is more than one 
+     *     greater than the number of existing repetitions.
+     */
+    public $group.name get${group.indexName}(int rep) { 
+       $group.name ret = null;
+       try {
+          ret = (${group.name})this.get("${group.indexName}", rep);
+       } catch(HL7Exception e) {
+          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          throw new RuntimeException(e);
+       }
+       return ret;
+    }
+
+    /** 
+     * Returns the number of existing repetitions of ${group.indexName} 
+     */ 
+    public int get${group.indexName}Reps() { 
+        int reps = -1; 
+        try { 
+            reps = this.getAll("${group.indexName}").length; 
+        } catch (HL7Exception e) { 
+            String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
+            HapiLogFactory.getHapiLog(this.getClass()).error(message, e); 
+            throw new RuntimeException(message);
+        } 
+        return reps; 
+    } 
+
+    /**
+     * Inserts a specific repetition of ${group.indexName} (${group.description})
+     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     */
+    public void insert${group.indexName}(${group.name} structure, int rep) throws HL7Exception { 
+       super.insertRepetition("${group.indexName}", structure, rep);
+    }
+
+
+    /**
+     * Inserts a specific repetition of ${group.indexName} (${group.description})
+     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     */
+    public ${group.name} insert${group.indexName}(int rep) throws HL7Exception { 
+       return (${group.name})super.insertRepetition("${group.indexName}", rep);
+    }
+
+
+    /**
+     * Removes a specific repetition of ${group.indexName} (${group.description})
+     * @see AbstractGroup\#removeRepetition(String, int) 
+     */
+    public ${group.name} remove${group.indexName}(int rep) throws HL7Exception { 
+       return (${group.name})super.removeRepetition("${group.indexName}", rep);
+    }
+
+#end
+
+#end
+
+}
+

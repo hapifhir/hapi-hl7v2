@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.0</version>
+		<version>1.1-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -94,69 +94,84 @@
 
 	<build>
 		<plugins>
-		  <!-- TODO: test confgen<plugin>
+		  <plugin>
 		      <groupId>ca.uhn.hapi</groupId>
 		      <artifactId>hapi-sourcegen</artifactId>
+                <version>${hapi.version}</version>
 		      <executions>
 		          <execution>
+		              <id>no_data_types</id>
 		              <goals>
                           <goal>confgen</goal>
 		              </goals>
 		              <configuration>
 		                  <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-		                  <packageName>ca.uhn.hl7v2.test.conf</packageName>
-		                  <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/VA-ADT_A01.xml</profile>
+		                  <packageName>ca.uhn.hl7v2.test.nodt.conf</packageName>
+		                  <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
+		                  <generateDateTypes>NONE</generateDateTypes>
 		              </configuration>
 		          </execution>
+                  <execution>
+                      <id>single_data_types</id>
+                      <goals>
+                          <goal>confgen</goal>
+                      </goals>
+                      <configuration>
+                          <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+                          <packageName>ca.uhn.hl7v2.test.singledt.conf</packageName>
+                          <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
+                          <generateDateTypes>SINGLE</generateDateTypes>
+                      </configuration>
+                  </execution>
 		      </executions>
 		      <dependencies>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v22</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v23</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v231</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v24</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v251</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v26</artifactId>
-            <version>1.0-beta1</version>
+            <version>${hapi.version.structures}</version>
         </dependency>       
 		      </dependencies>
-		  </plugin> -->
+		  </plugin>
 		</plugins>
 		<resources>
 			<resource>

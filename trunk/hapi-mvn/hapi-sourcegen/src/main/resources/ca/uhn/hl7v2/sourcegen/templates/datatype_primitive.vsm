@@ -1,0 +1,56 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+
+package ${basePackageName}datatype;
+
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.AbstractPrimitive;
+
+#if ( $datatype.specialCasePrimitive )
+#set ( $baseClass = ${normalBasePackageName} + 'datatype.' + ${datatype.type} )
+#else
+#set ( $baseClass = 'AbstractPrimitive' )
+#end
+
+/**
+ * <p>Represents an HL7 ${datatype.type} (${datatype.name}) data type.
+ * A ${datatype.type} contains a single String value.</p>
+ */
+public class ${datatype.type} extends ${baseClass} {
+
+#if ( !$datatype.isType )
+    /**
+     * Constructs an uninitialized ${datatype.type}.
+     * @param message the Message to which this Type belongs
+     */
+    public ${datatype.type}(Message message) {
+        super(message);
+    }
+#end
+#if ( $datatype.idType )
+    /**
+     * Constructs an uninitialized ${datatype.type}.
+     * @param message the Message to which this Type belongs
+     */
+    public ${datatype.type}(Message message, int theTable) {
+        super(message, theTable);
+    }
+#end
+
+
+    /**
+     * @return "${version}"
+     */
+    public String getVersion() {
+        return "${version}";
+    }
+
+}
+
