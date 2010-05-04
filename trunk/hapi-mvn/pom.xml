@@ -60,6 +60,10 @@
 			<name>Nico Vannieuwenhuyze</name>
 			<email>nicovn@users.sourceforge.net</email>
 		</developer>
+		<developer>
+			<name>Christian Ohr</name>
+			<email>ohr@users.sourceforge.net</email>
+		</developer>
 	</developers>
 	<inceptionYear>2001</inceptionYear>
 
