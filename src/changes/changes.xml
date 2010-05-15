@@ -5,14 +5,23 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+        <release version="1.1" date="TBA"
+            description="This section contains features and fixes which will be contained in the next release of HAPI. They may be tested by building from source.">
+            <action type="update" dev="jamesagnew">Update structure classes source generator to use an Apache Velocity based template instead of simple hard-coded string concatenation. This will make it much easier to add new features to the structures in the future.</action>
+            <action type="update" dev="jamesagnew">Message now has a method printStructure(), which returns a useful String for debugging containing a description of the entire structure of the message</action>
+        </release>
+        <release version="1.0.1" date="2010-05-16"
+            description="This release corrects a single issue">
+            <action type="fix" due-to="Irving Reid" issue="3002194">Correct an issue where a NullPointerException occurs if a mandatory segment at the end of a message is not present</action>
+        </release>
 		<release version="1.0" date="2010-04-12"
-            description="This version has not yet been released.">
+            description="This release adds a newly reworked PipeParser, and number of new features">
             <action type="fix">Correct regression introduced in 1.0-beta1 where a second segment within a group with the same name (i.e. the two PID segments in an ADT^A17) fails to parse correctly.</action>
             <action type="fix">Provide default implementation of new abstract method "createNewTypeWithoutReflection" on AbstractSegment class to prevent breaking existing user defined types. Thanks to Christian Ohr for reporting.</action>
             <action type="update" dev="jamesagnew">Clean up logging in ServerSocketStreamSource (used by HL7Server) so that it doesn't spew unneccesary logs while waiting for a connection</action>
             <action type="update" dev="jamesagnew">Remove all test suites (not tests, just the suites), as they cause maven to execute tests twice, and clean up test execution. Full test suie execution is down to ~90 seconds from 10 mins.</action>
 		</release>
-		<release version="1.0-beta1" date="TBA"
+		<release version="1.0-beta1" date="2009-11-28"
             description="This version has not yet been released.">
             <action type="add" due-to="Christian Ohr, Niranjan Sharma"><![CDATA[Add two new ModelClassFactory implementations: <a href="base/apidocs/ca/uhn/hl7v2/parser/CanonicalModelClassFactory.html">CanonicalModelClassFactory</a> (always returns the same version), and <a href="base/apidocs/ca/uhn/hl7v2/parser/CustomModelClassFactory.html">CustomModelClassFactory</a> (provides easy way to use custom structure packages)]]></action>
             <action type="fix" dev="jamesagnew">Fix a bug where formatting escape sequences were stripped from messages (i.e. leave sequences such as /.br/ alone)</action>

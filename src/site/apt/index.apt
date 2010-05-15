@@ -9,6 +9,18 @@ Welcome
 
 What's New
 
+* May 15, 2010
+
+   HAPI 1.0.1 is released.
+   
+   This release fixes a single issue, 
+   {{{https://sourceforge.net/tracker/index.php?func=detail&aid=3002194&group_id=38899&atid=423835}3002194}}, 
+   which is a NullPointerException in PipeParser when parsing malformed messages which are missing
+   a mandatory segment at the end of the message. Thanks to Irving Reid for reporting.
+   
+   If you are not parsing malformed messages, you do not need to upgrade.  
+
+
 * April 24, 2010
 
    HAPI 1.0 is released!

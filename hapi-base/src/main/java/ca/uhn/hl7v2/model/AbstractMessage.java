@@ -223,4 +223,24 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         return retVal;
     }
 
+    /**
+     * Provides an overview of the type and structure of this message
+     */
+    @Override
+    public String toString() {
+        try {
+            return encode();
+        } catch (HL7Exception e) {
+            return (getClass().getName() + " - Failed to create toString(): " + e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String printStructure() throws HL7Exception {
+        StringBuilder builder = new StringBuilder();    
+        appendStructureDescription(builder, 0, false, false, true, true);
+        return builder.toString();
+    }
 }

@@ -35,7 +35,17 @@
 		<developer>
 			<name>James Agnew</name>
 			<email>jamesagnew@users.sourceforge.net</email>
+			<organization>University Health Network</organization>
+			<organizationUrl>http://www.uhn.ca</organizationUrl>
 		</developer>
+        <developer>
+            <name>Christian Ohr</name>
+            <email>ohr@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Niranjan Sharma</name>
+            <email>niranjan.sharma@med.ge.com</email>
+        </developer>
 		<developer>
 			<name>Alexei Guevara</name>
 			<email>aguevara@users.sourceforge.net</email>
@@ -59,10 +69,6 @@
 		<developer>
 			<name>Nico Vannieuwenhuyze</name>
 			<email>nicovn@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Christian Ohr</name>
-			<email>ohr@users.sourceforge.net</email>
 		</developer>
 	</developers>
 	<inceptionYear>2001</inceptionYear>
@@ -317,6 +323,13 @@ pageTracker._trackPageview();
 				<module>hapi-test</module>
 			</modules>
 		</profile>
+        <profile>
+            <id>ROOT</id>
+            <build>
+            </build>
+            <modules>
+            </modules>
+        </profile>
 		<profile>
 			<id>GEN</id>
 			<build>
