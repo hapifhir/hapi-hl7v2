@@ -31,11 +31,10 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private Message myMessage;
     private String myDirection;
     private boolean myNextIsSet;
-    private boolean handleUnexpectedSegments;
-    private List<Position> currentDefinitionPath = new ArrayList<Position>();
+    private boolean myHandleUnexpectedSegments;
+    private List<Position> myCurrentDefinitionPath = new ArrayList<Position>();
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(MessageIterator.class);
-
 
     /*
      * may add configurability later ... private boolean findUpToFirstRequired;
@@ -49,41 +48,41 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     public MessageIterator(Message start, IStructureDefinition startDefinition, String direction, boolean handleUnexpectedSegments) {
         this.myMessage = start;
         this.myDirection = direction;
-        this.handleUnexpectedSegments = handleUnexpectedSegments;
-        this.currentDefinitionPath.add(new Position(startDefinition, 0));
+        this.myHandleUnexpectedSegments = handleUnexpectedSegments;
+        this.myCurrentDefinitionPath.add(new Position(startDefinition, 0));
     }
-
 
     private Position getCurrentPosition() {
-        return currentDefinitionPath.get(currentDefinitionPath.size() - 1);
+        return getTail(myCurrentDefinitionPath);
     }
 
+    private Position getTail(List<Position> theDefinitionPath) {
+        return theDefinitionPath.get(theDefinitionPath.size() - 1);
+    }
 
-    private void popUntilMatchFound() {
-        currentDefinitionPath.remove(currentDefinitionPath.size() - 1);
+    private List<Position> popUntilMatchFound(List<Position> theDefinitionPath) {
+        theDefinitionPath = new ArrayList<Position>(theDefinitionPath.subList(0, theDefinitionPath.size() - 1));
 
-        Position newCurrentPosition = getCurrentPosition();
+        Position newCurrentPosition = getTail(theDefinitionPath);
         IStructureDefinition newCurrentStructureDefinition = newCurrentPosition.getStructureDefinition();
 
         if (newCurrentStructureDefinition.getAllPossibleFirstChildren().contains(myDirection)) {
-            return;
+            return theDefinitionPath;
         }
 
         if (newCurrentStructureDefinition.isFinalChildOfParent()) {
-            // if (newCurrentStructureDefinition.getParent() != null &&
-            // newCurrentStructureDefinition.getFirstSibling().getAllFirstLeafNames().contains(myDirection))
-            // {
-            // newCurrentPosition.setStructureDefinition(newCurrentStructureDefinition.getFirstSibling());
-            // currentDefinitionPath.get(currentDefinitionPath.size() -
-            // 2).incrementRep();
-            if (newCurrentStructureDefinition.getAllPossibleFirstChildren().contains(myDirection)) {
-                return;
+            if (theDefinitionPath.size() > 1) {
+                return popUntilMatchFound(theDefinitionPath); // recurse
             } else {
-                popUntilMatchFound(); // recurse
+                if (log.isDebugEnabled()) {
+                    log.debug("Popped to root of message and did not find a match for " + myDirection);
+                }
+                return null;
             }
         }
-    }
 
+        return theDefinitionPath;
+    }
 
     /**
      * Returns true if another object exists in the iteration sequence.
@@ -107,21 +106,36 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             if (structureDefinition.getName().equals(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
                 myNextIsSet = true;
                 currentPosition.incrementRep();
-            } else if (structureDefinition.isSegment() && structureDefinition.getNextLeaf() == null && !structureDefinition.getNamesOfAllPossibleFollowingLeaves().contains(myDirection)) {
-                if (!handleUnexpectedSegments) {
+            } else if (structureDefinition.isSegment() && structureDefinition.getNextLeaf() == null
+                    && !structureDefinition.getNamesOfAllPossibleFollowingLeaves().contains(myDirection)) {
+                if (!myHandleUnexpectedSegments) {
                     return false;
                 }
                 addNonStandardSegmentAtCurrentPosition();
             } else if (structureDefinition.hasChildren() && structureDefinition.getAllPossibleFirstChildren().contains(myDirection)) {
                 currentPosition.incrementRep();
-                currentDefinitionPath.add(new Position(structureDefinition.getFirstChild(), -1));
+                myCurrentDefinitionPath.add(new Position(structureDefinition.getFirstChild(), -1));
             } else if (!structureDefinition.hasChildren() && !structureDefinition.getNamesOfAllPossibleFollowingLeaves().contains(myDirection)) {
-                if (!handleUnexpectedSegments) {
+                if (!myHandleUnexpectedSegments) {
                     return false;
                 }
                 addNonStandardSegmentAtCurrentPosition();
+                // } else if (structureDefinition.isMessage()) {
+                // if (!handleUnexpectedSegments) {
+                // return false;
+                // }
+                // addNonStandardSegmentAtCurrentPosition();
             } else if (structureDefinition.isFinalChildOfParent()) {
-                popUntilMatchFound();
+                List<Position> newDefinitionPath = popUntilMatchFound(myCurrentDefinitionPath);
+                if (newDefinitionPath != null) {
+                    // found match
+                    myCurrentDefinitionPath = newDefinitionPath;
+                } else {
+                    if (!myHandleUnexpectedSegments) {
+                        return false;
+                    }
+                    addNonStandardSegmentAtCurrentPosition();
+                }
             } else {
                 currentPosition.setStructureDefinition(structureDefinition.getNextSibling());
                 currentPosition.resetRepNumber();
@@ -132,12 +146,11 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         return true;
     }
 
-
     private void addNonStandardSegmentAtCurrentPosition() throws Error {
         if (log.isDebugEnabled()) {
             log.debug("Creating non standard segment on group: " + getCurrentPosition().getStructureDefinition().getParent().getName());
         }
-        List<Position> parentDefinitionPath = new ArrayList<Position>(currentDefinitionPath.subList(0, currentDefinitionPath.size() - 1));
+        List<Position> parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
         Group parentStructure = (Group) navigateToStructure(parentDefinitionPath);
 
         int index = getCurrentPosition().getStructureDefinition().getPosition() + 1;
@@ -150,12 +163,11 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         IStructureDefinition previousSibling = getCurrentPosition().getStructureDefinition();
         IStructureDefinition parentStructureDefinition = parentDefinitionPath.get(parentDefinitionPath.size() - 1).getStructureDefinition();
         NonStandardStructureDefinition nextDefinition = new NonStandardStructureDefinition(parentStructureDefinition, previousSibling, newSegmentName, index);
-        currentDefinitionPath = parentDefinitionPath;
-        currentDefinitionPath.add(new Position(nextDefinition, 0));
+        myCurrentDefinitionPath = parentDefinitionPath;
+        myCurrentDefinitionPath.add(new Position(nextDefinition, 0));
 
         myNextIsSet = true;
     }
-
 
     /**
      * <p>
@@ -190,12 +202,11 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             throw new NoSuchElementException("No more nodes in message");
         }
 
-        Structure currentStructure = navigateToStructure(currentDefinitionPath);
+        Structure currentStructure = navigateToStructure(myCurrentDefinitionPath);
 
         clearNext();
         return currentStructure;
     }
-
 
     private Structure navigateToStructure(List<Position> theDefinitionPath) throws Error {
         Structure currentStructure = null;
@@ -216,23 +227,19 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         return currentStructure;
     }
 
-
     /** Not supported */
     public void remove() {
         throw new UnsupportedOperationException("Can't remove a node from a message");
     }
 
-
     public String getDirection() {
         return this.myDirection;
     }
-
 
     public void setDirection(String direction) {
         clearNext();
         this.myDirection = direction;
     }
-
 
     private void clearNext() {
         myNextIsSet = false;
@@ -245,37 +252,30 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         private IStructureDefinition myStructureDefinition;
         private int myRepNumber = -1;
 
-
         public IStructureDefinition getStructureDefinition() {
             return myStructureDefinition;
         }
-
 
         public void resetRepNumber() {
             myRepNumber = -1;
         }
 
-
         public void setStructureDefinition(IStructureDefinition theStructureDefinition) {
             myStructureDefinition = theStructureDefinition;
         }
 
-
         public int getRepNumber() {
             return myRepNumber;
         }
-
 
         public Position(IStructureDefinition theStructureDefinition, int theRepNumber) {
             myStructureDefinition = theStructureDefinition;
             myRepNumber = theRepNumber;
         }
 
-
         public void incrementRep() {
             myRepNumber++;
         }
-
 
         /** @see Object#equals */
         public boolean equals(Object o) {
@@ -288,12 +288,10 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             return equals;
         }
 
-
         /** @see Object#hashCode */
         public int hashCode() {
             return myStructureDefinition.hashCode() + myRepNumber;
         }
-
 
         public String toString() {
             StringBuffer ret = new StringBuffer();
@@ -312,7 +310,6 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             return ret.toString();
         }
     }
-
 
     /**
      * Must be called after {@link #next()}
