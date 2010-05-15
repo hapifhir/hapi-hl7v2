@@ -1,16 +1,11 @@
 What's New
 
-  This document shows new features for version 1.0 of HAPI. Note that HAPI 1.0 is not yet released,
-  but a beta version is available.
+  This page shows new features in HAPI.
 
-* Version 1.0
+* What's next
 
-  Version 1.0 contains a number of bugfixes. See the {{{changes-report.html}Changelog}} for more information.
-
-** Still To Come
-
-  Note documented here, but still being worked on before the release of HAPI 1.0
-  are two useful features:
+  First, the following features are still in progress, and will be released in an upcoming
+  version of HAPI:
 
   * OSGi support, being worked on by {{{mailto:niranjan.sharma@med.ge.com}Niranjan Sharma}} of GE Healthcare.
 
@@ -18,6 +13,10 @@ What's New
     based on an HL7 conformance profiles generated using Message Workbench. This should make
     constraining messages easier, but more significantly it should make it much easier to
     create message classes for custom message definitions (specs using Z-segments, etc.)
+
+* Version 1.0
+
+  Version 1.0 contains a number of bugfixes. See the {{{changes-report.html}Changelog}} for more information.
 
 ** Parser Speed Improvements
 

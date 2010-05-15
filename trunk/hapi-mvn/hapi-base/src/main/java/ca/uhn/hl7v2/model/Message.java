@@ -160,4 +160,74 @@ public interface Message extends Group {
      */
     public Message generateACK(String theAcknowldegementCode, HL7Exception theException) throws HL7Exception, IOException;
 
+    /**
+     * <p>
+     * Prints a summary of the contents and structure of this message. This is useful for
+     * debugging purposes, if you want to figure out where in the structure of a message
+     * a given segment has been placed.
+     * </p>
+     * <p>
+     * For instance, the following message (containing a few quirks for demonstration purposes):
+     * <code>
+     * MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4\r
+     * EVN|R01
+     * EVN|R02
+     * PID|1
+     * IN1|1
+     * IN1|2
+     * PID|2
+     * </code>
+     * ...produces the following output:
+     * <code>
+     * ADT_A01 (start)
+     *    MSH - MSH|^~\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4
+     *    EVN - EVN|R01
+     *    [ { EVN2 } ] (non-standard) - EVN|R02
+     *    PID - PID|1
+     *    [ PD1 ] - Not populated
+     *    [ { ROL } ] - Not populated
+     *    [ { NK1 } ] - Not populated
+     *    PV1 - Not populated
+     *    [ PV2 ] - Not populated
+     *    [ { ROL2 } ] - Not populated
+     *    [ { DB1 } ] - Not populated
+     *    [ { OBX } ] - Not populated
+     *    [ { AL1 } ] - Not populated
+     *    [ { DG1 } ] - Not populated
+     *    [ DRG ] - Not populated
+     *    PROCEDURE (start)
+     *    [{
+     *       PR1 - Not populated
+     *       [ { ROL } ] - Not populated
+     *    }]
+     *    PROCEDURE (end)
+     *    [ { GT1 } ] - Not populated
+     *    INSURANCE (start)
+     *    [{
+     *       IN1 - IN1|1
+     *       [ IN2 ] - Not populated
+     *       [ { IN3 } ] - Not populated
+     *       [ { ROL } ] - Not populated
+     *    }]
+     *    [{
+     *       IN1 - IN1|2
+     *       [ { PID } ] (non-standard) - PID|2
+     *       [ IN2 ] - Not populated
+     *       [ { IN3 } ] - Not populated
+     *       [ { ROL } ] - Not populated
+     *    }]
+     *    INSURANCE (end)
+     *    [ ACC ] - Not populated
+     *    [ UB1 ] - Not populated
+     *    [ UB2 ] - Not populated
+     *    [ PDA ] - Not populated
+     * ADT_A01 (end)
+     * </code>
+     * </p>
+     * 
+     * @return A summary of the structure
+     * @throws HL7Exception If any problems occur encoding the structure
+     */
+    public String printStructure() throws HL7Exception;
+    
 } 

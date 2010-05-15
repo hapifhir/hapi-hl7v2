@@ -70,19 +70,19 @@
             </item>
             <item name="Source XRef" href="xref/index.html"/>
         </menu>
-	
+
         <menu name="Older Documentation">
             <item name="Parsing Messages" href="parsing.html"/>
             <item name="Installation" href="installation.html"/>
             <item name="Conformance Tools" href="conformance.html"/>
         </menu>
-
+		
         <menu name="Reports">
+            <item name="HAPI Developers" href="team-list.html"/>
             <item name="Unit Test Report" href="surefire-report.html"/>
-            <item name="Team List" href="team-list.html"/>
             <item name="Source Tag List" href="taglist.html"/>
         </menu>
-		
+    
 		<!-- <head>
 			<script type="text/javascript" src="http://www.google-analytics.com/urchin.js"></script>
 			<script type="text/javascript">_uacct = "UA-1395874-1"; urchinTracker();</script>		  
