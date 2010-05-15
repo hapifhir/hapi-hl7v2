@@ -424,21 +424,6 @@ public class PipeParser extends Parser {
 
 
     /**
-     * Returns the component or subcomponent separator from the given encoding
-     * characters.
-     */
-    private static char getSeparator(boolean subComponents, EncodingCharacters encodingChars) {
-        char separator;
-        if (subComponents) {
-            separator = encodingChars.getSubcomponentSeparator();
-        } else {
-            separator = encodingChars.getComponentSeparator();
-        }
-        return separator;
-    }
-
-
-    /**
      * Splits the given composite string into an array of components using the
      * given delimiter.
      */
@@ -809,7 +794,11 @@ public class PipeParser extends Parser {
     @Override
     public String encode(Message source) throws HL7Exception {
         if (myLegacyMode != null && myLegacyMode) {
-            return new OldPipeParser(getFactory()).encode(source);
+            
+            @SuppressWarnings("deprecation")
+            OldPipeParser oldPipeParser = new OldPipeParser(getFactory());
+            
+            return oldPipeParser.encode(source);
         }
         return super.encode(source);
     }
@@ -821,7 +810,11 @@ public class PipeParser extends Parser {
     @Override
     public Message parse(String message) throws HL7Exception, EncodingNotSupportedException {
         if (myLegacyMode != null && myLegacyMode) {
-            return new OldPipeParser(getFactory()).parse(message);
+            
+            @SuppressWarnings("deprecation")
+            OldPipeParser oldPipeParser = new OldPipeParser(getFactory());
+            
+            return oldPipeParser.parse(message);
         }
         return super.parse(message);
     }
