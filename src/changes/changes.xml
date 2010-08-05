@@ -9,6 +9,7 @@
             description="This section contains features and fixes which will be contained in the next release of HAPI. They may be tested by building from source.">
             <action type="update" dev="jamesagnew">Update structure classes source generator to use an Apache Velocity based template instead of simple hard-coded string concatenation. This will make it much easier to add new features to the structures in the future.</action>
             <action type="update" dev="jamesagnew">Message now has a method printStructure(), which returns a useful String for debugging containing a description of the entire structure of the message</action>
+            <action type="fix" dev="jamesagnew">GenericParser ignores custom ModelClassFactory implementations passed into its constructor. Thanks to John R for reporting.</action>
         </release>
         <release version="1.0.1" date="2010-05-16"
             description="This release corrects a single issue">
