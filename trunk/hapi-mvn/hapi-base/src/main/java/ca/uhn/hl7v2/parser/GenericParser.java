@@ -44,8 +44,8 @@ public class GenericParser extends Parser {
 
     private Parser primaryParser;
     private Parser secondaryParser;
-    private PipeParser pipeParser;
-    private XMLParser xmlParser;
+    private final PipeParser pipeParser;
+    private final XMLParser xmlParser;
 
     /** Creates a new instance of GenericParser */
     public GenericParser() {
@@ -60,8 +60,8 @@ public class GenericParser extends Parser {
     public GenericParser(ModelClassFactory theFactory) {
         super(theFactory);
         
-        pipeParser = new PipeParser();
-        xmlParser = new DefaultXMLParser();
+        pipeParser = new PipeParser(theFactory);
+        xmlParser = new DefaultXMLParser(theFactory);
         setPipeParserAsPrimary();
     }
 

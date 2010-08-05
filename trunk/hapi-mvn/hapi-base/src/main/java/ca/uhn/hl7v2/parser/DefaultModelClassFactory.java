@@ -45,7 +45,7 @@ import ca.uhn.log.HapiLogFactory;
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.8 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
+ * @version $Revision: 1.9 $ updated on $Date: 2010-08-05 17:51:16 $ by $Author: jamesagnew $
  */
 public class DefaultModelClassFactory implements ModelClassFactory {
 
@@ -266,11 +266,12 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         Class<?> compClass = null;
         int c = 0;
         while (compClass == null && c < packageList.length) {
+            String classNameToTry = null;
             try {
                 String p = packageList[c];
                 if (!p.endsWith("."))
                     p = p + ".";
-                String classNameToTry = p + subpackage + "." + name;
+                classNameToTry = p + subpackage + "." + name;
 
                 if (log.isDebugEnabled()) {
                     log.debug("Trying to load: " + classNameToTry);                    
@@ -281,6 +282,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
                 }
             }
             catch (ClassNotFoundException cne) {
+                log.debug("Failed to load: " + classNameToTry);                    
                 /* just try next one */
             }
             c++;
