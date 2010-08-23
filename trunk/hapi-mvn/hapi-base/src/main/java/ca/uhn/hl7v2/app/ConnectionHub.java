@@ -77,6 +77,16 @@ public class ConnectionHub {
      */
     public Connection attach(String host, int port, Parser parser, Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
         Connection conn = getExisting(host, port, parser.getClass(), llpClass);
+        if (conn != null && !conn.isOpen()) {
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Discarding connection which appears to be closed. Remote addr: " + conn.getRemoteAddress());
+            }
+            
+            close(conn);
+            conn = null;
+        }
+        
         if (conn == null) {
             try {
                 //Parser p = (Parser) parserClass.newInstance();
