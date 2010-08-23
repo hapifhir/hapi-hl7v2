@@ -154,7 +154,7 @@ public class Varies implements Type {
                     //set class
                     String version = segment.getMessage().getVersion();
 					String obx2Value = obx2.getValue();
-					Class c = factory.getTypeClass(obx2Value, version);
+					Class<? extends Type> c = factory.getTypeClass(obx2Value, version);
 //                    Class c = ca.uhn.hl7v2.parser.Parser.findClass(obx2.getValue(), 
 //                                                    segment.getMessage().getVersion(), 
 //                                                    "datatype");
@@ -168,8 +168,14 @@ public class Varies implements Type {
                     	h.setFieldPosition(2);
                     	throw h;
                     }
-                    v.setData((Type) c.getConstructor(new Class[]{Message.class})
-                            .newInstance(new Object[]{v.getMessage()}));
+
+                    Type newTypeInstance;
+                    try {
+                        newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class}).newInstance(new Object[]{v.getMessage()});
+                    } catch (NoSuchMethodException e) {
+                        newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class, Integer.class}).newInstance(new Object[]{v.getMessage(), 0});
+                    }
+                    v.setData(newTypeInstance);
                 }
                 
             } // for reps
