@@ -498,7 +498,17 @@ public abstract class XMLParser extends Parser {
             int compNum = 0;
             for (int i = 0; i < children.getLength(); i++) {
                 if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    parse(datatypeObject.getComponent(compNum), (Element) children.item(i));
+                    Element nextElement = (Element) children.item(i);
+                    String localName = nextElement.getLocalName();
+                    int dotIndex = localName.indexOf(".");
+                    if (dotIndex > -1) {
+                        compNum = Integer.parseInt(localName.substring(dotIndex + 1)) - 1;
+                    } else {
+                        log.debug("Datatype element " + datatypeElement.getLocalName() 
+                                + " doesn't have a valid numbered name, usgin default index of " + compNum);
+                    }
+                    Type nextComponent = datatypeObject.getComponent(compNum);
+                    parse(nextComponent, nextElement);
                     compNum++;
                 }
             }
