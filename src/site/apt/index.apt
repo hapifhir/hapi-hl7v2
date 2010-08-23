@@ -7,7 +7,33 @@ Welcome
   that conforms to their specification.  The project was initiated by {{{http://www.uhn.ca}University Health Network}} 
   (a large multi-site teaching hospital in Toronto, Canada).  
 
-What's New
+What's New - July 11, 2010
+
+   Two announcements:
+   
+   * The HAPI OSGi Bundle 1.0.1 has been uploaded to the {{{http://hl7api.sourceforge.net/m2/ca/uhn/hapi/hapi-osgi-base/1.0.1/}Maven Repo}}. This is 
+     a relatively new component, that was put together by {{{mailto:niranjan.sharma@med.ge.com}Niranjan}}, so please do note that
+     it is not yet as thoroughly tested as the regular distribution. Any feedback on problems or
+     successful use would be appreciated.
+
+
+
+   * I also have one other development to advertise. I was looking for a project recently to
+     teach myself to use the Google App Engine, and decided to craft up an interactive HL7
+     browser, to make quick lookups of how particular messages are structured a little bit easier.
+     
+     The resulting site is here: {{{http://hapi-xref.appspot.com/}HAPI HL7 Cross Reference}}.
+     
+     This site has the added useful benefit that it will generate {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html}Terser}} 
+     expressions for you, which should make using the Terser a bit easier.
+     
+     I am planning on opening the source code to this app soon, and if anyone would like to
+     get involved, please do get in touch. The codebase has the ability to generate a cross-ref
+     for conformance profiles as well, so I am thinking it might be nice to build up a library
+     of common conformance profiles as well. 
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
 
 * May 15, 2010
 
@@ -19,6 +45,8 @@ What's New
    a mandatory segment at the end of the message. Thanks to Irving Reid for reporting.
    
    If you are not parsing malformed messages, you do not need to upgrade.  
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
 
 
 * April 24, 2010

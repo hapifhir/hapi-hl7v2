@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
@@ -67,7 +68,10 @@ public abstract class Parser {
     private MessageValidator myValidator;
     private static final List<String> versions = Collections.unmodifiableList(Arrays.asList(new String[] { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" }));
 
-
+    static {
+        VersionLogger.init();
+    }
+    
     /**
      * Uses DefaultModelClassFactory for model class lookup. 
      */

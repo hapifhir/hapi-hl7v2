@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -60,6 +61,10 @@ public abstract class AbstractGroup implements Group {
     private Set<String> nonStandardNames;
     private final ModelClassFactory myFactory;
 
+    static {
+        VersionLogger.init();
+    }
+    
     /**
      * This constructor should be used by implementing classes that do not also
      * implement Message.
@@ -599,41 +604,46 @@ public abstract class AbstractGroup implements Group {
             } else if (Segment.class.isAssignableFrom(nextClass)) {
                 
                 int currentIndent = theStringBuilder.length();
-                indent(theStringBuilder, theIndent + 3);
+
+                StringBuilder structurePrefix = new StringBuilder();
+                indent(structurePrefix, theIndent + 3);
                 if (nextOptional) {
-                    theStringBuilder.append("[ ");
+                    structurePrefix.append("[ ");
                 }
                 if (nextRepeating) {
-                    theStringBuilder.append("{ ");
+                    structurePrefix.append("{ ");
                 }
-                theStringBuilder.append(nextName);
+                structurePrefix.append(nextName);
                 if (nextRepeating) {
-                    theStringBuilder.append(" }");
+                    structurePrefix.append(" }");
                 }
                 if (nextOptional) {
-                    theStringBuilder.append(" ]");
+                    structurePrefix.append(" ]");
                 }
 
                 if (this.nonStandardNames != null && this.nonStandardNames.contains(nextName)) {
-                    theStringBuilder.append(" (non-standard)");
+                    structurePrefix.append(" (non-standard)");
                 }
-                theStringBuilder.append(" - ");
+                structurePrefix.append(" - ");
                 
                 currentIndent = theStringBuilder.length() - currentIndent;
                 ArrayList<Structure> nextStructureList = structures.get(nextName);
+                theStringBuilder.append(structurePrefix);
                 if (nextStructureList == null || nextStructureList.isEmpty()) {
                     theStringBuilder.append("Not populated");
+                    theStringBuilder.append(lineSeparator);
                 } else {
                     for (int i = 0; i < nextStructureList.size(); i++) {
                         if (i > 0) {
-                            indent(theStringBuilder, currentIndent);
+                            indent(theStringBuilder, currentIndent + structurePrefix.length());
                         }
                         Segment nextSegment = (Segment)nextStructureList.get(i);
                         theStringBuilder.append(new PipeParser().doEncode(nextSegment, EncodingCharacters.getInstance(getMessage())));
+                        theStringBuilder.append(lineSeparator);
+                        
                     }
                 }
                 
-                theStringBuilder.append(lineSeparator);
             }
         }
 
