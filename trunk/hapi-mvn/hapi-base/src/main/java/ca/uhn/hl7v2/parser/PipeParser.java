@@ -333,9 +333,6 @@ public class PipeParser extends Parser {
         // destination.setName(fields[0]);
         for (int i = 1; i < fields.length; i++) {
             String[] reps = split(fields[i], String.valueOf(encodingChars.getRepetitionSeparator()));
-            if (log.isDebugEnabled()) {
-                log.debug(reps.length + "reps delimited by: " + encodingChars.getRepetitionSeparator());
-            }
 
             // MSH-2 will get split incorrectly so we have to fudge it ...
             boolean isMSH2 = isDelimDefSegment(destination.getName()) && i + fieldOffset == 2;
