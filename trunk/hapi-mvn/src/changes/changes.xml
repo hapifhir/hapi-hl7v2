@@ -10,6 +10,11 @@
             <action type="update" dev="jamesagnew">Update structure classes source generator to use an Apache Velocity based template instead of simple hard-coded string concatenation. This will make it much easier to add new features to the structures in the future.</action>
             <action type="update" dev="jamesagnew">Message now has a method printStructure(), which returns a useful String for debugging containing a description of the entire structure of the message</action>
             <action type="fix" dev="jamesagnew">GenericParser ignores custom ModelClassFactory implementations passed into its constructor. Thanks to John R for reporting.</action>
+            <action type="fix" due-to="Yildiray Kabak">XML parser now parses subsequent datatype components correctly when a component is missing. E.g. if ED.1 is missing but ED.2 is present: Previously, ED.2 would be parsed as ED.1.</action>
+            <action type="fix" due-to="Torsten from Agfa Healthcare" issue="3031998">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
+            <action type="fix" due-to="Karl Weller" issue="3027567">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
+            <action type="fix" due-to="Kalle Eskola">Add check to ConnectionHub to avoid returning a connection which was explicitly closed. Also update "send and receive" example in documentation to show correct way of discarding a connection using ConnectionHub.</action>
+            <action type="add" dev="jamesagnew">HAPI now logs the current version as it is being initialized, for troubleshooting purposes.</action>
         </release>
         <release version="1.0.1" date="2010-05-16"
             description="This release corrects a single issue">

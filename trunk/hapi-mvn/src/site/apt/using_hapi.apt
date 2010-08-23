@@ -15,9 +15,9 @@ Adding HAPI to your application
 * HAPI Libraries
 
 *-----------------------------+----------------------------------------------------------------------------------+ 
-| hapi-base-1.0.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
+| hapi-base-0.6.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
 *-----------------------------+----------------------------------------------------------------------------------+
-| hapi-structures-vXX-1.0.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
+| hapi-structures-vXX-0.6.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
 *-----------------------------+----------------------------------------------------------------------------------+
 
 * HAPI Dependencies
@@ -59,12 +59,12 @@ Adding HAPI to your application
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
         <!-- 
              Add hapi-structures-v22, v23, etc. depending on which versions 
@@ -72,56 +72,4 @@ Adding HAPI to your application
         -->     
 ---
 
-** Adding all Maven Dependencies
-
-  If you are not sure which versions of HL7 you will need to parse, or was to support all versions,
-  use the following dependency section. Note that this will result in almost 20 Mb of dependencies
-  being added to your project:
-
----
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-base</artifactId>
-            <version>1.0</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v21</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v22</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v23</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v231</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v24</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v25</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v251</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v26</artifactId>
-            <version>1.0</version>
-        </dependency>
----
+  
