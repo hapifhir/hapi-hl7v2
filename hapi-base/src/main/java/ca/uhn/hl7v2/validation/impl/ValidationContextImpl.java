@@ -33,25 +33,26 @@ import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
+import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
 /**
  * A default implementation of <code>ValidationContext</code>. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-08-09 13:31:13 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2010-08-23 01:14:44 $ by $Author: jamesagnew $
  */
 public class ValidationContextImpl implements ValidationContext, Serializable {
 
-    private List myPrimitiveRuleBindings;
-    private List myMessageRuleBindings;
-    private List myEncodingRuleBindings;
+    private List<RuleBinding> myPrimitiveRuleBindings;
+    private List<RuleBinding> myMessageRuleBindings;
+    private List<RuleBinding> myEncodingRuleBindings;
     private boolean myCheckPrimitivesFlag;
     
     public ValidationContextImpl() {
-        myPrimitiveRuleBindings = new ArrayList(30);
-        myMessageRuleBindings = new ArrayList(20);
-        myEncodingRuleBindings = new ArrayList(10);
+        myPrimitiveRuleBindings = new ArrayList<RuleBinding>(30);
+        myMessageRuleBindings = new ArrayList<RuleBinding>(20);
+        myEncodingRuleBindings = new ArrayList<RuleBinding>(10);
         myCheckPrimitivesFlag = true;
     }
 
@@ -60,7 +61,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
      * @param theType ignored 
      */
     public PrimitiveTypeRule[] getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
-        List active = new ArrayList(myPrimitiveRuleBindings.size());
+        List<Rule> active = new ArrayList<Rule>(myPrimitiveRuleBindings.size());
         for (int i = 0; i < myPrimitiveRuleBindings.size(); i++) {
             Object o = myPrimitiveRuleBindings.get(i);
             if ( !(o instanceof RuleBinding) ) {
@@ -80,7 +81,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
     /**
      * @return a List of <code>RuleBinding</code>s for <code>PrimitiveTypeRule</code>s.    
      */
-    public List getPrimitiveRuleBindings() {
+    public List<RuleBinding> getPrimitiveRuleBindings() {
         return myPrimitiveRuleBindings;
     }
 
@@ -90,7 +91,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
      */
     public MessageRule[] getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
             
-        List active = new ArrayList(myMessageRuleBindings.size());
+        List<Rule> active = new ArrayList<Rule>(myMessageRuleBindings.size());
         for (int i = 0; i < myMessageRuleBindings.size(); i++) {
             Object o = myMessageRuleBindings.get(i);
             if ( !(o instanceof RuleBinding) ) {
@@ -110,7 +111,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
     /**
      * @return a List of <code>RuleBinding</code>s for <code>MessageRule</code>s.    
      */
-    public List getMessageRuleBindings() {
+    public List<RuleBinding> getMessageRuleBindings() {
         return myMessageRuleBindings;
     }
 
@@ -118,7 +119,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
      * @see ca.uhn.hl7v2.validation.ValidationContext#getEncodingRules(java.lang.String, java.lang.String)
      */
     public EncodingRule[] getEncodingRules(String theVersion, String theEncoding) {
-        List active = new ArrayList(myEncodingRuleBindings.size());
+        List<Rule> active = new ArrayList<Rule>(myEncodingRuleBindings.size());
         for (int i = 0; i < myEncodingRuleBindings.size(); i++) {
             Object o = myEncodingRuleBindings.get(i);
             if ( !(o instanceof RuleBinding) ) {
@@ -138,7 +139,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
     /**
      * @return a List of <code>RuleBinding</code>s for <code>EncodingRule</code>s.    
      */
-    public List getEncodingRuleBindings() {
+    public List<RuleBinding> getEncodingRuleBindings() {
         return myEncodingRuleBindings;
     }
 

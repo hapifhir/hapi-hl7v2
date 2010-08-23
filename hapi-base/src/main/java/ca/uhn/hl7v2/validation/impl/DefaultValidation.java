@@ -33,7 +33,7 @@ import ca.uhn.hl7v2.validation.Rule;
  * This can be used as-is for a reasonable level of primitive type validation.   
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-03-26 00:39:49 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2010-08-23 01:14:44 $ by $Author: jamesagnew $
  */
 public class DefaultValidation extends ValidationContextImpl {
     public DefaultValidation() {
@@ -75,6 +75,6 @@ public class DefaultValidation extends ValidationContextImpl {
         getPrimitiveRuleBindings().add(new RuleBinding("*", "DTM", datetime));
         
         // NULLDT shouldn't have a value
-        getPrimitiveRuleBindings().add(new RuleBinding("*", "NULLDT", new SizeRule(0)));
+        getPrimitiveRuleBindings().add(new RuleBinding("*", "NULLDT", new WithdrawnDatatypeRule()));
     }
 }
