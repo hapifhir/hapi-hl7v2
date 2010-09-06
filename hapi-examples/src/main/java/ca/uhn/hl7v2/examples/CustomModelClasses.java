@@ -6,10 +6,13 @@
 package ca.uhn.hl7v2.examples;
 
 import ca.uhn.hl7v2.HL7Exception;
-//import ca.uhn.hl7v2.examples.custommodel.v25.message.ZDT_A01;
-//import ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
+import ca.uhn.hl7v2.examples.custommodel.v25.message.ZDT_A01;
+import ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
+import ca.uhn.hl7v2.parser.CustomModelClassFactory;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 
@@ -57,7 +60,6 @@ public class CustomModelClasses {
         // using it frequently, so we want to explicitly define a class to
         // handle it. That can be done as well.
 
-		/*
         // Here is a segment class we have created (click to view):
         ZPI zpi;
 
@@ -86,7 +88,7 @@ public class CustomModelClasses {
         System.out.println(zpi.getPetName()[0].encode()); // Fido
         System.out.println(zpi.getPetName()[1].encode()); // Fred
         System.out.println(zpi.getShoeSize().encode()); // 13
-		*/
+
     }
 
 }
