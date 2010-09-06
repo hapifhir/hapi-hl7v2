@@ -30,8 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
 import ca.uhn.log.HapiLog;
@@ -116,10 +114,17 @@ public class CommonDT {
      * Return the value as a calendar object
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        Calendar retVal = Calendar.getInstance();
         retVal.set(Calendar.DATE, getDay());
         retVal.set(Calendar.MONTH, getMonth() - 1);
         retVal.set(Calendar.YEAR, getYear());
+
+        // Truncate
+        retVal.set(Calendar.HOUR_OF_DAY, 0);
+        retVal.set(Calendar.MINUTE, 0);
+        retVal.set(Calendar.SECOND, 0);
+        retVal.set(Calendar.MILLISECOND, 0);
+        
         return retVal;
     }
 

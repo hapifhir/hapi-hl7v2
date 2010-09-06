@@ -31,8 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
 import ca.uhn.log.HapiLog;
@@ -234,7 +232,7 @@ public class CommonTS {
      * Return the value as a calendar object
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        Calendar retVal = Calendar.getInstance();
         retVal.set(Calendar.DATE, getDay());
         retVal.set(Calendar.MONTH, getMonth() - 1);
         retVal.set(Calendar.YEAR, getYear());

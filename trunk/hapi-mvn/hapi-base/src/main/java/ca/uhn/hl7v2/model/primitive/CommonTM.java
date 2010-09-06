@@ -31,8 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
 import ca.uhn.log.HapiLog;
@@ -575,7 +573,7 @@ public class CommonTM {
      * the value from this object. Returned value will have today's date</b> 
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        Calendar retVal = Calendar.getInstance();
         retVal.set(Calendar.HOUR_OF_DAY, getHour());
         retVal.set(Calendar.MINUTE, getMinute());
         retVal.set(Calendar.SECOND, getSecond());
