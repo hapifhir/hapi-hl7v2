@@ -40,6 +40,7 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 import java.util.HashMap;
@@ -608,6 +609,15 @@ public class PipeParser extends Parser {
         return result.toString();
     }
 
+    /**
+     * Convenience factory method which returns an instance that has a 
+     * {@link NoValidation NoValidation validation context}. 
+     */
+    public static PipeParser getInstanceWithNoValidation() {
+        PipeParser retVal = new PipeParser();
+        retVal.setValidationContext(new NoValidation());
+        return retVal;
+    }
 
     public static String encode(Segment source, EncodingCharacters encodingChars) {
         StringBuffer result = new StringBuffer();
