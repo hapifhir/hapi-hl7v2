@@ -41,6 +41,7 @@ import org.apache.maven.project.MavenProject;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
+import ca.uhn.hl7v2.sourcegen.DataTypeGenerator;
 import ca.uhn.hl7v2.sourcegen.EventMapGenerator;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 
@@ -48,13 +49,13 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  * Maven Plugin Mojo for generating HAPI HL7 message/segment/etc source files
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @goal sourcegen
+ * @goal xrefgen
  * @phase generate-sources
  * @requiresDependencyResolution runtime
  * @requiresProject
  * @inheritedByDefault false
  */
-public class SourceGenMojo extends AbstractMojo
+public class XrefGenMojo extends AbstractMojo
 {
     private static final Set alreadyMade = new HashSet();
     
@@ -75,14 +76,6 @@ public class SourceGenMojo extends AbstractMojo
      * @required
      */
     private String targetDirectory;
-
-    /**
-     * The target directory for the generated resources
-     * 
-     * @parameter
-     * @required
-     */
-    private String targetResourceDirectory;
 
     /**
      * The version for the generated source
@@ -126,14 +119,7 @@ public class SourceGenMojo extends AbstractMojo
      * 
      * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
      */
-    private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
-
-    /**
-     * Should structures be treated as resources
-     *
-     * @parameter default="false"
-     */
-    private boolean structuresAsResources;
+    private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates.json";
 
     /**
      * {@inheritDoc}
@@ -144,9 +130,7 @@ public class SourceGenMojo extends AbstractMojo
             getLog().warn("Configured to skip");
         }
 
-    	if (new File(targetDirectory).exists()) {
-            getLog().warn("Already exists version " + version + ", skipping!");
-    	} else if (!alreadyMade.contains(version)) {
+    	if (!alreadyMade.contains(version)) {
 
     		// I haven't entirely figured out why, but Maven runs this plugin 
     		// several times for each version, which takes forever, so we assume
@@ -164,26 +148,23 @@ public class SourceGenMojo extends AbstractMojo
            System.setProperty(NormativeDatabase.PROP_DATABASE_PASSWORD, jdbcPassword);
            System.setProperty(NormativeDatabase.PROP_DATABASE_URL, jdbcUrl);
             
+           DataTypeGenerator.setMakeAll(true);
+           
             try {
-				EventMapGenerator.generateEventMap(targetResourceDirectory, version);
-				String targetDir = structuresAsResources ? targetResourceDirectory : targetDirectory;
-                SourceGenerator.makeAll(targetDir, version, false, templatePackage, "java");
+                SourceGenerator.makeAll(targetDirectory, version, false, templatePackage, "json");
+                EventMapGenerator.generateEventDesc(targetDirectory, version, templatePackage);
 			} catch (HL7Exception e) {
-				throw new MojoExecutionException("Failed to build source ", e);
-			} catch (SQLException e) {
-				throw new MojoExecutionException("Failed to build source ", e);
-			} catch (IOException e) {
-				throw new MojoExecutionException("Failed to build source ", e);
-			}
+				e.printStackTrace();
+			    throw new MojoExecutionException("Failed to build source ", e);
+			} catch (Exception e) {
+                e.printStackTrace();
+                throw new MojoExecutionException("Failed to build source ", e);
+            }
             
         } else {
             getLog().warn("Already made version " + version + ", skipping!");
         }
         
-    	if (!structuresAsResources) {
-    	    getLog().info("Adding " + targetDirectory + " to compile source root");
-            project.addCompileSourceRoot(targetDirectory);
-    	}
     }
 
 }

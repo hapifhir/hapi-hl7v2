@@ -105,6 +105,27 @@ public class ConfGenMojo extends AbstractMojo {
     private String generateDataTypes = "NONE";
 
     /**
+     * The package from which to load the templates
+     * 
+     * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
+     */
+    private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
+
+    /**
+     * Should structures be treated as resources
+     *
+     * @parameter default="false"
+     */
+    private boolean structuresAsResources;
+
+    /**
+     * Should structures be treated as resources
+     *
+     * @parameter default="java"
+     */
+    private String fileExt = "java";
+    
+    /**
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -125,11 +146,14 @@ public class ConfGenMojo extends AbstractMojo {
             ProfileParser profileParser = new ProfileParser(false);
             RuntimeProfile runtimeProfile = profileParser.parse(profileString);
 
-            ProfileSourceGenerator gen = new ProfileSourceGenerator(runtimeProfile, targetDirectory, packageName, genDt);
+            ProfileSourceGenerator gen = new ProfileSourceGenerator(runtimeProfile, targetDirectory, packageName, genDt, templatePackage, fileExt);
             gen.generate();
 
-            getLog().info("Adding path to compile sources: " + targetDirectory);
-            project.addCompileSourceRoot(targetDirectory);
+            if (!structuresAsResources) {
+                getLog().info("Adding path to compile sources: " + targetDirectory);
+                project.addCompileSourceRoot(targetDirectory);
+            }
+            
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
@@ -142,8 +166,12 @@ public class ConfGenMojo extends AbstractMojo {
 
         ConfGenMojo tst = new ConfGenMojo();
         tst.targetDirectory = "hapi-test/target/generated-sources/confgen";
-        tst.packageName = "ca.uhn.hl7v2.test.conf";
+        tst.packageName = "ca.uhn.hl7v2.test.conf.json";
         tst.profile = "hapi-test/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml";
+        tst.structuresAsResources = true;
+        tst.templatePackage = "ca.uhn.hl7v2.sourcegen.templates.json";
+        tst.generateDataTypes = "SINGLE";
+        tst.fileExt = "json";
         tst.execute();
 
     }

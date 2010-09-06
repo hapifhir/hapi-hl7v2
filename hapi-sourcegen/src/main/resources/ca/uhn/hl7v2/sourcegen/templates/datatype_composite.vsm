@@ -15,7 +15,7 @@ import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.log.HapiLogFactory;
 
 /**
- * <p>Represents an HL7 ${datatypeName} (${description}) data type. 
+ * <p>Represents an HL7 ${datatypeName} (${desc}) data type. 
  * This type consists of the following components:</p>
  * <ul>
 #foreach ( $component in $components )

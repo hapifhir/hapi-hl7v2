@@ -1,0 +1,33 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+ [
+    {
+        "name" : "${segmentName}",
+        "description" : "${desc}",
+        "structures" :
+        [
+#foreach ( $element in $elements )
+            {
+                "type" : "${element.type}",
+                "description" : "${element.desc}",
+                "length" : "${element.length}",
+                "table" : "${element.table}",
+#if (${element.isRequired()})
+                "required" : true,
+#else
+                "required" : false,
+#end
+#if (${element.isRepeating()})
+                "repeating" : true,
+#else
+                "repeating" : false,
+#end                                                       
+            },
+#end
+        ]
+    }
+]

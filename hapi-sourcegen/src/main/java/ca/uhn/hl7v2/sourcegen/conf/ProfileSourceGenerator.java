@@ -5,8 +5,13 @@
 
 package ca.uhn.hl7v2.sourcegen.conf;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +20,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
@@ -38,6 +46,7 @@ import ca.uhn.hl7v2.sourcegen.SegmentDef;
 import ca.uhn.hl7v2.sourcegen.SegmentElement;
 import ca.uhn.hl7v2.sourcegen.SegmentGenerator;
 import ca.uhn.hl7v2.sourcegen.SourceGenerator;
+import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 
 /**
  * Generates HAPI custom model classes using HL7 conformance profiles
@@ -56,10 +65,15 @@ public class ProfileSourceGenerator {
     private final Map<String, ArrayList<SegmentElement>> mySegmentNameToSegmentElements;
     private final ArrayList<GroupDef> myGroupDefs;
     private GenerateDataTypesEnum myGenerateDataTypes;
+    private String myTemplatePackage;
+    private String myFileExt;
 
-    public ProfileSourceGenerator(RuntimeProfile theProfile, String theTargetDirectory, String theBasePackage, GenerateDataTypesEnum theGenDt) {
+    public ProfileSourceGenerator(RuntimeProfile theProfile, String theTargetDirectory, String theBasePackage, GenerateDataTypesEnum theGenDt, String theTemplatePackage,
+            String theFileExt) {
         myProfile = theProfile;
         myGenerateDataTypes = theGenDt;
+        myTemplatePackage = theTemplatePackage;
+        myFileExt = theFileExt;
 
         myTargetDirectory = theTargetDirectory;
         if (!myTargetDirectory.endsWith("/")) {
@@ -109,22 +123,24 @@ public class ProfileSourceGenerator {
 
         // Write Message
         {
-            String fileName = myTargetDirectory + "message/" + staticDef.getMsgStructID() + ".java";
+            String fileName = myTargetDirectory + "message/" + staticDef.getMsgStructID() + "." + myFileExt;
             ourLog.info("Writing Message file: " + fileName);
-            MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups);
+            MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups, myTemplatePackage);
         }
 
         for (GroupDef next : myGroupDefs) {
-            String fileName = myTargetDirectory + "group/" + next.getName() + ".java";
+            String fileName = myTargetDirectory + "group/" + next.getName() + "." + myFileExt;
             ourLog.info("Writing Group file: " + fileName);
-            GroupGenerator.writeGroup(next.getName(), fileName, next, version, myBasePackage);
+            GroupGenerator.writeGroup(next.getName(), fileName, next, version, myBasePackage, myTemplatePackage, next.getDescription());
         }
 
         // Write Segments
         Set<String> alreadyWrittenDatatypes = new HashSet<String>();
+        Set<String> alreadyWrittenSegments = new HashSet<String>();
         for (SegmentDef next : mySegmentDefs) {
+            alreadyWrittenSegments.add(next.getName());
 
-            String fileName = myTargetDirectory + "segment/" + next.getName() + ".java";
+            String fileName = myTargetDirectory + "segment/" + next.getName() + "." + myFileExt;
             ourLog.info("Writing Segment file: " + fileName);
             String segmentName = next.getName();
             String description = next.getDescription();
@@ -136,7 +152,7 @@ public class ProfileSourceGenerator {
                 }
             }
 
-            SegmentGenerator.writeSegment(fileName, version, segmentName, elements, description, myBasePackage, datatypePackages);
+            SegmentGenerator.writeSegment(fileName, version, segmentName, elements, description, myBasePackage, datatypePackages, myTemplatePackage);
 
             switch (myGenerateDataTypes) {
             case SINGLE:
@@ -145,6 +161,23 @@ public class ProfileSourceGenerator {
                 }
             }
 
+        }
+
+        if ("json".equals(myFileExt)) {
+            String fileName = myTargetDirectory + "/structures." + myFileExt;
+            ourLog.info("Writing Structures file: " + fileName);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
+            String templatePackage = myTemplatePackage.replace(".", "/");
+            Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/available_structures.vsm");
+            Context ctx = new VelocityContext();
+            ctx.put("messages", Collections.singletonList(myMessageName));
+            ctx.put("segments", alreadyWrittenSegments);
+            ctx.put("datatypes", alreadyWrittenDatatypes);
+
+            template.merge(ctx, out);
+
+            out.flush();
+            out.close();
         }
 
     }
@@ -158,9 +191,9 @@ public class ProfileSourceGenerator {
             }
         }
 
-        String fileName = myTargetDirectory + "datatype/" + theFieldDef.getType() + ".java";
-        DataTypeGenerator.writeDatatype(fileName, version, theFieldDef, myBasePackage);
-        
+        String fileName = myTargetDirectory + "datatype/" + theFieldDef.getType() + "." + myFileExt;
+        DataTypeGenerator.writeDatatype(fileName, version, theFieldDef, myBasePackage, myTemplatePackage);
+
         for (DatatypeDef next : theFieldDef.getSubComponentDefs()) {
             writeDatatype(next, theAlreadyWrittenDatatypes, version);
         }
@@ -342,6 +375,7 @@ public class ProfileSourceGenerator {
 
     public static void main(String[] args) throws ProfileException, IOException, Exception {
         RuntimeProfile rp = new ProfileParser(false).parseClasspath("ca/uhn/hl7v2/conf/parser/ADT_A01.xml");
-        new ProfileSourceGenerator(rp, "hapi-test/target/generated-sources/confgen", "hapi.on.olis", GenerateDataTypesEnum.SINGLE).generate();
+        new ProfileSourceGenerator(rp, "hapi-test/target/generated-sources/confgen", "hapi.on.olis", GenerateDataTypesEnum.SINGLE, "ca.uhn.hl7v2.sourcegen.templates.json", "json")
+                .generate();
     }
 }

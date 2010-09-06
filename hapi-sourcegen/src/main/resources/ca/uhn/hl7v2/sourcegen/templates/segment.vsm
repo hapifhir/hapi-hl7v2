@@ -7,7 +7,7 @@
 
 package ${basePackageName}segment;
 
-import ${basePackageName}group.*;
+// import ${basePackageName}group.*;
 #foreach ( $datatypePackage in $datatypePackages )
 import ${datatypePackage}.*;
 #end
@@ -22,7 +22,7 @@ import ca.uhn.hl7v2.model.AbstractSegment;
 import ca.uhn.hl7v2.model.Varies;
 
 /**
- *<p>Represents an HL7 ${segmentName} message segment. 
+ *<p>Represents an HL7 ${segmentName} message segment (${desc}). 
  * This segment has the following fields:</p>
  * <ul>
 #foreach ( $element in $elements )
@@ -51,6 +51,7 @@ public class ${segmentName} extends AbstractSegment {
     }
 
     private void init(ModelClassFactory factory) {
+#if ( $elements.size() > 0 )
        try {
 #foreach ( $element in $elements)
     #if (${element.required})
@@ -73,6 +74,7 @@ public class ${segmentName} extends AbstractSegment {
        } catch(HL7Exception e) {
           HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
        }
+#end
     }
 
     /** {@inheritDoc} */
@@ -125,6 +127,26 @@ public class ${segmentName} extends AbstractSegment {
         return ret;
     }
 
+    /**
+     * Returns a specific repetition of
+     * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
+     *
+     * @param rep The repetition index (0-indexed)
+     */
+    public ${element.alternateType} get${element.alternateAccessorName}(int rep) { 
+        $element.alternateType ret = null;
+        try {
+            Type t = this.getField(${velocityCount}, rep);
+            ret = ($element.alternateType)t;
+        } catch (ClassCastException cce) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            throw new RuntimeException(cce);
+        } catch (HL7Exception he) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            throw new RuntimeException(he);
+        }
+        return ret;
+    }
 
     /**
      * Inserts a repetition of

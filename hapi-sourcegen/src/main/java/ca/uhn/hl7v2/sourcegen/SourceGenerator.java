@@ -55,7 +55,7 @@ public class SourceGenerator extends Object {
      * @param theJdbcUrl The JDBC URL
      * @throws HL7Exception - 
      */
-    public static void makeAll(String baseDirectory, String version, boolean failOnError) throws HL7Exception  {
+    public static void makeAll(String baseDirectory, String version, boolean failOnError, String theTemplatePackage, String theFileExt) throws HL7Exception  {
         //load driver and set DB URL
         /*if (System.getProperty("ca.on.uhn.hl7.database.url") == null) {
             System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
@@ -63,9 +63,9 @@ public class SourceGenerator extends Object {
         
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            DataTypeGenerator.makeAll(baseDirectory, version);
-            SegmentGenerator.makeAll(baseDirectory, version);
-            MessageGenerator.makeAll(baseDirectory, version, failOnError);
+            DataTypeGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
+            SegmentGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
+            MessageGenerator.makeAll(baseDirectory, version, failOnError, theTemplatePackage, theFileExt);
             // group and message not implemented
         } catch (Exception e) {
         	throw new HL7Exception(e);
@@ -219,7 +219,7 @@ public class SourceGenerator extends Object {
     	System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:mysql://localhost:3306/hl7v65");
         System.setProperty("ca.on.uhn.hl7.database.user", "hl7");
         System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
-        makeAll("tmp", "2.5.1", true);
+        makeAll("tmp", "2.5.1", true, "", "java");
     }
 
 	public static String makeAlternateAccessorName(String fieldDesc, String parentName, int index) {

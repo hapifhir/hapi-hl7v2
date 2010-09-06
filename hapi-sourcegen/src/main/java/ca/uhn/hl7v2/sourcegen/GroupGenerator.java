@@ -63,16 +63,20 @@ public class GroupGenerator extends java.lang.Object {
     private static final HapiLog log = HapiLogFactory.getHapiLog(GroupGenerator.class);
 
 
-    public static void writeGroup(String groupName, String fileName, GroupDef group, String version, String basePackageName) throws Exception {
+    public static void writeGroup(String groupName, String fileName, GroupDef group, String version, String basePackageName, String theTemplatePackage, String theDescription) throws Exception {
 
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 
-        Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/group.vsm");
+        theTemplatePackage = theTemplatePackage.replace(".", "/");
+        Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/group.vsm");
         Context ctx = new VelocityContext();
         ctx.put("groupName", groupName);
         ctx.put("version", version);
+        ctx.put("desc", theDescription);
         ctx.put("basePackageName", basePackageName);
         ctx.put("groups", Arrays.asList(group.getStructures()));
+        ctx.put("chapter", "");
+        
         template.merge(ctx, out);
 
         out.flush();
@@ -120,9 +124,10 @@ public class GroupGenerator extends java.lang.Object {
      *            the directory to which files should be written
      * @param message
      *            the message to which this group belongs
+     * @param theTemplatePackage 
      * @throws Exception 
      */
-    public static GroupDef writeGroup(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws Exception {
+    public static GroupDef writeGroup(StructureDef[] structures, String groupName, String baseDirectory, String version, String message, String theTemplatePackage, String theFileExt) throws Exception {
 
         // make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
@@ -130,10 +135,10 @@ public class GroupGenerator extends java.lang.Object {
         }
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "group");
 
-        GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message);
+        GroupDef group = getGroupDef(structures, groupName, baseDirectory, version, message, theTemplatePackage, theFileExt);
 
-        String fileName = targetDir.getPath() + "/" + group.getName() + ".java";
-        writeGroup(group.getName(), fileName, group, version, DefaultModelClassFactory.getVersionPackageName(version));
+        String fileName = targetDir.getPath() + "/" + group.getName() + "." + theFileExt;
+        writeGroup(group.getName(), fileName, group, version, DefaultModelClassFactory.getVersionPackageName(version), theTemplatePackage, group.getDescription());
 
         return group;
     }
@@ -158,7 +163,7 @@ public class GroupGenerator extends java.lang.Object {
      * GroupDefs.
      * </p>
      */
-    public static GroupDef getGroupDef(StructureDef[] structures, String groupName, String baseDirectory, String version, String message) throws Exception {
+    public static GroupDef getGroupDef(StructureDef[] structures, String groupName, String baseDirectory, String version, String message, String theTemplatePackage, String theFileExt) throws Exception {
         GroupDef ret = null;
         boolean required = true;
         boolean repeating = false;
@@ -215,7 +220,7 @@ public class GroupGenerator extends java.lang.Object {
                     int endOfNewGroup = findGroupEnd(message, structures, currLongListPos);
                     StructureDef[] newGroupStructures = new StructureDef[endOfNewGroup - currLongListPos + 1];
                     System.arraycopy(structures, currLongListPos, newGroupStructures, 0, newGroupStructures.length);
-                    shortList[currShortListPos] = writeGroup(newGroupStructures, name, baseDirectory, version, message);
+                    shortList[currShortListPos] = writeGroup(newGroupStructures, name, baseDirectory, version, message, theTemplatePackage, theFileExt);
                     currLongListPos = endOfNewGroup + 1;
                 } else {
                     // copy verbatim into short list ...
@@ -281,320 +286,6 @@ public class GroupGenerator extends java.lang.Object {
             ret = true;
         }
         return ret;
-    }
-
-
-    /**
-     * Returns heading material for class source code (package, imports,
-     * JavaDoc, class declaration).
-     */
-    public static String makePreamble(GroupDef group, String version, String basePackageName) throws HL7Exception {
-        StringBuffer preamble = new StringBuffer();
-        preamble.append("package ");
-        preamble.append(basePackageName);
-        preamble.append("group;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
-        preamble.append("import ca.uhn.hl7v2.HL7Exception;\r\n");
-        preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
-        preamble.append("import ");
-        preamble.append(basePackageName);
-        preamble.append("segment.*;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.model.*;\r\n");
-        preamble.append("/**\r\n");
-        preamble.append(" * <p>Represents the ");
-        preamble.append(group.getName());
-        preamble.append(" Group.  A Group is an ordered collection of message \r\n");
-        preamble.append(" * segments that can repeat together or be optionally in/excluded together.\r\n");
-        preamble.append(" * This Group contains the following elements: </p>\r\n");
-        preamble.append(makeElementsDoc(group.getStructures()));
-        preamble.append(" */\r\n");
-        preamble.append("public class ");
-        preamble.append(group.getName());
-        preamble.append(" extends AbstractGroup {\r\n\r\n");
-
-        return preamble.toString();
-    }
-
-
-    /**
-     * Returns source code for the contructor for this Group class.
-     */
-    public static String makeConstructor(GroupDef group, String version) {
-        boolean useFactory = System.getProperty(MessageGenerator.MODEL_CLASS_FACTORY_KEY, "FALSE").equalsIgnoreCase("TRUE");
-
-        StringBuffer source = new StringBuffer();
-
-        source.append("\t/** \r\n");
-        source.append("\t * Creates a new ");
-        source.append(group.getName());
-        source.append(" Group.\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic ");
-        source.append(group.getName());
-        source.append("(Group parent, ModelClassFactory factory) {\r\n");
-        source.append("\t   super(parent, factory);\r\n");
-        source.append("\t   try {\r\n");
-        StructureDef[] structs = group.getStructures();
-        int numStructs = structs.length;
-        for (int i = 0; i < numStructs; i++) {
-            StructureDef def = structs[i];
-
-            if (def.getName().equals("ED")) {
-                // ignore this one, it's nonstandard
-            } else if (def.getName().equals("?")) {
-                source.append("\t      this.addNonstandardSegment(\"ANY\");\r\n");
-            } else {
-                if (useFactory) {
-                    source.append("\t      this.add(factory.get");
-                    source.append((def instanceof GroupDef) ? "Group" : "Segment");
-                    source.append("Class(\"");
-                    source.append(def.getName());
-                    source.append("\", \"");
-                    source.append(version);
-                    source.append("\"), ");
-                } else {
-                    source.append("\t      this.add(");
-                    source.append(def.getName());
-                    source.append(".class, ");
-                }
-
-                source.append(def.isRequired());
-                source.append(", ");
-                source.append(def.isRepeating());
-                source.append(");\r\n");
-            }
-        }
-        source.append("\t   } catch(HL7Exception e) {\r\n");
-        source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected error creating ");
-        source.append(group.getName());
-        source.append(" - this is probably a bug in the source code generator.\", e);\r\n");
-        source.append("\t   }\r\n");
-        source.append("\t}\r\n\r\n");
-        return source.toString();
-    }
-
-
-    /**
-     * Returns source code for a JavaDoc snippet listing the contents of a Group
-     * or Message.
-     */
-    public static String makeElementsDoc(StructureDef[] structures) {
-        StringBuffer elements = new StringBuffer();
-        for (int i = 0; i < structures.length; i++) {
-            StructureDef def = structures[i];
-            elements.append(" * ");
-            elements.append(i);
-            elements.append(": ");
-            elements.append(def.getName());
-            elements.append(" (");
-            elements.append(def.getDescription());
-            elements.append(") <b>");
-            if (!def.isRequired())
-                elements.append("optional ");
-            if (def.isRepeating())
-                elements.append("repeating");
-            elements.append("</b><br>\r\n");
-        }
-
-        return elements.toString();
-    }
-
-
-    /**
-     * Returns source code for an accessor method for a particular Structure.
-     */
-    public static String makeAccessor(GroupDef group, int structure) throws IndexOutOfBoundsException {
-        StringBuffer source = new StringBuffer();
-
-        StructureDef def = group.getStructures()[structure];
-
-        String name = def.getName();
-        String indexName = group.getIndexName(name);
-        String getterName = indexName;
-        if (def instanceof GroupDef) {
-            String unqualifiedName = ((GroupDef) def).getUnqualifiedName();
-            getterName = group.getIndexName(unqualifiedName);
-        }
-
-        if (def.getName().equals("ED")) {
-            return "";
-        }
-
-        // make accessor for first (or only) rep ...
-        source.append("\t/**\r\n");
-        source.append("\t * Returns ");
-        if (def.isRepeating())
-            source.append(" first repetition of ");
-        source.append(indexName);
-        source.append(" (");
-        source.append(def.getDescription());
-        source.append(") - creates it if necessary\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic ");
-        source.append(def.getName());
-        source.append(" get");
-        source.append(getterName);
-        source.append("() { \r\n");
-        source.append("\t   ");
-        source.append(def.getName());
-        source.append(" ret = null;\r\n");
-        source.append("\t   try {\r\n");
-        source.append("\t      ret = (");
-        source.append(def.getName());
-        source.append(")this.get(\"");
-        source.append(getterName);
-        source.append("\");\r\n");
-        source.append("\t   } catch(HL7Exception e) {\r\n");
-        source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected error accessing data - this is probably a bug in the source code generator.\", e);\r\n");
-        source.append("\t      throw new RuntimeException(e);\r\n");
-        source.append("\t   }\r\n");
-        source.append("\t   return ret;\r\n");
-        source.append("\t}\r\n\r\n");
-
-        // Add "has" method if segment is optional
-        if (false && !def.isRequired()) {
-            source.append("\t/**\r\n");
-            source.append("\t * Returns ");
-            source.append(indexName);
-            source.append(" (");
-            source.append(def.getDescription());
-            source.append(") - creates it if necessary\r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic ");
-            source.append(def.getName());
-            source.append(" get");
-            source.append(getterName);
-            source.append("() { \r\n");
-            source.append("\t   ");
-            source.append(def.getName());
-            source.append(" ret = null;\r\n");
-            source.append("\t   try {\r\n");
-            source.append("\t      ret = (");
-            source.append(def.getName());
-            source.append(")this.get(\"");
-            source.append(getterName);
-            source.append("\");\r\n");
-            source.append("\t   } catch(HL7Exception e) {\r\n");
-            source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected error accessing data - this is probably a bug in the source code generator.\", e);\r\n");
-            source.append("\t      throw new RuntimeException(e);\r\n");
-            source.append("\t   }\r\n");
-            source.append("\t   return ret;\r\n");
-            source.append("\t}\r\n\r\n");
-        }
-
-        if (def.isRepeating()) {
-            // make accessor for specific rep ...
-            source.append("\t/**\r\n");
-            source.append("\t * Returns a specific repetition of ");
-            source.append(indexName);
-            source.append("\r\n");
-            source.append("\t * (");
-            source.append(def.getDescription());
-            source.append(") - creates it if necessary\r\n");
-            source.append("\t * @throws HL7Exception if the repetition requested is more than one \r\n");
-            source.append("\t *     greater than the number of existing repetitions.\r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic ");
-            source.append(def.getName());
-            source.append(" get");
-            source.append(getterName);
-            source.append("(int rep) throws HL7Exception { \r\n");
-            source.append("\t   return (");
-            source.append(def.getName());
-            source.append(")this.get(\"");
-            source.append(getterName);
-            source.append("\", rep);\r\n");
-            source.append("\t}\r\n\r\n");
-
-            // make accessor for number of reps
-            source.append("\t/** \r\n");
-            source.append("\t * Returns the number of existing repetitions of ");
-            source.append(indexName);
-            source.append(" \r\n");
-            source.append("\t */ \r\n");
-            source.append("\tpublic int get");
-            source.append(getterName);
-            source.append("Reps() { \r\n");
-            source.append("\t    int reps = -1; \r\n");
-            source.append("\t    try { \r\n");
-            source.append("\t        reps = this.getAll(\"");
-            source.append(getterName);
-            source.append("\").length; \r\n");
-            source.append("\t    } catch (HL7Exception e) { \r\n");
-            source.append("\t        String message = \"Unexpected error accessing data - this is probably a bug in the source code generator.\"; \r\n");
-            source.append("\t        HapiLogFactory.getHapiLog(this.getClass()).error(message, e); \r\n");
-            source.append("\t        throw new RuntimeException(message);\r\n");
-            source.append("\t    } \r\n");
-            source.append("\t    return reps; \r\n");
-            source.append("\t} \r\n\r\n");
-
-            // Create insert repetition method
-            source.append("\t/**\r\n");
-            source.append("\t * Inserts a specific repetition of ");
-            source.append(indexName);
-            source.append("\r\n");
-            source.append("\t * (");
-            source.append(def.getDescription());
-            source.append(")\r\n");
-            source.append("\t * @see AbstractGroup#insertRepetition(Structure, int) \r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic void ");
-            source.append(" insert");
-            source.append(getterName);
-            source.append("(");
-            source.append(def.getName());
-            source.append(" structure, int rep) throws HL7Exception { \r\n");
-            source.append("\t   super.insertRepetition( structure");
-            source.append(", rep);\r\n");
-            source.append("\t}\r\n\r\n");
-
-            // Create insert new repetition method
-            source.append("\t/**\r\n");
-            source.append("\t * Inserts a specific repetition of ");
-            source.append(indexName);
-            source.append("\r\n");
-            source.append("\t * (");
-            source.append(def.getDescription());
-            source.append(")\r\n");
-            source.append("\t * @see AbstractGroup#insertRepetition(Structure, int) \r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic ");
-            source.append(def.getName());
-            source.append(" insert");
-            source.append(getterName);
-            source.append("(int rep) throws HL7Exception { \r\n");
-            source.append("\t   return (");
-            source.append(def.getName());
-            source.append(")super.insertRepetition(\"");
-            source.append(getterName);
-            source.append("\", rep);\r\n");
-            source.append("\t}\r\n\r\n");
-
-            // Create remove repetition method
-            source.append("\t/**\r\n");
-            source.append("\t * Removes a specific repetition of ");
-            source.append(indexName);
-            source.append("\r\n");
-            source.append("\t * (");
-            source.append(def.getDescription());
-            source.append(")\r\n");
-            source.append("\t * @see AbstractGroup#insertremoveRepetition(String, int) \r\n");
-            source.append("\t */\r\n");
-            source.append("\tpublic ");
-            source.append(def.getName());
-            source.append(" remove");
-            source.append(getterName);
-            source.append("(int rep) throws HL7Exception { \r\n");
-            source.append("\t   return (");
-            source.append(def.getName());
-            source.append(")super.removeRepetition(\"");
-            source.append(getterName);
-            source.append("\", rep);\r\n");
-            source.append("\t}\r\n\r\n");
-
-        }
-
-        return source.toString();
     }
 
 

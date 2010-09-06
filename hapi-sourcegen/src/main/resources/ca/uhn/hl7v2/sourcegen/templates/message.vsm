@@ -7,7 +7,9 @@
 
 package ${basePackageName}message;
 
+#if ( ${haveGroups} )
 import ${basePackageName}group.*;
+#end
 import ${basePackageName}segment.*;
 
 import ca.uhn.log.HapiLogFactory;
@@ -71,9 +73,11 @@ public class $message extends AbstractMessage  {
        }
     }
 
-    /** {@inheritDoc} */
+    /** 
+     * Returns "${version}"
+     */
     public String getVersion() {
-       return "$version";
+       return "${version}";
     }
 
 

@@ -57,9 +57,13 @@ public class SegmentElement  {
     }
     
     public boolean isRepeating() {
-        return repetitions > 1 || repetitions == -1;
+        return repetitions != 1;
     }
     
+    public String getType() {
+        return type;
+    }
+
     public String getAlternateType() {
         return SourceGenerator.getAlternateType(type, myVersion);
     }

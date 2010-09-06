@@ -207,6 +207,13 @@ public class GroupDef implements StructureDef {
      */
     public void setIndexName(String theIndexName) {
         myIndexName = theIndexName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSegment() {
+        return false;
     }    
     
 }
