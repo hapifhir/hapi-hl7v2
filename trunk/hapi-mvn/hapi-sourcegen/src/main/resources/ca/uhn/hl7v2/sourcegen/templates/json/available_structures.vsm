@@ -1,0 +1,32 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+[
+	{
+		"triggers" :
+			[
+#foreach ( $trigger in $triggers )
+				{
+					"type" : "${trigger.type}",
+					"description" : "${trigger.description}",
+					"structure" : "${trigger.structure}"
+				},
+#end
+			],
+		"segments" :
+			[
+#foreach ( $segment in $segments )
+                "$segment",
+#end
+			],
+		"datatypes" :
+			[
+#foreach ( $datatype in $datatypes )
+				"$datatype",
+#end
+			]
+	}
+]

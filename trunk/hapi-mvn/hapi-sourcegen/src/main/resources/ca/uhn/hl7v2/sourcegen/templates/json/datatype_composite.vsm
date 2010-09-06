@@ -1,0 +1,27 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+[
+    {
+        "name" : "${datatypeName}",
+        "type" : "composite",
+        "description" : "${desc}",
+        "components" :
+        [
+#foreach ( $component in $components)
+            {
+                "type" : "${component.type}",
+                "name" : "${component.name}",
+#if (${component.idType})
+                "table" : "${component.table}"
+#else
+                "table" : ""
+#end
+            },
+#end            
+        ]
+    }
+]

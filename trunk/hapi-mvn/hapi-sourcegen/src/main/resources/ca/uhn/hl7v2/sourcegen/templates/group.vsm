@@ -1,3 +1,4 @@
+#set( $HASH = '#' )
 /*
  * This class is an auto-generated source file for a HAPI
  * HL7 v2.x standard structure class.
@@ -18,8 +19,10 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.AbstractGroup;
 
 /**
- * <p>Represents a $groupName group structure. This structure contains the 
- * following elements: </p>
+ * <p>Represents a $groupName group structure (${description}).
+ * A Group is an ordered collection of message segments that can repeat together or be optionally in/excluded together.
+ * This Group contains the following elements:  
+ * </p>
 #foreach ( $group in $groups )
     #if (${group.isRequired()})
       #set ($reqd = "")
@@ -128,7 +131,7 @@ public class $groupName extends AbstractGroup {
 
     /**
      * Inserts a specific repetition of ${group.indexName} (${group.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public void insert${group.indexName}(${group.name} structure, int rep) throws HL7Exception { 
        super.insertRepetition("${group.indexName}", structure, rep);
@@ -137,7 +140,7 @@ public class $groupName extends AbstractGroup {
 
     /**
      * Inserts a specific repetition of ${group.indexName} (${group.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public ${group.name} insert${group.indexName}(int rep) throws HL7Exception { 
        return (${group.name})super.insertRepetition("${group.indexName}", rep);
@@ -146,7 +149,7 @@ public class $groupName extends AbstractGroup {
 
     /**
      * Removes a specific repetition of ${group.indexName} (${group.description})
-     * @see AbstractGroup\#removeRepetition(String, int) 
+     * @see AbstractGroup${HASH}removeRepetition(String, int) 
      */
     public ${group.name} remove${group.indexName}(int rep) throws HL7Exception { 
        return (${group.name})super.removeRepetition("${group.indexName}", rep);

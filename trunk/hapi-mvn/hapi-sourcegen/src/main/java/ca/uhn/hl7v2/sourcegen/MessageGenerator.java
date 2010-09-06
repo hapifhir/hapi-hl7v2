@@ -41,6 +41,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.velocity.Template;
@@ -80,12 +81,8 @@ public class MessageGenerator extends Object {
 
     /**
      * Creates and writes source code for all Messages and Groups.
-     * 
-     * @param failOnError
-     * @param theJdbcUrl
-     * @throws Exception 
      */
-    public static void makeAll(String baseDirectory, String version, boolean failOnError) throws Exception {
+    public static void makeAll(String baseDirectory, String version, boolean failOnError, String theTemplatePackage, String theFileExt) throws Exception {
         // get list of messages ...
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
@@ -112,7 +109,7 @@ public class MessageGenerator extends Object {
         for (int i = 0; i < messages.size(); i++) {
             String message = (String) messages.get(i);
             try {
-                make(message, baseDirectory, (String) chapters.get(i), version);
+                make(message, baseDirectory, (String) chapters.get(i), version, theTemplatePackage, theFileExt);
             } catch (HL7Exception e) {
                 if (failOnError) {
                     throw e;
@@ -156,11 +153,8 @@ public class MessageGenerator extends Object {
      * Creates source code for a specific message structure and writes it under
      * the specified directory. throws IllegalArgumentException if there is no
      * message structure for this message in the normative database
-     * 
-     * @param theJdbcUrl
-     * @throws Exception 
      */
-    public static void make(String message, String baseDirectory, String chapter, String version) throws Exception {
+    public static void make(String message, String baseDirectory, String chapter, String version, String theTemplatePackage, String theFileExt) throws Exception {
 
         // Make sure this structure has a corresponding definition in the
         // structure map
@@ -172,7 +166,7 @@ public class MessageGenerator extends Object {
             // segments.length +
             // " segments (not writing message code - just groups)");
 
-            GroupDef group = GroupGenerator.getGroupDef(segments, null, baseDirectory, version, message);
+            GroupDef group = GroupGenerator.getGroupDef(segments, null, baseDirectory, version, message, theTemplatePackage, theFileExt);
             StructureDef[] contents = group.getStructures();
 
             // make base directory
@@ -181,9 +175,9 @@ public class MessageGenerator extends Object {
             }
             File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
             System.out.println("Writing " + message + " to " + targetDir.getPath());
-            String fileName = targetDir.getPath() + "/" + message + ".java";
+            String fileName = targetDir.getPath() + "/" + message + "." + theFileExt;
 
-            writeMessage(fileName, contents, message, chapter, version, group, DefaultModelClassFactory.getVersionPackageName(version), true);
+            writeMessage(fileName, contents, message, chapter, version, group, DefaultModelClassFactory.getVersionPackageName(version), true, theTemplatePackage);
 
         } catch (SQLException e) {
             throw new HL7Exception(e);
@@ -304,57 +298,7 @@ public class MessageGenerator extends Object {
         return sql;
     }
 
-    /**
-     * Returns header material for the source code of a Message class (including
-     * package, imports, JavaDoc, and class declaration).
-     */
-    public static String makePreamble(StructureDef[] contents, String message, String chapter, String version, String basePackageName, boolean haveGroups) throws HL7Exception {
-        StringBuffer preamble = new StringBuffer();
-        preamble.append("package ");
-        preamble.append(basePackageName);
-        preamble.append("message;\r\n\r\n");
-        preamble.append("import ca.uhn.log.HapiLogFactory;\r\n");
-
-        if (haveGroups) {
-            preamble.append("import ");
-            preamble.append(basePackageName);
-            preamble.append("group.*;\r\n\r\n");
-        }
-
-        preamble.append("import ");
-        preamble.append(basePackageName);
-        preamble.append("segment.*;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.HL7Exception;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.parser.DefaultModelClassFactory;\r\n\r\n");
-        preamble.append("import ca.uhn.hl7v2.model.AbstractMessage;\r\n\r\n");
-        preamble.append("/**\r\n");
-        preamble.append(" * <p>Represents a ");
-        preamble.append(message);
-        preamble.append(" message structure (see chapter ");
-        preamble.append(chapter);
-        preamble.append("). This structure contains the \r\n");
-        preamble.append(" * following elements: </p>\r\n");
-        preamble.append(GroupGenerator.makeElementsDoc(contents));
-        preamble.append(" */\r\n");
-        preamble.append("public class ");
-        preamble.append(message);
-        preamble.append(" extends AbstractMessage ");
-
-        // implement interface from model.control package if required
-        /*
-         * Class correspondingControlInterface =
-         * Control.getInterfaceImplementedBy(message); if
-         * (correspondingControlInterface != null) {
-         * preamble.append("implements ");
-         * preamble.append(correspondingControlInterface.getName()); }
-         */
-
-        preamble.append(" {\r\n\r\n");
-
-        return preamble.toString();
-    }
-
+   
     /**
      * Returns source code for the contructor for this Message class.
      */
@@ -417,38 +361,19 @@ public class MessageGenerator extends Object {
         return source.toString();
     }
 
-    /**
-     * Test harness ...
-     */
-    public static void main(String args[]) {
-        if (args.length != 3) {
-            System.out.println("Usage: MessageGenerator message_name version source_dir");
-            System.exit(1);
-        }
-        String mess = args[0];
-        System.out.println("Testing source gen for message " + mess);
-        System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:mysql://localhost/hl7v25");
-        System.setProperty("ca.on.uhn.hl7.database.user", "hl7");
-        System.setProperty("ca.on.uhn.hl7.database.password", "hl7");
-        try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            make(mess, args[2], "0", args[1]);
-            // makeAll(args[2], args[1]);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, GroupDef group, String basePackageName,
-            boolean haveGroups) throws Exception {
+            boolean haveGroups, String theTemplatePackage) throws Exception {
 
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 
-        Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/message.vsm");
+        theTemplatePackage = theTemplatePackage.replace(".", "/");
+        Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/message.vsm");
         Context ctx = new VelocityContext();
         ctx.put("message", message);
         ctx.put("version", version);
         ctx.put("chapter", chapter);
+        ctx.put("haveGroups", haveGroups);
         ctx.put("basePackageName", basePackageName);
         ctx.put("segments", Arrays.asList(contents));
         template.merge(ctx, out);

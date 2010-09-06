@@ -68,14 +68,32 @@ public class SegmentGenerator extends java.lang.Object {
 	 * <p>Creates skeletal source code (without correct data structure but no business
 	 * logic) for all segments found in the normative database.  </p>
 	 */
-	public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
+	public static void makeAll(String baseDirectory, String version, String theTemplatePackage, String theFileExt) throws IOException, SQLException, HL7Exception {
 		//make base directory
 		if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
 			baseDirectory = baseDirectory + "/";
 		}
 		File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "segment");
 
-		//get list of data types
+		ArrayList<String> segments = getSegmentNames(version);
+
+		if (segments.size() == 0) {
+			log.warn("No version " + version + " segments found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
+		}
+
+		for (int i = 0; i < segments.size(); i++) {
+			try {
+				String seg = (String) segments.get(i);
+				makeSegment(seg, version, theTemplatePackage, targetDir, theFileExt);
+			} catch (Exception e) {
+				System.err.println("Error creating source code for all segments: " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+	}
+
+    public static ArrayList<String> getSegmentNames(String version) throws SQLException {
+        //get list of segments
 		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
 		Connection conn = normativeDatabase.getConnection();
 		Statement stmt = conn.createStatement();
@@ -83,7 +101,7 @@ public class SegmentGenerator extends java.lang.Object {
 		//System.out.println(sql);
 		ResultSet rs = stmt.executeQuery(sql);
 
-		ArrayList segments = new ArrayList();
+		ArrayList<String> segments = new ArrayList<String>();
 		while (rs.next()) {
 			String segName = rs.getString(1);
 
@@ -98,25 +116,8 @@ public class SegmentGenerator extends java.lang.Object {
 		}
 		stmt.close();
 		normativeDatabase.returnConnection(conn);
-
-		if (segments.size() == 0) {
-			log.warn("No version " + version + " segments found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
-		}
-
-		for (int i = 0; i < segments.size(); i++) {
-			try {
-				String seg = (String) segments.get(i);
-				String source = makeSegment(seg, version, normativeDatabase);
-				BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetDir.toString() + "/" + seg + ".java", false), SourceGenerator.ENCODING));
-				w.write(source);
-				w.flush();
-				w.close();
-			} catch (Exception e) {
-				System.err.println("Error creating source code for all segments: " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-	}
+        return segments;
+    }
 
 	/**
 	 * <p>Returns an alternate segment name to replace the given segment name.  Substitutions
@@ -138,12 +139,13 @@ public class SegmentGenerator extends java.lang.Object {
 	/**
 	 * Returns the Java source code for a class that represents the specified segment.
 	 */
-	public static String makeSegment(String name, String version, NormativeDatabase normativeDatabase) throws HL7Exception {
+	public static void makeSegment(String name, String version, String theTemplatePackage, File theTargetDir, String theFileExt) throws Exception {
 
 		ArrayList elements = new ArrayList();
 		String segDesc = null;
 		SegmentElement se = null;
 
+        NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
 		try {
 			Connection conn = normativeDatabase.getConnection();
 
@@ -201,7 +203,7 @@ public class SegmentGenerator extends java.lang.Object {
 				}
 
 				if (se.type.equals("-") || se.type.equals("NUL")) {
-					se.type.equals("NULLDT");
+					se.type = "NULLDT";
 				}
 
 				elements.add(se);
@@ -213,13 +215,15 @@ public class SegmentGenerator extends java.lang.Object {
 			normativeDatabase.returnConnection(conn);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-			return "";
+			return;
 		}
+		
+		String fileName = theTargetDir.toString() + "/" + name + "." + theFileExt;
 		
 		String basePackageName = DefaultModelClassFactory.getVersionPackageName(version);
 		String[] datatypePackages = { basePackageName + "datatype" };
-		String retVal = createSegmentString(version, name, elements, segDesc, basePackageName, datatypePackages);
-		return retVal;
+        writeSegment(fileName, version, name, elements, segDesc, basePackageName, datatypePackages, theTemplatePackage);
+
 	}
 
 	private static void makeFieldAccessor(String name, String version, StringBuffer source, SegmentElement se, String accessorName) {
@@ -406,153 +410,15 @@ public class SegmentGenerator extends java.lang.Object {
 	}
 
 
-		public static String createSegmentString(String version, String name, ArrayList<SegmentElement> elements, String segDesc, String basePackage, String[] datatypePackageStrings) throws HL7Exception {
-		//write imports, class documentation, etc ...
-		StringBuffer source = new StringBuffer();
-		source.append("package ");
-		source.append(basePackage);
-		source.append("segment;\r\n\r\n");
-		source.append("import ca.uhn.hl7v2.model.*;\r\n");
-		
-		for (String string : datatypePackageStrings) {
-			source.append("import " + string + ".*;\r\n");
-		}
-		
-		source.append("import ca.uhn.log.HapiLogFactory;\r\n");
-		source.append("import ca.uhn.hl7v2.parser.ModelClassFactory;\r\n");
-		source.append("import ca.uhn.hl7v2.HL7Exception;\r\n\r\n");
-		source.append("/**\r\n");
-		source.append(" * <p>Represents an HL7 ");
-		source.append(name);
-		source.append(" message segment. \r\n");
-		source.append(" * This segment has the following fields:</p><p>\r\n");
-		SegmentElement se;
-		for (int i = 0; i < elements.size(); i++) {
-			se = (SegmentElement) elements.get(i);
-			source.append(" * ");
-			source.append(name);
-			source.append("-");
-			source.append(se.field);
-			source.append(": ");
-			source.append(se.desc);
-			source.append(" (");
-			source.append(se.type);
-			source.append(")<br> \r\n");
-		}
-		source.append(" * </p><p>The get...() methods return data from individual fields.  These methods \r\n");
-		source.append(" * do not throw exceptions and may therefore have to handle exceptions internally.  \r\n");
-		source.append(" * If an exception is handled internally, it is logged and null is returned.  \r\n");
-		source.append(" * This is not expected to happen - if it does happen this indicates not so much \r\n");
-		source.append(" * an exceptional circumstance as a bug in the code for this class.</p>    \r\n");
-		source.append(" */\r\n");
-		source.append("public class ");
-		source.append(name);
-		source.append(" extends AbstractSegment ");
-		//implement interface from model.control package if required
-		/*Class correspondingControlInterface = Control.getInterfaceImplementedBy(name);
-		if (correspondingControlInterface != null) {
-		source.append("implements ");
-		source.append(correspondingControlInterface.getName());
-		} */
-		source.append(" {\r\n\r\n");
-		source.append("  /**\r\n");
-		source.append("   * Creates a ");
-		source.append(name);
-		source.append(" (");
-		source.append(segDesc);
-		source.append(") segment object that belongs to the given \r\n");
-		source.append("   * message.  \r\n");
-		source.append("   */\r\n");
-		//write constructor
-		source.append("  public ");
-		source.append(name);
-		source.append("(Group parent, ModelClassFactory factory) {\r\n");
-		source.append("    super(parent, factory);\r\n");
-		source.append("    Message message = getMessage();\r\n");
-		if (elements.size() > 0) {
-			source.append("    try {\r\n");
-			for (int i = 0; i < elements.size(); i++) {
-				se = (SegmentElement) elements.get(i);
-				String type = SourceGenerator.getAlternateType(se.type, version);
-				source.append("       this.add(");
-				source.append(type);
-				source.append(".class");
-				source.append(", ");
-				if (se.opt == null) {
-					source.append("false");
-				} else {
-					if (se.opt.equalsIgnoreCase("R")) {
-						source.append("true");
-					} else {
-						source.append("false");
-					}
-				}
-				source.append(", ");
-				source.append(se.repetitions);
-				source.append(", ");
-				source.append(se.length);
-				source.append(", ");
-				if (se.type.equals("ID") || se.type.equals("IS")) {
-					source.append("new Object[]{message, new Integer(");
-					source.append(se.table);
-					source.append(")}");
-				} else {
-					source.append("new Object[]{message}");
-				}
-				source.append(", \"").append(se.desc.replace("\"", "\\\"")).append("\"");
-				source.append(");\r\n");
-			}
-			source.append("    } catch (HL7Exception he) {\r\n");
-			source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Can't instantiate \" + this.getClass().getName(), he);\r\n");
-			source.append("    }\r\n");
-		}
-		source.append("  }\r\n\r\n");
-		//write a datatype-specific accessor for each field
-		for (int i = 0; i < elements.size(); i++) {
-			se = (SegmentElement) elements.get(i);
-			makeFieldAccessor(name, version, source, se, SourceGenerator.makeAccessorName(se.desc, name));
-			makeFieldAccessor(name, version, source, se, SourceGenerator.makeAlternateAccessorName(se.desc, name, i + 1));
-		}
-		//add adapter method code for control package if it exists
-		//source.append(Control.getImplementation(correspondingControlInterface, version));
-		// CreatNewType method - To avoid reflection
-		source.append("   protected Type createNewTypeWithoutReflection(int field) {\r\n");
-		source.append("      switch (field) {\r\n");
-		for (int i = 0; i < elements.size(); i++) {
-			se = (SegmentElement) elements.get(i);
-			String type = SourceGenerator.getAlternateType(se.type, version);
-			source.append("         case " + i + ": return new ");
-			if ("Varies".equals(type)) {
-				source.append("Varies(getMessage());\r\n");
-			} else {
-				source.append(DefaultModelClassFactory.getVersionPackageName(version));
-				source.append("datatype.");
-				source.append(type);
-				source.append("(getMessage()");
-				if (se.type.equals("ID") || se.type.equals("IS")) {
-					source.append(", new Integer(");
-					source.append(se.table);
-					source.append(")");
-				}
-				source.append(");\r\n");
-			}
-		}
-		source.append("         default: return null;\r\n");
-		source.append("      }\r\n");
-		source.append("   }\r\n");
-		source.append("\r\n");
-		source.append("}");
-		String retVal = source.toString();
-		return retVal;
-	}
-
-	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages) throws Exception {
+	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages, String theTemplatePackage) throws Exception {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 		
-        Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/segment.vsm");
+        theTemplatePackage = theTemplatePackage.replace(".", "/");
+        Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/segment.vsm");
         Context ctx = new VelocityContext();
         ctx.put("segmentName", segmentName);
         ctx.put("version", version);
+        ctx.put("desc", description);
         ctx.put("basePackageName", basePackage);
         ctx.put("elements", elements);
         ctx.put("datatypePackages", datatypePackages);
@@ -566,21 +432,4 @@ public class SegmentGenerator extends java.lang.Object {
 		out.close();
 	}
 
-	public static void main(String args[]) {
-		try {
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-			NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
-			if (args.length == 1) {
-				makeAll("tmp", "2.5.1");
-			} else {
-				String source = makeSegment(args[1], "2.5.1", normativeDatabase);
-				BufferedWriter w = new BufferedWriter(new FileWriter(args[0] + "/" + args[1] + ".java", false));
-				w.write(source);
-				w.flush();
-				w.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

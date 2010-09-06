@@ -149,5 +149,13 @@ public class SegmentDef implements StructureDef {
     public void setIndexName(String theIndexName) {
         myIndexName = theIndexName;
     }    
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSegment() {
+        return true;
+    }    
+    
     
 }

@@ -1,0 +1,14 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+[
+    {
+        "name" : "${datatype.type}",
+        "type" : "simple",
+        "description" : "${datatype.name}",
+        "components" : []
+    }
+]

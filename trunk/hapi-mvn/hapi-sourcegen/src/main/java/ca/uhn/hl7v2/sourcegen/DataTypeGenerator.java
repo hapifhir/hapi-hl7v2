@@ -67,13 +67,15 @@ import ca.uhn.log.HapiLogFactory;
 public class DataTypeGenerator extends Object {
     
     private static final HapiLog log = HapiLogFactory.getHapiLog(DataTypeGenerator.class);
+    private static boolean ourMakeAll;
     
     /**
      * <p>Creates skeletal source code (without correct data structure but no business
      * logic) for all data types found in the normative database.  For versions > 2.2, Primitive data types
      * are not generated, because they are coded manually (as of HAPI 0.3).  
+    * @param theTemplatePackage 
      */
-    public static void makeAll(String baseDirectory, String version) throws IOException, SQLException, HL7Exception {
+    public static void makeAll(String baseDirectory, String version, String theTemplatePackage, String theFileExt) throws IOException, SQLException, HL7Exception {
         //make base directory
         if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) { 
             baseDirectory = baseDirectory + "/";
@@ -81,7 +83,28 @@ public class DataTypeGenerator extends Object {
         File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "datatype"); 
         
         //get list of data types
-        ArrayList types = new ArrayList();
+        
+        ArrayList<String> types = getDataTypes(version);
+        
+        System.out.println("Generating " + types.size() + " datatypes for version " + version);
+        if (types.size() == 0) { 
+            log.warn("No version " + version + " data types found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
+        }
+                
+        for (int i = 0; i < types.size(); i++) {
+            try {
+                String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
+                make(targetDir, (String)types.get(i), version, basePackage, theTemplatePackage, theFileExt);
+            } catch (DataTypeException dte) {
+                log.warn(dte.getClass().getName() + " - " + dte.getMessage());
+            } catch (Exception e) {
+                log.error("Error creating source code for all data types", e);
+            } 
+        }
+    }
+
+    public static ArrayList<String> getDataTypes(String version) throws SQLException {
+        ArrayList<String> types = new ArrayList<String>();
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
@@ -90,6 +113,7 @@ public class DataTypeGenerator extends Object {
         while (rs.next()) {
             types.add(rs.getString(1));
         }
+        
         
         //get CF, CK, CM, CN, CQ sub-types ... 
  
@@ -101,27 +125,17 @@ public class DataTypeGenerator extends Object {
             "data_type_code  = 'CQ') and " +
 	    "HL7Versions.version_id = HL7DataStructures.version_id and  HL7Versions.hl7_version = '" + version + "'");
         while (rs.next()) {
-            types.add(rs.getString(1));
+            String string = rs.getString(1);
+            if (string.equals("-")) {
+                continue;
+            }
+            
+            types.add(string);
         }
         
         stmt.close();
         normativeDatabase.returnConnection(conn);
-        
-        System.out.println("Generating " + types.size() + " datatypes for version " + version);
-        if (types.size() == 0) { 
-            log.warn("No version " + version + " data types found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
-        }
-                
-        for (int i = 0; i < types.size(); i++) {
-            try {
-                String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
-                make(targetDir, (String)types.get(i), version, basePackage);
-            } catch (DataTypeException dte) {
-                log.warn(dte.getClass().getName() + " - " + dte.getMessage());
-            } catch (Exception e) {
-                log.error("Error creating source code for all data types", e);
-            } 
-        }
+        return types;
     }
     
     /**
@@ -130,9 +144,9 @@ public class DataTypeGenerator extends Object {
      * @param targetDirectory the directory into which the file will be written
      * @param datatype the name (e.g. ST, ID, etc.) of the data type to be created
      * @param version the HL7 version of the intended data type
-     * @param theJdbcUrl 
+     * @param theFileExt 
      */
-    public static void make(File targetDirectory, String dataType, String version, String basePackage) throws Exception {
+    public static void make(File targetDirectory, String dataType, String version, String basePackage, String theTemplatePackage, String theFileExt) throws Exception {
         //make sure that targetDirectory is a directory ... 
         if (!targetDirectory.isDirectory()) throw new IOException("Can't create file in " + 
             targetDirectory.toString() + " - it is not a directory.");
@@ -190,10 +204,10 @@ public class DataTypeGenerator extends Object {
         //if there is only one component make a Primitive, otherwise make a Composite
         String source = null;
         if (dataTypes.size() == 1) {
-            if (dataType.equals("FT") || dataType.equals("ST") || dataType.equals("TX") 
+            if (ourMakeAll || dataType.equals("FT") || dataType.equals("ST") || dataType.equals("TX") 
                     || dataType.equals("NM") || dataType.equals("SI") || dataType.equals("TN")
                     || dataType.equals("GTS")) { 
-                source = makePrimitive(new DatatypeDef(dataType, description), version, basePackage);                
+                source = makePrimitive(new DatatypeDef(dataType, description), version, basePackage, theTemplatePackage);                
             } else {
                 source = null; //note: IS, ID, DT, DTM, and TM are coded manually
             }
@@ -215,7 +229,7 @@ public class DataTypeGenerator extends Object {
                 componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, (String)descriptions.get(i), ((Integer) tables.get(i)).intValue());
             }
             
-            source = makeComposite(dataType, description, componentDefs, type, desc, table, version, basePackage);
+            source = makeComposite(dataType, description, componentDefs, type, desc, table, version, basePackage, theTemplatePackage);
         } else {
             if (dataType.equals("var")) {
                 return; // Varies isn't actually a type
@@ -229,7 +243,7 @@ public class DataTypeGenerator extends Object {
         
         //write to file ... 
         if (source != null) {
-            String targetFile = targetDirectory.toString() + "/" + dataType + ".java";
+            String targetFile = targetDirectory.toString() + "/" + dataType + "." + theFileExt;
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING));
             writer.write(source);
             writer.flush();
@@ -272,13 +286,14 @@ public class DataTypeGenerator extends Object {
      * Returns a String containing the complete source code for a Primitive HL7 data
      * type.  Note: this method is no longer used, as all Primitives are now coded manually.  
      */
-    private static String makePrimitive(DatatypeDef theDatatype, String version, String basePackage) throws Exception {
+    private static String makePrimitive(DatatypeDef theDatatype, String version, String basePackage, String theTemplatePackage) throws Exception {
 
         if (true) {
             
             StringWriter out = new StringWriter();
 
-            Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/datatype_primitive.vsm");
+            theTemplatePackage = theTemplatePackage.replace(".", "/");
+            Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/datatype_primitive.vsm");
             Context ctx = new VelocityContext();
             ctx.put("datatype", theDatatype);
             ctx.put("version", version);
@@ -375,19 +390,20 @@ public class DataTypeGenerator extends Object {
      * The descriptions array contains the corresponding descriptions (e.g. string).
      */
     private static String makeComposite(String dataType, String description, DatatypeComponentDef[] componentDefs, String[] dataTypes, 
-            String[] descriptions, int[] tables, String version, String basePackage) throws Exception {
+            String[] descriptions, int[] tables, String version, String basePackage, String theTemplatePackage) throws Exception {
         
         if (true) {
             
             StringWriter out = new StringWriter();
 
-            Template template = VelocityFactory.getClasspathTemplateInstance("ca/uhn/hl7v2/sourcegen/templates/datatype_composite.vsm");
+            theTemplatePackage = theTemplatePackage.replace(".", "/");
+            Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/datatype_composite.vsm");
             Context ctx = new VelocityContext();
             ctx.put("datatypeName", dataType);
             ctx.put("version", version);
             ctx.put("basePackageName", basePackage);
             ctx.put("components", Arrays.asList(componentDefs));
-            ctx.put("description", description);
+            ctx.put("desc", description);
             
             template.merge(ctx, out);
             return out.toString();
@@ -507,7 +523,7 @@ public class DataTypeGenerator extends Object {
             //System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7v25");        
             //make(new File("c:/testsourcegen"), args[0], args[1]);
             //make(new File("c:/testsourcegen"), "CE_0048", "2.3");
-            makeAll("c:/testsourcegen", "2.5");
+            makeAll("c:/testsourcegen", "2.5", "", "java");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -520,13 +536,13 @@ public class DataTypeGenerator extends Object {
         }*/
     }
 
-    public static void writeDatatype(String theFileName, String theVersion, DatatypeDef theFieldDef, String theBasePackage) throws Exception {
+    public static void writeDatatype(String theFileName, String theVersion, DatatypeDef theFieldDef, String theBasePackage, String theTemplatePackage) throws Exception {
         
         String text;
         if (theFieldDef.getSubComponentDefs().isEmpty()) {
-            text = makePrimitive(theFieldDef, theVersion, theBasePackage);
+            text = makePrimitive(theFieldDef, theVersion, theBasePackage, theTemplatePackage);
         } else {
-            text = makeComposite(theFieldDef.getType(), theFieldDef.getName(), theFieldDef.getSubComponentDefs().toArray(new DatatypeComponentDef[0]), null, null, null, theVersion, theBasePackage);
+            text = makeComposite(theFieldDef.getType(), theFieldDef.getName(), theFieldDef.getSubComponentDefs().toArray(new DatatypeComponentDef[0]), null, null, null, theVersion, theBasePackage, theTemplatePackage);
         }
 
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(theFileName, false), SourceGenerator.ENCODING));
@@ -535,4 +551,13 @@ public class DataTypeGenerator extends Object {
         writer.close();
         
     }
+    
+    /**
+     * Set to true if all data types should be made, including types which are normally
+     * not generated because they are special cases. Defaults to false.
+     */
+    public static void setMakeAll(boolean theMakeAll) {
+        ourMakeAll = theMakeAll;
+    }
+    
 }

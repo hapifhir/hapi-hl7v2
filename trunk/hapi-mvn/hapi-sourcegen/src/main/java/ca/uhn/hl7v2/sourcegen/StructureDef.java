@@ -48,6 +48,11 @@ public interface StructureDef {
      * Returns true if this structure is required in the Group.  
      */ 
     public boolean isRequired();
+
+    /**
+     * Returns true if this structure is a segment.  
+     */ 
+    public boolean isSegment();
     
     /**
      * Returns true if this structure can repeat in the Group.  

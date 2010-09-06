@@ -1,0 +1,38 @@
+/*
+ * This class is an auto-generated source file for a HAPI
+ * HL7 v2.x standard structure class.
+ *
+ * For more information, visit: http://hl7api.sourceforge.net/
+ */
+ [
+    {
+        "name" : "${message}",
+        "chapter" : "${chapter}",
+        "structures" :
+        [
+#foreach ( $segment in $segments )
+            {
+                "name" : "${segment.name}",
+                "unqualifiedName" : "${segment.unqualifiedName}",
+                "indexName" : "${segment.indexName}",
+                "description" : "${segment.description}",
+#if (${segment.isRequired()})
+                "required" : true,
+#else
+                "required" : false,
+#end
+#if (${segment.isRepeating()})
+                "repeating" : true,
+#else
+                "repeating" : false,
+#end                                                       
+#if (${segment.isSegment()})
+                "segment" : true,
+#else
+                "segment" : false,
+#end
+            },
+#end
+        ]    
+    }
+]
