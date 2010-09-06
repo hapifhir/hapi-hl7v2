@@ -15,7 +15,7 @@
  * Contributor(s): James Agnew
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -49,7 +49,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * Example code
  * 
  * @author <a href="mailto:james.agnew@uhn.on.ca">James Agnew</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:46 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2010-09-06 17:29:21 $ by $Author: jamesagnew $
  */
 public class SendAndReceiveAMessage
 {
@@ -131,7 +131,7 @@ public class SendAndReceiveAMessage
          */
 
         // Close the connection and server
-        connection.close();
+        connectionHub.discard(connection);
         server.stop();
 
     }
