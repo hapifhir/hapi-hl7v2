@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -27,7 +27,11 @@
 
 package ca.uhn.hl7v2.model.primitive;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -108,6 +112,274 @@ public class CommonTS {
     public CommonTS(String val) throws DataTypeException {
         this.setValue(val);
     } //end constructor
+
+    /**
+     * Returns the day as an integer.
+     */
+    public int getDay() {
+        int day = 0;
+        if (dt != null) {
+            day = dt.getDay();
+        } //end if
+        return day;
+    } //end method
+
+    /**
+     * Returns the fractional second value as a float.
+     */
+    public float getFractSecond() {
+        float fractionOfSec = 0;
+        if (tm != null) {
+            fractionOfSec = tm.getFractSecond();
+        } //end if
+        return fractionOfSec;
+    } //end method
+
+    /**
+     * Returns the GMT offset value as an integer.
+     */
+    public int getGMTOffset() {
+        int offSet = 0;
+        if (tm != null) {
+            offSet = tm.getGMTOffset();
+        } //end if
+        return offSet;
+    } //end method
+
+    /**
+     * Returns the hour as an integer.
+     */
+    public int getHour() {
+        int hour = 0;
+        if (tm != null) {
+            hour = tm.getHour();
+        } //end if
+        return hour;
+    } //end method
+
+    /**
+     * Returns the minute as an integer.
+     */
+    public int getMinute() {
+        int minute = 0;
+        if (tm != null) {
+            minute = tm.getMinute();
+        } //end if
+        return minute;
+    } //end method
+
+    /**
+     * Returns the month as an integer.
+     */
+    public int getMonth() {
+        int month = 0;
+        if (dt != null) {
+            month = dt.getMonth();
+        } //end if
+        return month;
+    } //end method
+
+    /**
+     * Returns the second as an integer.
+     */
+    public int getSecond() {
+        int seconds = 0;
+        if (tm != null) {
+            seconds = tm.getSecond();
+        } //end if
+        return seconds;
+    } //end method
+
+    /**
+     * Returns the HL7 TS string value.
+     */
+    public String getValue() {
+        String value = null;
+        if (dt != null) {
+            value = dt.getValue();
+        } //end if
+        if (tm != null && value != null && !value.equals("")) {
+            if (tm.getValue() != null && !tm.getValue().equals("")) {
+                //here we know we have a delete value or separate date and the time values supplied
+                if (tm.getValue().equals("\"\"") && dt.getValue().equals("\"\"")) {
+                    //set value to the delete value ("")
+                    value = "\"\"";
+                }
+                else{
+                    //set value to date concatonated with time value
+                    value = value + tm.getValue();
+                }                
+            } //end if
+            if (tm.getValue() == null || tm.getValue().equals("")) {
+                //here we know we both have the date and just the time offset value
+                //change the offset value from an integer to a signed string
+                int offset = tm.getGMTOffset();
+                String offsetStr = "";
+                if (offset > -99) {
+                    offsetStr = DataTypeUtil.preAppendZeroes(Math.abs(offset), 4);
+                    if (tm.getGMTOffset() >= 0) {
+                        offsetStr = "+" + offsetStr;
+                    } //end if
+                    else {
+                        offsetStr = "-" + offsetStr;
+                    } //end else
+                }
+                value = value + offsetStr;
+            } //end if
+        } //end if
+        return value;
+    } //end method
+    
+    /**
+     * Return the value as a calendar object
+     */
+    public Calendar getValueAsCalendar() {
+        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        retVal.set(Calendar.DATE, getDay());
+        retVal.set(Calendar.MONTH, getMonth() - 1);
+        retVal.set(Calendar.YEAR, getYear());
+        retVal.set(Calendar.HOUR_OF_DAY, getHour());
+        retVal.set(Calendar.MINUTE, getMinute());
+        retVal.set(Calendar.SECOND, getSecond());
+
+        float fractSecond = getFractSecond();
+        retVal.set(Calendar.MILLISECOND, (int) (fractSecond * 1000.0));
+        
+        int gmtOff = getGMTOffset();
+        if (gmtOff != CommonTM.GMT_OFFSET_NOT_SET_VALUE) {
+            retVal.set(Calendar.ZONE_OFFSET, gmtOff * 1000 * 60 * 60);
+        }
+        
+        return retVal;
+    }
+
+    /**
+     * Return the value as a date object
+     */
+    public Date getValueAsDate() {
+        return getValueAsCalendar().getTime();
+    }
+    
+    /**
+     * Returns the year as an integer.
+     */
+    public int getYear() {
+        int year = 0;
+        if (dt != null) {
+            year = dt.getYear();
+        } //end if
+        return year;
+    } //end method
+
+    
+    /**
+     * This method takes in integer values for the year, month, day, hour
+     * and minute and performs validations, it then sets the value in the object
+     * formatted as an HL7 Time Stamp value with year&month&day&hour&minute precision (YYYYMMDDHHMM).
+     */
+    public void setDateMinutePrecision(int yr, int mnth, int dy, int hr, int min) throws DataTypeException {
+        try {
+            //set the value of the date object to the input date value
+            this.setDatePrecision(yr, mnth, dy);
+            //create new time object is there isn't one
+            if (tm == null) {
+                tm = new CommonTM();
+            }
+            //set the value of the time object to the minute precision with the input values
+            tm.setHourMinutePrecision(hr, min);
+        } //end try
+
+        catch (DataTypeException e) {
+            throw e;
+        } //end catch
+
+        catch (Exception e) {
+            throw new DataTypeException(e);
+        } //end catch
+    } //end method
+    
+    
+    /**
+     * This method takes in integer values for the year and month and day
+     * and performs validations, it then sets the value in the object
+     * formatted as an HL7 Time Stamp value with year&month&day precision (YYYYMMDD).
+     *
+     */
+    public void setDatePrecision(int yr, int mnth, int dy) throws DataTypeException {
+        try {
+            //create date object if there isn't one
+            if (dt == null) {
+                dt = new CommonDT();
+            }
+            //set the value of the date object to the input date value
+            dt.setYearMonthDayPrecision(yr, mnth, dy);
+            //clear the time value object
+            tm = null;
+        } //end try
+
+        catch (DataTypeException e) {
+            throw e;
+        } //end catch
+
+        catch (Exception e) {
+            throw new DataTypeException(e);
+        } //end catch
+    } //end method
+
+    /**
+     * This method takes in integer values for the year, month, day, hour, minute, seconds,
+     * and fractional seconds (going to the tenthousandths precision).
+     * The method performs validations and then sets the value in the object formatted as an
+     * HL7 time value with a precision that starts from the year and goes down to the tenthousandths
+     * of a second (YYYYMMDDHHMMSS.SSSS).
+     * The Gmt Offset will not be effected.
+     * Note: all of the precisions from tenths down to
+     * tenthousandths of a second are optional. If the precision goes below tenthousandths
+     * of a second then the second value will be rounded to the nearest tenthousandths of a second.
+     */
+    public void setDateSecondPrecision(int yr, int mnth, int dy, int hr, int min, float sec) throws DataTypeException {
+        try {
+            //set the value of the date object to the input date value
+            this.setDatePrecision(yr, mnth, dy);
+            //create new time object is there isn't one
+            if (tm == null) {
+                tm = new CommonTM();
+            }
+            //set the value of the time object to the second precision with the input values
+            tm.setHourMinSecondPrecision(hr, min, sec);
+        } //end try
+
+        catch (DataTypeException e) {
+            throw e;
+        } //end catch
+
+        catch (Exception e) {
+            throw new DataTypeException(e);
+        } //end catch
+    } //end method
+
+    /**
+     * This method takes in the four digit (signed) GMT offset and sets the offset
+     * field
+     */
+    public void setOffset(int signedOffset) throws DataTypeException {
+        try {
+            //create new time object is there isn't one
+            if (tm == null) {
+                tm = new CommonTM();
+            }
+            //set the offset value of the time object to the input value
+            tm.setOffset(signedOffset);
+        }
+
+        catch (DataTypeException e) {
+            throw e;
+        } //end catch
+
+        catch (Exception e) {
+            throw new DataTypeException(e);
+        } //end catch
+    } //end method
 
     /**
      * This method takes in a string HL7 Time Stamp value and performs validations.
@@ -265,240 +537,83 @@ public class CommonTS {
     } // end method
 
     /**
-     * This method takes in integer values for the year and month and day
-     * and performs validations, it then sets the value in the object
-     * formatted as an HL7 Time Stamp value with year&month&day precision (YYYYMMDD).
-     *
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, including timezone offset
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
      */
-    public void setDatePrecision(int yr, int mnth, int dy) throws DataTypeException {
-        try {
-            //create date object if there isn't one
-            if (dt == null) {
-                dt = new CommonDT();
-            }
-            //set the value of the date object to the input date value
-            dt.setYearMonthDayPrecision(yr, mnth, dy);
-            //clear the time value object
-            tm = null;
-        } //end try
-
-        catch (DataTypeException e) {
-            throw e;
-        } //end catch
-
-        catch (Exception e) {
-            throw new DataTypeException(e);
-        } //end catch
-    } //end method
+    public void setValueComplete(Calendar theCalendar) throws DataTypeException {
+        int yr = theCalendar.get(Calendar.YEAR);
+        int mnth = theCalendar.get(Calendar.MONTH) + 1;
+        int dy = theCalendar.get(Calendar.DATE);
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
+        setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
+        
+        int zoneOffset = theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);
+        setOffset(zoneOffset);
+    }
 
     /**
-     * This method takes in integer values for the year, month, day, hour
-     * and minute and performs validations, it then sets the value in the object
-     * formatted as an HL7 Time Stamp value with year&month&day&hour&minute precision (YYYYMMDDHHMM).
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
      */
-    public void setDateMinutePrecision(int yr, int mnth, int dy, int hr, int min) throws DataTypeException {
-        try {
-            //set the value of the date object to the input date value
-            this.setDatePrecision(yr, mnth, dy);
-            //create new time object is there isn't one
-            if (tm == null) {
-                tm = new CommonTM();
-            }
-            //set the value of the time object to the minute precision with the input values
-            tm.setHourMinutePrecision(hr, min);
-        } //end try
-
-        catch (DataTypeException e) {
-            throw e;
-        } //end catch
-
-        catch (Exception e) {
-            throw new DataTypeException(e);
-        } //end catch
-    } //end method
+    public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
+        int yr = theCalendar.get(Calendar.YEAR);
+        int mnth = theCalendar.get(Calendar.MONTH) + 1;
+        int dy = theCalendar.get(Calendar.DATE);
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        setDateMinutePrecision(yr, mnth, dy, hr, min);
+    }
 
     /**
-     * This method takes in integer values for the year, month, day, hour, minute, seconds,
-     * and fractional seconds (going to the tenthousandths precision).
-     * The method performs validations and then sets the value in the object formatted as an
-     * HL7 time value with a precision that starts from the year and goes down to the tenthousandths
-     * of a second (YYYYMMDDHHMMSS.SSSS).
-     * The Gmt Offset will not be effected.
-     * Note: all of the precisions from tenths down to
-     * tenthousandths of a second are optional. If the precision goes below tenthousandths
-     * of a second then the second value will be rounded to the nearest tenthousandths of a second.
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
      */
-    public void setDateSecondPrecision(int yr, int mnth, int dy, int hr, int min, float sec) throws DataTypeException {
-        try {
-            //set the value of the date object to the input date value
-            this.setDatePrecision(yr, mnth, dy);
-            //create new time object is there isn't one
-            if (tm == null) {
-                tm = new CommonTM();
-            }
-            //set the value of the time object to the second precision with the input values
-            tm.setHourMinSecondPrecision(hr, min, sec);
-        } //end try
-
-        catch (DataTypeException e) {
-            throw e;
-        } //end catch
-
-        catch (Exception e) {
-            throw new DataTypeException(e);
-        } //end catch
-    } //end method
+    public void setValueToMinute(Date theDate) throws DataTypeException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate);
+        setValueToMinute(calendar);
+    }
 
     /**
-     * This method takes in the four digit (signed) GMT offset and sets the offset
-     * field
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
      */
-    public void setOffset(int signedOffset) throws DataTypeException {
-        try {
-            //create new time object is there isn't one
-            if (tm == null) {
-                tm = new CommonTM();
-            }
-            //set the offset value of the time object to the input value
-            tm.setOffset(signedOffset);
-        }
-
-        catch (DataTypeException e) {
-            throw e;
-        } //end catch
-
-        catch (Exception e) {
-            throw new DataTypeException(e);
-        } //end catch
-    } //end method
+    public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
+        int yr = theCalendar.get(Calendar.YEAR);
+        int mnth = theCalendar.get(Calendar.MONTH) + 1;
+        int dy = theCalendar.get(Calendar.DATE);
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        int sec = theCalendar.get(Calendar.SECOND);
+        setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
+    }
 
     /**
-     * Returns the HL7 TS string value.
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
      */
-    public String getValue() {
-        String value = null;
-        if (dt != null) {
-            value = dt.getValue();
-        } //end if
-        if (tm != null && value != null && !value.equals("")) {
-            if (tm.getValue() != null && !tm.getValue().equals("")) {
-                //here we know we have a delete value or separate date and the time values supplied
-                if (tm.getValue().equals("\"\"") && dt.getValue().equals("\"\"")) {
-                    //set value to the delete value ("")
-                    value = "\"\"";
-                }
-                else{
-                    //set value to date concatonated with time value
-                    value = value + tm.getValue();
-                }                
-            } //end if
-            if (tm.getValue() == null || tm.getValue().equals("")) {
-                //here we know we both have the date and just the time offset value
-                //change the offset value from an integer to a signed string
-                int offset = tm.getGMTOffset();
-                String offsetStr = "";
-                if (offset > -99) {
-                    offsetStr = DataTypeUtil.preAppendZeroes(Math.abs(offset), 4);
-                    if (tm.getGMTOffset() >= 0) {
-                        offsetStr = "+" + offsetStr;
-                    } //end if
-                    else {
-                        offsetStr = "-" + offsetStr;
-                    } //end else
-                }
-                value = value + offsetStr;
-            } //end if
-        } //end if
-        return value;
-    } //end method
-
-    /**
-     * Returns the year as an integer.
-     */
-    public int getYear() {
-        int year = 0;
-        if (dt != null) {
-            year = dt.getYear();
-        } //end if
-        return year;
-    } //end method
-
-    /**
-     * Returns the month as an integer.
-     */
-    public int getMonth() {
-        int month = 0;
-        if (dt != null) {
-            month = dt.getMonth();
-        } //end if
-        return month;
-    } //end method
-
-    /**
-     * Returns the day as an integer.
-     */
-    public int getDay() {
-        int day = 0;
-        if (dt != null) {
-            day = dt.getDay();
-        } //end if
-        return day;
-    } //end method
-
-    /**
-     * Returns the hour as an integer.
-     */
-    public int getHour() {
-        int hour = 0;
-        if (tm != null) {
-            hour = tm.getHour();
-        } //end if
-        return hour;
-    } //end method
-
-    /**
-     * Returns the minute as an integer.
-     */
-    public int getMinute() {
-        int minute = 0;
-        if (tm != null) {
-            minute = tm.getMinute();
-        } //end if
-        return minute;
-    } //end method
-
-    /**
-     * Returns the second as an integer.
-     */
-    public int getSecond() {
-        int seconds = 0;
-        if (tm != null) {
-            seconds = tm.getSecond();
-        } //end if
-        return seconds;
-    } //end method
-
-    /**
-     * Returns the fractional second value as a float.
-     */
-    public float getFractSecond() {
-        float fractionOfSec = 0;
-        if (tm != null) {
-            fractionOfSec = tm.getFractSecond();
-        } //end if
-        return fractionOfSec;
-    } //end method
-
-    /**
-     * Returns the GMT offset value as an integer.
-     */
-    public int getGMTOffset() {
-        int offSet = 0;
-        if (tm != null) {
-            offSet = tm.getGMTOffset();
-        } //end if
-        return offSet;
-    } //end method
+    public void setValueToSecond(Date theDate) throws DataTypeException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate);
+        setValueToSecond(calendar);
+    }
 
     /**
      * Returns a string value representing the input Gregorian Calendar object in

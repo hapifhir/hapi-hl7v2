@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -26,7 +26,11 @@
  */
 
 package ca.uhn.hl7v2.model.primitive;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -80,6 +84,54 @@ public class CommonDT {
         this.setValue(val);
     } //end constructor
 
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using maximum possible precision
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValue(Calendar theCalendar) throws DataTypeException {
+        int yr = theCalendar.get(Calendar.YEAR);
+        int mnth = theCalendar.get(Calendar.MONTH) + 1;
+        int dy = theCalendar.get(Calendar.DATE);
+        setYearMonthDayPrecision(yr, mnth, dy);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using maximum possible precision
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValue(Date theDate) throws DataTypeException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate);
+        setValue(calendar);
+    }
+    
+    
+    /**
+     * Return the value as a calendar object
+     */
+    public Calendar getValueAsCalendar() {
+        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        retVal.set(Calendar.DATE, getDay());
+        retVal.set(Calendar.MONTH, getMonth() - 1);
+        retVal.set(Calendar.YEAR, getYear());
+        return retVal;
+    }
+
+    
+    /**
+     * Return the value as a date object
+     */
+    public Date getValueAsDate() {
+        return getValueAsCalendar().getTime();
+    }
+    
+    
     /**
      * This method takes in a string HL7 date value and performs validations
      * then sets the value field. The stored value will be in the following
@@ -290,6 +342,7 @@ public class CommonDT {
         return day;
     } //end method
 
+    
     /**
      * Returns a string value representing the input Gregorian Calendar object in
      * an Hl7 Date Format.
