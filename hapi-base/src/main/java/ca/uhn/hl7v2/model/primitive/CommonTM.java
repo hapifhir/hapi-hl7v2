@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -27,7 +27,11 @@
 
 package ca.uhn.hl7v2.model.primitive;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -71,6 +75,11 @@ import ca.uhn.log.HapiLogFactory;
  * @author Neal Acharya
  */
 public class CommonTM {
+    
+    /**
+     * Value returned by {@link #getGMTOffset()} if no offset is set
+     */
+    public static final int GMT_OFFSET_NOT_SET_VALUE = -99;
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(CommonTM.class);
 
@@ -93,7 +102,7 @@ public class CommonTM {
         minute = 0;
         second = 0;
         fractionOfSec = 0;
-        offSet = -99;
+        offSet = GMT_OFFSET_NOT_SET_VALUE;
     } //end constructor
 
     /**
@@ -489,6 +498,111 @@ public class CommonTM {
     } //end method
 
     /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        setHourMinutePrecision(hr, min);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValueToMinute(Date theDate) throws DataTypeException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate);
+        setValueToMinute(calendar);
+    }
+    
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        int sec = theCalendar.get(Calendar.SECOND);
+        
+        setHourMinSecondPrecision(hr, min, sec);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, including timezone offset
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValueComplete(Calendar theCalendar) throws DataTypeException {
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
+        setHourMinSecondPrecision(hr, min, sec);
+        
+        int zoneOffset = theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);
+        setOffset(zoneOffset);
+    }
+    
+    /**
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     */
+    public void setValueToSecond(Date theDate) throws DataTypeException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate);
+        setValueToSecond(calendar);
+    }
+    
+    /**
+     * Return the value as a calendar object. 
+     * 
+     * <b>Note that only the time component of the return value is set to
+     * the value from this object. Returned value will have today's date</b> 
+     */
+    public Calendar getValueAsCalendar() {
+        Calendar retVal = DateUtils.truncate(Calendar.getInstance(), Calendar.DATE);
+        retVal.set(Calendar.HOUR_OF_DAY, getHour());
+        retVal.set(Calendar.MINUTE, getMinute());
+        retVal.set(Calendar.SECOND, getSecond());
+        
+        float fractSecond = getFractSecond();
+        retVal.set(Calendar.MILLISECOND, (int) (fractSecond * 1000.0));
+        
+        int gmtOff = getGMTOffset();
+        if (gmtOff != GMT_OFFSET_NOT_SET_VALUE) {
+            retVal.set(Calendar.ZONE_OFFSET, gmtOff * 1000 * 60 * 60);
+        }
+        
+        return retVal;
+    }
+
+    
+    /**
+     * Return the value as a date object
+     * 
+     * <b>Note that only the time component of the return value is set to
+     * the value from this object. Returned value will have today's date</b> 
+     */
+    public Date getValueAsDate() {
+        return getValueAsCalendar().getTime();
+    }    
+    
+    /**
      * Returns the hour as an integer.
      */
     public int getHour() {
@@ -517,7 +631,7 @@ public class CommonTM {
     } //end method
 
     /**
-     * Returns the GMT offset value as an integer, -99 if not set.  
+     * Returns the GMT offset value as an integer, {@link #GMT_OFFSET_NOT_SET_VALUE} if not set.  
      */
     public int getGMTOffset() {
         return offSet;
