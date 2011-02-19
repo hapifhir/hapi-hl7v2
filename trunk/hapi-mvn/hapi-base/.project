@@ -1,0 +1,22 @@
+<projectDescription>
+  <name>hapi-base</name>
+  <comment>HAPI (HL7 application programming interface; pronounced &quot;happy&quot;) is an open-source, 
+		object-oriented HL7 2.x parser for Java.  HL7 (http://hl7org)  is a messaging 
+		specification for healthcare information systems.  This project is not affiliated with 
+		the HL7 organization; we are just writing some software that conforms to their 
+		specification.  The project was initiated by University Health Network 
+		(a large multi-site teaching hospital in Toronto, Canada). NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.wst.common.project.facet.core.builder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

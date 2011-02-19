@@ -99,6 +99,20 @@
 		      <artifactId>hapi-sourcegen</artifactId>
                 <version>${hapi.version}</version>
 		      <executions>
+                  <!-- <execution>
+                      <id>json</id>
+                      <goals>
+                          <goal>confgen</goal>
+                      </goals>
+                      <configuration>
+                          <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+                          <packageName>ca.uhn.hl7v2.test.json</packageName>
+                          <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
+                          <generateDateTypes>SINGLE</generateDateTypes>
+                          <templatePackage>ca.uhn.hl7v2.sourcegen.templates.json</templatePackage>
+                          <structuresAsResources>true</structuresAsResources>
+                      </configuration>
+                  </execution> -->
 		          <execution>
 		              <id>no_data_types</id>
 		              <goals>

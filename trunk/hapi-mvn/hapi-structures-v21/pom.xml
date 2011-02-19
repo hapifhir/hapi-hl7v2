@@ -129,6 +129,10 @@
 					<minmemory>128m</minmemory>
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
+					<detectLinks>true</detectLinks>
+					<links>
+					   <link>http://hl7api.sourceforge.net/base/apidocs/</link>
+					</links>
 				</configuration>
 			</plugin>
 		</plugins>
