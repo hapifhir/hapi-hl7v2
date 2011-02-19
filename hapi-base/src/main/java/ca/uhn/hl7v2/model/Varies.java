@@ -59,6 +59,15 @@ public class Varies implements Type {
 	 */	
 	public static final String DEFAULT_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_obx2_type";
 
+    /** 
+     * System property key. The value may be set to provide a default
+     * datatype ("ST", "NM", etc) for an OBX segment with an invalid
+     * OBX-2 value type. In other words, if OBX-2 has a value of "ZYZYZ",
+     * which is not a valid value, but this property is set to "ST", then
+     * OBX-5 will be parsed as an ST.
+     */ 
+    public static final String INVALID_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.invalid_obx2_type";
+	
 	private static final HapiLog log = HapiLogFactory.getHapiLog(Varies.class);
 
     private Type data;
@@ -120,8 +129,15 @@ public class Varies implements Type {
     }    
 
     /** 
+     * <p>
      * Sets the data type of field 5 in the given OBX segment to the value of OBX-2.  The argument 
-     * is a Segment as opposed to a particular OBX because it is meant to work with any version.  
+     * is a Segment as opposed to a particular OBX because it is meant to work with any version.
+     * </p>
+     * <p>
+     * Note that if no value is present in OBX-2, or an invalid value is present in
+     * OBX-2, this method will throw an error. This behaviour can be corrected by using the 
+     * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP} 
+     * </p>  
      */
     public static void fixOBX5(Segment segment, ModelClassFactory factory) throws HL7Exception {
         try {
@@ -145,7 +161,7 @@ public class Varies implements Type {
                     if (v.getData() != null) {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
                             throw new HL7Exception(
-                                "OBX-5 is valued, but OBX-2 is not.  A datatype for OBX-5 must be specified using OBX-2.",
+                                "OBX-5 is valued, but OBX-2 is not.  A datatype for OBX-5 must be specified using OBX-2. See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
                                 HL7Exception.REQUIRED_FIELD_MISSING);
                         }
                     }
@@ -159,14 +175,23 @@ public class Varies implements Type {
 //                                                    segment.getMessage().getVersion(), 
 //                                                    "datatype");
                     if (c == null) {
-                    	Primitive obx1 = (Primitive) segment.getField(1, 0);
-                    	HL7Exception h = new HL7Exception("\'" +
-                    		obx2.getValue() + "\' in record " +
-                    		obx1.getValue() + " is invalid for version " + version,
-                    		HL7Exception.DATA_TYPE_ERROR);
-                    	h.setSegmentName("OBX");
-                    	h.setFieldPosition(2);
-                    	throw h;
+                        
+                        String defaultOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
+                        if (defaultOBX2Type != null) {
+                            c = factory.getTypeClass(defaultOBX2Type, version);
+                        }
+                        
+                        if (c == null) {
+                        	Primitive obx1 = (Primitive) segment.getField(1, 0);
+                        	HL7Exception h = new HL7Exception("\'" +
+                        		obx2.getValue() + "\' in record " +
+                        		obx1.getValue() + " is invalid for version " + version + 
+                        		". See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
+                        		HL7Exception.DATA_TYPE_ERROR);
+                        	h.setSegmentName("OBX");
+                        	h.setFieldPosition(2);
+                        	throw h;
+                        }
                     }
 
                     Type newTypeInstance;
