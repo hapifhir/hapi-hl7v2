@@ -15,6 +15,9 @@
             <action type="fix" due-to="Karl Weller" issue="3027567">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
             <action type="fix" due-to="Kalle Eskola">Add check to ConnectionHub to avoid returning a connection which was explicitly closed. Also update "send and receive" example in documentation to show correct way of discarding a connection using ConnectionHub.</action>
             <action type="add" dev="jamesagnew">HAPI now logs the current version as it is being initialized, for troubleshooting purposes.</action>
+            <action type="add" dev="jamesagnew">Add getters and setters to DT, TM, and TS data types to get and set values using standard Java Date and Calendar objects</action>
+            <action type="add" dev="jamesagnew">Add factory method to PipeParser which returns an instance with validation disabled (useful for one-liner parse routines)</action>
+            <action type="add" dev="jamesagnew">Add system property to allow OBX-2 to contain invalid values and still parse (see Varies javadoc)</action>
         </release>
         <release version="1.0.1" date="2010-05-16"
             description="This release corrects a single issue">

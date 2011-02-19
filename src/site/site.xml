@@ -56,9 +56,9 @@
             <item name="Source Code" href="source-repository.html"/>
         </menu>
 
-        <menu name="HL7 Reference">
+        <!-- <menu name="HL7 Reference">
             <item name="HL7 CrossRef" href="http://hapi-xref.appspot.com/"></item>
-        </menu>
+        </menu>  -->
 
         <menu name="HAPI Reference">
             <item name="JavaDocs" href="base/apidocs/index.html">

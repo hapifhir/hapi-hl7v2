@@ -1,19 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
 		<version>1.1-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-base</artifactId>
 	<name>HAPI - 01 - Base Module</name>
-	
+
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -21,29 +20,29 @@
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
 			<version>1.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.0.4</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-j2ee</artifactId>
 			<version>4.0.2</version>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.9</version>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -76,23 +75,48 @@
 
 	<build>
 		<plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- append to the packaging phase. -->
-                        <goals>
-                            <goal>single</goal> <!-- goals == mojos -->
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>../src/assembly/source.xml</descriptor>
-                            </descriptors>
-                        </configuration>                        
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<!-- make sure our code doesn't have 1.5+ dependencies except where we know it -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>animal-sniffer-maven-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>check-java-version</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<signature>
+								<groupId>org.codehaus.mojo.signature</groupId>
+								<artifactId>java14</artifactId>
+								<version>1.0</version>
+							</signature>
+							<ignores>
+							 <ignore>java.lang.StringBuilder</ignore>
+							</ignores>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>retrotranslator-maven-plugin</artifactId>
@@ -115,33 +139,21 @@
 						<phase>site</phase>
 						<configuration>
 							<tasks>
-								<!-- <echo message="Adding urchin"/>
-                                <replace dir="${basedir}/target/site">
-                                    <include name="**/*.html" />
-                                    <replacetoken>
-                    <![CDATA[</BODY>]]>
-                                    </replacetoken>
-                                    <replacevalue>
-                    <![CDATA[
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try {
-var pageTracker = _gat._getTracker("UA-1395874-1");
-pageTracker._trackPageview();
-} catch(err) {}</script></body>]]>
-                                    </replacevalue>
-                                </replace>-->
-								<echo message="Copying resources"/>
+								<!--
+									<echo message="Adding urchin"/> <replace dir="${basedir}/target/site"> <include name="**/*.html" /> <replacetoken> <![CDATA[</BODY>]]> </replacetoken>
+									<replacevalue> <![CDATA[ <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+									document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script
+									type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-1395874-1"); pageTracker._trackPageview(); } catch(err) {}</script></body>]]>
+									</replacevalue> </replace>
+								-->
+								<echo message="Copying resources" />
 								<copy todir="../target/site/base/apidocs">
 									<fileset dir="target/site/apidocs">
-										<include name="**/*"/>
+										<include name="**/*" />
 									</fileset>
 								</copy>
-                                <copy todir="../target/site/" file="target/site/taglist.html">
-                                </copy>
+								<copy todir="../target/site/" file="target/site/taglist.html">
+								</copy>
 							</tasks>
 						</configuration>
 						<goals>
@@ -158,5 +170,5 @@ pageTracker._trackPageview();
 			</resource>
 		</resources>
 	</build>
-	
+
 </project>
