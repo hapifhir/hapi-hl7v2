@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -29,6 +29,8 @@ package ca.uhn.hl7v2.model.primitive;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -93,6 +95,65 @@ public class CommonTMTest extends TestCase {
 		assertNotNull("Should have a valid CommonTM object", commonTM);
 	}
 
+	
+    public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ssZ");
+        Date date = format.parse("20100609 12:40:05-0400");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        
+        commonTM = new CommonTM();
+        commonTM.setValueToMinute(cal);
+        assertEquals("1240", commonTM.getValue());
+
+        commonTM = new CommonTM();
+        commonTM.setValueToMinute(date);
+        assertEquals("1240", commonTM.getValue());
+
+        commonTM = new CommonTM();
+        commonTM.setValueToSecond(cal);
+        assertEquals("124005", commonTM.getValue());
+
+        commonTM = new CommonTM();
+        commonTM.setValueToSecond(date);
+        assertEquals("124005", commonTM.getValue());
+
+        commonTM = new CommonTM();
+        cal.set(Calendar.MILLISECOND, 250);
+        cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
+        commonTM.setValueComplete(cal);
+        String value = commonTM.getValue();
+        assertEquals("124005.25-0004", value);
+        
+        format = new SimpleDateFormat("HH:mm:ss");
+        
+        commonTM = new CommonTM();
+        commonTM.setValue("1240");
+        String formatted = format.format(commonTM.getValueAsDate());
+        assertEquals("12:40:00", formatted);
+        
+        commonTM = new CommonTM();
+        commonTM.setValue("1240");
+        assertEquals("12:40:00", format.format(commonTM.getValueAsCalendar().getTime()));
+
+        commonTM = new CommonTM();
+        commonTM.setValue("124005");
+        formatted = format.format(commonTM.getValueAsDate());
+        assertEquals("12:40:05", formatted);
+        
+        commonTM = new CommonTM();
+        commonTM.setValue("124005");
+        assertEquals("12:40:05", format.format(commonTM.getValueAsCalendar().getTime()));
+        
+        // Check millis and offset
+        commonTM = new CommonTM();
+        commonTM.setValue("124005.25-0004");
+        cal = commonTM.getValueAsCalendar();
+        assertEquals(250, cal.get(Calendar.MILLISECOND));
+        assertEquals(-4 * 1000 * 60 * 60, cal.get(Calendar.ZONE_OFFSET));
+    }
+    
 	/**
 	 * Test for string constructor
 	 */

@@ -1,8 +1,10 @@
 package ca.uhn.hl7v2.util;
 
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.SIU_S12;
 import ca.uhn.hl7v2.model.v24.datatype.CE;
+import ca.uhn.hl7v2.model.v25.message.RSP_K23;
 import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.parser.*;
 
@@ -195,4 +197,22 @@ public class TerserTest extends TestCase {
         assertEquals(2, Terser.numSubComponents(s.getField(9, 0), 1));
                 
     }   
+    
+    
+    public void testId() throws EncodingNotSupportedException, HL7Exception {
+        
+        String msgString = "MSH|^~\\&|XYZ|a1510aae-cbcd-43d0-b0e2-4ad082f03775|HU|7d15ac56-8b12-4a07-8b10-3d2ae367f407|20100831104406||RSP^K23|20100831104406208095|P|2.5\r" + 
+        		"MSA|AA|20100831104406208095\r" + 
+        		"QAK||OK\r" + 
+        		"QPD|QRY_1001^Query for Corresponding Identifiers^ICDO|QRY10502106|QBPQ231176^^^57f31a9b-8eff-4736-84c4-6fafd6f25039\r" + 
+        		"PID|||QBPQ231177^^^DD95666A-76BA-444E-8FE8-C4E6BFC83E2D";
+        RSP_K23 qryMsg = (RSP_K23) new PipeParser().parse(msgString);
+        Terser t = new Terser(qryMsg);
+        
+        String value = t.get("/.PID-3-1");
+        System.out.println("\r\n\r\n" + value);
+        value = t.get("/QUERY_RESPONSE(0)/.PID-3-1");
+        System.out.println(value);
+    }
+    
 }

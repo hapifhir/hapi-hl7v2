@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -26,8 +26,11 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
@@ -142,6 +145,56 @@ public class CommonTSTest extends TestCase {
         assertNotNull("Should have a valid CommonTS object", commonTS);
     }
 
+    public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        Date date = format.parse("20100609 12:40:05");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        
+        commonTS = new CommonTS();
+        commonTS.setValueToMinute(cal);
+        assertEquals("201006091240", commonTS.getValue());
+
+        commonTS = new CommonTS();
+        commonTS.setValueToMinute(date);
+        assertEquals("201006091240", commonTS.getValue());
+
+        commonTS = new CommonTS();
+        commonTS.setValueToSecond(cal);
+        assertEquals("20100609124005", commonTS.getValue());
+
+        commonTS = new CommonTS();
+        commonTS.setValueToSecond(date);
+        assertEquals("20100609124005", commonTS.getValue());
+        
+        commonTS = new CommonTS();
+        cal.set(Calendar.MILLISECOND, 250);
+        cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
+        commonTS.setValueComplete(cal);
+        String value = commonTS.getValue();
+        assertEquals("20100609124005.25-0004", value);
+        
+        commonTS = new CommonTS();
+        commonTS.setValue("201006091240");
+        assertEquals("201006091240", commonTS.getValue());
+        String formatted = format.format(commonTS.getValueAsDate());
+        assertEquals("20100609 12:40:00", formatted);
+        
+        commonTS = new CommonTS();
+        commonTS.setValue("201006091240");
+        assertEquals("20100609 12:40:00", format.format(commonTS.getValueAsCalendar().getTime()));
+     
+        // Check millis and offset
+        commonTS = new CommonTS();
+        commonTS.setValue("20100609124005.25-0004");
+        cal = commonTS.getValueAsCalendar();
+        assertEquals(250, cal.get(Calendar.MILLISECOND));
+        assertEquals(-4 * 1000 * 60 * 60, cal.get(Calendar.ZONE_OFFSET));
+        
+    }
+    
+    
 	/**
 	 * Test set/getValue with various inputs
 	 */
