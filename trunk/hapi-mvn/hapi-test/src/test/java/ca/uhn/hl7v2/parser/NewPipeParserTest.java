@@ -3,11 +3,12 @@ package ca.uhn.hl7v2.parser;
 import java.io.IOException;
 import java.io.InputStream;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Message;
@@ -15,22 +16,24 @@ import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Varies;
+import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
 import ca.uhn.hl7v2.model.v24.datatype.SI;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
-import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A03;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
+import ca.uhn.hl7v2.model.v25.message.REF_I12;
 import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.model.v251.message.ADT_A17;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 import ca.uhn.hl7v2.validation.impl.SizeRule;
@@ -61,8 +64,8 @@ public class NewPipeParserTest extends TestCase {
      *    MERGE_INFO
      * </pre>
      * 
-     * This test checks for correct behaviour if a required segment at the tail of the message
-     * is missing
+     * This test checks for correct behaviour if a required segment at the tail
+     * of the message is missing
      */
     public void testMissingRequiredLastSegment() throws HL7Exception {
 
@@ -78,9 +81,9 @@ public class NewPipeParserTest extends TestCase {
         Assert.assertEquals("7010226", msg.getPID().getPid3_PatientIdentifierList(0).getIDNumber().getValue());
         PV1 pv1 = (PV1) msg.get("PV1");
         Assert.assertEquals("I", pv1.getPv12_PatientClass().encode());
-        
+
         ourLog.info("\r\n" + msg.toString());
-        
+
     }
 
     public void testTwoSegmentsWithSameName() throws EncodingNotSupportedException, HL7Exception {
@@ -99,6 +102,52 @@ public class NewPipeParserTest extends TestCase {
         ourLog.info(msg.encode());
 
         Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
+
+    }
+
+    public void testDTInObx2() throws EncodingNotSupportedException, HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+                + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
+                + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
+                + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+                + "OBX|8|DT|GDT-00108^Device Implant Date^GDT-LATITUDE||20090505||||||F||\r";
+
+        ca.uhn.hl7v2.model.v231.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v231.message.ORU_R01();
+        msg.setParser(new PipeParser());
+        msg.parse(string);
+
+        ourLog.info(msg.encode());
+
+    }
+
+    public void testInvalidLengthInObx2() throws EncodingNotSupportedException, HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.4\r"
+                + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
+                + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
+                + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+                + "OBX|8|MED|GDT-00108^Device Implant Date^GDT-LATITUDE||20090505||||||F||\r";
+
+        ca.uhn.hl7v2.model.v24.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v24.message.ORU_R01();
+        msg.setParser(new PipeParser());
+
+        System.setProperty(Varies.INVALID_OBX2_TYPE_PROP, "ST");
+        msg.parse(string);
+
+        ourLog.info(msg.encode());
+
+        System.clearProperty(Varies.INVALID_OBX2_TYPE_PROP);
+        try {
+            msg.parse(string);
+            fail();
+        } catch (HL7Exception e) {
+
+        }
 
     }
 
@@ -472,7 +521,7 @@ public class NewPipeParserTest extends TestCase {
         System.out.println(parser.encode(parsed));
 
         ourLog.info("\r\n" + parsed.toString());
-        
+
         assertEquals("R01", parsed.getEVN().getEventTypeCode().getValue());
 
         EVN group = (EVN) parsed.get("EVN2");
@@ -641,6 +690,43 @@ public class NewPipeParserTest extends TestCase {
         public String getSectionReference() {
             return null;
         }
+    }
+
+    /**
+     * Make sure IS and ID datatypes are supported as OBX-5 values
+     */
+    public void testParseObx5WithTypeRequiringTable() throws EncodingNotSupportedException, HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+                + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+                + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
+                + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
+                + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+                + "OBX|1|IS|Z114099^Erc^L||ABC||||||F|||200905011111|PMH\r";
+
+        parser.parse(string);
+
+    }
+
+    public void testMissingSegment() throws EncodingNotSupportedException, HL7Exception {
+
+        String messageString = "MSH|^~\\&|BLAH|Default Facility|||20100604104559||REF^I12^REF_I12|||2.5\r\n" + "SFT|BLAH|BLAH|BLAH|2010/06/04 10:44, branch : trunk\r\n"
+                + "RF1||||||15|20100601000000\r\n" + "PRD|RP^Referring Provider|foo^doctor^^^DR|^^^^^^O||||999998\r\n"
+                + "PRD|RT^Referred to Provider|moto^moto^^^r6|^^^^^^O||^^^^^^^^^^^411||8\r\n" + "PID|1||^^^^^^20100525^21000101^ON||aaa^aaa^^^^^L||19000101|M|||^^^ON^^^H\r\n"
+                + "NTE|||asfd notes|^APPOINTMENT_NOTES\r\n" + "NTE|||engine oil problem, and maybe needs new plugs|^REASON_FOR_CONSULTATION\r\n"
+                + "NTE|||86k km|^CLINICAL_INFORMATION\r\n" + "NTE|||goes too slow|^CONCURRENT_PROBLEMS\r\n" + "NTE|||91 octane|^CURRENT_MEDICATIONS\r\n"
+                + "NTE|||scooters|^ALLERGIES";
+
+        REF_I12 message = (REF_I12) parser.parse(messageString);
+
+        ourLog.info("Structure is: " + message.printStructure());
+
+        ourLog.info("Going to parse/encode");
+        message.parse(message.encode());
+
+        ourLog.info("Structure is: " + message.printStructure());
+
     }
 
 }

@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -26,8 +26,16 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.apache.commons.lang.time.DateUtils;
+
+import sun.util.calendar.CalendarUtils;
 
 import junit.framework.TestCase;
 
@@ -191,6 +199,33 @@ public class CommonDTTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	
+	public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
+	    
+	    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:ss");
+        Date date = format.parse("20100609 12:40");
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    
+	    commonDT = new CommonDT();
+	    commonDT.setValue(cal);
+	    assertEquals("20100609", commonDT.getValue());
+
+        commonDT = new CommonDT();
+        commonDT.setValue(date);
+        assertEquals("20100609", commonDT.getValue());
+	    
+        commonDT = new CommonDT();
+        commonDT.setValue("20100609");
+        assertEquals("20100609 00:00", format.format(commonDT.getValueAsDate()));
+        
+        commonDT = new CommonDT();
+        commonDT.setValue("20100609");
+        assertEquals("20100609 00:00", format.format(commonDT.getValueAsCalendar().getTime()));
+        
+	}
+	
+	
 	/**
 	 * Testing setYearPrecision() with various year values
 	 */
