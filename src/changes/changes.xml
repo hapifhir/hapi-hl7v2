@@ -7,17 +7,20 @@
 	<body>
         <release version="1.1" date="TBA"
             description="This section contains features and fixes which will be contained in the next release of HAPI. They may be tested by building from source.">
+            <action type="add" due-to="Gabriel Landais" issue="3164756">Allow users of HAPI SimpleServer to create an Application that handles errors. The provided patch adds an interface, which should be implemented by exception aware Applications. The application can then re-dispatch the provided ACK, or a create a completely new message.</action>
+            <action type="fix" due-to="Pepe Juarez" issue="3115671">Correct XML encoding of OMD_O03. (OMD_O03.DIET was incorrectly being encoded simply as "DIE")</action>
+            <action type="fix" due-to="Karl Weller" issue="3027567">Correct the spelling of the name TIMING in a number of group structures (e.g. OML_O21_TIMING which was previously OML_O21_TIIMING)</action>
             <action type="update" dev="jamesagnew">Update structure classes source generator to use an Apache Velocity based template instead of simple hard-coded string concatenation. This will make it much easier to add new features to the structures in the future.</action>
-            <action type="update" dev="jamesagnew">Message now has a method printStructure(), which returns a useful String for debugging containing a description of the entire structure of the message</action>
+            <action type="update" dev="jamesagnew">Message now has a method Message#printStructure(), which returns a useful String for debugging containing a description of the entire structure of the message</action>
             <action type="fix" dev="jamesagnew">GenericParser ignores custom ModelClassFactory implementations passed into its constructor. Thanks to John R for reporting.</action>
             <action type="fix" due-to="Yildiray Kabak">XML parser now parses subsequent datatype components correctly when a component is missing. E.g. if ED.1 is missing but ED.2 is present: Previously, ED.2 would be parsed as ED.1.</action>
             <action type="fix" due-to="Torsten from Agfa Healthcare" issue="3031998">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
             <action type="fix" due-to="Karl Weller" issue="3027567">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
             <action type="fix" due-to="Kalle Eskola">Add check to ConnectionHub to avoid returning a connection which was explicitly closed. Also update "send and receive" example in documentation to show correct way of discarding a connection using ConnectionHub.</action>
             <action type="add" dev="jamesagnew">HAPI now logs the current version as it is being initialized, for troubleshooting purposes.</action>
-            <action type="add" dev="jamesagnew">Add getters and setters to DT, TM, and TS data types to get and set values using standard Java Date and Calendar objects</action>
-            <action type="add" dev="jamesagnew">Add factory method to PipeParser which returns an instance with validation disabled (useful for one-liner parse routines)</action>
-            <action type="add" dev="jamesagnew">Add system property to allow OBX-2 to contain invalid values and still parse (see Varies javadoc)</action>
+            <action type="add" dev="jamesagnew">Add getters and setters to DT, TM, and TS data types to get and set values using standard Java Date and Calendar objects.</action> 
+            <action type="add" dev="jamesagnew">Add factory method to PipeParser which returns an instance with validation disabled (useful for one-liner parse routines)</action> 
+            <action type="add" dev="jamesagnew">Add system property to allow OBX-2 to contain invalid values and still parse (see Varies JavaDoc)</action>
         </release>
         <release version="1.0.1" date="2010-05-16"
             description="This release corrects a single issue">

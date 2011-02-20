@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
 		<version>1.1-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-test</artifactId>
 	<name>HAPI - 06 - Test Case Suite</name>
-	
+
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -21,63 +21,63 @@
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
 			<version>${hapi.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v22</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v23</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v231</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v24</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v25</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v251</artifactId>
-            <version>${hapi.version}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v26</artifactId>
-            <version>${hapi.version}</version>
-        </dependency>       
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v251</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v26</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-sourcegen</artifactId>
 			<version>${hapi.version}</version>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>junit-addons</groupId>
 			<artifactId>junit-addons</artifactId>
 			<version>1.4</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
@@ -89,103 +89,102 @@
 			<version>1.0-FCS</version>
 		</dependency>
 
-		
+
 	</dependencies>
 
 	<build>
 		<plugins>
-		  <plugin>
-		      <groupId>ca.uhn.hapi</groupId>
-		      <artifactId>hapi-sourcegen</artifactId>
-                <version>${hapi.version}</version>
-		      <executions>
-                  <!-- <execution>
-                      <id>json</id>
-                      <goals>
-                          <goal>confgen</goal>
-                      </goals>
-                      <configuration>
-                          <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-                          <packageName>ca.uhn.hl7v2.test.json</packageName>
-                          <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
-                          <generateDateTypes>SINGLE</generateDateTypes>
-                          <templatePackage>ca.uhn.hl7v2.sourcegen.templates.json</templatePackage>
-                          <structuresAsResources>true</structuresAsResources>
-                      </configuration>
-                  </execution> -->
-		          <execution>
-		              <id>no_data_types</id>
-		              <goals>
-                          <goal>confgen</goal>
-		              </goals>
-		              <configuration>
-		                  <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-		                  <packageName>ca.uhn.hl7v2.test.nodt.conf</packageName>
-		                  <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
-		                  <generateDateTypes>NONE</generateDateTypes>
-		              </configuration>
-		          </execution>
-                  <execution>
-                      <id>single_data_types</id>
-                      <goals>
-                          <goal>confgen</goal>
-                      </goals>
-                      <configuration>
-                          <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-                          <packageName>ca.uhn.hl7v2.test.singledt.conf</packageName>
-                          <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
-                          <generateDateTypes>SINGLE</generateDateTypes>
-                      </configuration>
-                  </execution>
-		      </executions>
-		      <dependencies>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-base</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v21</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v22</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v23</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v231</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v24</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v25</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v251</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v26</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>       
-		      </dependencies>
-		  </plugin>
+			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>
+				<version>${hapi.version}</version>
+				<executions>
+					<!-- <execution> <id>json</id> <goals> <goal>confgen</goal> </goals> 
+						<configuration> <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory> 
+						<packageName>ca.uhn.hl7v2.test.json</packageName> <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile> 
+						<generateDateTypes>SINGLE</generateDateTypes> <templatePackage>ca.uhn.hl7v2.sourcegen.templates.json</templatePackage> 
+						<structuresAsResources>true</structuresAsResources> </configuration> </execution> -->
+					<execution>
+						<id>no_data_types</id>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<packageName>ca.uhn.hl7v2.test.nodt.conf</packageName>
+							<profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
+							<generateDateTypes>NONE</generateDateTypes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>single_data_types</id>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<packageName>ca.uhn.hl7v2.test.singledt.conf</packageName>
+							<profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile>
+							<generateDateTypes>SINGLE</generateDateTypes>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-base</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v21</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v22</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v23</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v231</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v24</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v25</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v251</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v26</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7.2</version>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -194,5 +193,5 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 </project>

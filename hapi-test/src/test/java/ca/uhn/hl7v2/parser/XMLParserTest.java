@@ -9,6 +9,7 @@ package ca.uhn.hl7v2.parser;
 import java.io.IOException;
 import java.io.InputStream;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 
@@ -20,6 +21,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.datatype.ED;
+import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
  
 /**
@@ -535,5 +537,33 @@ public class XMLParserTest extends TestCase {
         
     }
 
+    
+    /**
+     * Test for issue reported here: https://sourceforge.net/tracker/?func=detail&aid=3115671&group_id=38899&atid=423835
+     */
+    public void testEncodeOmdO03() throws EncodingNotSupportedException, HL7Exception {
+    	
+			String texto = "MSH|^~\\&|DIETOOLS|1^DOMINION|JARA||20101027181706||OMD^O03^OMD_O03|20101027181706|P|2.5|||ER|AL\r"+
+			"PID|1||CIPNUM^^^CAEX^CIP^^^^EX&&ES-EX||DUMAS^VICTOR HUGO|ZAPATA|19740325|1\r"+
+			"PV1|1|I|^^51C302-1^^^^^^^0005&51UHP31&UH TERCERA 1 HSPA&TIPOUOENF||||||||||||||||100002739^005^^^^^^^^0005&APARATO DIGESTIVO&5DIG&TIPOUOSERV|\r"+
+			"ORC|XO||||||||20101117|1^^HERNAME\r"+
+			"TQ1|1||CE||||20101117\r"+
+			"ODS|D||PAN4^PEDIATRICA 1|\r"+
+			"ODS|P||EVENTO^LACT|\r"+
+			"ODS|P||CARACTERISTICA^SIN SAL|\r"+
+			"ODS|P||CARACTERISTICA^DIABETICO|\r";
+			String textoXML = new String();
+			//parseamos para conseguir un string de un xml con formato hl7
+			XMLParser xmlParser = new DefaultXMLParser();
+			PipeParser pipeParser = new PipeParser();
+			OMD_O03 msg = (OMD_O03) pipeParser.parse(texto);
+
+			textoXML = xmlParser.encode(msg);
+			System.out.println("Objeto transformado0: " + textoXML);
+
+
+			Assert.assertTrue(textoXML.contains("OMD_O03.DIET"));
+    	
+    }
     
 }

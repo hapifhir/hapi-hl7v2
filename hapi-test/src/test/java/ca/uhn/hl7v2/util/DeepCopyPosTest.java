@@ -86,8 +86,9 @@ public class DeepCopyPosTest extends TestCase {
      */
     public void testCompToCompCopy2() throws Exception {
         
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
+//            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+//            System.setProperty("ca.on.uhn.hl7.database.url", "jdbc:odbc:hl7");
+    	
             String val1 = "M";
             String val2 = "123";
             AD ad = new AD(null);

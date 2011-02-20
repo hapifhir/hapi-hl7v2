@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * Unit tests for <code>ValidatesAgainstSchema</code>.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
+ * @version $Revision: 1.3 $ updated on $Date: 2011-02-20 21:59:07 $ by $Author: jamesagnew $
  */
 public class XMLSchemaRuleTest extends TestCase {
 
@@ -30,11 +30,19 @@ public class XMLSchemaRuleTest extends TestCase {
         URL res = XMLSchemaRuleTest.class.getClassLoader().getResource("ca/uhn/hl7v2/validation/impl/ACK.xsd");
         String resPath = res.toString().replace("file:/", "").replace("/ACK.xsd", "");
         
+        
+        if (!resPath.startsWith(System.getProperty("file.separator") + "")) { 
+        	resPath = System.getProperty("file.separator") + resPath;
+        }
+        
         System.setProperty("ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation.2.5", 
                 resPath);
         
         EncodingRule rule = new XMLSchemaRule();
         ValidationException[] errors = rule.test(getMessage1());
+        for (int i =0; i < errors.length;i++) {
+        	System.out.println(errors[i].toString());
+        }
         assertEquals(0, errors.length);
 
         errors = rule.test(getMessage2());
