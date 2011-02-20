@@ -501,6 +501,7 @@ public class CommonTM {
      * Note: Sets fields using precision up to the minute
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
@@ -514,6 +515,7 @@ public class CommonTM {
      * Note: Sets fields using precision up to the minute
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValueToMinute(Date theDate) throws DataTypeException {
         Calendar calendar = Calendar.getInstance();
@@ -527,6 +529,7 @@ public class CommonTM {
      * Note: Sets fields using precision up to the second
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
@@ -542,6 +545,7 @@ public class CommonTM {
      * Note: Sets fields using precision up to the millisecond, including timezone offset
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValueComplete(Calendar theCalendar) throws DataTypeException {
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
@@ -559,6 +563,7 @@ public class CommonTM {
      * Note: Sets fields using precision up to the second
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValueToSecond(Date theDate) throws DataTypeException {
         Calendar calendar = Calendar.getInstance();
@@ -567,10 +572,11 @@ public class CommonTM {
     }
     
     /**
-     * Return the value as a calendar object. 
+     * <p>Return the value as a calendar object.</p> 
      * 
      * <b>Note that only the time component of the return value is set to
      * the value from this object. Returned value will have today's date</b> 
+     * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
         Calendar retVal = Calendar.getInstance();
@@ -591,10 +597,11 @@ public class CommonTM {
 
     
     /**
-     * Return the value as a date object
+     * <p>Return the value as a date object</p>
      * 
      * <b>Note that only the time component of the return value is set to
      * the value from this object. Returned value will have today's date</b> 
+     * @since 1.1 
      */
     public Date getValueAsDate() {
         return getValueAsCalendar().getTime();

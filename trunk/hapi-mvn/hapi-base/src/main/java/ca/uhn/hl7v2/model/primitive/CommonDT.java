@@ -87,7 +87,8 @@ public class CommonDT {
      * 
      * Note: Sets fields using maximum possible precision
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theCalendar The calendar object from which to retrieve values
+     * @since 1.1 
      */
     public void setValue(Calendar theCalendar) throws DataTypeException {
         int yr = theCalendar.get(Calendar.YEAR);
@@ -102,6 +103,7 @@ public class CommonDT {
      * Note: Sets fields using maximum possible precision
      * 
      * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
      */
     public void setValue(Date theDate) throws DataTypeException {
         Calendar calendar = Calendar.getInstance();
@@ -112,6 +114,7 @@ public class CommonDT {
     
     /**
      * Return the value as a calendar object
+     * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
         Calendar retVal = Calendar.getInstance();
@@ -131,6 +134,7 @@ public class CommonDT {
     
     /**
      * Return the value as a date object
+     * @since 1.1 
      */
     public Date getValueAsDate() {
         return getValueAsCalendar().getTime();
