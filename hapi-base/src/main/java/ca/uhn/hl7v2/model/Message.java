@@ -35,7 +35,14 @@ import java.io.IOException;
 
 
 /**
+ * <p>
  * Represents a complete HL7 message including all structures, segments, and fields.  
+ * </p><p>
+ * Note this it is not recommended to implement this interface directly, as it is
+ * subject to change. Instead, extend abstract implementations for your
+ * model classes, such as {@link AbstractMessage} and {@link AbstractGroup}
+ * </p>
+ * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public interface Message extends Group {
@@ -169,17 +176,16 @@ public interface Message extends Group {
      * <p>
      * For instance, the following message (containing a few quirks for demonstration purposes):
      * <code>
-     * MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4\r
+     * <pre>MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4\r
      * EVN|R01
      * EVN|R02
      * PID|1
      * IN1|1
      * IN1|2
-     * PID|2
-     * </code>
+     * PID|2</pre></code>
      * ...produces the following output:
      * <code>
-     * ADT_A01 (start)
+     * <pre>ADT_A01 (start)
      *    MSH - MSH|^~\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4
      *    EVN - EVN|R01
      *    [ { EVN2 } ] (non-standard) - EVN|R02
@@ -222,7 +228,7 @@ public interface Message extends Group {
      *    [ UB2 ] - Not populated
      *    [ PDA ] - Not populated
      * ADT_A01 (end)
-     * </code>
+     * </pre></code>
      * </p>
      * 
      * @return A summary of the structure
