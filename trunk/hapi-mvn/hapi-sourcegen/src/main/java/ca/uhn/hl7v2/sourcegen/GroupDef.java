@@ -85,6 +85,16 @@ public class GroupDef implements StructureDef {
         return result;
     }
     
+    
+    public String getRawGroupName() {
+    	return groupName;
+    }
+    
+    public void setRawGroupName(String groupName) {
+    	this.groupName = groupName;
+    }
+    
+    
     /**
      * @return group name without message name prepended  
      */

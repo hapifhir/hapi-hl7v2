@@ -411,11 +411,13 @@ public class SegmentGenerator extends java.lang.Object {
 
 
 	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages, String theTemplatePackage) throws Exception {
+		log.info("Writing segment: " + fileName);
+		
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 		
         theTemplatePackage = theTemplatePackage.replace(".", "/");
         Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/segment.vsm");
-        Context ctx = new VelocityContext();
+        VelocityContext ctx = new VelocityContext();
         ctx.put("segmentName", segmentName);
         ctx.put("version", version);
         ctx.put("desc", description);

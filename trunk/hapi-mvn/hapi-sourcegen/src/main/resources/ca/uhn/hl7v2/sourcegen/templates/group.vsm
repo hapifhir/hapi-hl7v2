@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.AbstractGroup;
+import ca.uhn.hl7v2.model.GenericSegment;
 
 /**
  * <p>Represents a $groupName group structure (${description}).
