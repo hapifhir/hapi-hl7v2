@@ -140,6 +140,12 @@ public class Responder {
         }
         catch (HL7Exception e) {
             outgoingMessageString = logAndMakeErrorMessage(e, parser.getCriticalResponseData(incomingMessageString), parser, parser.getEncoding(incomingMessageString));
+        	for (Object app : apps) {
+				if (app instanceof ApplicationExceptionHandler) {
+					ApplicationExceptionHandler aeh = (ApplicationExceptionHandler) app;
+					outgoingMessageString = aeh.processException(incomingMessageString, outgoingMessageString, e);
+				}
+        	}
         }
         
         if (outgoingMessageString == null) {
