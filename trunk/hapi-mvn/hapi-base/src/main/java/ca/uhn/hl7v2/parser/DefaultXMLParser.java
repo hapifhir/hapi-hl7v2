@@ -26,7 +26,9 @@ package ca.uhn.hl7v2.parser;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -64,6 +66,13 @@ public class DefaultXMLParser extends XMLParser {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultXMLParser.class);
 
+    private static final Set<String> ourForceGroupNames;
+    
+    static {
+    	ourForceGroupNames = new HashSet<String>();
+    	ourForceGroupNames.add("DIET");
+    }
+    
     /** Creates a new instance of DefaultXMLParser */
     public DefaultXMLParser() {
     }
@@ -286,15 +295,18 @@ public class DefaultXMLParser extends XMLParser {
      */
     protected static String makeGroupElementName(String messageName, String className) {
         String ret = null;
-
-        if (className.length() > 4) {
-            StringBuffer elementName = new StringBuffer();
+        
+        if (className.length() > 4 || ourForceGroupNames.contains(className)) {
+            StringBuilder elementName = new StringBuilder();
             elementName.append(messageName);
             elementName.append('.');
             elementName.append(className);
             ret = elementName.toString();
         } else if (className.length() == 4) {
-            ret = className.substring(0,3);
+            // It is not clear why this case is needed.. We should figure out
+        	// why it was added, since removing it or optimizing its use would
+        	// prevent the need for "ourForGroupNames" above
+        	ret = className.substring(0,3);
         } else {
             ret = className;
         }
