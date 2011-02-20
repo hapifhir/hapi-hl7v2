@@ -14,6 +14,14 @@ What's New
     constraining messages easier, but more significantly it should make it much easier to
     create message classes for custom message definitions (specs using Z-segments, etc.)
 
+* Version 1.1
+
+  Version 1.1 is API compatible with version 1.0. Upgrading should be as simple as dropping
+  in the updated JARs.
+  
+  
+
+
 * Version 1.0
 
   Version 1.0 contains a number of bugfixes. See the {{{changes-report.html}Changelog}} for more information.

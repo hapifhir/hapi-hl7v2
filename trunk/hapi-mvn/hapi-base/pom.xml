@@ -90,7 +90,7 @@
 						<configuration>
 							<signature>
 								<groupId>org.codehaus.mojo.signature</groupId>
-								<artifactId>java14</artifactId>
+								<artifactId>java15</artifactId>
 								<version>1.0</version>
 							</signature>
 							<ignores>
@@ -136,16 +136,9 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>site</phase>
+						<phase>post-site</phase>
 						<configuration>
 							<tasks>
-								<!--
-									<echo message="Adding urchin"/> <replace dir="${basedir}/target/site"> <include name="**/*.html" /> <replacetoken> <![CDATA[</BODY>]]> </replacetoken>
-									<replacevalue> <![CDATA[ <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-									document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script
-									type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-1395874-1"); pageTracker._trackPageview(); } catch(err) {}</script></body>]]>
-									</replacevalue> </replace>
-								-->
 								<echo message="Copying resources" />
 								<copy todir="../target/site/base/apidocs">
 									<fileset dir="target/site/apidocs">
