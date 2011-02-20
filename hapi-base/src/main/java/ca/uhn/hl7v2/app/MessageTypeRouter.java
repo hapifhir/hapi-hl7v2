@@ -1,6 +1,8 @@
 package ca.uhn.hl7v2.app;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.HL7Exception;
@@ -14,7 +16,7 @@ import ca.uhn.log.HapiLogFactory;
  * the method <code>registerApplication(...)</code>.
  * @author Bryan Tripp
  */
-public class MessageTypeRouter implements Application {
+public class MessageTypeRouter implements Application, ApplicationExceptionHandler {
     
     private static final HapiLog log = HapiLogFactory.getHapiLog(MessageTypeRouter.class);
     private HashMap apps;
@@ -55,7 +57,23 @@ public class MessageTypeRouter implements Application {
         }
         return out;
     }
-    
+
+    /**
+     * Forwards the given exception to all Applications.
+     */
+	public String processException(String incomingMessage, String outgoingMessage, Exception e) {
+		String outgoingMessageResult = outgoingMessage;
+		Set<Map.Entry<Object, Application>> entrySet = apps.entrySet();
+		for (Map.Entry<Object, Application> entry : entrySet) {
+			Object app = entry.getValue();
+			if (app instanceof ApplicationExceptionHandler) {
+				ApplicationExceptionHandler aeh = (ApplicationExceptionHandler) app;
+				outgoingMessageResult = aeh.processException(incomingMessage, outgoingMessageResult, e);
+			}
+		}		
+		return outgoingMessageResult;
+	}
+
     /**
      * Registers the given application to handle messages corresponding to the given type
      * and trigger event.  Only one application can be registered for a given message type
@@ -112,4 +130,5 @@ public class MessageTypeRouter implements Application {
         //create hash key string by concatenating type and trigger event
         return messageType + "|" + triggerEvent;
     }
+
 }
