@@ -69,17 +69,12 @@ public class ${segmentName} extends AbstractSegment {
     #else
       #set ($constructorArgs = "new Object[]{ getMessage(), new Integer(${element.table}) }")
     #end
-          this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.desc}");
+          this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.descEscaped}");
 #end
        } catch(HL7Exception e) {
           HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
        }
 #end
-    }
-
-    /** {@inheritDoc} */
-    public String getVersion() {
-       return "$version";
     }
 
 

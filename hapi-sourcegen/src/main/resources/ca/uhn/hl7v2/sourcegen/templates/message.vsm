@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.model.AbstractMessage;
       #set ($rept = "repeating")
     #else
       #set ($rept = "")
-    #end                                                       
+    #end
  * ${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b>
 #end
  */

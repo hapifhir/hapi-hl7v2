@@ -6,17 +6,18 @@
 package ca.uhn.hl7v2.sourcegen.conf;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -123,13 +124,17 @@ public class ProfileSourceGenerator {
 
         // Write Message
         {
-            String fileName = myTargetDirectory + "message/" + staticDef.getMsgStructID() + "." + myFileExt;
+            String parent = myTargetDirectory + "message/";
+            FileUtils.forceMkdir(new File(parent));
+			String fileName = parent + staticDef.getMsgStructID() + "." + myFileExt;
             ourLog.info("Writing Message file: " + fileName);
             MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups, myTemplatePackage);
         }
 
         for (GroupDef next : myGroupDefs) {
-            String fileName = myTargetDirectory + "group/" + next.getName() + "." + myFileExt;
+            String parent = myTargetDirectory + "group/";
+            FileUtils.forceMkdir(new File(parent));
+            String fileName = parent + next.getName() + "." + myFileExt;
             ourLog.info("Writing Group file: " + fileName);
             GroupGenerator.writeGroup(next.getName(), fileName, next, version, myBasePackage, myTemplatePackage, next.getDescription());
         }
@@ -140,7 +145,9 @@ public class ProfileSourceGenerator {
         for (SegmentDef next : mySegmentDefs) {
             alreadyWrittenSegments.add(next.getName());
 
-            String fileName = myTargetDirectory + "segment/" + next.getName() + "." + myFileExt;
+            String parent = myTargetDirectory + "segment/";
+            FileUtils.forceMkdir(new File(parent));
+            String fileName = parent + next.getName() + "." + myFileExt;
             ourLog.info("Writing Segment file: " + fileName);
             String segmentName = next.getName();
             String description = next.getDescription();
@@ -191,7 +198,9 @@ public class ProfileSourceGenerator {
             }
         }
 
-        String fileName = myTargetDirectory + "datatype/" + theFieldDef.getType() + "." + myFileExt;
+        String parent = myTargetDirectory + "datatype/";
+        FileUtils.forceMkdir(new File(parent));
+        String fileName = parent + theFieldDef.getType() + "." + myFileExt;
         DataTypeGenerator.writeDatatype(fileName, version, theFieldDef, myBasePackage, myTemplatePackage);
 
         for (DatatypeDef next : theFieldDef.getSubComponentDefs()) {

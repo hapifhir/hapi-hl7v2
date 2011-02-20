@@ -217,6 +217,12 @@ public class GroupGenerator extends java.lang.Object {
                 if (currSegName.equals("[") || currSegName.equals("{") || currSegName.equals("[{")) {
                     // this is the opening of a new group ...
                     String name = ((SegmentDef) structures[currLongListPos]).getGroupName();
+                    
+                    // Fix mistakes in DB
+                    if (name != null) {
+                    	name = name.replace("TIIMING", "TIMING");
+                    }
+                    
                     int endOfNewGroup = findGroupEnd(message, structures, currLongListPos);
                     StructureDef[] newGroupStructures = new StructureDef[endOfNewGroup - currLongListPos + 1];
                     System.arraycopy(structures, currLongListPos, newGroupStructures, 0, newGroupStructures.length);
@@ -246,6 +252,15 @@ public class GroupGenerator extends java.lang.Object {
                                                                        // assignment
         System.arraycopy(shortList, 0, finalList, 0, currShortListPos);
         for (int i = 0; i < finalList.length; i++) {
+        	
+        	// Fix mistakes in the DB
+        	if (finalList[i].getUnqualifiedName().equals("ED")) {
+        		continue;
+        	}
+        	if (finalList[i] instanceof GroupDef && ((GroupDef)finalList[i]).getRawGroupName() != null && ((GroupDef)finalList[i]).getRawGroupName().contains("TIIMING")) {
+        		((GroupDef)finalList[i]).setRawGroupName(((GroupDef)finalList[i]).getRawGroupName().replace("TIIMING", "TIMING"));
+        	}
+        	
             ret.addStructure(finalList[i]);
         }
 

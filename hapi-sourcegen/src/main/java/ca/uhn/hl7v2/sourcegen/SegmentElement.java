@@ -83,6 +83,10 @@ public class SegmentElement  {
     public String getDesc() {
         return desc;
     }
+    
+    public String getDescEscaped() {
+    	return desc.replace("\"", "\\\"");
+    }
 
     public int getLength() {
         return length;
@@ -97,6 +101,6 @@ public class SegmentElement  {
     }
 
     public String getAlternateAccessorName() {
-        return SourceGenerator.makeAlternateAccessorName(desc, mySegmentName, myIndexWithinSegment);
+        return SourceGenerator.makeAlternateAccessorName(desc, mySegmentName, myIndexWithinSegment + 1);
     }
 }
