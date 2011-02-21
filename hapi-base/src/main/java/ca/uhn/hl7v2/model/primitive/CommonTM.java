@@ -74,7 +74,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class CommonTM {
     
-    /**
+	/**
      * Value returned by {@link #getGMTOffset()} if no offset is set
      */
     public static final int GMT_OFFSET_NOT_SET_VALUE = -99;
@@ -87,7 +87,7 @@ public class CommonTM {
     private int second;
     private float fractionOfSec;
     private int offSet;
-    private char omitOffsetFg = 'n';
+    private boolean omitOffsetFg = false;
 
     /**
      * Constructs a TM datatype with fields initialzed to zero and the value set to
@@ -245,7 +245,7 @@ public class CommonTM {
                 if (offsetExists) {
                     //in case the offset are a series of zeros we should not omit displaying
                     //it in the return value from the getValue() method
-                    omitOffsetFg = 'n';
+                    omitOffsetFg = false;
                     //remove the sign from the temp offset
                     String tempOffsetNoS = tempOffset.substring(1);
                     //extract the hour data from the offset value.  If the first 2 characters
@@ -278,7 +278,7 @@ public class CommonTM {
                 //local timezone
                 //[Bryan: changing this to omit time zone because erroneous if parser in different zone than sender]
                 if (!offsetExists) {
-                    omitOffsetFg = 'y';
+                    omitOffsetFg = true;
                     // set the offSet field to the current time and local time zone
                     //offSet = DataTypeUtil.getLocalGMTOffset();
                 } //end if
@@ -321,7 +321,7 @@ public class CommonTM {
             offSet = 0;
             //Here the offset is not defined, we should omit showing it in the
             //return value from the getValue() method
-            omitOffsetFg = 'y';
+            omitOffsetFg = true;
             value = DataTypeUtil.preAppendZeroes(hr, 2);
         } //end try
 
@@ -355,7 +355,7 @@ public class CommonTM {
             offSet = 0;
             //Here the offset is not defined, we should omit showing it in the
             //return value from the getValue() method
-            omitOffsetFg = 'y';
+            omitOffsetFg = true;
             value = value + DataTypeUtil.preAppendZeroes(min, 2);
         } //end try
 
@@ -405,7 +405,7 @@ public class CommonTM {
             offSet = 0;
             //Here the offset is not defined, we should omit showing it in the
             //return value from the getValue() method
-            omitOffsetFg = 'y';
+            omitOffsetFg = true;
             value = value + DataTypeUtil.preAppendZeroes(second, 2) + fractString;
         } //end try
 
@@ -427,7 +427,7 @@ public class CommonTM {
             //When this function is called an offset is being created/updated
             //we should not omit displaying it in the return value from
             //the getValue() method
-            omitOffsetFg = 'n';
+            omitOffsetFg = false;
             String offsetStr = Integer.toString(signedOffset);
             if ((signedOffset >= 0 && offsetStr.length() > 4) || (signedOffset < 0 && offsetStr.length() > 5)) {
                 //The length of the GMT offset must be no greater than 5 characters (including the sign)
@@ -477,7 +477,7 @@ public class CommonTM {
         //combine the value field with the offSet field and return it
         String returnVal = null;
         if (value != null && !value.equals("")) {
-            if (omitOffsetFg == 'n' && !value.equals("\"\"")) {
+            if (omitOffsetFg == false && !value.equals("\"\"")) {
                 int absOffset = Math.abs(offSet);
                 String sign = "";
                 if (offSet >= 0) {
@@ -547,15 +547,30 @@ public class CommonTM {
      * @param theCalendar The calendar object from which to retrieve values 
      * @since 1.1 
      */
-    public void setValueComplete(Calendar theCalendar) throws DataTypeException {
+    public void setValue(Calendar theCalendar) throws DataTypeException {
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
         int min = theCalendar.get(Calendar.MINUTE);
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
         setHourMinSecondPrecision(hr, min, sec);
         
-        int zoneOffset = theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);
+        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET)*100) / (1000 * 60 * 60);
         setOffset(zoneOffset);
     }
+   
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
+     * the current system offset
+     * 
+     * @param theDate The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+	public void setValue(Date theDate) throws DataTypeException {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(theDate);
+		setValue(cal);
+	}
     
     /**
      * Convenience setter which sets the value using a {@link Date} object.
@@ -588,8 +603,8 @@ public class CommonTM {
         retVal.set(Calendar.MILLISECOND, (int) (fractSecond * 1000.0));
         
         int gmtOff = getGMTOffset();
-        if (gmtOff != GMT_OFFSET_NOT_SET_VALUE) {
-            retVal.set(Calendar.ZONE_OFFSET, gmtOff * 1000 * 60 * 60);
+        if (gmtOff != GMT_OFFSET_NOT_SET_VALUE && !omitOffsetFg) {
+            retVal.set(Calendar.ZONE_OFFSET, (gmtOff/100) * (1000 * 60 * 60));
         }
         
         return retVal;
@@ -641,7 +656,7 @@ public class CommonTM {
     public int getGMTOffset() {
         return offSet;
     } //end method
-
+    
     /**
      * Returns a string value representing the input Gregorian Calendar object in
      * an Hl7 Time Format.

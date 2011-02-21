@@ -139,7 +139,7 @@ public class CommonTS {
     public int getGMTOffset() {
         int offSet = 0;
         if (tm != null) {
-            offSet = tm.getGMTOffset();
+        	offSet = tm.getGMTOffset();
         } //end if
         return offSet;
     } //end method
@@ -233,21 +233,11 @@ public class CommonTS {
      * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = Calendar.getInstance();
-        retVal.set(Calendar.DATE, getDay());
-        retVal.set(Calendar.MONTH, getMonth() - 1);
-        retVal.set(Calendar.YEAR, getYear());
-        retVal.set(Calendar.HOUR_OF_DAY, getHour());
-        retVal.set(Calendar.MINUTE, getMinute());
-        retVal.set(Calendar.SECOND, getSecond());
+        Calendar retVal = tm.getValueAsCalendar();
 
-        float fractSecond = getFractSecond();
-        retVal.set(Calendar.MILLISECOND, (int) (fractSecond * 1000.0));
-        
-        int gmtOff = getGMTOffset();
-        if (gmtOff != CommonTM.GMT_OFFSET_NOT_SET_VALUE) {
-            retVal.set(Calendar.ZONE_OFFSET, gmtOff * 1000 * 60 * 60);
-        }
+        retVal.set(Calendar.YEAR, getYear());
+        retVal.set(Calendar.MONTH, getMonth() - 1);
+        retVal.set(Calendar.DATE, getDay());
         
         return retVal;
     }
@@ -380,6 +370,42 @@ public class CommonTS {
             throw new DataTypeException(e);
         } //end catch
     } //end method
+
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, including timezone offset
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValue(Calendar theCalendar) throws DataTypeException {
+        int yr = theCalendar.get(Calendar.YEAR);
+        int mnth = theCalendar.get(Calendar.MONTH) + 1;
+        int dy = theCalendar.get(Calendar.DATE);
+        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = theCalendar.get(Calendar.MINUTE);
+        float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
+        setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
+        
+        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET)*100) / (1000 * 60 * 60);
+        setOffset(zoneOffset);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
+     * the current system offset
+     * 
+     * @param theDate The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+	public void setValue(Date theDate) throws DataTypeException {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(theDate);
+		setValue(cal);
+	}
 
     /**
      * This method takes in a string HL7 Time Stamp value and performs validations.
@@ -539,39 +565,20 @@ public class CommonTS {
     /**
      * Convenience setter which sets the value using a {@link Calendar} object.
      * 
-     * Note: Sets fields using precision up to the millisecond, including timezone offset
-     * 
-     * @param theCalendar The calendar object from which to retrieve values 
-     * @since 1.1 
-     */
-    public void setValueComplete(Calendar theCalendar) throws DataTypeException {
-        int yr = theCalendar.get(Calendar.YEAR);
-        int mnth = theCalendar.get(Calendar.MONTH) + 1;
-        int dy = theCalendar.get(Calendar.DATE);
-        int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
-        int min = theCalendar.get(Calendar.MINUTE);
-        float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
-        setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
-        
-        int zoneOffset = theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);
-        setOffset(zoneOffset);
-    }
-
-    /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
-     * 
      * Note: Sets fields using precision up to the minute
      * 
      * @param theCalendar The calendar object from which to retrieve values 
      * @since 1.1 
      */
     public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
-        int yr = theCalendar.get(Calendar.YEAR);
+        
+    	int yr = theCalendar.get(Calendar.YEAR);
         int mnth = theCalendar.get(Calendar.MONTH) + 1;
         int dy = theCalendar.get(Calendar.DATE);
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
         int min = theCalendar.get(Calendar.MINUTE);
         setDateMinutePrecision(yr, mnth, dy, hr, min);
+        
     }
 
     /**
