@@ -61,7 +61,7 @@ public class MessageTypeRouter implements Application, ApplicationExceptionHandl
     /**
      * Forwards the given exception to all Applications.
      */
-	public String processException(String incomingMessage, String outgoingMessage, Exception e) {
+	public String processException(String incomingMessage, String outgoingMessage, Exception e) throws HL7Exception {
 		String outgoingMessageResult = outgoingMessage;
 		Set<Map.Entry<Object, Application>> entrySet = apps.entrySet();
 		for (Map.Entry<Object, Application> entry : entrySet) {
