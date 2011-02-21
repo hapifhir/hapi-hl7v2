@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -25,6 +25,9 @@
  */
 
 package ca.uhn.hl7v2.model.primitive;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.DataTypeException;
@@ -40,7 +43,7 @@ import ca.uhn.hl7v2.model.Message;
  *  
  * @author <a href="mailto:neal.acharya@uhn.on.ca">Neal Acharya</a>
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:51 $ by $Author: jamesagnew $
+ * @version $Revision: 1.2 $ updated on $Date: 2011-02-21 17:55:08 $ by $Author: jamesagnew $
  */
 public abstract class TSComponentOne extends AbstractPrimitive {
 
@@ -206,6 +209,98 @@ public abstract class TSComponentOne extends AbstractPrimitive {
     public int getGMTOffset() throws DataTypeException {
         return getDetail().getGMTOffset();
     }
+    
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, including timezone offset
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValue(Calendar theCalendar) throws DataTypeException {
+        getDetail().setValue(theCalendar);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
+     * the current system offset
+     * 
+     * @param theDate The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValue(Date theDate) throws DataTypeException {
+        getDetail().setValue(theDate);
+    }
+    
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
+        getDetail().setValueToMinute(theCalendar);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the minute
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValueToMinute(Date theDate) throws DataTypeException {
+        getDetail().setValueToMinute(theDate);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
+        getDetail().setValueToSecond(theCalendar);
+    }
+
+    /**
+     * Convenience setter which sets the value using a {@link Date} object.
+     * 
+     * Note: Sets fields using precision up to the second
+     * 
+     * @param theCalendar The calendar object from which to retrieve values 
+     * @since 1.1 
+     */
+    public void setValueToSecond(Date theDate) throws DataTypeException {
+        getDetail().setValueToSecond(theDate);
+    }
+
+    /**
+     * Return the value as a calendar object
+     * @since 1.1 
+     * @throws DataTypeException If the current underlying string representation can not be parsed into a valid date/time
+     */
+    public Calendar getValueAsCalendar() throws DataTypeException {
+    	return getDetail().getValueAsCalendar();
+    }
+
+    /**
+     * Return the value as a date object
+     * @since 1.1 
+     * @throws DataTypeException If the current underlying string representation can not be parsed into a valid date/time
+     */
+    public Date getValueAsDate() throws DataTypeException {
+        return getDetail().getValueAsDate();
+    }
+    
     
     /** Returns the name of the type (used in XML encoding and profile checking)  */
 //    public String getName() {
