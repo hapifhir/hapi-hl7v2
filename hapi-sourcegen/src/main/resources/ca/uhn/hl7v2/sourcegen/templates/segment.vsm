@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.model.Varies;
   #set ($rept = "repeating")
  #else
   #set ($rept = "")
- #end                                                       
+ #end
  * <li>${segmentName}-${velocityCount}: ${element.desc} (${element.alternateType}) <b>$reqd $rept</b>
 #end
  * </ul>

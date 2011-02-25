@@ -74,7 +74,7 @@ public class ${datatypeName} extends AbstractType implements Composite {
 #foreach ( $component in $components )
 #set ( $idx = ${velocityCount} - 1 )
     /**
-     * Returns ${component.name} (component #${idx}).  This is a convenience method that saves you from 
+     * Returns ${component.name} (component #${idx + 1}).  This is a convenience method that saves you from 
      * casting and handling an exception.
      */
     public ${component.type} get${component.accessorName}() {
@@ -90,7 +90,7 @@ public class ${datatypeName} extends AbstractType implements Composite {
 
     
     /**
-     * Returns ${component.name} (component #${idx}).  This is a convenience method that saves you from 
+     * Returns ${component.name} (component #${idx + 1}).  This is a convenience method that saves you from 
      * casting and handling an exception.
      */
     public ${component.type} get${component.alternateAccessorName}() {
