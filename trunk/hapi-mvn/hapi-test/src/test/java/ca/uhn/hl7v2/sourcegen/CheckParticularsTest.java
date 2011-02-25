@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.sourcegen;
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
 
 /**
@@ -27,6 +28,15 @@ public class CheckParticularsTest extends TestCase {
         String className = "ca.uhn.hl7v2.model.v251.segment.ED";
 	    failIfExists(className);
 	}
+	
+	/**
+	 * GetVersion seems to be brittle for some reason.. Maven really wants to override Velocity's "version" variable
+	 */
+	public void testGetVersion() {
+		ADT_A01 msg = new ADT_A01();
+		assertEquals("2.5", msg.getVersion());
+	}
+	
 
     /**
 	 * This segment is invalid and shouldn't be generated.. The DB contains it for some reason

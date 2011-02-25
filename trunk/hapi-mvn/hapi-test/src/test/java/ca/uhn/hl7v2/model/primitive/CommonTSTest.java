@@ -171,7 +171,7 @@ public class CommonTSTest extends TestCase {
         commonTS = new CommonTS();
         cal.set(Calendar.MILLISECOND, 250);
         cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
-        commonTS.setValueComplete(cal);
+        commonTS.setValue(cal);
         String value = commonTS.getValue();
         assertEquals("20100609124005.25-0004", value);
         

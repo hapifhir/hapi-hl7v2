@@ -122,7 +122,7 @@ public class CommonTMTest extends TestCase {
         commonTM = new CommonTM();
         cal.set(Calendar.MILLISECOND, 250);
         cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
-        commonTM.setValueComplete(cal);
+        commonTM.setValue(cal);
         String value = commonTM.getValue();
         assertEquals("124005.25-0004", value);
         
