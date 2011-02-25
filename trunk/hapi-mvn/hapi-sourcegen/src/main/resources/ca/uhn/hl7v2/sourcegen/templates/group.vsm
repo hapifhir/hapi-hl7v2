@@ -24,6 +24,7 @@ import ca.uhn.hl7v2.model.GenericSegment;
  * A Group is an ordered collection of message segments that can repeat together or be optionally in/excluded together.
  * This Group contains the following elements:  
  * </p>
+ * <ul>
 #foreach ( $group in $groups )
     #if (${group.isRequired()})
       #set ($reqd = "")
@@ -35,8 +36,9 @@ import ca.uhn.hl7v2.model.GenericSegment;
     #else
       #set ($rept = "")
     #end                                                       
- * ${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept</b>
+ * <li>${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept</b></li>
 #end
+ * </ul>
  */
 public class $groupName extends AbstractGroup {
 

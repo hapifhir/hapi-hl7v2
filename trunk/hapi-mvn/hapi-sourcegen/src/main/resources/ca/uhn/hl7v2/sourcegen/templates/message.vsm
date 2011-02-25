@@ -21,6 +21,7 @@ import ca.uhn.hl7v2.model.AbstractMessage;
 /**
  * <p>Represents a $message message structure (see chapter ${chapter}). This structure contains the 
  * following elements: </p>
+ * <ul>
 #foreach ( $segment in $segments )
     #if (${segment.isRequired()})
       #set ($reqd = "")
@@ -32,8 +33,9 @@ import ca.uhn.hl7v2.model.AbstractMessage;
     #else
       #set ($rept = "")
     #end
- * ${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b>
+ * <li>${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b></li>
 #end
+ * </ul>
  */
 public class $message extends AbstractMessage  {
 
