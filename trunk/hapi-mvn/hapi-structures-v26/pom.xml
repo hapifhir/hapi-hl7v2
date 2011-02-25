@@ -60,7 +60,7 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>site</phase>
+						<phase>post-site</phase>
 						<inherited>true</inherited>
 						<configuration>
 							<tasks>
