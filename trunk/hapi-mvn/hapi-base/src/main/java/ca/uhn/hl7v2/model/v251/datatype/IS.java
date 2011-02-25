@@ -48,6 +48,13 @@ public class IS extends ca.uhn.hl7v2.model.primitive.IS {
     
     /**
      * @param theMessage message to which this Type belongs
+     */
+    public IS(Message theMessage) {
+        super(theMessage);
+    }
+
+    /**
+     * @param theMessage message to which this Type belongs
      * @param theTable HL7 table from which values are to be drawn 
      */
     public IS(Message theMessage, int theTable) {
