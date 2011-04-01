@@ -1,30 +1,142 @@
+                                    ------
+                                    What's New
+                                    ------
+                                    ------
+                                    ------
+
 What's New
 
   This page shows new features in HAPI.
 
-* What's next
 
-  First, the following features are still in progress, and will be released in an upcoming
-  version of HAPI:
+Version 1.1
 
-  * OSGi support, being worked on by {{{mailto:niranjan.sharma@med.ge.com}Niranjan Sharma}} of GE Healthcare.
+  Version 1.1 is API compatible with version 1.0 (aside from a method change in the
+  Message interface, but this should not generally be directly extended). Upgrading 
+  should be as simple as dropping
+  in the updated JARs. This release includes several important bugfixes and a number of
+  great contributions. See the {{{./changes-report.html}Changelog}} for more information.
+  
+* Noteworthy new features
+  
+** Structure Class Generator Maven Plugin
 
-  * A new framework and maven plugin to generate custom HAPI message classes and structures
-    based on an HL7 conformance profiles generated using Message Workbench. This should make
-    constraining messages easier, but more significantly it should make it much easier to
-    create message classes for custom message definitions (specs using Z-segments, etc.)
-
-* Version 1.1
-
-  Version 1.1 is API compatible with version 1.0. Upgrading should be as simple as dropping
-  in the updated JARs.
+  HAPI now includes a Maven Plugin which can be used to translate an HL7 Conformance Profile into a 
+  set of HAPI structure objects representing Message/Group/Segment types. See the
+  {{{http://hl7api.sourceforge.net/conformance.html}conformance}} page
+  for more information.  
   
   
+** QuickStart method to initialize Messages
+  
+  AbstractMessage provides an "initQuickstart" method for quickly setting values in the MSH segment
+  to standard default values:
 
++----------------+
+	public static void main(String[] args) throws HL7Exception, IOException {
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		System.out.println(msg);
+		// MSH|^~\&|||||20110220174633.569-0500||ORU^R01^ORU_R01|436|T|2.4
+	}
++----------------+  
+  
+  
+** Convenience methods for temportal datatypes
+  
+  HAPI now has some pleasant convenience methods for bridging the gap between HL7's Date/Time types
+  and Java Date/Calendar types:
 
-* Version 1.0
++----------------+  
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		
+		TS ts = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getORC().getDateTimeOfTransaction();
+		DTM time = ts.getTime();
+		time.setValue("20110201121233");
+		
+		Date date = time.getValueAsDate();
+		System.out.println(date);
+		// Tue Feb 01 12:12:33 EST 2011
+
+		Calendar cal = new GregorianCalendar();
+		cal.set(Calendar.YEAR, 2010);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.DATE, 29);
+		cal.set(Calendar.HOUR_OF_DAY, 12);
+		cal.set(Calendar.MINUTE, 59);
+		time.setValueToMinute(cal);
+		
+		System.out.println(ts.encode());
+		// 201001291259
+
+		cal = time.getValueAsCalendar();
+		System.out.println(cal.getTime());
+		// Tue Feb 01 12:12:33 EST 2011
++----------------+  
+  
+  
+** Application Exception Handlers
+  
+  Application instances may now declare an {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ApplicationExceptionHandler.html}additional interface}} which allows them to process
+  exceptions and optionally override the system generated response message. (Thanks to Gabriel Landais) 
+  
++----------------+  
+    /**
+	 * Example Application processor which always attempts to generate an
+	 * ACK, even if exceptions are thrown
+	 */
+	private class MyApplication implements Application, ApplicationExceptionHandler {
+
+		public String processException(String incomingMessage, String outgoingMessage, Exception e) throws HL7Exception {
+
+			// Process/log the exception..?
+
+			ADT_A01 message = new ADT_A01();
+			try {
+				message.parse(incomingMessage);
+			} catch (HL7Exception e2) {
+				// ignore
+			}
+			
+			// create a new ACK message
+			ACK ack = new ACK();
+			try {
+				ack.initQuickstart("ACK", null, null);
+			} catch (IOException e1) {
+				throw new HL7Exception(e1);
+			}
+
+			ack.getMSA().getMsa1_AcknowledgmentCode().setValue("AA");
+			ack.getMSA().getMsa2_MessageControlID().setValue(message.getMSH().getMessageControlID().getValue());
+			
+			return ack.encode();
+		}
+
+		public Message processMessage(Message in) throws ApplicationException, HL7Exception {
+			
+			// do some processing
+			
+			try {
+				return in.generateACK();
+			} catch (IOException e) {
+				throw new HL7Exception(e);
+			}
+		}
+
+		public boolean canProcess(Message in) {
+			return true;
+		}
+		
+	}
++----------------+  
+ 
+
+Version 1.0
 
   Version 1.0 contains a number of bugfixes. See the {{{changes-report.html}Changelog}} for more information.
+  
+* Noteworthy new features
 
 ** Parser Speed Improvements
 

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<assembly xmlns="urn:assembly" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:assembly http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+  <id>sources</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <baseDirectory></baseDirectory>
+  <fileSets>
+     <fileSet>
+      <directory>../hapi-base/src/main/java</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-base/src/main/resources</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v21/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v21/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v22/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v22/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v23/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v23/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v231/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v231/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v24/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v24/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v25/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v25/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v251/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v251/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>../hapi-structures-v26/target/generated-sources/sourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+     <fileSet>
+      <directory>../hapi-structures-v26/target/generated-sources/resourcegen</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+ </fileSets>
+</assembly>

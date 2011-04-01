@@ -173,7 +173,7 @@ public class CommonTSTest extends TestCase {
         cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
         commonTS.setValue(cal);
         String value = commonTS.getValue();
-        assertEquals("20100609124005.25-0004", value);
+        assertEquals("20100609124005.25-0400", value);
         
         commonTS = new CommonTS();
         commonTS.setValue("201006091240");
@@ -187,7 +187,7 @@ public class CommonTSTest extends TestCase {
      
         // Check millis and offset
         commonTS = new CommonTS();
-        commonTS.setValue("20100609124005.25-0004");
+        commonTS.setValue("20100609124005.25-0400");
         cal = commonTS.getValueAsCalendar();
         assertEquals(250, cal.get(Calendar.MILLISECOND));
         assertEquals(-4 * 1000 * 60 * 60, cal.get(Calendar.ZONE_OFFSET));

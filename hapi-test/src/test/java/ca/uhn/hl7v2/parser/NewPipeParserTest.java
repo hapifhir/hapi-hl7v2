@@ -86,6 +86,26 @@ public class NewPipeParserTest extends TestCase {
 
     }
 
+    
+    /**
+     * Checking an issue reported by a user where an ampersand in OBx-5 causes the
+     * content after the ampersand to be repeated
+     */
+    public void testAmpersandInObx5() throws HL7Exception {
+    	
+    	// Message is stripped down
+    	String msgString = "MSH|^~\\&|\r" + 
+    			"OBX||ST|||Blood&Plasma - Bio (Green)||||||||||||\r\n";
+    	
+    	ORU_R01 msg = new ORU_R01();
+    	msg.parse(msgString);
+    	
+    	String encode = msg.encode();
+		System.out.println("\n\n" + encode);
+    	
+    }
+    
+    
     public void testTwoSegmentsWithSameName() throws EncodingNotSupportedException, HL7Exception {
 
         String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ORU^R01|66239404|T|2.3.1||||||\r"

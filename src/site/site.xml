@@ -47,6 +47,7 @@
             <item name="FAQ" href="hapi-faq.html"/>
             <item name="Using the Test Panel" href="testpanel.html"/>
             <item name="Helpful Links" href="links.html"/>
+            <item name="Conformance Tools" href="conformance.html"/>
         </menu>
 
         <menu name="Contributing to HAPI">
@@ -78,7 +79,6 @@
         <menu name="Older Documentation">
             <item name="Parsing Messages" href="parsing.html"/>
             <item name="Installation" href="installation.html"/>
-            <item name="Conformance Tools" href="conformance.html"/>
         </menu>
 		
         <menu name="Reports">

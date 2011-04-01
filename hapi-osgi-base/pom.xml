@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1-beta1</version>
+		<version>1.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -17,58 +16,58 @@
 	<packaging>bundle</packaging>
 
 	<dependencies>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-base</artifactId>
-            <version>${hapi.version.structures}</version>
-        </dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
-            <version>${hapi.version.structures}</version>
-            <scope>provided</scope>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v22</artifactId>
-            <version>${hapi.version.structures}</version>
-            <scope>provided</scope>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v23</artifactId>
-            <version>${hapi.version.structures}</version>
-            <scope>provided</scope>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v231</artifactId>
-            <version>${hapi.version.structures}</version>
-            <scope>provided</scope>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v24</artifactId>
-            <version>${hapi.version.structures}</version>
-            <scope>provided</scope>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
-            <version>${hapi.version.structures}</version>
-			<version>1.0-beta1</version>
-            <scope>provided</scope>
+			<artifactId>hapi-structures-v25</artifactId>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
-            <version>${hapi.version.structures}</version>
-			<version>1.0-beta1</version>
-            <scope>provided</scope>
+			<artifactId>hapi-structures-v251</artifactId>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
-            <version>${hapi.version.structures}</version>
-			<version>1.0-beta1</version>
-            <scope>provided</scope>
+			<artifactId>hapi-structures-v26</artifactId>
+			<version>${hapi.version.structures}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -86,10 +85,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<!--
-							Embed all dependency jars except logging one. Since logging
-							shall be used from PAX-logging
-						-->
+						<!-- Embed all dependency jars except logging one. Since logging shall 
+							be used from PAX-logging -->
 						<Embed-Dependency>*;scope=compile|runtime;artifactId=!commons-logging|log4j|hapi-base</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<unpackBundle>true</unpackBundle>
@@ -167,7 +164,8 @@
 							ca.uhn.hl7v2.model.v26.segment;resolution:=optional,
 							*;resolution:=optional
                         </Import-Package>
-                        <!-- This is required to handle dynamic class loading using Class.forName methods in various places in HAPI -->
+						<!-- This is required to handle dynamic class loading using Class.forName 
+							methods in various places in HAPI -->
 						<DynamicImport-Package>
 							ca.uhn.hl7v2.model.v21.datatype,
 							ca.uhn.hl7v2.model.v21.group,
@@ -204,6 +202,35 @@
                         </DynamicImport-Package>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/osgi-source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>javadoc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/osgi-javadoc.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<resources>
