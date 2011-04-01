@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1-beta1</version>
+		<version>1.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -63,10 +62,10 @@
 						<inherited>true</inherited>
 						<configuration>
 							<tasks>
-								<echo message="Copying resources"/>
+								<echo message="Copying resources" />
 								<copy todir="../target/site/${gen.version.short}/apidocs">
 									<fileset dir="target/site/apidocs">
-										<include name="**/*"/>
+										<include name="**/*" />
 									</fileset>
 								</copy>
 							</tasks>
@@ -90,6 +89,18 @@
 						<configuration>
 							<descriptors>
 								<descriptor>../src/assembly/structures-source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>javadoc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/javadoc.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -123,12 +134,16 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.6.1</version>
 				<inherited>true</inherited>
 				<configuration>
 					<minmemory>128m</minmemory>
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
+					<detectLinks>true</detectLinks>
+					<links>
+					   <link>http://hl7api.sourceforge.net/apidocs/</link>
+					</links>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -71,8 +71,8 @@ public class GroupGenerator extends java.lang.Object {
         Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/group.vsm");
         Context ctx = new VelocityContext();
         ctx.put("groupName", groupName);
-        ctx.put("version", version);
-        ctx.put("desc", theDescription);
+        ctx.put("specVersion", version);
+        ctx.put("typeDescription", theDescription);
         ctx.put("basePackageName", basePackageName);
         ctx.put("groups", Arrays.asList(group.getStructures()));
         ctx.put("chapter", "");

@@ -32,8 +32,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -368,10 +370,24 @@ public class MessageGenerator extends Object {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 
         theTemplatePackage = theTemplatePackage.replace(".", "/");
-        Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/message.vsm");
+        String template2 = theTemplatePackage + "/messages.vsm";
+        
+//        InputStream resis = MessageGenerator.class.getClassLoader().getResourceAsStream(template2);
+//        System.out.println(resis);
+//        System.out.println(resis);
+//        System.out.println(resis);
+//
+//        URL resUrl = MessageGenerator.class.getClassLoader().getResource(template2);
+//        System.out.println(resUrl);
+//        System.out.println(resUrl);
+//        System.out.println(resUrl);
+//        
+//        Template template = new Template();
+        
+		Template template = VelocityFactory.getClasspathTemplateInstance(template2);
         Context ctx = new VelocityContext();
         ctx.put("message", message);
-        ctx.put("version", version);
+        ctx.put("specVersion", version);
         ctx.put("chapter", chapter);
         ctx.put("haveGroups", haveGroups);
         ctx.put("basePackageName", basePackageName);

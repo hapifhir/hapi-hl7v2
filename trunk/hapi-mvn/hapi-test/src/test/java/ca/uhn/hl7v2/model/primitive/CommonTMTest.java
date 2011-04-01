@@ -124,7 +124,7 @@ public class CommonTMTest extends TestCase {
         cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
         commonTM.setValue(cal);
         String value = commonTM.getValue();
-        assertEquals("124005.25-0004", value);
+        assertEquals("124005.25-0400", value);
         
         format = new SimpleDateFormat("HH:mm:ss");
         
@@ -148,7 +148,7 @@ public class CommonTMTest extends TestCase {
         
         // Check millis and offset
         commonTM = new CommonTM();
-        commonTM.setValue("124005.25-0004");
+        commonTM.setValue("124005.25-0400");
         cal = commonTM.getValueAsCalendar();
         assertEquals(250, cal.get(Calendar.MILLISECOND));
         assertEquals(-4 * 1000 * 60 * 60, cal.get(Calendar.ZONE_OFFSET));

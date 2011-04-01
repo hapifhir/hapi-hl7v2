@@ -419,8 +419,7 @@ public class SegmentGenerator extends java.lang.Object {
         Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/segment.vsm");
         VelocityContext ctx = new VelocityContext();
         ctx.put("segmentName", segmentName);
-        ctx.put("version", version);
-        ctx.put("desc", description);
+        ctx.put("typeDescription", description);
         ctx.put("basePackageName", basePackage);
         ctx.put("elements", elements);
         ctx.put("datatypePackages", datatypePackages);

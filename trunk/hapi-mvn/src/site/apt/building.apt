@@ -4,13 +4,13 @@ Hacking HAPI
   code for HAPI. This might be done for example to fix bugs, add features, or
   learn how HAPI works internally. 
 
-  As of version 0.6, HAPI uses the {{{http://maven.apache.org}Maven}} build system to build
+  As of version 0.6, HAPI uses the {{{./http://maven.apache.org}Maven}} build system to build
   it's source code. Generating the source takes the following steps.
   
 * Getting the Source
 
   The first step to building HAPI is obtaining the source code. HAPI uses CVS
-  as its {{{source-repository.html}source-code repository}}.
+  as its {{{./source-repository.html}source-code repository}}.
   
   Note that the correct subdirectory to check out from the repository is now
   called "hapi-mvn". There is an outdated directory called "hapi" which

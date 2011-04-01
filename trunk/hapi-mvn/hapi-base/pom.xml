@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1-beta1</version>
+		<version>1.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -104,14 +104,26 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- append to the packaging phase. -->
+						<id>sources</id>
+						<phase>package</phase>
 						<goals>
-							<goal>single</goal> <!-- goals == mojos -->
+							<goal>single</goal>
 						</goals>
 						<configuration>
 							<descriptors>
 								<descriptor>../src/assembly/source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>javadoc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/javadoc.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -136,6 +148,7 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>sources</id>
 						<phase>post-site</phase>
 						<configuration>
 							<tasks>
@@ -152,6 +165,9 @@
 						<goals>
 							<goal>run</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>javadoc</id>
 					</execution>
 				</executions>
 			</plugin>

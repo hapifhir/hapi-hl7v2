@@ -1,4 +1,117 @@
+                                    ------
+                                    Conformance Tools
+                                    ------
+                                    ------
+                                    ------
+
 Conformance
+
+  HAPI includes several tools which may be used to work with Conformance Profiles.
+
+* Conformance Class Generator v2
+
+  HAPI 1.1 introduced a new conformance class generator, which takes a conformance profile and generates a HAPI
+  message definition. This is useful both to constrain/remove unwanted elements from a message type, as well as
+  to extend a message type by adding custom segments.
+  
+  This feature was developed by University Health Network, and is currently being used quite heavily in a production
+  ESB/interface engine to create message structures for translating messages between arbitrary formats. Applications
+  that can produce message with custom Z-segments, out of order segments, and other nuances are no longer an issue. 
+  
+  Important: Note that this functionality is still a work in progress, and has the following limitations:
+  
+  * Messages are constrained only down to the Segment level. Generated segment classes still rely on HAPI datatypes,
+    so it is not possible to add or remove components from individual fields.
+    
+  * Fields which are marked as "not used" are not yet constrained away. As such, this plugin is really currently
+    only useful for extending existing message types, not constraining them. Constraining is the next planned use-case
+    for implementation. Get in touch if you would like to help.
+    
+  * The new generator is only provided as a Maven plugin. Converting it to work with Ant or as a standalone application
+    would be fairly easy, please get in touch if you would like to contribute.  
+  
+** Usage
+
+  First, generate a conformance profile using the 
+  {{{http://www.hl7.org/documentcenter/public/wg/ictc/MWB%20Release%206.8.zip}Message Workbench}} tool.
+  This tool will export your profile as an XML file, which can be read by the conformance class generator. Save
+  this file in your project under 
+
++-------+  
+  src/main/conf/conf.xml
++-------+  
+  
+  Next, add the Maven plugin to your pom:
+  
++-------+
+	</plugins>
+		<plugin>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-sourcegen</artifactId>
+			<version>${hapi.version}</version>
+			<executions>
+				<execution>
+					<phase>generate-sources</phase>
+					<goals>
+						<goal>confgen</goal>
+					</goals>
+					<configuration>
+						
+						<!-- This is the conformance profile file to use -->
+						<profile>${basedir}/src/main/resources/example_ack.xml</profile>
+						
+					    <!-- Place generated Java source here -->
+						<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+						
+						<!-- Generated classes will be placed here -->
+						<packageName>com.foo</packageName>
+						
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>	
++-------+
+
+  You will now have a "com.foo" package containing your newly generated classes. If you are using
+  eclipse, you might now want to add the following directory to your source path so that you
+  can see the generated sources:
+  
++--------+
+target/generated-sources/confgen
++--------+
+
+  To see an example:
+  
+  * View the conformance profile XML file {{{http://hl7api.cvs.sourceforge.net/viewvc/hl7api/hapi-mvn/hapi-examples/src/main/resources/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml?view=markup}HERE}}.
+  
+  * View the generated source classes {{{.//xref/com/foo/a31/ADT_A31.html}HERE}}.
+    
+
+* Message Validator
+
+  The {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/conf/check/DefaultValidator.html}Default Validator}} 
+  accepts a conformance profile and validates a message against it at runtime. Example usage:
+
++---------------+
+	// Load the profile from the classpath
+    ProfileParser parser = new ProfileParser(false);
+    RuntimeProfile profile = parser.parseClasspath("ca/uhn/hl7v2/conf/parser/example_ack.xml");
+
+    // Create a message to validate
+    String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
+    ACK msg = (ACK) (new PipeParser()).parse(message);
+	
+    // Validate
+	HL7Exception[] errors = new DefaultValidator().validate(msg, profile.getMessage());
+	
+	// Each exception is a validation error
+	System.out.println("Validation errors: " + Arrays.asList(errors));
++----------------+
+
+
+
+* Older tools
 
   Version 0.4 of HAPI introduces several features related to the HL7 conformance framework.  There are also several non-HAPI conformance tools. 
 
@@ -7,23 +120,20 @@ Conformance
   <<HAPI 0.4 introduces the following conformance tools>>: 
   
 *-----------------------+------------------------------------------------------------+
-| {{{http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/check/}Message Validator}} | This is not a stand-alone tool but a part of the HAPI framework.   It checks messages against profiles and produces a list of non-conformances (if any).  Problems can be written to a log or report, or they can trigger an email to an interface engine administrator.  
+| {{{./conf/compiler.html}Profile Compiler}} | Turns a profile into a Java JAR.  The JAR contains an API with all the constraints of the profile, so that coding against it will prevent you from producing non-compliant messages.  Many non-conformances are caught at compile time, the rest at run-time.  
 *-----------------------+------------------------------------------------------------+
-| {{{conf/compiler.html}Profile Compiler}} | Turns a profile into a Java JAR.  The JAR contains an API with all the constraints of the profile, so that coding against it will prevent you from producing non-compliant messages.  Many non-conformances are caught at compile time, the rest at run-time.  
-*-----------------------+------------------------------------------------------------+
-| {{{conf/constraint_analyzer.html}Constraint Analyzer}} | Determines whether one profile properly constrains another. 
+| {{{./conf/constraint_analyzer.html}Constraint Analyzer}} | Determines whether one profile properly constrains another. 
 *-----------------------+------------------------------------------------------------+
 | {{{http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/store/}Profile Store}} | In progress.  Currently saves/loads profiles to/from local disk.  Will load profiles from HL7's on-line registry and cache them locally in next version.   
 *-----------------------+------------------------------------------------------------+
 
 
-  <<By the way, non-HAPI conformance tools include the following>>:
-  
+* Non-HAPI Conformance Tools  
   
 *-----------------------+------------------------------------------------------------+
 | {{{http://www.hl7.org/lib_admin/docs.cfm?dir=library/committees/conf&comm=conf}The Messaging Workbench}} | This is a graphical profile editor created by Peter Rontey of the US Veteran's Administration.    It can be downloaded from the HL7 Conformance SIG's documents page.  
 *-----------------------+------------------------------------------------------------+
-| {{{conf/darius}Custom Z API Generator}} | An XSL tool by Darius Kemeklis that generates custom Z segment API classes for HAPI based on a conformance profile.  Standalone as well as integrated into the Messaging Workbench.   
+| {{{./conf/darius}Custom Z API Generator}} | An XSL tool by Darius Kemeklis that generates custom Z segment API classes for HAPI based on a conformance profile.  Standalone as well as integrated into the Messaging Workbench.   
 *-----------------------+------------------------------------------------------------+
 | {{{http://www.nist.gov/messagemaker}Message Maker}} | This tool by Rob Snelick and colleagues (NIST) generates test messages from a conformance profile.    
 *-----------------------+------------------------------------------------------------+

@@ -2,11 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>6</version>
+	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1-beta1</version>
+	<version>1.1</version>
 	<name>HAPI - Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -23,7 +29,7 @@
 			<name>HAPI Developers Mailing List</name>
 			<subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
 			<unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
-			<archive>http://www.nabble.com/HAPI-f3467.html</archive>
+			<archive>http://news.gmane.org/gmane.comp.medical.hl7</archive>
 			<post>mailto:hl7api-devel@lists.sourceforge.net</post>
 		</mailingList>
 	</mailingLists>
@@ -107,9 +113,8 @@
 
 
 	<scm>
-		<connection>scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi</connection>
-		<url>http://hl7api.cvs.sourceforge.net/hl7api/</url>
-		<tag>HEAD</tag>
+		<connection>scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi-mvn</connection>
+		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
 	</scm>
 
 	<repositories>
@@ -142,19 +147,14 @@
 	</modules>
 
 	<distributionManagement>
-		<repository>
-			<id>hl7api.sf.net</id>
-			<name>HAPI Sourceforge</name>
-			<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
-		</repository>
-		<snapshotRepository>
-			<id>hl7api.sf.net</id>
-			<name>HAPI Sourceforge</name>
-			<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs/m2</url>
-		</snapshotRepository>
+		<!-- Not needed because of the sonatype parent <repository> <id>hl7api.sf.net</id> 
+			<name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> 
+			</repository> <snapshotRepository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> 
+			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> 
+			</snapshotRepository> -->
 		<site>
 			<id>hl7api.sf.net</id>
-			<!--<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs</url>-->
+			<!--<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs</url> -->
 			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/</url>
 		</site>
 	</distributionManagement>
@@ -194,34 +194,21 @@
 					</descriptors>
 				</configuration>
 			</plugin>
-			<!-- <plugin> <artifactId>maven-antrun-plugin</artifactId> <executions> 
-				<execution> <id>insert-analytics</id> <phase>site</phase> <inherited>false</inherited> 
-				<configuration> <tasks> <echo>Adding Urchin</echo> <replace dir="${basedir}/target/site"> 
-				<include name="**/*.html"/> <replacetoken> <![CDATA[</body>]]> </replacetoken> 
-				<replacevalue> <![CDATA[ <script type="text/javascript"> var gaJsHost = (("https:" 
-				== document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript 
-				src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
-				</script> <script type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-1395874-1"); 
-				pageTracker._trackPageview(); } catch(err) {}</script></body>]]> </replacevalue> 
-				</replace> <replace dir="${basedir}/target/site"> <include name="**/*.html"/> 
-				<replacetoken> <![CDATA[</BODY>]]> </replacetoken> <replacevalue> <![CDATA[ 
-				<script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) 
-				? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" 
-				+ gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
-				</script> <script type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-1395874-1"); 
-				pageTracker._trackPageview(); } catch(err) {}</script></BODY>]]> </replacevalue> 
-				</replace> </tasks> </configuration> <goals> <goal>run</goal> </goals> </execution> 
-				</executions> </plugin> -->
 		</plugins>
 		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
 		</extensions>
 	</build>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<hapi.version>1.1-beta1</hapi.version>
-		<hapi.version.structures>1.0.1</hapi.version.structures>
+		<hapi.version>1.1</hapi.version>
+		<hapi.version.structures>1.1</hapi.version.structures>
 	</properties>
 
 	<reporting>
@@ -234,6 +221,8 @@
 					<minmemory>128m</minmemory>
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
+					<destDir>apidocs</destDir>
+					<reportOutputDirectory>{project.reporting.outputDirectory}/apidocs</reportOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -266,6 +255,7 @@
 				</reportSets>
 				<configuration>
 					<issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
+					<escapeHTML>false</escapeHTML>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -314,9 +304,8 @@
 			</build>
 			<modules>
 				<module>hapi-base</module>
-				<module>hapi-examples</module>
 				<module>hapi-sourcegen</module>
-				<!--<module>hapi-structures-base</module> -->
+				<module>hapi-examples</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
@@ -330,6 +319,21 @@
 		<profile>
 			<id>DIST</id>
 			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 			<modules>
 				<module>hapi-base</module>
@@ -344,6 +348,7 @@
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
 				<module>hapi-test</module>
+				<module>hapi-osgi-base</module>
 			</modules>
 		</profile>
 		<profile>
@@ -362,6 +367,7 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
+				<module>hapi-osgi-base</module>
 			</modules>
 		</profile>
 		<profile>

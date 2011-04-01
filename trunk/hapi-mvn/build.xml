@@ -5,12 +5,12 @@
 			<arg line="-P SITE,ACCESS clean"/>
 		</exec>
 		<exec executable="mvn.bat">
-			<arg line="-P SITE,ACCESS site"/>
+			<arg line="-P SITE,ACCESS post-site"/>
 		</exec>
 	</target>
     <target name="package">
         <echo>Running Maven</echo>
-        <exec executable="mvn.bat">
+        <exec executable="./mvn">
             <arg line="-P GEN,ACCESS clean"/>
         </exec>
         <exec executable="mvn.bat">

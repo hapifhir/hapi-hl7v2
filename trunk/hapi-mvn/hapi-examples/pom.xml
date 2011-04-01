@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1-beta1</version>
+		<version>1.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -78,15 +77,15 @@
                         <phase>site</phase>
                         <configuration>
                             <tasks>
-                                <!-- <echo message="Copying resources"/>
+                                <!-- <echo message="Copying resources" />
                                 <copy todir="../target/site/examples/apidocs">
                                     <fileset dir="target/site/apidocs">
-                                        <include name="**/*"/>
+                                        <include name="**/*" />
                                     </fileset>
                                 </copy>  -->
                                 <!-- <copy todir="../target/site/examples/xref">
                                     <fileset dir="target/site/xref">
-                                        <include name="**/*"/>
+                                        <include name="**/*" />
                                     </fileset>
                                 </copy>  -->
                             </tasks>
@@ -103,14 +102,70 @@
 				<version>${hapi.version}</version>
 				<executions>
 					<execution>
+						<id>ack</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>confgen</goal>
 						</goals>
 						<configuration>
-							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							
+							<!-- This is the conformance profile file to use -->
 							<profile>${basedir}/src/main/resources/example_ack.xml</profile>
-							<packageName>com.foo</packageName>
+							
+						    <!-- Place generated Java source here -->
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							
+							<!-- Generated classes will be placed here -->
+							<packageName>com.foo.ack</packageName>
+							
+						</configuration>
+					</execution>
+					<execution>
+						<id>a31</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							
+							<!-- This is the conformance profile file to use -->
+							<profile>${basedir}/src/main/resources/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml</profile>
+							
+						    <!-- Place generated Java source here -->
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							
+							<!-- Generated classes will be placed here -->
+							<packageName>com.foo.a31</packageName>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sources</id>
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>javadoc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>../src/assembly/javadoc.xml</descriptor>
+							</descriptors>
 						</configuration>
 					</execution>
 				</executions>
