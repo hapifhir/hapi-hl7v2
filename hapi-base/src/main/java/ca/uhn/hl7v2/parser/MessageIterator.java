@@ -153,7 +153,9 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         List<Position> parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
         Group parentStructure = (Group) navigateToStructure(parentDefinitionPath);
 
-        int index = getCurrentPosition().getStructureDefinition().getPosition() + 1;
+        int newStructureOffsetWithinParent = 1 + getCurrentPosition().getStructureDefinition().getParent().getNumberOfCustomSegmentsInInstance(parentStructure);
+        
+        int index = getCurrentPosition().getStructureDefinition().getPosition() + newStructureOffsetWithinParent;
         String newSegmentName;
         try {
             newSegmentName = parentStructure.addNonstandardSegment(myDirection, index);
