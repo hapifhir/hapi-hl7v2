@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import ca.uhn.hl7v2.model.Group;
+
 /**
  * Structure definition which defines a non-standard structure within a parent
  * structure.
@@ -39,156 +41,147 @@ import java.util.Set;
  */
 public class NonStandardStructureDefinition implements IStructureDefinition {
 
-    private String myName;
-    private IStructureDefinition myParent;
-    private int myPosition;
-    private IStructureDefinition myPreviousSibling;
+	private String myName;
+	private IStructureDefinition myParent;
+	private int myPosition;
+	private IStructureDefinition myPreviousSibling;
 
+	/**
+	 * Constructor
+	 */
+	public NonStandardStructureDefinition(IStructureDefinition theParent, IStructureDefinition thePreviousSibling, String theName, int thePosition) {
+		myParent = theParent;
+		myName = theName;
+		myPreviousSibling = thePreviousSibling;
+		myPosition = thePosition;
+	}
 
-    /**
-     * Constructor
-     */
-    public NonStandardStructureDefinition(IStructureDefinition theParent, IStructureDefinition thePreviousSibling, String theName, int thePosition) {
-        myParent = theParent;
-        myName = theName;
-        myPreviousSibling = thePreviousSibling;
-        myPosition = thePosition;
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public Set<String> getAllChildNames() {
+		return Collections.emptySet();
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public Set<String> getAllPossibleFirstChildren() {
+		return Collections.emptySet();
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public Set<String> getAllChildNames() {
-        return Collections.emptySet();
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public List<StructureDefinition> getChildren() {
+		return Collections.emptyList();
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public IStructureDefinition getFirstChild() {
+		return null;
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public Set<String> getAllPossibleFirstChildren() {
-        return Collections.emptySet();
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public IStructureDefinition getFirstSibling() {
+		return null;
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public String getName() {
+		return myName;
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public List<StructureDefinition> getChildren() {
-        return Collections.emptyList();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getNameAsItAppearsInParent() {
+		return getName();
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
+		return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public IStructureDefinition getFirstChild() {
-        return null;
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public IStructureDefinition getNextLeaf() {
+		return myPreviousSibling.getNextLeaf();
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public IStructureDefinition getNextSibling() {
+		return myPreviousSibling.getNextSibling();
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public IStructureDefinition getFirstSibling() {
-        return null;
-    }
+	/**
+	 * @throws UnsupportedOperationException
+	 *             Custom structures may not contain other structures. If this
+	 *             is called, it is likely a bug within HAPI.
+	 */
+	public int getNumberOfCustomSegmentsInInstance(Group theStructureInstance) {
+		throw new UnsupportedOperationException("Custom structures may not contain other structures. This is likely a bug within HAPI.");
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public IStructureDefinition getParent() {
+		return myParent;
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public String getName() {
-        return myName;
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public int getPosition() {
+		return myPosition;
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean hasChildren() {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameAsItAppearsInParent() {
-        return getName();
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean isFinalChildOfParent() {
+		return myPreviousSibling.isFinalChildOfParent();
+	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean isRepeating() {
+		return true;
+	}
 
-    /**
-     * {@inheritDoc }
-     */
-    public Set<String> getNamesOfAllPossibleFollowingLeaves() {
-        return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean isRequired() {
+		return false;
+	}
 
-
-    /**
-     * {@inheritDoc }
-     */
-    public IStructureDefinition getNextLeaf() {
-        return myPreviousSibling.getNextLeaf();
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public IStructureDefinition getNextSibling() {
-        return myPreviousSibling.getNextSibling();
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public IStructureDefinition getParent() {
-        return myParent;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public int getPosition() {
-        return myPosition;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public boolean hasChildren() {
-        return false;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public boolean isFinalChildOfParent() {
-        return myPreviousSibling.isFinalChildOfParent();
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public boolean isRepeating() {
-        return true;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public boolean isRequired() {
-        return false;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    public boolean isSegment() {
-        return true;
-    }
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean isSegment() {
+		return true;
+	}
 
 }
