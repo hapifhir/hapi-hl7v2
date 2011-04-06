@@ -12,10 +12,10 @@
  * The Initial Developer of the Original Code is University Health Network. Copyright (C)
  * 2002.  All Rights Reserved.
  *
- * Contributor(s): ______________________________________.
+ * Contributor(s): Ryan W. Gross (General Electric Corporation - Healthcare IT).
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -66,7 +66,9 @@ import ca.uhn.log.*;
  * in this example was desired instead of rep 1, the following syntax would also work (since there is
  * only one AIG segment position in SUI_S12): </p>
  * <p><code>/.AIG-5(1)</code></p>
+ * 
  * @author Bryan Tripp
+ * @author Ryan W. Gross (General Electric Corporation - Healthcare IT).
  */
 public class Terser {
     
@@ -107,17 +109,31 @@ public class Terser {
         return getPrimitive(type, component, subcomponent);
     }
     
-    /**
-     * Returns the Primitive object at the given location in the given field.  
-     * It is intended that the given type be at the field level, although extra components 
-     * will be added blindly if, for example, you provide a primitive subcomponent instead 
-     * and specify component or subcomponent > 1
-     */
-    public static Primitive getPrimitive(Type type, int component, int subcomponent) {
-        Type comp = getComponent(type, component);
-        Type sub = getComponent(comp, subcomponent);
-        return getPrimitive(sub);
-    }
+    
+	/**
+	 * Returns the Primitive object at the given location in the given field.
+	 * It is intended that the given type be at the field level, although extra components
+	 * will be added blindly if, for example, you provide a primitive subcomponent instead
+	 * and specify component or subcomponent > 1
+	 */
+	public static Primitive getPrimitive(final Type type, final int component, final int subcomponent) {
+		Type comp = getComponent(type, component);
+		if(type instanceof Varies && comp instanceof GenericPrimitive && subcomponent > 1) {
+			try {
+				final Varies varies = (Varies)type;
+				final GenericComposite comp2 = new GenericComposite(type.getMessage());
+				varies.setData(comp2);
+				comp = getComponent(type, component);
+			} catch (final DataTypeException de) {
+				final String message = "Unexpected exception copying data to generic composite. This is probably a bug within HAPI. " + de.getMessage();
+				log.error(message, de);
+				throw new Error(message);
+			}
+		}
+		final Type sub = getComponent(comp, subcomponent);
+		return getPrimitive(sub);
+	}
+
     
     /** 
      * Attempts to extract a Primitive from the given type. If it's a composite, 
