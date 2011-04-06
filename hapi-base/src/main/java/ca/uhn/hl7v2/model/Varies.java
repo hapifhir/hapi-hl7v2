@@ -200,6 +200,23 @@ public class Varies implements Type {
                     } catch (NoSuchMethodException e) {
                         newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class, Integer.class}).newInstance(new Object[]{v.getMessage(), 0});
                     }
+                    
+                    if (newTypeInstance instanceof Primitive) {
+                    	Type[] subComponentsInFirstField = v.getFirstComponentSubcomponentsOnlyIfMoreThanOne();
+                    	if (subComponentsInFirstField != null) {
+                    		StringBuilder firstComponentValue = new StringBuilder();
+                    		for (Type type : subComponentsInFirstField) {
+                    			if (firstComponentValue.length() != 0) {
+                    				char subComponentSeparator = EncodingCharacters.getInstance(segment.getMessage()).getSubcomponentSeparator();
+                    				firstComponentValue.append(subComponentSeparator);
+                    			}
+                    			firstComponentValue.append(type.encode());
+							}
+                    		
+                    		v.setFirstComponentPrimitiveValue(firstComponentValue.toString());
+                    	}
+                    }
+                    
                     v.setData(newTypeInstance);
                 }
                 
@@ -217,8 +234,59 @@ public class Varies implements Type {
         }
     }
 
+    
+    private void setFirstComponentPrimitiveValue(String theValue) throws DataTypeException {
+		Composite c = (Composite) data;
+		Type firstComponent = c.getComponent(0);
+		setFirstComponentPrimitiveValue(firstComponent, theValue);
+	}
 
-    /**
+    
+	private void setFirstComponentPrimitiveValue(Type theFirstComponent, String theValue)
+			throws DataTypeException {
+		
+		if (theFirstComponent instanceof Varies) {
+			Varies firstComponentVaries = (Varies)theFirstComponent;
+			if (((Varies) theFirstComponent).getData() instanceof Composite) {
+				Type[] subComponents = ((Composite)firstComponentVaries.getData()).getComponents();
+				setFirstComponentPrimitiveValue(subComponents[0], theValue);
+				for (int i = 1; i < subComponents.length; i++) {
+					setFirstComponentPrimitiveValue(subComponents[i], "");
+				}
+			} else {
+				Primitive p = (Primitive) firstComponentVaries.getData();
+				p.setValue(theValue);
+			}
+		} else if (theFirstComponent instanceof Composite) {
+			Type[] subComponents = ((Composite)theFirstComponent).getComponents();
+			setFirstComponentPrimitiveValue(subComponents[0], theValue);
+			for (int i = 1; i < subComponents.length; i++) {
+				setFirstComponentPrimitiveValue(subComponents[i], "");
+			}
+		} else {
+			((Primitive)theFirstComponent).setValue(theValue);
+		}
+	}
+
+	/**
+     * Returns an array containing the subcomponents within the first component of this Varies
+     * object only if there are more than one of them. Otherwise, returns null.
+     */
+    private Type[] getFirstComponentSubcomponentsOnlyIfMoreThanOne() throws DataTypeException {
+    	if (data instanceof Composite) {
+    		Composite c = (Composite) data;
+    		Type firstComponent = c.getComponent(0);
+    		if (firstComponent instanceof Varies) {
+    			Varies firstComponentVaries = (Varies) firstComponent;
+    			if (firstComponentVaries.getData() instanceof Composite) {
+    				return ((Composite)firstComponentVaries.getData()).getComponents();
+    			}
+    		} 
+    	}
+		return null;
+	}
+
+	/**
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {

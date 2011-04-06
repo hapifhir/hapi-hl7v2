@@ -27,6 +27,7 @@
 
 package ca.uhn.hl7v2.parser;
 
+import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Structure;
 import java.util.List;
 import java.util.Set;
@@ -162,4 +163,11 @@ public interface IStructureDefinition {
      * @return Is this a required structure within it's parent
      */
     boolean isRequired();
+
+    /**
+     * Given a group instance, which must be an instance of the structure represented
+     * by this definition, determines how many custom structures have been
+     * added to the instance
+     */
+	int getNumberOfCustomSegmentsInInstance(Group theStructureInstance);
 }

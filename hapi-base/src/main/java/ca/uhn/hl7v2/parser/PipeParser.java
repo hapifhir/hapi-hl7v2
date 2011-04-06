@@ -28,6 +28,7 @@
 package ca.uhn.hl7v2.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -38,12 +39,11 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-import java.util.HashMap;
 
 /**
  * An implementation of Parser that supports traditionally encoded (ie delimited
@@ -200,7 +200,7 @@ public class PipeParser extends Parser {
              * for people to only populate component 1 in an ACK msg }
              */
             else {
-                StringBuffer buf = new StringBuffer("Can't determine message structure from MSH-9: ");
+                StringBuilder buf = new StringBuilder("Can't determine message structure from MSH-9: ");
                 buf.append(wholeFieldNine);
                 if (comps.length < 3) {
                     buf.append(" HINT: there are only ");
@@ -345,7 +345,7 @@ public class PipeParser extends Parser {
             for (int j = 0; j < reps.length; j++) {
                 try {
                     if (log.isDebugEnabled()) {
-                        StringBuffer statusMessage = new StringBuffer("Parsing field ");
+                        StringBuilder statusMessage = new StringBuilder("Parsing field ");
                         statusMessage.append(i + fieldOffset);
                         statusMessage.append(" repetition ");
                         statusMessage.append(j);
@@ -481,9 +481,9 @@ public class PipeParser extends Parser {
      * component.
      */
     public static String encode(Type source, EncodingCharacters encodingChars) {
-        StringBuffer field = new StringBuffer();
+        StringBuilder field = new StringBuilder();
         for (int i = 1; i <= Terser.numComponents(source); i++) {
-            StringBuffer comp = new StringBuffer();
+            StringBuilder comp = new StringBuilder();
             for (int j = 1; j <= Terser.numSubComponents(source, i); j++) {
                 Primitive p = Terser.getPrimitive(source, i, j);
                 comp.append(encodePrimitive(p, encodingChars));
@@ -589,24 +589,54 @@ public class PipeParser extends Parser {
      * called by encode(Message source, String encoding).
      */
     public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         String[] names = source.getNames();
+        
+        String mandatoryFirstSegmentName = null;
+        boolean haveHadMandatorySegment = false;
+        
         for (int i = 0; i < names.length; i++) {
+        	
             Structure[] reps = source.getAll(names[i]);
+            boolean nextNameIsRequired = source.isRequired(names[i]);
+            
             for (int rep = 0; rep < reps.length; rep++) {
+            	
                 if (reps[rep] instanceof Group) {
-                    result.append(encode((Group) reps[rep], encodingChars));
+                    
+                	result.append(encode((Group) reps[rep], encodingChars));
+                    
                 } else {
-                    String segString = encode((Segment) reps[rep], encodingChars);
+                    
+                	String segString = encode((Segment) reps[rep], encodingChars);
                     if (segString.length() >= 4) {
                         result.append(segString);
-                        result.append('\r');
+                        result.append(segDelim);
+                    } else if (!haveHadMandatorySegment) {
+                    	mandatoryFirstSegmentName = names[i];
                     }
+                    
                 }
+                
             }
+            
+            // This this segment is a required first element of a group and it
+            // is not present, encode it anyways in order to hint that 
+            // segments which follow will be in this group
+			if (reps.length == 0 && nextNameIsRequired && !haveHadMandatorySegment && result.length() == 0) {
+            	mandatoryFirstSegmentName = names[i];
+            }
+            
+			haveHadMandatorySegment &= nextNameIsRequired;
+			
         }
-        return result.toString();
+        
+        if (mandatoryFirstSegmentName != null) {
+        	return mandatoryFirstSegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
+        } else {
+        	return result.toString();
+        }
     }
 
     /**
@@ -620,7 +650,7 @@ public class PipeParser extends Parser {
     }
 
     public static String encode(Segment source, EncodingCharacters encodingChars) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(source.getName());
         result.append(encodingChars.getFieldSeparator());
 
@@ -666,7 +696,7 @@ public class PipeParser extends Parser {
      * segment is the line feed.
      */
     public static String stripLeadingWhitespace(String in) {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         char[] chars = in.toCharArray();
         int c = 0;
         while (c < chars.length) {

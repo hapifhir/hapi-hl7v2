@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.uhn.hl7v2.model.Group;
+
 /**
  * Defines
  * 
@@ -371,4 +373,18 @@ public class StructureDefinition implements IStructureDefinition {
     public String toString() {
         return "StructureDefinition[" + getName() + "]";
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	public int getNumberOfCustomSegmentsInInstance(Group theStructureInstance) {
+		HashSet<String> allChildNames = getAllChildNames();
+		int retVal = 0;
+		for (String names : theStructureInstance.getNames()) {
+			if (!allChildNames.contains(names)) {
+				retVal++;
+			}
+		}
+		return retVal;
+	}
 }
