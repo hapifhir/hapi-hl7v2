@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -89,7 +90,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      */
     public boolean hasNext() {
 
-        log.debug("hasNext()");
+        log.debug("hasNext() for direction " + myDirection);
         if (myDirection == null) {
             throw new IllegalStateException("Direction not set");
         }
@@ -103,7 +104,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             }
 
             IStructureDefinition structureDefinition = currentPosition.getStructureDefinition();
-            if (structureDefinition.getName().equals(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
+            if (structureDefinition.isSegment() && structureDefinition.getName().startsWith(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
                 myNextIsSet = true;
                 currentPosition.incrementRep();
             } else if (structureDefinition.isSegment() && structureDefinition.getNextLeaf() == null
@@ -148,14 +149,17 @@ public class MessageIterator implements java.util.Iterator<Structure> {
 
     private void addNonStandardSegmentAtCurrentPosition() throws Error {
         if (log.isDebugEnabled()) {
-            log.debug("Creating non standard segment on group: " + getCurrentPosition().getStructureDefinition().getParent().getName());
+            log.debug("Creating non standard segment " + myDirection + " on group: " + getCurrentPosition().getStructureDefinition().getParent().getName());
         }
         List<Position> parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
         Group parentStructure = (Group) navigateToStructure(parentDefinitionPath);
 
-        int newStructureOffsetWithinParent = 1 + getCurrentPosition().getStructureDefinition().getParent().getNumberOfCustomSegmentsInInstance(parentStructure);
-        
-        int index = getCurrentPosition().getStructureDefinition().getPosition() + newStructureOffsetWithinParent;
+        // Current position within parent
+        Position currentPosition = getCurrentPosition();
+		String nameAsItAppearsInParent = currentPosition.getStructureDefinition().getNameAsItAppearsInParent();
+
+		int index = Arrays.asList(parentStructure.getNames()).indexOf(nameAsItAppearsInParent) + 1;
+		
         String newSegmentName;
         try {
             newSegmentName = parentStructure.addNonstandardSegment(myDirection, index);

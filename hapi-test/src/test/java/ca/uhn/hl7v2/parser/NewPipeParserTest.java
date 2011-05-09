@@ -29,6 +29,7 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.model.v25.message.REF_I12;
 import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.model.v251.message.ADT_A17;
+import ca.uhn.hl7v2.model.v26.datatype.AD;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
@@ -104,16 +105,105 @@ public class NewPipeParserTest extends TestCase {
 		System.out.println("\n\n" + encode);
     	
     }
+
+    
+	/**
+	 * Make sure mandatory segments are encoded, even if they are empty. This
+	 * is required to give parsing applications a hint as to where the following
+	 * segments belong.
+	 */
+	public void testEncodeEmptySegmentsIfTheyAreMandatory() throws HL7Exception {
+
+		// Message is stripped down
+		String msgString = "MSH|^~\\&\r" // -
+				+ "OBR|\r" // -
+				+ "OBX||AD|||F1C1^F2C1\r";
+
+		ORU_R01 msg = new ORU_R01();
+		msg.parse(msgString);
+
+		String encode = msg.encode();
+
+		assertEquals(msgString.trim(), encode.trim());
+
+		msgString = "MSH|^~\\&\r" // -
+				+ "OBX||AD|||F1C1^F2C1\r";
+
+		msg = new ORU_R01();
+		msg.parse(msgString);
+
+		encode = msg.encode();
+
+		assertEquals(msgString.trim(), encode.trim());
+
+		/*
+		 * Optional segment at the start of group
+		 */
+		
+		msgString = "MSH|^~\\&\r" // -
+				+ "ORC|\r"
+				+ "OBX||AD|||F1C1^F2C1\r";
+
+		msg = new ORU_R01();
+		msg.parse(msgString);
+
+		encode = msg.encode();
+
+		String expected = "MSH|^~\\&\r" // -
+			+ "OBR|\r"
+			+ "OBX||AD|||F1C1^F2C1\r";
+		assertEquals(expected.trim(), encode.trim());
+
+		/*
+		 * Optional segment populated at the start of group
+		 */
+		
+		msgString = "MSH|^~\\&\r" // -
+				+ "ORC|1\r"
+				+ "OBX||AD|||F1C1^F2C1\r";
+
+		msg = new ORU_R01();
+		msg.parse(msgString);
+
+		encode = msg.encode();
+
+		assertEquals(msgString.trim(), encode.trim());
+		
+	}
+    
+    /**
+     * Ensure that incorrectly placed extra segment at end of message is in the same
+     * position when message is re-encoded. This is based on an issue found by UHN
+     */
+    public void testAddExtraSegmentToEnd() throws EncodingNotSupportedException, HL7Exception {
+    	
+    	String msgString = "MSH|^~\\&|REG|W|||201103230042||ADT^A06|32153168-A06|P|2.2\r" + 
+    			"PV2||F||||||||||||||||||||N||AI|Emergency||||||N|||||||OTH^Self^03ZBrInBy\r" + 
+    			"NK1||||^^^^^^M|||NK\r" + 
+    			"DG1||IN|MISC|Transient Ischemic Attack / Stroke\r" + 
+    			"MRG|2804019||11020086571";
+
+    	PipeParser p = PipeParser.getInstanceWithNoValidation();
+    	Message message = p.parse(msgString);
+    	
+    	String encoded = message.encode();
+    	
+    	ourLog.info("Structure is: " + message.printStructure());
+    	
+    	assertEquals(msgString.trim(), encoded.trim());
+    	
+    }
+    
     
     
     public void testTwoSegmentsWithSameName() throws EncodingNotSupportedException, HL7Exception {
 
-        String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ORU^R01|66239404|T|2.3.1||||||\r"
-                + "EVN|A01|201002130003||||201002130003|G^4265^L\r"
+        String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1||||||\r"
+                + "EVN|A17|201002130003||||201002130003|G^4265^L\r"
                 + "PID|1||3678347^^^UHN^MR^G^4265^^^^^~9635915532^vp^^CANON^JHN^G^4265^^^20120517^^~||LEIGHTON^RACHEL^DIAMOND^^^^U||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6H 2T9^CAN^H||^PRN^PH^^1^416^7676333|^WPN^PH^^1^905^7436333^6001||||\r"
                 + "PV1||E|Emerg^EmergAcute^Interview^G^4265^^^N^EmergAcute^Interview^Emerg^185 2 16^|||Emerg^Gen Wait^GenWait13^G^4265^^^^Gen Wait^GenWait13^Emerg^185 6 13^|141378^Rauchwerger^David^^^Dr.^MD^^^L^^^EI^^^^^^^^^^^^^|||||||A|||141378^Rauchwerger^David^^^Dr.^MD^^^L^^^EI^^^^^^^^^^^^^|EP^|292007135^^^UHN^VN^G^4265^^^^^||||||||||||||||||||G|||||200905030022|||||||V|\r"
                 + "PID|2||0877410^^^UHN^MR^^^^^^^~3135063059^^^CANON^JHN^^^^^^^~||Lex^Tamara^Christina^^Miss^^L^^^^^200905030044^^~||19801120|F|||441 Margueretta St^^Toronto^ON^M6H2S6^Can^H^^^^^^^~|1811|(416)533-5113^PRN^PH^^^^^^^^^~|(416)532-0206^WPN^PH^^^^^^^^^|eng^ English^03ZPtlang^^^|S^Single^03ZMtSt^^^|PDI^ Patient did not indicate^03ZRelgn^^^|292007138^^^UHN^VN^^^^^^^~||||||||||||N|||200905030044||||||\r"
-                + "BLG|||MOHLTC";
+                + "ZZ1|TESTVALUE";
 
         ADT_A17 msg = new ADT_A17();
         msg.setParser(parser);
@@ -125,6 +215,37 @@ public class NewPipeParserTest extends TestCase {
 
     }
 
+    
+    public void testLotsOfExtraSegments() throws EncodingNotSupportedException, HL7Exception {
+
+        String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1\r"
+                + "EVN|A17|201002130003||||201002130003|G^4265^L\r"
+                + "PID|1\r"
+                + "ZZA|ZZAVALUE\r"
+                + "ZZA|ZZAVALUE\r"
+                + "ZZB|ZZBVALUE\r"
+                + "ZZB|ZZBVALUE\r"
+                + "PV1||E\r"
+                + "PID|2\r"
+                + "ZZA|ZZAVALUE\r"
+                + "ZZA|ZZAVALUE\r"
+                + "ZZB|ZZBVALUE\r"
+                + "ZZB|ZZBVALUE\r"
+                + "ZZC|ZZCVALUE\r";
+
+        ADT_A17 msg = new ADT_A17();
+        msg.setParser(parser);
+        msg.parse(messageText);
+
+        ourLog.info(msg.encode());
+
+        Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
+
+        String encoded = msg.encode();
+		Assert.assertEquals(messageText, encoded);
+        
+    }
+    
     public void testDTInObx2() throws EncodingNotSupportedException, HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
