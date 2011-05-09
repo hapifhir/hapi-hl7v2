@@ -188,8 +188,10 @@ public abstract class AbstractGroup implements Group {
         if (version == null)
             throw new HL7Exception("Need message version to add segment by name; message.getVersion() returns null");
         Class<? extends Structure> c = myFactory.getSegmentClass(theName, version);
-        if (c == null)
+        
+        if (c == null) {
             c = GenericSegment.class;
+        }
 
         tryToInstantiateStructure(c, theName); // may throw exception
 
@@ -279,7 +281,12 @@ public abstract class AbstractGroup implements Group {
         try {
             Object o = null;
             if (GenericSegment.class.isAssignableFrom(c)) {
-                s = new GenericSegment(this, name);
+                String genericName = name;
+                if (genericName.length() > 3) {
+                	genericName = genericName.substring(0, 3);
+                }
+                
+				s = new GenericSegment(this, genericName);
             } else if (GenericGroup.class.isAssignableFrom(c)) {
                 s = new GenericGroup(this, name, myFactory);
             } else {
@@ -518,6 +525,10 @@ public abstract class AbstractGroup implements Group {
                 newName = name + version++;
             }
             name = newName;
+        }
+        
+        if (index > this.names.size()) {
+        	throw new HL7Exception("Invalid index " + index + " - Should be <= " + this.names.size());
         }
         
         this.names.add(index, name);

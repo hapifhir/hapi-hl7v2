@@ -23,7 +23,8 @@ import java.util.ArrayList;
  */
 public class ExtraComponents implements Serializable {
     
-    private static final long serialVersionUID = -2614683870975956395L;
+
+	private static final long serialVersionUID = -2614683870975956395L;
     
     private ArrayList comps;
     private Message message;
@@ -77,6 +78,14 @@ public class ExtraComponents implements Serializable {
 		comps.clear();
 	}
 
+    /**
+     * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "ExtraComponents" + comps;
+	}
+	
 
     /*private void addComp(int comp) {
     }*/

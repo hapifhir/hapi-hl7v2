@@ -53,21 +53,47 @@ import ca.uhn.log.HapiLogFactory;
 public class Varies implements Type {
 
 	/** 
-	 * System property key. The value may be set to provide a default
+	 * System property key: The value may be set to provide a default
 	 * datatype ("ST", "NM", etc) for an OBX segment with a missing
 	 * OBX-2 value.
 	 */	
 	public static final String DEFAULT_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_obx2_type";
 
     /** 
-     * System property key. The value may be set to provide a default
+     * System property key: The value may be set to provide a default
      * datatype ("ST", "NM", etc) for an OBX segment with an invalid
      * OBX-2 value type. In other words, if OBX-2 has a value of "ZYZYZ",
      * which is not a valid value, but this property is set to "ST", then
      * OBX-5 will be parsed as an ST.
      */ 
     public static final String INVALID_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.invalid_obx2_type";
-	
+
+    /** 
+     * <p>
+     * System property key: If this is not set, or set to "true", and a subcomponent delimiter is found within the
+     * value of a Varies of a primitive type, this subcomponent delimiter will be treated as a literal
+     * character instead of a subcomponent delimiter, and will therefore be escaped if the message is
+     * re-encoded. This is handy when dealing with non-conformant sending systems which do not correctly
+     * escape ampersands in OBX-5 values.
+     * </p>
+     * <p>
+     * For example, consider the following OBX-5 segment:
+     * <pre>
+     *    OBX||ST|||Apples, Pears &amp; Bananas|||
+     * </pre>
+     * In this example, the data type is a primitive ST and does not support subcomponents, and the
+     * ampersand is obviously not intended to represent a subcomponent delimiter. If this 
+     * property is set to <code>true</code>, the entire string will be treated as the
+     * value of OBX-5, and if the message is re-encoded the string will appear
+     * as "Apples, Pears \T\ Bananas".
+     * </p>
+     * <p>
+     * If this property is set to anything other than "true", the subcomponent delimiter is treated as a component delimiter, 
+     * so the value after the ampersand is placed into an {@link ExtraComponents extra component}.
+     * </p>
+     */ 
+    public static final String ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE = "ca.uhn.hl7v2.model.varies.escape_subcomponent_delim_in_primitive";
+    
 	private static final HapiLog log = HapiLogFactory.getHapiLog(Varies.class);
 
     private Type data;
@@ -204,16 +230,22 @@ public class Varies implements Type {
                     if (newTypeInstance instanceof Primitive) {
                     	Type[] subComponentsInFirstField = v.getFirstComponentSubcomponentsOnlyIfMoreThanOne();
                     	if (subComponentsInFirstField != null) {
-                    		StringBuilder firstComponentValue = new StringBuilder();
-                    		for (Type type : subComponentsInFirstField) {
-                    			if (firstComponentValue.length() != 0) {
-                    				char subComponentSeparator = EncodingCharacters.getInstance(segment.getMessage()).getSubcomponentSeparator();
-                    				firstComponentValue.append(subComponentSeparator);
-                    			}
-                    			firstComponentValue.append(type.encode());
-							}
                     		
-                    		v.setFirstComponentPrimitiveValue(firstComponentValue.toString());
+                    		if (escapeSubcompponentDelimInPrimitive()) {
+                    		
+	                    		StringBuilder firstComponentValue = new StringBuilder();
+	                    		for (Type type : subComponentsInFirstField) {
+	                    			if (firstComponentValue.length() != 0) {
+	                    				char subComponentSeparator = EncodingCharacters.getInstance(segment.getMessage()).getSubcomponentSeparator();
+	                    				firstComponentValue.append(subComponentSeparator);
+	                    			}
+	                    			firstComponentValue.append(type.encode());
+								}
+	                    		
+	                    		v.setFirstComponentPrimitiveValue(firstComponentValue.toString());
+                    		
+                    		} 
+                    		
                     	}
                     }
                     
@@ -235,7 +267,12 @@ public class Varies implements Type {
     }
 
     
-    private void setFirstComponentPrimitiveValue(String theValue) throws DataTypeException {
+    private static boolean escapeSubcompponentDelimInPrimitive() {
+		String property = System.getProperty(ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE);
+		return property == null || "true".equalsIgnoreCase(property);
+	}
+
+	private void setFirstComponentPrimitiveValue(String theValue) throws DataTypeException {
 		Composite c = (Composite) data;
 		Type firstComponent = c.getComponent(0);
 		setFirstComponentPrimitiveValue(firstComponent, theValue);
