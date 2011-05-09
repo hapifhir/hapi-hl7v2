@@ -127,15 +127,6 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	}
 
 	/**
-	 * @throws UnsupportedOperationException
-	 *             Custom structures may not contain other structures. If this
-	 *             is called, it is likely a bug within HAPI.
-	 */
-	public int getNumberOfCustomSegmentsInInstance(Group theStructureInstance) {
-		throw new UnsupportedOperationException("Custom structures may not contain other structures. This is likely a bug within HAPI.");
-	}
-
-	/**
 	 * {@inheritDoc }
 	 */
 	public IStructureDefinition getParent() {

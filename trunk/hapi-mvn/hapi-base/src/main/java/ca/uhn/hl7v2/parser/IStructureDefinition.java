@@ -27,10 +27,10 @@
 
 package ca.uhn.hl7v2.parser;
 
-import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Structure;
 import java.util.List;
 import java.util.Set;
+
+import ca.uhn.hl7v2.model.Structure;
 
 /**
  * Contains information about the composition of a given type of {@link Structure}.
@@ -155,7 +155,7 @@ public interface IStructureDefinition {
     Set<String> getAllPossibleFirstChildren();
 
     /**
-     * @return Returns the names of all children of this structure
+     * @return Returns the names of all children of this structure, including first elements within child groups
      */
     Set<String> getAllChildNames();
 
@@ -164,10 +164,4 @@ public interface IStructureDefinition {
      */
     boolean isRequired();
 
-    /**
-     * Given a group instance, which must be an instance of the structure represented
-     * by this definition, determines how many custom structures have been
-     * added to the instance
-     */
-	int getNumberOfCustomSegmentsInInstance(Group theStructureInstance);
 }
