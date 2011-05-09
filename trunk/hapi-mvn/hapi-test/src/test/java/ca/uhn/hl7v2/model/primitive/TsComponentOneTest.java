@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.DTM;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
@@ -17,12 +18,16 @@ import junit.framework.TestCase;
 public class TsComponentOneTest extends TestCase {
 
 	private SimpleDateFormat myFormat;
+	private ORU_R01 myMsg;
 
 	@Override
 	protected void setUp() throws Exception {
 		myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		TimeZone timeZone = TimeZone.getTimeZone("Canada/Eastern");
 		myFormat.setTimeZone(timeZone);
+		
+		myMsg = new ORU_R01();
+		myMsg.initQuickstart("ORU", "R01", "P");
 	}
 
 	public void testCalendarOperations() throws HL7Exception {
@@ -43,7 +48,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsCalendar() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);
@@ -77,7 +82,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsCalendarToMinute() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);
@@ -104,7 +109,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsCalendarWithSeconds() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);
@@ -132,7 +137,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsDate() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);
@@ -166,7 +171,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsDateToMinute() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);
@@ -193,7 +198,7 @@ public class TsComponentOneTest extends TestCase {
 	public void testSetValueAsDateWithSeconds() throws HL7Exception {
 
 		// DTM extends TSComponentOne
-		DTM time = new DTM(new ORU_R01());
+		DTM time = new DTM(myMsg);
 		
 		Calendar cal = new GregorianCalendar();
 		cal.set(Calendar.YEAR, 2010);

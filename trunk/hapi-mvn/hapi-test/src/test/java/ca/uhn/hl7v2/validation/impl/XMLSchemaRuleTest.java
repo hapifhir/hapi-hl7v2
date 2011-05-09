@@ -5,6 +5,7 @@ package ca.uhn.hl7v2.validation.impl;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -14,7 +15,7 @@ import junit.framework.TestCase;
  * Unit tests for <code>ValidatesAgainstSchema</code>.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.3 $ updated on $Date: 2011-02-20 21:59:07 $ by $Author: jamesagnew $
+ * @version $Revision: 1.4 $ updated on $Date: 2011-05-09 22:04:40 $ by $Author: jamesagnew $
  */
 public class XMLSchemaRuleTest extends TestCase {
 
@@ -43,10 +44,10 @@ public class XMLSchemaRuleTest extends TestCase {
         for (int i =0; i < errors.length;i++) {
         	System.out.println(errors[i].toString());
         }
-        assertEquals(0, errors.length);
+        assertEquals(Arrays.asList(errors).toString(), 0, errors.length);
 
         errors = rule.test(getMessage2());
-        assertEquals(1, errors.length);
+        assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
     }
     
     private String getMessage1() {

@@ -64,7 +64,11 @@ public class AbstractSegmentTest extends TestCase {
         string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
                 + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
 
-		assertEquals(string, a01.encode());
+		String encode = a01.encode();
+		
+		System.out.println("Message is:\n" + encode.replace("\r", "\n"));
+		
+		assertEquals(string, encode);
 
 	}
 
