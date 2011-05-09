@@ -48,7 +48,7 @@ import ca.uhn.hl7v2.parser.*;
  */
 public abstract class HL7Service implements Runnable {
 
-    private Vector connections;
+    private Vector<Connection> connections;
     private boolean keepRunning;
     protected Parser parser;
     protected LowerLayerProtocol llp;
@@ -57,7 +57,7 @@ public abstract class HL7Service implements Runnable {
 
     /** Creates a new instance of Server */
     public HL7Service(Parser parser, LowerLayerProtocol llp) {
-        connections = new Vector();
+        connections = new Vector<Connection>();
         listeners = new ArrayList();
         this.parser = parser;
         this.llp = llp;
@@ -123,10 +123,10 @@ public abstract class HL7Service implements Runnable {
         notifyListeners(c);
     }
 
-    private synchronized void discardConnection(Connection c) {
-        this.connections.remove(c);
-        notifyListeners(c);
-    }
+//    private synchronized void discardConnection(Connection c) {
+//        this.connections.remove(c);
+//        notifyListeners(c);
+//    }
 
     /**
      * Returns a connection to a remote host that was initiated by the given remote host.  
@@ -159,7 +159,7 @@ public abstract class HL7Service implements Runnable {
     }
 
     /** Returns all currently active connections. */
-    public synchronized Vector getRemoteConnections() {
+    public synchronized Vector<Connection> getRemoteConnections() {
         return connections;
     }
 
