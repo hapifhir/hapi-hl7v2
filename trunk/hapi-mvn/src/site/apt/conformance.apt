@@ -85,7 +85,7 @@ target/generated-sources/confgen
   
   * View the conformance profile XML file {{{http://hl7api.cvs.sourceforge.net/viewvc/hl7api/hapi-mvn/hapi-examples/src/main/resources/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml?view=markup}HERE}}.
   
-  * View the generated source classes {{{.//xref/com/foo/a31/ADT_A31.html}HERE}}.
+  * View the generated source classes {{{./xref/com/foo/a31/message/ADT_A05.html}HERE}}.
     
 
 * Message Validator
