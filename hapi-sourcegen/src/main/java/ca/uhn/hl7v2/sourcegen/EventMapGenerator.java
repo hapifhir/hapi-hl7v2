@@ -2,12 +2,10 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,7 +13,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
@@ -48,10 +52,11 @@ public class EventMapGenerator {
         }
 
         ResultSet rs = createStructureQuery(theVersion);
+        Map<String, Set<String>> trigger2structure = new TreeMap<String, Set<String>>();
         while (rs.next()) {
             String messageType = rs.getString("message_typ_snd");
             String triggerCode = rs.getString("event_code");
-            String trigger = messageType + "_" + triggerCode;
+            final String trigger = messageType + "_" + triggerCode;
             String structure = rs.getString("message_structure_snd");
 
             if ("ACK".equals(messageType)) {
@@ -61,8 +66,44 @@ public class EventMapGenerator {
                 continue;
             }
 
-            writer.append(trigger).append("\t").append(structure).append("\r\n");
+            /*
+             * This logic keeps the structure value which matches exactly the trigger value at the
+             * end of the list. This is desirable as sometimes multiple structures mark themselves
+             * as being associated with the same trigger event, so we want to favour the one
+             * with the matching name.
+             * 
+             * Example: for an ORM^R01, favour creating an ORM_O01 structure and not an
+             * OMD_O01 even though the latter also declares itself as being the 
+             * structure for ORM^R01 in the database.
+             */
+
+            if (!trigger2structure.containsKey(trigger)) {
+            	trigger2structure.put(trigger, new TreeSet<String>(new Comparator<String>() {
+
+					public int compare(String theO1, String theO2) {
+						if (theO1.equals(theO2)) {
+							return 0;
+						} else if (theO1.equals(trigger)) {
+							return 1;
+						} else if (theO2.equals(trigger)) {
+							return -1;
+						} else {
+							return theO1.compareTo(theO2);
+						}
+					}
+				}));
+            }
+            
+            trigger2structure.get(trigger).add(structure);
+            
         }
+
+        for (Map.Entry<String, Set<String>> nextEntry : trigger2structure.entrySet()) {
+        	for (String nextStructure : nextEntry.getValue()) {
+        		writer.append(nextEntry.getKey()).append("\t").append(nextStructure).append("\r\n");
+        	}
+        }
+        
 
         rs.close();
         writer.close();
