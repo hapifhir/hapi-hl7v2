@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.message.SIU_S12;
+import ca.uhn.hl7v2.model.v231.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
 import ca.uhn.hl7v2.model.v24.datatype.SI;
 import ca.uhn.hl7v2.model.v24.message.ACK;
@@ -87,6 +88,27 @@ public class NewPipeParserTest extends TestCase {
 
     }
 
+    /**
+     * http://sourceforge.net/tracker/?func=detail&aid=3212931&group_id=38899&atid=423835
+     * 
+     * Ensure that the correct class is parsed for 2.3.1 ORM^O01
+     */
+    public void testParseCorrectClass() throws EncodingNotSupportedException, HL7Exception {
+
+    	String sn = "MSH|^~\\&|RIS 2.0|KIR|InterRis 2.0|Receiving facility|20110309132505||ORM^O01|MSG00001|1|2.3.1|1||||SL|UNICODE UTF-8|SL\r" + 
+    	"PID|||123^^^^^BIS~1234^^^^^HIS~12345^^^^^KZZZ||Lastname^Name^J^Mr|||M\r" +
+    	"PV1||E||||||2314^Novak&Janez^^^^Dr.|||||||||||123365\r" +
+    	"ORC|AF|1123abc^marand||3|||1^once^^^^U\r" +
+    	"OBR|1|1123abc^marand||RDP_10^RDP Kljicnica|||||||||klinicno vprasanje?||^^^^L&Left|12345^Novak^Janez^^^^^^BPI_ZDR|||||||||||1^Once^^^^R\r";
+
+    	//java code for parsing,..
+    	Parser p = new PipeParser();
+    	final Message msg = p.parse(sn);
+    	System.out.println(msg.getClass());    	
+    	
+    	Assert.assertEquals(msg.getClass(), ORM_O01.class);
+    }
+    
     
     /**
      * Checking an issue reported by a user where an ampersand in OBx-5 causes the
@@ -838,12 +860,12 @@ public class NewPipeParserTest extends TestCase {
      */
     public void testParseObx5WithTypeRequiringTable() throws EncodingNotSupportedException, HL7Exception {
 
-        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
-                + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
-                + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
-                + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
-                + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
-                + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" //-
+                + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" //-
+                + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" //-
+                + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r" //-
+                + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r" //-
+                + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r" //-
                 + "OBX|1|IS|Z114099^Erc^L||ABC||||||F|||200905011111|PMH\r";
 
         parser.parse(string);
@@ -852,12 +874,16 @@ public class NewPipeParserTest extends TestCase {
 
     public void testMissingSegment() throws EncodingNotSupportedException, HL7Exception {
 
-        String messageString = "MSH|^~\\&|BLAH|Default Facility|||20100604104559||REF^I12^REF_I12|||2.5\r\n" + "SFT|BLAH|BLAH|BLAH|2010/06/04 10:44, branch : trunk\r\n"
-                + "RF1||||||15|20100601000000\r\n" + "PRD|RP^Referring Provider|foo^doctor^^^DR|^^^^^^O||||999998\r\n"
-                + "PRD|RT^Referred to Provider|moto^moto^^^r6|^^^^^^O||^^^^^^^^^^^411||8\r\n" + "PID|1||^^^^^^20100525^21000101^ON||aaa^aaa^^^^^L||19000101|M|||^^^ON^^^H\r\n"
-                + "NTE|||asfd notes|^APPOINTMENT_NOTES\r\n" + "NTE|||engine oil problem, and maybe needs new plugs|^REASON_FOR_CONSULTATION\r\n"
-                + "NTE|||86k km|^CLINICAL_INFORMATION\r\n" + "NTE|||goes too slow|^CONCURRENT_PROBLEMS\r\n" + "NTE|||91 octane|^CURRENT_MEDICATIONS\r\n"
-                + "NTE|||scooters|^ALLERGIES";
+        String messageString = "MSH|^~\\&|BLAH|Default Facility|||20100604104559||REF^I12^REF_I12|||2.5\r\n" //-
+        	+ "SFT|BLAH|BLAH|BLAH|2010/06/04 10:44, branch : trunk\r\n" //-
+            + "RF1||||||15|20100601000000\r\n" //-
+            + "PRD|RP^Referring Provider|foo^doctor^^^DR|^^^^^^O||||999998\r\n" //-
+            + "PRD|RT^Referred to Provider|moto^moto^^^r6|^^^^^^O||^^^^^^^^^^^411||8\r\n" + "PID|1||^^^^^^20100525^21000101^ON||aaa^aaa^^^^^L||19000101|M|||^^^ON^^^H\r\n" //-
+            + "NTE|||asfd notes|^APPOINTMENT_NOTES\r\n" //-
+            + "NTE|||engine oil problem, and maybe needs new plugs|^REASON_FOR_CONSULTATION\r\n" //-
+            + "NTE|||86k km|^CLINICAL_INFORMATION\r\n" //-
+            + "NTE|||goes too slow|^CONCURRENT_PROBLEMS\r\n" + "NTE|||91 octane|^CURRENT_MEDICATIONS\r\n" //-
+            + "NTE|||scooters|^ALLERGIES";
 
         REF_I12 message = (REF_I12) parser.parse(messageString);
 
