@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1</version>
+		<version>1.2-alpha2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -101,50 +101,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/source.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/javadoc.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>retrotranslator-maven-plugin</artifactId>
-				<version>1.0-alpha-4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>translate-project</goal>
-						</goals>
-						<configuration>
-							<attach>true</attach>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
@@ -179,5 +135,59 @@
 			</resource>
 		</resources>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>DIST</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>../src/assembly/source.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+							<execution>
+								<id>javadoc</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>../src/assembly/javadoc.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>retrotranslator-maven-plugin</artifactId>
+						<version>1.0-alpha-4</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>translate-project</goal>
+								</goals>
+								<configuration>
+									<attach>true</attach>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

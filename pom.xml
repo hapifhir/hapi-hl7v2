@@ -12,7 +12,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1</version>
+	<version>1.2-alpha2</version>
 	<name>HAPI - Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -78,6 +78,17 @@
 			<email>nicovn@users.sourceforge.net</email>
 		</developer>
 	</developers>
+	
+	<contributors>
+		<contributor>
+			<name>Rodolfo Chavez</name>
+		</contributor>		
+		<contributor>
+			<name>Ryan W. Gross</name>
+		 	<organization>General Electric Corporation - Healthcare IT</organization>
+		</contributor>
+	</contributors>
+	
 	<inceptionYear>2001</inceptionYear>
 
 	<issueManagement>
@@ -207,8 +218,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<hapi.version>1.1</hapi.version>
-		<hapi.version.structures>1.1</hapi.version.structures>
+		<hapi.version>1.2-alpha2</hapi.version>
+		<hapi.version.structures>1.2-alpha2</hapi.version.structures>
 	</properties>
 
 	<reporting>

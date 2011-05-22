@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.1</version>
+		<version>1.2-alpha2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -76,51 +76,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- append to the packaging phase. -->
-						<goals>
-							<goal>single</goal> <!-- goals == mojos -->
-						</goals>
-						<inherited>true</inherited>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/structures-source.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/javadoc.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>retrotranslator-maven-plugin</artifactId>
-				<version>1.0-alpha-4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>translate-project</goal>
-						</goals>
-						<configuration>
-							<attach>true</attach>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<resources>
             <resource>
@@ -148,5 +103,60 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<profiles>
+		<profile>
+			<id>DIST</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>make-assembly</id> <!-- this is used for inheritance merges -->
+								<phase>package</phase> <!-- append to the packaging phase. -->
+								<goals>
+									<goal>single</goal> <!-- goals == mojos -->
+								</goals>
+								<inherited>true</inherited>
+								<configuration>
+									<descriptors>
+										<descriptor>../src/assembly/structures-source.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+							<execution>
+								<id>javadoc</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>../src/assembly/javadoc.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>retrotranslator-maven-plugin</artifactId>
+						<version>1.0-alpha-4</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>translate-project</goal>
+								</goals>
+								<configuration>
+									<attach>true</attach>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	
 </project>
