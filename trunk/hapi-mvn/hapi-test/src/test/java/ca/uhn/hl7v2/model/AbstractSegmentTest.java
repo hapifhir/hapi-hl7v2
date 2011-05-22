@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import junit.framework.*;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -72,5 +73,27 @@ public class AbstractSegmentTest extends TestCase {
 
 	}
 
-    
+
+	public void testInsertRepetition() throws HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+            + "PID|||1000\r"
+            + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
+            + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
+            + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+            + "OBX|8|DT|GDT-00108^Device Implant Date^GDT-LATITUDE||20090505||||||F||\r";
+
+        ORU_R01 msg = new ORU_R01();
+        msg.parse(string);
+        
+        Assert.assertEquals("PID|||1000", msg.getRESPONSE(0).getPATIENT().getPID().encode());
+        
+        msg.getRESPONSE(0).getPATIENT().getPID().insertPid3_PatientIDInternalID(1).parse("1001");
+        Assert.assertEquals("PID|||1000~1001", msg.getRESPONSE(0).getPATIENT().getPID().encode());
+
+        msg.getRESPONSE(0).getPATIENT().getPID().insertPid3_PatientIDInternalID(0).parse("0999");
+        Assert.assertEquals("PID|||0999~1000~1001", msg.getRESPONSE(0).getPATIENT().getPID().encode());
+
+	}
+	
 }

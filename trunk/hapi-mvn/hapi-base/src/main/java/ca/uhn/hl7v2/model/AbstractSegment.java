@@ -529,7 +529,7 @@ public abstract class AbstractSegment implements Segment {
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
     protected Type removeRepetition(int fieldNum, int index) throws HL7Exception {
-        if (fieldNum < 1 || fieldNum >= fields.size()) {
+        if (fieldNum < 1 || fieldNum > fields.size()) {
             throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
 
@@ -553,7 +553,7 @@ public abstract class AbstractSegment implements Segment {
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
     protected Type insertRepetition(int fieldNum, int index) throws HL7Exception {
-        if (fieldNum < 1 || fieldNum >= fields.size()) {
+        if (fieldNum < 1 || fieldNum > fields.size()) {
             throw new HL7Exception("The field " + fieldNum + " does not exist in the segment " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
         }
 
