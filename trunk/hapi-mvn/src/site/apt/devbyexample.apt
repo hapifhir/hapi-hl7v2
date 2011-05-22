@@ -20,52 +20,56 @@ Developing using HAPI - By Example
 
 * The Basics
 
-  A good starting point with regards to using HAPI would be to
-  {{{./xref/ca/uhn/hl7v2/examples/ExampleParseMessages.html}parse a message}}.
+  * A good starting point with regards to using HAPI would be to
+    {{{./xref/ca/uhn/hl7v2/examples/ExampleParseMessages.html}parse a message}}.
   
   
 * Creating messages
 
-  Next, let's try 
-  {{{./xref/ca/uhn/hl7v2/examples/CreateAMessage.html}creating a new message}} 
-  from scratch.
+  * Next, let's try 
+    {{{./xref/ca/uhn/hl7v2/examples/CreateAMessage.html}creating a new message}} 
+    from scratch.
   
-  Another common problem is to 
-  {{{./xref/ca/uhn/hl7v2/examples/PopulateOBXSegment.html}populate an ORU message's OBX segment}}.
+  * Another common problem is to 
+    {{{./xref/ca/uhn/hl7v2/examples/PopulateOBXSegment.html}populate an ORU message's OBX segment}}.
 
 
 * Sending and receiving
   
-  Now, let's introduce some {{{./xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
+  * Now, let's introduce some {{{./xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
 
 
 * Parsing Messages
 
-  Once we're parsing messages, we can 
-  {{{./xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
-  to make sure they contain no invalid data.
+  * Once we're parsing messages, we can 
+    {{{./xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
+    to make sure they contain no invalid data.
   
-  To be even more advanced, we can
-  {{{./xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfile.html}validate messages}}
-  using conformance profiles. Note that the conformance profile used in this
-  example can be seen {{{./xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}. See the FAQ for 
-  notes on using this in your own applications. 
+  * To be even more advanced, we can
+    {{{./xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfile.html}validate messages}}
+    using conformance profiles. Note that the conformance profile used in this
+    example can be seen {{{./xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}. See the FAQ for 
+    notes on using this in your own applications. 
+
+  * There are several ways to 
+    {{{./xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html}handle multiple versions}}
+    of HL7 within a single application.
 
 
 * Advanced Parsing/Reading Messages
 
-  Another way of reading and writing to message objects is to use 
-  a {{{./xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
+  * Another way of reading and writing to message objects is to use 
+    a {{{./xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
 
-  We can use a subclassed parser to {{{./xref/ca/uhn/hl7v2/examples/CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
+  * We can use a subclassed parser to {{{./xref/ca/uhn/hl7v2/examples/CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
 
-  {{{./xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
+  * {{{./xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
 
 
 * Advanced Creating Messages
   
-  Alessandro Delprete submitted {{{./xref/ca/uhn/hl7v2/examples/EncapsulatedData.html}this example}} of 
-  how to embed a CDA document as MIME content in an MDM^T02 message.
+  * Alessandro Delprete submitted {{{./xref/ca/uhn/hl7v2/examples/EncapsulatedData.html}this example}} of 
+    how to embed a CDA document as MIME content in an MDM^T02 message.
 
   
   
