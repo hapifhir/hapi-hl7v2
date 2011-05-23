@@ -2,6 +2,9 @@ package ca.uhn.hl7v2.util;
 
 import java.io.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Creates unique message IDs.  IDs are stored in a file called <hapi.home>/id_file for persistence
  * across JVM sessions.  Note that if one day you run the JVM with a new working directory,
@@ -11,10 +14,12 @@ import java.io.*;
  */
 public class MessageIDGenerator {
     
+	private static final Log ourLog = LogFactory.getLog(MessageIDGenerator.class.getName());
     private static MessageIDGenerator messageIdGenerator;
+    private static final String idFile = Home.getHomeDirectory().getAbsolutePath() + "/id_file";
+    
     private long id;
     private FileWriter fileW;
-    private static final String idFile = Home.getHomeDirectory().getAbsolutePath() + "/id_file";
     
     /**
      * Constructor
@@ -52,14 +57,20 @@ public class MessageIDGenerator {
                     private id field to it*/
                     String idStr = String.valueOf(charArray);
                     String idStrTrim = idStr.trim();
-                    id = Long.parseLong(idStrTrim);
+                    
+                    try {
+                    	id = Long.parseLong(idStrTrim);
+                    } catch (NumberFormatException nfe) {
+                    	ourLog.warn("Failed to parse message ID file value \"" + idStrTrim + "\". Defaulting to 0.");
+                    }
+                    
                 }//end else
                 //Fix for bug 1100881:  Close the file after writing.
                 fileR.close();
             }//end else
         }//end try
         catch (FileNotFoundException e){
-            System.out.println(e);
+            ourLog.error("Failed to locate ID file", e);
         }//end catch
     }//end constructor code
     

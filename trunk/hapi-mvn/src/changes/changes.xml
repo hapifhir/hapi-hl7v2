@@ -7,6 +7,22 @@
 	<body>
         <release version="1.2" date="TBA"
             description="TBA">
+            <action type="fix" dev="James Agnew" issue="3306358">
+            	Prevent MessageIDGenerator (used to generate message control IDs for ACK messages, for example in SimpleServer)
+            	from throwing an exception if it is not able to parse the value found in id_file. Previously if something
+            	went wrong and this file was blank, a hard to debug exception was thrown. Now, control ID sequencing is simply
+            	reset to zero. Thanks to an anonymous bug submittor.
+            </action>
+            <action type="fix" dev="Rodolfo Chavez" issue="3264566">
+            	Fix an issue where inserting/removing a repetition of the very last field in a segment
+            	fails due to an incorrect range check in AbstractSegment. Thanks Rodolfo for submitting! 
+            </action>
+            <action type="fix" dev="James Agnew" issue="3212931">
+            	Where multiple structures are marked as associated with the same trigger event 
+            	(example: ORN_O02 and ORR_O02 are both indicated as matching trigger ORR^O02) the
+            	parser will favour the structure whose name matches the event type and trigger (ORR_O02 in the
+            	previous example) when parsing a message with no structure explicitly defined in MSH-9-3.
+            </action>
             <action type="fix" dev="Ryan W. Gross">
             	Fix an issue where subcomponents within a Varies (OBX-5) value are incorrectly handled. For example,
             	if OBX-2 specifies a composite type, and the first component is also a composite, the first subcomponent
@@ -37,7 +53,7 @@
 </pre>
 				]]>
 				Previously, the following encoding would have occurred, which would have incorrectly been parsed as
-				having a custom OBX segment: 
+				having a custom OBX segment instead of having a normal ORDER_OBSERVATION group: 
 				<![CDATA[
 <pre>
 	MSH|^~\&|REG|W|||201103230042||ORU^R01|32153168|P|2.5
