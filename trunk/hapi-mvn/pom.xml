@@ -78,17 +78,17 @@
 			<email>nicovn@users.sourceforge.net</email>
 		</developer>
 	</developers>
-	
+
 	<contributors>
 		<contributor>
 			<name>Rodolfo Chavez</name>
-		</contributor>		
+		</contributor>
 		<contributor>
 			<name>Ryan W. Gross</name>
-		 	<organization>General Electric Corporation - Healthcare IT</organization>
+			<organization>General Electric Corporation - Healthcare IT</organization>
 		</contributor>
 	</contributors>
-	
+
 	<inceptionYear>2001</inceptionYear>
 
 	<issueManagement>
@@ -331,6 +331,28 @@
 			<id>DIST</id>
 			<build>
 				<plugins>
+					<plugin>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+							</execution>
+						</executions>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.7</version>
+						<inherited>true</inherited>
+						<configuration>
+							<minmemory>128m</minmemory>
+							<maxmemory>1g</maxmemory>
+							<linksource>true</linksource>
+							<destDir>apidocs</destDir>
+							<verbose>true</verbose>
+							<debug>true</debug>
+							<reportOutputDirectory>${project.reporting.outputDirectory}/apidocs</reportOutputDirectory>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>

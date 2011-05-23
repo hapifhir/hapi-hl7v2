@@ -22,14 +22,14 @@
 	<classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/2.0.2/xml-apis-2.0.2.pom"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.9/log4j-1.2.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.1/hapi-structures-v21-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.1/hapi-structures-v21-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/1.1/hapi-structures-v22-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.1/hapi-structures-v22-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/1.1/hapi-structures-v23-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v23/1.1/hapi-structures-v23-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/1.1/hapi-structures-v231-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.1/hapi-structures-v231-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.1/hapi-structures-v24-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.1/hapi-structures-v24-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.1/hapi-structures-v25-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.1/hapi-structures-v25-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.1/hapi-structures-v251-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.1/hapi-structures-v251-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.1/hapi-structures-v26-1.1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.1/hapi-structures-v26-1.1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.2-alpha2/hapi-structures-v21-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.2-alpha2/hapi-structures-v21-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/1.2-alpha2/hapi-structures-v22-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.2-alpha2/hapi-structures-v22-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/1.2-alpha2/hapi-structures-v23-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v23/1.2-alpha2/hapi-structures-v23-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/1.2-alpha2/hapi-structures-v231-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/1.2-alpha2/hapi-structures-v231-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.2-alpha2/hapi-structures-v24-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v24/1.2-alpha2/hapi-structures-v24-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.2-alpha2/hapi-structures-v25-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v25/1.2-alpha2/hapi-structures-v25-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.2-alpha2/hapi-structures-v251-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v251/1.2-alpha2/hapi-structures-v251-1.2-alpha2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.2-alpha2/hapi-structures-v26-1.2-alpha2.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v26/1.2-alpha2/hapi-structures-v26-1.2-alpha2-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.0-FCS/jaxen-1.0-FCS.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
