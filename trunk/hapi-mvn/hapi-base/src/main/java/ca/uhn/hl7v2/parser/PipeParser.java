@@ -481,6 +481,13 @@ public class PipeParser extends Parser {
      * component.
      */
     public static String encode(Type source, EncodingCharacters encodingChars) {
+        if (source instanceof Varies) {
+        	Varies varies = (Varies) source;
+        	if (varies.getData() != null) {
+        		source = varies.getData();
+        	}
+        }
+    	
         StringBuilder field = new StringBuilder();
         for (int i = 1; i <= Terser.numComponents(source); i++) {
             StringBuilder comp = new StringBuilder();
