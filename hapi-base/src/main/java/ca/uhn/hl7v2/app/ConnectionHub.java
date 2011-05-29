@@ -29,8 +29,11 @@ package ca.uhn.hl7v2.app;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -40,24 +43,54 @@ import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
 /**
+ * <p>
  * Provides access to shared HL7 Connections.  The ConnectionHub 
  * has at most one connection to any given address at any time.  
+ * </p>
+ * <p>
+ * <b>Synchronization Note:</b> This class should be safe to use in a multithreaded
+ * environment. A synchronization mutex is maintained for any given target host and port,
+ * so that if two threads are trying to connect to two separate destinations neither will
+ * block, but if two threads are trying to connect to the same destination, one will block
+ * until the other has finished trying. Use caution if this class is to be used in an 
+ * environment where a very large (over 1000) number of target host/port destinations
+ * will be accessed at the same time.
+ * </p>
  * @author Bryan Tripp
  */
 public class ConnectionHub {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ConnectionHub.class);
+	/**
+	 * Set a system property with this key to a string containing an integer larger 
+	 * than the default ("1000") if you need to connect to a very large number of
+	 * targets at the same time in a multithreaded environment.
+	 */
+    public static final String MAX_CONCURRENT_TARGETS = ConnectionHub.class.getName() + ".maxSize";
+
+	private static final HapiLog log = HapiLogFactory.getHapiLog(ConnectionHub.class);
 
     private static ConnectionHub instance = null;
-    private HashMap connections;
-    private HashMap sockets;
-    private HashMap numRefs;
+    private final Map<String, Connection> connections;
+    private final Map<String, Socket> sockets;
+    private final Map<Integer, Integer> numRefs;
+    private final Map<String, String> connectionMutexes;
     
     /** Creates a new instance of ConnectionHub */
     private ConnectionHub() {
-        connections = new HashMap(20);
-        sockets = new HashMap(20);
-        numRefs = new HashMap(20);
+        connections = new HashMap<String, Connection>(20);
+        sockets = new HashMap<String, Socket>(20);
+        numRefs = new HashMap<Integer, Integer>(20);
+        connectionMutexes = Collections.synchronizedMap(new LinkedHashMap<String, String>(5, 0.75f, true) {
+
+            private static final long serialVersionUID = 1L;
+            final int maxSize = new Integer(System.getProperty(MAX_CONCURRENT_TARGETS, "1000"));
+
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                return this.size() > maxSize;
+            }
+        });
+
     }
     
     /** Returns the singleton instance of ConnectionHub */
@@ -71,40 +104,56 @@ public class ConnectionHub {
     /**
      * Returns a Connection to the given address, opening this 
      * Connection if necessary. The given Parser will only be used if a new Connection 
-     * is opened, so there is no guarantee that the Connection returnd will be using the 
+     * is opened, so there is no guarantee that the Connection returned will be using the 
      * Parser you provide.  If you need explicit access to the Parser the Connection 
      * is using, call <code>Connection.getParser()</code>. 
      */
     public Connection attach(String host, int port, Parser parser, Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
-        Connection conn = getExisting(host, port, parser.getClass(), llpClass);
-        if (conn != null && !conn.isOpen()) {
-            
-            if (log.isDebugEnabled()) {
-                log.debug("Discarding connection which appears to be closed. Remote addr: " + conn.getRemoteAddress());
-            }
-            
-            close(conn);
-            conn = null;
-        }
         
-        if (conn == null) {
-            try {
-                //Parser p = (Parser) parserClass.newInstance();
-                LowerLayerProtocol llp = llpClass.newInstance();
-                conn = connect(host, port, parser, llp);
-            } catch (ClassCastException e) {
-                //Log.tryToLog(cce, "Problem opening new connection to " + host + " port " + port);
-                throw new HL7Exception( "ClassCastException - need a LowerLayerProtocol class to get an Inititator", 
-                                        HL7Exception.APPLICATION_INTERNAL_ERROR,
-                                        e);
-            } catch (Exception e) {
-                //Log.tryToLog(e, "Problem opening new connection to " + host + " port " + port);
-                throw new HL7Exception( "Can't connect to " + host + " port " + port + ": " + e.getClass().getName() + ": " + e.getMessage(), 
-                                        HL7Exception.APPLICATION_INTERNAL_ERROR,
-                                        e);
-            }
+    	// For every permutation of this
+    	String connectionMutex = host + ":" + port;
+    	synchronized (connectionMutexes) {
+        	if (connectionMutexes.containsKey(connectionMutex)) {
+        		connectionMutex = connectionMutexes.get(connectionMutex);
+        	} else {
+        		connectionMutexes.put(connectionMutex, connectionMutex);
+        	}
         }
-        incrementRefs(conn);
+    	
+    	Connection conn;
+    	synchronized (connectionMutex) {
+			conn = getExisting(host, port, parser.getClass(), llpClass);
+	        if (conn != null && !conn.isOpen()) {
+	            
+	            if (log.isDebugEnabled()) {
+	                log.debug("Discarding connection which appears to be closed. Remote addr: " + conn.getRemoteAddress());
+	            }
+	            
+	            close(conn);
+	            conn = null;
+	        }
+	        
+	        if (conn == null) {
+	            try {
+	                //Parser p = (Parser) parserClass.newInstance();
+	                LowerLayerProtocol llp = llpClass.newInstance();
+	                conn = connect(host, port, parser, llp);
+	            } catch (ClassCastException e) {
+	                //Log.tryToLog(cce, "Problem opening new connection to " + host + " port " + port);
+	                throw new HL7Exception( "ClassCastException - need a LowerLayerProtocol class to get an Inititator", 
+	                                        HL7Exception.APPLICATION_INTERNAL_ERROR,
+	                                        e);
+	            } catch (Exception e) {
+	                //Log.tryToLog(e, "Problem opening new connection to " + host + " port " + port);
+	                throw new HL7Exception( "Can't connect to " + host + " port " + port + ": " + e.getClass().getName() + ": " + e.getMessage(), 
+	                                        HL7Exception.APPLICATION_INTERNAL_ERROR,
+	                                        e);
+	            }
+	        }
+	        incrementRefs(conn);
+	        
+    	} // synchronized
+    	
         return conn;
     }
     
@@ -186,7 +235,7 @@ public class ConnectionHub {
     }
     
     /** Updates the number of references to i - used by incrementRefs and decrementRefs */
-    private int updateRefs(Connection c, int change) {
+    private synchronized int updateRefs(Connection c, int change) {
         Integer hashCode = new Integer(c.hashCode());
         Object o = numRefs.get(hashCode);
         int existingRefs = 0;
