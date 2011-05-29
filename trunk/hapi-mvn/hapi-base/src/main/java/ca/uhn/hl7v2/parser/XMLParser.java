@@ -263,11 +263,14 @@ public abstract class XMLParser extends Parser {
         }
         
         Document doc = encodeDocument(source);
-        doc.getDocumentElement().setAttribute("xmlns", "urn:hl7-org:v2xml");
+        Element documentElement = doc.getDocumentElement();
+		documentElement.setAttribute("xmlns", "urn:hl7-org:v2xml");
         
         StringWriter out = new StringWriter();
 
         OutputFormat outputFormat = new OutputFormat("", null, true);
+        outputFormat.setLineWidth(0);
+        
         if (textEncoding != null) {
         	outputFormat.setEncoding(textEncoding);
         }

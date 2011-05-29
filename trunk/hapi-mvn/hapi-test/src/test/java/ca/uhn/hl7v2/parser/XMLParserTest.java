@@ -14,6 +14,8 @@ import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import ca.uhn.hl7v2.model.Composite;
@@ -21,6 +23,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.datatype.ED;
+import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
  
@@ -31,6 +34,7 @@ import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 public class XMLParserTest extends TestCase {
 
     XMLParser parser;
+    private static final Log ourLog = LogFactory.getLog(XMLParserTest.class);
     
     /** Creates a new instance of XMLParserTest */
     public XMLParserTest(String arg) {
@@ -565,5 +569,38 @@ public class XMLParserTest extends TestCase {
 			Assert.assertTrue(textoXML.contains("OMD_O03.DIET"));
     	
     }
+    
+    /**
+     * See https://sourceforge.net/tracker/?func=detail&atid=423835&aid=3308845&group_id=38899
+     */
+    public void testEncodeLongValuesDoesntWrap() throws HL7Exception, IOException {
+
+    	// OBX-5 is a really really long string
+    	String obx5Value = "AAAABBBB CCCCDDDD ";
+    	obx5Value = obx5Value + obx5Value + obx5Value + obx5Value + obx5Value;
+    	obx5Value = obx5Value + obx5Value + obx5Value + obx5Value + obx5Value;
+    	obx5Value = obx5Value.trim();
+    	
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx2_ValueType().parse("ST");
+		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx5_ObservationValue(0).parse(obx5Value);
+    	
+		DefaultXMLParser p = new DefaultXMLParser();
+		
+		String encoded = p.encode(msg);
+		
+		ourLog.info("Encoded: " + encoded);
+		
+		msg = (ORU_R01) p.parse(encoded);
+    	
+		ST st = (ST) msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx5_ObservationValue(0).getData();
+		String actual = st.getValue();
+		
+		Assert.assertEquals(obx5Value, actual);
+		
+    }
+    
+    
     
 }
