@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.model;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +12,7 @@ import ca.uhn.hl7v2.model.v26.datatype.CD;
 import ca.uhn.hl7v2.model.v26.datatype.ST;
 import ca.uhn.hl7v2.model.v24.datatype.CE;
 import ca.uhn.hl7v2.model.v26.message.ORU_R01;
+import ca.uhn.hl7v2.model.v26.segment.OBX;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -200,7 +202,8 @@ public class VariesTest extends TestCase {
 		assertEquals("F1C1", actual);
 
 		actual = obx5.encode();
-		assertEquals("F1C1&F1C2", actual);
+		ourLog.info("Actual: " + actual);
+		assertEquals("F1C1^F1C2", actual);
 		
 		String expected = "MSH|^~\\&\r" // -
 			+ "OBR|\r" // -
@@ -311,4 +314,35 @@ public class VariesTest extends TestCase {
 				PipeParser.encode(variesField, encoders));
 	}
 
+	/**
+	 * This is from a reported message that was kind of malformed to begin with,
+	 * but became more malformed in processing.
+	 * 
+	 * Parse method should clear all existing data including extra
+	 * components.
+	 */
+	public void testVariesParseMethodClearsExistingExtraComponents()
+			throws HL7Exception {
+
+		// Message is stripped down
+		String msgString = "MSH|^~\\&\r" // -
+				+ "OBR|\r" // -
+				+ "OBX||FN|||OF1C1^OF2C1&OF2C2\r";
+
+		ORU_R01 msg = new ORU_R01();
+		msg.parse(msgString);
+
+		OBX obx = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX();
+		Varies varies = obx.getObx5_ObservationValue(0);
+		varies.parse("NF1^NF2");
+		
+		String encode = msg.encode();
+		ourLog.info("\n\n" + encode);
+		
+		Assert.assertEquals("NF1^NF2", varies.encode());
+
+
+	}
+
+	
 }

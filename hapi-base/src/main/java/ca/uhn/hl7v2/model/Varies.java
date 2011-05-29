@@ -327,7 +327,10 @@ public class Varies implements Type {
      * {@inheritDoc }
      */
     public void parse(String string) throws HL7Exception {
-        getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
+        if (data != null) {
+        	data.clear();
+        }
+    	getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
     }
 
 

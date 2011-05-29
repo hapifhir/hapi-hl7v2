@@ -28,6 +28,8 @@
 package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.EncodingCharacters;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
@@ -97,7 +99,8 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
      */
     @Override
     public String encode() throws HL7Exception {
-        return getValue();
+        Parser p = getMessage().getParser();
+        return p.doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
 
 
