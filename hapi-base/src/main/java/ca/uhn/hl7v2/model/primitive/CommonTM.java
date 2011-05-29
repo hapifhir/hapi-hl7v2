@@ -120,7 +120,7 @@ public class CommonTM {
      * and GMT offset ([+/-ZZZZ]) will be preserved.
      * Note: If the GMT offset is not supplied then the local
      * time zone (using standard time zone format which is not modified for daylight savings)
-     * will be stored as a default.
+     * will be stored as a default. Passing in <code>null</code> clears any existing value.
      */
     public void setValue(String val) throws DataTypeException {
 
@@ -496,7 +496,7 @@ public class CommonTM {
     } //end method
 
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the minute
      * 
@@ -504,13 +504,18 @@ public class CommonTM {
      * @since 1.1 
      */
     public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
+		if (theCalendar == null) {
+			setValue((String)null);
+			return;
+		}
+
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
         int min = theCalendar.get(Calendar.MINUTE);
         setHourMinutePrecision(hr, min);
     }
 
     /**
-     * Convenience setter which sets the value using a {@link Date} object.
+     * Convenience setter which sets the value using a {@link Date} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the minute
      * 
@@ -518,13 +523,18 @@ public class CommonTM {
      * @since 1.1 
      */
     public void setValueToMinute(Date theDate) throws DataTypeException {
-        Calendar calendar = Calendar.getInstance();
+		if (theDate == null) {
+			setValue((String)null);
+			return;
+		}
+
+		Calendar calendar = Calendar.getInstance();
         calendar.setTime(theDate);
         setValueToMinute(calendar);
     }
     
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the second
      * 
@@ -532,6 +542,11 @@ public class CommonTM {
      * @since 1.1 
      */
     public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
+		if (theCalendar == null) {
+			setValue((String)null);
+			return;
+		}
+
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
         int min = theCalendar.get(Calendar.MINUTE);
         int sec = theCalendar.get(Calendar.SECOND);
@@ -540,7 +555,7 @@ public class CommonTM {
     }
 
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the millisecond, including timezone offset
      * 
@@ -548,6 +563,11 @@ public class CommonTM {
      * @since 1.1 
      */
     public void setValue(Calendar theCalendar) throws DataTypeException {
+		if (theCalendar == null) {
+			setValue((String)null);
+			return;
+		}
+
         int hr = theCalendar.get(Calendar.HOUR_OF_DAY);
         int min = theCalendar.get(Calendar.MINUTE);
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
@@ -558,7 +578,7 @@ public class CommonTM {
     }
    
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
      * the current system offset
@@ -567,13 +587,18 @@ public class CommonTM {
      * @since 1.1 
      */
 	public void setValue(Date theDate) throws DataTypeException {
+		if (theDate == null) {
+			setValue((String)null);
+			return;
+		}
+
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(theDate);
 		setValue(cal);
 	}
     
     /**
-     * Convenience setter which sets the value using a {@link Date} object.
+     * Convenience setter which sets the value using a {@link Date} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the second
      * 
@@ -581,6 +606,11 @@ public class CommonTM {
      * @since 1.1 
      */
     public void setValueToSecond(Date theDate) throws DataTypeException {
+		if (theDate == null) {
+			setValue((String)null);
+			return;
+		}
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(theDate);
         setValueToSecond(calendar);

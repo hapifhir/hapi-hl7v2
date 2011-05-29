@@ -83,20 +83,51 @@ public class Terser {
     /**
      * Returns the string value of the Primitive at the given location.
      * @param segment the segment from which to get the primitive
-     * @param field the field number
-     * @param rep the field repetition
-     * @param component the component number (use 1 for primitive field)
-     * @param subcomponent the subcomponent number (use 1 for primitive component)
+     * @param field the field number (indexed from 1)
+     * @param rep the field repetition (indexed from 0)
+     * @param component the component number (indexed from 1, use 1 for primitive field)
+     * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
      */
     public static String get(Segment segment, int field, int rep, int component, int subcomponent) throws HL7Exception {
-        Primitive prim = getPrimitive(segment, field, rep, component, subcomponent);
+        if (segment == null) {
+        	throw new NullPointerException("segment may not be null");
+        }
+        if (rep < 0) {
+        	throw new IllegalArgumentException("rep must not be negative");
+        }
+        if (component < 1) {
+        	throw new IllegalArgumentException("component must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+        if (subcomponent < 1) {
+        	throw new IllegalArgumentException("subcomponent must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+        
+    	Primitive prim = getPrimitive(segment, field, rep, component, subcomponent);
         return prim.getValue();
     }
     
     /**
      * Sets the string value of the Primitive at the given location.
+     * @param segment the segment from which to get the primitive
+     * @param field the field number (indexed from 1)
+     * @param rep the field repetition (indexed from 0)
+     * @param component the component number (indexed from 1, use 1 for primitive field)
+     * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
      */
     public static void set(Segment segment, int field, int rep, int component, int subcomponent, String value) throws HL7Exception {
+        if (segment == null) {
+        	throw new NullPointerException("segment may not be null");
+        }
+        if (rep < 0) {
+        	throw new IllegalArgumentException("rep must not be negative");
+        }
+        if (component < 1) {
+        	throw new IllegalArgumentException("component must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+        if (subcomponent < 1) {
+        	throw new IllegalArgumentException("subcomponent must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+
         Primitive prim = getPrimitive(segment, field, rep, component, subcomponent);
         prim.setValue(value);
     }
@@ -115,9 +146,23 @@ public class Terser {
 	 * It is intended that the given type be at the field level, although extra components
 	 * will be added blindly if, for example, you provide a primitive subcomponent instead
 	 * and specify component or subcomponent > 1
+     * @param type the type from which to get the primitive
+     * @param component the component number (indexed from 1, use 1 for primitive field)
+     * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
 	 */
 	public static Primitive getPrimitive(final Type type, final int component, final int subcomponent) {
-		Type comp = getComponent(type, component);
+        if (type == null) {
+        	throw new NullPointerException("type may not be null");
+        }
+        if (component < 1) {
+        	throw new IllegalArgumentException("component must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+        if (subcomponent < 1) {
+        	throw new IllegalArgumentException("subcomponent must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+        }
+
+
+        Type comp = getComponent(type, component);
 		if(type instanceof Varies && comp instanceof GenericPrimitive && subcomponent > 1) {
 			try {
 				final Varies varies = (Varies)type;

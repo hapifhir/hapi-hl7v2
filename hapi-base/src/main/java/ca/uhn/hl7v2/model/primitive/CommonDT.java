@@ -83,7 +83,7 @@ public class CommonDT {
     } //end constructor
 
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using maximum possible precision
      * 
@@ -91,6 +91,11 @@ public class CommonDT {
      * @since 1.1 
      */
     public void setValue(Calendar theCalendar) throws DataTypeException {
+		if (theCalendar == null) {
+			setValue((String)null);
+			return;
+		}
+
         int yr = theCalendar.get(Calendar.YEAR);
         int mnth = theCalendar.get(Calendar.MONTH) + 1;
         int dy = theCalendar.get(Calendar.DATE);
@@ -98,7 +103,7 @@ public class CommonDT {
     }
 
     /**
-     * Convenience setter which sets the value using a {@link Date} object.
+     * Convenience setter which sets the value using a {@link Date} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using maximum possible precision
      * 
@@ -106,6 +111,11 @@ public class CommonDT {
      * @since 1.1 
      */
     public void setValue(Date theDate) throws DataTypeException {
+		if (theDate == null) {
+			setValue((String)null);
+			return;
+		}
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(theDate);
         setValue(calendar);
@@ -144,7 +154,7 @@ public class CommonDT {
     /**
      * This method takes in a string HL7 date value and performs validations
      * then sets the value field. The stored value will be in the following
-     * format YYYY[MM[DD]].
+     * format YYYY[MM[DD]]. Passing in <code>null</code> clears any existing value.
      *
      */
     public void setValue(String val) throws DataTypeException {
