@@ -1,7 +1,7 @@
 
 package ca.uhn.hl7v2.model;
 
-import ca.uhn.hl7v2.model.v23.message.PPG_PCG;
+import ca.uhn.hl7v2.model.v251.message.ACK;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import java.util.Map;
@@ -70,4 +70,16 @@ public class MessageStructuresTest extends TestCase {
 
     }
 
+    /**
+     * Make sure the "reps" methods are generated
+     */
+    public void testRepsMethods() {
+    	
+    	ACK ack = new ACK();
+    	ack.getERR().getErr1_ErrorCodeAndLocationReps();
+    	ack.getERR().getErrorCodeAndLocationReps();
+    	
+    	
+    }
+    
 }
