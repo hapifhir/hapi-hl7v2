@@ -101,6 +101,27 @@ public class ${segmentName} extends AbstractSegment {
         return ret;
     }
 
+
+    /**
+     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * This method does not create a repetition, so if no repetitions have currently been defined or accessed,
+     * it will return zero.
+     */
+    public int get${element.accessorName}Reps() {
+        ${element.alternateType}[] ret = null;
+        try {
+            Type[] t = this.getField(${velocityCount});
+            return t.length;  
+        } catch (ClassCastException cce) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            throw new RuntimeException(cce);
+        } catch (HL7Exception he) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            throw new RuntimeException(he);
+        }
+    }
+
+
     /**
      * Returns a specific repetition of
      * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
@@ -142,6 +163,28 @@ public class ${segmentName} extends AbstractSegment {
         }
         return ret;
     }
+
+
+    /**
+     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * This method does not create a repetition, so if no repetitions have currently been defined or accessed,
+     * it will return zero.
+     */
+    public int get${element.alternateAccessorName}Reps() {
+        ${element.alternateType}[] ret = null;
+        try {
+            Type[] t = this.getField(${velocityCount});
+            return t.length;  
+        } catch (ClassCastException cce) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            throw new RuntimeException(cce);
+        } catch (HL7Exception he) {
+            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            throw new RuntimeException(he);
+        }
+    }
+
+
 
     /**
      * Inserts a repetition of
