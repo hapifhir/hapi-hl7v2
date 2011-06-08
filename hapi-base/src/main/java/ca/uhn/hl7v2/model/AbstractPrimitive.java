@@ -109,20 +109,47 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
      */
     @Override
     public void parse(String string) throws HL7Exception {
+        EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
+        char subc = encodingCharacters.getSubcomponentSeparator();
+        char cmpc = encodingCharacters.getComponentSeparator();
+
         clear();
-		setValue(string);
+        
+        // If the string contains subcomponent delimiters, parse
+        // these as extra components
+        int subcIndex = string.indexOf(subc);
+        int cmpcIndex = string.indexOf(cmpc);
+        if (subcIndex != -1 || cmpcIndex != -1) {
+            
+            //Object ancestor = AbstractMessage.findAncestorOf(this);
+            
+            setValue(string.substring(0, subcIndex));
+            
+            while (subcIndex != -1) {
+                int prevIndex = subcIndex + 1;
+                subcIndex = string.indexOf(subc, prevIndex);
+                if (subcIndex != -1) {
+                    String nextSubComponent = string.substring(prevIndex, subcIndex);
+                    getExtraComponents().getComponent(getExtraComponents().numComponents()).parse(nextSubComponent);
+                }
+            }
+            
+        } else {
+        
+            setValue(string);
+        
+        }
     }
 
 
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public void clear() {
-		super.clear();
-		myValue = null;
-	}
-
-
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        myValue = null;
+        getExtraComponents().clear();
+    }
 
 }
