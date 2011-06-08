@@ -334,6 +334,16 @@ public abstract class AbstractGroup implements Group {
     }
 
     /**
+     * Returns true if the named structure is a group
+     */
+    public boolean isGroup(String name) throws HL7Exception {
+        Class<? extends Structure> clazz = classes.get(name);
+        if (clazz == null)
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        return Group.class.isAssignableFrom(clazz);
+    }
+
+    /**
      * Returns true if the named structure is required.
      */
     public boolean isRequired(String name) throws HL7Exception {

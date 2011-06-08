@@ -79,6 +79,13 @@ public interface Group extends Structure {
    * Returns true if the named structure is repeating. 
    */
   public boolean isRepeating(String name) throws HL7Exception;
+
+  /**
+   * Returns true if the named structure is a group.
+   * 
+   * @since 1.2 
+   */
+  public boolean isGroup(String name) throws HL7Exception;
   
   /**
    * Returns an ordered array of the names of the Structures in this 

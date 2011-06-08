@@ -600,47 +600,55 @@ public class PipeParser extends Parser {
 
         String[] names = source.getNames();
         
-        String mandatoryFirstSegmentName = null;
+        String firstMandatorySegmentName = null;
+        boolean haveEncounteredMandatorySegment = false;
         boolean haveHadMandatorySegment = false;
-        
+        boolean haveHadSegmentBeforeMandatorySegment = false;
+                
         for (int i = 0; i < names.length; i++) {
         	
             Structure[] reps = source.getAll(names[i]);
             boolean nextNameIsRequired = source.isRequired(names[i]);
+        
+            haveEncounteredMandatorySegment |= nextNameIsRequired;
+            if (nextNameIsRequired && !haveHadMandatorySegment) {
+                if (!source.isGroup(names[i])) {
+                	firstMandatorySegmentName = names[i];
+                }
+            }
             
             for (int rep = 0; rep < reps.length; rep++) {
             	
                 if (reps[rep] instanceof Group) {
                     
-                	result.append(encode((Group) reps[rep], encodingChars));
-                    
+                	String encodedGroup = encode((Group) reps[rep], encodingChars);
+					result.append(encodedGroup);
+					
                 } else {
-                    
+                	
                 	String segString = encode((Segment) reps[rep], encodingChars);
                     if (segString.length() >= 4) {
                         result.append(segString);
                         result.append(segDelim);
-                    } else if (!haveHadMandatorySegment) {
-                    	mandatoryFirstSegmentName = names[i];
-                    }
+                        
+                        if (nextNameIsRequired) {
+                        	haveHadMandatorySegment |= true;
+                        }
+                        
+                        if (!haveHadMandatorySegment && !haveEncounteredMandatorySegment) {
+                        	haveHadSegmentBeforeMandatorySegment |= true;
+                        }
+                        
+                    } 
                     
                 }
                 
             }
-            
-            // This this segment is a required first element of a group and it
-            // is not present, encode it anyways in order to hint that 
-            // segments which follow will be in this group
-			if (reps.length == 0 && nextNameIsRequired && !haveHadMandatorySegment && result.length() == 0) {
-            	mandatoryFirstSegmentName = names[i];
-            }
-            
-			haveHadMandatorySegment &= nextNameIsRequired;
-			
+                        
         }
         
-        if (mandatoryFirstSegmentName != null) {
-        	return mandatoryFirstSegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
+        if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment) {
+        	return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
         } else {
         	return result.toString();
         }
