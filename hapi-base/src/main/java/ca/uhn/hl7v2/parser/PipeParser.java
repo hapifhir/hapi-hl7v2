@@ -602,6 +602,7 @@ public class PipeParser extends Parser {
         
         String firstMandatorySegmentName = null;
         boolean haveEncounteredMandatorySegment = false;
+        boolean haveEncounteredContent = false;
         boolean haveHadMandatorySegment = false;
         boolean haveHadSegmentBeforeMandatorySegment = false;
                 
@@ -610,6 +611,7 @@ public class PipeParser extends Parser {
             Structure[] reps = source.getAll(names[i]);
             boolean nextNameIsRequired = source.isRequired(names[i]);
         
+            boolean havePreviouslyEncounteredMandatorySegment = haveEncounteredMandatorySegment;
             haveEncounteredMandatorySegment |= nextNameIsRequired;
             if (nextNameIsRequired && !haveHadMandatorySegment) {
                 if (!source.isGroup(names[i])) {
@@ -624,6 +626,16 @@ public class PipeParser extends Parser {
                 	String encodedGroup = encode((Group) reps[rep], encodingChars);
 					result.append(encodedGroup);
 					
+					if (encodedGroup.length() > 0) {
+                        if (!haveHadMandatorySegment && !haveEncounteredMandatorySegment) {
+                        	haveHadSegmentBeforeMandatorySegment = true;
+                        }
+                        if (nextNameIsRequired && !haveHadMandatorySegment && !havePreviouslyEncounteredMandatorySegment) {
+                        	haveHadMandatorySegment = true;
+                        }
+						haveEncounteredContent = true;
+					}
+					
                 } else {
                 	
                 	String segString = encode((Segment) reps[rep], encodingChars);
@@ -631,12 +643,14 @@ public class PipeParser extends Parser {
                         result.append(segString);
                         result.append(segDelim);
                         
+                        haveEncounteredContent = true;
+                        
                         if (nextNameIsRequired) {
-                        	haveHadMandatorySegment |= true;
+                        	haveHadMandatorySegment = true;
                         }
                         
                         if (!haveHadMandatorySegment && !haveEncounteredMandatorySegment) {
-                        	haveHadSegmentBeforeMandatorySegment |= true;
+                        	haveHadSegmentBeforeMandatorySegment = true;
                         }
                         
                     } 
@@ -647,7 +661,7 @@ public class PipeParser extends Parser {
                         
         }
         
-        if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment) {
+        if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment && haveEncounteredContent) {
         	return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
         } else {
         	return result.toString();
