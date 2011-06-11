@@ -39,20 +39,19 @@ import ca.uhn.hl7v2.model.AbstractMessage;
  */
 public class $message extends AbstractMessage  {
 
+    /**
+     * Creates a new $message message with DefaultModelClassFactory. 
+     */ 
+    public ${message}() { 
+       this(new DefaultModelClassFactory());
+    }
+
     /** 
      * Creates a new $message message with custom ModelClassFactory.
      */
     public ${message}(ModelClassFactory factory) {
        super(factory);
        init(factory);
-    }
-
-    /**
-     * Creates a new $message message with DefaultModelClassFactory. 
-     */ 
-    public ${message}() { 
-       super(new DefaultModelClassFactory());
-       init(new DefaultModelClassFactory());
     }
 
     private void init(ModelClassFactory factory) {
