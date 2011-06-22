@@ -7,6 +7,14 @@
 	<body>
         <release version="1.2" date="TBA"
             description="TBA">
+            <action type="fix" dev="James Agnew">
+            	Fix an issue where calling 
+            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
+            	(for example on an ST datatype) 
+            	would not clear existing 
+            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
+            	if any were defined.
+            </action>
             <action type="fix" dev="James Agnew" issue="3306358">
             	Prevent MessageIDGenerator (used to generate message control IDs for ACK messages, for example in SimpleServer)
             	from throwing an exception if it is not able to parse the value found in id_file. Previously if something
