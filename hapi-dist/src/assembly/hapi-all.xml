@@ -11,7 +11,61 @@
 
     <includeBaseDirectory>false</includeBaseDirectory>
 
+	<dependencySets>
+		<dependencySet>
+			<includes>
+                <include>ca.uhn.hapi:hapi-base</include>
+                <include>ca.uhn.hapi:hapi-examples</include>
+                <include>ca.uhn.hapi:hapi-structures-v21</include>
+                <include>ca.uhn.hapi:hapi-structures-v22</include>
+                <include>ca.uhn.hapi:hapi-structures-v23</include>
+                <include>ca.uhn.hapi:hapi-structures-v231</include>
+                <include>ca.uhn.hapi:hapi-structures-v24</include>
+                <include>ca.uhn.hapi:hapi-structures-v25</include>
+                <include>ca.uhn.hapi:hapi-structures-v251</include>
+                <include>ca.uhn.hapi:hapi-structures-v26</include>
+                <include>commons-cli:commons-cli</include>
+                <include>commons-logging:commons-logging</include>
+                <include>org.jdom:jdom</include>
+                <include>xalan:xalan</include>
+                <include>xerces:xercesImpl</include>
+                <include>log4j:log4j</include>
+			</includes>
+            <outputDirectory>lib</outputDirectory>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+		</dependencySet>
+	</dependencySets>
+
+<!-- 
     <moduleSets>
+        <moduleSet>
+            <includes>
+                <include>ca.uhn.hapi:hapi-base</include>
+            </includes>
+            <binaries>
+                <includeDependencies>true</includeDependencies>
+                <outputDirectory>lib</outputDirectory>
+                <unpack>false</unpack>
+            </binaries>
+        </moduleSet>
+        <moduleSet>
+            <includes>
+                <include>ca.uhn.hapi:hapi-examples</include>
+                <include>ca.uhn.hapi:hapi-structures-v21</include>
+                <include>ca.uhn.hapi:hapi-structures-v22</include>
+                <include>ca.uhn.hapi:hapi-structures-v23</include>
+                <include>ca.uhn.hapi:hapi-structures-v231</include>
+                <include>ca.uhn.hapi:hapi-structures-v24</include>
+                <include>ca.uhn.hapi:hapi-structures-v25</include>
+                <include>ca.uhn.hapi:hapi-structures-v251</include>
+                <include>ca.uhn.hapi:hapi-structures-v26</include>
+            </includes>
+            <binaries>
+                <includeDependencies>false</includeDependencies>
+                <outputDirectory>lib</outputDirectory>
+                <unpack>false</unpack>
+            </binaries>
+        </moduleSet>
         <moduleSet>
             <includes>
                 <include>ca.uhn.hapi:hapi-base</include>
@@ -25,10 +79,23 @@
                 <include>ca.uhn.hapi:hapi-structures-v26</include>
             </includes>
             <binaries>
-                <outputDirectory>modules</outputDirectory>
+                <attachmentClassifier>sources</attachmentClassifier>
+                <includeDependencies>false</includeDependencies>
+                <outputDirectory>sources</outputDirectory>
                 <unpack>false</unpack>
             </binaries>
         </moduleSet>
     </moduleSets>
+ -->
+     
+    <fileSets>
+        <fileSet>
+            <outputDirectory></outputDirectory>
+            <directory>../src/docs</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>    
     
 </assembly>
