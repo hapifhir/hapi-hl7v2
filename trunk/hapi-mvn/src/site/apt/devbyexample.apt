@@ -18,6 +18,20 @@ Developing using HAPI - By Example
   Please note that this page assumes at least a basic familiarity 
   with {{{http://hl7.org}HL7}} and it's terminology.
 
+
+* HAPI Community Survey 2011
+
+  HAPI Community Survey! This year, HAPI will be ten years old! To celebrate, we are
+  launching our first survey on the HAPI user community. The survey takes less than five
+  minutes to fill out, as it is just 8 quick multiple choice questions. Please take
+  a few minutes to show your support!
+  
+  {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Access the survey here}}
+
+  The survey will run until the fall.
+
+
+
 * The Basics
 
   * A good starting point with regards to using HAPI would be to
@@ -65,11 +79,15 @@ Developing using HAPI - By Example
 
   * {{{./xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
 
+  * Use {{{./xref/ca/uhn/hl7v2/examples/ParseInvalidObx2Values.html}system properties}} to allow parsing of ORU^R01 (and other messages with OBX segments) which have
+    an invalid value in OBX-2, which specifies the type used to parse OBX-5.
 
 * Advanced Creating Messages
   
   * Alessandro Delprete submitted {{{./xref/ca/uhn/hl7v2/examples/EncapsulatedData.html}this example}} of 
     how to embed a CDA document as MIME content in an MDM^T02 message.
 
-  
+* Utility Classes
+
+  * {{{./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html}Reading Messages from a File}}
   

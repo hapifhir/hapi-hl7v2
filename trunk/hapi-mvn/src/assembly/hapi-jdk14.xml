@@ -11,31 +11,27 @@
 
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <moduleSets>
-        <moduleSet>
-            <includes>
-                <include>ca.uhn.hapi:hapi-base</include>
-                <include>ca.uhn.hapi:hapi-structures-v21</include>
-                <include>ca.uhn.hapi:hapi-structures-v22</include>
-                <include>ca.uhn.hapi:hapi-structures-v23</include>
-                <include>ca.uhn.hapi:hapi-structures-v231</include>
-                <include>ca.uhn.hapi:hapi-structures-v24</include>
-                <include>ca.uhn.hapi:hapi-structures-v25</include>
-                <include>ca.uhn.hapi:hapi-structures-v251</include>
-                <include>ca.uhn.hapi:hapi-structures-v26</include>
-            </includes>
-            <binaries>
-				<attachmentClassifier>jdk14</attachmentClassifier>
-                <unpack>false</unpack>
-				<includeDependencies>false</includeDependencies>
-            </binaries>
-        </moduleSet>
-    </moduleSets>
+	<dependencySets>
+		<dependencySet>
+			<includes>
+                <include>ca.uhn.hapi:hapi-base:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v21:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v22:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v23:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v231:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v24:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v25:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v251:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v26:jdk14</include>
+			</includes>
+            <outputDirectory>lib</outputDirectory>			
+		</dependencySet>
+	</dependencySets>
 
     <fileSets>
         <fileSet>
             <outputDirectory></outputDirectory>
-            <directory>src/jdk14docs</directory>
+            <directory>../src/jdk14docs</directory>
             <includes>
                 <include>**/*</include>
             </includes>
