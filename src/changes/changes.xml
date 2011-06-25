@@ -7,13 +7,109 @@
 	<body>
         <release version="1.2" date="TBA"
             description="TBA">
+            <action type="add" dev="James Agnew">
+            	Add two new system properties which allow OBX segments messages to be parsed
+            	even if they are either missing, or have an invalid value in OBX-2 (which defines
+            	the datatype used in OBX-5).
+				<![CDATA[
+	            	<a href="./xref/ca/uhn/hl7v2/examples/ParseInvalidObx2Values.html">More information</a>
+				]]>
+            </action>
+            <action type="add" dev="James Agnew">
+            	Add new utility classes for
+				<![CDATA[
+	            	<a href="./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html">iterating over</a>
+				]]>
+            	a file containing multiple
+            	ER7 encoded HL7 messages
+            </action>
             <action type="fix" dev="James Agnew">
             	Fix an issue where calling 
-            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
+				<![CDATA[
+    	        	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
+				]]>
             	(for example on an ST datatype) 
             	would not clear existing 
-            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
+				<![CDATA[
+        	    	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
+				]]>
             	if any were defined.
+            </action>
+            <action type="fix" dev="James Agnew">
+            	Fix one regression caused by the feature below in 1.2-beta1, where a group containing at least one
+            	mandatory segment would be encoded if it was accessed, even if no content was added to it.
+            </action>
+            <action type="fix" dev="James Agnew">
+            	When encoding a group using the PipeParser where the first segment is required, but no data has been populated in that segment, 
+            	the empty segment is now still encoded if needed as a blank segment in order to give parsers a hint about which 
+            	group further segments are in. This helps to ensure that messages can be "round tripped", meaning that
+            	a message which is parsed, encoded, and then re-parsed should contain exactly the same structure from
+            	beginning to end. 
+            	For example, in an ORU^R01 message with a populated OBX segment, but no data
+            	in the mandatory OBR segment which begins the ORDER_OBSERVATION group (see 
+            	<![CDATA[<a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/group/ORU_R01_ORDER_OBSERVATION.html">reference</a>]]>),
+            	the message would still contain an empty OBR segment when encoded:
+				<![CDATA[
+<pre>
+	MSH|^~\&|REG|W|||201103230042||ORU^R01|32153168|P|2.5
+	OBR|
+	OBX||ST|||Value Data
+</pre>
+				]]>
+				Previously, the following encoding would have occurred, which would have incorrectly been parsed as
+				having a custom OBX segment instead of having a normal ORDER_OBSERVATION group: 
+				<![CDATA[
+<pre>
+	MSH|^~\&|REG|W|||201103230042||ORU^R01|32153168|P|2.5
+	OBX||ST|||Value Data
+</pre>
+				]]>
+            </action>
+            <action type="add" dev="James Agnew">
+            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Group.html">Group</a>]]>
+            	interface now has a new method: isGroup(String). This method allows callers to determine
+            	if a child structure is a segment or a group. The only provided implementation, AbstractGroup,
+            	implements this method, so the API change should not have any effect on users.
+            </action>
+            <action type="fix" dev="James Agnew">
+            	Restore missing get[FIELD_NAME]Reps() methods from segments. These were accidentally removed
+            	with the conversion to a Velocity based structure generator, but they have now been
+            	restored.
+            </action>
+            <action type="fix" dev="James Agnew" issue="3303344">
+            	Avoid a NullPointerException if a null value is passed into the "setValue(Date)" or 
+            	"setValue(Calendar)" methods on a DT, TS, or TM datatype. Passing in a null now
+            	simply clears any existing value, bringing these methods in line with
+            	the behaviour of the "setValue(String)" method. 
+            	Thanks to Michael for reporting!
+            </action>
+            <action type="fix" dev="Stephane Giner" issue="3307882">
+            	Fix potential race condition when using ConnectionHub in a multithreaded
+            	environment.
+            </action>
+            <action type="fix" dev="Axel Biernat" issue="3308845">
+            	Avoid line wrapping when XML encoding messages using the XMLParser. This means
+            	that values with very long strings won't have unexpected breaks added when
+            	they are encoded and re-parsed. 
+            </action>
+            <action type="fix" dev="James Agnew">
+            	Correct issue where extra components in primitive types within OBX-5 appear twice when
+            	message is re-encoded. This is useful, for example, if you are receiving messages
+            	from a system which is not correctly escaping ampersands or carats within
+            	an OBX-5 value. Prior to chis change, a message containing the following
+            	segment:
+				<![CDATA[
+<pre>
+   OBX||ST|||F1C1^F2C1&F2C2
+</pre>
+				]]>
+            	Would be re-encoded as:
+				<![CDATA[
+<pre>
+   OBX||ST|||F1C1&F2C2^F2C1&F2C2
+</pre>
+				]]>
+				Thanks to Andbuty Choy for finding this.
             </action>
             <action type="fix" dev="James Agnew" issue="3306358">
             	Prevent MessageIDGenerator (used to generate message control IDs for ACK messages, for example in SimpleServer)
@@ -45,29 +141,6 @@
             	Correct a PipeParser parsing issue: When a message is being parsed which contains 
             	multiple unexpected segments, any unexpected segments after the first one may appear
             	out of order if the message is re-encoded.
-            </action>
-            <action type="fix" dev="James Agnew">
-            	When encoding a group using the PipeParser where the first segment is required, but no data has been populated in that segment, 
-            	the empty segment is now still encoded if needed as a blank segment in order to give parsers a hint about which 
-            	group further segments are in. For example, in an ORU^R01 message with a populated OBX segment, but no data
-            	in the mandatory OBR segment which begins the ORDER_OBSERVATION group (see 
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/group/ORU_R01_ORDER_OBSERVATION.html">reference</a>]]>),
-            	the message would still contain an empty OBR segment when encoded:
-				<![CDATA[
-<pre>
-	MSH|^~\&|REG|W|||201103230042||ORU^R01|32153168|P|2.5
-	OBR|
-	OBX||ST|||Value Data
-</pre>
-				]]>
-				Previously, the following encoding would have occurred, which would have incorrectly been parsed as
-				having a custom OBX segment instead of having a normal ORDER_OBSERVATION group: 
-				<![CDATA[
-<pre>
-	MSH|^~\&|REG|W|||201103230042||ORU^R01|32153168|P|2.5
-	OBX||ST|||Value Data
-</pre>
-				]]>
             </action>
 		</release>
         <release version="1.1" date="2011-03-28"

@@ -12,7 +12,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2-alpha2</version>
+	<version>1.2-beta1</version>
 	<name>HAPI - Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -80,6 +80,9 @@
 	</developers>
 
 	<contributors>
+		<contributor>
+			<name>Axel Biernat</name>
+		</contributor>
 		<contributor>
 			<name>Rodolfo Chavez</name>
 		</contributor>
@@ -194,17 +197,6 @@
 					<maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<inherited>false</inherited>
-				<configuration>
-					<descriptors>
-						<descriptor>src/assembly/hapi-all.xml</descriptor>
-						<descriptor>src/assembly/hapi-src.xml</descriptor>
-						<descriptor>src/assembly/hapi-jdk14.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
@@ -218,12 +210,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<hapi.version>1.2-alpha2</hapi.version>
-		<hapi.version.structures>1.2-alpha2</hapi.version.structures>
+		<hapi.version>1.2-beta1</hapi.version>
+		<hapi.version.structures>1.2-beta1</hapi.version.structures>
 	</properties>
 
 	<reporting>
 		<plugins>
+			<!-- 
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.7</version>
@@ -233,9 +226,10 @@
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
 					<destDir>apidocs</destDir>
-					<reportOutputDirectory>{project.reporting.outputDirectory}/apidocs</reportOutputDirectory>
+					<reportOutputDirectory>${project.reporting.outputDirectory}/apidocs</reportOutputDirectory>
 				</configuration>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
@@ -382,6 +376,7 @@
 				<module>hapi-structures-v26</module>
 				<module>hapi-test</module>
 				<module>hapi-osgi-base</module>
+				<module>hapi-dist</module>
 			</modules>
 		</profile>
 		<profile>

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.2-alpha2</version>
+		<version>1.2-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -57,6 +57,18 @@
 
 	<reporting>
 		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<inherited>true</inherited>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+					<detectLinks>true</detectLinks>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
