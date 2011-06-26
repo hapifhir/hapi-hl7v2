@@ -140,7 +140,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup#insertRepetition(Structure, int) 
      */
     public void insert${segment.indexName}(${segment.name} structure, int rep) throws HL7Exception { 
        super.insertRepetition( "${segment.indexName}", structure, rep);
@@ -149,7 +149,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup#insertRepetition(Structure, int) 
      */
     public ${segment.name} insert${segment.indexName}(int rep) throws HL7Exception { 
        return (${segment.name})super.insertRepetition("${segment.indexName}", rep);
@@ -158,7 +158,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Removes a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#removeRepetition(String, int) 
+     * @see AbstractGroup#removeRepetition(String, int) 
      */
     public ${segment.name} remove${segment.indexName}(int rep) throws HL7Exception { 
        return (${segment.name})super.removeRepetition("${segment.indexName}", rep);
