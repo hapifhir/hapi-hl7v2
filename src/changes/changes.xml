@@ -5,8 +5,16 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-        <release version="1.2" date="TBA"
-            description="TBA">
+        <release version="1.2" date="2011-06-26"
+            description="This release brings some bug fixes and a
+  few enhancements. The primary focus of this release is in fixing issues relating to
+  parsing and encoding. In particular, a number of issues specific to parsing of
+  OBX-5 (Varies) values have been corrected.">
+            <action type="fix" dev="James Agnew">
+            	Fix one regression in HAPI 1.2-beta1, where a group containing at least one
+            	mandatory segment would sometimes be encoded as an empty segment 
+            	even if no content was added to it.
+            </action>
             <action type="add" dev="James Agnew">
             	Add two new system properties which allow OBX segments messages to be parsed
             	even if they are either missing, or have an invalid value in OBX-2 (which defines
@@ -16,12 +24,12 @@
 				]]>
             </action>
             <action type="add" dev="James Agnew">
-            	Add new utility classes for
-				<![CDATA[
-	            	<a href="./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html">iterating over</a>
-				]]>
+            	Add new utility classes for iterating over 
             	a file containing multiple
-            	ER7 encoded HL7 messages
+            	ER7 encoded HL7 messages. 
+				<![CDATA[
+	            	<a href="./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html">See example</a>
+				]]>
             </action>
             <action type="fix" dev="James Agnew">
             	Fix an issue where calling 
@@ -29,15 +37,11 @@
     	        	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
 				]]>
             	(for example on an ST datatype) 
-            	would not clear existing 
+            	would not clear pre-existing 
 				<![CDATA[
         	    	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
 				]]>
             	if any were defined.
-            </action>
-            <action type="fix" dev="James Agnew">
-            	Fix one regression caused by the feature below in 1.2-beta1, where a group containing at least one
-            	mandatory segment would be encoded if it was accessed, even if no content was added to it.
             </action>
             <action type="fix" dev="James Agnew">
             	When encoding a group using the PipeParser where the first segment is required, but no data has been populated in that segment, 

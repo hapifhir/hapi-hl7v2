@@ -15,11 +15,15 @@ Welcome
   (a large multi-site teaching hospital in Toronto, Canada).  
 
 
-HAPI Community Survey - June 9, 2011
+HAPI 1.2 Released! - June 26, 2011
 
-  HAPI 1.2-beta1 has been uploaded to Sourceforge. This release brings some bug fixes and a 
-  few enhancements. See the {{{./changes-report.html}Changelog}} for more info. A final release should
-  be out in about two weeks barring any unforeseen issues.
+  HAPI 1.2 has been uploaded to Sourceforge. This release brings some bug fixes and a 
+  few enhancements. The primary focus of this release is in fixing issues relating to
+  parsing and encoding. In particular, a number of issues specific to parsing of
+  OBX-5 (Varies) values have been corrected.
+  
+  See the {{{./changes-report.html}Changelog}} for more a complete list of what's new.
+  Thanks to everyone who contributed!
 
   Also, don't forget to {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}take the 2011 survey!}}
 
