@@ -12,7 +12,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2-beta1</version>
+	<version>1.2</version>
 	<name>HAPI - Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -210,8 +210,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<hapi.version>1.2-beta1</hapi.version>
-		<hapi.version.structures>1.2-beta1</hapi.version.structures>
+		<hapi.version>1.2</hapi.version>
+		<hapi.version.structures>1.2</hapi.version.structures>
 	</properties>
 
 	<reporting>
