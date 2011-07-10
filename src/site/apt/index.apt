@@ -27,6 +27,17 @@ HAPI 1.2 Released! - June 26, 2011
 
   Also, don't forget to {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}take the 2011 survey!}}
 
+  In other HAPI news: Next up for HAPI will be a switch to a new version control system. 
+  It looks like through the responses to our survey so far, there is good support
+  for moving to Subversion (52%) followed closely by Git (44%), with Mercurial (which would
+  have been my preference, go figure) and remaining with CVS trailing at 8% and 5% respectively.
+  
+  My own gut feel on this is that while Git is undoubtedly the more modern and powerful VCS,
+  Subversion has been around for a lot longer and is much less likely to present a barrier
+  to entry for anyone looking to get involved. I'd love to hear opinions either way.
+  
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+  
 
 HAPI Community Survey - June 1, 2011
 
