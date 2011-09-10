@@ -36,6 +36,7 @@
 		</dependencySet>
 	</dependencySets>
 
+
 <!-- 
     <moduleSets>
         <moduleSet>
@@ -94,6 +95,69 @@
             <directory>../src/docs</directory>
             <includes>
                 <include>**/*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-base/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v21/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v22/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v23/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v231/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v24/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v25/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v251/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v26/target</directory>
+            <includes>
+                <include>*sources.jar</include>
             </includes>
         </fileSet>
     </fileSets>    
