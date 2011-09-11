@@ -5,6 +5,20 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+        <release version="1.3" date="TBD">
+        	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
+        	can be accessed at:
+				<![CDATA[
+	            	<a href="https://hl7api.svn.sourceforge.net/svnroot/hl7api">https://hl7api.svn.sourceforge.net/svnroot/hl7api</a>
+				]]>
+			The old CVS repo will be kept around for now, just in case it is needed. 
+        	</action>
+        	<action dev="Eric Poiseau">
+        		Ignore non-numeric table names when reading in XML conformance profiles. This allows conformance profiles
+        		to be parsed and applied even if they contain textual table names, although these names are
+        		now ignored.
+        	</action>
+		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
   few enhancements. The primary focus of this release is in fixing issues relating to

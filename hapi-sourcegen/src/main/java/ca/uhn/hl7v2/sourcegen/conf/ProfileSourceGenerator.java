@@ -304,7 +304,11 @@ public class ProfileSourceGenerator {
             nextSegmentElement.repetitions = nextField.getMax();
             String table = nextField.getTable();
             if (table != null && table.length() > 0) {
-                nextSegmentElement.table = Integer.parseInt(table);
+                try {
+                	nextSegmentElement.table = Integer.parseInt(table);
+                } catch (NumberFormatException e) {
+                	ourLog.warn("Unable to parse number out of table name: \"" + table +"\" for field \"" + nextSegmentElement.desc + "\". Ignoring this value and setting table number to 0.");
+                }
             }
             nextSegmentElement.type = nextField.getDatatype();
 

@@ -29,7 +29,26 @@
             <arg line="-P DIST,ACCESS package assembly:assembly site"/>
         </exec>
     </target>
-    <target name="urchin">
+    <target name="survey">
+	 <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[<!-- ======== START OF CLASS DATA ======== -->]]></replacetoken>
+            <replacevalue><![CDATA[
+<h1 style="color:#800000;">HAPI Community Survey 2011</h1>
+<div>
+This year, HAPI will be ten years old! To celebrate, we are launching our first survey on the HAPI user community. The survey takes less than five minutes to fill out, as it is just 8 quick multiple choice questions. Please take a few minutes to show your support!
+</div>
+<a href="https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y">Access the survey here</a>
+<div>
+The survey will run until the fall.
+</div>
+</div>
+<HR>
+                ]]></replacevalue>
+        </replace>
+	</target> 
+
+	<target name="urchin">
         <echo>Adding Google analytics in target/site</echo>
         <replace dir="target/site" summary="true">
             <include name="**/*.html"></include>

@@ -127,8 +127,10 @@
 
 
 	<scm>
-		<connection>scm:cvs:pserver:anonymous:anonymous@hl7api.cvs.sourceforge.net:/cvsroot/hl7api:hapi-mvn</connection>
-		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
+		<connection>scm:svn:https://hl7api.svn.sourceforge.net/svnroot/hl7api</connection>
+		<developerConnection>scm:svn:https://hl7api.svn.sourceforge.net/svnroot/hl7api</developerConnection>
+		<url>https://hl7api.svn.sourceforge.net/svnroot/hl7api</url>
+	<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
 	</scm>
 
 	<repositories>
