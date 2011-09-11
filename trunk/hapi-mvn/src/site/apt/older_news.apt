@@ -1,0 +1,176 @@
+What's New - Mar 28, 2011
+
+  HAPI 1.1 has been released!
+  Get it {{{http://sourceforge.net/projects/hl7api/files/hl7api/1.1/}here}}. Thanks to everyone
+  who contributed code to this release!
+  
+  See the {{{./whatsnew.html}What's New}} and {{{./changes-report.html}Changelog}} for more information on what
+  has been changed.
+  
+  <<Note to Maven Users>>: Thanks to some hard work by Francis De Brabandere, HAPI is now deployed to
+  the {{{http://repo2.maven.org/maven2/ca/uhn/hapi/}Central Repo}}. This means you no longer need to add
+  HAPI's internal repo to your project in order to get the new release.
+  
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+
+What's New - Mar 5, 2011
+
+  HAPI 1.1-beta2 
+  A new Beta of HAPI (1.1-beta1) has been {{{http://sourceforge.net/projects/hl7api/files/hl7api-unstable/1.1-beta1/}posted}}. Please test and report and problems, I am 
+  hoping to release version 1.1 within a week or so. I am not aware of any issues with this Beta.
+  
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+What's New - Feb 21, 2011
+
+  A new Beta of HAPI (1.1-beta1) has been {{{http://sourceforge.net/projects/hl7api/files/hl7api-unstable/1.1-beta1/}posted}}. Please test and report and problems, I am 
+  hoping to release version 1.1 within a week or so. I am not aware of any issues with this Beta.
+  
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+What's New - July 11, 2010
+
+   Two announcements:
+   
+   * The HAPI OSGi Bundle 1.0.1 has been uploaded to the {{{http://hl7api.sourceforge.net/m2/ca/uhn/hapi/hapi-osgi-base/1.0.1/}Maven Repo}}. This is 
+     a relatively new component, that was put together by {{{mailto:niranjan.sharma@med.ge.com}Niranjan}}, so please do note that
+     it is not yet as thoroughly tested as the regular distribution. Any feedback on problems or
+     successful use would be appreciated.
+
+
+
+   * <<Sorry, Cross Reference Site Removed at the request of HL7.org>> I also have one other development to advertise. I was looking for a project recently to
+     teach myself to use the Google App Engine, and decided to craft up an interactive HL7
+     browser, to make quick lookups of how particular messages are structured a little bit easier.
+     
+     The resulting site is here: [REMOVED]
+     
+     This site has the added useful benefit that it will generate {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html}Terser}} 
+     expressions for you, which should make using the Terser a bit easier.
+     
+     I am planning on opening the source code to this app soon, and if anyone would like to
+     get involved, please do get in touch. The codebase has the ability to generate a cross-ref
+     for conformance profiles as well, so I am thinking it might be nice to build up a library
+     of common conformance profiles as well. 
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+* May 15, 2010
+
+   HAPI 1.0.1 is released.
+   
+   This release fixes a single issue, 
+   {{{https://sourceforge.net/tracker/index.php?func=detail&aid=3002194&group_id=38899&atid=423835}3002194}}, 
+   which is a NullPointerException in PipeParser when parsing malformed messages which are missing
+   a mandatory segment at the end of the message. Thanks to Irving Reid for reporting.
+   
+   If you are not parsing malformed messages, you do not need to upgrade.  
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+* April 24, 2010
+
+   HAPI 1.0 is released!
+   
+   After a fairly long beta period, I'm excited to announce that HAPI has finally reached
+   1.0. Download it {{{https://sourceforge.net/projects/hl7api/files/hl7api/}here}}! 
+
+   This release packs in a lot of new features, some major speed improvements, and several
+   fixes to long standing (but hard to fix) bugs. For a good summary of what's in this release,
+   see the {{{./whatsnew.html}what's new}} page, and the {{{./changes-report.html}changelog}}.
+   
+   Questions and answers about this release:
+   
+   * <<Q:>> What is the significance of the 1.0 version number?
+     
+     <<A:>> Absolutely nothing. HAPI has been a production grade library for many years now, and
+     over the years we've received quite a few inquiries from people hesitant to incorporate
+     a library with a pre-release version number into their software. The move to 1.0 is nothing more
+     than a signal that HAPI is good to go.
+   
+   * <<Q:>> Why the long period between releases?
+     
+     <<A:>> This release contained a major rewrite of the internals of the PipeParser, which is
+     pretty much at the heart of most people's use of HAPI. This rewrite was neccesary in order
+     both to speed things up, and to fix a number of problems with the existing logic in handling
+     unexpected custom segments and provide more predictable behaviour. Because of this, we wanted
+     to make sure we got it right. This release has been thoroughly tested in a number of applications,
+     including some heavy duty production use, so we are now confident that it's ready. 
+   
+   * <<Q:>> What's next?
+     
+     <<A:>> Hopefully a new release of hUnit will be out soon, and then hopefully our first HAPI
+     release in this post-1.0 world. :) Let us know what you would like to see in it!
+    
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+* November 28, 2009
+
+   A new beta (1.0-beta1) of HAPI has been uploaded to the {{{https://sourceforge.net/projects/hl7api/files/hl7api-unstable/}downloads area}}.
+   This should allow people to try out some of the new features that are coming up, and to
+   report any bugs that are found.
+
+   This release features an overhaul of PipeParser, various speed improvements, and a number
+   of new convenience methods, all of which are outlined on the {{{./whatsnew.html}what's new}} page.
+
+   Also worth mentioning, a new release of {{{./hunit/index.html}hUnit}} has been released
+   as well. The new release features shiny new UI for defining tests.
+
+   -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
+
+
+* September 7, 2009
+
+   A few announcements on the HAPI front:
+
+   <<OSGi Support>>
+
+   I wanted to let you all know of an exciting new development in the HAPI world: the development of a set of OSGi bundles, enabling HAPI to be deployed in an OSGi container.
+
+   Development is ongoing, led by {{{mailto:niranjan.sharma@med.ge.com}Niranjan Sharma}} from GE Healthcare. At this point, we have a mostly working set of unit tests and a basic plan of attack for getting the bundles to do something useful. Naturally, HAPI's use of reflection and a few scattered classloaded resource issues are causing some minor hassles, but I'm sure it can all be worked out.
+
+   If anyone is interested in contributing some time in development, testing, documentation, etc., please by all means get in touch with either myself or Niranjan. I'm really excited to see where this is all leading, in my opinion (and many others) OSGi is the future of Java, and it will be really nice to see HAPI playing well in that sandbox.
+
+
+   <<Upcoming Version of HAPI>>
+
+   Just to keep anyone who is interested posted on the development of the core HAPI library, a new version is in the works. I'm still not sure when it will be released, but it is looking promising. Two major things have changes for this cycle:
+
+   [[1]] The codebase is being upgraded to JDK 5, allowing the use of generics and other modern features within the library. We are planning on still supporting JDK1.4 using the retrotranslator maven plugin to product custom 1.4 compliant JARs for anyone needing the legacy support. I have used this approach in the past on other projects with lots of success.
+
+   [[2]] After a great deal of profiling and optimizing, the PipeParser is now 60-70% faster and the XML parser is at least 30% faster as well. The changes involved in these optimizations also fixed a few long standing bugs, such as the first repetition of a repeating segment always being added to a message structure even when it wasn't present in the message, and the fact that unexpected segments early in a message caused the rest of the message to parse into generic segments instead of their correct locations within the message structure.
+
+   []
+
+
+   <<hUnit>>
+
+   hUnit, a new subproject of HAPI, has finally come along far enough for some public consumption. hUnit is an HL7 application unit testing framework, currently geared towards unit testing HL7 ESB applications (i.e. message transformations within interface engines) as well as message procesing applications. hUnit has been developed at UHN to provide repeatable unit tests for our JavaCAPS HL7 message translations, and we are quickly adding features to support our internal needs. At this point, it is starting to become stable enough that it could be publicly consumed- stay tuned (or get in touch if this sounds like something of particular interest to you).
+
+   Check it out at {{{./hunit/index.html}hUnit's Site}}.
+
+
+* July 1, 2009 (Canada Day for those of us in Canada!)
+  
+    HAPI 0.6 has been relased! This release is the first release incorporating support for
+    HL7 v2.5.1 and v2.6.
+    
+    Note that a number of things have changed with this release:
+    
+      * Support for HL7 {{{./v251/apidocs/index.html}v2.5.1}} and {{{./v26/apidocs/index.html}v2.6}} has been added.
+      
+      * A number of {{{./changes-report.html}bugfixes and enhancements}} have been added.
+      
+      * A new {{{./building.html}build system}} has been introduced, with a new CVS repository layout to go with it.
+      
+      * The HAPI {{{./using_hapi.html}release JARs}} have changed from one monolithic JAR to a number of version specific ones. 
+
+    We owe a huge thanks to Frank Oemig and Karen Van Hentenryck for their
+    help in providing an updated HL7 database, from which HAPI's source libraries are built.
