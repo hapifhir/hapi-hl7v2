@@ -532,6 +532,16 @@ public class FastParser extends Parser {
     }
     
     /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+	}
+    
+    /**
      * A pointer to a distinct segment or group position in a message.  
      *  
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>

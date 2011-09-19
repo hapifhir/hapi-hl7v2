@@ -289,4 +289,9 @@ public class GenericParser extends Parser {
         primaryParser.parse(message, string);
     }
 
+	@Override
+	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+		return primaryParser.doParseForSpecificPackage(theMessage, theVersion, thePackageName);
+	}
+
 }

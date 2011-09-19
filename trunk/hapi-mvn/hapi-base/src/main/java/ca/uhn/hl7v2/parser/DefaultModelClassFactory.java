@@ -118,6 +118,54 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
         return (Class<? extends Type>) findClass(theName, theVersion, "datatype");
     }
+    
+    /**
+     * Retrieves and instantiates a message class by looking in a specific java package for the 
+     * message type.
+     *  
+     * @param theName The message structure type (e.g. "ADT_A01")
+     * @param theVersion The HL7 version (e.g. "2.3.1")
+     * @param isExplicit If false, the message structure is looked up using {@link Parser#getMessageStructureForEvent(String, String)} and converted to the appropriate structure type. For example, "ADT_A04" would be converted to "ADT_A01" because the A04 trigger uses the A01 message structure according to HL7.
+     * @param packageName The package name to use. Note that if the message type can't be found in this package, HAPI will return the standard type returned by {@link #getMessageClass(String, String, boolean)}
+     * @since 1.3 
+     */
+	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception { 
+        Class<? extends Message> mc = null;
+	    
+        if (!isExplicit) { 
+            theName = Parser.getMessageStructureForEvent(theName, theVersion); 
+        } 
+        
+        mc = (Class<? extends Message>) findClassInASpecificPackage(theName, theVersion, "message", packageName); 
+        if (mc == null) {
+            mc = GenericMessage.getGenericMessageClass(theVersion);
+        }
+        
+        return mc; 
+    } 
+
+
+    private static Class<?> findClassInASpecificPackage(String name, String version, String type, String packageName) throws HL7Exception { 
+         
+		if (packageName == null || packageName.length() == 0) { 
+			return findClass(name, version, type); 
+		}
+		
+		Class<?> compClass = null; 
+		String classNameToTry = packageName + "." + name; 
+		 
+		try { 
+			compClass = Class.forName(classNameToTry); 
+		} catch (ClassNotFoundException e) { 
+			if (log.isDebugEnabled()) {
+				log.debug("Unable to find class " + classNameToTry + ", using default", e);
+			}
+			return findClass(name, version, type); 
+		} 
+		 
+		return compClass; 
+    } 
+    
 
     /**
 	 * Returns the path to the base package for model elements of the given version

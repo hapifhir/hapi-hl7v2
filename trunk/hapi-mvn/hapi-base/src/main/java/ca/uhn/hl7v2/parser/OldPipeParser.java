@@ -729,6 +729,16 @@ public class OldPipeParser extends Parser {
         return encode(type, encodingCharacters);
     }
 
+    /**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
+	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+	}
+    
     public void parse(Message message, String string) throws HL7Exception {
         //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, "MSH", true);
