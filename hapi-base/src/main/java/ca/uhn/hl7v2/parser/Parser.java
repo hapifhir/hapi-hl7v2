@@ -332,7 +332,69 @@ public abstract class Parser {
      */
     public abstract void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception;
 
+    /**
+     * Parse a message using a specific model package instead of the default, using {@link ModelClassFactory#getMessageClassInASpecificPackage(String, String, boolean, String)}.
+     * 
+     * <b>WARNING: This method is only implemented in some parser implementations</b>. Currently it will only
+     * work with the PipeParser parser implementation. Use with caution.
+     */
+	public Message parseForSpecificPackage(String message, String packageName) throws HL7Exception, EncodingNotSupportedException { 
+		String encoding = getEncoding(message); 
+		if (!supportsEncoding(encoding)) { 
+		    throw new EncodingNotSupportedException( 
+		            "Can't parse message beginning " + message.substring(0, Math.min(message.length(), 50))); 
+		} 
+		 
+		String version = getVersion(message); 
+		if (!validVersion(version)) { 
+		    throw new HL7Exception("Can't process message of version '" + version + "' - version not recognized", 
+		            HL7Exception.UNSUPPORTED_VERSION_ID); 
+		} 
+		 
+		myValidator.validate(message, encoding.equals("XML"), version); 
+		 
+		Message result = doParseForSpecificPackage(message, version, packageName); 
+		 
+		myValidator.validate(result); 
+		
+		result.setParser(this); 
+		 
+		return result; 
+	} 
 
+	/**
+	 * Attempt the parse a message using a specific model package
+	 */
+	protected abstract Message doParseForSpecificPackage(String message, String version, String packageName) throws HL7Exception, EncodingNotSupportedException;
+
+	/**
+	 * Instantiate a message type using a specific package name
+	 * 
+	 * @see ModelClassFactory#getMessageClassInASpecificPackage(String, String, boolean, String)
+	 */
+	protected Message instantiateMessageInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception { 
+		Message result = null; 
+		 
+		try { 
+			Class<? extends Message> messageClass = myFactory.getMessageClassInASpecificPackage(theName, theVersion, isExplicit, packageName); 
+			if (messageClass == null) { 
+				throw new ClassNotFoundException("Can't find message class in current package list: " + theName);
+			}
+			
+			log.debug("Instantiating msg of class " + messageClass.getName()); 
+			Constructor<? extends Message> constructor = messageClass.getConstructor(new Class[]{ModelClassFactory.class}); 
+			result = (Message) constructor.newInstance(new Object[]{myFactory}); 
+		} catch (Exception e) { 
+			throw new HL7Exception("Couldn't create Message object of type " + theName, 
+			HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e); 
+		} 
+		 
+		result.setValidationContext(myContext); 
+		 
+		return result; 
+	} 
+    
+    
     /**
      * Parses a particular segment and returns the encoded structure
      *
@@ -365,18 +427,16 @@ public abstract class Parser {
      */
     public static Segment makeControlMSH(String version, ModelClassFactory factory) throws HL7Exception {
         Segment msh = null;
-        String className = null;
-        
         
         try {
             Message dummy = (Message) GenericMessage.getGenericMessageClass(version)
                 .getConstructor(new Class[]{ModelClassFactory.class}).newInstance(new Object[]{factory});
             
-            Class[] constructorParamTypes = { Group.class, ModelClassFactory.class };
+            Class<?>[] constructorParamTypes = { Group.class, ModelClassFactory.class };
             Object[] constructorParamArgs = { dummy, factory };
-            Class c = factory.getSegmentClass("MSH", version);
-            Constructor constructor = c.getConstructor(constructorParamTypes);
-            msh = (Segment) constructor.newInstance(constructorParamArgs);
+            Class<? extends Segment> c = factory.getSegmentClass("MSH", version);
+            Constructor<? extends Segment> constructor = c.getConstructor(constructorParamTypes);
+            msh = constructor.newInstance(constructorParamArgs);
         }
         catch (Exception e) {
             throw new HL7Exception(
@@ -502,13 +562,13 @@ public abstract class Parser {
         Message result = null;
         
         try {
-            Class messageClass = myFactory.getMessageClass(theName, theVersion, isExplicit);
+            Class<? extends Message> messageClass = myFactory.getMessageClass(theName, theVersion, isExplicit);
             if (messageClass == null)
                 throw new ClassNotFoundException("Can't find message class in current package list: " 
                     + theName);
-            log.info("Instantiating msg of class " + messageClass.getName());
-            Constructor constructor = messageClass.getConstructor(new Class[]{ModelClassFactory.class});
-            result = (Message) constructor.newInstance(new Object[]{myFactory});
+            log.debug("Instantiating msg of class " + messageClass.getName());
+            Constructor<? extends Message> constructor = messageClass.getConstructor(new Class[]{ModelClassFactory.class});
+            result = constructor.newInstance(new Object[]{myFactory});
         } catch (Exception e) {            
             throw new HL7Exception("Couldn't create Message object of type " + theName,
                 HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);

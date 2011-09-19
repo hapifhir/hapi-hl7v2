@@ -760,6 +760,16 @@ public abstract class XMLParser extends Parser {
      * @throws Unsupported operation exception
      */
     @Override
+	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	/**
+     * Throws unsupported operation exception
+     *
+     * @throws Unsupported operation exception
+     */
+    @Override
     public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -835,6 +845,10 @@ public abstract class XMLParser extends Parser {
                 public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
+				@Override
+				protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+                    throw new UnsupportedOperationException("Not supported yet.");
+				}
             };
 
             //loop through segment children of message, encode, print to console

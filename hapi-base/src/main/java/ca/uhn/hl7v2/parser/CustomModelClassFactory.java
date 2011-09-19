@@ -49,7 +49,7 @@ import java.util.HashMap;
 public class CustomModelClassFactory implements ModelClassFactory {
 
     private static final long serialVersionUID = 1;
-    private ModelClassFactory defaultFactory;
+    private final ModelClassFactory defaultFactory;
     private Map<String, String[]> customModelClasses;
     private static Log LOG = LogFactory.getLog(CustomModelClassFactory.class);
 
@@ -180,4 +180,11 @@ public class CustomModelClassFactory implements ModelClassFactory {
         }
         return classLoaded;
     }
+
+    /**
+     * Delegates calls to {@link DefaultModelClassFactory#getMessageClassInASpecificPackage(String, String, boolean, String)}
+     */
+	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
+		return defaultFactory.getMessageClassInASpecificPackage(theName, theVersion, theIsExplicit, thePackageName);
+	}
 }

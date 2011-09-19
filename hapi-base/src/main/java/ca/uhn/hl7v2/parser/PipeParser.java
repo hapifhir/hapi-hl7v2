@@ -246,6 +246,21 @@ public class PipeParser extends Parser {
         return m;
     }
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected Message doParseForSpecificPackage(String message, String version, String packageName) throws HL7Exception, EncodingNotSupportedException { 
+
+        // try to instantiate a message object of the right class 
+        MessageStructure structure = getStructure(message); 
+        Message m = instantiateMessageInASpecificPackage(structure.messageStructure, version, structure.explicitlyDefined, packageName); 
+
+        parse(m, message); 
+
+        return m; 
+    }
+    
 
     /**
      * Generates (or returns the cached value of) the message

@@ -33,6 +33,18 @@ public interface ModelClassFactory extends Serializable {
     public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception;
     
     /**
+     * Retrieves and instantiates a message class by looking in a specific java package for the 
+     * message type.
+     *  
+     * @param theName The message structure type (e.g. "ADT_A01")
+     * @param theVersion The HL7 version (e.g. "2.3.1")
+     * @param isExplicit If false, the message structure is looked up using {@link Parser#getMessageStructureForEvent(String, String)} and converted to the appropriate structure type. For example, "ADT_A04" would be converted to "ADT_A01" because the A04 trigger uses the A01 message structure according to HL7.
+     * @param packageName The package name to use. Note that if the message type can't be found in this package, HAPI will return the standard type returned by {@link #getMessageClass(String, String, boolean)}
+     * @since 1.3 
+     */
+	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception;
+	
+    /**
      * @param theName name of group 
      * @param theVersion HL7 version 
      * @return a class that implements the specified group
