@@ -26,7 +26,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ResponderTest extends TestCase
 {
-    private static int ourPort = 22222;
+    private static int ourPort = 22229;
     
     private SimpleServer server;
     private Socket socket;
