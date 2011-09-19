@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.9</version>
 		</dependency>
 		<dependency>
 			<groupId>junit-addons</groupId>
@@ -181,12 +181,21 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.7.2</version>
 				<configuration>
+					<forkMode>once</forkMode>
+					<parallel>both</parallel>
 					<!--<testFailureIgnore>true</testFailureIgnore>-->
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
+					<!-- 
 					<execution>
 						<id>sources</id>
 						<phase>package</phase>
@@ -211,6 +220,7 @@
 							</descriptors>
 						</configuration>
 					</execution>
+					 -->
 				</executions>
 			</plugin>
 		</plugins>
