@@ -335,6 +335,7 @@ public class NewPipeParserTest extends TestCase {
 		}
 
 		String er7Message = buffer.toString();
+		er7Message = er7Message.replaceAll("(\\r|\\n)+", "\r");
 
 		ca.uhn.hl7v2.model.v25.message.ADT_A03 message = (ADT_A03) parser.parse(er7Message);
 
