@@ -18,6 +18,10 @@
         		to be parsed and applied even if they contain textual table names, although these names are
         		now ignored.
         	</action>
+        	<action dev="Nicolas Lefebfre">
+        		Add a new method to Parser, parseForSpecificPackage, which parses messages using structure classes
+        		found in a particular package instead of using the built in HAPI defaults.
+        	</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
