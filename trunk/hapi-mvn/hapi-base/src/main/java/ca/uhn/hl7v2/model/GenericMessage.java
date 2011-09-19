@@ -33,11 +33,11 @@ public abstract class GenericMessage extends AbstractMessage {
      * This is needed so that version-specific segments can be added as the message
      * is parsed.  
      */
-    public static Class getGenericMessageClass(String version) {
+    public static Class<? extends Message> getGenericMessageClass(String version) {
         if (!Parser.validVersion(version))
             throw new IllegalArgumentException("The version " + version + " is not recognized");
         
-        Class c = null;
+        Class<? extends Message> c = null;
         if (version.equals("2.1")) {
             c = V21.class;
         } else if (version.equals("2.2")) {
