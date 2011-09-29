@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>1.2</version>
+		<version>1.3-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

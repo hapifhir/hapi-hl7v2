@@ -6,6 +6,23 @@
 	</properties>
 	<body>
         <release version="1.3" date="TBD">
+        	<action type="add" dev="James Agnew">
+        		Add a new method to 
+        		Hl7InputStreamMessageStringIterator
+        		and
+        		HL7InputStreamMessageIterator
+        		called setIgnoreComments(boolean) which allows the iterator to
+        		ignore lines beginning with a hash (#). This allows you to put
+        		comments in files being read by these classes.
+        	</action>
+        	<action type="fix" dev="Diederik Muylwyk">
+        		Correct two issues with AbstractPrimitive#parse(String). This is the method which is used (for example)
+        		if parse is called on an ST type. Previously if an escape sequence (e.g. "Snakes \T\ Ladders") was 
+        		passed into this method, it would appear double-escaped when the message was re-encoded, giving
+        		a string such as "Snakes \E\T\E\ Ladders". In addition, if this method was called and the string
+        		passed in contained a field delimiter (generally "^") this would lead to an IllegalArgumentException
+        		in some cases. Thanks to Diederik Muylwyk for reporting this and providing a test case!
+        	</action>
         	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
         	can be accessed at:
 				<![CDATA[
