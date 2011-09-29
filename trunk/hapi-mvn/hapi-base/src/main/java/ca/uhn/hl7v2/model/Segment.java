@@ -28,12 +28,18 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.Parser;
 
 /**
  * Represents an HL7 message segment, which is a unit of data that contains multiple fields.
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public interface Segment extends Structure {
+
+    /**
+     * Encodes this message using the parser returned by {@link Message#getParser() }
+     */
+    public String encode() throws HL7Exception;
 
     /**
      * Returns the array of Fields at the specified index.  The array will be of length 1 for
@@ -59,12 +65,6 @@ public interface Segment extends Structure {
     public Type getField(int number, int rep) throws HL7Exception;
 
     /**
-     * Returns true if the field at the given index is required, false otherwise.
-     * @throws HL7Exception if field index is out of range.
-     */
-    public boolean isRequired(int number) throws HL7Exception;
-
-    /**
      * Returns the maximum length of the field at the given index, in characters.
      * @throws HL7Exception if field index is out of range.
      */
@@ -79,17 +79,24 @@ public interface Segment extends Structure {
     public int getMaxCardinality(int number) throws HL7Exception;
 
     /**
-     * Returns the number of fields defined by this segment (repeating
-     * fields are not counted multiple times).
-     */
-    public int numFields();
-
-    /**
      * Returns the names of the fields in this segment.
      *
      * @since 1.0 - Note that if user defined types are being used, there is a possibility that some entries may be null. All official hapi structures will have all entries populated, but older user defined structures may not have populated all values, since this feature did not exist prior to release 1.0.
      */
     public String[] getNames();
+
+    /**
+     * Returns true if the field at the given index is required, false otherwise.
+     * @throws HL7Exception if field index is out of range.
+     */
+    public boolean isRequired(int number) throws HL7Exception;
+
+
+    /**
+     * Returns the number of fields defined by this segment (repeating
+     * fields are not counted multiple times).
+     */
+    public int numFields();
 
 
     /**
@@ -97,11 +104,5 @@ public interface Segment extends Structure {
      */
     public void parse(String string) throws HL7Exception;
 
-
-    /**
-     * Encodes this message using the parser returned by {@link Message#getParser() }
-     */
-    public String encode() throws HL7Exception;
-
-
+    
 }

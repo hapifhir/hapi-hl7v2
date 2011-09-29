@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
+import ca.uhn.hl7v2.parser.Escape;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -123,20 +124,35 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
             
             //Object ancestor = AbstractMessage.findAncestorOf(this);
             
-            setValue(string.substring(0, subcIndex));
+            int index;
+            char escapeChar;
+            if (cmpcIndex != -1) {
+            	index = cmpcIndex;
+            	escapeChar = cmpc;
+            } else {
+    			index = subcIndex;
+    			escapeChar = subc;
+            }
             
-            while (subcIndex != -1) {
-                int prevIndex = subcIndex + 1;
-                subcIndex = string.indexOf(subc, prevIndex);
-                if (subcIndex != -1) {
-                    String nextSubComponent = string.substring(prevIndex, subcIndex);
+			setValue(string.substring(0, index));
+            while (index != -1) {
+                int prevIndex = index + 1;
+                index = string.indexOf(escapeChar, prevIndex);
+                if (index != -1) {
+                    String nextSubComponent = string.substring(prevIndex, index);
                     getExtraComponents().getComponent(getExtraComponents().numComponents()).parse(nextSubComponent);
+                } else {
+                    String nextSubComponent = string.substring(prevIndex);
+                    if (nextSubComponent.length() > 0) {
+                    	getExtraComponents().getComponent(getExtraComponents().numComponents()).parse(nextSubComponent);
+                    }
                 }
             }
             
         } else {
         
-            setValue(string);
+        	String escaped = Escape.unescape(string, encodingCharacters);
+            setValue(escaped);
         
         }
     }
