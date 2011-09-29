@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="hapi-base/src/main/java"/>
+	<classpathentry kind="src" path="hapi-test/target/generated-sources/confgen"/>
 	<classpathentry kind="src" path="hapi-base/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/resources"/>
@@ -8,7 +9,6 @@
 	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-test/src/test/java"/>
 	<classpathentry kind="src" path="hapi-test/src/test/resources"/>
-	<classpathentry kind="src" path="hapi-test/target/generated-sources/confgen"/>
 	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-utils/1.5.1/plexus-utils-1.5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.2.0/maven-core-2.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.2.0/maven-settings-2.2.0.jar"/>
