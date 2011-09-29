@@ -33,8 +33,8 @@ import ca.uhn.hl7v2.util.Hl7InputStreamMessageStringIterator.ParseFailureError;
  */
 public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 
-	private Hl7InputStreamMessageStringIterator myWrapped;
 	private PipeParser myParser;
+	private Hl7InputStreamMessageStringIterator myWrapped;
 
 	/**
 	 * Constructor
@@ -58,15 +58,15 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 		init();
 	}
 
-	private void init() {
-		myParser = PipeParser.getInstanceWithNoValidation();
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean hasNext() {
 		return myWrapped.hasNext();
+	}
+
+	private void init() {
+		myParser = PipeParser.getInstanceWithNoValidation();
 	}
 
 	/**
@@ -93,6 +93,14 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 */
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * If set to true, any lines beginning with a hash (#) will be ignored. This allows
+	 * you to place comments in a file to be read if needed.
+	 */
+	public void setIgnoreComments(boolean theIgnoreComments) {
+		myWrapped.setIgnoreComments(theIgnoreComments);
 	}
 
 }

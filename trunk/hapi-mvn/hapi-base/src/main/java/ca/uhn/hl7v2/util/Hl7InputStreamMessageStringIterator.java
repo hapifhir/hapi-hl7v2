@@ -17,9 +17,10 @@ import org.apache.commons.logging.LogFactory;
  * files, and tries to be very lenient about the format of the stream,
  * specifically concerning control characters and line endings. It should be
  * safe to provide a stream containing Windows or Unix line endings (which will
- * be treated as segment delimiters). It is also safe to provide a stream containing
- * MLLP control blocks before and after each message (although these will not be
- * validated! Do not use this class to read MLLP messages from a socket stream!)
+ * be treated as segment delimiters). It is also safe to provide a stream
+ * containing MLLP control blocks before and after each message (although these
+ * will not be validated! Do not use this class to read MLLP messages from a
+ * socket stream!)
  * </p>
  * <p>
  * The input stream could, for example, be a FileInputStream reading from a text
@@ -34,11 +35,12 @@ import org.apache.commons.logging.LogFactory;
 public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 
 	private static final Log ourLog = LogFactory.getLog(Hl7InputStreamMessageStringIterator.class);
-	private Reader myReader;
-	private Boolean myHasNext;
-	private String myNext;
 	private StringBuilder myBuffer = new StringBuilder();
 	private boolean myFoundMessageInBuffer = false;
+	private Boolean myHasNext;
+	private boolean myIgnoreComments;
+	private String myNext;
+	private Reader myReader;
 
 	/**
 	 * Constructor
@@ -67,7 +69,10 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 		if (myHasNext == null) {
 
 			int next;
+			int prev = -1;
 			int endOfBuffer = -1;
+			boolean inComment = false;
+			
 			while (true) {
 				try {
 					next = myReader.read();
@@ -79,8 +84,13 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 					break;
 				}
 
-				// Convert '\n' or "\r\n" to '\r'
 				char nextChar = (char) next;
+				if (nextChar == '#' && myIgnoreComments && (prev == -1 || prev == '\n' || prev == '\r')) {
+					inComment = true;
+					continue;
+				}
+				
+				// Convert '\n' or "\r\n" to '\r'
 				if (nextChar == 10) {
 					if (myBuffer.length() > 0) {
 						if (myBuffer.charAt(myBuffer.length() - 1) == 13) {
@@ -89,10 +99,16 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 							myBuffer.append((char) 13);
 						}
 					}
+				} else if (inComment) {
+					if (nextChar == 10 || nextChar == 13) {
+						inComment = false;
+					}
 				} else {
 					myBuffer.append(nextChar);
 				}
-
+				
+				prev = next;
+				
 				int bLength = myBuffer.length();
 				if (nextChar == 'H' && bLength >= 3) {
 					if (myBuffer.charAt(bLength - 2) == 'S') {
@@ -161,6 +177,14 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 	 */
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * If set to true, any lines beginning with a hash (#) will be ignored. This
+	 * allows you to place comments in a file to be read if needed.
+	 */
+	public void setIgnoreComments(boolean theIgnoreComments) {
+		myIgnoreComments = theIgnoreComments;
 	}
 
 	public static class ParseFailureError extends RuntimeException {
