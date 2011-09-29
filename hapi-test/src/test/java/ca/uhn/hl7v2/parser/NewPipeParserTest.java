@@ -16,6 +16,7 @@ import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Varies;
+import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v231.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
@@ -1053,5 +1054,87 @@ public class NewPipeParserTest extends TestCase {
 		Assert.assertEquals(expected2, actual2);
 		
 	}
+	
+	
+	public void testEncodeWithSetEncodeEmptySegments() throws HL7Exception, IOException {
+		
+		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
+		pOn.getParserConfiguration().setEncodeEmptySegments(true);
+
+		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
+		pOff.getParserConfiguration().setEncodeEmptySegments(false);
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		msg.getMSH().getMessageControlID().setValue("");
+		msg.getMSH().getDateTimeOfMessage().parse("");
+		
+		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getORC();
+
+		String encoded = pOff.encode(msg);
+		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r";
+		Assert.assertEquals(expected, encoded);
+
+		encoded = pOn.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
+		           "ORC|\r";
+		Assert.assertEquals(expected, encoded);
+		
+	}
+	
+	
+	public void testUnescapeComponents() throws HL7Exception {
+		
+		String message = "MSH|^~\\&|NES|NINTENDO|AGNEW|CORNERCUBICLE|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r\n" + 
+				"EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r\n" + 
+				"PID|1||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\r\n" + 
+				"NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\r\n" + 
+				"NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\r\n" + 
+				"PV1|1|O|ABCD^EFGH^|||^^|123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|^DOG^DUCKHUNT^^^^^^^CURRENT||CRD|||||||123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|AO|0123456789|1|||||||||||||||||||MSH||A|||20010101000000";
+		ca.uhn.hl7v2.model.v23.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v23.message.ADT_A01();
+		msg.parse(message);
+		
+		ST st = msg.getPID().getPid11_PatientAddress(0).getXad2_OtherDesignation();
+		String actual = st.getValue();
+		String expected = "MARIO & LUIGI BROS PLACE";
+		assertEquals(expected, actual);
+
+		st.setValue(actual);
+		actual = st.getValue();
+		expected = "MARIO & LUIGI BROS PLACE";
+		assertEquals(expected, actual);
+		
+		actual = st.encode();
+		expected = "MARIO \\T\\ LUIGI BROS PLACE";
+		assertEquals(expected, actual);
+
+		st.parse(actual);
+		actual = st.getValue();
+		expected = "MARIO & LUIGI BROS PLACE";
+		assertEquals(expected, actual);
+		
+		expected = "123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234";
+		actual = msg.getPID().getPid11_PatientAddress(0).encode();
+		assertEquals(expected, actual);
+		
+	}
+	
+	
+	public void testParsePrimitiveWithUnexpectedSubcomponents() throws HL7Exception, IOException {
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "P");
+		
+		ca.uhn.hl7v2.model.v24.datatype.ST controlID = msg.getMSH().getMessageControlID();
+		controlID.parse("A^1");
+		assertEquals("A", msg.getMSH().getMessageControlID().getValue());
+		assertEquals("1", msg.getMSH().getMessageControlID().getExtraComponents().getComponent(0).encode());
+		
+		msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().parse("A&1");
+		assertEquals("A", msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().getValue());
+		assertEquals("1", msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().getExtraComponents().getComponent(0).encode());
+		
+	}
+	
 	
 }
