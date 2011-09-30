@@ -69,8 +69,8 @@ public class PipeParser extends Parser {
 
     private Boolean myLegacyMode = null;
 
-
-    /** Creates a new PipeParser */
+    
+	/** Creates a new PipeParser */
     public PipeParser() {
     }
 
@@ -602,7 +602,7 @@ public class PipeParser extends Parser {
 
         // pass down to group encoding method which will operate recursively on
         // children ...
-        return encode((Group) source, en);
+        return encode((Group) source, en, getParserConfiguration().isEncodeEmptySegments());
     }
 
 
@@ -611,7 +611,17 @@ public class PipeParser extends Parser {
      * called by encode(Message source, String encoding).
      */
     public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
-        StringBuilder result = new StringBuilder();
+        boolean encodeEmptySegments = source.getMessage().getParser().getParserConfiguration().isEncodeEmptySegments();
+        return encode(source, encodingChars, encodeEmptySegments);
+    }
+
+
+    /**
+     * Returns given group serialized as a pipe-encoded string - this method is
+     * called by encode(Message source, String encoding).
+     */
+	private static String encode(Group source, EncodingCharacters encodingChars, boolean encodeEmptySegments) throws HL7Exception {
+		StringBuilder result = new StringBuilder();
 
         String[] names = source.getNames();
         
@@ -634,11 +644,30 @@ public class PipeParser extends Parser {
                 }
             }
             
+//            // Force encoding
+//			if (reps.length == 0 && encodeEmptySegments) {
+//            	result.append(names[i]);
+//            	result.append(encodingChars.getFieldSeparator());
+//            	result.append(segDelim);
+//            	
+//                haveEncounteredContent = true;
+//                
+//                if (nextNameIsRequired) {
+//                	haveHadMandatorySegment = true;
+//                }
+//                
+//                if (!haveHadMandatorySegment && !haveEncounteredMandatorySegment) {
+//                	haveHadSegmentBeforeMandatorySegment = true;
+//                }
+//            	
+//            }
+
+            // Add all reps of the next segment/group
             for (int rep = 0; rep < reps.length; rep++) {
             	
                 if (reps[rep] instanceof Group) {
                     
-                	String encodedGroup = encode((Group) reps[rep], encodingChars);
+                	String encodedGroup = encode((Group) reps[rep], encodingChars, encodeEmptySegments);
 					result.append(encodedGroup);
 					
 					if (encodedGroup.length() > 0) {
@@ -654,8 +683,13 @@ public class PipeParser extends Parser {
                 } else {
                 	
                 	String segString = encode((Segment) reps[rep], encodingChars);
-                    if (segString.length() >= 4) {
+                    if (segString.length() >= 4 || encodeEmptySegments) {
                         result.append(segString);
+                        
+                        if (segString.length() == 3) {
+                        	result.append(encodingChars.getFieldSeparator());
+                        }
+                        
                         result.append(segDelim);
                         
                         haveEncounteredContent = true;
@@ -681,7 +715,7 @@ public class PipeParser extends Parser {
         } else {
         	return result.toString();
         }
-    }
+	}
 
     /**
      * Convenience factory method which returns an instance that has a 
@@ -1026,7 +1060,8 @@ public class PipeParser extends Parser {
             }
         }
     }
-
+    
+    
     /**
      * A struct for holding a message class string and a boolean indicating
      * whether it was defined explicitly.

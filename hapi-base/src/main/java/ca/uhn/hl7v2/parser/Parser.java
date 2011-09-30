@@ -66,7 +66,9 @@ public abstract class Parser {
     private ModelClassFactory myFactory;
     private ValidationContext myContext;
     private MessageValidator myValidator;
-    private static final List<String> versions = Collections.unmodifiableList(Arrays.asList(new String[] { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" }));
+    private ParserConfiguration myParserConfiguration = new ParserConfiguration();
+    
+	private static final List<String> versions = Collections.unmodifiableList(Arrays.asList(new String[] { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" }));
 
     static {
         VersionLogger.init();
@@ -122,6 +124,31 @@ public abstract class Parser {
         myValidator = new MessageValidator(theContext, true);
     }
 
+    
+    /**
+	 * @return Returns the parser configuration. This is a bean which contains configuration
+	 * instructions relating to how a parser should be parsing or encoding messages it
+	 * deals with. 
+	 */
+	public ParserConfiguration getParserConfiguration() {
+		return myParserConfiguration;
+	}
+
+	/**
+	 * Sets the parser configuration for this parser (may not be null). This is a bean which contains configuration
+	 * instructions relating to how a parser should be parsing or encoding messages it
+	 * deals with. 
+	 * 
+	 * @param theParserConfiguration The parser configuration
+	 */
+	public void setParserConfiguration(ParserConfiguration theParserConfiguration) {
+		if (theParserConfiguration == null) {
+			throw new NullPointerException("theParserConfiguration may not be null");
+		}
+		myParserConfiguration = theParserConfiguration;
+	}
+    
+    
     /**
      * Returns a String representing the encoding of the given message, if 
      * the encoding is recognized.  For example if the given message appears 
