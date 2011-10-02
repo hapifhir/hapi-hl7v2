@@ -29,12 +29,20 @@ public class ParserConfiguration {
      *       <td>Encode Output</td>
      *    </th>
      *    <tr>
+     *       <td>None (for illustration purposes)</td>
+     *       <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4</td>
+     *    </tr>
+     *    <tr>
      *       <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC</td>
      *       <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>ORC|</td>
      *    </tr>
      *    <tr>
      *       <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC-4</td>
      *       <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>ORC||||</td>
+     *    </tr>
+     *    <tr>
+     *       <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC-4-2</td>
+     *       <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>ORC||||^</td>
      *    </tr>
      * </table>
      * <p>
@@ -52,11 +60,16 @@ public class ParserConfiguration {
 		
 		int lastSlashIndex = theForcedEncode.lastIndexOf('/');
 		lastSlashIndex = Math.max(lastSlashIndex, 0);
-		
-		if (lastSlashIndex == theForcedEncode.length() || !theForcedEncode.substring(lastSlashIndex + 1).matches("[A-Z]{3}(-[0-9]+){0,1}$")) {
-			throw new IllegalArgumentException("Definition must end with a segment name or field lookup, e.g. MSH or MSH-2");
+
+		if (lastSlashIndex == 0) {
+			if (!theForcedEncode.matches("[A-Z]{3}(-[0-9]+){0,2}$")) {
+				throw new IllegalArgumentException("Definition must end with a segment name or field lookup, e.g. MSH or MSH-2");
+			}
+		} else {
+			if (lastSlashIndex == theForcedEncode.length() || !theForcedEncode.substring(lastSlashIndex + 1).matches("[A-Z]{3}(-[0-9]+){0,2}$")) {
+				throw new IllegalArgumentException("Definition must end with a segment name or field lookup, e.g. MSH or MSH-2");
+			}
 		}
-		
 		myForcedEncode.add(theForcedEncode);
 	}
 

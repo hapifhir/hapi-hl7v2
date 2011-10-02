@@ -496,6 +496,11 @@ public class PipeParser extends Parser {
      * component.
      */
     public static String encode(Type source, EncodingCharacters encodingChars) {
+    	return encode(source, encodingChars, null, null);
+    }
+
+
+    private static String encode(Type source, EncodingCharacters encodingChars, ParserConfiguration parserConfig, String currentTerserPath) {
         if (source instanceof Varies) {
         	Varies varies = (Varies) source;
         	if (varies.getData() != null) {
@@ -514,12 +519,33 @@ public class PipeParser extends Parser {
             field.append(stripExtraDelimiters(comp.toString(), encodingChars.getSubcomponentSeparator()));
             field.append(encodingChars.getComponentSeparator());
         }
-        return stripExtraDelimiters(field.toString(), encodingChars.getComponentSeparator());
-        // return encode(source, encodingChars, false);
-    }
+        
+        int forceUpToFieldNum = 0;
+        if (parserConfig != null && currentTerserPath != null) {
+        	for (String nextPath : parserConfig.getForcedEncode()) {
+        		if (nextPath.startsWith(currentTerserPath) && nextPath.length() > currentTerserPath.length()) {
+        			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length() + 1);
+        			if (endOfFieldDef == -1) {
+        				endOfFieldDef = nextPath.length();
+        			}
+        			String fieldNumString = nextPath.substring(currentTerserPath.length() + 1, endOfFieldDef);
+        			forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
+        		}
+        	}
+        }
+        
+        char componentSeparator = encodingChars.getComponentSeparator();
+		String retVal = stripExtraDelimiters(field.toString(), componentSeparator);
+        
+		while (forceUpToFieldNum > 0 && (countInstancesOf(retVal, componentSeparator) + 1) < forceUpToFieldNum) {
+			retVal = retVal + componentSeparator;
+		}
+        
+		return retVal;
+	}
 
 
-    private static String encodePrimitive(Primitive p, EncodingCharacters encodingChars) {
+	private static String encodePrimitive(Primitive p, EncodingCharacters encodingChars) {
         String val = (p).getValue();
         if (val == null) {
             val = "";
@@ -740,10 +766,24 @@ public class PipeParser extends Parser {
         // field delimiter after ...
         int numFields = source.numFields();
         for (int i = startAt; i <= numFields; i++) {
+        	
+        	String nextFieldTerserPath = currentTerserPath + "-" + i;
+            if (parserConfig != null && currentTerserPath != null) {
+            	for (String nextPath : parserConfig.getForcedEncode()) {
+            		if (nextPath.startsWith(nextFieldTerserPath)) {
+            			try {
+							source.getField(i, 0);
+						} catch (HL7Exception e) {
+			                log.error("Error while encoding segment: ", e);
+						}
+            		}
+            	}
+            }
+            
             try {
                 Type[] reps = source.getField(i);
                 for (int j = 0; j < reps.length; j++) {
-                    String fieldText = encode(reps[j], encodingChars);
+                    String fieldText = encode(reps[j], encodingChars, parserConfig, nextFieldTerserPath);
                     // if this is MSH-2, then it shouldn't be escaped, so
                     // unescape it again
                     if (isDelimDefSegment(source.getName()) && i == 2)
@@ -776,7 +816,8 @@ public class PipeParser extends Parser {
         char fieldSeparator = encodingChars.getFieldSeparator();
 		String retVal = stripExtraDelimiters(result.toString(), fieldSeparator);
 		
-		while (forceUpToFieldNum > 0 && countInstancesOf(retVal, fieldSeparator) < forceUpToFieldNum) {
+		int offset = isDelimDefSegment(source.getName()) ? 1 : 0;
+		while (forceUpToFieldNum > 0 && (countInstancesOf(retVal, fieldSeparator) + offset) < forceUpToFieldNum) {
 			retVal = retVal + fieldSeparator;
 		}
 		

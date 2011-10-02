@@ -1056,13 +1056,16 @@ public class NewPipeParserTest extends TestCase {
 	}
 	
 	
-	public void testEncodeWithSetEncodeEmptySegments() throws HL7Exception, IOException {
+	public void testEncodeWithForceEncoding() throws HL7Exception, IOException {
 		
 		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
 		pOn.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC");
 
 		PipeParser pOnOrc4 = PipeParser.getInstanceWithNoValidation();
 		pOnOrc4.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-4");
+
+		PipeParser pOnOrc4_2 = PipeParser.getInstanceWithNoValidation();
+		pOnOrc4_2.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-4-2");
 		
 		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
 		
@@ -1085,6 +1088,48 @@ public class NewPipeParserTest extends TestCase {
 		encoded = pOnOrc4.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
 		           "ORC||||\r";
+		Assert.assertEquals(expected, encoded);
+		
+		encoded = pOnOrc4_2.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
+		           "ORC||||^\r";
+		Assert.assertEquals(expected, encoded);
+
+	}
+
+	
+	public void testEncodeWithForceEncodingOnMSH() throws HL7Exception, IOException {
+		
+		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
+		pOn.getParserConfiguration().addForcedEncode("MSH");
+
+		PipeParser pOnMSH19 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH19.getParserConfiguration().addForcedEncode("MSH-19");
+
+		PipeParser pOnMSH19_2 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH19_2.getParserConfiguration().addForcedEncode("MSH-19-2");
+		
+		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		msg.getMSH().getMessageControlID().setValue("");
+		msg.getMSH().getDateTimeOfMessage().parse("");
+		
+		String encoded = pOff.encode(msg);
+		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r";
+		Assert.assertEquals(expected, encoded);
+
+		encoded = pOn.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r";
+		Assert.assertEquals(expected, encoded);
+
+		encoded = pOnMSH19.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4|||||||\r";
+		Assert.assertEquals(expected, encoded);
+
+		encoded = pOnMSH19_2.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4|||||||^\r";
 		Assert.assertEquals(expected, encoded);
 		
 	}
