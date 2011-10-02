@@ -14,13 +14,24 @@ Welcome
   that conforms to their specification.  The project was initiated by {{{http://www.uhn.ca}University Health Network}} 
   (a large multi-site teaching hospital in Toronto, Canada).  
 
+  <<{{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Support HAPI! Answer the 2011 HAPI Community Survey!}}>>
 
-HAPI sources moved to Subversion (SVN) - September 11, 2011
+
+HAPI sources moved to Subversion (SVN) - October 2, 2011
 
   The HAPI source code has been migrated to a new Subversion repository
   {{{https://hl7api.svn.sourceforge.net/svnroot/hl7api/}here}}.
   
-  Thank you to everyone who put forward ideas on what VCS we should move to! The old CVS
+  Thank you to everyone who put forward ideas on what VCS we should move to! The
+  decision to move to SVN instead of Git (the second most popular choice) was a
+  challenging one. Git is a modern and very powerful tool to be sure, but
+  in the end we have concluded that SVN is probably the right balance between
+  ease of use and features.
+  
+  If you have any patches against the old repository that you would like to
+  see incorporated into the new one, please get in touch.
+  
+  The old CVS
   repository will be left around for the time being, just in case it is needed.
 
    -{{{mailto:jamesagnew@users.sourceforge.net}James Agnew}}
