@@ -602,7 +602,7 @@ public class PipeParser extends Parser {
 
         // pass down to group encoding method which will operate recursively on
         // children ...
-        return encode((Group) source, en, getParserConfiguration().isEncodeEmptySegments());
+        return encode((Group) source, en, getParserConfiguration(), "");
     }
 
 
@@ -611,8 +611,7 @@ public class PipeParser extends Parser {
      * called by encode(Message source, String encoding).
      */
     public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
-        boolean encodeEmptySegments = source.getMessage().getParser().getParserConfiguration().isEncodeEmptySegments();
-        return encode(source, encodingChars, encodeEmptySegments);
+        return encode(source, encodingChars, source.getMessage().getParser().getParserConfiguration(), "");
     }
 
 
@@ -620,7 +619,7 @@ public class PipeParser extends Parser {
      * Returns given group serialized as a pipe-encoded string - this method is
      * called by encode(Message source, String encoding).
      */
-	private static String encode(Group source, EncodingCharacters encodingChars, boolean encodeEmptySegments) throws HL7Exception {
+	private static String encode(Group source, EncodingCharacters encodingChars, ParserConfiguration parserConfiguration, String currentTerserPath) throws HL7Exception {
 		StringBuilder result = new StringBuilder();
 
         String[] names = source.getNames();
@@ -633,41 +632,27 @@ public class PipeParser extends Parser {
                 
         for (int i = 0; i < names.length; i++) {
         	
-            Structure[] reps = source.getAll(names[i]);
-            boolean nextNameIsRequired = source.isRequired(names[i]);
+            String nextName = names[i];
+            source.get(nextName, 0);
+			Structure[] reps = source.getAll(nextName);
+            boolean nextNameIsRequired = source.isRequired(nextName);
         
             boolean havePreviouslyEncounteredMandatorySegment = haveEncounteredMandatorySegment;
             haveEncounteredMandatorySegment |= nextNameIsRequired;
             if (nextNameIsRequired && !haveHadMandatorySegment) {
-                if (!source.isGroup(names[i])) {
-                	firstMandatorySegmentName = names[i];
+                if (!source.isGroup(nextName)) {
+                	firstMandatorySegmentName = nextName;
                 }
             }
             
-//            // Force encoding
-//			if (reps.length == 0 && encodeEmptySegments) {
-//            	result.append(names[i]);
-//            	result.append(encodingChars.getFieldSeparator());
-//            	result.append(segDelim);
-//            	
-//                haveEncounteredContent = true;
-//                
-//                if (nextNameIsRequired) {
-//                	haveHadMandatorySegment = true;
-//                }
-//                
-//                if (!haveHadMandatorySegment && !haveEncounteredMandatorySegment) {
-//                	haveHadSegmentBeforeMandatorySegment = true;
-//                }
-//            	
-//            }
-
+            String nextTerserPath = currentTerserPath.length() > 0 ? currentTerserPath + "/" + nextName : nextName;
+            
             // Add all reps of the next segment/group
             for (int rep = 0; rep < reps.length; rep++) {
             	
                 if (reps[rep] instanceof Group) {
                     
-                	String encodedGroup = encode((Group) reps[rep], encodingChars, encodeEmptySegments);
+                	String encodedGroup = encode((Group) reps[rep], encodingChars, parserConfiguration, nextTerserPath);
 					result.append(encodedGroup);
 					
 					if (encodedGroup.length() > 0) {
@@ -681,8 +666,16 @@ public class PipeParser extends Parser {
 					}
 					
                 } else {
+
+                	// Check if we are configured to force the encoding of this segment
+                	boolean encodeEmptySegments = false;
+                	for (String next : parserConfiguration.getForcedEncode()) {
+                		if (next.startsWith(nextTerserPath)) {
+                			encodeEmptySegments = true;
+                		}
+                	}
                 	
-                	String segString = encode((Segment) reps[rep], encodingChars);
+                	String segString = encode((Segment) reps[rep], encodingChars, parserConfiguration, nextTerserPath);
                     if (segString.length() >= 4 || encodeEmptySegments) {
                         result.append(segString);
                         
@@ -728,6 +721,11 @@ public class PipeParser extends Parser {
     }
 
     public static String encode(Segment source, EncodingCharacters encodingChars) {
+    	return encode(source, encodingChars, null, null);
+    }
+
+
+    private static String encode(Segment source, EncodingCharacters encodingChars, ParserConfiguration parserConfig, String currentTerserPath) {
         StringBuilder result = new StringBuilder();
         result.append(source.getName());
         result.append(encodingChars.getFieldSeparator());
@@ -760,12 +758,44 @@ public class PipeParser extends Parser {
             result.append(encodingChars.getFieldSeparator());
         }
 
+        int forceUpToFieldNum = 0;
+        if (parserConfig != null && currentTerserPath != null) {
+        	for (String nextPath : parserConfig.getForcedEncode()) {
+        		if (nextPath.startsWith(currentTerserPath) && nextPath.length() > currentTerserPath.length()) {
+        			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length() + 1);
+        			if (endOfFieldDef == -1) {
+        				endOfFieldDef = nextPath.length();
+        			}
+        			String fieldNumString = nextPath.substring(currentTerserPath.length() + 1, endOfFieldDef);
+        			forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
+        		}
+        	}
+        }
+        
         // strip trailing delimiters ...
-        return stripExtraDelimiters(result.toString(), encodingChars.getFieldSeparator());
-    }
+        char fieldSeparator = encodingChars.getFieldSeparator();
+		String retVal = stripExtraDelimiters(result.toString(), fieldSeparator);
+		
+		while (forceUpToFieldNum > 0 && countInstancesOf(retVal, fieldSeparator) < forceUpToFieldNum) {
+			retVal = retVal + fieldSeparator;
+		}
+		
+		return retVal;
+	}
 
 
-    /**
+	private static int countInstancesOf(String theString, char theCharToSearchFor) {
+		int retVal = 0;
+		for (int i = 0; i < theString.length(); i++) {
+			if (theString.charAt(i) == theCharToSearchFor) {
+				retVal++;
+			}
+		}
+		return retVal;
+	}
+
+
+	/**
      * Removes leading whitespace from the given string. This method was created
      * to deal with frequent problems parsing messages that have been
      * hand-written in windows. The intuitive way to delimit segments is to hit

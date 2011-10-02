@@ -1059,10 +1059,12 @@ public class NewPipeParserTest extends TestCase {
 	public void testEncodeWithSetEncodeEmptySegments() throws HL7Exception, IOException {
 		
 		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
-		pOn.getParserConfiguration().setEncodeEmptySegments(true);
+		pOn.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC");
 
+		PipeParser pOnOrc4 = PipeParser.getInstanceWithNoValidation();
+		pOnOrc4.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-4");
+		
 		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
-		pOff.getParserConfiguration().setEncodeEmptySegments(false);
 		
 		ORU_R01 msg = new ORU_R01();
 		msg.initQuickstart("ORU", "R01", "T");
@@ -1078,6 +1080,11 @@ public class NewPipeParserTest extends TestCase {
 		encoded = pOn.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
 		           "ORC|\r";
+		Assert.assertEquals(expected, encoded);
+
+		encoded = pOnOrc4.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
+		           "ORC||||\r";
 		Assert.assertEquals(expected, encoded);
 		
 	}
