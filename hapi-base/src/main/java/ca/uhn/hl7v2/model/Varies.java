@@ -31,6 +31,7 @@ package ca.uhn.hl7v2.model;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -162,11 +163,28 @@ public class Varies implements Type {
      * <p>
      * Note that if no value is present in OBX-2, or an invalid value is present in
      * OBX-2, this method will throw an error. This behaviour can be corrected by using the 
-     * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP} 
+     * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP},
+     * or by using configuration in {@link ParserConfiguration} 
      * </p>  
      */
     public static void fixOBX5(Segment segment, ModelClassFactory factory) throws HL7Exception {
-        try {
+        fixOBX5(segment, factory, segment.getMessage().getParser().getParserConfiguration());
+    }
+
+    /** 
+     * <p>
+     * Sets the data type of field 5 in the given OBX segment to the value of OBX-2.  The argument 
+     * is a Segment as opposed to a particular OBX because it is meant to work with any version.
+     * </p>
+     * <p>
+     * Note that if no value is present in OBX-2, or an invalid value is present in
+     * OBX-2, this method will throw an error. This behaviour can be corrected by using the 
+     * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP} 
+     * or by using configuration in {@link ParserConfiguration} 
+     * </p>  
+     */
+	public static void fixOBX5(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration) throws HL7Exception {
+		try {
             //get unqualified class name
             Primitive obx2 = (Primitive) segment.getField(2, 0);
             Type[] reps = segment.getField(5);
@@ -176,7 +194,10 @@ public class Varies implements Type {
                 // If we don't have a value for OBX-2, a default
                 // can be supplied via a System property
                 if (obx2.getValue() == null) {
-	                String defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
+	                String defaultOBX2Type = parserConfiguration.getDefaultObx2Type();
+	                if (defaultOBX2Type == null) {
+	                	defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
+	                }
 					if (defaultOBX2Type != null) {
 	                    log.debug("setting default obx2 type to " + defaultOBX2Type);
 	                    obx2.setValue(defaultOBX2Type);
@@ -202,7 +223,10 @@ public class Varies implements Type {
 //                                                    "datatype");
                     if (c == null) {
                         
-                        String defaultOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
+                        String defaultOBX2Type = parserConfiguration.getInvalidObx2Type();
+                        if (defaultOBX2Type == null) {
+                        	defaultOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
+                        }
                         if (defaultOBX2Type != null) {
                             c = factory.getTypeClass(defaultOBX2Type, version);
                         }
@@ -264,7 +288,7 @@ public class Varies implements Type {
                 HL7Exception.APPLICATION_INTERNAL_ERROR,
                 e);
         }
-    }
+	}
 
     
     private static boolean escapeSubcompponentDelimInPrimitive() {
