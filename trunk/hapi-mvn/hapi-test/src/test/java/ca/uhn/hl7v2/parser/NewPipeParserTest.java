@@ -161,7 +161,8 @@ public class NewPipeParserTest extends TestCase {
 		 */
 
 		msgString = "MSH|^~\\&\r" // -
-				+ "ORC|\r" + "OBX||AD|||F1C1^F2C1\r";
+				+ "ORC|\r" //- 
+				+ "OBX||AD|||F1C1^F2C1\r";
 
 		msg = new ORU_R01();
 		msg.parse(msgString);
@@ -169,15 +170,29 @@ public class NewPipeParserTest extends TestCase {
 		encode = msg.encode();
 
 		String expected = "MSH|^~\\&\r" // -
-				+ "OBR|\r" + "OBX||AD|||F1C1^F2C1\r";
+				+ "OBR|\r" // - 
+				+ "OBX||AD|||F1C1^F2C1\r";
 		assertEquals(expected.trim(), encode.trim());
 
+		/*
+		 * Try it with encoding optional segments disabled
+		 */
+		
+		PipeParser parser2 = new PipeParser();
+		parser2.getParserConfiguration().setEncodeEmptyMandatoryFirstSegments(false);
+		encode = parser2.encode(msg);
+		expected = "MSH|^~\\&\r" // -
+				+ "OBX||AD|||F1C1^F2C1\r";
+		assertEquals(expected.trim(), encode.trim());
+		
+		
 		/*
 		 * Optional segment populated at the start of group
 		 */
 
 		msgString = "MSH|^~\\&\r" // -
-				+ "ORC|1\r" + "OBX||AD|||F1C1^F2C1\r";
+				+ "ORC|1\r" //-
+				+ "OBX||AD|||F1C1^F2C1\r";
 
 		msg = new ORU_R01();
 		msg.parse(msgString);

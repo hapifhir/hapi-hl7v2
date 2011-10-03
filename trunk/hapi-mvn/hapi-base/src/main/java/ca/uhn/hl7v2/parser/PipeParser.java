@@ -694,13 +694,7 @@ public class PipeParser extends Parser {
                 } else {
 
                 	// Check if we are configured to force the encoding of this segment
-                	boolean encodeEmptySegments = false;
-                	for (String next : parserConfiguration.getForcedEncode()) {
-                		if (next.startsWith(nextTerserPath)) {
-                			encodeEmptySegments = true;
-                		}
-                	}
-                	
+                	boolean encodeEmptySegments = parserConfiguration.determineForcedEncodeIncludesTerserPath(nextTerserPath);
                 	String segString = encode((Segment) reps[rep], encodingChars, parserConfiguration, nextTerserPath);
                     if (segString.length() >= 4 || encodeEmptySegments) {
                         result.append(segString);
@@ -729,7 +723,9 @@ public class PipeParser extends Parser {
                         
         }
         
-        if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment && haveEncounteredContent) {
+        if (firstMandatorySegmentName != null && !haveHadMandatorySegment && 
+        		!haveHadSegmentBeforeMandatorySegment && haveEncounteredContent && 
+        		parserConfiguration.isEncodeEmptyMandatorySegments()) {
         	return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
         } else {
         	return result.toString();
@@ -800,16 +796,7 @@ public class PipeParser extends Parser {
 
         int forceUpToFieldNum = 0;
         if (parserConfig != null && currentTerserPath != null) {
-        	for (String nextPath : parserConfig.getForcedEncode()) {
-        		if (nextPath.startsWith(currentTerserPath) && nextPath.length() > currentTerserPath.length()) {
-        			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length() + 1);
-        			if (endOfFieldDef == -1) {
-        				endOfFieldDef = nextPath.length();
-        			}
-        			String fieldNumString = nextPath.substring(currentTerserPath.length() + 1, endOfFieldDef);
-        			forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
-        		}
-        	}
+        	forceUpToFieldNum = parserConfig.determineForcedFieldNumForTerserPath(currentTerserPath);
         }
         
         // strip trailing delimiters ...
