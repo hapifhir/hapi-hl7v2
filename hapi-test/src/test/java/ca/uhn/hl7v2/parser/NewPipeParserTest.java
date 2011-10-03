@@ -6,6 +6,7 @@ import java.io.InputStream;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1145,6 +1146,38 @@ public class NewPipeParserTest extends TestCase {
 
 		encoded = pOnMSH19_2.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4|||||||^\r";
+		Assert.assertEquals(expected, encoded);
+
+		PipeParser pOnMSH999 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH999.getParserConfiguration().addForcedEncode("MSH-99");
+		encoded = pOnMSH999.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4" + StringUtils.leftPad("", 99 - 12, '|') + "\r";
+		System.out.println(encoded.replace("\r", "\r\n"));
+		Assert.assertEquals(expected, encoded);
+
+		pOnMSH999 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH999.getParserConfiguration().addForcedEncode("MSH-999");
+		encoded = pOnMSH999.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4" + StringUtils.leftPad("", 999 - 12, '|') + "\r";
+		System.out.println(encoded.replace("\r", "\r\n"));
+		Assert.assertEquals(expected, encoded);
+		
+		PipeParser pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH9_99.getParserConfiguration().addForcedEncode("MSH-9-9");
+		encoded = pOnMSH9_99.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01^^^^^^||T|2.4|||||||||^\r";
+		Assert.assertEquals(expected, encoded);
+
+		pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH9_99.getParserConfiguration().addForcedEncode("MSH-9-99");
+		encoded = pOnMSH9_99.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01^^^^^^" + StringUtils.leftPad("", 90, '^') + "||T|2.4|||||||||^\r";
+		Assert.assertEquals(expected, encoded);
+
+		pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
+		pOnMSH9_99.getParserConfiguration().addForcedEncode("MSH-9-999");
+		encoded = pOnMSH9_99.encode(msg);
+		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01^^^^^^" + StringUtils.leftPad("", 990, '^') + "||T|2.4|||||||||^\r";
 		Assert.assertEquals(expected, encoded);
 		
 	}
