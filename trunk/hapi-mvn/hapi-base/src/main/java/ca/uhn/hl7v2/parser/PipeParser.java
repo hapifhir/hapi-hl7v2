@@ -524,11 +524,12 @@ public class PipeParser extends Parser {
         if (parserConfig != null && currentTerserPath != null) {
         	for (String nextPath : parserConfig.getForcedEncode()) {
         		if (nextPath.startsWith(currentTerserPath) && nextPath.length() > currentTerserPath.length()) {
-        			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length() + 1);
+        			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length());
         			if (endOfFieldDef == -1) {
-        				endOfFieldDef = nextPath.length();
+        				forceUpToFieldNum = 0;
+        				break;
         			}
-        			String fieldNumString = nextPath.substring(currentTerserPath.length() + 1, endOfFieldDef);
+        			String fieldNumString = nextPath.substring(endOfFieldDef + 1, nextPath.length());
         			forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
         		}
         	}
