@@ -73,11 +73,11 @@ public class ParserConfiguration {
 		lastSlashIndex = Math.max(lastSlashIndex, 0);
 
 		if (lastSlashIndex == 0) {
-			if (!theForcedEncode.matches("[A-Z]{3}(-[0-9]+){0,2}$")) {
+			if (!theForcedEncode.matches("[A-Z0-9]{3}(-[0-9]+){0,2}$")) {
 				throw new IllegalArgumentException("Definition must end with a segment name or field lookup, e.g. MSH or MSH-2");
 			}
 		} else {
-			if (lastSlashIndex == theForcedEncode.length() || !theForcedEncode.substring(lastSlashIndex + 1).matches("[A-Z]{3}(-[0-9]+){0,2}$")) {
+			if (lastSlashIndex == theForcedEncode.length() || !theForcedEncode.substring(lastSlashIndex + 1).matches("[A-Z0-9]{3}(-[0-9]+){0,2}$")) {
 				throw new IllegalArgumentException("Definition must end with a segment name or field lookup, e.g. MSH or MSH-2");
 			}
 		}
