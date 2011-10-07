@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -35,6 +35,7 @@ import java.awt.*;
  * A dialog box for opening a new Connection (used with TestPanel). 
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public class ConnectionDialog extends JDialog {
 
     private JTextField port;
@@ -113,7 +114,7 @@ public class ConnectionDialog extends JDialog {
         });
         
         pack();
-        show();
+        setVisible(true);
     }
     
     private void connect() {
@@ -138,7 +139,7 @@ public class ConnectionDialog extends JDialog {
 
     public static void main(String[] args) {             
         try {
-            ConnectionDialog d = new ConnectionDialog(new TestPanel());
+            new ConnectionDialog(new TestPanel());
         } catch (Exception e) {
             e.printStackTrace();
         }

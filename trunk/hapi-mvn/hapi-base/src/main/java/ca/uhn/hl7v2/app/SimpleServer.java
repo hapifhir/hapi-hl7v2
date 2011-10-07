@@ -15,7 +15,7 @@
  * Contributor(s): Kyle Buza
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -80,7 +80,7 @@ public class SimpleServer extends HL7Service {
             ServerSocket ss = new ServerSocket(port);
             ss.setSoTimeout(SO_TIMEOUT);
             log.info("SimpleServer running on port " + ss.getLocalPort());
-            while (keepRunning()) {
+            while (isRunning()) {
                 try {
                     Socket newSocket = ss.accept();
                     log.info("Accepted connection from " + newSocket.getInetAddress().getHostAddress());

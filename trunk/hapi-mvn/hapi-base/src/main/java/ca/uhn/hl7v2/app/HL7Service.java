@@ -27,15 +27,19 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.app;
 
-import java.io.*;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
-import java.util.Vector;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.*;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.parser.Parser;
 
 /**
  * <p>An HL7 service.  Accepts incoming TCP/IP connections and creates Connection 
@@ -48,17 +52,17 @@ import ca.uhn.hl7v2.parser.*;
  */
 public abstract class HL7Service implements Runnable {
 
-    private Vector<Connection> connections;
+    private List<Connection> connections;
     private boolean keepRunning;
     protected Parser parser;
     protected LowerLayerProtocol llp;
     private MessageTypeRouter router;
-    private ArrayList listeners;
+    private List<ConnectionListener> listeners;
 
     /** Creates a new instance of Server */
     public HL7Service(Parser parser, LowerLayerProtocol llp) {
-        connections = new Vector<Connection>();
-        listeners = new ArrayList();
+        connections = new ArrayList<Connection>();
+        listeners = new ArrayList<ConnectionListener>();
         this.parser = parser;
         this.llp = llp;
         this.router = new MessageTypeRouter();
@@ -159,7 +163,7 @@ public abstract class HL7Service implements Runnable {
     }
 
     /** Returns all currently active connections. */
-    public synchronized Vector<Connection> getRemoteConnections() {
+    public synchronized List<Connection> getRemoteConnections() {
         return connections;
     }
 
@@ -236,20 +240,18 @@ public abstract class HL7Service implements Runnable {
                             + "' is not of the form: message_type [tab] trigger_event [tab] application_class.",
                         HL7Exception.APPLICATION_INTERNAL_ERROR);
                 }
-
-                Class appClass = Class.forName(className); //may throw ClassNotFoundException 
-                Object appObject = appClass.newInstance();
-                Application app = null;
+                
                 try {
-                    app = (Application) appObject;
-                }
-                catch (ClassCastException cce) {
+                    @SuppressWarnings("unchecked")
+					Class<? extends Application> appClass = (Class<? extends Application>) Class.forName(className); //may throw ClassNotFoundException 
+                    Application app = appClass.newInstance();
+                    registerApplication(type, event, app);
+                } catch (ClassCastException cce) {
                     throw new HL7Exception(
-                        "The specified class, " + appClass.getName() + ", doesn't implement Application.",
+                        "The specified class, " + className + ", doesn't implement Application.",
                         HL7Exception.APPLICATION_INTERNAL_ERROR);
                 }
 
-                this.registerApplication(type, event, app);
             }
         }
     }
@@ -279,9 +281,9 @@ public abstract class HL7Service implements Runnable {
                 }
 
                 synchronized (service) {
-                    Iterator it = service.getRemoteConnections().iterator();
+                    Iterator<Connection> it = service.getRemoteConnections().iterator();
                     while (it.hasNext()) {
-                        Connection conn = (Connection) it.next();
+                        Connection conn = it.next();
                         if (!conn.isOpen()) {
                             it.remove();
                             service.notifyListeners(conn);

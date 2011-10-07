@@ -176,7 +176,7 @@ public class DefaultXMLParser extends XMLParser {
         String messageName = groupObject.getMessage().getName();
         
         NodeList allChildNodes = groupElement.getChildNodes();
-        ArrayList unparsedElementList = new ArrayList();
+        List<String> unparsedElementList = new ArrayList<String>();
         for (int i = 0; i < allChildNodes.getLength(); i++) {
             Node node = allChildNodes.item(i);
             String name = node.getNodeName();
@@ -210,17 +210,17 @@ public class DefaultXMLParser extends XMLParser {
     private void parseReps(Element groupElement, Group groupObject, 
             String messageName, String childName, String childIndexName) throws HL7Exception {
         
-        List reps = getChildElementsByTagName(groupElement, makeGroupElementName(messageName, childName));
+        List<Element> reps = getChildElementsByTagName(groupElement, makeGroupElementName(messageName, childName));
         log.debug("# of elements matching " 
             + makeGroupElementName(messageName, childName) + ": " + reps.size());
 
 		if (groupObject.isRepeating(childIndexName)) {
 			for (int i = 0; i < reps.size(); i++) {
-				parseRep((Element) reps.get(i), groupObject.get(childIndexName, i));
+				parseRep(reps.get(i), groupObject.get(childIndexName, i));
 			}        			        
 		} else {
 			if (reps.size() > 0) {
-				parseRep((Element) reps.get(0), groupObject.get(childIndexName, 0));				
+				parseRep(reps.get(0), groupObject.get(childIndexName, 0));				
 			}
 
 //			if (reps.size() > 1) {			
@@ -236,13 +236,13 @@ public class DefaultXMLParser extends XMLParser {
 					for (i = 1; i < reps.size(); i++) {
 						newIndexName = childName+(i+1);
 						Structure st = groupObject.get(newIndexName);
-						parseRep((Element) reps.get(i), st);
+						parseRep(reps.get(i), st);
 					}
 				} catch(Throwable t) {
 					log.info("Issue Parsing: " + t);
 					newIndexName = groupObject.addNonstandardSegment(childName);
 					for (int j = i; j < reps.size(); j++) {
-						parseRep((Element) reps.get(j), groupObject.get(newIndexName, j-i));
+						parseRep(reps.get(j), groupObject.get(newIndexName, j-i));
 					}
 				}
 			}
@@ -261,14 +261,14 @@ public class DefaultXMLParser extends XMLParser {
     }
     
     //includes direct children only
-    private List getChildElementsByTagName(Element theElement, String theName) {
-    	List result = new ArrayList(10);
+    private List<Element> getChildElementsByTagName(Element theElement, String theName) {
+    	List<Element> result = new ArrayList<Element>(10);
     	NodeList children = theElement.getChildNodes();
     	
     	for (int i = 0; i < children.getLength(); i++) {
     		Node child = children.item(i);
     		if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(theName)) {
-    			result.add(child);
+    			result.add((Element)child);
     		}
     	}
     	

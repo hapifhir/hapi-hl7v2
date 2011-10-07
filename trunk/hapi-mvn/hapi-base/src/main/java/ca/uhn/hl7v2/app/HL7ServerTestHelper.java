@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,9 +27,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Helper class used to send messages from a flat file to 
@@ -46,10 +44,7 @@ public class HL7ServerTestHelper {
     private static final Log ourLog = LogFactory.getLog(HL7ServerTestHelper.class);
     
     private static final String HL7_START_OF_MESSAGE = "\u000b";
-    private static final String HL7_SEGMENT_SEPARATOR = "\r";
     private static final String HL7_END_OF_MESSGAE = "\u001c";
-    
-    private int receivedAckCount;
 
     private String host = null;
     
@@ -95,8 +90,7 @@ public class HL7ServerTestHelper {
     
     public int process( InputStream theMsgInputStream ) throws FileNotFoundException, IOException
     {
-        Parser hapiParser = new PipeParser(); 
-        
+     
         BufferedReader in =
             new BufferedReader( 
                 new CommentFilterReader( new InputStreamReader( theMsgInputStream ) )
@@ -191,7 +185,7 @@ public class HL7ServerTestHelper {
 	 * @return the HL7 messages contained in theSource
 	 */
 	public static String[] getHL7Messages(String theSource) {
-		ArrayList messages = new ArrayList(20); 
+		List<String> messages = new ArrayList<String>(20); 
 		Pattern startPattern = Pattern.compile("^MSH", Pattern.MULTILINE);
 		Matcher startMatcher = startPattern.matcher(theSource);
 
@@ -209,7 +203,7 @@ public class HL7ServerTestHelper {
 			}
 			messages.add(msg.toString());
 		}
-		return (String[]) messages.toArray(new String[0]);
+		return messages.toArray(new String[0]);
 	}
     
 	/** 

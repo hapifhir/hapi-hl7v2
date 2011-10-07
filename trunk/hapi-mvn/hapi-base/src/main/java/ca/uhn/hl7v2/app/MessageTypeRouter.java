@@ -2,10 +2,9 @@ package ca.uhn.hl7v2.app;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
@@ -19,11 +18,11 @@ import ca.uhn.log.HapiLogFactory;
 public class MessageTypeRouter implements Application, ApplicationExceptionHandler {
     
     private static final HapiLog log = HapiLogFactory.getHapiLog(MessageTypeRouter.class);
-    private HashMap apps;
+    private Map<String, Application> apps;
     
     /** Creates a new instance of MessageTypeRouter */
     public MessageTypeRouter() {
-        apps = new HashMap(20);
+        apps = new HashMap<String, Application>(20);
     }
     
     /**
@@ -63,9 +62,7 @@ public class MessageTypeRouter implements Application, ApplicationExceptionHandl
      */
 	public String processException(String incomingMessage, String outgoingMessage, Exception e) throws HL7Exception {
 		String outgoingMessageResult = outgoingMessage;
-		Set<Map.Entry<Object, Application>> entrySet = apps.entrySet();
-		for (Map.Entry<Object, Application> entry : entrySet) {
-			Object app = entry.getValue();
+		for (Application app : apps.values()) {
 			if (app instanceof ApplicationExceptionHandler) {
 				ApplicationExceptionHandler aeh = (ApplicationExceptionHandler) app;
 				outgoingMessageResult = aeh.processException(incomingMessage, outgoingMessageResult, e);
@@ -115,11 +112,11 @@ public class MessageTypeRouter implements Application, ApplicationExceptionHandl
      */
     private synchronized Application getMatchingApplication(String messageType, String triggerEvent) {
         Application matchingApp = null;
-        Object o = this.apps.get(getKey(messageType, triggerEvent));
+        Application o = this.apps.get(getKey(messageType, triggerEvent));
         if (o == null) o = this.apps.get(getKey(messageType, "*"));
         if (o == null) o = this.apps.get(getKey("*", triggerEvent));
         if (o == null) o = this.apps.get(getKey("*", "*"));        
-        if (o != null) matchingApp = (Application)o;
+        if (o != null) matchingApp = o;
         return matchingApp;
     }
     

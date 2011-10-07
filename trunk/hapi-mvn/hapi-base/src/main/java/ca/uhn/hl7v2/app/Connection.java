@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -31,6 +31,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -49,12 +52,12 @@ public class Connection {
 
     private Initiator initiator;
     private Responder responder;
-    private ArrayList sockets;
+    private List<Socket> sockets;
     private HL7Writer ackWriter;
     private HL7Writer sendWriter;
     private Parser parser;
-    private HashMap receipts;
-    private ArrayList receivers;
+    private Map<String, MessageReceipt> receipts;
+    private List<Receiver> receivers;
     private boolean open = true;
 
     /** 
@@ -95,9 +98,9 @@ public class Connection {
     /** Common initialization tasks */
     private void init(Parser parser) throws LLPException {
         this.parser = parser;
-        sockets = new ArrayList();
-        receipts = new HashMap();
-        receivers = new ArrayList();
+        sockets = new ArrayList<Socket>();
+        receipts = new HashMap<String, MessageReceipt>();
+        receivers = new ArrayList<Receiver>();
         responder = new Responder(parser);
     }
 
@@ -108,7 +111,7 @@ public class Connection {
      * checked).  
      */
     public InetAddress getRemoteAddress() {
-        Socket s = (Socket) sockets.get(0);
+        Socket s = sockets.get(0);
         return s.getInetAddress();
     }
 
@@ -140,11 +143,11 @@ public class Connection {
         StringBuffer buf = new StringBuffer();
         buf.append(getRemoteAddress().getHostName());
         buf.append(":");
-        for (int i = 0; i < sockets.size(); i++) {
-            buf.append(((Socket) sockets.get(i)).getPort());
-            if (i + 1 < sockets.size())
-                buf.append(",");
-        }
+        for (Iterator<Socket> iter = sockets.iterator(); iter.hasNext();) {
+			Socket socket = iter.next();
+			buf.append(socket.getPort());
+			if (iter.hasNext()) buf.append(",");
+		}
         return buf.toString();
     }
 
@@ -170,32 +173,24 @@ public class Connection {
         //String ID = getParser().getAckID(message);
         MessageReceipt mr = null;
         if (ackID != null)
-            mr = (MessageReceipt) receipts.remove(ackID);
+            mr = receipts.remove(ackID);
         return mr;
     }
 
     /** Stops running Receiver threads and closes open sockets */
     public void close() {
-        for (int i = 0; i < receivers.size(); i++) {
-            ((Receiver) receivers.get(i)).stop();
-        }
-        for (int i = 0; i < sockets.size(); i++) {
-            try {
-                ((Socket) sockets.get(i)).close();
-            }
-            catch (IOException e) {
-                log.error("Error while stopping threads and closing sockets",e);
-            }
-        }
-        open = false;
-    }
+    	for (Receiver receiver : receivers) {
+			receiver.stop();
+		}
+    	for (Socket socket : sockets) {
+    		try {
+    			socket.close();				
+			} catch (Exception e) {
+				log.error("Error while stopping threads and closing sockets",e);
+			}
 
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode() {
-        int hashCode = super.hashCode();
-        return hashCode;
+		}
+        open = false;
     }
 
     /** Returns false if the Connection has been closed. */

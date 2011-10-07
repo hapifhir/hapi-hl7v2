@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.llp.HL7Reader;
-import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
@@ -61,8 +59,6 @@ public class Initiator {
     private static final HapiLog log = HapiLogFactory.getHapiLog(Initiator.class); 
 
     //private Parser parser;
-    private HL7Reader in;
-    private HL7Writer out;
     private Connection conn;
     //private boolean keepListening;    
     private int timeoutMillis = 10000;
