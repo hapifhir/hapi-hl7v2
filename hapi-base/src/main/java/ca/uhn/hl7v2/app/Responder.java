@@ -38,11 +38,10 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.llp.HL7Reader;
-import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -52,7 +51,6 @@ import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-//import ca.uhn.hl7v2.model.v24.datatype.ValidNM;
 
 /**
  * <p>Performs the responding role in a message exchange (i.e receiver of the first message,
@@ -68,9 +66,7 @@ public class Responder {
     
     //private LowerLayerProtocol llp;
     private Parser parser;
-    private ArrayList apps;
-    private HL7Reader in;
-    private HL7Writer out;
+    private List<Application> apps;
     private BufferedWriter checkWriter = null;
     
     /**
@@ -106,7 +102,7 @@ public class Responder {
      */
     private void init(Parser parser, boolean checkParse) {
         this.parser = parser;
-        apps = new ArrayList(10);
+        apps = new ArrayList<Application>(10);
         try {
             if (checkParse)
                 checkWriter = new BufferedWriter(
@@ -213,14 +209,14 @@ public class Responder {
         if (!originalMessageText.equals(newMessageText)) {
             //check each segment
             StringTokenizer tok = new StringTokenizer(originalMessageText, "\r");
-            ArrayList one = new ArrayList();
+            List<String> one = new ArrayList<String>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)
                     one.add(seg);
             }
             tok = new StringTokenizer(newMessageText, "\r");
-            ArrayList two = new ArrayList();
+            List<String> two = new ArrayList<String>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)
@@ -235,8 +231,8 @@ public class Responder {
             else {
                 //check each segment
                 for (int i = 0; i < one.size(); i++) {
-                    String origSeg = (String) one.get(i);
-                    String newSeg = (String) two.get(i);
+                    String origSeg = one.get(i);
+                    String newSeg = two.get(i);
                     if (!origSeg.equals(newSeg)) {
                         checkWriter.write("Warning: inbound and parsed message segment differs: \r\n");
                         checkWriter.write("Original: " + origSeg + "\r\n");

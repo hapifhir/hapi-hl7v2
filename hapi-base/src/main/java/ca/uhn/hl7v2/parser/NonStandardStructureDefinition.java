@@ -30,8 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import ca.uhn.hl7v2.model.Group;
-
 /**
  * Structure definition which defines a non-standard structure within a parent
  * structure.

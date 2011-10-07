@@ -109,7 +109,8 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    public Class<? extends Message> getMessageClass(String name, String version, boolean isExplicit) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Message> getMessageClass(String name, String version, boolean isExplicit) throws HL7Exception {
         if (!isExplicit) {
             name = Parser.getMessageStructureForEvent(name, version);
         }
@@ -123,7 +124,8 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    public Class<? extends Group> getGroupClass(String name, String version) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Group> getGroupClass(String name, String version) throws HL7Exception {
         Class<? extends Group> retVal = (Class<? extends Group>) findClass("group", name, version);
         if (retVal == null) {
             retVal = defaultFactory.getGroupClass(name, version);
@@ -134,7 +136,8 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    public Class<? extends Segment> getSegmentClass(String name, String version) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Segment> getSegmentClass(String name, String version) throws HL7Exception {
         Class<? extends Segment> retVal = (Class<? extends Segment>) findClass("segment", name, version);
         if (retVal == null) {
             retVal = defaultFactory.getSegmentClass(name, version);
@@ -145,7 +148,8 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    public Class<? extends Type> getTypeClass(String name, String version) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Type> getTypeClass(String name, String version) throws HL7Exception {
         Class<? extends Type> retVal = (Class<? extends Type>) findClass("datatype", name, version);
         if (retVal == null) {
             retVal = defaultFactory.getTypeClass(name, version);

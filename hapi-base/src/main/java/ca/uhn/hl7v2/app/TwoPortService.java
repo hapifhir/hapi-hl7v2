@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -32,7 +32,9 @@ import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -51,16 +53,16 @@ public class TwoPortService extends HL7Service {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(TwoPortService.class);
 
-    private Vector inSockets; //Vector because it's synchronized 
-    private Vector outSockets;
+    private List<Socket> inSockets; //Vector because it's synchronized 
+    private List<Socket> outSockets;
     private int inboundPort;
     private int outboundPort;
 
     /** Creates a new instance of TwoPortService */
     public TwoPortService(Parser parser, LowerLayerProtocol llp, int inboundPort, int outboundPort) {
         super(parser, llp);
-        inSockets = new Vector(20);
-        outSockets = new Vector(20);
+        inSockets = Collections.synchronizedList(new ArrayList<Socket>(20));
+        outSockets = Collections.synchronizedList(new ArrayList<Socket>(20));
         this.inboundPort = inboundPort;
         this.outboundPort = outboundPort;
     }
@@ -79,7 +81,7 @@ public class TwoPortService extends HL7Service {
             outThread.start();
             log.info("TwoPortService running on ports " + inboundPort + " and " + outboundPort);
 
-            while (keepRunning()) {
+            while (isRunning()) {
                 Connection conn = accept(3000);
                 if (conn != null) {
                     newConnection(conn);
@@ -111,10 +113,10 @@ public class TwoPortService extends HL7Service {
         while (conn == null && System.currentTimeMillis() < startTime + timeoutMillis) {
             int i = 0;
             while (conn == null && i < inSockets.size()) {
-                Socket in = (Socket) inSockets.get(i);
+                Socket in = inSockets.get(i);
                 int j = 0;
                 while (conn == null && j < outSockets.size()) {
-                    Socket out = (Socket) outSockets.get(j);
+                    Socket out = outSockets.get(j);
                     if (out.getInetAddress().getHostAddress().equals(in.getInetAddress().getHostAddress())) {
                         conn = new Connection(parser, llp, in, out);
                         inSockets.remove(i);
@@ -141,10 +143,10 @@ public class TwoPortService extends HL7Service {
     private class AcceptThread implements Runnable {
 
         private ServerSocket ss;
-        private Vector sockets;
+        private List<Socket> sockets;
         private boolean keepRunning = true;
 
-        public AcceptThread(int port, Vector sockets) throws IOException, SocketException {
+        public AcceptThread(int port, List<Socket> sockets) throws IOException, SocketException {
             ss = new ServerSocket(port);
             ss.setSoTimeout(3000);
             this.sockets = sockets;

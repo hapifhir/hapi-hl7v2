@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -304,7 +305,7 @@ public abstract class XMLParser extends Parser {
      *      for the given Segment, or if there is an error while setting individual field values.
      */
     public void parse(Segment segmentObject, Element segmentElement) throws HL7Exception {
-        HashSet done = new HashSet();
+        Set<String> done = new HashSet<String>();
         
 //        for (int i = 1; i <= segmentObject.numFields(); i++) {
 //            String elementName = makeElementName(segmentObject, i);
@@ -867,7 +868,7 @@ public abstract class XMLParser extends Parser {
                         ser.serialize(doc);
                         System.out.println("Segment " + reps[j].getClass().getName() + ": \r\n" + out.toString());
 
-                        Class[] segmentConstructTypes = { Message.class };
+                        Class<?>[] segmentConstructTypes = { Message.class };
                         Object[] segmentConstructArgs = { null };
                         Segment s =
                             (Segment) reps[j].getClass().getConstructor(segmentConstructTypes).newInstance(

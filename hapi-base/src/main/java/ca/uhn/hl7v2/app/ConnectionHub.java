@@ -83,7 +83,7 @@ public class ConnectionHub {
         connectionMutexes = Collections.synchronizedMap(new LinkedHashMap<String, String>(5, 0.75f, true) {
 
             private static final long serialVersionUID = 1L;
-            final int maxSize = new Integer(System.getProperty(MAX_CONCURRENT_TARGETS, "1000"));
+            final int maxSize = Integer.parseInt(System.getProperty(MAX_CONCURRENT_TARGETS, "1000"));
 
             @Override
             protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
@@ -158,7 +158,7 @@ public class ConnectionHub {
     }
     
     /** Returns an existing connection if one exists, null otherwise */    
-    private Connection getExisting(String host, int port, Class parserClass, Class llpClass) {
+    private Connection getExisting(String host, int port, Class<? extends Parser> parserClass, Class<? extends LowerLayerProtocol> llpClass) {
         Connection existing = null;
         Object o = connections.get(makeHashKey(host, port, parserClass, llpClass));
         if (o != null) existing = (Connection) o;
@@ -203,14 +203,14 @@ public class ConnectionHub {
         c.close();
         
         //remove from "connections"  
-        Iterator keys = connections.keySet().iterator();
+        Iterator<String> keys = connections.keySet().iterator();
         boolean removed = false;
         while (keys.hasNext() && !removed) {
-            Object key = keys.next();
-            Object val = connections.get(key);
+            String key = keys.next();
+            Connection val = connections.get(key);
             if (val.hashCode() == c.hashCode()) { 
                 connections.remove(key);
-                numRefs.remove(new Integer(c.hashCode()));
+                numRefs.remove(c.hashCode());
                 removed = true;
             }
         }
@@ -236,14 +236,13 @@ public class ConnectionHub {
     
     /** Updates the number of references to i - used by incrementRefs and decrementRefs */
     private synchronized int updateRefs(Connection c, int change) {
-        Integer hashCode = new Integer(c.hashCode());
-        Object o = numRefs.get(hashCode);
+        Integer o = numRefs.get(c.hashCode());
         int existingRefs = 0;
         if (o != null) {
-            existingRefs = ((Integer)o).intValue();            
+            existingRefs = o.intValue();            
         }
         Integer newRefs = new Integer(existingRefs + change);
-        numRefs.put(hashCode, newRefs);
+        numRefs.put(c.hashCode(), newRefs);
         return newRefs.intValue();
     }
 
@@ -252,7 +251,7 @@ public class ConnectionHub {
      * port number, and the class names of a Parser and LowerLayerProtocol.  In other words, 
      * allows us to store and retrieve remote connections using a hash map. 
      */
-    private static String makeHashKey(String IP, int port, Class parserClass, Class llpClass) {
+    private static String makeHashKey(String IP, int port, Class<? extends Parser> parserClass, Class<? extends LowerLayerProtocol> llpClass) {
         StringBuffer key = new StringBuffer(); 
         key.append(IP);
         key.append(":");

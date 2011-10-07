@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -40,8 +40,6 @@ import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * An Application that does nothing with the message and returns an Application 
@@ -50,8 +48,6 @@ import ca.uhn.log.HapiLogFactory;
  * @author  Bryan Tripp
  */
 public class DefaultApplication implements Application {
-
-    private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultApplication.class);
 
     /** Creates a new instance of DefaultApplication */
     public DefaultApplication() {
@@ -68,15 +64,15 @@ public class DefaultApplication implements Application {
      * Creates and returns an acknowledgement -- the details are determined by fillDetails().
      */
     public Message processMessage(Message in) throws ApplicationException {
-        Message out = null;
         try {
             //get default ACK
-            out = makeACK((Segment) in.get("MSH"));
+        	Message out = makeACK((Segment) in.get("MSH"));
             fillDetails(out);
+            return out;
         } catch (Exception e) {
             throw new ApplicationException("Couldn't create response message: " + e.getMessage());
         }        
-        return out;
+
     } 
     
     /**
@@ -143,8 +139,9 @@ public class DefaultApplication implements Application {
 
         Message out = null;
         try {
-            Class ackClass = Class.forName(ackClassName);
-            out = (Message) ackClass.newInstance();
+            @SuppressWarnings("unchecked")
+			Class<? extends Message> ackClass = (Class<? extends Message>) Class.forName(ackClassName);
+            out = ackClass.newInstance();
         }
         catch (Exception e) {
             throw new HL7Exception("Can't instantiate ACK of class " + ackClassName + ": " + e.getClass().getName());
@@ -158,7 +155,7 @@ public class DefaultApplication implements Application {
         terser.set("/MSH-9", "ACK");
         terser.set("/MSH-12", version);
         terser.set("/MSA-1", "AA");
-        terser.set("/MSA-2", terser.get(inboundHeader, 10, 0, 1, 1));
+        terser.set("/MSA-2", Terser.get(inboundHeader, 10, 0, 1, 1));
 
         return out;
     }

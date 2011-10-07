@@ -87,7 +87,8 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      *      an alternate structure corresponding to that message type and event.   
      * @return corresponding message subclass if found; GenericMessage otherwise
      */
-    public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
         Class<? extends Message> mc = null;
         if (!isExplicit) {
             theName = Parser.getMessageStructureForEvent(theName, theVersion);
@@ -101,21 +102,24 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     /**
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getGroupClass(java.lang.String, java.lang.String)
      */
-    public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
         return (Class<? extends Group>) findClass(theName, theVersion, "group");
     }
 
     /** 
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getSegmentClass(java.lang.String, java.lang.String)
      */
-    public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
         return (Class<? extends Segment>) findClass(theName, theVersion, "segment");
     }
 
     /** 
      * @see ca.uhn.hl7v2.parser.ModelClassFactory#getTypeClass(java.lang.String, java.lang.String)
      */
-    public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
         return (Class<? extends Type>) findClass(theName, theVersion, "datatype");
     }
     
@@ -129,6 +133,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      * @param packageName The package name to use. Note that if the message type can't be found in this package, HAPI will return the standard type returned by {@link #getMessageClass(String, String, boolean)}
      * @since 1.3 
      */
+	@SuppressWarnings("unchecked")
 	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception { 
         Class<? extends Message> mc = null;
 	    

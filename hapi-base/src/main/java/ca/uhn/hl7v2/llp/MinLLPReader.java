@@ -202,15 +202,6 @@ public class MinLLPReader implements HL7Reader
         myReader.close();
     }
     
-    private static OutputStreamWriter getWriter(OutputStream theStream) throws IOException {
-        String charset = System.getProperty(MinLLPWriter.CHARSET_KEY, "US-ASCII");
-        
-        if (charset.equals("default")) {
-            return new OutputStreamWriter(theStream);
-        } else {
-            return new OutputStreamWriter(theStream, charset);
-        }
-    }
         
 }
 
