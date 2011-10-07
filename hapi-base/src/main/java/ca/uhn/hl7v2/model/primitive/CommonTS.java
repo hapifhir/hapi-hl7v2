@@ -393,7 +393,7 @@ public class CommonTS {
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
         setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
         
-        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET)*100) / (1000 * 60 * 60);
+        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60)) * 100;
         setOffset(zoneOffset);
     }
 
