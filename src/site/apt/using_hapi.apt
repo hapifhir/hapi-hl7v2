@@ -15,9 +15,9 @@ Adding HAPI to your application
 * HAPI Libraries
 
 *-----------------------------+----------------------------------------------------------------------------------+ 
-| hapi-base-0.6.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
+| hapi-base-1.2.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
 *-----------------------------+----------------------------------------------------------------------------------+
-| hapi-structures-vXX-0.6.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
+| hapi-structures-vXX-1.2.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
 *-----------------------------+----------------------------------------------------------------------------------+
 
 * HAPI Dependencies
@@ -52,19 +52,19 @@ Adding HAPI to your application
 ---
 
   And then adding the following to your dependencies section (add the structures versions you need).
-  Note that the example below assumes you are using HAPI release 0.6. Adjust the version accordingly
+  Note that the example below assumes you are using HAPI release 1.2. Adjust the version accordingly
   if you are using a different release.
   
 ---
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>       
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <!-- 
              Add hapi-structures-v22, v23, etc. depending on which versions 
