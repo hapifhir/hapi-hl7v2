@@ -20,7 +20,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -49,7 +49,10 @@ import java.io.*;
 
 public class MinLLPWriter implements HL7Writer
 {
-    public static final String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
+	/**
+	 * @see MinLLPReader#CHARSET_KEY
+	 */
+    public static final String CHARSET_KEY = MinLLPReader.CHARSET_KEY;
     
     BufferedWriter myWriter; //reads from the input stream given in the
                              //constructor
