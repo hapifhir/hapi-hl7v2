@@ -573,7 +573,7 @@ public class CommonTM {
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
         setHourMinSecondPrecision(hr, min, sec);
         
-        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET)*100) / (1000 * 60 * 60);
+        int zoneOffset = ((theCalendar.get(Calendar.ZONE_OFFSET)) / (1000 * 60 * 60)) * 100;
         setOffset(zoneOffset);
     }
    
