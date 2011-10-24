@@ -52,13 +52,36 @@ public interface Type extends Serializable {
     public Message getMessage();
 
     /**
-     * Parses the string into this message using the parser returned by {@link #getParser() }
+     * <p>
+     * Parses the string into this type and replaces the current contents with
+     * the parsed value. This method accepts HL7 encoded text and treats its
+     * input as such.
+     * </p>
+     * <p>
+     * Note that this method is subtly different from calling {@link Primitive#setValue(String)}, but
+     * can be quite powerful. For example, using the argument of "milk&cookies" on an ST datatype:
+     * <ul>
+     * <li>
+     * If you are using {@link Primitive#setValue(String)}, the ampersand is treated as an actual ampersand 
+     * in the text, and the field will be treated as a single field which is encoded as "milk\T\cookies" (\T\ is the 
+     * escape sequence for the subcomponent delimiter).
+     * </li>
+     * <li>
+     * If you are using parse(String), the ampersand is treated as a subcomponent delimiter, meaning that
+     * the value is set to "milk", and a second component is added with the value of "cookies".
+     * </li>
+     * </ul>
+     * </p>  
+     * <p>
+     * This method makes use of the parser which is stored within the enclosing {@link #getMessage() Message}.
+     * At this time, only PipeParsers are supported. 
+     * </p>
      */
     public void parse(String string) throws HL7Exception;
 
 
     /**
-     * Encodes this message using the parser returned by {@link #getParser() }
+     * Encodes this type using HL7 encoding.
      */
     public String encode() throws HL7Exception;
 
