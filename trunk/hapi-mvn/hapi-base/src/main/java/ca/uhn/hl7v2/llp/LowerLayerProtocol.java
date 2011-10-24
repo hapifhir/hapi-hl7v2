@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -81,16 +81,22 @@ public abstract class LowerLayerProtocol {
     public abstract HL7Writer getWriter(OutputStream out) throws LLPException;
     
     /**
+     * <p>
      * Logs the fact that a character has been received, if configured to do so.  This is a 
      * debuging feature.  This is enabled by setting the system property 
      * ca.uhn.hl7v2.llp.logBytesRead=TRUE (before LowerLayerProtocol is instantiated).  
      * A message is written to standard out for each character.  THIS IS VERY SLOW and should
      * normally be turned off. 
+     * </p><p>
+     * Note that as of HAPI 1.3, this will be logged using commons-logging at
+     * a level of "info" instead of being printed to System.out
+     * </p>
      */
     public static void logCharacterReceived(int c) {
         if (logChars) {
-            System.out.println("Char received: " + c + " (" + (char) c + ")");
+            log.info("Char received: " + c + " (" + (char) c + ")");
         }
     }
     
 }
+

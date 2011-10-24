@@ -49,21 +49,42 @@ import ca.uhn.log.HapiLogFactory;
 public class MinLLPReader implements HL7Reader
 {
     
-    
+    /**
+     *<p>
+     * System property: If a value is set for this property, the value
+     * is interpreted as a character set, and this characterset is 
+     * used. A possible example is "UTF-8" if you are receiving messages
+     * from a system that transmits in UTF-8.
+     * </p>
+     * <p>
+     * If the system property is set to a value of "default" (in other words, a
+     * string containing only the word default), then the platform default
+     * is used.
+     * </p>
+     * <p>
+     * If the system property is not set, US-ASCII encoding is used.
+     * </p>
+     */
     public static final String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(MinLLPReader.class);
     
     private BufferedReader myReader;
 
-    private static final char END_MESSAGE = '\u001c'; //character indicating the
-                                              //termination of an HL7 message
-    private static final char START_MESSAGE = '\u000b';//character indicating the
-                                               //start of an HL7 message
-    private static final char LAST_CHARACTER = 13; //the final character of
-        //a message: a carriage return
-
-    //NB: The above is as per the minimal lower layer protocol.
+    /**
+     * Character indicating the termination of an HL7 message
+     */
+    public static final char END_MESSAGE = '\u001c'; 
+    
+    /**
+     * character indicating the start of an HL7 message
+     */
+    public static final char START_MESSAGE = '\u000b';
+    
+    /**
+     * The final character of a message: a carriage return. NB: This is per the minimal lower layer protocol.
+     */
+    public static final char LAST_CHARACTER = 13;
 
     /** Creates a MinLLPReader with no setup - setInputStream must be set later. 
     */
