@@ -29,9 +29,12 @@ public class ParserConfiguration {
 	 * ORU^R01 message:
 	 * </p>
 	 * <table>
-	 * <th>
-	 * <td>Forced Encode Path</td>
-	 * <td>Encode Output</td></th>
+	 * <thead>
+	 * <tr>
+	 * <th>Forced Encode Path</th>
+	 * <th>Encode Output</th>
+	 * </tr>
+	 * </thead>
 	 * <tr>
 	 * <td>None (for illustration purposes)</td>
 	 * <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4</td>
