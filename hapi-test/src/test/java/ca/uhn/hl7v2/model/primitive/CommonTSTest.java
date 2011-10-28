@@ -123,6 +123,25 @@ public class CommonTSTest extends TestCase {
 	 */
 	 
 	/**
+	 * Test for http://sourceforge.net/support/tracker.php?aid=3410095
+	 */
+	public void testSetCalendarUsingHighValueTimeZoneOffset() throws ParseException, DataTypeException {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));
+		
+		System.out.println(c.getTime());
+		
+		c.set(Calendar.ZONE_OFFSET, 12 * 60 * 60 * 1000);
+		System.out.println(c.getTime());
+		
+		commonTS.setValue(c);
+		
+		String val = commonTS.getValue();
+		assertEquals("20110102070000+1200", val);
+		
+	}
+	
+	/**
 	 * Test for default constructor
 	 */
 	public void testConstructor() {
