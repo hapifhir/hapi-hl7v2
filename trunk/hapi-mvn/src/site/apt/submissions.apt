@@ -28,6 +28,8 @@ Code Submission Guidelines
   [[1]] Where possible, new code should build on old code. For example, if you want to add a SOAP messaging module, it should perform error logging using HAPI's existing log framework (if you found HAPI's logging framework inadequate, the best approach would be to improve it, then use the improved version).
 
   [[1]] You must own the copyright for the code you submit, and you must release it under the GPL and MPL licenses by including a license header of the same form as that appearing in existing HAPI code.
+  
+  [[1]] Code must be in the "ca.uhn.hl7v2" package space.
 
 
 
