@@ -130,8 +130,20 @@ public class SendAndReceiveAMessage
          * MSH|^~\&|||||20070218200627.515-0500||ACK|54|P|2.2 MSA|AA|12345
          */
 
-        // Close the connection and server
+        /* 
+         * Close the connection and server. Note that this method may close 
+         * the connection. If you are designing a system which will continuously
+         * send out messages, you may want to consider keeping a copy of the 
+         * Connection object between messages. That way, the same connection
+         * will be reused.
+         * 
+         * See 
+         * http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendLotsOfMessages.html
+         * for an example of this.
+         */
         connectionHub.discard(connection);
+        
+        // Stop the receiving server
         server.stop();
 
     }
