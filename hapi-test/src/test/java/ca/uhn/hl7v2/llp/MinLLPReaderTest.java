@@ -44,11 +44,11 @@ import ca.uhn.hl7v2.util.MessageLibrary;
 public class MinLLPReaderTest extends TestCase {
     // NB: Per the minimal lower layer protocol.
     // character indicating the termination of an HL7 message
-    private static final char END_MESSAGE = '\u001c';
+    static final char END_MESSAGE = '\u001c';
     // character indicating the start of an HL7 message
-    private static final char START_MESSAGE = '\u000b';
+    static final char START_MESSAGE = '\u000b';
     // the final character of a message: a carriage return
-    private static final char LAST_CHARACTER = 13;
+    static final char LAST_CHARACTER = 13;
 
     private String message;
     private byte[] sendMessage;
