@@ -17,6 +17,28 @@ Welcome
   <<{{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Support HAPI! Answer the 2011 HAPI Community Survey!}}>>
 
 
+HAPI Birthday! October 30, 2011
+
+  On October 30 2001. Bryan Tripp and a team at University Health Network registered the HAPI
+  project with Sourceforge, and a new project was born. On November 15 2001 HAPI 0.1 was 
+  released, and 10 releases later HAPI is probably the most widely used HL7 v2 library
+  there is.
+  
+  A few stats:
+  
+  * Over the last five years, the number of visitors to the HAPI website has doubled, and 
+    it continues to grow. The graph below shows the number of unique visitors to our online
+    documentation each month between 2006 and 2011.
+    
+[images/10yr_visitors.png] Five years of growth!
+    
+  []
+  
+  * Foo 
+  
+  
+
+
 HAPI sources moved to Subversion (SVN) - October 2, 2011
 
   The HAPI source code has been migrated to a new Subversion repository

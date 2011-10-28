@@ -28,8 +28,6 @@ Developing using HAPI - By Example
   
   {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Access the survey here}}
 
-  The survey will run until the fall.
-
 
 
 * The Basics
@@ -52,6 +50,12 @@ Developing using HAPI - By Example
   
   * Now, let's introduce some {{{./xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
 
+  * Read messages from a file and 
+    {{{./xref/ca/uhn/hl7v2/examples/SendLotsOfMessages.html}send multiple messages out}} using ConnectionHub.
+
+  * Handle different  
+    {{{./xref/ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html}character encoding schemes}} (charsets), such
+    as UTF-8, or ISO-8859/2.
 
 * Parsing Messages
 
