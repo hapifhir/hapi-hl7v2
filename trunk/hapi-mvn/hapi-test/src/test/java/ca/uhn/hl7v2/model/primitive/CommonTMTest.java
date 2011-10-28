@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -95,6 +95,25 @@ public class CommonTMTest extends TestCase {
 		assertNotNull("Should have a valid CommonTM object", commonTM);
 	}
 
+	/**
+	 * Test for http://sourceforge.net/support/tracker.php?aid=3410095
+	 */
+	public void testSetCalendarUsingHighValueTimeZoneOffset() throws ParseException, DataTypeException {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));
+		
+		System.out.println(c.getTime());
+		
+		c.set(Calendar.ZONE_OFFSET, 12 * 60 * 60 * 1000);
+		System.out.println(c.getTime());
+		
+		commonTM.setValue(c);
+		
+		String val = commonTM.getValue();
+		assertEquals("070000+1200", val);
+		
+	}
+	
 	
     public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
         
