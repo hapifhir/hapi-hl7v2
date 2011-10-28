@@ -39,7 +39,7 @@ public class PreParser {
      * @return field values corresponding to the given paths
      * @throws HL7Exception
      */
-    public static String[] getFields(String theMessageText, String[] thePathSpecs) throws HL7Exception {
+    public static String[] getFields(String theMessageText, String... thePathSpecs) throws HL7Exception {
         DatumPath[] paths = new DatumPath[thePathSpecs.length];
         for (int i = 0; i < thePathSpecs.length; i++) {
             StringTokenizer tok = new StringTokenizer(thePathSpecs[i], "-", false);
