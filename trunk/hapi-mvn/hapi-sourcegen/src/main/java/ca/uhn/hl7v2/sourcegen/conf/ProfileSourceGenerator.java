@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -302,18 +304,15 @@ public class ProfileSourceGenerator {
             nextSegmentElement.opt = nextField.getUsage();
             nextSegmentElement.rep = (nextField.getMax() != 1) ? "Y" : "N";
             nextSegmentElement.repetitions = nextField.getMax();
-            String table = nextField.getTable();
-            if (table != null && table.length() > 0) {
-                try {
-                	nextSegmentElement.table = Integer.parseInt(table);
-                } catch (NumberFormatException e) {
-                	ourLog.warn("Unable to parse number out of table name: \"" + table +"\" for field \"" + nextSegmentElement.desc + "\". Ignoring this value and setting table number to 0.");
-                }
-            }
             nextSegmentElement.type = nextField.getDatatype();
 
             if (nextSegmentElement.type.startsWith("CM_")) {
                 nextSegmentElement.type = nextSegmentElement.type.substring(3);
+            }
+
+            String table = nextField.getTable();
+            if (table != null && table.length() > 0) {
+                extractTableInfo(nextSegmentElement, table);
             }
 
             segmentElements.add(nextSegmentElement);
@@ -327,6 +326,32 @@ public class ProfileSourceGenerator {
 
         return retVal;
     }
+
+	static void extractTableInfo(SegmentElement nextSegmentElement, String table) {
+		Pattern p = Pattern.compile("^([a-zA-Z]+)([0-9]+)$");
+		Matcher m = p.matcher(table);
+		if (m.find()) {
+			String namespace = m.group(1);
+			nextSegmentElement.tableNamespace = namespace;
+			
+			String tableNum = m.group(2);
+			nextSegmentElement.table = Integer.parseInt(tableNum);
+			
+			String alternateType = nextSegmentElement.getAlternateType();
+			if ("ID".equals(alternateType)) {
+				nextSegmentElement.setAlternateType("ca.uhn.hl7v2.model.primitive.IDWithNamespace");
+			} else if ("IS".equals(alternateType)) {
+				nextSegmentElement.setAlternateType("ca.uhn.hl7v2.model.primitive.IDWithNamespace");
+			}
+			
+		} else {
+			try {
+		    	nextSegmentElement.table = Integer.parseInt(table);
+		    } catch (NumberFormatException e) {
+		    	ourLog.warn("Unable to parse number out of table name: \"" + table +"\" for field \"" + nextSegmentElement.desc + "\". Ignoring this value and setting table number to 0.");
+		    }
+		}
+	}
 
     private DatatypeDef convertToDatatypeDef(Field theField) {
         String type = theField.getDatatype();

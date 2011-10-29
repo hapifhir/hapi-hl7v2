@@ -61,12 +61,24 @@
 			The old CVS repo will be kept around for now, just in case it is needed. 
         	</action>
         	<action dev="Eric Poiseau">
-        		Ignore non-numeric table names when reading in XML conformance profiles. This allows conformance profiles
-        		to be parsed and applied even if they contain textual table names, although these names are
-        		now ignored.
+        		Allow conformance profile structure generator to handle ID and IS type definitions with namespaced 
+        		table numbers (e.g. IHE0155). These are now generated as special subclasses of 
+        		ID 
+        		and 
+        		IS
+        		, called 
+        		IDWithNamespace
+        		and 
+        		ISWithNamespace 
+        		respectively. These types have a method, getTableNamespace() which retrieves the non
+        		numeric part of the table name.
+        		
         	</action>
         	<action dev="Nicolas Lefebfre">
-        		Add a new method to Parser, parseForSpecificPackage, which parses messages using structure classes
+        		Add a new method to 
+        		Parser, 
+        		parseForSpecificPackage, 
+        		which parses messages using structure classes
         		found in a particular package instead of using the built in HAPI defaults.
         	</action>
 		</release>

@@ -127,6 +127,18 @@
 							<generateDateTypes>SINGLE</generateDateTypes>
 						</configuration>
 					</execution>
+					<execution>
+						<id>tables_with_namespaces</id>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<packageName>ca.uhn.hl7v2.test.tblnms.conf</packageName>
+							<profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/example_ack.xml</profile>
+							<generateDateTypes>NONE</generateDateTypes>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
