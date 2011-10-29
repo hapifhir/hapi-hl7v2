@@ -64,10 +64,14 @@ public class ${segmentName} extends AbstractSegment {
     #else
       #set ($rept = "false")
     #end
-    #if (${element.idType})
+    #if (!${element.idType})
       #set ($constructorArgs = "new Object[]{ getMessage() }")
     #else
-      #set ($constructorArgs = "new Object[]{ getMessage(), new Integer(${element.table}) }")
+      #if (${element.hasTableNamespace})
+        #set ($constructorArgs = "new Object[]{ getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, new Integer(${element.table}) }")
+      #else
+        #set ($constructorArgs = "new Object[]{ getMessage(), new Integer(${element.table}) }")
+      #end
     #end
           this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.descEscaped}");
 #end
@@ -289,6 +293,8 @@ public class ${segmentName} extends AbstractSegment {
 #set ( $idx = ${velocityCount} - 1 )
 #if ( $element.alternateType == "Varies" )
           case ${idx}: return new Varies(getMessage());
+#elseif ( $element.idType && $element.hasTableNamespace)
+          case ${idx}: return new ${element.alternateType}(getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, new Integer( ${element.table} ));
 #elseif ( $element.idType )
           case ${idx}: return new ${element.alternateType}(getMessage(), new Integer( ${element.table} ));
 #else
