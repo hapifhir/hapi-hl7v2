@@ -423,6 +423,7 @@ public class SegmentGenerator extends java.lang.Object {
         ctx.put("basePackageName", basePackage);
         ctx.put("elements", elements);
         ctx.put("datatypePackages", datatypePackages);
+        ctx.put("hl7VersionInQuotes", '"' + version + '"');
         
         template.merge(ctx, out);
 		

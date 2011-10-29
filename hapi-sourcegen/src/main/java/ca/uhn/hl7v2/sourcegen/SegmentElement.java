@@ -23,84 +23,126 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
 
-*/
+ */
 
 package ca.uhn.hl7v2.sourcegen;
 
 /**
- * A structure for storing a single data element of a segment ... 
+ * A structure for storing a single data element of a segment ...
+ * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-public class SegmentElement  {
+public class SegmentElement {
 
-    public int field;
-    public String rep;
-    public int repetitions;
-    public String desc;
-    public int length;
-    public int table;
-    public String opt;
-    public String type;
-    private String myVersion;
-    private String mySegmentName;
-    private int myIndexWithinSegment;
+	public String desc;
+	public int field;
+	public int length;
+	private int myIndexWithinSegment;
+	private String mySegmentName;
+	private String myVersion;
+	public String opt;
+	public String rep;
+	public int repetitions;
+	public int table;
+	public String tableNamespace;
+	public String type;
+	private String myAlternateType;
 
-    /** Creates new SegmentElement */
-    public SegmentElement(String theSegmentName, String theVersion, int theIndexWithinSegment) {
-        mySegmentName = theSegmentName;
-        myVersion = theVersion;
-        myIndexWithinSegment = theIndexWithinSegment;
-    }
+	/** Creates new SegmentElement */
+	public SegmentElement(String theSegmentName, String theVersion, int theIndexWithinSegment) {
+		mySegmentName = theSegmentName;
+		myVersion = theVersion;
+		myIndexWithinSegment = theIndexWithinSegment;
+	}
 
-    public boolean isRequired() {
-        return "R".equalsIgnoreCase(opt);
-    }
-    
-    public boolean isRepeating() {
-        return repetitions != 1;
-    }
-    
-    public String getType() {
-        return type;
-    }
+	public String getAccessorName() {
+		return SourceGenerator.makeAccessorName(desc, mySegmentName);
+	}
 
-    public String getAlternateType() {
-        return SourceGenerator.getAlternateType(type, myVersion);
-    }
-    
-    public boolean isIdType() {
-        return (type.equals("ID") || type.equals("IS"));
-    }
-    
-    public int getField() {
-        return field;
-    }
+	public String getAlternateAccessorName() {
+		return SourceGenerator.makeAlternateAccessorName(desc, mySegmentName, myIndexWithinSegment + 1);
+	}
 
-    public int getRepetitions() {
-        return repetitions;
-    }
+	public String getAlternateType() {
+		if (myAlternateType != null) {
+			return myAlternateType;
+		}
+		return SourceGenerator.getAlternateType(type, myVersion);
+	}
 
-    public String getDesc() {
-        return desc;
-    }
-    
-    public String getDescEscaped() {
-    	return desc.replace("\"", "\\\"");
-    }
+	/**
+	 * @param theAlternateType the alternateType to set
+	 */
+	public void setAlternateType(String theAlternateType) {
+		myAlternateType = theAlternateType;
+	}
 
-    public int getLength() {
-        return length;
-    }
+	public String getDesc() {
+		return desc;
+	}
 
-    public int getTable() {
-        return table;
-    }
+	public String getDescEscaped() {
+		return desc.replace("\"", "\\\"");
+	}
 
-    public String getAccessorName() {
-        return SourceGenerator.makeAccessorName(desc, mySegmentName);
-    }
+	public int getField() {
+		return field;
+	}
 
-    public String getAlternateAccessorName() {
-        return SourceGenerator.makeAlternateAccessorName(desc, mySegmentName, myIndexWithinSegment + 1);
-    }
+	public int getLength() {
+		return length;
+	}
+
+	public int getRepetitions() {
+		return repetitions;
+	}
+
+	public int getTable() {
+		return table;
+	}
+
+	/**
+	 * @return the tableNamespace
+	 */
+	public String getTableNamespace() {
+		return tableNamespace;
+	}
+
+	/**
+	 * @return the tableNamespace
+	 */
+	public String getTableNamespaceInQuotes() {
+		return '"' + tableNamespace + '"';
+	}
+
+	/**
+	 * @return the tableNamespace
+	 */
+	public boolean isHasTableNamespace() {
+		return tableNamespace != null && tableNamespace.length() > 0;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public boolean isIdType() {
+		return (type.equals("ID") || type.equals("IS"));
+	}
+
+	public boolean isRepeating() {
+		return repetitions != 1;
+	}
+
+	public boolean isRequired() {
+		return "R".equalsIgnoreCase(opt);
+	}
+
+	/**
+	 * @param theTableNamespace
+	 *            the tableNamespace to set
+	 */
+	public void setTableNamespace(String theTableNamespace) {
+		tableNamespace = theTableNamespace;
+	}
 }
