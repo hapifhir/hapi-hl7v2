@@ -6,6 +6,27 @@
 	</properties>
 	<body>
         <release version="1.3" date="TBD">
+        	<action type="add" dev="James Agnew">
+        		Remove HapiLog, Log, and Status, all of which were used as a logging system prior to
+        		the introduction of commons-logging into HAPI. The old logging system was only used by
+        		one class, MessageLibrary, and led to lots of stray files being generated during
+        		unit test runs. 
+        	</action>
+        	<action type="add" dev="James Agnew">
+        		Add new method to group and message structure classes that returns all repetitions
+        		of repeatable children as a typed List. This is useful for quickly and easily
+        		iterating over structures within a message.
+        		<![CDATA[<br/><br/>]]>
+        		For example, ADT_A01 has a repeatable OBX segment. It is now possible to access it
+        		in three ways:
+        		<![CDATA[
+        			<ul>
+        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX()">OBX getOBX()</a>, which returns the first repetition, creating it if neccesary
+        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX(int)">OBX getOBX(int rep)</a>, which returns a specific repetition
+        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBXAll()">List&lt;OBX&gt; getOBXAll()</a>, which returns all repetitions (or an empty list if there are none)
+        			</ul>
+        		]]>
+        	</action>
         	<action type="add" dev="Jens Kristian Villadsen">
         		Add a new LowerLayerProtocol implementation which respects MSH-18 (Character Set)
         		values to determine the underlying transport character set. See
@@ -18,8 +39,11 @@
         		Modernize a bunch of the code base to add proper generics support.
         	</action>
         	<action type="fix" dev="Christian Ohr / Jason Thompson" issue="3410095">
-        		Correct an integer overflow issue when 
-        		CommonTS#setValue(Calendar) is invoked with a calendar containing some high
+        		Correct an integer overflow issue when
+        		<![CDATA[
+        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#setValue(java.util.Calendar)">CommonTS#setValue(Calendar)</a>
+        		]]> 
+        		is invoked with a calendar containing some high
         		timezone offset values. Thanks to Jason Thompson for reporting and
         		providing a fix.
         	</action>
@@ -255,9 +279,6 @@
             <action type="fix">Provide default implementation of new abstract method "createNewTypeWithoutReflection" on AbstractSegment class to prevent breaking existing user defined types. Thanks to Christian Ohr for reporting.</action>
             <action type="update" dev="James Agnew">Clean up logging in ServerSocketStreamSource (used by HL7Server) so that it doesn't spew unneccesary logs while waiting for a connection</action>
             <action type="update" dev="James Agnew">Remove all test suites (not tests, just the suites), as they cause maven to execute tests twice, and clean up test execution. Full test suie execution is down to ~90 seconds from 10 mins.</action>
-		</release>
-		<release version="1.0-beta1" date="2009-11-28"
-            description="This version has not yet been released.">
             <action type="add" due-to="Christian Ohr, Niranjan Sharma"><![CDATA[Add two new ModelClassFactory implementations: <a href="base/apidocs/ca/uhn/hl7v2/parser/CanonicalModelClassFactory.html">CanonicalModelClassFactory</a> (always returns the same version), and <a href="base/apidocs/ca/uhn/hl7v2/parser/CustomModelClassFactory.html">CustomModelClassFactory</a> (provides easy way to use custom structure packages)]]></action>
             <action type="fix" dev="James Agnew">Fix a bug where formatting escape sequences were stripped from messages (i.e. leave sequences such as /.br/ alone)</action>
             <action type="add" due-to="Christian Ohr">Overhaul Escape class (handles HL7 escape sequences) to dramatically improve performance</action>
