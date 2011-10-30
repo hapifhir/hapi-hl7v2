@@ -10,6 +10,8 @@ package ${basePackageName}group;
 
 import ${basePackageName}segment.*;
 
+import java.util.List;
+
 import ca.uhn.log.HapiLogFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -132,6 +134,13 @@ public class $groupName extends AbstractGroup {
             throw new RuntimeException(message);
         } 
         return reps; 
+    } 
+
+    /** 
+     * Returns a non-modifiable List containing all current existing repetitions of ${group.indexName} 
+     */ 
+    public List<${group.name}> get${group.indexName}All() throws HL7Exception {
+    	return this.getAllAsList("${group.indexName}", ${group.name}.class);
     } 
 
     /**
