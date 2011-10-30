@@ -12,6 +12,8 @@ import ${basePackageName}group.*;
 #end
 import ${basePackageName}segment.*;
 
+import java.util.List;
+
 import ca.uhn.log.HapiLogFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -136,6 +138,13 @@ public class $message extends AbstractMessage  {
             throw new RuntimeException(message);
         } 
         return reps; 
+    } 
+
+    /** 
+     * Returns a non-modifiable List containing all current existing repetitions of ${segment.indexName} 
+     */ 
+    public List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
+    	return this.getAllAsList("${segment.indexName}", ${segment.name}.class);
     } 
 
     /**

@@ -29,6 +29,8 @@ package ca.uhn.hl7v2.model;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -394,6 +396,28 @@ public abstract class AbstractGroup implements Group {
             all[i] = list.get(i);
         }
         return all;
+    }
+
+    /**
+     * Returns a list containing all existing repetitions of the structure
+     * identified by name
+     * 
+     * @throws HL7Exception
+     *             if the named Structure is not part of this Group.
+     */
+    @SuppressWarnings("unchecked")
+	protected <T extends Structure> List<T> getAllAsList(String name, Class<T> theType) throws HL7Exception {
+        Class<? extends Structure> clazz = classes.get(name);
+        
+		if (!theType.equals(clazz)) {
+        	throw new HL7Exception("Structure with name \"" + name + "\" has type " + clazz.getName() + " but should be " + theType); 
+        }
+    	
+    	ArrayList<T> retVal = new ArrayList<T>();
+        for (Structure next : getAll(name)) {
+        	retVal.add((T) next);
+        }
+        return Collections.unmodifiableList(retVal);
     }
 
     /**
