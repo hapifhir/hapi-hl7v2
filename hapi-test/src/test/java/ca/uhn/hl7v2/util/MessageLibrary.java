@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -29,14 +29,15 @@ package ca.uhn.hl7v2.util;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import ca.uhn.hl7v2.Log;
+import org.apache.commons.logging.LogFactory;
+
+import ca.uhn.hl7v2.llp.MinLLPWriter;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.GenericParser;
@@ -57,7 +58,10 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * @author Leslie Mann
  */
-public class MessageLibrary extends ArrayList {
+public class MessageLibrary extends ArrayList<LibraryEntry> {
+	
+	private static final org.apache.commons.logging.Log ourLog = LogFactory.getLog(MessageLibrary.class);
+	
 	private final String MULTI_LINE_COMMENT_START = "/*";
 	private final String MULTI_LINE_COMMENT_END = "*/";
 	private final String SINGLE_LINE_COMMENT = "//";
@@ -105,8 +109,8 @@ public class MessageLibrary extends ArrayList {
 	 * Parses each HL7 message from text file into a LibraryEntry
 	 * Entries are collected into an ArrayList.
 	 */
-	private ArrayList setEntries(String messageFilePath) {
-		ArrayList entries = new ArrayList();
+	private ArrayList<LibraryEntry> setEntries(String messageFilePath) {
+		ArrayList<LibraryEntry> entries = new ArrayList<LibraryEntry>();
 		Parser parser;
 		if (encoding=="XML") {
 			parser = new DefaultXMLParser();
@@ -122,7 +126,7 @@ public class MessageLibrary extends ArrayList {
 			//BufferedReader in = new BufferedReader(new FileReader(messageFilePath));
 	 
 			StringBuffer msgBuf = new StringBuffer();
-			HashMap segments = new HashMap();
+			HashMap<String, String> segments = new HashMap<String, String>();
 			Message msg = null;
 		
 			boolean eof = false;
@@ -158,9 +162,9 @@ public class MessageLibrary extends ArrayList {
 						Integer.parseInt(lineSplit[1]);
 						lineKey = lineKey + "|" + lineSplit[1];
 					} catch (NumberFormatException e) {
-						int stop = 1;
+//						int stop = 1;
 					} catch (ArrayIndexOutOfBoundsException e) {
-						int stop = 1;
+//						int stop = 1;
 					}
 					segments.put(lineKey, line);
 					msgBuf.append(line+"\r");
@@ -170,13 +174,12 @@ public class MessageLibrary extends ArrayList {
 					String msgStr = msgBuf.toString();
 					try {
 						msg = parser.parse(msgStr);
-						Status.writeStatus("Message:\n" + msgStr);
+						ourLog.info("Message:\n" + msgStr);
 					} catch (Exception e) {
 						++numParsingErrors;
-						Status.writeStatus("Warning: Parsing errors with message:\n" + msgStr);
-						Log.tryToLog(e, "Parsing errors with message:\n" + msgStr);
+						ourLog.warn("Parsing errors with message:\n" + msgStr, e);
 					}
-					entries.add(new LibraryEntry(new String(msgStr), new HashMap(segments), msg));
+					entries.add(new LibraryEntry(new String(msgStr), new HashMap<String, String>(segments), msg));
 					//reset for next message
 					msgBuf.setLength(0);
 					segments.clear();
@@ -185,11 +188,9 @@ public class MessageLibrary extends ArrayList {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			Status.writeStatus("Warning: Message file not found: " + messageFilePath);
-			Log.tryToLog(e, "Message file not found " + messageFilePath);
+			ourLog.warn("Message file not found " + messageFilePath, e);
 		} catch (IOException e) {
-			Status.writeStatus("Warning: Unable to open message file: " + messageFilePath);
-			Log.tryToLog(e, "Unable to open message file: " + messageFilePath);
+			ourLog.warn("Unable to open message file: " + messageFilePath, e);
 		}
 		return entries;
 	}
@@ -203,11 +204,10 @@ public class MessageLibrary extends ArrayList {
 	 * @return a stream of HL7 messages
 	 */
 	public ByteArrayInputStream getAsByteArrayInputStream() {
-		Iterator msgs = this.iterator();
+		Iterator<LibraryEntry> msgs = this.iterator();
 		StringBuffer inputMessages = new StringBuffer();
 		while (msgs.hasNext()) {
 			LibraryEntry entry = (LibraryEntry) msgs.next();
-			String temp = entry.messageString();
 			inputMessages.append(START_MESSAGE + entry.messageString() + END_MESSAGE + LAST_CHARACTER);
 		}			
 		return new ByteArrayInputStream(inputMessages.toString().getBytes());
