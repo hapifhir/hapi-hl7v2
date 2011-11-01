@@ -137,7 +137,13 @@ public class $groupName extends AbstractGroup {
     } 
 
     /** 
-     * Returns a non-modifiable List containing all current existing repetitions of ${group.indexName} 
+     * <p>
+     * Returns a non-modifiable List containing all current existing repetitions of ${group.indexName}.
+     * <p>
+     * <p>
+     * Note that unlike {@link ${HASH}get${group.indexName}()}, this method will not create any reps
+     * if none are already present, so an empty list may be returned.
+     * </p>
      */ 
     public List<${group.name}> get${group.indexName}All() throws HL7Exception {
     	return this.getAllAsList("${group.indexName}", ${group.name}.class);
