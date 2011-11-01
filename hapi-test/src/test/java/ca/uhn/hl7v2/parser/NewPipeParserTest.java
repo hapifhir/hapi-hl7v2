@@ -20,12 +20,14 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v231.message.ORM_O01;
+import ca.uhn.hl7v2.model.v24.datatype.FT;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
 import ca.uhn.hl7v2.model.v24.datatype.SI;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
+import ca.uhn.hl7v2.model.v24.segment.OBX;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A03;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
@@ -91,6 +93,32 @@ public class NewPipeParserTest extends TestCase {
 
 	}
 
+
+	public void testPreserveFormattingChars() throws HL7Exception {
+		
+		String msgString = "MSH|^~\\&|PHCN_ULTRA|2220|HSIE|2220|201106161233||ORU^R01|72313573|T|2.4|||AL|AL|AU\r\n" + 
+				"PID|\r"+
+				"PV1||I|^DIS^DIS^2220|||||0129296H^BRAUN^GARY|7MPH^MPH-HL7-RESULT FEED|||||||||I|^^^2220\r\n" + 
+				"ORC|RE|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA||RE\r\n" + 
+				"OBR|1|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA|GAS^GASES (BLOOD)|||201106161000|||||||||0129296H^BRAUN^GARY^^^DR^^^2220^^^^Provider Num||||1295102|7MPH|201106161233||GRP|F||^^^201106161203\r\n" + 
+				"OBX|1|FT|GAS^^LN||Type Venous\\.br\\\\.br\\ Analysis pH : \\H\\ 7.28\\N\\ (7.38-7.43) ";
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.setParser(parser);
+		msg.parse(msgString);
+		
+		OBX obx = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX();
+
+		String obx5val = ((FT)obx.getObx5_ObservationValue(0).getData()).getValue();
+		assertTrue(obx5val, obx5val.contains("Type Venous\\.br\\\\.br\\ Analysis"));
+		assertTrue(obx5val, obx5val.contains("pH : \\H\\ 7.28\\N\\ (7.38-7.43) "));
+
+		String obx5encoded = obx.getObx5_ObservationValue(0).encode();
+		assertTrue(obx5encoded, obx5encoded.contains("Type Venous\\.br\\\\.br\\ Analysis"));
+		assertTrue(obx5encoded, obx5encoded.contains("pH : \\H\\ 7.28\\N\\ (7.38-7.43) "));
+		
+	}
+	
 	/**
 	 * http://sourceforge.net/tracker/?func=detail&aid=3212931&group_id=38899&
 	 * atid=423835

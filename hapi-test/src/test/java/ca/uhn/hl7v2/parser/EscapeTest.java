@@ -1,12 +1,18 @@
 package ca.uhn.hl7v2.parser;
 
- import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
-import junit.framework.*;
-import java.io.*;
+ import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
 
 import org.codehaus.plexus.util.IOUtil;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.model.v24.datatype.FT;
+import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * JUnit test cases for Escape.  
@@ -19,17 +25,6 @@ public class EscapeTest extends TestCase {
     public EscapeTest(java.lang.String testName) {
         super(testName);
         this.enc = new EncodingCharacters('|', null);
-    }
-    
-    public static void main(java.lang.String[] args) throws HL7Exception {
-		new EscapeTest("aaa").testFormattingCharacters();
-
-        junit.textui.TestRunner.run(suite());
-    }
-    
-    public static Test suite() {
-        TestSuite suite = new TestSuite(EscapeTest.class);
-        return suite;
     }
     
     public void testUnescape() throws Exception {
@@ -108,5 +103,23 @@ public class EscapeTest extends TestCase {
 
 	}
 
+	public void testPreserveFormattingChars() throws HL7Exception, IOException {
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		
+		FT ft = new FT(msg);
+		msg.getRESPONSE().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx2_ValueType().setValue("FT");
+		msg.getRESPONSE().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx5_ObservationValue(0).setData(ft);
+		
+		ft.setValue("H \\H\\ N \\N\\ ");
+		assertEquals("H \\H\\ N \\N\\ ", ft.getValue());
+		assertEquals("H \\H\\ N \\N\\ ", ft.encode());
+
+		ft.setValue("H \\C00FF\\ N");
+		assertEquals("H \\C00FF\\ N", ft.getValue());
+		assertEquals("H \\C00FF\\ N", ft.encode());
+		
+	}
 
 }
