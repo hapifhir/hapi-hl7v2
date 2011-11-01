@@ -67,7 +67,6 @@ public class DataTypeUtil {
         int offSet;
         GregorianCalendar currentTime = new GregorianCalendar();
         int gmtOffSet = currentTime.get(GregorianCalendar.ZONE_OFFSET);
-        String offSetSign;
         int offSetSignInt;
         if (gmtOffSet < 0 ){
             offSetSignInt = -1;
