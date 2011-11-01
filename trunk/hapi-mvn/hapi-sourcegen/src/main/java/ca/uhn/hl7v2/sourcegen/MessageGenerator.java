@@ -392,6 +392,7 @@ public class MessageGenerator extends Object {
         ctx.put("haveGroups", haveGroups);
         ctx.put("basePackageName", basePackageName);
         ctx.put("segments", Arrays.asList(contents));
+        ctx.put("HASH", "#");
         template.merge(ctx, out);
 
         out.flush();

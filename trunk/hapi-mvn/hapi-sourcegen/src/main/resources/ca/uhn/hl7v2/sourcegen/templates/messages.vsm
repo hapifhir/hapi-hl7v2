@@ -141,7 +141,13 @@ public class $message extends AbstractMessage  {
     } 
 
     /** 
-     * Returns a non-modifiable List containing all current existing repetitions of ${segment.indexName} 
+     * <p>
+     * Returns a non-modifiable List containing all current existing repetitions of ${segment.indexName}.
+     * <p>
+     * <p>
+     * Note that unlike {@link ${HASH}get${segment.indexName}()}, this method will not create any reps
+     * if none are already present, so an empty list may be returned.
+     * </p>
      */ 
     public List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
     	return this.getAllAsList("${segment.indexName}", ${segment.name}.class);
@@ -149,7 +155,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public void insert${segment.indexName}(${segment.name} structure, int rep) throws HL7Exception { 
        super.insertRepetition( "${segment.indexName}", structure, rep);
@@ -158,7 +164,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public ${segment.name} insert${segment.indexName}(int rep) throws HL7Exception { 
        return (${segment.name})super.insertRepetition("${segment.indexName}", rep);
@@ -167,7 +173,7 @@ public class $message extends AbstractMessage  {
 
     /**
      * Removes a specific repetition of ${segment.indexName} (${segment.description})
-     * @see AbstractGroup\#removeRepetition(String, int) 
+     * @see AbstractGroup${HASH}removeRepetition(String, int) 
      */
     public ${segment.name} remove${segment.indexName}(int rep) throws HL7Exception { 
        return (${segment.name})super.removeRepetition("${segment.indexName}", rep);
