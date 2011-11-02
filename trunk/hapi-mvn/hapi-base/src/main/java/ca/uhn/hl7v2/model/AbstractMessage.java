@@ -28,7 +28,6 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.model;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -264,7 +263,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * 
      * @param messageCode The message code (aka message type) to insert into MSH-9-1. Example: "ADT"
      * @param messageTriggerEvent The message trigger event to insert into MSG-9-2. Example: "A01"
-     * @param processingId The message processing ID to insert into MSH-11. Examples: "T" or "P"
+     * @param processingId The message processing ID to insert into MSH-11. Examples: "T" (for TEST) or "P" for (PRODUCTION)
      * 
      * @throws IOException If the message ID generation fails for some reason 
      * @throws HL7Exception If the message rejects any of the values which are generated to setting

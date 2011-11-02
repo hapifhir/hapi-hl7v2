@@ -74,6 +74,8 @@ public class ConnectionHub {
     private final Map<String, Socket> sockets;
     private final Map<Integer, Integer> numRefs;
     private final Map<String, String> connectionMutexes;
+
+	private boolean myLogMessages = true;
     
     /** Creates a new instance of ConnectionHub */
     private ConnectionHub() {
@@ -172,6 +174,8 @@ public class ConnectionHub {
     private Connection connect(String host, int port, Parser parser, LowerLayerProtocol llp) throws UnknownHostException, IOException, LLPException {
         Socket s = new Socket(host, port);
         Connection i = new Connection(parser, llp, s);
+        i.setLogMessages(myLogMessages);
+        
         connections.put(makeHashKey(host, port, parser.getClass(), llp.getClass()), i);
         sockets.put(makeHashKey(host, port, parser.getClass(), llp.getClass()), s);
         return i;
@@ -226,6 +230,14 @@ public class ConnectionHub {
     }
     
     /**
+     * If set to <code>false</code> (default is <code>true</code>), raw messages will not be logged.
+     * This setting applies to all connections created after the value is set.
+     */
+	public void setLogMessages(boolean theLogMessages) {
+		myLogMessages = theLogMessages;
+	}
+
+    /**
      * This should be called to indicate that some party is ceasing use of the 
      * given Connection. 
      * @returns the number of times this Connection is referenced
@@ -262,4 +274,5 @@ public class ConnectionHub {
         key.append(llpClass.getName());        
         return key.toString();
     }
+
 }

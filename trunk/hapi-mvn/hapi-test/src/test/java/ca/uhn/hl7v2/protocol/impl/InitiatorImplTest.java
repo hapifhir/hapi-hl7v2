@@ -103,7 +103,7 @@ public class InitiatorImplTest extends TestCase {
         t.set("MSH-1", "|");
         t.set("MSH-2", "^~\\&");
         t.set("MSH-18", "UNICODE");
-        Message response = i.sendAndReceive(a01);
+        i.sendAndReceive(a01);
         assertEquals("UNICODE", p.getSent().getMetadata().get("MSH-18"));
     }
 

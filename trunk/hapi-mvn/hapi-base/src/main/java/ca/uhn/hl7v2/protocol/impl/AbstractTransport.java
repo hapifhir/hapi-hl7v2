@@ -46,17 +46,17 @@ public abstract class AbstractTransport implements TransportLayer {
     
     private static HapiLog log = HapiLogFactory.getHapiLog(AbstractTransport.class);
     
-    private Map myCommonMetadata;
+    private Map<String, Object> myCommonMetadata;
     private boolean myIsConnected = false;
     
     public AbstractTransport() {
-        myCommonMetadata = new HashMap();
+        myCommonMetadata = new HashMap<String, Object>();
     }
         
     /**
      * @see ca.uhn.hl7v2.protocol.TransportLayer#getCommonMetadata()
      */
-    public Map getCommonMetadata() {
+    public Map<String, Object> getCommonMetadata() {
         return myCommonMetadata;
     }
 

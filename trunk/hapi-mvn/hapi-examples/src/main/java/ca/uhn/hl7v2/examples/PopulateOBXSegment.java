@@ -15,7 +15,7 @@
  * Contributor(s): James Agnew
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -27,11 +27,14 @@
 
 package ca.uhn.hl7v2.examples;
 
+import java.io.IOException;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v25.datatype.CE;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.datatype.TX;
+import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
 import ca.uhn.hl7v2.model.v25.group.ORU_R01_ORDER_OBSERVATION;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBR;
@@ -67,52 +70,59 @@ public class PopulateOBXSegment
      * the segment group:
      * 
      * <code>
-     *                      ORDER_OBSERVATION
+     *                     ORDER_OBSERVATION start
      *       {
      *       [ ORC ]
      *       OBR
      *       [ { NTE } ]
-     *                     TIMING_QTY
+     *                     TIMING_QTY start
      *          [{
      *          TQ1
      *          [ { TQ2 } ]
      *          }]
-     *                     TIMING_QTY
+     *                     TIMING_QTY end
      *       [ CTD ]
-     *                     OBSERVATION
+     *                     OBSERVATION start
      *          [{
      *          OBX
      *          [ { NTE } ]
      *          }]
-     *                     OBSERVATION
+     *                     OBSERVATION end
      *       [ { FT1 } ]
      *       [ { CTI } ]
-     *                     SPECIMEN
+     *                     SPECIMEN start
      *          [{
      *          SPM
      *          [ { OBX } ]
      *          }]
-     *                     SPECIMEN
+     *                     SPECIMEN end
      *       }
-     *                     ORDER_OBSERVATION
+     *                     ORDER_OBSERVATION end
      * </code>
      * 
      * @param args
      *            The arguments
      * @throws HL7Exception
      *             If any processing problem occurs
+     * @throws IOException 
      */
-    public static void main(String[] args) throws HL7Exception {
+    public static void main(String[] args) throws HL7Exception, IOException {
 
         // First, a message object is constructed
         ORU_R01 message = new ORU_R01();
 
-        // A few basic MSH fields are populated. In a real situation, this would not be enough
-        // to produce a valid message, but for demonstration purposes we'll skip a few
-        // fields.
-        message.getMSH().getEncodingCharacters().setValue("^~\\&");
-        message.getMSH().getFieldSeparator().setValue("|");
-
+        /*
+         * The initQuickstart method populates all of the mandatory fields in the
+         * MSH segment of the message, including the message type, the timestamp,
+         * and the control ID.
+         */
+        message.initQuickstart("ORU", "R01", "T");
+        
+        /*
+         * The OBR segment is contained within a group called ORDER_OBSERVATION, 
+         * which is itself in a group called PATIENT_RESULT. These groups are
+         * reached using named accessors.
+         */
         ORU_R01_ORDER_OBSERVATION orderObservation = message.getPATIENT_RESULT().getORDER_OBSERVATION();
 
         // Populate the OBR
@@ -122,8 +132,16 @@ public class PopulateOBXSegment
         obr.getFillerOrderNumber().getNamespaceID().setValue("LAB");
         obr.getUniversalServiceIdentifier().getIdentifier().setValue("88304");
         
+        /*
+         * The OBX segment is in a repeating group called OBSERVATION. You can 
+         * use a named accessor which takes an index to access a specific 
+         * repetition. You can ask for an index which is equal to the 
+         * current number of repetitions,and a new repetition will be created.
+         */
+        ORU_R01_OBSERVATION observation = orderObservation.getOBSERVATION(0);
+
         // Populate the first OBX
-        OBX obx = orderObservation.getOBSERVATION(0).getOBX();
+		OBX obx = observation.getOBX();
         obx.getSetIDOBX().setValue("1");
         obx.getObservationIdentifier().getIdentifier().setValue("88304");
         obx.getObservationSubID().setValue("1");
@@ -167,7 +185,7 @@ public class PopulateOBXSegment
         System.out.append(new PipeParser().encode(message));
 
         /*
-         * MSH|^~\&
+         * MSH|^~\&|||||20111102082111.435-0500||ORU^R01^ORU_R01|305|T|2.5
          * OBR|1||1234^LAB|88304
          * OBX|1|CE|88304|1|T57000^GALLBLADDER^SNM
          * OBX|2|TX|88304&MDT|1|MICROSCOPIC EXAM SHOWS HISTOLOGICALLY NORMAL GALLBLADDER TISSUE

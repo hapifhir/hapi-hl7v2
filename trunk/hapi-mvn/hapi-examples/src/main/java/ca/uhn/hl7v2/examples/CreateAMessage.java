@@ -60,7 +60,7 @@ public class CreateAMessage
         mshSegment.getSequenceNumber().setValue("123");
         mshSegment.getMessageType().getMessageType().setValue("ADT");
         mshSegment.getMessageType().getTriggerEvent().setValue("A01");
-        mshSegment.getMessageType().getMessageStructure().setValue("ADT A01");
+        mshSegment.getMessageType().getMessageStructure().setValue("ADT_A01");
         
         // Populate the PID Segment
         PID pid = adt.getPID(); 

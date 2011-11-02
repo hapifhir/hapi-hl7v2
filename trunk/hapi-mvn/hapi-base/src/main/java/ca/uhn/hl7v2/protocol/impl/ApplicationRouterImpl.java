@@ -89,7 +89,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * 
      * @return {text, charset}
      */
-    private String[] processMessage(String incomingMessageString, Map<String, String> theMetadata) throws HL7Exception {
+    private String[] processMessage(String incomingMessageString, Map<String, Object> theMetadata) throws HL7Exception {
         HapiLog rawOutbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.outbound");
         HapiLog rawInbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.inbound");
         

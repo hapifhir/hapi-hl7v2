@@ -63,7 +63,7 @@ public interface ReceivingApplication {
      *      a database problem)
      * @throws HL7Exception if there is a problem with the message 
      */
-    public Message processMessage(Message theMessage, Map theMetadata) 
+    public Message processMessage(Message theMessage, Map<String, Object> theMetadata) 
             throws ReceivingApplicationException, HL7Exception;
     
     /** 
