@@ -75,7 +75,7 @@ public class ConformanceProfileRule implements MessageRule {
      * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
      */
     public ValidationException[] test(Message msg) {
-        ArrayList problems = new ArrayList(20);
+        ArrayList<ValidationException> problems = new ArrayList<ValidationException>(20);
         String[] ids = {myProfileID};
         
         try {
@@ -106,7 +106,7 @@ public class ConformanceProfileRule implements MessageRule {
         Terser t = new Terser(theMessage);
         boolean noMore = false;
         int c = 0;
-        ArrayList declaredProfiles = new ArrayList(8);
+        ArrayList<String> declaredProfiles = new ArrayList<String>(8);
         while (!noMore) {
             String path = "MSH-21(" + c++ + ")";
             String idRep = t.get(path);

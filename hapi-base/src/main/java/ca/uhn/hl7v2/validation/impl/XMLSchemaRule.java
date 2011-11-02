@@ -63,9 +63,9 @@ public class XMLSchemaRule implements EncodingRule {
 
     private class SchemaEventHandler extends DefaultHandler
     {
-        private List validationErrors;
+        private List<ValidationException> validationErrors;
         
-        public SchemaEventHandler(List theValidationErrorList)
+        public SchemaEventHandler(List<ValidationException> theValidationErrorList)
         {
             validationErrors = theValidationErrorList;
         }
@@ -134,7 +134,7 @@ public class XMLSchemaRule implements EncodingRule {
      */
     
     public ValidationException[] test(String msg) {
-        List validationErrors = new ArrayList(20);
+        List<ValidationException> validationErrors = new ArrayList<ValidationException>(20);
         Document domDocumentToValidate = null;
         
         StringReader stringReaderForDom = new StringReader(msg);
@@ -226,7 +226,7 @@ public class XMLSchemaRule implements EncodingRule {
         return builder;
     }
     
-     private String getSchemaLocation(Document domDocumentToValidate, List validationErrors) {
+     private String getSchemaLocation(Document domDocumentToValidate, List<ValidationException> validationErrors) {
         boolean validSchemaInDocument = false;
         String schemaLocation = new String();
         String schemaFilename = new String();
@@ -313,7 +313,7 @@ public class XMLSchemaRule implements EncodingRule {
         }
     }
 
-    private boolean validateNamespace(Document domDocumentToValidate, List validationErrors) {
+    private boolean validateNamespace(Document domDocumentToValidate, List<ValidationException> validationErrors) {
         // start by verifying the default namespace if this isn't correct the rest will fail anyway
         if (domDocumentToValidate.getDocumentElement().getNamespaceURI() == null)
         {
