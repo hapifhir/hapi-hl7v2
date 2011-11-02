@@ -27,7 +27,7 @@ public class ModelInstantiationTest extends TestCase {
 		scanner.addIncludeFilter(new AssignableTypeFilter(AbstractType.class));
 		Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/*/datatype");
 
-		Map<Class, Throwable> failures = new HashMap<Class, Throwable>();
+		Map<Class<?>, Throwable> failures = new HashMap<Class<?>, Throwable>();
 		for (BeanDefinition beanDefinition : components) {
 
 			String nextBeanClassName = beanDefinition.getBeanClassName();
@@ -37,7 +37,7 @@ public class ModelInstantiationTest extends TestCase {
 			try {
 
 				Constructor<?> constructor = clazz.getConstructor(new Class[] { Message.class });
-				Object instance = constructor.newInstance(new ADT_A01());
+				constructor.newInstance(new ADT_A01());
 
 			} catch (Exception e) {
 
@@ -54,7 +54,7 @@ public class ModelInstantiationTest extends TestCase {
 			StringBuilder m = new StringBuilder();
 			m.append("Got the following failures: \n");
 
-			for (Map.Entry<Class, Throwable> next : failures.entrySet()) {
+			for (Map.Entry<Class<?>, Throwable> next : failures.entrySet()) {
 				m.append(" * ").append(next.getKey().getName()).append("\n");
 				m.append("   ").append(next.getValue().toString()).append("\n");
 			}
