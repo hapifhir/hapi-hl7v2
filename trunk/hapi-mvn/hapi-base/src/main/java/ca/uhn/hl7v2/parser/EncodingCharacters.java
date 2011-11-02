@@ -35,63 +35,39 @@ import ca.uhn.hl7v2.model.Message;
 
 
 /**
- *
  * Represents the set of special characters used to encode traditionally
- *
  * encoded HL7 messages.
  *
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
- *
  */
 
 public class EncodingCharacters extends Object implements Cloneable {
     
-    
-    
     private char fieldSep;
-    
     private char[] encChars;
     
-    
-    
     /**
-     *
      * Creates new EncodingCharacters object with the given character
-     *
      * values. If the encodingCharacters argument is null, the default
-     *
      * values are used.
      *
      * @param encodingCharacters consists of the characters that appear in
-     *
      *      MSH-2 (see section 2.8 of the HL7 spec).  The characters are
-     *
      *      Component Separator, Repetition Separator, Escape Character, and
-     *
      *      Subcomponent Separator (in that order).
-     *
      */
     
     public EncodingCharacters(char fieldSeparator, String encodingCharacters) {
-        
         this.fieldSep = fieldSeparator;
-        
         this.encChars = new char[4];
         
         if (encodingCharacters == null) {
-            
-            this.encChars[0] = '^';
-            
-            this.encChars[1] = '~';
-            
+            this.encChars[0] = '^';            
+            this.encChars[1] = '~';            
             this.encChars[2] = '\\';
-            
             this.encChars[3] = '&';
-            
         } else {
-            
             encodingCharacters.getChars(0, 4, this.encChars, 0);
-            
         }
         
     }
@@ -119,18 +95,9 @@ public class EncodingCharacters extends Object implements Cloneable {
 
     
     
-    public EncodingCharacters(char fieldSeparator, char componentSeparator,
-    
-    char repetitionSeparator, char escapeCharacter,
-    
-    char subcomponentSeparator)
-    
+    public EncodingCharacters(char fieldSeparator, char componentSeparator, char repetitionSeparator, char escapeCharacter, char subcomponentSeparator)
     {
-        
-        this(fieldSeparator, String.valueOf(componentSeparator)
-        
-        + repetitionSeparator + escapeCharacter + subcomponentSeparator);
-        
+        this(fieldSeparator, String.valueOf(componentSeparator) + repetitionSeparator + escapeCharacter + subcomponentSeparator);
     }
     
     
@@ -138,165 +105,92 @@ public class EncodingCharacters extends Object implements Cloneable {
     /** copies contents of "other" */
     
     public EncodingCharacters(EncodingCharacters other)
-    
     {
-        
         this.fieldSep = other.getFieldSeparator();
-        
         this.encChars = new char[4];
-        
         this.encChars[0] = other.getComponentSeparator();
-        
         this.encChars[1] = other.getRepetitionSeparator();
-        
         this.encChars[2] = other.getEscapeCharacter();
-        
         this.encChars[3] = other.getSubcomponentSeparator();
-        
     }
-    
-    
     
     /**
      *
      * Returns the field separator.
      *
      */
-    
     public char getFieldSeparator() {
-        
         return this.fieldSep;
-        
     }
-    
-    
     
     /**
      *
      * Returns the component separator.
      *
      */
-    
     public char getComponentSeparator() {
-        
         return this.encChars[0];
-        
     }
-    
-    
     
     /**
      *
      * Returns the repetition separator.
      *
      */
-    
     public char getRepetitionSeparator() {
-        
         return this.encChars[1];
-        
     }
     
-    
-    
     /**
-     *
      * Returns the escape character.
-     *
      */
-    
     public char getEscapeCharacter() {
-        
         return this.encChars[2];
-        
     }
     
-    
-    
     /**
-     *
      * Returns the subcomponent separator.
-     *
      */
-    
     public char getSubcomponentSeparator() {
-        
         return this.encChars[3];
-        
     }
     
-    
-    
     /**
-     *
      * Returns the encoding characters (not including field separator)
-     *
      * as a string.
-     *
      */
-    
     public String toString() {
-        
         StringBuffer ret = new StringBuffer();
-        
         for (int i = 0; i < this.encChars.length; i++) {
-            
             ret.append(this.encChars[i]);
-            
         }
         
         return ret.toString();
-        
     }
-    
-    
     
     public Object clone()
-    
     {
-        
         return new EncodingCharacters(this);
-        
     }
-    
-    
     
     public void setFieldSeparator(char newFieldSep) {
-        
         this.fieldSep = newFieldSep;
-        
     }
-    
-    
     
     public void setComponentSeparator(char newComponentSep) {
-        
         this.encChars[0] = newComponentSep;
-        
     }
-    
-    
     
     public void setRepetitionSeparator(char newRepetitionSep) {
-        
         this.encChars[1] = newRepetitionSep;
-        
     }
-    
-    
     
     public void setEscapeCharacter(char newEscapeChar) {
-        
         this.encChars[2] = newEscapeChar;
-        
     }
     
-    
-    
     public void setSubcomponentSeparator(char newSubcomponentSep) {
-        
         this.encChars[3] = newSubcomponentSep;
-        
     }
     
     /** @see java.lang.Object#equals */

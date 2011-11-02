@@ -71,22 +71,51 @@ public class Escape {
             boolean charReplaced = false;
             char c = text.charAt(i);
 
+            FORENCCHARS:
 			for (int j = 0; j < 6; j++) {
                 if (text.charAt(i) == esc.characters[j]) {
 
 					// Formatting escape sequences such as /.br/ should be left alone
 					if (j == 4) {
-						if (i + 1 < textLength) {
-							if (text.charAt(i + 1) == '.') {
+						
+						if (i+1 < textLength) {
+							
+							// Check for \.br\
+							char nextChar = text.charAt(i + 1);
+							switch (nextChar) {
+							case '.':
+							case 'C':
+							case 'M':
+							case 'X':
+							case 'Z':
+							{
 								int nextEscapeIndex = text.indexOf(esc.characters[j], i + 1);
 								if (nextEscapeIndex > 0) {
 									result.append(text.substring(i, nextEscapeIndex + 1));
 									charReplaced = true;
 									i = nextEscapeIndex;
-									break;
+									break FORENCCHARS;
 								}
+								break;
 							}
+							case 'H':
+							case 'N':
+							{
+								if (i+2 < textLength && text.charAt(i+2) == '\\') {
+									int nextEscapeIndex = i + 2;
+									if (nextEscapeIndex > 0) {
+										result.append(text.substring(i, nextEscapeIndex + 1));
+										charReplaced = true;
+										i = nextEscapeIndex;
+										break FORENCCHARS;
+									}
+								}
+								break;
+							}
+							}
+							
 						}
+						
 					}
 
                     result.append(esc.encodings[j]);
@@ -147,15 +176,44 @@ public class Escape {
 					
 					// If we haven't found this, there is one more option. Escape sequences of /.XXXXX/ are
 					// formatting codes. They should be left intact
-					if ((i + 1 < textLength) && text.charAt(i + 1) == '.') {
-						int closingEscape = text.indexOf(escape, i + 1);
-						if (closingEscape > 0) {
-							String substring = text.substring(i, closingEscape + 1);
-							result.append(substring);
-							i += substring.length();
-						} else {
-							i++;
+					if (i + 1 < textLength) {
+						char nextChar = text.charAt(i + 1);
+						switch (nextChar) {
+							case '.':
+							case 'C':
+							case 'M':
+							case 'X':
+							case 'Z':
+							{
+								int closingEscape = text.indexOf(escape, i + 1);
+								if (closingEscape > 0) {
+									String substring = text.substring(i, closingEscape + 1);
+									result.append(substring);
+									i += substring.length();
+								} else {
+									i++;
+								}
+								break;
+							}
+							case 'H':
+							case 'N':
+							{
+								int closingEscape = text.indexOf(escape, i + 1);
+								if (closingEscape == i + 2) {
+									String substring = text.substring(i, closingEscape + 1);
+									result.append(substring);
+									i += substring.length();
+								} else {
+									i++;
+								}
+								break;
+							}
+							default:
+							{
+								i++;
+							}
 						}
+						
 					} else {
 						i++;
 					}
