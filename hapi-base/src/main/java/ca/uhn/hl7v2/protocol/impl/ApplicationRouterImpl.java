@@ -3,7 +3,6 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
-import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +41,8 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      */
     public static String RAW_MESSAGE_KEY = "raw-message"; 
 
-    private List myBindings;
+    private List<Binding> myBindings;
     private Parser myParser;
-    private BufferedWriter checkWriter = null;
     
 
     /**
@@ -64,7 +62,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     }
     
     private void init(Parser theParser) {
-        myBindings = new ArrayList(20);
+        myBindings = new ArrayList<Binding>(20);
         myParser = theParser;
     }
 
@@ -91,7 +89,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * 
      * @return {text, charset}
      */
-    private String[] processMessage(String incomingMessageString, Map theMetadata) throws HL7Exception {
+    private String[] processMessage(String incomingMessageString, Map<String, String> theMetadata) throws HL7Exception {
         HapiLog rawOutbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.outbound");
         HapiLog rawInbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.inbound");
         
