@@ -54,15 +54,16 @@ public class ValidationContextFactory {
      * 
      * @return <code>ValidationContext</code> 
      */
-    public synchronized static ValidationContext getContext() throws ValidationException {
+    @SuppressWarnings("unchecked")
+	public synchronized static ValidationContext getContext() throws ValidationException {
         if (ourContext == null) {
             String contextClassName = System.getProperty(CONTEXT_PROPERTY);            
             if (contextClassName == null) {
                 ourContext = new DefaultValidation();
             } else {
-                Class c;
+                Class<? extends ValidationContext> c;
                 try {
-                    c = Class.forName(contextClassName);
+                    c = (Class<? extends ValidationContext>) Class.forName(contextClassName);
                     ourContext = (ValidationContext) c.newInstance();
                 } catch (Exception e) {
                     throw new ValidationException(e);

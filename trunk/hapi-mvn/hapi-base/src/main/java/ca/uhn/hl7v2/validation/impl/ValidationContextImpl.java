@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uhn.hl7v2.model.Primitive;
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
+import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
@@ -47,13 +47,11 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
     private List<RuleBinding> myPrimitiveRuleBindings;
     private List<RuleBinding> myMessageRuleBindings;
     private List<RuleBinding> myEncodingRuleBindings;
-    private boolean myCheckPrimitivesFlag;
     
     public ValidationContextImpl() {
         myPrimitiveRuleBindings = new ArrayList<RuleBinding>(30);
         myMessageRuleBindings = new ArrayList<RuleBinding>(20);
         myEncodingRuleBindings = new ArrayList<RuleBinding>(10);
-        myCheckPrimitivesFlag = true;
     }
 
     /** 
