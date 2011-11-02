@@ -1,19 +1,15 @@
 package ca.uhn.hl7v2.model.primitive;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.DTM;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
-
-import junit.framework.TestCase;
 
 public class TsComponentOneTest extends TestCase {
 

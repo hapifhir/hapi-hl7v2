@@ -390,7 +390,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec("19840101000000.0+11111", DataTypeException.class),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -468,7 +468,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec(2001, -1, 21, DataTypeException.class),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -557,7 +557,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec(2001, -1, 21, 1, 1, DataTypeException.class),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -661,7 +661,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec(2001, -1, 21, 1, 1, 1.0F, DataTypeException.class),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -727,7 +727,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec(2300, baseTime + "+2300"),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

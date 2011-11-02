@@ -262,7 +262,7 @@ public class CommonTMTest extends TestCase {
 			new TestSpec("080005.1479+1234", "080005.1479+1234")
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -319,7 +319,7 @@ public class CommonTMTest extends TestCase {
 			new TestSpec(24, DataTypeException.class)
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -381,7 +381,7 @@ public class CommonTMTest extends TestCase {
 			new TestSpec(24, 59, DataTypeException.class)
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -451,7 +451,7 @@ public class CommonTMTest extends TestCase {
 			new TestSpec(24, 60, 60, DataTypeException.class)
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -519,7 +519,7 @@ public class CommonTMTest extends TestCase {
 			new TestSpec(21064, DataTypeException.class)
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
