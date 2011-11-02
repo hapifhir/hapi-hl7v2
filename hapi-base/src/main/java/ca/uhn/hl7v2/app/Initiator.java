@@ -63,6 +63,8 @@ public class Initiator {
     //private boolean keepListening;    
     private int timeoutMillis = 10000;
 
+	private boolean myLogMessages;
+
     /** 
      * Creates a new instance of Initiator.  
      * @param conn the Connection associated with this Initiator.   
@@ -109,8 +111,9 @@ public class Initiator {
 
         //log and send message 
         String outbound = conn.getParser().encode(out);
-        log.info("Initiator sending message: " + outbound);
-        rawOutbound.info(outbound);
+        if (myLogMessages) {
+        	rawOutbound.info(outbound);
+        }
         
         try {
             this.conn.getSendWriter().writeMessage(outbound);
@@ -137,13 +140,15 @@ public class Initiator {
                     String inbound = mr.getMessage();
                     
                     //log that we got the message
-                    log.info( "Initiator received message: " + inbound );
-                    rawInbound.info(inbound);
+                    if (myLogMessages) {
+                    	rawInbound.info(inbound);
+                    }
                     
                     //parse message
                     response = conn.getParser().parse(inbound);
                     log.debug("response parsed");
                     done = true;
+                    
                 }
 
                 if (System.currentTimeMillis() > startTime + timeoutMillis)
@@ -189,7 +194,7 @@ public class Initiator {
                     public void run() {
                         try {
                                 //get message ID
-    String ID = MessageIDGenerator.getInstance().getNewID();
+                        	String ID = MessageIDGenerator.getInstance().getNewID();
                             Message out = parser.parse(outText);
                             Terser tOut = new Terser(out);
                             tOut.set("/MSH-10", ID);
@@ -221,5 +226,12 @@ public class Initiator {
             e.printStackTrace();
         }
     }
+
+    /**
+     * If set to <code>false</code> (default is <code>true</code>), raw messages will not be logged.
+     */
+	public void setLogMessages(boolean theLogMessages) {
+		myLogMessages = theLogMessages;
+	}
 
 }

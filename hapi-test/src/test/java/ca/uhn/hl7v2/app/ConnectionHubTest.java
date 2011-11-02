@@ -1,16 +1,24 @@
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.*;
-import ca.uhn.hl7v2.llp.*;
+import ca.uhn.hl7v2.llp.LLPException;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MinLLPReader;
+import ca.uhn.hl7v2.llp.MinLLPWriter;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * JUnit test harmess for ConnectionHub 
@@ -21,6 +29,7 @@ public class ConnectionHubTest extends TestCase {
     private static final Log ourLog = LogFactory.getLog(ConnectionHubTest.class);
     private SimpleServer ss1;
     private SimpleServer ss2;
+	private MyNonRespondingApp ss3;
     
     /** Creates a new instance of ConnectionHubTest */
     public ConnectionHubTest(String arg) {
@@ -34,11 +43,14 @@ public class ConnectionHubTest extends TestCase {
         ss2 = new SimpleServer(5432, LowerLayerProtocol.makeLLP(), new PipeParser());
         ss2.registerApplication("*", "*", new MyApp());
         ss2.start();
+        ss3 = new MyNonRespondingApp();
+        ss3.start();
     }
 
     public void tearDown() {
         ss1.stop();
         ss2.stop();
+        ss3.myDone = true;
         
         try {
             Thread.sleep(SimpleServer.SO_TIMEOUT + 1000);
@@ -77,11 +89,13 @@ public class ConnectionHubTest extends TestCase {
      * Make sure that connection hub doesn't try to reuse a connection which is already closed
      * @throws IOException 
      * @throws LLPException 
+     * @throws InterruptedException 
      */
-    public void testConnectionClosedExternally() throws HL7Exception, LLPException, IOException {
+    public void testConnectionClosedExternally() throws HL7Exception, LLPException, IOException, InterruptedException {
         
         PipeParser pipeParser = new PipeParser();
-        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9877, pipeParser, MinLowerLayerProtocol.class);
+        ConnectionHub.getInstance().setLogMessages(false);
         
         String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
             + "EVN|A45|201004141020|\r"
@@ -90,20 +104,41 @@ public class ConnectionHubTest extends TestCase {
         ADT_A45 msg = new ADT_A45();
         msg.setParser(pipeParser);
         msg.parse(messageText);
-        i1.getInitiator().sendAndReceive(msg);
         
-        i1.close();
-        i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        ss3.myTransactionsUntilClose = 1;
+        
+        Message response = i1.getInitiator().sendAndReceive(msg);
+        
+        ourLog.info("Response was " + response);
 
-        i1.getInitiator().sendAndReceive(msg);
+        Thread.sleep(500);
         
-        i1.close();
+        try {
+        	ourLog.info("Going to send a second message to original connection, which is now closed");
+        	
+        	response = i1.getInitiator().sendAndReceive(msg);
+        	fail("Should have thrown exception");
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
+        ourLog.info("Response was " + response);
+
+        ss3.myTransactionsUntilClose = 2;
+
+        Connection i2 = ConnectionHub.getInstance().attach("localhost", 9877, pipeParser, MinLowerLayerProtocol.class);
+
+        response = i2.getInitiator().sendAndReceive(msg);
+        response = i2.getInitiator().sendAndReceive(msg);
+
+        ourLog.info("Response was " + response);
+
+        i2.close();
     }
     
     public void testDiscard() throws Exception {
         PipeParser pipeParser = new PipeParser();
         Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        Connection i1again = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
         ConnectionHub.getInstance().discard(i1);
         Connection i1thrice = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
         assertTrue(i1thrice.hashCode() != i1.hashCode());
@@ -127,6 +162,72 @@ public class ConnectionHubTest extends TestCase {
             }
         }
 
+    }
+    
+    
+    private class MyNonRespondingApp extends Thread
+    {
+    	private boolean myDone = false;
+    	private int myTransactionsUntilClose;
+
+		@Override
+		public void run() {
+			
+			try {
+				ServerSocket ss = new ServerSocket(9877);
+				ss.setSoTimeout(100);
+				
+				Socket accept = null;
+				MinLLPReader reader = null;
+				MinLLPWriter writer = null;
+				while (!myDone) {
+					
+					try {
+						if (accept == null) {
+							accept = ss.accept();
+							ourLog.info("Got new connection");
+							reader = new MinLLPReader(accept.getInputStream());
+							writer = new MinLLPWriter(accept.getOutputStream());
+						}
+					} catch (Exception e) {
+						continue;
+					}
+					
+					String message = reader.getMessage();
+					ourLog.info("Reader got message: " + message);
+					
+					if (myTransactionsUntilClose-- == 0) {
+						accept.close();
+						accept = null;
+						continue;
+					}
+					
+					Message inMsg = PipeParser.getInstanceWithNoValidation().parse(message);
+					String response = inMsg.generateACK().encode();
+
+					ourLog.info("Replying: " + response);
+					writer.writeMessage(response);
+					
+					if (myTransactionsUntilClose-- == 0) {
+						ourLog.info("Closing connection");
+						accept.close();
+						accept = null;
+					}
+
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (LLPException e) {
+				e.printStackTrace();
+			} catch (EncodingNotSupportedException e) {
+				e.printStackTrace();
+			} catch (HL7Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+    	
     }
 
 }

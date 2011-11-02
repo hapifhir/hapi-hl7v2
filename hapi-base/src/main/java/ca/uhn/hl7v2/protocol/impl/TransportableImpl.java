@@ -17,7 +17,7 @@ import ca.uhn.hl7v2.protocol.Transportable;
 public class TransportableImpl implements Transportable {
 
     private final String myMessageText;
-    private final Map myMetadata;
+    private final Map<String, Object> myMetadata;
     
     /**
      * Creates a new instance with no associated metadata (metadata can 
@@ -27,7 +27,7 @@ public class TransportableImpl implements Transportable {
      */
     public TransportableImpl(String theMessageText) {
         myMessageText = theMessageText;
-        myMetadata = new HashMap();
+        myMetadata = new HashMap<String, Object>();
     }
     
     /**
@@ -38,7 +38,7 @@ public class TransportableImpl implements Transportable {
      * @param theMetadata metadata associated with the message (typical examples 
      *      would be selected field values for routing) 
      */
-    public TransportableImpl(String theMessageText, Map theMetadata) {
+    public TransportableImpl(String theMessageText, Map<String, Object> theMetadata) {
         myMessageText = theMessageText;
         myMetadata = theMetadata;
     }
@@ -53,7 +53,7 @@ public class TransportableImpl implements Transportable {
     /** 
      * @see ca.uhn.hl7v2.protocol.Transportable#getMetadata()
      */
-    public Map getMetadata() {
+    public Map<String, Object> getMetadata() {
         return myMetadata;
     }
 

@@ -28,6 +28,6 @@ public interface Transportable {
      * was received (this depends on the underlying <code>TransportLayer</code> used).  
      * Message fields are keyed with <code>Terser</code> path names.  
      */
-    public Map getMetadata();
+    public Map<String, Object> getMetadata();
     
 }

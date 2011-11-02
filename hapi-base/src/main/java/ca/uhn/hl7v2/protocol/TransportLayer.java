@@ -39,7 +39,7 @@ public interface TransportLayer {
      *      This provides a way of associating connection information with  
      *      incoming messages (eg the IP address of the remote server).
      */
-    public Map getCommonMetadata();    
+    public Map<String, Object> getCommonMetadata();    
     
     /**
      * Initializes a connection to the remote server.  This can be called after 

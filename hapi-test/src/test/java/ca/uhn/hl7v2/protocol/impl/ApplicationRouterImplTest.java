@@ -42,7 +42,7 @@ public class ApplicationRouterImplTest extends TestCase {
 
     public void testProcessMessage() throws Exception {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A01", "P", "2.4");
-        MockApplication app = new MockApplication("a");
+        MockApplication app = new MockApplication();
         String message1 = "MSH|^~\\&|||||||ADT^A01|a|P|2.4\rNTE||foo\r";
         String response = "MSH|^~\\&|||||||ACK|b|P|2.4||||||UNICODE\rMSA|AA|a\r";
         String message2 = "MSH|^~\\&|||||||ADT^A14|a|P|2.4\rNTE||foo\r";
@@ -66,7 +66,7 @@ public class ApplicationRouterImplTest extends TestCase {
 
     public void testHasActiveBinding() {
         AppRoutingDataImpl rdA = new AppRoutingDataImpl("ADT", "A01", "P", "2.4");
-        ReceivingApplication appA = new MockApplication("a");
+        ReceivingApplication appA = new MockApplication();
         assertEquals(false, myRouter.hasActiveBinding(rdA));
         
         myRouter.bindApplication(rdA, appA);
@@ -91,7 +91,7 @@ public class ApplicationRouterImplTest extends TestCase {
      */    
     public void testWildcards() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("*", "A01", "P", "2.4");
-        ReceivingApplication app = new MockApplication("1");
+        ReceivingApplication app = new MockApplication();
         myRouter.bindApplication(rd, app);
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A01", "P", "2.4")));
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("foo", "A01", "P", "2.4")));
@@ -104,7 +104,7 @@ public class ApplicationRouterImplTest extends TestCase {
      */    
     public void testRegex() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
-        ReceivingApplication app = new MockApplication("1");
+        ReceivingApplication app = new MockApplication();
         myRouter.bindApplication(rd, app);
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A01", "P", "2.4")));
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A02", "P", "2.4")));
@@ -173,22 +173,13 @@ public class ApplicationRouterImplTest extends TestCase {
     private class MockApplication implements ReceivingApplication {
 
         private Message myNextResponse;
-        private final String myId;
         
-        public MockApplication(String theId) {
-            myId = theId;
-        }
-        
-        public Message processMessage(Message arg0, Map arg1) throws ReceivingApplicationException, HL7Exception {
+        public Message processMessage(Message arg0, Map<String, Object> arg1) throws ReceivingApplicationException, HL7Exception {
             return myNextResponse;
         }
 
         public boolean canProcess(Message arg0) {
             return true;
-        }
-        
-        public String getId() {
-            return myId;            
         }
         
         public void setNextResponse(Message theResponse) {

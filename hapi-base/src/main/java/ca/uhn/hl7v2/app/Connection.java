@@ -198,4 +198,11 @@ public class Connection {
         return open;
     }
 
+    /**
+     * If set to <code>false</code> (default is <code>true</code>), raw messages will not be logged.
+     */
+	public void setLogMessages(boolean theLogMessages) {
+		initiator.setLogMessages(theLogMessages);
+	}
+
 }

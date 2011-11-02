@@ -30,12 +30,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.Queue;
 import javax.jms.TextMessage;
-import javax.jms.Topic;
 
 import ca.uhn.hl7v2.protocol.JMSDestination;
 import ca.uhn.hl7v2.protocol.TransportException;
@@ -63,7 +60,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
      
     private JMSDestination myInbound;
     private JMSDestination myOutbound;
-    private Map myMetadata;
+    private Map<String, Object> myMetadata;
     
     /**
      * @param theInboundDestination wrapper around the Queue or Topic to which outgoing messages 
@@ -88,8 +85,8 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
     /** 
      * Sets common metadata on the basis of connection and destination.  
      */ 
-    private Map makeMetadata() {
-        Map md = new HashMap();
+    private Map<String, Object> makeMetadata() {
+        Map<String, Object> md = new HashMap<String, Object>();
         try {
             md.put(INBOUND_CLIENT_ID_KEY, myInbound.getConnection().getClientID());
             md.put(INBOUND_CONNECTION_METADATA_KEY, myInbound.getConnection().getMetaData());
@@ -103,23 +100,23 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
         return md;
     }
     
-    /**
-     * @param theDestination a Queue or Topic 
-     * @return either getQueueName() or getTopicName() 
-     */
-    private static String getName(Destination theDestination) throws JMSException {
-        String name = null;
-        
-        if (theDestination instanceof Queue) {
-            name = ((Queue) theDestination).getQueueName();
-        } else if (theDestination instanceof Topic) {
-            name = ((Topic) theDestination).getTopicName();
-        } else {
-            throw new IllegalArgumentException("We don't support Destinations of type " 
-                + theDestination.getClass().getName());
-        }
-        return name;
-    }
+//    /**
+//     * @param theDestination a Queue or Topic 
+//     * @return either getQueueName() or getTopicName() 
+//     */
+//    private static String getName(Destination theDestination) throws JMSException {
+//        String name = null;
+//        
+//        if (theDestination instanceof Queue) {
+//            name = ((Queue) theDestination).getQueueName();
+//        } else if (theDestination instanceof Topic) {
+//            name = ((Topic) theDestination).getTopicName();
+//        } else {
+//            throw new IllegalArgumentException("We don't support Destinations of type " 
+//                + theDestination.getClass().getName());
+//        }
+//        return name;
+//    }
 
     /** 
      * @see ca.uhn.hl7v2.protocol.Transport#doSend(ca.uhn.hl7v2.protocol.Transportable)
@@ -155,7 +152,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
 
             ((TextMessage) message).setText(theSource.getMessage());
         
-            Iterator it = theSource.getMetadata().keySet().iterator();
+            Iterator<String> it = theSource.getMetadata().keySet().iterator();
             while (it.hasNext()) {
                 Object key = it.next();
                 Object val = theSource.getMetadata().get(key);
@@ -212,7 +209,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
      *  
      * @see ca.uhn.hl7v2.protocol.TransportLayer#getCommonMetadata()
      */
-    public Map getCommonMetadata() {
+    public Map<String, Object> getCommonMetadata() {
         return myMetadata;
     }
 
