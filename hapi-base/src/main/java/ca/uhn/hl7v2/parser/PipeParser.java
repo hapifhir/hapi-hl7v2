@@ -624,7 +624,7 @@ public class PipeParser extends Parser {
             throw new HL7Exception("Can't encode message: MSH-2 (encoding characters) is missing");
 
         if (encCharString.length() != 4)
-            throw new HL7Exception("Encoding characters '" + encCharString + "' invalid -- must be 4 characters", HL7Exception.DATA_TYPE_ERROR);
+            throw new HL7Exception("Encoding characters (MSH-2) value '" + encCharString + "' invalid -- must be 4 characters", HL7Exception.DATA_TYPE_ERROR);
         EncodingCharacters en = new EncodingCharacters(fieldSep, encCharString);
 
         // pass down to group encoding method which will operate recursively on
