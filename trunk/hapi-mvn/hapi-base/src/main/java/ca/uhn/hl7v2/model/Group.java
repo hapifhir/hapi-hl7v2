@@ -97,7 +97,7 @@ public interface Group extends Structure {
   /**
    * Returns the Class of the Structure at the given name index.  
    */
-  public Class getClass(String name);
+  public Class<? extends Structure> getClass(String name);
   
   /**
    * Expands the group by introducing a new child Structure (i.e. 

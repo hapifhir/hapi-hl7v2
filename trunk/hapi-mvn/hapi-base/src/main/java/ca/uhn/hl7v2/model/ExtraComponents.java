@@ -26,12 +26,12 @@ public class ExtraComponents implements Serializable {
 
 	private static final long serialVersionUID = -2614683870975956395L;
     
-    private ArrayList comps;
+    private ArrayList<Varies> comps;
     private Message message;
     
     /** Creates a new instance of ExtraComponents */
     public ExtraComponents(Message message) {
-        this.comps = new ArrayList();
+        this.comps = new ArrayList<Varies>();
         this.message = message; 
     }
     
