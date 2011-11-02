@@ -33,8 +33,6 @@ import java.util.GregorianCalendar;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * This class contains functionality used by the TM class
@@ -78,8 +76,6 @@ public class CommonTM {
      * Value returned by {@link #getGMTOffset()} if no offset is set
      */
     public static final int GMT_OFFSET_NOT_SET_VALUE = -99;
-
-    private static final HapiLog log = HapiLogFactory.getHapiLog(CommonTM.class);
 
     private String value;
     private int hour;

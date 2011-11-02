@@ -33,8 +33,6 @@ import java.util.GregorianCalendar;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>
@@ -109,8 +107,6 @@ import ca.uhn.log.HapiLogFactory;
  * @author Neal Acharya
  */
 public class CommonTS {
-
-    private static final HapiLog log = HapiLogFactory.getHapiLog(CommonTS.class);
 
     private CommonDT dt;
     private CommonTM tm;

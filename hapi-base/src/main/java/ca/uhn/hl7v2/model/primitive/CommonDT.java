@@ -32,8 +32,6 @@ import java.util.GregorianCalendar;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * This class contains functionality used by the DT class
@@ -53,8 +51,6 @@ import ca.uhn.log.HapiLogFactory;
  */
 
 public class CommonDT {
-
-    private static final HapiLog log = HapiLogFactory.getHapiLog(CommonDT.class);
 
     private String value;
     private int year;
