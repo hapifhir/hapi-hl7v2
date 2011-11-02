@@ -40,34 +40,27 @@ Adding HAPI to your application
   
 * Using Maven
 
-  If you use Maven to build your application, adding HAPI is as easy as adding the following to your
-  repository section:
-
----
-        <repository>
-            <id>hapi-sf</id>
-            <name>HAPI Sourceforge Repository</name>
-            <url>http://hl7api.sourceforge.net/m2</url>
-        </repository>
----
-
-  And then adding the following to your dependencies section (add the structures versions you need).
+  To use HAPI , add hapi-base to your dependencies section, and add the structures versions you need.
   Note that the example below assumes you are using HAPI release 1.2. Adjust the version accordingly
   if you are using a different release.
   
 ---
+		<!-- This is the core HAPI library -->
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
             <version>1.2</version>
         </dependency>       
+        
+        <!-- This is the structure JAR for HL7 v2.1 -->
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
             <version>1.2</version>
         </dependency>
+        
         <!-- 
-             Add hapi-structures-v22, v23, etc. depending on which versions 
+             Also add hapi-structures-v22, v23, etc. depending on which versions 
              of HL7 you need to create or parse 
         -->     
 ---
