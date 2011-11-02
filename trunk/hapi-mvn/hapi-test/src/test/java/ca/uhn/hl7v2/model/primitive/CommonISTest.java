@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -29,7 +29,6 @@ package ca.uhn.hl7v2.model.primitive;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
@@ -67,9 +66,6 @@ public class CommonISTest extends TestCase {
 		super.setUp();
         table = 2;
 		commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
-            public String getVersion() {
-                return "2.5";
-            }
         };
 		value = "CodedValue";
 	}
@@ -163,7 +159,7 @@ public class CommonISTest extends TestCase {
 		};
         
 
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length; i++) {
 			if (!tests[i].executeTest())
@@ -228,7 +224,7 @@ public class CommonISTest extends TestCase {
 			new TestSpec(getString(201, 'a'), DataTypeException.class),
 		};
 
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length; i++) {
 			if (!tests[i].executeTest())
@@ -243,9 +239,6 @@ public class CommonISTest extends TestCase {
 	 */
 	public void testGetValue() throws DataTypeException {
 		commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
-            public String getVersion() {
-                return "2.5";
-            }
         };
         commonIS.setValue(value);
 		assertEquals("Should get code value back.", value, commonIS.getValue());
@@ -256,9 +249,6 @@ public class CommonISTest extends TestCase {
 	 */
 	public void testGetTable() throws DataTypeException {
         commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
-            public String getVersion() {
-                return "2.5";
-            }
         };
         commonIS.setValue(value);
 		assertEquals("Should get table number back.", table, commonIS.getTable());
@@ -274,7 +264,6 @@ public class CommonISTest extends TestCase {
 		for (int i=0;i<length;i++) {
 			buf.append(c);
 		}
-		int l = buf.length();
 		return buf.toString();
 	}
 
