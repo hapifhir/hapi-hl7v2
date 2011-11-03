@@ -33,8 +33,9 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
-import ca.uhn.hl7v2.sourcegen.*;
 import java.util.HashMap;
+
+import ca.uhn.hl7v2.sourcegen.SourceGenerator;
 
 /** This Class represents the name of a conformance class. It is used to generate
  * names for classes, accessors for those classes, member variable to hold those
@@ -67,7 +68,7 @@ public final class ProfileName {
    public static final int PS_SUBC = 5;
 
    private static final String[] PS_TYPES = { "Msg", "SegGrp", "Seg", "Field", "Comp", "SubComp" };
-   protected HashMap nameMap; // Map containing the name of the parent and all children at any given level
+   protected HashMap<String, Object> nameMap; // Map containing the name of the parent and all children at any given level
    private String parentName; // The name of the parent name assosiated with this ProfileName
 
    private String profileName; // The name that this ProfileName represents
@@ -80,7 +81,7 @@ public final class ProfileName {
     * both for clarity and to avoid name collisions.
     */
    public ProfileName(String profileName, int profileStructureType) {
-      this(profileName, profileStructureType, new HashMap(50), profileName);
+      this(profileName, profileStructureType, new HashMap<String, Object>(50), profileName);
    }
 
    /** Creates a new instance of ProfileName 
@@ -91,7 +92,7 @@ public final class ProfileName {
     * @param nameMap a list of all the children in ProfileName
     * @param parentName the name of the parent to the child 
     */
-   private ProfileName(String profileName, int profileStructureType, HashMap nameMap, String parentName) {
+   private ProfileName(String profileName, int profileStructureType, HashMap<String, Object> nameMap, String parentName) {
       this.profileName = new String(profileName);
       this.profileStructureType = profileStructureType;
       this.nameMap = nameMap;
@@ -121,7 +122,7 @@ public final class ProfileName {
     * @return ProfileName Returns the ProfileName object
     */
    public ProfileName clearNameMap() {
-      this.nameMap = new HashMap(50);
+      this.nameMap = new HashMap<String, Object>(50);
       nameMap.put(this.profileStructureType + this.profileName, null);
       this.parentName = this.profileName;
       return this;

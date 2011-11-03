@@ -30,17 +30,19 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
-import ca.uhn.hl7v2.conf.classes.generator.genclasses.*;
-import ca.uhn.hl7v2.conf.spec.message.*;
-import ca.uhn.hl7v2.conf.classes.exceptions.*;
-import ca.uhn.hl7v2.conf.*;
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.model.v231.datatype.IS;
-
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import ca.uhn.hl7v2.conf.ProfileException;
+import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceError;
+import ca.uhn.hl7v2.conf.classes.generator.genclasses.GeneratedConformanceContainer;
+import ca.uhn.hl7v2.conf.spec.message.Component;
+import ca.uhn.hl7v2.conf.spec.message.SubComponent;
+import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.Message;
 
 /** This class builds Conformance Component Classes
  * @author <table><tr>James Agnew</tr>
@@ -121,8 +123,12 @@ public class ConformanceComponentBuilder {
 			}
 
          if ( instance instanceof Composite ) {
+        	 	
+        	 	@SuppressWarnings("unchecked")
+				Class<? extends Composite> cComp = (Class<? extends Composite>) c;
+        	 
 				// In this case, the child is a composite subcomponent
-				Component generatedComponent = createSubComponentProfile(c, comp.getSubComponent(i).getName());
+				Component generatedComponent = createSubComponentProfile(cComp, comp.getSubComponent(i).getName());
 				gcc.addComponent(new ProfileName(comp.getSubComponent(i).getName(), ProfileName.PS_COMP), i - 1, true);
 				ConformanceComponentBuilder childBuilder = new ConformanceComponentBuilder(packageName + "." + profileName.getPackageName(), depManager, versionString);
 				childBuilder.buildClass(generatedComponent);
@@ -154,7 +160,7 @@ public class ConformanceComponentBuilder {
     * @param name - the Component name
     * @return Component - the Component
     */
-   private Component createSubComponentProfile(Class compositeClass, String name) {
+   private Component createSubComponentProfile(Class<? extends Composite> compositeClass, String name) {
       Component theComponent = new Component();
       int numSubComponents = 0;
 

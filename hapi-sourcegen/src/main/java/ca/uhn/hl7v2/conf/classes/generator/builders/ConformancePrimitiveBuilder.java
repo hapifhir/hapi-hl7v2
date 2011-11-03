@@ -46,7 +46,6 @@ public class ConformancePrimitiveBuilder {
    private DocumentationBuilder docBuilder; // The documentation builder
 
    private String packageName; // Represents the Package that this Segment will go in
-   private String underlyingType; // The underlying HAPI Type
 
    /** This constructor will create a new ConformancePrimitiveBuilder
     */

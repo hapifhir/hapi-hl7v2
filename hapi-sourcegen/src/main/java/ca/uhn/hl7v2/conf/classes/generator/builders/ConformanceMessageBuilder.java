@@ -44,11 +44,8 @@ import ca.uhn.hl7v2.conf.classes.generator.genclasses.*;
  */
 public class ConformanceMessageBuilder {
    private GeneratedConformanceMessage confMsg;
-   private DeploymentManager depManager;
    private StaticDef msg;
    private String packageName;
-
-   private RuntimeProfile runtimeProfile;
 
    /** This constructor will create a new ConformanceMessageBuilder
     * @param packageName the name of the package
@@ -62,8 +59,6 @@ public class ConformanceMessageBuilder {
     * @param depManager the DeploymentManager
     */
    public void buildClass(RuntimeProfile runtimeProfile, DeploymentManager depManager){
-      this.depManager = depManager;
-      this.runtimeProfile = runtimeProfile;
       this.msg = runtimeProfile.getMessage();
       this.confMsg = new GeneratedConformanceMessage();
          

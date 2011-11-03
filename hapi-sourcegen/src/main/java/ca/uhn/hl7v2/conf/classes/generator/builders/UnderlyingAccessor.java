@@ -81,13 +81,12 @@ public class UnderlyingAccessor {
      * @param accessorName the Accessor ame
      */
     public UnderlyingAccessor(String className, String accessorName) {  
-        boolean foundAccessor = false;
         acceptsRep = false;
         
         track(className);
         
         try {
-            Class c = getHapiModelClass(className);
+            Class<?> c = getHapiModelClass(className);
             theAccessor = makeName(c, accessorName);
 
             //children of groups & segments repeat; children of composites don't 
@@ -142,8 +141,8 @@ public class UnderlyingAccessor {
      * @return the Java class by that name if one is on the classpath; otherwise it is assumed 
      *      that we are dealing with a Z-segment, and GenericSegment.class is returned
      */
-    public static Class getHapiModelClass(String theUnderlyingClassName) {
-        Class c = null;
+    public static Class<?>getHapiModelClass(String theUnderlyingClassName) {
+        Class<?> c = null;
         try {
             c = Class.forName(theUnderlyingClassName);
         } catch (ClassNotFoundException e) {
@@ -158,7 +157,7 @@ public class UnderlyingAccessor {
      * @param theChildName must be an integer when the parent is a composite  
      * @return the accessor name on the given parent that returns the the given child 
      */
-    private String makeName(Class theParentClass, String theChildName) {
+    private String makeName(Class<?> theParentClass, String theChildName) {
         String result = null;
         if (Group.class.isAssignableFrom(theParentClass)) {
             result = "get(\"" + guessCompName(theChildName) + "\", rep)";
@@ -184,7 +183,7 @@ public class UnderlyingAccessor {
         return theAccessorName.substring(3);
     }
     
-    private static Method getMethod(Class theParentClass, String theChildName) {
+    private static Method getMethod(Class<?> theParentClass, String theChildName) {
         Method result = null;
         Method methods[] = theParentClass.getMethods();
         for (int i = 0; i < methods.length; i++) {
