@@ -12,6 +12,7 @@ import ca.uhn.hl7v2.util.Hl7InputStreamMessageStringIterator;
 
 public class ReadMessagesFromFile {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws FileNotFoundException {
 
 		/*

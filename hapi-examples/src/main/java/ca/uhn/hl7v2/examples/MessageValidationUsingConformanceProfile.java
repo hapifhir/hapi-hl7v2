@@ -11,11 +11,7 @@ import ca.uhn.hl7v2.conf.check.DefaultValidator;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * TODO: add!

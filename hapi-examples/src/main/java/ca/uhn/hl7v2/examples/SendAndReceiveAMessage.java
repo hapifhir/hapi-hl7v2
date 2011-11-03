@@ -38,8 +38,6 @@ import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v22.message.ADT_A01;
-import ca.uhn.hl7v2.model.v22.segment.PID;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
