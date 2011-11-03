@@ -30,7 +30,8 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /** This class parses the command line argument for the command line tool ConfGen.java
  * @author <table><tr>James Agnew</tr>
@@ -43,7 +44,7 @@ public class CommandParser {
    private boolean errFlag = false;
    private String errorType;
    private boolean helpFlag = false;
-   private Vector params;
+   private List<String> params;
 
    // option flags
    private boolean testFlag = false;
@@ -52,14 +53,14 @@ public class CommandParser {
    /** creates a new vector to store the command line arguments into 
     */
    public CommandParser() {
-      this.params = new Vector();
+      this.params = new ArrayList<String>();
    }
 
    /** returns the location where the genrated files are going to be stored into 
     * @return the location where the genrated files are going to be stored into   
     */
    public String getDest() {
-      return params.elementAt(1).toString();
+      return params.get(1).toString();
    }
    /** returns true if the error flag is set or false if it is not
     * @return true if the error flag is set or false if it is not  
@@ -86,14 +87,14 @@ public class CommandParser {
     * @return the pakage name to use for the generated source 
     */
    public String getPackage() {
-      return params.elementAt(2).toString();
+      return params.get(2).toString();
    }
 
    /** returns the location of the XML profile 
     * @return the location of the XML profile  
     */
    public String getSource() {
-      return params.elementAt(0).toString();
+      return params.get(0).toString();
    }
    /** returns true if the test flag is set or false if it is not
     * @return true if the test flag is set or false if it is not  
