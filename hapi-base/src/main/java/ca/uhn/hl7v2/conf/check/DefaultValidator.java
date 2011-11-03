@@ -58,7 +58,7 @@ public class DefaultValidator implements Validator {
      * @see Validator#validate
      */
     public HL7Exception[] validate(Message message, StaticDef profile) throws ProfileException, HL7Exception {
-        ArrayList exList = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         Terser t = new Terser(message);
         
         //check msg type, event type, msg struct ID
@@ -83,7 +83,7 @@ public class DefaultValidator implements Validator {
             exList.add(e);
         }
         
-        Exception[] childExceptions; 
+        HL7Exception[] childExceptions; 
         childExceptions = testGroup(message, profile, profile.getIdentifier());
         for (int i = 0; i < childExceptions.length; i++) {
             exList.add(childExceptions[i]);
@@ -96,8 +96,8 @@ public class DefaultValidator implements Validator {
      * Tests a group against a group section of a profile.
      */
     public HL7Exception[] testGroup(Group group, AbstractSegmentContainer profile, String profileID) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
-        ArrayList allowedStructures = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        ArrayList<String> allowedStructures = new ArrayList<String>(20);
         
         for (int i = 1; i <= profile.getChildren(); i++) {
             ProfileStructure struct = profile.getChild(i);
@@ -109,7 +109,7 @@ public class DefaultValidator implements Validator {
                 //see which instances have content
                 try {
                     Structure[] instances = group.getAll(struct.getName());
-                    ArrayList instancesWithContent = new ArrayList(10);
+                    ArrayList<Structure> instancesWithContent = new ArrayList<Structure>(10);
                     for (int j = 0; j < instances.length; j++) {
                         if (hasContent(instances[j])) instancesWithContent.add(instances[j]);
                     }
@@ -142,8 +142,8 @@ public class DefaultValidator implements Validator {
      * a list of exceptions representing structures that appear in the message  
      * but are not supposed to.  
      */
-    private HL7Exception[] checkForExtraStructures(Group group, ArrayList allowedStructures) throws ProfileException {
-        ArrayList exList = new ArrayList();
+    private HL7Exception[] checkForExtraStructures(Group group, ArrayList<String> allowedStructures) throws ProfileException {
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
         String[] childNames = group.getNames();
         for (int i = 0; i < childNames.length; i++) {
             if (!allowedStructures.contains(childNames[i])) {
@@ -192,7 +192,7 @@ public class DefaultValidator implements Validator {
      * Tests a structure (segment or group) against the corresponding part of a profile.  
      */
     public HL7Exception[] testStructure(Structure s, ProfileStructure profile, String profileID) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         if (profile instanceof Seg) {
             if (Segment.class.isAssignableFrom(s.getClass())) {
                 addToList(testSegment((Segment) s, (Seg) profile, profileID), exList);
@@ -215,8 +215,8 @@ public class DefaultValidator implements Validator {
      * Tests a segment against a segment section of a profile.
      */
     public HL7Exception[] testSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile, String profileID) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
-        ArrayList allowedFields = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        ArrayList<Integer> allowedFields = new ArrayList<Integer>(20);
         
         for (int i = 1; i <= profile.getFields(); i++) {
             Field field = profile.getField(i);
@@ -228,7 +228,7 @@ public class DefaultValidator implements Validator {
                 //see which instances have content
                 try {
                     Type[] instances = segment.getField(i);
-                    ArrayList instancesWithContent = new ArrayList(10);
+                    ArrayList<Type> instancesWithContent = new ArrayList<Type>(10);
                     for (int j = 0; j < instances.length; j++) {
                         if (hasContent(instances[j])) instancesWithContent.add(instances[j]);
                     }
@@ -278,8 +278,8 @@ public class DefaultValidator implements Validator {
      * but are not supposed to.  
      * @param allowedFields an array of Integers containing field #s of allowed fields
      */
-    private HL7Exception[] checkForExtraFields(Segment segment, ArrayList allowedFields) throws ProfileException {
-        ArrayList exList = new ArrayList();
+    private HL7Exception[] checkForExtraFields(Segment segment, ArrayList<Integer> allowedFields) throws ProfileException {
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
         for (int i = 1; i <= segment.numFields(); i++) {
             if (!allowedFields.contains(new Integer(i))) {
                 try {
@@ -305,7 +305,7 @@ public class DefaultValidator implements Validator {
      *      default pipe-encoded form is used to check length and constant val)
      */
     public HL7Exception[] testType(Type type, AbstractComponent profile, String encoded, String profileID) {
-        ArrayList exList = new ArrayList();
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
         if (encoded == null) encoded = PipeParser.encode(type, this.enc);
 
         HL7Exception ue = testUsage(encoded, profile.getUsage(), profile.getName());
@@ -386,7 +386,7 @@ public class DefaultValidator implements Validator {
      * all other types or if the table name or number is missing.  
      */
     private HL7Exception[] testTypeAgainstTable(Type type, AbstractComponent profile, String profileID) {
-        ArrayList exList = new ArrayList();
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
         if (profile.getTable() != null && (type.getName().equals("IS") || type.getName().equals("ID"))) {
             String codeSystem = makeTableName(profile.getTable());
             String value = ((Primitive) type).getValue();
@@ -403,7 +403,7 @@ public class DefaultValidator implements Validator {
         return this.toArray(exList);
     }
     
-    private void addTableTestResult(ArrayList exList, String profileID, String codeSystem, String value) {
+    private void addTableTestResult(ArrayList<HL7Exception> exList, String profileID, String codeSystem, String value) {
         if (codeSystem != null && value != null) {
             HL7Exception e = testValueAgainstTable(profileID, codeSystem, value);
             if (e != null) exList.add(e);
@@ -433,7 +433,7 @@ public class DefaultValidator implements Validator {
     }
     
     public HL7Exception[] testField(Type type, Field profile, boolean escape, String profileID) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         
         //account for MSH 1 & 2 which aren't escaped
         String encoded = null;
@@ -465,7 +465,7 @@ public class DefaultValidator implements Validator {
     }
     
     public HL7Exception[] testComponent(Type type, Component profile, String profileID) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         
         addToList(testType(type, profile, null, profileID), exList);
         
@@ -494,7 +494,7 @@ public class DefaultValidator implements Validator {
     
     /** Tests for extra components (ie any not defined in the profile) */
     private HL7Exception[] checkExtraComponents(Composite comp, int numInProfile) throws ProfileException {
-        ArrayList exList = new ArrayList(20);
+        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         
         StringBuffer extra = new StringBuffer();
         for (int i = numInProfile; i < comp.getComponents().length; i++) {
@@ -568,14 +568,14 @@ public class DefaultValidator implements Validator {
     }
     
     /** Appends an array of HL7 exceptions to a list */
-    private void addToList(HL7Exception[] exceptions, ArrayList list) {
+    private void addToList(HL7Exception[] exceptions, ArrayList<HL7Exception> list) {
         for (int i = 0; i < exceptions.length; i++) {
             list.add(exceptions[i]);
         }
     }
     
-    /** Returns the HL7 exceptions in the given arraylist in an array */
-    private HL7Exception[] toArray(ArrayList list) {
+    /** Returns the HL7 exceptions in the given ArrayList<HL7Exception> in an array */
+    private HL7Exception[] toArray(ArrayList<HL7Exception> list) {
         return (HL7Exception[]) list.toArray(new HL7Exception[0]);
     }
     
