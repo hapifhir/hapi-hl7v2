@@ -29,13 +29,8 @@ public class XMLSchemaRuleTest extends TestCase {
     public void testTest() throws IOException {
         
         URL res = XMLSchemaRuleTest.class.getClassLoader().getResource("ca/uhn/hl7v2/validation/impl/ACK.xsd");
-        String resPath = res.toString().replace("file:/", "").replace("/ACK.xsd", "");
-        
-        
-        if (!resPath.startsWith(System.getProperty("file.separator") + "")) { 
-        	resPath = System.getProperty("file.separator") + resPath;
-        }
-        
+        String resPath = res.toString().replace("file:", "").replace("/ACK.xsd", "");
+   
         System.setProperty("ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation.2.5", 
                 resPath);
         

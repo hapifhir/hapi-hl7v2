@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -45,6 +45,7 @@ import ca.uhn.hl7v2.model.Message;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2011-02-21 17:55:08 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("serial")
 public abstract class TSComponentOne extends AbstractPrimitive {
 
     private CommonTS myDetail;
@@ -227,8 +228,9 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * 
      * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
      * the current system offset
+     * Note: Date is timezone-agnostic, representing always GMT time
      * 
-     * @param theDate The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values 
      * @since 1.1 
      */
     public void setValue(Date theDate) throws DataTypeException {
@@ -251,8 +253,9 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * Convenience setter which sets the value using a {@link Date} object.
      * 
      * Note: Sets fields using precision up to the minute
+     * Note: Date is timezone-agnostic, representing always GMT time
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values 
      * @since 1.1 
      */
     public void setValueToMinute(Date theDate) throws DataTypeException {
@@ -276,7 +279,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * 
      * Note: Sets fields using precision up to the second
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values 
      * @since 1.1 
      */
     public void setValueToSecond(Date theDate) throws DataTypeException {
@@ -294,6 +297,8 @@ public abstract class TSComponentOne extends AbstractPrimitive {
 
     /**
      * Return the value as a date object
+     * Note: Sets fields using precision up to the second
+     * 
      * @since 1.1 
      * @throws DataTypeException If the current underlying string representation can not be parsed into a valid date/time
      */

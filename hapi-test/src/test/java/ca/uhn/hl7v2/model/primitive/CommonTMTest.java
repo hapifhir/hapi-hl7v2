@@ -26,6 +26,8 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
+import static org.junit.Assert.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +35,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -48,37 +56,40 @@ import ca.uhn.hl7v2.model.DataTypeException;
  *
  * @author Leslie Mann
  */
-public class CommonTMTest extends TestCase {
+// FIXME: make junit4, globally set timezone to toronto
+public class CommonTMTest {
 	final String baseTime = "154638";
 	final String baseTimePrecision = baseTime + ".4321";
 	final String baseTimePrecisionOffset = baseTimePrecision + "-2345";
 	private CommonTM commonTM;
 
-	/**
-	 * Constructor for CommonTMTest.
-	 * @param testName
-	 */
-	public CommonTMTest(String testName) {
-		super(testName);
-	}
+	private static TimeZone tz;
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(CommonTMTest.class);
-	}
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		tz = TimeZone.getDefault();
+		TimeZone.setDefault(TimeZone.getTimeZone("Canada/Eastern"));
+    }
+	
+	@AfterClass
+	public static void tearDownBeforeClass() {
+		TimeZone.setDefault(tz);
+    }
+	
 
 	/**
 	 * @see TestCase#setUp()
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		commonTM = new CommonTM();
 	}
 
 	/**
 	 * @see TestCase#tearDown()
 	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		commonTM = null;
 	}
 
@@ -91,6 +102,7 @@ public class CommonTMTest extends TestCase {
 	/**
 	 * Test for default constructor
 	 */
+	@Test
 	public void testConstructor() {
 		assertNotNull("Should have a valid CommonTM object", commonTM);
 	}
@@ -98,7 +110,9 @@ public class CommonTMTest extends TestCase {
 	/**
 	 * Test for http://sourceforge.net/support/tracker.php?aid=3410095
 	 */
+	@Test
 	public void testSetCalendarUsingHighValueTimeZoneOffset() throws ParseException, DataTypeException {
+
 		Calendar c = Calendar.getInstance();
 		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));
 		
@@ -111,12 +125,11 @@ public class CommonTMTest extends TestCase {
 		
 		String val = commonTM.getValue();
 		assertEquals("070000+1200", val);
-		
 	}
 	
 	
+	@Test
     public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
-        
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ssZ");
         Date date = format.parse("20100609 12:40:05-0400");
         Calendar cal = Calendar.getInstance();
@@ -144,6 +157,18 @@ public class CommonTMTest extends TestCase {
         commonTM.setValue(cal);
         String value = commonTM.getValue();
         assertEquals("124005.25-0400", value);
+
+        commonTM = new CommonTM();
+        cal.set(Calendar.ZONE_OFFSET, 12 * 1000 * 60 * 60);
+        commonTM.setValue(cal);
+        value = commonTM.getValue();
+        assertEquals("124005.25+1200", value);
+
+        commonTM = new CommonTM();
+        cal.set(Calendar.ZONE_OFFSET, (int)(5.5 * 1000 * 60 * 60));
+        commonTM.setValue(cal);
+        value = commonTM.getValue();
+        assertEquals("124005.25+0530", value);
         
         format = new SimpleDateFormat("HH:mm:ss");
         
@@ -176,6 +201,7 @@ public class CommonTMTest extends TestCase {
 	/**
 	 * Test for string constructor
 	 */
+	@Test
 	public void testStringConstructor() throws DataTypeException {
 		commonTM = new CommonTM(baseTime);
 		assertNotNull("Should have a valid CommonTM object", commonTM);
@@ -184,7 +210,8 @@ public class CommonTMTest extends TestCase {
     /**
      * Testing string constructor with delete value "". 
      */
-    public void testStringConstructor2() throws DataTypeException {
+	@Test
+	public void testStringConstructor2() throws DataTypeException {
         commonTM = new CommonTM("\"\"");
         assertNotNull("Should have a valid CommonTM object", commonTM);
         assertEquals("Should have a value of \"\" ", "\"\"", commonTM.getValue());
@@ -193,6 +220,7 @@ public class CommonTMTest extends TestCase {
 	/**
 	 * Test set/get value with various time strings
 	 */
+	@Test
 	public void testSetGetValue() {
 		class TestSpec {
 			String time;
@@ -272,6 +300,7 @@ public class CommonTMTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testSetHourPrecision() {
 		class TestSpec {
 			int hour;
@@ -329,6 +358,7 @@ public class CommonTMTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testSetHourMinutePrecision() {
 		class TestSpec {
 			int hour;
@@ -391,6 +421,7 @@ public class CommonTMTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testSetHourMinSecondPrecision() {
 		class TestSpec {
 			int hour;
@@ -465,6 +496,7 @@ public class CommonTMTest extends TestCase {
 	 * Test set/getOffset.  Testspec constructor sets up a value
 	 * of "154638" so we can get a value back
 	 */
+	@Test
 	public void testSetGetOffset() {
 		
 		class TestSpec {
@@ -529,24 +561,28 @@ public class CommonTMTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testGetHour() throws DataTypeException {
 		commonTM = new CommonTM(baseTime);
 		int hour = commonTM.getHour();
 		assertEquals("Should get hour back", Integer.parseInt(baseTime.substring(0,2)), hour);
 	}
 
+	@Test
 	public void testGetMinute() throws DataTypeException {
 		commonTM = new CommonTM(baseTime);
 		int minute = commonTM.getMinute();
 		assertEquals("Should get minute back", Integer.parseInt(baseTime.substring(2,4)), minute);
 	}
 
+	@Test
 	public void testGetSecond() throws DataTypeException {
 		commonTM = new CommonTM(baseTime);
 		int second = commonTM.getSecond();
 		assertEquals("Should get second back", Integer.parseInt(baseTime.substring(4,6)), second);
 	}
 
+	@Test
 	public void testGetFractSecond() throws DataTypeException {
 		float delta = .0001f;
 		commonTM = new CommonTM(baseTimePrecision);
@@ -555,6 +591,7 @@ public class CommonTMTest extends TestCase {
 			fractSecond, delta);
 	}
 
+	@Test
 	public void testGetGMTOffset() throws DataTypeException {
 		commonTM = new CommonTM(baseTimePrecisionOffset);
 		int offset = commonTM.getGMTOffset();
@@ -562,6 +599,7 @@ public class CommonTMTest extends TestCase {
 			offset);
 	}
 
+	@Test
 	public void testToHl7TMFormat() throws DataTypeException, ParseException {
         //new tests related to bug 1173074 ...
         //case 1: Paris time, date in winter 

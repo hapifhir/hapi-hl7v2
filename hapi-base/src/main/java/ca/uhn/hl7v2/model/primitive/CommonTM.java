@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -514,6 +514,7 @@ public class CommonTM {
      * Convenience setter which sets the value using a {@link Date} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the minute
+     * Note: Date is timezone-agnostic, representing always GMT time
      * 
      * @param theCalendar The calendar object from which to retrieve values 
      * @since 1.1 
@@ -569,7 +570,10 @@ public class CommonTM {
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
         setHourMinSecondPrecision(hr, min, sec);
         
-        int zoneOffset = ((theCalendar.get(Calendar.ZONE_OFFSET)) / (1000 * 60 * 60)) * 100;
+        // 3410095: care for integer overflow and timezones not at the full hour, e.g. India
+        int hourOffset= theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);   
+        int minuteOffset = (theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60)) % 60;
+        int zoneOffset = hourOffset * 100 + minuteOffset;
         setOffset(zoneOffset);
     }
    
@@ -578,6 +582,7 @@ public class CommonTM {
      * 
      * Note: Sets fields using precision up to the millisecond, and sets the timezone offset to
      * the current system offset
+     * Note: Date is timezone-agnostic, representing always GMT time
      * 
      * @param theDate The calendar object from which to retrieve values 
      * @since 1.1 
@@ -597,6 +602,7 @@ public class CommonTM {
      * Convenience setter which sets the value using a {@link Date} object. Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the second
+     * Note: Date is timezone-agnostic, representing always GMT time
      * 
      * @param theCalendar The calendar object from which to retrieve values 
      * @since 1.1 
@@ -642,6 +648,7 @@ public class CommonTM {
      * 
      * <b>Note that only the time component of the return value is set to
      * the value from this object. Returned value will have today's date</b> 
+     * Note: Date is timezone-agnostic, representing always GMT time
      * @since 1.1 
      */
     public Date getValueAsDate() {

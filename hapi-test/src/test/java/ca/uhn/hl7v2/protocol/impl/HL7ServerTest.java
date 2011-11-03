@@ -31,7 +31,7 @@ public class HL7ServerTest extends TestCase {
     }
     
     public void testResponse() throws Exception {
-        int port = 9877;
+        int port = 9878;
         String localhost = "127.0.0.1";
         ServerSocket ss = new ServerSocket(port);
         SafeStorage storage = new NullSafeStorage();

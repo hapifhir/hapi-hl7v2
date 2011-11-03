@@ -194,7 +194,7 @@
 				<version>2.7.2</version>
 				<configuration>
 					<forkMode>once</forkMode>
-					<parallel>both</parallel>
+					<!-- <parallel>classes</parallel>  -->
 					<!--<testFailureIgnore>true</testFailureIgnore>-->
 				</configuration>
 			</plugin>
