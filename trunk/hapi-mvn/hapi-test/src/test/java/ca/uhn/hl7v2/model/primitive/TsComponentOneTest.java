@@ -1,24 +1,44 @@
 package ca.uhn.hl7v2.model.primitive;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.datatype.DTM;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
-public class TsComponentOneTest extends TestCase {
+public class TsComponentOneTest {
 
 	private SimpleDateFormat myFormat;
 	private ORU_R01 myMsg;
+	private static TimeZone tz;
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		tz = TimeZone.getDefault();
+		TimeZone.setDefault(TimeZone.getTimeZone("Canada/Eastern"));
+    }
+	
+	@AfterClass
+	public static void tearDownBeforeClass() {
+		TimeZone.setDefault(tz);
+    }	
+	
+	
+	@Before
+	public void setUp() throws Exception {
 		myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
 		TimeZone timeZone = TimeZone.getTimeZone("Canada/Eastern");
 		myFormat.setTimeZone(timeZone);
 		
@@ -26,6 +46,7 @@ public class TsComponentOneTest extends TestCase {
 		myMsg.initQuickstart("ORU", "R01", "P");
 	}
 
+	@Test
 	public void testCalendarOperations() throws HL7Exception {
 		
 		// DTM extends TSComponentOne
@@ -41,6 +62,7 @@ public class TsComponentOneTest extends TestCase {
 
 	}
 
+	@Test
 	public void testSetValueAsCalendar() throws HL7Exception {
 
 		// DTM extends TSComponentOne
@@ -75,6 +97,7 @@ public class TsComponentOneTest extends TestCase {
 		
 	}
 
+	@Test
 	public void testSetValueAsCalendarToMinute() throws HL7Exception {
 
 		// DTM extends TSComponentOne
@@ -101,7 +124,7 @@ public class TsComponentOneTest extends TestCase {
 		
 	}
 	
-	
+	@Test
 	public void testSetValueAsCalendarWithSeconds() throws HL7Exception {
 
 		// DTM extends TSComponentOne
@@ -129,7 +152,7 @@ public class TsComponentOneTest extends TestCase {
 		
 	}
 
-	
+	@Test
 	public void testSetValueAsDate() throws HL7Exception {
 
 		// DTM extends TSComponentOne
@@ -164,6 +187,7 @@ public class TsComponentOneTest extends TestCase {
 		
 	}
 
+	@Test
 	public void testSetValueAsDateToMinute() throws HL7Exception {
 
 		// DTM extends TSComponentOne
@@ -190,7 +214,7 @@ public class TsComponentOneTest extends TestCase {
 		
 	}
 	
-	
+	@Test
 	public void testSetValueAsDateWithSeconds() throws HL7Exception {
 
 		// DTM extends TSComponentOne

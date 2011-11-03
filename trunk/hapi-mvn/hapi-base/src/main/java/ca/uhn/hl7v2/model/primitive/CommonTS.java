@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -409,7 +409,10 @@ public class CommonTS {
         float sec = theCalendar.get(Calendar.SECOND) + (theCalendar.get(Calendar.MILLISECOND) / 1000.0F);
         setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
         
-        int zoneOffset = (theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60)) * 100;
+        // 3410095: care for integer overflow and timezones not at the full hour, e.g. India
+        int hourOffset= theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);   
+        int minuteOffset = (theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60)) % 60;
+        int zoneOffset = hourOffset * 100 + minuteOffset;
         setOffset(zoneOffset);
     }
 

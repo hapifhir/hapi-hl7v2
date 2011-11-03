@@ -26,12 +26,21 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
+import static org.junit.Assert.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -43,7 +52,7 @@ import ca.uhn.hl7v2.model.DataTypeUtil;
  * 
  * @author Leslie Mann
  */
-public class CommonTSTest extends TestCase {
+public class CommonTSTest {
 	String offsetStr;
 	String timeStamp;
 	String baseTime;
@@ -57,23 +66,24 @@ public class CommonTSTest extends TestCase {
 	int second;
 	float fractionalSecond;
 	
-	/**
-	 * Constructor for CommonTSTest.
-	 * @param testName
-	 */
-	public CommonTSTest(String testName) {
-		super(testName);
-	}
+	private static TimeZone tz;
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(CommonTSTest.class);
-	}
-
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		tz = TimeZone.getDefault();
+		TimeZone.setDefault(TimeZone.getTimeZone("Canada/Eastern"));
+    }
+	
+	@AfterClass
+	public static void tearDownBeforeClass() {
+		TimeZone.setDefault(tz);
+    }
+	
 	/**
 	 * @see TestCase#setUp()
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		year = 2002;
 		month = 11;
 		day = 30;
@@ -111,8 +121,8 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * @see TestCase#tearDown()
 	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 	    offsetStr = null;
 	}
 
@@ -125,7 +135,9 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Test for http://sourceforge.net/support/tracker.php?aid=3410095
 	 */
+	@Test
 	public void testSetCalendarUsingHighValueTimeZoneOffset() throws ParseException, DataTypeException {
+
 		Calendar c = Calendar.getInstance();
 		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));
 		
@@ -137,13 +149,13 @@ public class CommonTSTest extends TestCase {
 		commonTS.setValue(c);
 		
 		String val = commonTS.getValue();
-		assertEquals("20110102070000+1200", val);
-		
+		assertEquals("20110102070000+1200", val);	
 	}
 	
 	/**
 	 * Test for default constructor
 	 */
+	@Test
 	public void testConstructor() {
 		assertNotNull("Should have a valid CommonTS object", commonTS);
 	}
@@ -151,6 +163,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Test for string constructor
 	 */
+	@Test
 	public void testStringConstructor() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertNotNull("Should have a valid CommonTS object", commonTS);
@@ -159,11 +172,13 @@ public class CommonTSTest extends TestCase {
     /**
      * Testing string constructor with delete value "".
      */
+	@Test
     public void testStringConstructor2() throws DataTypeException {
         commonTS = new CommonTS("\"\"");
         assertNotNull("Should have a valid CommonTS object", commonTS);
     }
 
+	@Test
     public void testNativeJavaAccessorsAndMutators() throws DataTypeException, ParseException {
         
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
@@ -194,6 +209,20 @@ public class CommonTSTest extends TestCase {
         String value = commonTS.getValue();
         assertEquals("20100609124005.25-0400", value);
         
+        // 3410095 : proof to avoid overflow
+        commonTS = new CommonTS();
+        cal.set(Calendar.ZONE_OFFSET, 12 * 1000 * 60 * 60);
+        commonTS.setValue(cal);
+        value = commonTS.getValue();
+        assertEquals("20100609124005.25+1200", value);
+        
+        // 3410095-related : proof to cover time zones not at the full hour, e.g. India
+        commonTS = new CommonTS();
+        cal.set(Calendar.ZONE_OFFSET, (int)(5.5 * 1000 * 60 * 60));
+        commonTS.setValue(cal);
+        value = commonTS.getValue();
+        assertEquals("20100609124005.25+0530", value);          
+        
         commonTS = new CommonTS();
         commonTS.setValue("201006091240");
         assertEquals("201006091240", commonTS.getValue());
@@ -217,6 +246,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Test set/getValue with various inputs
 	 */
+	@Test
 	public void testSetGetValue() {
 		class TestSpec {
 			String value;
@@ -240,6 +270,7 @@ public class CommonTSTest extends TestCase {
 					ts.setValue(value);
 					String retval = ts.getValue();
 					if (retval != null) {
+						if (!retval.equals(outcome)) System.out.println("Got " + retval + " expected " + outcome);
 						return retval.equals(outcome);
 					} else {
 						return outcome == null;
@@ -264,7 +295,7 @@ public class CommonTSTest extends TestCase {
 			new TestSpec("1", DataTypeException.class),
 			new TestSpec("19", DataTypeException.class),
 			new TestSpec("198", DataTypeException.class),
-			new TestSpec("1984", "1984"),
+			new TestSpec("1984", "1984" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
 			//year & time zone
 			new TestSpec("1984-1", DataTypeException.class),
 			new TestSpec("1984-11", DataTypeException.class),
@@ -281,8 +312,8 @@ public class CommonTSTest extends TestCase {
 			//month
 			new TestSpec("19840", DataTypeException.class),
 			new TestSpec("198400", DataTypeException.class),
-			new TestSpec("198401", "198401"),
-			new TestSpec("198412", "198412" ),
+			new TestSpec("198401", "198401" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
+			new TestSpec("198412", "198412"  + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
 			new TestSpec("198413", DataTypeException.class),
 			//month & time zone
 			new TestSpec("198401-1", DataTypeException.class),
@@ -300,8 +331,8 @@ public class CommonTSTest extends TestCase {
 			//day
 			new TestSpec("1984010", DataTypeException.class),
 			new TestSpec("19840100", DataTypeException.class),
-			new TestSpec("19840101", "19840101"),
-			new TestSpec("19840131", "19840131"),
+			new TestSpec("19840101", "19840101" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
+			new TestSpec("19840131", "19840131" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
 			new TestSpec("19840132", DataTypeException.class),
 			//day & time zone
 			new TestSpec("19840101-1", DataTypeException.class),
@@ -401,6 +432,7 @@ public class CommonTSTest extends TestCase {
 		
 	}
 
+	@Test
 	public void testSetDatePrecision() {
 		class TestSpec {
 			int year;
@@ -478,6 +510,7 @@ public class CommonTSTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testSetDateMinutePrecision() {
 		class TestSpec {
 			int year;
@@ -567,6 +600,7 @@ public class CommonTSTest extends TestCase {
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
+	@Test
 	public void testSetDateSecondPrecision() {
 		class TestSpec {
 			int year;
@@ -675,6 +709,7 @@ public class CommonTSTest extends TestCase {
 	 * Test set/getOffset.  Testspec constructor sets up a value
 	 * of "154638" so we can get a value back
 	 */
+	@Test
 	public void testSetGetOffset() {
 		
 		class TestSpec {
@@ -740,6 +775,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve year value
 	 */
+	@Test
     public void testGetYear() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get year back", year, commonTS.getYear());
@@ -748,6 +784,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve month value
 	 */
+	@Test
     public void testGetMonth() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get month back", month, commonTS.getMonth());
@@ -756,6 +793,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve day value
 	 */
+	@Test
     public void testGetDay() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get day back", day, commonTS.getDay());
@@ -764,6 +802,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve hour value
 	 */
+	@Test
 	public void testGetHour() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get hour back", hour, commonTS.getHour());
@@ -772,6 +811,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve minute value
 	 */
+	@Test
 	public void testGetMinute() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get minute back", minute, commonTS.getMinute());
@@ -780,6 +820,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve second value
 	 */
+	@Test
 	public void testGetSecond() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get seconds back", second, commonTS.getSecond());
@@ -788,6 +829,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve fractional second value
 	 */
+	@Test
 	public void testGetFractSecond() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get fractional seconds back", fractionalSecond, commonTS.getFractSecond(), 0.0001);
@@ -796,6 +838,7 @@ public class CommonTSTest extends TestCase {
 	/**
 	 * Testing ability to retrieve GMT offset value
 	 */
+	@Test
 	public void testGetGMTOffset() throws DataTypeException {
 		commonTS = new CommonTS(timeStamp);
 		assertEquals("Should get GMT offset back", offset, commonTS.getGMTOffset());
@@ -803,8 +846,9 @@ public class CommonTSTest extends TestCase {
         assertEquals(500, commonTS.getGMTOffset());
 	}
 
+	@Test
 	public void testToHl7TMFormat() throws DataTypeException {
-		GregorianCalendar cal = new GregorianCalendar();
+		GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("America/Toronto"));
         cal.clear();
         cal.setLenient(false);
 	    cal.set(Calendar.HOUR_OF_DAY, 20);

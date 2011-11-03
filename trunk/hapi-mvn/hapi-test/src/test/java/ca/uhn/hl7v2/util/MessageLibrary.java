@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ca.uhn.hl7v2.llp.MinLLPWriter;
@@ -58,10 +59,10 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * @author Leslie Mann
  */
+@SuppressWarnings("serial")
 public class MessageLibrary extends ArrayList<LibraryEntry> {
 	
-	private static final org.apache.commons.logging.Log ourLog = LogFactory.getLog(MessageLibrary.class);
-	
+	private static final Log LOG = LogFactory.getLog(MessageLibrary.class);
 	private final String MULTI_LINE_COMMENT_START = "/*";
 	private final String MULTI_LINE_COMMENT_END = "*/";
 	private final String SINGLE_LINE_COMMENT = "//";
@@ -126,7 +127,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 			//BufferedReader in = new BufferedReader(new FileReader(messageFilePath));
 	 
 			StringBuffer msgBuf = new StringBuffer();
-			HashMap<String, String> segments = new HashMap<String, String>();
+			HashMap segments = new HashMap();
 			Message msg = null;
 		
 			boolean eof = false;
@@ -162,9 +163,9 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						Integer.parseInt(lineSplit[1]);
 						lineKey = lineKey + "|" + lineSplit[1];
 					} catch (NumberFormatException e) {
-//						int stop = 1;
+						int stop = 1;
 					} catch (ArrayIndexOutOfBoundsException e) {
-//						int stop = 1;
+						int stop = 1;
 					}
 					segments.put(lineKey, line);
 					msgBuf.append(line+"\r");
@@ -174,12 +175,11 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 					String msgStr = msgBuf.toString();
 					try {
 						msg = parser.parse(msgStr);
-						ourLog.info("Message:\n" + msgStr);
 					} catch (Exception e) {
 						++numParsingErrors;
-						ourLog.warn("Parsing errors with message:\n" + msgStr, e);
+						LOG.info("Parsing errors with message:\n" + msgStr, e);
 					}
-					entries.add(new LibraryEntry(new String(msgStr), new HashMap<String, String>(segments), msg));
+					entries.add(new LibraryEntry(new String(msgStr), new HashMap(segments), msg));
 					//reset for next message
 					msgBuf.setLength(0);
 					segments.clear();
@@ -188,9 +188,9 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			ourLog.warn("Message file not found " + messageFilePath, e);
+			LOG.info("Message file not found " + messageFilePath, e);
 		} catch (IOException e) {
-			ourLog.warn("Unable to open message file: " + messageFilePath, e);
+			LOG.info("Unable to open message file: " + messageFilePath, e);
 		}
 		return entries;
 	}
@@ -204,10 +204,11 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 * @return a stream of HL7 messages
 	 */
 	public ByteArrayInputStream getAsByteArrayInputStream() {
-		Iterator<LibraryEntry> msgs = this.iterator();
+		Iterator msgs = this.iterator();
 		StringBuffer inputMessages = new StringBuffer();
 		while (msgs.hasNext()) {
 			LibraryEntry entry = (LibraryEntry) msgs.next();
+			String temp = entry.messageString();
 			inputMessages.append(START_MESSAGE + entry.messageString() + END_MESSAGE + LAST_CHARACTER);
 		}			
 		return new ByteArrayInputStream(inputMessages.toString().getBytes());
