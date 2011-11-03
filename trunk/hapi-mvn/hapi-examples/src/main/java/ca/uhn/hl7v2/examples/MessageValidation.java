@@ -32,7 +32,6 @@ import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * TODO: add!

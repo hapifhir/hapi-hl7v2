@@ -11,6 +11,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 
 public class HandlingCharacterEncodings {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws HL7Exception {
 		
 		/*
