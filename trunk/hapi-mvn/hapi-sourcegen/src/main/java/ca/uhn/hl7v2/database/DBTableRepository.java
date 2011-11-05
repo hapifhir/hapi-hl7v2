@@ -37,8 +37,6 @@ import java.util.HashMap;
 import ca.uhn.hl7v2.LookupException;
 import ca.uhn.hl7v2.UndefinedTableException;
 import ca.uhn.hl7v2.UnknownValueException;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Implements TableRepository by looking up values from the default HL7
@@ -47,16 +45,14 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class DBTableRepository extends TableRepository {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(DBTableRepository.class);
-    
     private int[] tableList;
-    private HashMap tables;
+    private HashMap<Integer, String[]> tables;
     private final int bufferSize = 3000; //max # of tables or values that can be cached at a time
     private NormativeDatabase normativeDatabase;
 
     protected DBTableRepository(String jdbcUrl) throws SQLException {
         tableList = null;
-        tables = new HashMap();
+        tables = new HashMap<Integer, String[]>();
         normativeDatabase = NormativeDatabase.getInstance();
     }
 

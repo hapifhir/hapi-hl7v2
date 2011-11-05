@@ -43,22 +43,22 @@ import java.util.Vector;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class GeneratedMethod {
-   private Vector body;
-   private Vector comments;
-   private Vector description;
+   private Vector<String> body;
+   private Vector<String> comments;
+   private Vector<String> description;
    protected final String INDENT = "   ";
    private String name;
-   private Vector params;
+   private Vector<String> params;
    private String returnType;
    private String throwing;
    private String visibility;
 
    /** Creates a new instance of GeneratedMethod */
    public GeneratedMethod() {
-      body = new Vector();
-      comments = new Vector();
-      params = new Vector();
-      description = new Vector();
+      body = new Vector<String>();
+      comments = new Vector<String>();
+      params = new Vector<String>();
+      description = new Vector<String>();
    }
 
    /** A method to set the parameters of the method
@@ -165,7 +165,7 @@ public class GeneratedMethod {
     *        example " * " for a comment)
     * @return The generated string
     */
-   private String vectorToString(int indentLevel, Vector vec, String prefix) {
+   private String vectorToString(int indentLevel, Vector<?> vec, String prefix) {
       String pString = "";
       String indent = "".concat(prefix);
 

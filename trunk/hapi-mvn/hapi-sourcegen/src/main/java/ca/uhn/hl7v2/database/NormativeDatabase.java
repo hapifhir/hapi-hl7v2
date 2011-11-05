@@ -32,9 +32,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
 
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;

@@ -56,7 +56,7 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  */
 public class SourceGenMojo extends AbstractMojo
 {
-    private static final Set alreadyMade = new HashSet();
+    private static final Set<String> alreadyMade = new HashSet<String>();
     
     /**
      * The maven project.
