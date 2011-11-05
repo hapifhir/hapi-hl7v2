@@ -42,6 +42,7 @@ import ca.uhn.hl7v2.model.GenericSegment;
 #end
  * </ul>
  */
+@SuppressWarnings("unused")
 public class $groupName extends AbstractGroup {
 
     /** 

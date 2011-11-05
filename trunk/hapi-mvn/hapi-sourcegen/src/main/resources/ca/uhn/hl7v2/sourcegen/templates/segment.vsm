@@ -40,6 +40,7 @@ import ca.uhn.hl7v2.model.Varies;
 #end
  * </ul>
  */
+@SuppressWarnings("unused")
 public class ${segmentName} extends AbstractSegment {
 
     /** 
