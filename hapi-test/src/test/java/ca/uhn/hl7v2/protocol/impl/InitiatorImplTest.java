@@ -157,6 +157,9 @@ public class InitiatorImplTest extends TestCase {
         public ProcessorContext getContext() {
             return null;
         }
+
+		public void stop() {
+		}
         
     }
     

@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class ProcessorImplTest extends TestCase {
 
-    private Processor myProcessor;
+    private ProcessorImpl myProcessor;
     private MockTransport myTransport;
     private MockTransport myRemotelyDrivenTransport;
     private MockApplicationRouter myRouter;
@@ -45,7 +45,16 @@ public class ProcessorImplTest extends TestCase {
         myProcessor = new ProcessorImpl(context, true);
     }
     
-    public void testSendNoAcceptAck() throws Exception {
+    
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		
+		myProcessor.stop();
+		
+	}
+
+	public void testSendNoAcceptAck() throws Exception {
         String a = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-a|P|2.2|||NE\rNTE|\r";
         myProcessor.send(new TransportableImpl(a), 3, 1000);
         assertEquals(a, myTransport.getLastSent().getMessage());

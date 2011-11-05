@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.test.nodt.conf.segment.DB1;
 import ca.uhn.hl7v2.test.singledt.conf.message.ADT_A01;
 import ca.uhn.hl7v2.test.singledt.conf.segment.OBX;
 import ca.uhn.hl7v2.test.tblnms.conf.message.ACK;
@@ -38,6 +39,11 @@ public class TestGeneratedSources extends TestCase {
 		assertEquals("2", iter.next().getSetIDOBX().getValue());
 		assertFalse(iter.hasNext());
 		
+	}
+	
+	
+	public void testGetSegmentFieldReps() {
+		new ADT_A01().getDB1().getDb13_DisabledPersonIdentifierReps();
 	}
 	
 	
