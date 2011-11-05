@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.app;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 
 import junit.framework.TestCase;
 
@@ -19,6 +20,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
 /**
  * JUnit test harmess for ConnectionHub 
@@ -26,7 +28,11 @@ import ca.uhn.hl7v2.parser.PipeParser;
  */
 public class ConnectionHubTest extends TestCase {
 
-    private static final Log ourLog = LogFactory.getLog(ConnectionHubTest.class);
+    private static final int mySs3Port = RandomServerPortProvider.findFreePort();
+	private static final int myFreePort = RandomServerPortProvider.findFreePort();
+	private static final int mySs2Port = RandomServerPortProvider.findFreePort();
+	private static final int mySs1Port = RandomServerPortProvider.findFreePort();
+	private static final Log ourLog = LogFactory.getLog(ConnectionHubTest.class);
     private SimpleServer ss1;
     private SimpleServer ss2;
 	private MyNonRespondingApp ss3;
@@ -37,20 +43,28 @@ public class ConnectionHubTest extends TestCase {
     }
     
     public void setUp() throws Exception {
-        ss1 = new SimpleServer(9876, LowerLayerProtocol.makeLLP(), new PipeParser());
+        ss1 = new SimpleServer(mySs1Port, LowerLayerProtocol.makeLLP(), new PipeParser());
         ss1.registerApplication("*", "*", new MyApp());
         ss1.start();
-        ss2 = new SimpleServer(5432, LowerLayerProtocol.makeLLP(), new PipeParser());
+        ss2 = new SimpleServer(mySs2Port, LowerLayerProtocol.makeLLP(), new PipeParser());
         ss2.registerApplication("*", "*", new MyApp());
         ss2.start();
+        
         ss3 = new MyNonRespondingApp();
         ss3.start();
+        ss3.myStartedLatch.await();
     }
 
     public void tearDown() {
         ss1.stop();
         ss2.stop();
+        
         ss3.myDone = true;
+        try {
+			ss3.myDoneLatch.await();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
         
         try {
             Thread.sleep(SimpleServer.SO_TIMEOUT + 1000);
@@ -66,18 +80,18 @@ public class ConnectionHubTest extends TestCase {
      */
     public void testAttach() throws Exception {
         PipeParser pipeParser = new PipeParser();
-        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        Connection i1again = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1 = ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1again = ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
         assertEquals(i1.hashCode(), i1again.hashCode());
-        Connection i2 = ConnectionHub.getInstance().attach("localhost", 5432, pipeParser, MinLowerLayerProtocol.class);
+        Connection i2 = ConnectionHub.getInstance().attach("localhost", mySs2Port, pipeParser, MinLowerLayerProtocol.class);
         try {
-            ConnectionHub.getInstance().attach("localhost", 9090, pipeParser, MinLowerLayerProtocol.class);
-            fail("Shouldn't be a service running at 9090");
+            ConnectionHub.getInstance().attach("localhost", myFreePort, pipeParser, MinLowerLayerProtocol.class);
+            fail("Shouldn't be a service running at " + myFreePort);
         } catch (Exception e) {}
         ConnectionHub.getInstance().detach(i1);
         ConnectionHub.getInstance().detach(i1again);
         ConnectionHub.getInstance().detach(i2);
-        Connection i1OnceMore = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1OnceMore = ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
         int onceMoreHashCode = i1OnceMore.hashCode();
         int i1HashCode = i1.hashCode();
         assertTrue(onceMoreHashCode != i1HashCode);
@@ -94,7 +108,7 @@ public class ConnectionHubTest extends TestCase {
     public void testConnectionClosedExternally() throws HL7Exception, LLPException, IOException, InterruptedException {
         
         PipeParser pipeParser = new PipeParser();
-        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9877, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1 = ConnectionHub.getInstance().attach("localhost", mySs3Port, pipeParser, MinLowerLayerProtocol.class);
         ConnectionHub.getInstance().setLogMessages(false);
         
         String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
@@ -119,13 +133,13 @@ public class ConnectionHubTest extends TestCase {
         	response = i1.getInitiator().sendAndReceive(msg);
         	fail("Should have thrown exception");
         } catch (IOException e) {
-        	e.printStackTrace();
+        	// expected
         }
         ourLog.info("Response was " + response);
 
-        ss3.myTransactionsUntilClose = 2;
+        ss3.myTransactionsUntilClose = 3;
 
-        Connection i2 = ConnectionHub.getInstance().attach("localhost", 9877, pipeParser, MinLowerLayerProtocol.class);
+        Connection i2 = ConnectionHub.getInstance().attach("localhost", mySs3Port, pipeParser, MinLowerLayerProtocol.class);
 
         response = i2.getInitiator().sendAndReceive(msg);
         response = i2.getInitiator().sendAndReceive(msg);
@@ -137,10 +151,10 @@ public class ConnectionHubTest extends TestCase {
     
     public void testDiscard() throws Exception {
         PipeParser pipeParser = new PipeParser();
-        Connection i1 = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
-        ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1 = ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
+        ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
         ConnectionHub.getInstance().discard(i1);
-        Connection i1thrice = ConnectionHub.getInstance().attach("localhost", 9876, pipeParser, MinLowerLayerProtocol.class);
+        Connection i1thrice = ConnectionHub.getInstance().attach("localhost", mySs1Port, pipeParser, MinLowerLayerProtocol.class);
         assertTrue(i1thrice.hashCode() != i1.hashCode());
         
         ConnectionHub.getInstance().discard(i1thrice);
@@ -169,13 +183,18 @@ public class ConnectionHubTest extends TestCase {
     {
     	private boolean myDone = false;
     	private int myTransactionsUntilClose;
+    	private CountDownLatch myDoneLatch = new CountDownLatch(1);
+    	private CountDownLatch myStartedLatch = new CountDownLatch(1);
 
 		@Override
 		public void run() {
 			
 			try {
-				ServerSocket ss = new ServerSocket(9877);
+				ServerSocket ss = new ServerSocket(mySs3Port);
 				ss.setSoTimeout(100);
+
+				myStartedLatch.countDown();
+				
 				
 				Socket accept = null;
 				MinLLPReader reader = null;
@@ -185,6 +204,7 @@ public class ConnectionHubTest extends TestCase {
 					try {
 						if (accept == null) {
 							accept = ss.accept();
+														
 							ourLog.info("Got new connection");
 							reader = new MinLLPReader(accept.getInputStream());
 							writer = new MinLLPWriter(accept.getOutputStream());
@@ -197,6 +217,7 @@ public class ConnectionHubTest extends TestCase {
 					ourLog.info("Reader got message: " + message);
 					
 					if (myTransactionsUntilClose-- == 0) {
+						ourLog.info("CLOSING!");
 						accept.close();
 						accept = null;
 						continue;
@@ -209,12 +230,15 @@ public class ConnectionHubTest extends TestCase {
 					writer.writeMessage(response);
 					
 					if (myTransactionsUntilClose-- == 0) {
+						ourLog.info("CLOSING!");
 						ourLog.info("Closing connection");
 						accept.close();
 						accept = null;
 					}
 
 				}
+				
+				ss.close();
 				
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -224,8 +248,9 @@ public class ConnectionHubTest extends TestCase {
 				e.printStackTrace();
 			} catch (HL7Exception e) {
 				e.printStackTrace();
+			} finally {
+				myDoneLatch.countDown();
 			}
-			
 		}
     	
     }

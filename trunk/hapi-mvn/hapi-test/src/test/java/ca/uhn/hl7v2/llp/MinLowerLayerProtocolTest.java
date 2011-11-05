@@ -28,7 +28,6 @@ package ca.uhn.hl7v2.llp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import junit.framework.TestCase;
 
@@ -128,34 +127,35 @@ public class MinLowerLayerProtocolTest extends TestCase {
 		assertNotNull("Should have a valid LowerLayerProtocol object", lowerLayerProtocol);
 	}
 
-	/**
-	 * Testing subclass LogCharacterReceived() method
-	 */
-	public void xtestLogCharacterReceived() {
-		int c = 'A';
-		
-		// Set properties to generate a status message
-		System.setProperty("ca.uhn.hl7v2.llp.logBytesRead", "TRUE");
-		System.setProperty("ca.uhn.hl7v2.util.status.out", "");
-	
-		minLowerLayerProtocol = new MinLowerLayerProtocol();
-
-		// redirect System.out
-		ByteArrayOutputStream statusMsgStream = new ByteArrayOutputStream();
-		PrintStream ps = new PrintStream(statusMsgStream);
-		PrintStream oldOut = System.out;
-		System.setOut(ps);
-
-		MinLowerLayerProtocol.logCharacterReceived(c);
-
-		// reset System.out
-		System.setOut(oldOut);
-		// trim to remove \n at end of logging message
-		String statusMessage = statusMsgStream.toString().trim();
-
-		assertEquals("Should have character logging message", 
-     					"Char received: " + c + " (" + (char) c + ")", statusMessage);
-	}
+	// Disabled, as we now use commons-logging
+//	/**
+//	 * Testing subclass LogCharacterReceived() method
+//	 */
+//	public void testLogCharacterReceived() {
+//		int c = 'A';
+//		
+//		// Set properties to generate a status message
+//		System.setProperty("ca.uhn.hl7v2.llp.logBytesRead", "TRUE");
+//		System.setProperty("ca.uhn.hl7v2.util.status.out", "");
+//	
+//		minLowerLayerProtocol = new MinLowerLayerProtocol();
+//
+//		// redirect System.out
+//		ByteArrayOutputStream statusMsgStream = new ByteArrayOutputStream();
+//		PrintStream ps = new PrintStream(statusMsgStream);
+//		PrintStream oldOut = System.out;
+//		System.setOut(ps);
+//
+//		MinLowerLayerProtocol.logCharacterReceived(c);
+//
+//		// reset System.out
+//		System.setOut(oldOut);
+//		// trim to remove \n at end of logging message
+//		String statusMessage = statusMsgStream.toString().trim();
+//
+//		assertEquals("Should have character logging message", 
+//     					"Char received: " + c + " (" + (char) c + ")", statusMessage);
+//	}
 
 	/**
 	 * Testing subclass LogCharacterReceived() method after

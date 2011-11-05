@@ -13,6 +13,8 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -24,6 +26,10 @@ public class ModelInstantiationTest extends TestCase {
 
 	public void testDataTypes() throws IOException, ClassNotFoundException {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
+		
+		ResourceLoader resourceLoader = new DefaultResourceLoader(GenericComposite.class.getClassLoader());
+		scanner.setResourceLoader(resourceLoader);
+		
 		scanner.addIncludeFilter(new AssignableTypeFilter(AbstractType.class));
 		Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/*/datatype");
 
@@ -67,6 +73,10 @@ public class ModelInstantiationTest extends TestCase {
 
 	public void testMessageTypes() throws IOException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, HL7Exception {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
+
+		ResourceLoader resourceLoader = new DefaultResourceLoader(AbstractMessage.class.getClassLoader());
+		scanner.setResourceLoader(resourceLoader);
+
 		scanner.addIncludeFilter(new AssignableTypeFilter(Message.class));
 		Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/*/message");
 

@@ -266,6 +266,8 @@ public class MinLLPWriterTest extends TestCase {
         
         if (before != null) {
             System.setProperty(MinLLPWriter.CHARSET_KEY, before);
+        } else {
+            System.clearProperty(MinLLPWriter.CHARSET_KEY);
         }
     }
 }

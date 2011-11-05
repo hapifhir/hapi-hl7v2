@@ -123,7 +123,7 @@ public class DefaultValidationTest extends TestCase {
             //new TestSpec("20020132", DataTypeException.class),
         };
         
-        ArrayList failedTests = new ArrayList();
+        ArrayList<Object> failedTests = new ArrayList<Object>();
 
         for (int i = 0; i < tests.length ; i++) {
             if ( ! tests[ i ].executeTest() ) 
@@ -206,7 +206,7 @@ public class DefaultValidationTest extends TestCase {
             new TestSpec("080005.1479+1234", "080005.1479+1234")
         };
         
-        ArrayList failedTests = new ArrayList();
+        ArrayList<Object> failedTests = new ArrayList<Object>();
 
         for (int i = 0; i < tests.length ; i++) {
             if ( ! tests[ i ].executeTest() ) 
@@ -392,7 +392,7 @@ public class DefaultValidationTest extends TestCase {
             new TestSpec("19840101000000.0+11111", DataTypeException.class),
         };
         
-        ArrayList failedTests = new ArrayList();
+        ArrayList<Object> failedTests = new ArrayList<Object>();
 
         for (int i = 0; i < tests.length ; i++) {
             if ( ! tests[ i ].executeTest() ) 
@@ -547,7 +547,7 @@ public class DefaultValidationTest extends TestCase {
             new TestSpec("1234 (705)267-2131X2345B1234C Test", DataTypeException.class),
         };
         
-        ArrayList failedTests = new ArrayList();
+        ArrayList<Object> failedTests = new ArrayList<Object>();
 
         for (int i = 0; i < tests.length ; i++) {
             if ( ! tests[ i ].executeTest() ) 
@@ -638,7 +638,7 @@ public class DefaultValidationTest extends TestCase {
                 new TestSpec("TEST", DataTypeException.class),
                 };
 
-        ArrayList failedTests = new ArrayList();
+        ArrayList<Object> failedTests = new ArrayList<Object>();
 
         for (int i = 0; i < tests.length; i++) {
             if (!tests[i].executeTest())
@@ -691,7 +691,7 @@ public class DefaultValidationTest extends TestCase {
         PipeParser pipeParser = new PipeParser();
         pipeParser.setValidationContext(new DefaultValidation());
         try {
-            Message message = pipeParser.parse(validMessage);
+            pipeParser.parse(validMessage);
             fail("Parsed successfully despite invalid date");
         } catch (EncodingNotSupportedException e) {
             // expected
