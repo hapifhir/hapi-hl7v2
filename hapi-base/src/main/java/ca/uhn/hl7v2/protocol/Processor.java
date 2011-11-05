@@ -163,4 +163,10 @@ public interface Processor {
      */
     public ProcessorContext getContext();
 
+    /**
+     * Request that the processor stop running and clean up any resources and worker threads it has started
+     */
+    public void stop();
+
+    
 }
