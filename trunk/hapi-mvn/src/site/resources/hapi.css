@@ -1,0 +1,48 @@
+
+#navcolumn {
+	background-color: white !important;
+}
+
+#leftColumn {
+	border: none !important;
+	margin: 0px;
+}
+
+#navcolumn h5 {
+	color: #206020;
+}
+
+#breadcrumbs {
+	background: white;
+	padding: 0px;
+	border-bottom-width: 1px;
+	border-bottom-color: #C0C0C0;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3, h4, h5 {
+	color: #105010;
+	font-weight: bold;
+}
+
+.section {
+	padding: 0px;
+}
+
+.section h2 {
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #80FF80;
+}
+
+.section h3 {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #C0FFC0;
+	width: 66%;
+}
+
+a, a.externalLink, a:active, a:hover, a:link, a:visited {
+	color: #408840;
+}
+

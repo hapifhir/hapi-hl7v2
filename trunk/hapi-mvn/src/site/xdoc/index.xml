@@ -15,7 +15,7 @@
 	<body>
 
 		<!-- The body of the document contains a number of sections -->
-		<section name="Welcome">
+		<section name="HAPI - The Open Source Java HL7 Parser and API">
 
 			<p>
 				This is the home page for the HAPI project. HAPI (HL7 application
@@ -67,7 +67,7 @@
 
 		<section name="HAPI 10th Birthday! October 30, 2011" style="position: relative;">
 
-			<img src="images/cake_64.png" alt="Birthday Cake" style="position: absolute; top: 0px; left: 450px;"/>
+			<img src="images/cake_64.png" alt="Birthday Cake" style="position: absolute; top: -10px; left: 450px;"/>
 			<!-- <img src="images/cake_64.png" alt="Birthday Cake" style="float:left;"/>-->
 
 			<p>
