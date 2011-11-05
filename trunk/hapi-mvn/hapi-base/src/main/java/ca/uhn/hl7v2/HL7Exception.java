@@ -16,7 +16,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  �GPL�), in which case the provisions of the GPL are 
+GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -28,11 +28,8 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2;
 
-import java.sql.SQLException;
-
-import ca.uhn.log.*;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.util.Terser;
 
 /** 
  * Represents an exception encountered while processing 
@@ -40,8 +37,6 @@ import ca.uhn.hl7v2.model.Segment;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public class HL7Exception extends Exception {
-
-    private static final HapiLog ourLog = HapiLogFactory.getHapiLog(HL7Exception.class);
 
 
     /** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept */
