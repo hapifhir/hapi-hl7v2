@@ -23,6 +23,7 @@ import ca.uhn.log.HapiLogFactory;
 #end
  * </ul>
  */
+@SuppressWarnings("unused")
 public class ${datatypeName} extends AbstractType implements Composite {
 
     private Type[] data;
