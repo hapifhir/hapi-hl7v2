@@ -32,11 +32,11 @@ public class DatumPath implements Cloneable {
 
 	public static final int s_maxSize = 6;
 
-	protected Vector m_path = null;
+	protected ArrayList<Object> m_path = null;
 
 	public DatumPath()
 	{
-		m_path = new Vector(s_maxSize);
+		m_path = new ArrayList<Object>(s_maxSize);
 	}
 
 	/** copy constructor */
@@ -160,7 +160,6 @@ public class DatumPath implements Cloneable {
 	*/
 	public String toString()
 	{
-		String ret = null;
 
 		StringBuffer strbuf = new StringBuffer(15);
 
@@ -191,8 +190,9 @@ public class DatumPath implements Cloneable {
 	*/
 	public DatumPath add(Object newValue)
 	{
-		m_path.setSize(m_path.size() + 1);
-		set(m_path.size() - 1, newValue);
+//		m_path.ensureCapacity(m_path.size() + 1);
+//		set(m_path.size() - 1, newValue);
+		m_path.add(newValue);
 		return this;
 	}
 
@@ -236,8 +236,14 @@ public class DatumPath implements Cloneable {
 	public DatumPath setSize(int newSize)
 	{
 		int oldSize = m_path.size();
-			
-		m_path.setSize(newSize);
+		
+		while (m_path.size() < newSize) {
+			m_path.add(null);
+		}
+		
+		while (m_path.size() > newSize) {
+			m_path.remove(m_path.size() - 1);
+		}
 
 		if(newSize > oldSize) {
 			// give the new elements some default values: 
@@ -307,6 +313,7 @@ public class DatumPath implements Cloneable {
 		DatumPath dp2 = (new DatumPath()).add(new String()).add(-42);
 
 		System.out.println(dp);
+		System.out.println(dp2);
 	}
 }
 

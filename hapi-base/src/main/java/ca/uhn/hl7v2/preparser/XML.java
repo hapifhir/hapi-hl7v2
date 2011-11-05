@@ -34,7 +34,7 @@ public class XML
 
 		/** Specifies what parts of a message should be dumped to m_props. 
 		*/
-		public Collection m_msgMask = null;
+		public Collection<DatumPath> m_msgMask = null;
 
 		/* All other fields are parser state. */
 
@@ -72,7 +72,7 @@ public class XML
 		(Integer).  So when we hit a segment ZYX, we'll know how many times we've
 		hit a ZYX before, and set the segmentRepIdx part of m_curPath
 		appropriately. */
-		TreeMap m_segmentId2nextRepIdx = new TreeMap();
+		TreeMap<String, Integer> m_segmentId2nextRepIdx = new TreeMap<String, Integer>();
 
 		/* m_depthWithinUselessElement and m_depthWithinUsefulElement 
 		reflect what m_msgMask thinks about our location in the document at any
@@ -189,7 +189,7 @@ public class XML
 								// useful element.
 								// TODO: functional stylee (a la C++'s std::accumulate) ? 
 								boolean curPathStartsWithAMaskElem = false;
-								for(Iterator maskIt = m_msgMask.iterator(); 
+								for(Iterator<DatumPath> maskIt = m_msgMask.iterator(); 
 									!curPathStartsWithAMaskElem && maskIt.hasNext(); )
 								{
 									curPathStartsWithAMaskElem 
@@ -203,7 +203,7 @@ public class XML
 									// to be useful -- but might it contains elements that
 									// are?
 									boolean aMaskElemStartsWithCurPath = false;
-									for(Iterator maskIt = m_msgMask.iterator(); 
+									for(Iterator<DatumPath> maskIt = m_msgMask.iterator(); 
 										!aMaskElemStartsWithCurPath && maskIt.hasNext(); )
 									{
 										aMaskElemStartsWithCurPath 
@@ -245,7 +245,7 @@ public class XML
 		*/
 		protected static boolean tryToGrowDocLocationFromElementName(
 			StringBuffer msgID /*in/out*/, DatumPath curPath /*in/out*/, 
-			Map segmentId2nextRepIdx /*in/out*/, DatumPath lastDumpedPath /*in*/, 
+			Map<String, Integer> segmentId2nextRepIdx /*in/out*/, DatumPath lastDumpedPath /*in*/, 
 			String elementName /*in*/)
 		{
 			boolean ok = false; // ok == can we make sense of this new element?
@@ -505,7 +505,7 @@ public class XML
 	wasn't there.)
 	*/
 	public static boolean parseMessage(Properties props, String message, 
-			Collection msgMask) throws HL7Exception
+			Collection<DatumPath> msgMask) throws HL7Exception
 	{
 		boolean ret = false;
 		try {
@@ -521,7 +521,7 @@ public class XML
 			if(msgMask != null)
 				handler.m_msgMask = msgMask;
 			else {
-				handler.m_msgMask = new Vector();
+				handler.m_msgMask = new ArrayList<DatumPath>();
 				handler.m_msgMask.add(new DatumPath());
 			}
 
@@ -544,7 +544,7 @@ public class XML
 	{
 		if(args.length >= 1) {
 			Properties props = new Properties();
-			Vector msgMask = new Vector();
+			List<DatumPath> msgMask = new Vector<DatumPath>();
 			msgMask.add((new DatumPath()).add("MSH").add(0).add(9));
 			//msgMask.add(new DatumPath());
 			boolean parseret;
