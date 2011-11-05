@@ -13,7 +13,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.2.0/maven-core-2.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.2.0/maven-settings-2.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.2.0/maven-project-2.2.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-j2ee/4.0.2/jboss-j2ee-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>

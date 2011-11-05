@@ -2,10 +2,7 @@ Developing Using HAPI
 
 Downloading HAPI
 
-  HAPI can be downloaded at our {{{http://sourceforge.net/projects/hl7api/files/hl7api/}Sourceforge Download Site}}.
-
-  Note that if you use Maven as your build system, you may alternately wish to use our
-  {{{http://hl7api.sourceforge.net/m2/}Maven Repository}} to add to your POM.
+  If you aren't using Maven, HAPI can be downloaded at our {{{http://sourceforge.net/projects/hl7api/files/hl7api/}Sourceforge Download Site}}.
 
 Adding HAPI to your application
 
@@ -38,7 +35,7 @@ Adding HAPI to your application
 | jdom-1.1.jar                | 
 *-----------------------------+----------------------------------------------------------------------------------+
   
-* Using Maven
+* Maven Dependencies
 
   To use HAPI , add hapi-base to your dependencies section, and add the structures versions you need.
   Note that the example below assumes you are using HAPI release 1.2. Adjust the version accordingly

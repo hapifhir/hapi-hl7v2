@@ -13,7 +13,7 @@
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
 	<version>1.3-beta1</version>
-	<name>HAPI - Open Source Java HL7 Parser and API</name>
+	<name>The Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
 		HAPI (HL7 application programming interface; pronounced "happy") is an open-source, 
@@ -252,10 +252,21 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.9</version>
 				<inherited>false</inherited>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
+				<reportSets>
+					<reportSet>
+						<id>hapi-tests</id>
+						<reports>
+							<report>report-only</report>
+						</reports>
+						<configuration>
+							<reportsDirectories>
+								<reportsDirectory>hapi-test/target/surefire-reports</reportsDirectory>
+							</reportsDirectories>
+						</configuration>
+					</reportSet>
+				</reportSets>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

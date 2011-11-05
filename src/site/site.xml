@@ -1,101 +1,95 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.0.0.xsd" 
-    name="HAPI">
+<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="HAPI">
 
-    <bannerLeft>
-        <name>HAPI</name>
-        <src>images/hapilogo5.gif</src>
-        <href>http://hl7api.sourceforge.net/</href>
-    </bannerLeft>
+	<bannerLeft>
+		<name>HAPI</name>
+		<src>images/hapilogo5.gif</src>
+		<href>http://hl7api.sourceforge.net/</href>
+	</bannerLeft>
 
-    <bannerRight>
-        <name>Sourceforge</name>
-        <src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16</src>
-        <href>https://sourceforge.net/projects/hl7api/</href>
-    </bannerRight>
-	
-    <poweredBy>
-        <logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2"/>
-        <logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
-    </poweredBy>
-	
-    <version position="left"/>
-	
-    <body>
-	  
-        <links>
-            <item name="hUnit" href="http://hl7api.sf.net/hunit" />
-            <item name="hl7.org" href="http://hl7.org/" />
-            <item name="University Health Network" href="http://www.uhn.ca/" />
-        </links>
-	
-        <menu name="Welcome">
-            <item name="Introduction" href="index.html"/>
-            <item name="What's New" href="whatsnew.html"/>
-            <item name="Changelog" href="changes-report.html"/>
-            <item name="Get Involved" href="getinvolved.html"/>
-            <item name="Mailing List" href="mail-lists.html"/>
-        </menu>
-	
-        <menu name="Using HAPI">
-            <item name="Download" href="using_hapi.html"/>
-            <item name="JDK 1.4 Support" href="jdk14.html"/>
-            <item name="License" href="license.html"/>
-            <item name="HAPI By Example" href="devbyexample.html"/>
-            <item name="FAQ" href="hapi-faq.html"/>
-            <item name="Using the Test Panel" href="testpanel.html"/>
-            <item name="Helpful Links" href="links.html"/>
-            <item name="Conformance Tools" href="conformance.html"/>
-        </menu>
+	<!-- <bannerRight> <name>Sourceforge</name> <src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16</src> <href>https://sourceforge.net/projects/hl7api/</href> </bannerRight> -->
 
-        <menu name="Contributing to HAPI">
-            <item name="Hacking HAPI" href="building.html"/>
-            <item name="Submitting Code" href="submissions.html"/>
-            <item name="Issue Tracking" href="issue-tracking.html"/>
-            <item name="Source Code" href="source-repository.html"/>
-        </menu>
+	<poweredBy>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2" />
+		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png" />
+	</poweredBy>
 
-        <!-- <menu name="HL7 Reference">
-            <item name="HL7 CrossRef" href="http://hapi-xref.appspot.com/"></item>
-        </menu>  -->
+	<version position="left" />
 
-        <menu name="HAPI Reference">
-            <item name="JavaDocs" href="base/apidocs/index.html">
-                <item name="HAPI Core" href="base/apidocs/index.html"/>
-                <item name="v2.1 Messages" href="v21/apidocs/index.html"/>
-                <item name="v2.2 Messages" href="v22/apidocs/index.html"/>
-                <item name="v2.3 Messages" href="v23/apidocs/index.html"/>
-                <item name="v2.3.1 Messages" href="v231/apidocs/index.html"/>
-                <item name="v2.4 Messages" href="v24/apidocs/index.html"/>
-                <item name="v2.5 Messages" href="v25/apidocs/index.html"/>
-                <item name="v2.5.1 Messages" href="v251/apidocs/index.html"/>
-                <item name="v2.6 Messages" href="v26/apidocs/index.html"/>
-            </item>
-            <item name="Source XRef" href="xref/index.html"/>
-        </menu>
+	<body>
 
-        <menu name="Older Documentation">
-            <item name="Parsing Messages" href="parsing.html"/>
-            <item name="Installation" href="installation.html"/>
-        </menu>
-		
-        <menu name="Reports">
-            <item name="HAPI Developers" href="team-list.html"/>
-            <item name="Unit Test Report" href="surefire-report.html"/>
-            <item name="Source Tag List" href="taglist.html"/>
-        </menu>
-    
+		<links>
+			<item name="hUnit" href="http://hl7api.sf.net/hunit" />
+			<item name="hl7.org" href="http://hl7.org/" />
+			<item name="University Health Network" href="http://www.uhn.ca/" />
+		</links>
+
+		<menu name="Welcome">
+			<item name="Introduction" href="index.html" />
+			<item name="Changelog" href="changes-report.html" />
+
+			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
+		</menu>
+
+		<menu name="Download">
+			<item name="Downloads" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
+			<item name="Using Maven" href="using_maven.html" />
+		</menu>
+
+		<menu name="Documentation">
+			<item name="HAPI By Example" href="devbyexample.html" />
+			<item name="JDK 1.4 Support" href="jdk14.html" />
+			<item name="FAQ" href="hapi-faq.html" />
+			<item name="Using the Test Panel" href="testpanel.html" />
+			<item name="Helpful Links" href="links.html" />
+			<item name="Conformance Tools" href="conformance.html" />
+		</menu>
+
+		<menu name="Contribute to HAPI">
+			<item name="Hacking HAPI" href="building.html" />
+			<item name="Submitting Code" href="submissions.html" />
+			<item name="Issue Tracking" href="issue-tracking.html" />
+			<item name="Source Code" href="source-repository.html" />
+		</menu>
+
+		<!-- <menu name="HL7 Reference"> <item name="HL7 CrossRef" href="http://hapi-xref.appspot.com/"></item> </menu> -->
+
+		<menu name="JavaDocs">
+			<item name="HAPI Core" href="base/apidocs/index.html" />
+			<item name="v2.1 Messages" href="v21/apidocs/index.html" />
+			<item name="v2.2 Messages" href="v22/apidocs/index.html" />
+			<item name="v2.3 Messages" href="v23/apidocs/index.html" />
+			<item name="v2.3.1 Messages" href="v231/apidocs/index.html" />
+			<item name="v2.4 Messages" href="v24/apidocs/index.html" />
+			<item name="v2.5 Messages" href="v25/apidocs/index.html" />
+			<item name="v2.5.1 Messages" href="v251/apidocs/index.html" />
+			<item name="v2.6 Messages" href="v26/apidocs/index.html" />
+			<item name="Source XRef" href="xref/index.html" />
+		</menu>
+
+		<menu name="Older Documentation">
+			<item name="Parsing Messages" href="parsing.html" />
+			<item name="Installation" href="installation.html" />
+		</menu>
+
+		<menu name="Reports">
+			<item name="HAPI Developers" href="team-list.html" />
+			<item name="Unit Test Report" href="surefire-report.html" />
+			<item name="Source Tag List" href="taglist.html" />
+			<item name="License" href="license.html" />
+		</menu>
+
 		<head>
-			<link rel="shortcut icon" href="http://hl7api.sourceforge.net/images/favicon.png" />			
+			<link rel="shortcut icon" href="http://hl7api.sourceforge.net/images/favicon.png" />
+			<link rel="stylesheet" type="text/css" href="hapi.css" />
 		</head>
-		    		
-    </body>
-    
-    <skin>
-        <groupId>com.googlecode.fluido-skin</groupId>
-        <artifactId>fluido-skin</artifactId>
-        <version>1.3</version>
-    </skin>
-    
+
+	</body>
+
+	<skin>
+		<groupId>com.googlecode.fluido-skin</groupId>
+		<artifactId>fluido-skin</artifactId>
+		<version>1.3</version>
+	</skin>
+
 </project>
