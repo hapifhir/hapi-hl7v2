@@ -62,7 +62,7 @@ public class HL7Server {
     
     private ProcessorContext myContext;
     private boolean myIsRunning = false;
-    private List myProcessors;
+    private List<Processor> myProcessors;
     
     /**
      * @param theServerSocket a ServerSocket on which to listen for connections that will
@@ -99,9 +99,9 @@ public class HL7Server {
 
     //creates list and starts thread to clean dead processors from it     
     private void initProcessorList() {
-        myProcessors = new ArrayList();
+        myProcessors = new ArrayList<Processor>();
         
-        final List processors = myProcessors; 
+        final List<Processor> processors = myProcessors; 
         Thread cleaner = new Thread() {
             public void run() {
                 try {
@@ -109,9 +109,9 @@ public class HL7Server {
                 } catch (InterruptedException e) {}
                 
                 synchronized (processors) {
-                    Iterator it = processors.iterator();
+                    Iterator<Processor> it = processors.iterator();
                     while (it.hasNext()) {
-                        Processor proc = (Processor) it.next();
+                        Processor proc = it.next();
                         if (!proc.getContext().getLocallyDrivenTransportLayer().isConnected() 
                                 || !proc.getContext().getRemotelyDrivenTransportLayer().isConnected()) {
                             it.remove();
@@ -171,8 +171,12 @@ public class HL7Server {
                 while (server.isRunning()) {
                     try {
                         Processor p = server.accept(theAddress);
-                        server.newProcessor(p); 
-                        Thread.sleep(1);
+                        if (!myIsRunning) {
+                        	p.stop();
+                        } else {
+                            server.newProcessor(p); 
+                            Thread.sleep(1);
+                        }
                     } catch (TransportException e) {
                         log.error(e);
                     } catch (InterruptedException e) {
@@ -198,6 +202,11 @@ public class HL7Server {
      */
     public void stop() {
         myIsRunning = false;
+        synchronized (myProcessors) {
+            for (Processor next : myProcessors) {
+            	next.stop();
+            }
+        }
     }
     
     /**
