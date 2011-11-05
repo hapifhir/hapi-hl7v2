@@ -42,13 +42,13 @@ import ca.uhn.hl7v2.conf.classes.generator.builders.*;
 public class GeneratedClass {
 
    private static final String INDENT = "   ";
-   private Vector classComments;
-   private Vector classImports;
+   private Vector<String> classComments;
+   private Vector<String> classImports;
    private String classPackage;
    private GeneratedMethod constructor;
-   private Vector license;
-   private Vector memberVariables;
-   private Vector methods;
+   private Vector<String> license;
+   private Vector<String> memberVariables;
+   private Vector<GeneratedMethod> methods;
    private String name;
    private String properties;
 
@@ -56,11 +56,11 @@ public class GeneratedClass {
     *  creates a new instance of the all the memberVariables 
     */
    public GeneratedClass() {
-      classImports = new Vector();
-      memberVariables = new Vector();
-      methods = new Vector();
-      classComments = new Vector();
-      license = new Vector();
+      classImports = new Vector<String>();
+      memberVariables = new Vector<String>();
+      methods = new Vector<GeneratedMethod>();
+      classComments = new Vector<String>();
+      license = new Vector<String>();
       constructor = new GeneratedMethod();
       constructor.setVisibility("public");
       classPackage = "";
@@ -178,7 +178,7 @@ public class GeneratedClass {
     * @param prefix a string to prepend to each line (ie <example>" * "</example> for a comment)
     * @return the generated string
     */
-   private String vectorToString(int indentLevel, Vector vec, String prefix) {
+   private String vectorToString(int indentLevel, Vector<?> vec, String prefix) {
       String pString = "";
       String indent = "".concat(prefix);
 

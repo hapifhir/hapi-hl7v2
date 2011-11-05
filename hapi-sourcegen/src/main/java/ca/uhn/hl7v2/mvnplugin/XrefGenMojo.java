@@ -28,9 +28,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.mvnplugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,7 +54,7 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  */
 public class XrefGenMojo extends AbstractMojo
 {
-    private static final Set alreadyMade = new HashSet();
+    private static final Set<String> alreadyMade = new HashSet<String>();
     
     /**
      * The maven project.
@@ -66,7 +63,8 @@ public class XrefGenMojo extends AbstractMojo
      * @required
      * @readonly
      */
-    private MavenProject project;
+    @SuppressWarnings("unused")
+	private MavenProject project;
 
     
     /**

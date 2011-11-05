@@ -44,7 +44,7 @@ import ca.uhn.hl7v2.UnknownValueException;
  */
 public abstract class TableRepository {
 
-  private static Map reps = new HashMap();
+  private static Map<String, DBTableRepository> reps = new HashMap<String, DBTableRepository>();
 
   /**
    * Returns a TableRepository object.
