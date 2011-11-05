@@ -40,12 +40,7 @@ public class HL7ServerTest extends TestCase {
 
         HL7Server server = new HL7Server(ss, router, storage);
         server.start(localhost);
-        
-        try {
-            Thread.sleep(100); //give it time to start before we stop it
-        } catch (InterruptedException e) {}
-        server.stop();
-        
+                
         StreamSource sender = new ClientSocketStreamSource(new InetSocketAddress(localhost, port));
         MLLPTransport transport = new MLLPTransport(sender);
         transport.connect();
@@ -57,7 +52,13 @@ public class HL7ServerTest extends TestCase {
         assertTrue(inbound.getMessage().indexOf("mock") > -1);     
         
         transport.disconnect();
-        ss.close();   
+        ss.close();
+        
+        try {
+            Thread.sleep(100); //give it time to start before we stop it
+        } catch (InterruptedException e) {}
+        server.stop();
+        
     }
     
 }
