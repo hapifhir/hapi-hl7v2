@@ -3,9 +3,10 @@
  */
 package ca.uhn.hl7v2.preparser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.GenericParser;
@@ -77,7 +78,7 @@ public class PreParser {
         String encoding = ourParser.getEncoding(theMessageText);
         Properties props = new Properties();
         
-        Vector mask = new Vector();
+        List<DatumPath> mask = new ArrayList<DatumPath>();
         for (int i = 0; i < thePaths.length; i++) {
             mask.add(thePaths[i]);
         }

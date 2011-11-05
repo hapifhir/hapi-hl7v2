@@ -71,7 +71,7 @@ public class DefinitionLoader {
         if (where != null) sql.append(where);
         
         ResultSet rs = stmt.executeQuery(sql.toString());
-        ArrayList tmpList = new ArrayList(150);
+        ArrayList<String> tmpList = new ArrayList<String>(150);
         while (rs.next()) {
             tmpList.add(rs.getString(field));
         }
@@ -115,7 +115,7 @@ public class DefinitionLoader {
         
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql.toString());
-        ArrayList attNames = new ArrayList(20);
+        ArrayList<String> attNames = new ArrayList<String>(20);
         while (rs.next()) {
             attNames.add(rs.getString("attName"));
         }
@@ -203,7 +203,7 @@ public class DefinitionLoader {
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql.toString());
-        ArrayList list = new ArrayList();
+        ArrayList<ComponentDefinition> list = new ArrayList<ComponentDefinition>();
         while (rs.next()) {
             ComponentDefinition def = new ComponentDefinition();
             def.setName(rs.getString("componentName"));
