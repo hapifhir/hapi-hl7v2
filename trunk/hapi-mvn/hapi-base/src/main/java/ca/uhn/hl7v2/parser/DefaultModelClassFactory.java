@@ -53,7 +53,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultModelClassFactory.class);
     
-    private static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
+    static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
     private static final HashMap<String, String[]> packages = new HashMap<String, String[]>();
     private static List<String> ourVersions = null;
 

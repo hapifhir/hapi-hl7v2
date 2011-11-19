@@ -24,6 +24,8 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.llp;
 
+import static ca.uhn.hl7v2.llp.MinLLPReader.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,15 +34,9 @@ import java.io.InputStreamReader;
 import java.net.SocketException;
 import java.nio.charset.Charset;
 
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.preparser.PreParser;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-import static ca.uhn.hl7v2.llp.MinLLPReader.END_MESSAGE;
-import static ca.uhn.hl7v2.llp.MinLLPReader.LAST_CHARACTER;
-import static ca.uhn.hl7v2.llp.MinLLPReader.START_MESSAGE;
 
 /**
  * Charset-aware MLLP stream reader

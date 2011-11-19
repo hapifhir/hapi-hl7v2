@@ -1,14 +1,11 @@
 package ca.uhn.hl7v2.sourcegen.util;
 
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public class ResourceLoader extends ClasspathResourceLoader {
-
-	private static final Logger ourLog = Logger.getLogger(ResourceLoader.class.getName());
 
 	/*
 	 * (non-Javadoc)

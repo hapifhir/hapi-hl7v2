@@ -33,7 +33,7 @@ public class AppWrapper implements ReceivingApplication {
     /** 
      * @see ca.uhn.hl7v2.protocol.ReceivingApplication#processMessage(ca.uhn.hl7v2.model.Message, java.util.Map)
      */
-    public Message processMessage(Message theMessage, Map theMetadata) 
+    public Message processMessage(Message theMessage, Map<String, Object> theMetadata) 
             throws ReceivingApplicationException, HL7Exception {
         Message result =  null;
         

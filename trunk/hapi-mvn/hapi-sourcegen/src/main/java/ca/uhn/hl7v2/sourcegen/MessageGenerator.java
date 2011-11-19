@@ -29,22 +29,15 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -75,8 +68,6 @@ public class MessageGenerator extends Object {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(MessageGenerator.class);
 
-    private static String groupName;
-
     /** Creates new MessageGenerator */
     public MessageGenerator() {
     }
@@ -91,8 +82,8 @@ public class MessageGenerator extends Object {
         Statement stmt = conn.createStatement();
         String sql = getMessageListQuery(version);
         ResultSet rs = stmt.executeQuery(sql);
-        ArrayList messages = new ArrayList();
-        ArrayList chapters = new ArrayList();
+        ArrayList<String> messages = new ArrayList<String>();
+        ArrayList<String> chapters = new ArrayList<String>();
         while (rs.next()) {
             String name = rs.getString(1);
             if ("0".equals(name)) {

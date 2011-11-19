@@ -104,7 +104,7 @@ public class ApplicationLoader {
                         HL7Exception.APPLICATION_INTERNAL_ERROR);
                 }
 
-                Class appClass = Class.forName(className); //may throw ClassNotFoundException 
+                Class<?> appClass = Class.forName(className); //may throw ClassNotFoundException 
                 Object appObject = appClass.newInstance();
                 ReceivingApplication app = null;
                 if (appObject instanceof ReceivingApplication) {
