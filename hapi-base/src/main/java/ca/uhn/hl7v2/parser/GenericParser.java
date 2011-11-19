@@ -31,6 +31,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * A Parser that delegates parsing tasks to an underlying PipeParser and DefaultXMLParser
@@ -292,6 +293,22 @@ public class GenericParser extends Parser {
 	@Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
 		return primaryParser.doParseForSpecificPackage(theMessage, theVersion, thePackageName);
+	}
+	
+	public static void main(String[] args) throws EncodingNotSupportedException, HL7Exception {
+		
+		String msgString = "MSH|^~\\&|RAMSOFT|SENDING FACILITY|RAMSOFT|RECEIVING FACILITY|20101223202939-0400||ADT^A08|101|P|2.3.1||||||||\r" + 
+				"EVN|A08|20101223202939-0400||||\r" + 
+				"PID||P12345^^^ISSUER|P12345^^^ISSUER||PATIENT^TEST^M^^^^||19741018|M|||10808 FOOTHILL BLVD^^RANCHO CUCAMONGA^CA^91730^US||(909)481-5872^^^sales@ramsoft.com|(909)481-5800x1||M||12345|286-50-9510|||\r" + 
+				"PV1||O||||||||||||||||||||||||||||||||||||||||||||||||||\r" + 
+				"AL1|1||^PORK^|\r" + 
+				"AL1|2||^PENICILLIN^|";
+		
+		GenericParser parser = new GenericParser();
+		parser.setValidationContext(new NoValidation());
+		Message msg = parser.parse(msgString);
+		System.out.println(msg.getClass().getName());
+			
 	}
 
 }

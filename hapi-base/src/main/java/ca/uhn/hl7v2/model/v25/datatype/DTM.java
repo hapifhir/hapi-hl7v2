@@ -27,8 +27,6 @@
 
 package ca.uhn.hl7v2.model.v25.datatype;
 
-import java.util.Date;
-
 import ca.uhn.hl7v2.model.Message;
 
 /**

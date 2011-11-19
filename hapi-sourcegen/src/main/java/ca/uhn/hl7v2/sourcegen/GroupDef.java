@@ -46,7 +46,7 @@ public class GroupDef implements StructureDef {
     private String description;
     private boolean required;
     private boolean repeating;
-    private HashMap existingNames;
+    private HashMap<String, String> existingNames;
     private String myIndexName;
     
     
@@ -54,11 +54,11 @@ public class GroupDef implements StructureDef {
     public GroupDef(String messageName, String groupName, boolean required, boolean repeating, String description) {
         this.messageName = messageName;
         this.groupName = groupName;
-        this.elements = new ArrayList();
+        this.elements = new ArrayList<StructureDef>();
         this.required = required;
         this.repeating = repeating;
         this.description = description;
-        this.existingNames = new HashMap();
+        this.existingNames = new HashMap<String, String>();
     }
 
     /**
@@ -179,7 +179,7 @@ public class GroupDef implements StructureDef {
      * for deriving group names.
      */
     public String[] getChildSegments() {
-        ArrayList deepChildList = new ArrayList();
+        ArrayList<String> deepChildList = new ArrayList<String>();
         for (int i = 0; i < elements.size(); i++) {
             StructureDef childStruct = (StructureDef) elements.get(i);
             String[] childStructChildren = childStruct.getChildSegments();

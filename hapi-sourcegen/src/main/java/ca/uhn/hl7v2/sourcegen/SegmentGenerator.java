@@ -26,24 +26,21 @@
  */
 package ca.uhn.hl7v2.sourcegen;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.OutputStreamWriter;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
@@ -141,7 +138,7 @@ public class SegmentGenerator extends java.lang.Object {
 	 */
 	public static void makeSegment(String name, String version, String theTemplatePackage, File theTargetDir, String theFileExt) throws Exception {
 
-		ArrayList elements = new ArrayList();
+		ArrayList<SegmentElement> elements = new ArrayList<SegmentElement>();
 		String segDesc = null;
 		SegmentElement se = null;
 
@@ -169,7 +166,7 @@ public class SegmentGenerator extends java.lang.Object {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql.toString());
 
-			List usedFieldDescs = new ArrayList();
+			List<String> usedFieldDescs = new ArrayList<String>();
 			int index = 0;
 			while (rs.next()) {
 				if (segDesc == null) {
@@ -226,188 +223,6 @@ public class SegmentGenerator extends java.lang.Object {
 
 	}
 
-	private static void makeFieldAccessor(String name, String version, StringBuffer source, SegmentElement se, String accessorName) {
-		if (se.desc.equalsIgnoreCase("UNUSED")) {  //some entries in 2.1 DB say "unused"
-			return;
-		}
-			String type = SourceGenerator.getAlternateType(se.type, version);
-			source.append("  /**\r\n");
-			source.append("   * Returns ");
-			if (se.repetitions != 1) {
-				source.append("a single repetition of ");
-			}
-			source.append(se.desc);
-			source.append(" (");
-			source.append(name);
-			source.append("-");
-			source.append(se.field);
-			source.append(").\r\n");
-			if (se.repetitions != 1) {
-				source.append("   * @param rep the repetition number (this is a repeating field)\r\n");
-				source.append("   * @throws HL7Exception if the repetition number is invalid.\r\n");
-			}
-			source.append("   */\r\n");
-			source.append("  public ");
-			source.append(type);
-			source.append(" get");
-			source.append(accessorName);
-			source.append("(");
-			if (se.repetitions != 1) {
-				source.append("int rep");
-			}
-			source.append(") ");
-			if (se.repetitions != 1) {
-				source.append("throws HL7Exception");
-			}
-			source.append(" {\r\n");
-			source.append("    ");
-			source.append(type);
-			source.append(" ret = null;\r\n");
-			source.append("    try {\r\n");
-			source.append("        Type t = this.getField(");
-			source.append(se.field);
-			source.append(", ");
-			if (se.repetitions == 1) {
-				source.append("0");
-			} else {
-				source.append("rep");
-			}
-			source.append(");\r\n");
-			source.append("        ret = (");
-			source.append(type);
-			source.append(")t;\r\n");
-
-			source.append("    } catch (ClassCastException cce) {\r\n");
-			source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
-			source.append("        throw new RuntimeException(cce);\r\n");
-			if (se.repetitions == 1) {
-				source.append("    } catch (HL7Exception he) {\r\n");
-				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
-				source.append("        throw new RuntimeException(he);\r\n");
-			}
-			source.append("    }\r\n");
-			source.append("    return ret;\r\n");
-			source.append("  }\r\n\r\n");
-
-			//add an array accessor as well for repeating fields
-			if (se.repetitions != 1) {
-				source.append("  /**\r\n");
-				source.append("   * Returns all repetitions of ");
-				source.append(se.desc);
-				source.append(" (");
-				source.append(name);
-				source.append("-");
-				source.append(se.field);
-				source.append(").\r\n");
-				source.append("   */\r\n");
-				source.append("  public ");
-				source.append(type);
-				source.append("[] get");
-				source.append(accessorName);
-				source.append("() {\r\n");
-				source.append("     ");
-				source.append(type);
-				source.append("[] ret = null;\r\n");
-				source.append("    try {\r\n");
-				source.append("        Type[] t = this.getField(");
-				source.append(se.field);
-				source.append(");  \r\n");
-				source.append("        ret = new ");
-				source.append(type);
-				source.append("[t.length];\r\n");
-				source.append("        for (int i = 0; i < ret.length; i++) {\r\n");
-				source.append("            ret[i] = (");
-				source.append(type);
-				source.append(")t[i];\r\n");
-				source.append("        }\r\n");
-				source.append("    } catch (ClassCastException cce) {\r\n");
-				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
-				source.append("        throw new RuntimeException(cce);\r\n");
-				source.append("    } catch (HL7Exception he) {\r\n");
-				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
-				source.append("        throw new RuntimeException(he);\r\n");
-				source.append("    }\r\n");
-				source.append("    return ret;\r\n");
-				source.append("  }\r\n\r\n");
-
-
-				// Add count reps method
-				source.append("  /**\r\n");
-				source.append("   * Returns a count of the number of repetitions of ");
-				source.append(se.desc);
-				source.append(" (");
-				source.append(name);
-				source.append("-");
-				source.append(se.field);
-				source.append(").\r\n");
-				source.append("   */\r\n");
-				source.append("  public int get");
-				source.append(accessorName);
-				source.append("Reps() {\r\n");
-				source.append("    try {\r\n");
-				source.append("        return this.getField(");
-				source.append(se.field);
-				source.append(").length;  \r\n");
-				source.append("    } catch (ClassCastException cce) {\r\n");
-				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", cce);\r\n");
-				source.append("        throw new RuntimeException(cce);\r\n");
-				source.append("    } catch (HL7Exception he) {\r\n");
-				source.append("        HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem obtaining field value.  This is a bug.\", he);\r\n");
-				source.append("        throw new RuntimeException(he);\r\n");
-				source.append("    }\r\n");
-				source.append("  }\r\n\r\n");
-
-
-				// Add insert repetition method
-				source.append("  /**\r\n");
-				source.append("   * Inserts a repetition of ");
-				source.append(se.desc);
-				source.append(" (");
-				source.append(name);
-				source.append("-");
-				source.append(se.field);
-				source.append(") at a given index and returns it.\r\n");
-				source.append("   * @param index The index\r\n");
-				source.append("   */\r\n");
-				source.append("  public ");
-				source.append(type);
-				source.append(" insert");
-				source.append(accessorName);
-				source.append("(int index) throws HL7Exception {\r\n");
-				source.append("     return (");
-				source.append(type);
-				source.append(") super.insertRepetition(");
-				source.append(se.field);
-				source.append(", index);\r\n");
-				source.append("  }\r\n\r\n");
-
-
-				// Add remove repetition method
-				source.append("  /**\r\n");
-				source.append("   * Removes a repetition of ");
-				source.append(se.desc);
-				source.append(" (");
-				source.append(name);
-				source.append("-");
-				source.append(se.field);
-				source.append(") at a given index and returns it.\r\n");
-				source.append("   * @param index The index\r\n");
-				source.append("   */\r\n");
-				source.append("  public ");
-				source.append(type);
-				source.append(" remove");
-				source.append(accessorName);
-				source.append("(int index) throws HL7Exception {\r\n");
-				source.append("     return (");
-				source.append(type);
-				source.append(") super.removeRepetition(");
-				source.append(se.field);
-				source.append(", index);\r\n");
-				source.append("  }\r\n\r\n");
-
-			}
-		
-	}
 
 
 	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages, String theTemplatePackage) throws Exception {

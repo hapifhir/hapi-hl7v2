@@ -28,32 +28,28 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.sourcegen;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -173,9 +169,9 @@ public class DataTypeGenerator extends Object {
         //System.out.println(sql.toString());  //for debugging
         ResultSet rs = stmt.executeQuery(sql.toString());
         
-        ArrayList dataTypes = new ArrayList(20);
-        ArrayList descriptions = new ArrayList(20);
-        ArrayList tables = new ArrayList(20);
+        ArrayList<String> dataTypes = new ArrayList<String>(20);
+        ArrayList<String> descriptions = new ArrayList<String>(20);
+        ArrayList<Integer> tables = new ArrayList<Integer>(20);
         String description = null;
         while (rs.next()) {
             if (description == null) description = rs.getString(3);
@@ -250,37 +246,6 @@ public class DataTypeGenerator extends Object {
         }
     }
 
-    private static void appendAccessor(String[] dataTypes, int i, String version, StringBuffer source, String[] descriptions, final String accessorName) {
-        String dtName = SourceGenerator.getAlternateType(dataTypes[i], version);
-        source.append("\t/**\r\n");
-        source.append("\t * Returns ");
-        source.append(descriptions[i]);
-        source.append(" (component #");
-        source.append(i);
-        source.append(").  This is a convenience method that saves you from \r\n");
-        source.append("\t * casting and handling an exception.\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic ");
-        source.append(dtName);
-        source.append(" get");
-        source.append(accessorName);
-        source.append("() {\r\n");
-        source.append("\t   ");
-        source.append(dtName);
-        source.append(" ret = null;\r\n");
-        source.append("\t   try {\r\n");
-        source.append("\t      ret = (");
-        source.append(dtName);
-        source.append(")getComponent(");
-        source.append(i);
-        source.append(");\r\n");
-        source.append("\t   } catch (DataTypeException e) {\r\n");
-        source.append("\t      HapiLogFactory.getHapiLog(this.getClass()).error(\"Unexpected problem accessing known data type component - this is a bug.\", e);\r\n");
-        source.append("\t      throw new RuntimeException(e);\r\n");
-        source.append("\t   }\r\n");
-        source.append("\t   return ret;\r\n");
-        source.append("\t}\r\n\r\n");
-    }
     
     /**
      * Returns a String containing the complete source code for a Primitive HL7 data
@@ -288,8 +253,6 @@ public class DataTypeGenerator extends Object {
      */
     private static String makePrimitive(DatatypeDef theDatatype, String version, String basePackage, String theTemplatePackage) throws Exception {
 
-        if (true) {
-            
             StringWriter out = new StringWriter();
 
             theTemplatePackage = theTemplatePackage.replace(".", "/");
@@ -303,85 +266,6 @@ public class DataTypeGenerator extends Object {
             template.merge(ctx, out);
             return out.toString();
             
-        }
-        
-        
-        
-        //System.out.println("Making primitive: " + datatype);
-        StringBuffer source = new StringBuffer();
-        
-        source.append("package ");
-        source.append(DefaultModelClassFactory.getVersionPackageName(version));
-        source.append("datatype;\r\n\r\n");
-        source.append("import ca.uhn.hl7v2.model.Primitive;\r\n");
-        source.append("import ca.uhn.hl7v2.model.DataTypeException;\r\n");
-        source.append("import ca.uhn.hl7v2.model.Message;\r\n");
-        source.append("import ca.uhn.hl7v2.model.Type;\r\n");
-        source.append("import ca.uhn.hl7v2.model.AbstractPrimitive;\r\n\r\n");
-        source.append("/**\r\n");
-        source.append(" * <p>Represents the HL7 ");
-        String description = theDatatype.getName();
-        String dataType = theDatatype.getType();
-        source.append(dataType);
-        source.append(" (");
-        source.append(description);
-        source.append(") datatype.  A ");
-        source.append(dataType);
-        source.append(" contains a single String value.\r\n");
-        source.append(" */\r\n");
-        source.append("public class ");
-        source.append(dataType);
-        source.append(" extends AbstractPrimitive ");
-        source.append(" {\r\n\r\n");
-        //source.append("\tprotected String value;\r\n\r\n");
-        source.append("\t/**\r\n");
-        source.append("\t * Constructs an uninitialized ");
-        source.append(dataType);
-        source.append(".\r\n");
-        source.append("\t * @param message the Message to which this Type belongs\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic ");
-        source.append(dataType);
-        source.append("(Message message) {\r\n");
-        source.append("\t\tsuper(message);\r\n");
-        source.append("\t}\r\n\r\n");
-        //source.append("\t/**\r\n");
-        //source.append("\t * Constructs a ");
-        //source.append(datatype);
-        //source.append(" with the given value.\r\n");
-        //source.append("\t */\r\n");
-        //source.append("\tpublic ");
-        //source.append(datatype);
-        //source.append("(String value) {\r\n");
-        //source.append("\t\tthis.value = value;\r\n");
-        //source.append("\t}\r\n\r\n");
-//        source.append("\t/**\r\n");
-//        source.append("\t * Sets the value (a private field), which implementing classes should validate.\r\n");
-//        source.append("\t */\r\n");
-//        source.append("\tpublic void setValue(String value) throws DataTypeException { \r\n");
-//        source.append("\t\tthis.value = value;\r\n\t}\r\n\r\n");
-//        source.append("\t/**\r\n");
-//        source.append("\t * Returns the value.\r\n");
-//        source.append("\t */\r\n");
-//        source.append("\tpublic String getValue() {\r\n");
-//        source.append("\t\treturn this.value;\r\n");
-//        source.append("\t}\r\n");
-        /*if (correspondingControlInterface != null) {
-            source.append(Control.getImplementation(correspondingControlInterface, version));
-        }*/
-        source.append("\t/**\r\n");
-        source.append("\t * @return \"");
-        source.append(version);
-        source.append("\"\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic String getVersion() {\r\n");
-        source.append("\t    return \"");
-        source.append(version);
-        source.append("\";\r\n");
-        source.append("\t}\r\n\r\n");
-        source.append("}\r\n");
-        
-        return source.toString();
     }
     
     /**
@@ -392,8 +276,6 @@ public class DataTypeGenerator extends Object {
     private static String makeComposite(String dataType, String description, DatatypeComponentDef[] componentDefs, String[] dataTypes, 
             String[] descriptions, int[] tables, String version, String basePackage, String theTemplatePackage) throws Exception {
         
-        if (true) {
-            
             StringWriter out = new StringWriter();
 
             theTemplatePackage = theTemplatePackage.replace(".", "/");
@@ -408,111 +290,6 @@ public class DataTypeGenerator extends Object {
             template.merge(ctx, out);
             return out.toString();
             
-        }
-        
-        StringBuffer source = new StringBuffer();
-        source.append("package ");
-        source.append(basePackage);
-        source.append("datatype;\r\n\r\n");
-        source.append("import ca.uhn.hl7v2.model.Composite;\r\n");
-        source.append("import ca.uhn.hl7v2.model.DataTypeException;\r\n");
-        source.append("import ca.uhn.hl7v2.model.Message;\r\n");
-        source.append("import ca.uhn.hl7v2.model.Type;\r\n");
-        source.append("import ca.uhn.hl7v2.model.AbstractType;\r\n");
-        source.append("import ca.uhn.log.HapiLogFactory;\r\n\r\n");
-        source.append("/**\r\n");
-        source.append(" * <p>The HL7 ");
-        source.append(dataType);
-        source.append(" (");
-        source.append(description);
-        source.append(") data type.  Consists of the following components: </p><ol>\r\n");
-        for (int i = 0; i < dataTypes.length; i++) {
-            source.append(" * <li>");
-            source.append(descriptions[i]);
-            source.append(" (");
-            source.append(dataTypes[i]);
-            source.append(")</li>\r\n");
-        }
-        source.append(" * </ol>\r\n");
-        source.append(" */\r\n");
-        source.append("public class ");
-        source.append(dataType);
-        source.append(" extends AbstractType implements ");
-
-        //implement interface from model.control package if required
-        //Class correspondingControlInterface = Control.getInterfaceImplementedBy(dataType);
-        //if (correspondingControlInterface == null) {
-            source.append("Composite");
-        //} else { 
-	    //            source.append(correspondingControlInterface.getName());
-        //}
-        
-        source.append(" {\r\n\r\n");        
-        source.append("\tprivate Type[] data;\r\n\r\n");
-        source.append("\t/**\r\n");
-        source.append("\t * Creates a ");
-        source.append(dataType);
-        source.append(".\r\n");
-        source.append("\t * @param message the Message to which this Type belongs\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic ");
-        source.append(dataType);
-        source.append("(Message message) {\r\n");
-        source.append("\t\tsuper(message);\r\n");
-        source.append("\t\tdata = new Type[");
-        source.append(dataTypes.length);
-        source.append("];\r\n");
-        for (int i = 0; i < dataTypes.length; i++) {
-            source.append("\t\tdata[");
-            source.append(i);
-            source.append("] = new ");
-            source.append(SourceGenerator.getAlternateType(dataTypes[i], version));
-            if (dataTypes[i].equals("ID") || dataTypes[i].equals("IS")) {
-                source.append("(message, ");                
-                source.append(tables[i]); 
-                source.append(")");                
-            } else {
-                source.append("(message)");                
-            }
-            source.append(";\r\n");
-        }
-        source.append("\t}\r\n\r\n");
-        source.append("\t/**\r\n");
-        source.append("\t * Returns an array containing the data elements.\r\n");
-        source.append("\t */\r\n");
-        source.append("\tpublic Type[] getComponents() { \r\n");
-        source.append("\t\treturn this.data; \r\n");
-        source.append("\t}\r\n\r\n");
-        source.append("\t/**\r\n");        
-        source.append("\t * Returns an individual data component.\r\n");        
-        source.append("\t * @throws DataTypeException if the given element number is out of range.\r\n");        
-        source.append("\t */\r\n");        
-        source.append("\tpublic Type getComponent(int number) throws DataTypeException { \r\n\r\n");
-        source.append("\t\ttry { \r\n");
-        source.append("\t\t\treturn this.data[number]; \r\n");
-        source.append("\t\t} catch (ArrayIndexOutOfBoundsException e) { \r\n");
-        source.append("\t\t\tthrow new DataTypeException(\"Element \" + number + \" doesn't exist in ");
-        source.append(dataTypes.length);
-        source.append(" element ");
-        source.append(dataType);
-        source.append(" composite\"); \r\n");
-        source.append("\t\t} \r\n");
-        source.append("\t} \r\n");
-        
-        //make type-specific accessors ... 
-        for (int i = 0; i < dataTypes.length; i++) {
-            String accessorName = SourceGenerator.makeAccessorName(descriptions[i], dataType);
-            appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
-
-            accessorName = SourceGenerator.makeAlternateAccessorName(descriptions[i], dataType, i + 1);
-            appendAccessor(dataTypes, i, version, source, descriptions, accessorName);
-        }
-        /*if (correspondingControlInterface != null) {
-            source.append(Control.getImplementation(correspondingControlInterface, version));
-        } */       
-        source.append("}");
-        
-        return source.toString();
     }
     
     //test
