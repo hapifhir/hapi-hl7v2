@@ -50,10 +50,6 @@ public abstract class AbstractConformanceDataType {
     
     private Primitive hapiPrimitive;
     
-    /** Default constructor */
-    private AbstractConformanceDataType() {
-    }
-    
     /** Constructor for AbstractConformanceDataType
      * @param hapiPrimitive the underlying primitive that the extending class represents
      */
