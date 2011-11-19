@@ -1,5 +1,4 @@
 package ca.uhn.hl7v2.conf.store;
-import java.io.IOException;
 import ca.uhn.hl7v2.conf.ProfileException;
 
 /**

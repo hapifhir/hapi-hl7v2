@@ -1,9 +1,9 @@
 package ca.uhn.hl7v2.conf.store;
-import java.io.IOException;
-import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.log.*;
-import java.util.regex.*;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+
+import ca.uhn.log.HapiLog;
+import ca.uhn.log.HapiLogFactory;
 
 /**
  * Created on 27-Aug-2003
