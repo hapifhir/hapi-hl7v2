@@ -9,6 +9,8 @@ public class ParserConfigurationTest extends TestCase {
 		
 		ParserConfiguration pc = new ParserConfiguration();
 
+		pc.addForcedEncode("ORDER/RXR-22");
+		
 		try {
 			pc.addForcedEncode("A");
 			fail();

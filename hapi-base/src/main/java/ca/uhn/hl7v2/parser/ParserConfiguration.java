@@ -87,6 +87,20 @@ public class ParserConfiguration {
 		myForcedEncode.add(theForcedEncode);
 	}
 
+	/**
+	 * Removes a forced encode entry
+	 * 
+	 * @see #addForcedEncode(String)
+	 * @since 1.3
+	 */
+	public void removeForcedEncode(String theForcedEncode) {
+		if (theForcedEncode == null) {
+			throw new NullPointerException("forced encode may not be null");
+		}
+		
+		myForcedEncode.remove(theForcedEncode);
+	}
+	
 	boolean determineForcedEncodeIncludesTerserPath(String theTerserPath) {
 		for (String next : getForcedEncode()) {
 			if (next.startsWith(theTerserPath)) {
