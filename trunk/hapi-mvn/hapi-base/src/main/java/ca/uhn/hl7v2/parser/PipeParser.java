@@ -530,7 +530,9 @@ public class PipeParser extends Parser {
         				break;
         			}
         			String fieldNumString = nextPath.substring(endOfFieldDef + 1, nextPath.length());
-        			forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
+        			if (fieldNumString.length() > 0) {
+        				forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
+        			}
         		}
         	}
         }
