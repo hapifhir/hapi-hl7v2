@@ -54,6 +54,6 @@ public interface Initiator {
      * is converted to a <code>Transportable</code>.  Each field is a <code>Terser</code>
      * path (type String).  
      */
-    public List getMetadataFields();
+    public List<String> getMetadataFields();
         
 }

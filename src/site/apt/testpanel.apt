@@ -9,13 +9,11 @@ MSH|^~\&|Fake Sending App|Fake Sending Facility||Fake Receiving Facility|2001081
 MSA|AA
 ---------
 
-  <<Step 1>>: Open the TestPanel application. You must have the JDK
-  installed, and you must have the file "hapi_0.3.jar" (or whatever the latest version is); in the directory
-  from which you run it. If you are using Windows, open the DOS Prompt or Command Window and type
-  this: 
+  <<Step 1>>: You must have the Java 5 or better installed. Download the HAPI distribution,
+  unpack it and change into the examples directory. Type this:
 
 ---------
-java -classpath hapi_0.3.jar;xmlParserAPIs.jar;xercesImpl.jar ca.uhn.hl7v2.app.TestPanel
+Run_Test_Panel </p>
 ---------
 
   You should see this:
@@ -28,12 +26,15 @@ java -classpath hapi_0.3.jar;xmlParserAPIs.jar;xercesImpl.jar ca.uhn.hl7v2.app.T
 
 [images/testpanelack.jpg]
 
-  This is much more exciting with a bigger message, but you get the idea.
+  At the bottom you can see debug log messages written by the HL7 Parser.
+   
+  This is much more exciting with a bigger message, but you get the idea. Leave this
+  Test Panel running, we need it in a moment.
 
 * Something a Little More Involved
 
   Now let's try starting up a server and sending a message to it. This time we
-  will use an ADT_A01 message:
+  will use an ADT_A01 message from a file:
 
 -----------------
 MSH|^~\&|system1|W|system2|UHN|200105231927||ADT^A01^ADT_A01|22139243|P|2.4
@@ -45,22 +46,22 @@ IN1|1||001001|  OHIP||||||||||||^^^^^|||^^^^^^M^|||||||||||||||||||||||||^^^^^^M
 ACC|
 -----------------
 
-  <<Step 1>>: First, start the server. Enter the following command:
+  <<Step 1>>: First, start the Test Panel in server mode. You need to specify 
+  a port number on which to receive connections, e.g. 8888:
 
 -----------------
-java -classpath hapi_0.3.jar ca.uhn.hl7v2.app.SimpleServer 8888 </p>
+Run_Test_Panel 8888 </p>
 -----------------
 
-  When you run the SimpleServer class from the command line, you need to specify 
-  a port number on which to receive connections (that's the 8888, above). You 
-  should see a message from the server, telling you it has started:
+This time, the log window shows that the server has been started:
 
-[images/simpleserverrunning.gif]
+[images/simpleserverrunning.jpg]
 
-  <<Step 2>>: Open TestPanel and parse the ADT_A01 message, as above (be sure to do this 
-  in a new Command Window because we need the server to keep running).
-  
-  <<Step 3>>: Connect to your SimpleServer server from the TestPanel. You do this 
+  <<Step 2>>: Switch to the first Test Panel instance and load the ADT_A01 message. 
+  Click on "Load" and select the ADT_A01.txt file from the examples directory. Afterwards
+  hit the "Parse" button.
+    
+  <<Step 3>>: Connect to your server-side Test Panel. You do this 
   by pressing the "Connect" button and entering the host and port of the server
   as shown below. 
   In this case, the host is "localhost", and the port is "8888". 
@@ -71,10 +72,10 @@ java -classpath hapi_0.3.jar ca.uhn.hl7v2.app.SimpleServer 8888 </p>
   list, and press "Send". The ADT_A01 message should be sent to the server, 
   and the response should appear in the "Inbound Message Tree" area.
   
-  The response message you see is a default message that SimpleServer returns if
+  The response message you see is a default message that Test Panel returns if
   it receives a message is does not recognize.
   
-  <<Step 5>>: Press "Encode". The inbound message should be encoded and 
+  <<Step 5>>: Press "Encode Inbound". The inbound message should be encoded and 
   displayed in the "Inbound Message Text" area. Now the window should 
   look like this:
 
@@ -82,9 +83,9 @@ java -classpath hapi_0.3.jar ca.uhn.hl7v2.app.SimpleServer 8888 </p>
 
   <<Step 6>>: For fun, let's encode the inbound message using the XML
   encoding. To do this, check the "Use XML" box, then click the
-  "Encode" button again. When "Use XML" is checked,
+  "Encode Inbound" button again. When "Use XML" is checked,
   outbound messages are also sent in XML form. This is OK, because
-  SimpleServer will recognize that a message is XML-encoded, and use the
+  the server will recognize that a message is XML-encoded, and use the
   appropriate parser.
 
 [images/responsexml.jpg]

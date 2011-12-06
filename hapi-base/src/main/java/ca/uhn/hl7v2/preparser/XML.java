@@ -1,15 +1,30 @@
 package ca.uhn.hl7v2.preparser;
 
-import java.util.*;
-import java.io.*;
-import javax.xml.parsers.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import ca.uhn.hl7v2.HL7Exception;
 
 public class XML
 {
+	@SuppressWarnings("serial")
 	protected static class StopParsingException extends SAXException
 	{
 		public StopParsingException() 
@@ -72,7 +87,7 @@ public class XML
 		(Integer).  So when we hit a segment ZYX, we'll know how many times we've
 		hit a ZYX before, and set the segmentRepIdx part of m_curPath
 		appropriately. */
-		TreeMap<String, Integer> m_segmentId2nextRepIdx = new TreeMap<String, Integer>();
+		SortedMap<String, Integer> m_segmentId2nextRepIdx = new TreeMap<String, Integer>();
 
 		/* m_depthWithinUselessElement and m_depthWithinUsefulElement 
 		reflect what m_msgMask thinks about our location in the document at any
@@ -193,7 +208,7 @@ public class XML
 									!curPathStartsWithAMaskElem && maskIt.hasNext(); )
 								{
 									curPathStartsWithAMaskElem 
-										= m_curPath.startsWith((DatumPath)maskIt.next());
+										= m_curPath.startsWith(maskIt.next());
 								}
 
 								if(curPathStartsWithAMaskElem) 
@@ -207,7 +222,7 @@ public class XML
 										!aMaskElemStartsWithCurPath && maskIt.hasNext(); )
 									{
 										aMaskElemStartsWithCurPath 
-											= ((DatumPath)maskIt.next()).startsWith(m_curPath);
+											= maskIt.next().startsWith(m_curPath);
 									}
 
 									if(!aMaskElemStartsWithCurPath) {
@@ -268,8 +283,7 @@ public class XML
 					else
 						curPath.add(new Integer(0));
 
-					segmentId2nextRepIdx.put(elementName, 
-						new Integer(((Integer)curPath.get(curPath.size()-1)).intValue() + 1));
+					segmentId2nextRepIdx.put(elementName, ((Integer)curPath.get(curPath.size()-1)).intValue() + 1);
 				}
 				ok = true;
 			}
@@ -544,8 +558,8 @@ public class XML
 	{
 		if(args.length >= 1) {
 			Properties props = new Properties();
-			List<DatumPath> msgMask = new Vector<DatumPath>();
-			msgMask.add((new DatumPath()).add("MSH").add(0).add(9));
+			List<DatumPath> msgMask = new ArrayList<DatumPath>();
+			msgMask.add(new DatumPath().add("MSH").add(0).add(9));
 			//msgMask.add(new DatumPath());
 			boolean parseret;
             try {

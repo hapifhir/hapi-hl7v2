@@ -20,7 +20,7 @@ import java.util.*;
  *  
  * @author Bryan Tripp
  */
-public class MessageIterator implements java.util.Iterator {
+public class MessageIterator implements java.util.Iterator<Structure> {
 
     private Structure currentStructure; 
     private String direction;
@@ -297,7 +297,7 @@ public class MessageIterator implements java.util.Iterator {
      * <li>"First descendents" means first child, or first child of the first child, 
      * or first child of the first child of the first child, etc. </li> </ol>
      */
-    public Object next() {
+    public Structure next() {
         if (!hasNext()) {
             throw new NoSuchElementException("No more nodes in message");
         }

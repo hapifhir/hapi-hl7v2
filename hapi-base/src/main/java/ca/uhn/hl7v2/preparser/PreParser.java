@@ -3,7 +3,7 @@
  */
 package ca.uhn.hl7v2.preparser;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -76,17 +76,13 @@ public class PreParser {
     private static String[] getFields(String theMessageText, DatumPath[] thePaths) throws HL7Exception {
         String[] fields = new String[thePaths.length];
         String encoding = ourParser.getEncoding(theMessageText);
-        Properties props = new Properties();
-        
-        List<DatumPath> mask = new ArrayList<DatumPath>();
-        for (int i = 0; i < thePaths.length; i++) {
-            mask.add(thePaths[i]);
-        }
-        
         if (encoding == null) {
             throw new HL7Exception("Message encoding is not recognized"); 
-        }
+        }        
+        Properties props = new Properties();
         
+        List<DatumPath> mask = Arrays.asList(thePaths);
+
         boolean OK = false;
         if (encoding.equals("VB")) {
             OK = ER7.parseMessage(props, mask, theMessageText);

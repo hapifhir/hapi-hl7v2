@@ -2,10 +2,13 @@ package ca.uhn.hl7v2.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.StringTokenizer;
-import java.util.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
 
@@ -16,7 +19,7 @@ import ca.uhn.log.HapiLogFactory;
 public class PropertyLoader {
     
     private static final HapiLog log = HapiLogFactory.getHapiLog(PropertyLoader.class);
-    private static HashSet files = new HashSet();
+    private static Set<String> files = new HashSet<String>();
     
     private PropertyLoader() {
     }
@@ -86,7 +89,7 @@ public class PropertyLoader {
         }
         
         Properties p = System.getProperties();
-        Enumeration en = p.propertyNames();
+        Enumeration<?> en = p.propertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             System.out.println("Property: " + key + " Value: " + System.getProperty(key));

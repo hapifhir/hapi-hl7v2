@@ -31,6 +31,7 @@ package ca.uhn.hl7v2;
  * Thrown when a lookup table is not known to a TableRepository. 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
+@SuppressWarnings("serial")
 public class UndefinedTableException extends UnknownValueException {
 
   public UndefinedTableException(String message) {

@@ -42,6 +42,7 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.3 $ updated on $Date: 2010-08-23 01:14:44 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("serial")
 public class ValidationContextImpl implements ValidationContext, Serializable {
 
     private List<RuleBinding> myPrimitiveRuleBindings;

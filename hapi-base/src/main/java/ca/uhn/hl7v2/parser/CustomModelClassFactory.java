@@ -27,16 +27,17 @@ package ca.uhn.hl7v2.parser;
  *
  * @author James
  */
-import ca.uhn.hl7v2.HL7Exception;
-
-import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Group;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Type;
 
 /**
  * ModelClassFactory which allows custom packages to search to be specified.
@@ -51,7 +52,7 @@ public class CustomModelClassFactory implements ModelClassFactory {
     private static final long serialVersionUID = 1;
     private final ModelClassFactory defaultFactory;
     private Map<String, String[]> customModelClasses;
-    private static Log LOG = LogFactory.getLog(CustomModelClassFactory.class);
+    private static Logger LOG = LoggerFactory.getLogger(CustomModelClassFactory.class);
 
     /**
      * Constructor which just delegated to {@link DefaultModelClassFactory}

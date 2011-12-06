@@ -33,6 +33,7 @@ import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("serial")
 public class SizeRule implements PrimitiveTypeRule {
 
     private int myMaxChars;

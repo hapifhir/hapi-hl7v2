@@ -1,30 +1,32 @@
 package ca.uhn.hl7v2.app;
 
-import junit.framework.TestCase;
-import ca.uhn.hl7v2.model.v24.datatype.TS;
-import java.util.GregorianCalendar;
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.HL7Exception;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
-import ca.uhn.hl7v2.parser.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
  * 
  * @author Bryan Tripp
  */
-public class DefaultApplicationTest extends TestCase {
+public class DefaultApplicationTest {
 
     Segment inbound;
     Segment outbound;
     Message in;
     DefaultApplication app; 
     
-    /** Creates a new instance of DefaultApplicationTest */
-    public DefaultApplicationTest(String arg) {
-        super(arg);
-    }
-
+    @Before
     public void setUp() throws Exception {
         app = new DefaultApplication();
         in = new ca.uhn.hl7v2.model.v24.message.ACK();
@@ -42,6 +44,7 @@ public class DefaultApplicationTest extends TestCase {
         inbound.controlMessageControlID().setValue("boo");*/
     }
     
+    @Test
     public void testFillResponseHeader() throws HL7Exception, IOException {
         Segment outbound = new ca.uhn.hl7v2.model.v24.segment.MSH(
                 new GenericMessage.V24(new DefaultModelClassFactory()), new DefaultModelClassFactory());
@@ -56,6 +59,7 @@ public class DefaultApplicationTest extends TestCase {
         assertTrue(!id1.equals(id2));
     }
     
+    @Test
     public void testMakeACK() throws Exception {
         Message ack = DefaultApplication.makeACK(inbound);
         Terser t = new Terser(ack);
@@ -65,12 +69,13 @@ public class DefaultApplicationTest extends TestCase {
         assertEquals("boo", t.get("/MSA-2"));
     }
     
+    @Test
     public void testProcessMessage() throws Exception {
         Message out = app.processMessage(in);
         Terser t = new Terser(out);
         assertEquals("AR", t.get("/MSA-1"));
         assertEquals("207", t.get("/ERR-1(0)-4-1"));
-        Parser parser = new PipeParser();
-        System.out.println(parser.encode(out));
+        //Parser parser = new PipeParser();
+        //System.out.println(parser.encode(out));
     }
 }

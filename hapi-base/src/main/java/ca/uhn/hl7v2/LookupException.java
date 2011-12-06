@@ -35,6 +35,7 @@ package ca.uhn.hl7v2;
  * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
+@SuppressWarnings("serial")
 public class LookupException extends Exception {
 
     /**

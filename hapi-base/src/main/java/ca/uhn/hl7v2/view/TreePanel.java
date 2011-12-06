@@ -43,29 +43,34 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.*;
+import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.log.HapiLog;
 import ca.uhn.log.HapiLogFactory;
-import ca.uhn.hl7v2.util.Terser;
 
 /**
  * This is a Swing panel that displays the contents of a Message object in a JTree.
  * The tree currently only expands to the field level (components shown as one node).
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
+@SuppressWarnings("serial")
 public class TreePanel extends javax.swing.JPanel {
 	
 	private static final HapiLog log = HapiLogFactory.getHapiLog(TreePanel.class);
     
-    private PipeParser parser;
     private EncodingCharacters encChars;
     private Message message;
     
     /** Creates new TreePanel */
-    public TreePanel(PipeParser parser) {
-        this.parser = parser;
+    public TreePanel() {
         this.encChars = new EncodingCharacters('|', null);
     }
     
@@ -74,6 +79,12 @@ public class TreePanel extends javax.swing.JPanel {
      */
     public void setMessage(Message message) {
         this.message = message;
+    	if (message == null) {
+    		this.removeAll();
+    		this.revalidate();
+    		return;
+    	}
+
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(message.getClass().getName());
         addChildren(message, top);
         
@@ -108,7 +119,7 @@ public class TreePanel extends javax.swing.JPanel {
                         newNode = new DefaultMutableTreeNode(groupName + " (rep " + j + ")");
                         addChildren((Group)childReps[j], newNode);
                     } else if (childReps[j] instanceof Segment) {
-                        newNode = new DefaultMutableTreeNode(parser.encode((Segment)childReps[j], encChars));
+                        newNode = new DefaultMutableTreeNode(PipeParser.encode((Segment)childReps[j], encChars));
                         addChildren((Segment)childReps[j], newNode);
                     }
                     treeParent.insert(newNode, currChild++);
@@ -129,7 +140,7 @@ public class TreePanel extends javax.swing.JPanel {
             try {
                 Type[] reps = messParent.getField(i);
                 for (int j = 0; j < reps.length; j++) {
-                    String field = parser.encode(reps[j], encChars);
+                    String field = PipeParser.encode(reps[j], encChars);
                     DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("Field " + i + " rep " + j + " (" + getLabel(reps[j]) + "): " + field);
                     addChildren(reps[j], newNode);
                     treeParent.insert(newNode, currChild++);
@@ -211,7 +222,7 @@ public class TreePanel extends javax.swing.JPanel {
         JFrame frame = new JFrame(message.getClass().getName());
         
         try {
-            TreePanel panel = new TreePanel(new PipeParser());
+            TreePanel panel = new TreePanel();
             panel.setMessage(message);
             JScrollPane scroll = new JScrollPane(panel);
             frame.getContentPane().add(scroll, BorderLayout.CENTER);
@@ -257,7 +268,7 @@ public class TreePanel extends javax.swing.JPanel {
             System.out.println(parser.encode(mess, "VB"));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error( e );
+            log.error( e.getMessage(), e );
         }
     }
     

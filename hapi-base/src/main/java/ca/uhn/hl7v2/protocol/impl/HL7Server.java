@@ -178,7 +178,7 @@ public class HL7Server {
                             Thread.sleep(1);
                         }
                     } catch (TransportException e) {
-                        log.error(e);
+                        log.error(e.getMessage(), e);
                     } catch (InterruptedException e) {
                     } 
                 }

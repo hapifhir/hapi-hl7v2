@@ -177,9 +177,9 @@ public abstract class AbstractJMSTransport extends AbstractTransport implements 
         
             Iterator<String> it = theSource.getMetadata().keySet().iterator();
             while (it.hasNext()) {
-                Object key = it.next();
+                String key = it.next();
                 Object val = theSource.getMetadata().get(key);
-                message.setObjectProperty(key.toString(), val);
+                message.setObjectProperty(key, val);
             }
         } catch (JMSException e) {
             throw new TransportException(e);

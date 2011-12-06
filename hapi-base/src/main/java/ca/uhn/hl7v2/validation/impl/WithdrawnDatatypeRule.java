@@ -18,6 +18,7 @@ package ca.uhn.hl7v2.validation.impl;
  * </p>
  * <code>parser.setValidationContext(new NoValidation());</code>
  */
+@SuppressWarnings("serial")
 public class WithdrawnDatatypeRule extends SizeRule {
 
     /**

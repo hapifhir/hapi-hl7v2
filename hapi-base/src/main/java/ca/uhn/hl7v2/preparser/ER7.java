@@ -5,12 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 
-/**
+/*
 The point of this class (all static members, not instantiatable) is to take a
 traditionally-encoded HL7 message and add all it's contents to a Properties
 object, via the parseMessage() method.
@@ -58,8 +59,8 @@ public class ER7 {
 				EncodingCharacters encodingChars = new EncodingCharacters('0', "0000");
 				if(parseMSHSegmentWhole(props, msgMask, encodingChars, firstSegment)) {
 					ok = true;
-					TreeMap<String, Integer> segmentId2nextRepIdx = new TreeMap<String, Integer>();
-					segmentId2nextRepIdx.put(new String("MSH"), new Integer(1)); 
+					SortedMap<String, Integer> segmentId2nextRepIdx = new TreeMap<String, Integer>();
+					segmentId2nextRepIdx.put(new String("MSH"), 1); 
 						// in case we find another MSH segment, heh.
 					while(messageTokenizer.hasMoreTokens()) {
 						parseSegmentWhole(props, segmentId2nextRepIdx, 
@@ -124,7 +125,7 @@ public class ER7 {
 	put them in props. */
 	protected static void parseSegmentWhole(/*out*/ Properties props, 
 		/*in/out*/ Map<String, Integer> segmentId2nextRepIdx, 
-		/*in*/ List<DatumPath> /*<DatumPath>*/ msgMask, /*in*/ EncodingCharacters encodingChars, 
+		/*in*/ List<DatumPath> msgMask, /*in*/ EncodingCharacters encodingChars, 
 		/*in*/ String segment)
 	{
 		try {
@@ -140,28 +141,22 @@ public class ER7 {
 			// will only bother to parse this segment if any of it's contents will 
 			// be dumped to props.
 			boolean parseThisSegment = false;
-			DatumPath segmentIdAsDatumPath = (new DatumPath()).add(segmentId);
+			DatumPath segmentIdAsDatumPath = new DatumPath().add(segmentId);
 			for(Iterator<DatumPath> maskIt = msgMask.iterator(); !parseThisSegment && maskIt.hasNext(); ) 
-				parseThisSegment = segmentIdAsDatumPath.startsWith((DatumPath)(maskIt.next()));
+				parseThisSegment = segmentIdAsDatumPath.startsWith(maskIt.next());
 			for(Iterator<DatumPath> maskIt = msgMask.iterator(); !parseThisSegment && maskIt.hasNext(); ) 
-				parseThisSegment = ((DatumPath)(maskIt.next())).startsWith(segmentIdAsDatumPath);
+				parseThisSegment = maskIt.next().startsWith(segmentIdAsDatumPath);
 
 			if(parseThisSegment && (segment.charAt(3) == encodingChars.getFieldSeparator())) {
 				ER7SegmentHandler handler = new ER7SegmentHandler();
 				handler.m_props = props;
 				handler.m_encodingChars = encodingChars;
 				handler.m_segmentId = segmentId;
-//				if(msgMask != null)
-					handler.m_msgMask = msgMask;
-//				else {
-//					handler.m_msgMask = new ArrayList<DatumPath>();
-//					handler.m_msgMask.add(new DatumPath()); // everything will pass this
-//						// (every DatumPath startsWith the zero-length DatumPath)
-//				}
+				handler.m_msgMask = msgMask;
 				handler.m_segmentRepIdx = currentSegmentRepIdx;
 
 				List<Integer> nodeKey = new ArrayList<Integer>();
-				nodeKey.add(Integer.valueOf(0));
+				nodeKey.add(new Integer(0));
 				parseSegmentGuts(handler, segment.substring(4), nodeKey);
 			}
 		}
@@ -220,7 +215,7 @@ public class ER7 {
 			for(Iterator<DatumPath> maskIt = m_msgMask.iterator(); 
 				!valDatumPathPassesMask && maskIt.hasNext(); )
 			{
-				valDatumPathPassesMask = valDatumPath.startsWith((DatumPath)(maskIt.next()));
+				valDatumPathPassesMask = valDatumPath.startsWith(maskIt.next());
 			}
 
 			if(valDatumPathPassesMask)
@@ -260,8 +255,7 @@ public class ER7 {
 				if(nodeKey.size() < handler.specDepth()) {
 					nodeKey.add(new Integer(0));
 					parseSegmentGuts(handler, gutsToken, nodeKey);
-					nodeKey.remove(nodeKey.size() - 1);
-//					nodeKey.setSize(nodeKey.size()-1);
+					nodeKey.remove(nodeKey.size()-1);
 				}
 				else 
 					handler.putDatum(nodeKey, gutsToken);

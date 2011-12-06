@@ -1,3 +1,4 @@
+#!/bin/sh
 # *******************************************
 # * This batch file runs the HAPI test panel
 # *
@@ -11,10 +12,11 @@ do
 done
 
 HAPI_HOME="."
-PORT="8888"
 
 echo HAPI_HOME is set to $HAPI_HOME
-echo Running ca.uhn.hl7v2.app.TestPanel with HL7Service on port $PORT
+echo Running ca.uhn.hl7v2.app.TestPanel 
+if [ "$1" = "" ]
+  then echo with HL7Service on port $1
 
-java -cp $CP -Dhapi.home=$HAPI_HOME ca.uhn.hl7v2.app.TestPanel $PORT
+java -cp $CP -Dhapi.home=$HAPI_HOME ca.uhn.hl7v2.app.TestPanel $1
 

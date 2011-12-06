@@ -141,8 +141,9 @@ public class SendAndReceiveAMessage
          */
         connectionHub.discard(connection);
         
-        // Stop the receiving server
-        server.stop();
+        // Stop the receiving server and client
+        server.stopAndWait();
+        ConnectionHub.shutdown();
 
     }
 

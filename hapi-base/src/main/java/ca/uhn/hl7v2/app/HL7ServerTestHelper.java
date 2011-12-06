@@ -25,8 +25,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class used to send messages from a flat file to 
@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HL7ServerTestHelper {
     
-    private static final Log ourLog = LogFactory.getLog(HL7ServerTestHelper.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(HL7ServerTestHelper.class);
     
     private static final String HL7_START_OF_MESSAGE = "\u000b";
     private static final String HL7_END_OF_MESSGAE = "\u001c";
@@ -83,7 +83,7 @@ public class HL7ServerTestHelper {
                 sckt.close();
         }
         catch (Exception e) {
-            ourLog.error(e);
+            ourLog.error(e.getMessage(), e);
         }
     }
  
@@ -123,8 +123,8 @@ public class HL7ServerTestHelper {
         //elapsed time
         long elapsedTime = (endTime - startTime) / 1000;
         
-        ourLog.info(retVal + " messages sent.");
-        ourLog.info("Elapsed Time in seconds:  " + elapsedTime);
+        ourLog.info("{} messages sent.", retVal);
+        ourLog.info("Elapsed Time in seconds: {} ", elapsedTime);
         return retVal;
 			
             /*line = line.trim();
@@ -269,7 +269,7 @@ public class HL7ServerTestHelper {
         }
         catch (ParseException e)
         {
-            ourLog.error(e);
+            ourLog.error(e.getMessage(), e);
             return;
         }
 

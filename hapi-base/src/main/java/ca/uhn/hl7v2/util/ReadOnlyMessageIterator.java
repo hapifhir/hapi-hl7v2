@@ -51,15 +51,15 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:27 $ by $Author: jamesagnew $
  */
-public class ReadOnlyMessageIterator implements Iterator {
+public class ReadOnlyMessageIterator implements Iterator<Structure> {
 
-    private List myRemaining; //remaining nodes in reverse order (i.e. last is next)
+    private List<Structure> myRemaining; //remaining nodes in reverse order (i.e. last is next)
     
     /**
      * @param theRoot root of depth first iteration, which starts with the first child  
      */
     public ReadOnlyMessageIterator(Group theRoot) {
-        myRemaining = new ArrayList(40);
+        myRemaining = new ArrayList<Structure>(40);
         addChildren(theRoot);
     }
     
@@ -68,11 +68,11 @@ public class ReadOnlyMessageIterator implements Iterator {
      * @return an iterator that skips groups and empty segments, returning only populated 
      *      segments  
      */
-    public static Iterator createPopulatedSegmentIterator(Group theRoot) {
-        Iterator allIterator = new ReadOnlyMessageIterator(theRoot);
+    public static Iterator<Structure> createPopulatedSegmentIterator(Group theRoot) {
+        Iterator<Structure> allIterator = new ReadOnlyMessageIterator(theRoot);
         
-        FilterIterator.Predicate segmentsOnly = new FilterIterator.Predicate() {
-            public boolean evaluate(Object obj) {
+        FilterIterator.Predicate<Structure> segmentsOnly = new FilterIterator.Predicate<Structure>() {
+            public boolean evaluate(Structure obj) {
                 if (Segment.class.isAssignableFrom(obj.getClass())) {
                     return true;
                 } else {
@@ -80,11 +80,11 @@ public class ReadOnlyMessageIterator implements Iterator {
                 }
             }
         };
-        FilterIterator segmentIterator = new FilterIterator(allIterator, segmentsOnly);
+        FilterIterator<Structure> segmentIterator = new FilterIterator<Structure>(allIterator, segmentsOnly);
         
         final EncodingCharacters ec = new EncodingCharacters('|', "^~\\&");
-        FilterIterator.Predicate populatedOnly = new FilterIterator.Predicate() {
-            public boolean evaluate(Object obj) {
+        FilterIterator.Predicate<Structure> populatedOnly = new FilterIterator.Predicate<Structure>() {
+            public boolean evaluate(Structure obj) {
                 String encoded = PipeParser.encode((Segment) obj, ec);                
                 if (encoded.length() > 3) {
                     return true;
@@ -93,7 +93,7 @@ public class ReadOnlyMessageIterator implements Iterator {
                 }
             }
         };
-        return new FilterIterator(segmentIterator, populatedOnly);        
+        return new FilterIterator<Structure>(segmentIterator, populatedOnly);        
     }
     
     private void addChildren(Group theParent) {
@@ -120,12 +120,12 @@ public class ReadOnlyMessageIterator implements Iterator {
     /** 
      * @see java.util.Iterator#next()
      */
-    public Object next() {
+    public Structure next() {
         if (!hasNext()) {
             throw new NoSuchElementException("No more nodes in message");
         }
         
-        Structure next = (Structure) myRemaining.remove(myRemaining.size() - 1);
+        Structure next = myRemaining.remove(myRemaining.size() - 1);
         
         if (next instanceof Group) {
             addChildren((Group) next);

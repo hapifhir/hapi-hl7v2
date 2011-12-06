@@ -12,13 +12,12 @@ import java.io.InputStreamReader;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -28,11 +27,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
  */
 public class Hl7InputStreamReader {
     
-   private static final Logger ourLog = Logger.getLogger(Hl7InputStreamReader.class);
-    
-   private InputStream is = null;
-    
-    
+   private static final Logger ourLog = LoggerFactory.getLogger(Hl7InputStreamReader.class);
+
     
    /**
     * Reads HL7 messages from an InputStream and outputs an array of HL7 message strings
@@ -41,9 +37,7 @@ public class Hl7InputStreamReader {
     */
     public static String[] read( InputStream theMsgInputStream )
      throws FileNotFoundException, IOException
-    {
-        Parser hapiParser = new PipeParser(); 
-        
+    {        
         BufferedReader in =
             new BufferedReader( 
                 new CommentFilterReader( new InputStreamReader( theMsgInputStream ) )
@@ -77,7 +71,7 @@ public class Hl7InputStreamReader {
 	 * @return the HL7 messages contained in theSource
 	 */
 	private static String[] getHL7Messages(String theSource) {
-		ArrayList messages = new ArrayList(20); 
+		List<String> messages = new ArrayList<String>(20); 
 		Pattern startPattern = Pattern.compile("^MSH", Pattern.MULTILINE);
 		Matcher startMatcher = startPattern.matcher(theSource);
 
@@ -95,7 +89,7 @@ public class Hl7InputStreamReader {
 			}
 			messages.add(msg.toString());
 		}
-		return (String[]) messages.toArray(new String[0]);
+		return messages.toArray(new String[0]);
 	}
     
 	/** 
