@@ -29,114 +29,99 @@ package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.HL7Reader;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
- * Listens for incoming messages on a certain input stream, and
- * sends them to the appropriate location.  
+ * Listens for incoming messages on a certain input stream, and sends them to
+ * the appropriate location.
+ * 
  * @author Bryan Tripp
  */
-public class Receiver implements Runnable {
+public class Receiver extends Service {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(Receiver.class);
+	private static final Logger log = LoggerFactory.getLogger(Receiver.class);
 
-    private Connection conn;
-    private HL7Reader in;
-    private boolean running;
+	private Connection conn;
+	private HL7Reader in;
 
-    /** Creates a new instance of Receiver, associated with the given Connection  */
-    public Receiver(Connection c, HL7Reader in) {
-        this.conn = c;
-        this.in = in;
-    }
+	/** Creates a new instance of Receiver, associated with the given Connection */
+	public Receiver(Connection c, HL7Reader in) {
+		super("Receiver", c.getExecutorService());
+		this.conn = c;
+		this.in = in;
+	}
 
-    /**
-     * Loops continuously, reading messages and calling processMessage() until
-     * stop() is called.
-     */
-    public void run() {
-        while (running) {
-            Thread.yield();
-            try {
-                String message = in.getMessage();
-                if (message == null) {
-                    log.info("Closing connection (no more messages available).");
-                    conn.close();
-                } else {
-                    processMessage(message);
-                }
-            }
-            catch (IOException e) {
-                conn.close();
-                log.error("IOException: closing Connection, will no longer read messages with this Receiver. ", e);
-            }
-            catch (Exception e) {
-                log.error("Error while closing connection: ", e);
-            }
-        }
-    }
 
-    /**
-     * Processes a single incoming message by sending it to the appropriate
-     * internal location.  If an incoming message contains
-     * an MSA-2 field, it is assumed that this message is meant as a reply to a message that has been sent
-     * earlier.  In this case an attempt is give the message to the object
-     * that sent the corresponding outbound message.  If the message contains an MSA-2 but there are no objects that
-     * appear to be waiting for it, it is discarded and an exception is logged. If the message does not
-     * contain an MSA-2 field, it is concluded that the message has arrived unsolicited.  In this case
-     * it is sent to the Responder (in a new Thread).
-     */
-    protected void processMessage(String message) {
-        String ackID = conn.getParser().getAckID(message);
-        if (ackID == null) {
-            Grunt g = new Grunt(conn, message);
-            g.start();
-        }
-        else {
-            MessageReceipt mr = conn.findRecipient(ackID);
-            if (mr == null) {
-                log.info( "Unexpected Message Received: " + message );
-            }
-            else {
-                mr.setMessage(message);
-            }
-        }
-    }
-    
-    /** Independent thread for processing a single message */ 
-    private class Grunt extends Thread {
-        
-        private Connection conn;
-        private String m;
-        
-        public Grunt(Connection conn, String message) {
-            this.conn = conn;
-            this.m = message;
-        }
-        
-        public void run() {
-            try {
-                String response = conn.getResponder().processMessage(m);
-                conn.getAckWriter().writeMessage(response);
-            }
-            catch (Exception e) {
-                log.error("Error while processing message: ", e );
-            }
-        }
-    }
+	@Override
+	protected void handle() {
+		try {
+			String message = in.getMessage();
+			if (message == null) {
+				log.info("Closing connection (no more messages available).");
+				conn.close();
+			} else {
+				processMessage(message);
+			}
+		} catch (IOException e) {
+			conn.close();
+			log.warn(
+					"IOException: closing Connection, will no longer read messages with this Receiver. ",
+					e);
+		} catch (Exception e) {
+			log.error("Error while closing connection: ", e);
+		}
 
-    /** Starts the Receiver in a new thread */
-    public void start() {
-        running = true;
-        Thread thd = new Thread(this);
-        thd.start();
-    }
+	}
 
-    /** Stops the Receiver after the next message is read. */
-    public void stop() {
-        running = false;
-    }
+
+	/**
+	 * Processes a single incoming message by sending it to the appropriate
+	 * internal location. If an incoming message contains an MSA-2 field, it is
+	 * assumed that this message is meant as a reply to a message that has been
+	 * sent earlier. In this case an attempt is give the message to the object
+	 * that sent the corresponding outbound message. If the message contains an
+	 * MSA-2 but there are no objects that appear to be waiting for it, it is
+	 * discarded and an exception is logged. If the message does not contain an
+	 * MSA-2 field, it is concluded that the message has arrived unsolicited. In
+	 * this case it is sent to the Responder (in a new Thread).
+	 */
+	protected void processMessage(String message) {
+		String ackID = conn.getParser().getAckID(message);
+		if (ackID == null) {
+			log.debug("Unsolicited Message Received: {}", message);
+			getExecutorService().submit(new Grunt(conn, message));
+		} else {
+			if (!conn.isRecipientWaiting(ackID, message)) {
+				log.info("Unexpected Message Received: {}", message);
+			} else {
+				log.debug("Response Message Received: {}", message);
+			}
+		}
+	}
+
+	/** Independent thread for processing a single message */
+	private class Grunt implements Runnable {
+
+		private Connection conn;
+		private String m;
+
+		public Grunt(Connection conn, String message) {
+			this.conn = conn;
+			this.m = message;
+		}
+
+		public void run() {
+			try {
+				String response = conn.getResponder().processMessage(m);
+				conn.getAckWriter().writeMessage(response);
+			} catch (Exception e) {
+				log.error("Error while processing message: ", e);
+			}
+		}
+	}
 
 }

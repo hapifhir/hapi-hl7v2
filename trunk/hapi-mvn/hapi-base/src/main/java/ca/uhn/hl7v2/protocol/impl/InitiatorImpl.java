@@ -25,7 +25,7 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class InitiatorImpl implements Initiator {
 
-    private final List myMetadataFields;
+    private final List<String> myMetadataFields;
     private final Parser myParser;
     private final Processor myProcessor;
     private int myMaxRetries;
@@ -38,7 +38,7 @@ public class InitiatorImpl implements Initiator {
      *  with the remote system
      */
     public InitiatorImpl(Processor theProcessor) {
-        myMetadataFields = new ArrayList(20);
+        myMetadataFields = new ArrayList<String>(20);
         myMetadataFields.add("MSH-18"); //add character set by default
         myParser = new GenericParser();
         myProcessor = theProcessor;
@@ -52,7 +52,7 @@ public class InitiatorImpl implements Initiator {
      *  with the remote system
      */
     public InitiatorImpl(Parser theParser, Processor theProcessor) {
-        myMetadataFields = new ArrayList(20);
+        myMetadataFields = new ArrayList<String>(20);
         myParser = theParser;
         myProcessor = theProcessor;
         init();
@@ -108,7 +108,7 @@ public class InitiatorImpl implements Initiator {
         String msgId = t.get("/MSH-10");
         
         String messageText = getParser().encode(theMessage);
-        Map metadata = getMetadata(theMessage);
+        Map<String, Object> metadata = getMetadata(theMessage);
         Transportable out = new TransportableImpl(messageText, metadata);
         
         if (needAck(appAckNeeded)) {
@@ -145,12 +145,12 @@ public class InitiatorImpl implements Initiator {
         return need;
     }
     
-    private Map getMetadata(Message theMessage) throws HL7Exception {
-        Map md = new HashMap();
+    private Map<String, Object> getMetadata(Message theMessage) throws HL7Exception {
+        Map<String, Object> md = new HashMap<String, Object>();
         Terser t = new Terser(theMessage);
 
         //snapshot so concurrent changes won't break our iteration
-        Object[] fields = getMetadataFields().toArray(new Object[0]);
+        String[] fields = getMetadataFields().toArray(new String[0]);
         
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i].toString();
@@ -178,7 +178,7 @@ public class InitiatorImpl implements Initiator {
     /**
      * @see ca.uhn.hl7v2.protocol.Initiator#getMetadataFields()
      */
-    public List getMetadataFields() {
+    public List<String> getMetadataFields() {
         return myMetadataFields;
     }
 

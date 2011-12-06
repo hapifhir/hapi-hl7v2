@@ -5,6 +5,8 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests correctness of message parsing by testing equivalence of re-encoded
@@ -69,35 +71,31 @@ public class ParseTester {
      * files recursively).
      */
     public HL7Exception[] testAll(File source) throws IOException {
-        ArrayList list = new ArrayList();
+        List<HL7Exception> list = new ArrayList<HL7Exception>();
         System.out.println("Testing " + source.getPath());
         if (source.isDirectory()) {
             File[] contents = source.listFiles();
             for (int i = 0; i < contents.length; i++) {
                 HL7Exception[] exceptions = testAll(contents[i]);
-                for (int j = 0; j < exceptions.length; j++) {
-                    list.add(exceptions[j]);
-                }
+                list.addAll(Arrays.asList(exceptions));
             }
         } else if (source.isFile()) {          
             FileReader in = new FileReader(source);
             setSource(in);
             setContext(source.getAbsolutePath());
             HL7Exception[] exceptions = testAll();
-            for (int i = 0; i < exceptions.length; i++) {
-                list.add(exceptions[i]);
-            }
+            list.addAll(Arrays.asList(exceptions));
         } else {
             System.out.println("Warning: " + source.getPath() + " is not a normal file");
         }
-        return (HL7Exception[]) list.toArray(new HL7Exception[0]);
+        return list.toArray(new HL7Exception[0]);
     }
     
     /**
      * Tests all remaining messages available from the currrent source.
      */
     public HL7Exception[] testAll() throws IOException {
-        ArrayList list = new ArrayList();
+    	List<HL7Exception> list = new ArrayList<HL7Exception>();
 
         String message = null;
         while ((message = getNextMessage()).length() > 0) {
@@ -105,7 +103,7 @@ public class ParseTester {
             if (e != null) list.add(e);
         }
         
-        return (HL7Exception[]) list.toArray(new HL7Exception[0]);
+        return list.toArray(new HL7Exception[0]);
     }
     
     /**

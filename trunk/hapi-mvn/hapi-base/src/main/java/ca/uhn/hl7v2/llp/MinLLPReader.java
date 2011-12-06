@@ -29,12 +29,15 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.llp;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Title:        HL7Reader
@@ -67,7 +70,7 @@ public class MinLLPReader implements HL7Reader
      */
     public static final String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(MinLLPReader.class);
+    private static final Logger log = LoggerFactory.getLogger(MinLLPReader.class);
     
     private BufferedReader myReader;
 

@@ -5,8 +5,9 @@
  */
 package ca.uhn.log;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * <p>Factory for creating {@link HapiLog} instances. It is factory
@@ -15,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
  * the <code>HapiLog</code> class.
  * 
  * @author <a href="mailto:alexei.guevara@uhn.on.ca">Alexei Guevara</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:52 $ by $Author: jamesagnew $
+ * @deprecated use slf4j LoggerFactory
  */
 public final class HapiLogFactory {
     
@@ -34,14 +35,9 @@ public final class HapiLogFactory {
      * @exception LogConfigurationException if a suitable <code>Log</code>
      *  instance cannot be returned
      */
-    public static HapiLog getHapiLog( Class clazz ) {
-        HapiLog retVal = null;
-        
-        Log log = LogFactory.getLog( clazz );
-        retVal = new HapiLogImpl( log );
-        
-        return retVal;
-        
+    public static HapiLog getHapiLog( Class<?> clazz ) {
+        Logger log = LoggerFactory.getLogger( clazz );
+        return new HapiLogImpl( log );
     }
     
     /**
@@ -56,12 +52,8 @@ public final class HapiLogFactory {
      *  instance cannot be returned
      */
     public static HapiLog getHapiLog( String name ) {
-        HapiLog retVal = null;
-        
-        Log log = LogFactory.getLog( name );
-        retVal = new HapiLogImpl( log );
-        
-        return retVal;
+        Logger log = LoggerFactory.getLogger( name );
+        return new HapiLogImpl( log );
     }
 
 }

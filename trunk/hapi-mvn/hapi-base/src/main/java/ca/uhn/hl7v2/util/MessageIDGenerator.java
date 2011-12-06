@@ -1,9 +1,13 @@
 package ca.uhn.hl7v2.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates unique message IDs.  IDs are stored in a file called <hapi.home>/id_file for persistence
@@ -14,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MessageIDGenerator {
     
-	private static final Log ourLog = LogFactory.getLog(MessageIDGenerator.class.getName());
+	private static final Logger ourLog = LoggerFactory.getLogger(MessageIDGenerator.class.getName());
     private static MessageIDGenerator messageIdGenerator;
     private static final String idFile = Home.getHomeDirectory().getAbsolutePath() + "/id_file";
     

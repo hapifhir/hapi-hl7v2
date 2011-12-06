@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * This is an application that will perform specific translations on the
@@ -25,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HL7FileMsgCorrector {
     
-    private static final Log ourLog =  LogFactory.getLog(HL7FileMsgCorrector.class);
+    private static final Logger ourLog =  LoggerFactory.getLogger(HL7FileMsgCorrector.class);
 
     /**
      * 

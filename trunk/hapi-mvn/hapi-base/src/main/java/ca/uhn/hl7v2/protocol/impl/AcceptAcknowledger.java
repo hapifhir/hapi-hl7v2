@@ -57,7 +57,7 @@ public class AcceptAcknowledger {
                 Transportable ack = makeAcceptAck(theMessage, Processor.CA, HL7Exception.MESSAGE_ACCEPTED, "");
                 ruling = new AcceptACK(true, ack);
             } catch (HL7Exception e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 int code = HL7Exception.APPLICATION_INTERNAL_ERROR;
                 Transportable ack = makeAcceptAck(theMessage, Processor.CR, code, e.getMessage());
                 ruling = new AcceptACK(false, ack);

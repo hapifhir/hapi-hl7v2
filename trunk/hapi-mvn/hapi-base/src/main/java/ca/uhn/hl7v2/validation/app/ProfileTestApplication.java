@@ -1,11 +1,9 @@
 package ca.uhn.hl7v2.validation.app;
 
-import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
-
-import ca.uhn.log.*;
 
 /**
  * <p>Tests messages against conformance profiles.  A constant profile
@@ -17,7 +15,6 @@ import ca.uhn.log.*;
  */
 public class ProfileTestApplication extends TestApplication {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ProfileTestApplication.class);
     private String profileID;
     private ConformanceProfileRule rule;
     

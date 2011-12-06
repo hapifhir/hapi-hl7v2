@@ -12,6 +12,8 @@ SET HAPI_HOME=.
 set PORT=8888
 
 echo HAPI_HOME is set to %HAPI_HOME%
-echo Running ca.uhn.hl7v2.app.TestPanel with HL7Service on port %PORT%
-
-java -cp %CP% -Dhapi.home=%HAPI_HOME% ca.uhn.hl7v2.app.TestPanel %PORT%
+echo Running ca.uhn.hl7v2.app.TestPanel 
+if "%1" == "" goto start
+echo with HL7Service on port %1
+:start
+java -cp %CP% -Dhapi.home=%HAPI_HOME% ca.uhn.hl7v2.app.TestPanel %1

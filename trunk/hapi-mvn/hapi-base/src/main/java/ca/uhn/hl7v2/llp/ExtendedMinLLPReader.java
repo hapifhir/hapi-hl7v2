@@ -117,7 +117,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 		}
 		catch(Exception e)
 		{
-			log.debug("Nonvalid charset - defaulting to US-ASCII", e);
+			log.warn("Nonvalid charset - defaulting to US-ASCII", e);
 		}
 		finally
 		{

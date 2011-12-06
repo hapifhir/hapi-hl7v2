@@ -1,11 +1,13 @@
 package ca.uhn.hl7v2.validation.app;
 
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.HL7Exception;
-import org.apache.commons.logging.*;
 import org.apache.log4j.NDC;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * An application intended for testing messages.  The intended use is to route a copy 
@@ -58,7 +60,7 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
         //update logging context with message text
         NDC.push(context);
         
-        LogFactory.getLog("ca.uhn.hl7v2.validation.error").info("Testing message");
+        LoggerFactory.getLogger("ca.uhn.hl7v2.validation.error").info("Testing message");
         
         HL7Exception[] problems = test(in);        
         sendNotifications(problems);
@@ -82,7 +84,7 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
         for (int i = 0; i < problems.length; i++) {
             String exName = problems[i].getClass().getName();
             String logName = "ca.uhn.hl7v2.validation.error" + exName.substring(exName.lastIndexOf('.'));
-            LogFactory.getLog(logName).error("message validation failure", problems[i]);
+            LoggerFactory.getLogger(logName).error("message validation failure", problems[i]);
         }
     }
     
@@ -93,11 +95,12 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
             t.set("MSA-1", "AE");        
             t.set("MSA-3", "Errors were encountered while testing the message");
         }
-        
+        /*
         Segment err = (Segment) ack.get("ERR");
         for (int i = 0; i < problems.length; i++) {
             // problems[i].populate(err); FIXME: broken! needs database
         }
+        */
     }
     
     /**

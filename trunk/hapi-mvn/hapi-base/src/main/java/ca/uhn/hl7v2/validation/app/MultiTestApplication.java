@@ -1,6 +1,9 @@
 package ca.uhn.hl7v2.validation.app;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.HL7Exception;
 
@@ -11,11 +14,11 @@ import ca.uhn.hl7v2.HL7Exception;
  */
 public class MultiTestApplication extends TestApplication {
     
-    private ArrayList tests;
+    private List<TestApplication> tests;
     
     /** Creates a new instance of MultiTestApplication */
     public MultiTestApplication() {
-        tests = new ArrayList(20);
+        tests = new ArrayList<TestApplication>(20);
     }
     
     /**
@@ -24,7 +27,7 @@ public class MultiTestApplication extends TestApplication {
     public boolean canProcess(Message in) {
         boolean can = false;
         for (int i = 0; !can && i < tests.size(); i++) {
-            can = ((TestApplication) tests.get(i)).canProcess(in);
+            can = tests.get(i).canProcess(in);
         }
         return can;
     }
@@ -34,15 +37,13 @@ public class MultiTestApplication extends TestApplication {
      * @return exceptions that describe any identified problems with the message
      */
     public HL7Exception[] test(Message in) throws HL7Exception {
-        ArrayList problems = new ArrayList(40);
+        List<HL7Exception> problems = new ArrayList<HL7Exception>(40);
         for (int i = 0; i < tests.size(); i++) {
             TestApplication app = (TestApplication) tests.get(i);
             HL7Exception[] shortList = app.test(in);
-            for (int j = 0; j < shortList.length; j++) {
-                problems.add(shortList[i]);
-            }
+            problems.addAll(Arrays.asList(shortList));
         }
-        return (HL7Exception[]) problems.toArray(new HL7Exception[0]);
+        return problems.toArray(new HL7Exception[0]);
     }
     
     /**

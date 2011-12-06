@@ -22,197 +22,213 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 
 package ca.uhn.hl7v2.app;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.app.AcceptorThread.AcceptedSocket;
+import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
- * A TCP/IP-based HL7 Service that uses separate ports for inbound and outbound messages.
- * A connection is only activated when the same remote host connects to both the 
- * inbound and outbound ports.  
+ * A TCP/IP-based HL7 Service that uses separate ports for inbound and outbound
+ * messages. A connection is only activated when the same remote host connects
+ * to both the inbound and outbound ports.
+ * 
  * @author Bryan Tripp
  */
 public class TwoPortService extends HL7Service {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(TwoPortService.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(TwoPortService.class);
 
-    private List<Socket> inSockets; //Vector because it's synchronized 
-    private List<Socket> outSockets;
-    private int inboundPort;
-    private int outboundPort;
+	private Map<String, AcceptedSocket> waitingForSecondSocket = new HashMap<String, AcceptedSocket>();
+	private int inboundPort;
+	private int outboundPort;
+	private boolean tls;
+	private BlockingQueue<AcceptedSocket> queue;
+	private AcceptorThread inboundAcceptor, outboundAcceptor;
 
-    /** Creates a new instance of TwoPortService */
-    public TwoPortService(Parser parser, LowerLayerProtocol llp, int inboundPort, int outboundPort) {
-        super(parser, llp);
-        inSockets = Collections.synchronizedList(new ArrayList<Socket>(20));
-        outSockets = Collections.synchronizedList(new ArrayList<Socket>(20));
-        this.inboundPort = inboundPort;
-        this.outboundPort = outboundPort;
-    }
+	public TwoPortService(int inboundPort, int outboundPort) {
+		this(new PipeParser(), LowerLayerProtocol.makeLLP(), inboundPort,
+				outboundPort, false);
+	}
 
-    /** 
-     * Initially sets up server sockets and starts separate threads to accept connections 
-     * on them.  Then loops, calling this.accept() super.newConnection().   
-     */
-    public void run() {
-        try {
-            AcceptThread inAccept = new AcceptThread(inboundPort, inSockets);
-            AcceptThread outAccept = new AcceptThread(outboundPort, outSockets);
-            Thread inThread = new Thread(inAccept);
-            Thread outThread = new Thread(outAccept);
-            inThread.start();
-            outThread.start();
-            log.info("TwoPortService running on ports " + inboundPort + " and " + outboundPort);
+	public TwoPortService(int inboundPort, int outboundPort, boolean tls) {
+		this(new PipeParser(), LowerLayerProtocol.makeLLP(), inboundPort,
+				outboundPort, tls);
+	}
 
-            while (isRunning()) {
-                Connection conn = accept(3000);
-                if (conn != null) {
-                    newConnection(conn);
-                    log.info("Accepted connection from " + conn.getRemoteAddress().getHostAddress());
-                }
-            }
+	/** Creates a new instance of TwoPortService */
+	public TwoPortService(Parser parser, LowerLayerProtocol llp,
+			int inboundPort, int outboundPort, boolean tls) {
+		this(parser, llp, inboundPort, outboundPort, tls,
+				DefaultExecutorService.getDefaultService());
+	}
 
-            inAccept.stop();
-            outAccept.stop();
-        }
-        catch (Exception e) {
-            log.error("Error while accepting connections: ", e);
-        }
-    }
+	/** Creates a new instance of TwoPortService */
+	public TwoPortService(Parser parser, LowerLayerProtocol llp,
+			int inboundPort, int outboundPort, boolean tls,
+			ExecutorService executorService) {
+		super(parser, llp, executorService);
+		this.queue = new LinkedBlockingQueue<AcceptedSocket>();
+		this.inboundPort = inboundPort;
+		this.outboundPort = outboundPort;
+		this.tls = tls;
+	}
 
-    /** 
-     * Returns a Connection based on an inbound and outbound connection pair from 
-     * the same remote host.  This is done by looping through all the connections
-     * trying to match the host addresses of all posible inbound and outbound 
-     * pairs.  When a matching pair is found, both sockets are removed from the 
-     * pending sockets lists, so there should normally be a very small number of 
-     * sockets to search through.  This method will return null if the specified 
-     * number of milliseconds has passed, otherwise will wait until a single remote 
-     * host has connected to both the inbound and outbound ports.  
-     */
-    private Connection accept(long timeoutMillis) throws LLPException, IOException {
-        long startTime = System.currentTimeMillis();
-        Connection conn = null;
-        while (conn == null && System.currentTimeMillis() < startTime + timeoutMillis) {
-            int i = 0;
-            while (conn == null && i < inSockets.size()) {
-                Socket in = inSockets.get(i);
-                int j = 0;
-                while (conn == null && j < outSockets.size()) {
-                    Socket out = outSockets.get(j);
-                    if (out.getInetAddress().getHostAddress().equals(in.getInetAddress().getHostAddress())) {
-                        conn = new Connection(parser, llp, in, out);
-                        inSockets.remove(i);
-                        outSockets.remove(j);
-                    }
-                    j++;
-                }
-                i++;
-            }
-            try {
-                Thread.sleep(10);
-            }
-            catch (InterruptedException e) {
-            }
-        }
-        return conn;
-    }
+	/**
+	 * Launches two threads that concurrently listen on the inboundPort and
+	 * outboundPort.
+	 * 
+	 * @see ca.uhn.hl7v2.app.HL7Service#afterStartup()
+	 */
+	@Override
+	protected void afterStartup() {
+		try {
+			super.afterStartup();
+			inboundAcceptor = createAcceptThread(inboundPort);
+			outboundAcceptor = createAcceptThread(outboundPort);
+			inboundAcceptor.start();
+			outboundAcceptor.start();
+			log.info("TwoPortService running on ports {} and {}", inboundPort,
+					outboundPort);
+		} catch (IOException e) {
+			log.error("Could not run TwoPortService on ports {} and {}",
+					inboundPort, outboundPort);
+			throw new RuntimeException(e);
+		}
+	}
 
-    /** 
-     * A Runnable that accepts connections on a ServerSocket and adds them to 
-     * a Vector, so that they can be matched later.  After stop() is called, the 
-     * ServerSocket is closed.
-     */
-    private class AcceptThread implements Runnable {
+	/**
+	 * Terminate the two acceptor threads
+	 * 
+	 * @see ca.uhn.hl7v2.app.HL7Service#afterTermination()
+	 */
+	@Override
+	protected void afterTermination() {
+		super.afterTermination();
+		inboundAcceptor.stop();
+		outboundAcceptor.stop();
+	}
 
-        private ServerSocket ss;
-        private List<Socket> sockets;
-        private boolean keepRunning = true;
+	/**
+	 * Polls for accepted sockets
+	 */
+	protected void handle() {
+		try {
+			Connection conn = acceptConnection(queue.poll(2, TimeUnit.SECONDS));
+			if (conn != null) {
+				log.info("Accepted connection from "
+						+ conn.getRemoteAddress().getHostAddress());
+				newConnection(conn);
+			}
+		} catch (Exception e) {
+			log.error("Error while accepting connections: ", e);
+		}
+	}
 
-        public AcceptThread(int port, List<Socket> sockets) throws IOException, SocketException {
-            ss = new ServerSocket(port);
-            ss.setSoTimeout(3000);
-            this.sockets = sockets;
-        }
+	/**
+	 * Helper method that checks whether the newSocket completes a two-port
+	 * connection or not. If yes, the {@link Connection} object is created and
+	 * returned.
+	 */
+	private Connection acceptConnection(AcceptedSocket newSocket)
+			throws LLPException, IOException {
+		Connection conn = null;
+		if (newSocket != null) {
+			String address = newSocket.socket.getInetAddress().getHostAddress();
+			AcceptedSocket otherSocket = waitingForSecondSocket.remove(address);
+			if (otherSocket != null && otherSocket.origin != newSocket.origin) {
+				log.debug("Socket {} completes a two-port connection",
+						newSocket.socket);
+				Socket in = getInboundSocket(newSocket, otherSocket);
+				Socket out = getOutboundSocket(newSocket, otherSocket);
+				conn = new Connection(parser, llp, in, out,
+						getExecutorService());
+			} else {
+				log.debug(
+						"Registered {} Still waiting for second socket for two-port connection",
+						newSocket.socket);
+				waitingForSecondSocket.put(address, newSocket);
+			}
+		}
+		return conn;
+	}
 
-        public void run() {
-            try {
-                while (keepRunning) {
-                    try {
-                        Socket s = ss.accept();
-                        sockets.add(s);
-                    }
-                    catch (InterruptedIOException e) { /* OK - just timed out */
-                    }
-                }
-                ss.close();
-            }
-            catch (Exception e) {
-                log.error("Problem running connection accept thread", e);
-            }
-        }
+	private Socket getInboundSocket(AcceptedSocket socket1,
+			AcceptedSocket socket2) {
+		return socket1.origin == inboundAcceptor ? socket1.socket
+				: socket2.socket;
+	}
 
-        public void stop() {
-            keepRunning = false;
-        }
-    }
+	private Socket getOutboundSocket(AcceptedSocket socket1,
+			AcceptedSocket socket2) {
+		return socket1.origin == outboundAcceptor ? socket1.socket
+				: socket2.socket;
+	}
 
-    /**
-     * Run server from command line.  Inbound and outbound port numbers should be provided as arguments,
-     * and a file containing a list of Applications to use can also be specified
-     * as an optional argument (as per <code>super.loadApplicationsFromFile(...)</code>).
-     * Uses the default LowerLayerProtocol.
-     */
-    public static void main(String args[]) {
-        if (args.length < 2 || args.length > 3) {
-            System.out.println(
-                "Usage: ca.uhn.hl7v2.app.TwoPortService inbound_port outbound_port [application_spec_file_name]");
-            System.exit(1);
-        }
+	protected AcceptorThread createAcceptThread(int port)
+			throws SocketException, IOException {
+		return new AcceptorThread(port, tls, getExecutorService(), queue);
+	}
 
-        int inPort = 0;
-        int outPort = 0;
-        try {
-            inPort = Integer.parseInt(args[0]);
-            outPort = Integer.parseInt(args[1]);
-        }
-        catch (NumberFormatException e) {
-            System.err.println("One of the given ports (" + args[0] + " or " + args[1] + ") is not an integer.");
-            System.exit(1);
-        }
+	/**
+	 * Run server from command line. Inbound and outbound port numbers should be
+	 * provided as arguments, and a file containing a list of Applications to
+	 * use can also be specified as an optional argument (as per
+	 * <code>super.loadApplicationsFromFile(...)</code>). Uses the default
+	 * LowerLayerProtocol.
+	 */
+	public static void main(String args[]) {
+		if (args.length < 2 || args.length > 3) {
+			System.out
+					.println("Usage: ca.uhn.hl7v2.app.TwoPortService inbound_port outbound_port [application_spec_file_name]");
+			System.exit(1);
+		}
 
-        File appFile = null;
-        if (args.length == 3) {
-            appFile = new File(args[2]);
-        }
+		int inPort = 0;
+		int outPort = 0;
+		try {
+			inPort = Integer.parseInt(args[0]);
+			outPort = Integer.parseInt(args[1]);
+		} catch (NumberFormatException e) {
+			System.err.println("One of the given ports (" + args[0] + " or "
+					+ args[1] + ") is not an integer.");
+			System.exit(1);
+		}
 
-        try {
-            TwoPortService server = new TwoPortService(new PipeParser(), LowerLayerProtocol.makeLLP(), inPort, outPort);
-            if (appFile != null)
-                server.loadApplicationsFromFile(appFile);
-            server.start();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+		File appFile = null;
+		if (args.length == 3) {
+			appFile = new File(args[2]);
+		}
 
-    }
+		try {
+			TwoPortService server = new TwoPortService(inPort, outPort);
+			if (appFile != null)
+				server.loadApplicationsFromFile(appFile);
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 }

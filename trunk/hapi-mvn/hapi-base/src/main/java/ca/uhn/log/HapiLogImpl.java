@@ -5,9 +5,8 @@
  */
 package ca.uhn.log;
 
-import java.text.MessageFormat;
-
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
 
 /**
  * Provides a base implementation of the <code>HapiLog</code> interface.
@@ -17,160 +16,267 @@ import org.apache.commons.logging.Log;
  * 
  * @author <a href="mailto:alexei.guevara@uhn.on.ca">Alexei Guevara</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:52 $ by $Author: jamesagnew $
+ * @deprecated use slf4j logger class
  */
 public class HapiLogImpl implements HapiLog {
     
-    private final Log delegate;
-    
-    HapiLogImpl( Log delegate ) {
+    HapiLogImpl( Logger delegate ) {
         this.delegate = delegate;
     }
+    
+	/** 
+	 * @deprecated Not available in slf4j. Use e.g. {@link #error(String, Throwable)} instead
+	 */
+	public void error(Exception e) {
+		delegate.error(e.getMessage(), e);
+	}
+    
+    public String getName() {
+		return delegate.getName();
+	}
 
-    /**
-     * @param message
-     */
-    public void debug(Object message) {
-        delegate.debug(message);
-    }
+	public boolean isTraceEnabled() {
+		return delegate.isTraceEnabled();
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void debug(Object message, Throwable t) {
-        delegate.debug(message, t);
-    }
+	public void trace(String msg) {
+		delegate.trace(msg);
+	}
 
-    /**
-     * @param message
-     */
-    public void error(Object message) {
-        delegate.error(message);
-    }
+	public void trace(String format, Object arg) {
+		delegate.trace(format, arg);
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void error(Object message, Throwable t) {
-        delegate.error(message, t);
-    }
+	public void trace(String format, Object arg1, Object arg2) {
+		delegate.trace(format, arg1, arg2);
+	}
 
-    /**
-     * @param message
-     */
-    public void fatal(Object message) {
-        delegate.fatal(message);
-    }
+	public void trace(String format, Object[] argArray) {
+		delegate.trace(format, argArray);
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void fatal(Object message, Throwable t) {
-        delegate.fatal(message, t);
-    }
+	public void trace(String msg, Throwable t) {
+		delegate.trace(msg, t);
+	}
 
-    /**
-     * @param message
-     */
-    public void info(Object message) {
-        delegate.info(message);
-    }
+	public boolean isTraceEnabled(Marker marker) {
+		return delegate.isTraceEnabled(marker);
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void info(Object message, Throwable t) {
-        delegate.info(message, t);
-    }
+	public void trace(Marker marker, String msg) {
+		delegate.trace(marker, msg);
+	}
 
-    /**
-     * @return
-     */
-    public boolean isDebugEnabled() {
-        return delegate.isDebugEnabled();
-    }
+	public void trace(Marker marker, String format, Object arg) {
+		delegate.trace(marker, format, arg);
+	}
 
-    /**
-     * @return
-     */
-    public boolean isErrorEnabled() {
-        return delegate.isErrorEnabled();
-    }
+	public void trace(Marker marker, String format, Object arg1, Object arg2) {
+		delegate.trace(marker, format, arg1, arg2);
+	}
 
-    /**
-     * @return
-     */
-    public boolean isFatalEnabled() {
-        return delegate.isFatalEnabled();
-    }
+	public void trace(Marker marker, String format, Object[] argArray) {
+		delegate.trace(marker, format, argArray);
+	}
 
-    /**
-     * @return
-     */
-    public boolean isInfoEnabled() {
-        return delegate.isInfoEnabled();
-    }
+	public void trace(Marker marker, String msg, Throwable t) {
+		delegate.trace(marker, msg, t);
+	}
 
-    /**
-     * @return
-     */
-    public boolean isTraceEnabled() {
-        return delegate.isTraceEnabled();
-    }
+	public boolean isDebugEnabled() {
+		return delegate.isDebugEnabled();
+	}
 
-    /**
-     * @return
-     */
-    public boolean isWarnEnabled() {
-        return delegate.isWarnEnabled();
-    }
+	public void debug(String msg) {
+		delegate.debug(msg);
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return delegate.toString();
-    }
+	public void debug(String format, Object arg) {
+		delegate.debug(format, arg);
+	}
 
-    /**
-     * @param message
-     */
-    public void trace(Object message) {
-        delegate.trace(message);
-    }
+	public void debug(String format, Object arg1, Object arg2) {
+		delegate.debug(format, arg1, arg2);
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void trace(Object message, Throwable t) {
-        delegate.trace(message, t);
-    }
+	public void debug(String format, Object[] argArray) {
+		delegate.debug(format, argArray);
+	}
 
-    /**
-     * @param message
-     */
-    public void warn(Object message) {
-        delegate.warn(message);
-    }
+	public void debug(String msg, Throwable t) {
+		delegate.debug(msg, t);
+	}
 
-    /**
-     * @param message
-     * @param t
-     */
-    public void warn(Object message, Throwable t) {
-        delegate.warn(message, t);
-    }
+	public boolean isDebugEnabled(Marker marker) {
+		return delegate.isDebugEnabled(marker);
+	}
 
-    /* (non-Javadoc)
-     * @see ca.uhn.log.HapiLog#debug(java.lang.String, java.lang.Object[], java.lang.Throwable)
-     */
-    public void debug(String msgPattern, Object[] values, Throwable t) {
-        String message = MessageFormat.format( msgPattern, values );
-        delegate.debug( message, t);
-    }
+	public void debug(Marker marker, String msg) {
+		delegate.debug(marker, msg);
+	}
+
+	public void debug(Marker marker, String format, Object arg) {
+		delegate.debug(marker, format, arg);
+	}
+
+	public void debug(Marker marker, String format, Object arg1, Object arg2) {
+		delegate.debug(marker, format, arg1, arg2);
+	}
+
+	public void debug(Marker marker, String format, Object[] argArray) {
+		delegate.debug(marker, format, argArray);
+	}
+
+	public void debug(Marker marker, String msg, Throwable t) {
+		delegate.debug(marker, msg, t);
+	}
+
+	public boolean isInfoEnabled() {
+		return delegate.isInfoEnabled();
+	}
+
+	public void info(String msg) {
+		delegate.info(msg);
+	}
+
+	public void info(String format, Object arg) {
+		delegate.info(format, arg);
+	}
+
+	public void info(String format, Object arg1, Object arg2) {
+		delegate.info(format, arg1, arg2);
+	}
+
+	public void info(String format, Object[] argArray) {
+		delegate.info(format, argArray);
+	}
+
+	public void info(String msg, Throwable t) {
+		delegate.info(msg, t);
+	}
+
+	public boolean isInfoEnabled(Marker marker) {
+		return delegate.isInfoEnabled(marker);
+	}
+
+	public void info(Marker marker, String msg) {
+		delegate.info(marker, msg);
+	}
+
+	public void info(Marker marker, String format, Object arg) {
+		delegate.info(marker, format, arg);
+	}
+
+	public void info(Marker marker, String format, Object arg1, Object arg2) {
+		delegate.info(marker, format, arg1, arg2);
+	}
+
+	public void info(Marker marker, String format, Object[] argArray) {
+		delegate.info(marker, format, argArray);
+	}
+
+	public void info(Marker marker, String msg, Throwable t) {
+		delegate.info(marker, msg, t);
+	}
+
+	public boolean isWarnEnabled() {
+		return delegate.isWarnEnabled();
+	}
+
+	public void warn(String msg) {
+		delegate.warn(msg);
+	}
+
+	public void warn(String format, Object arg) {
+		delegate.warn(format, arg);
+	}
+
+	public void warn(String format, Object[] argArray) {
+		delegate.warn(format, argArray);
+	}
+
+	public void warn(String format, Object arg1, Object arg2) {
+		delegate.warn(format, arg1, arg2);
+	}
+
+	public void warn(String msg, Throwable t) {
+		delegate.warn(msg, t);
+	}
+
+	public boolean isWarnEnabled(Marker marker) {
+		return delegate.isWarnEnabled(marker);
+	}
+
+	public void warn(Marker marker, String msg) {
+		delegate.warn(marker, msg);
+	}
+
+	public void warn(Marker marker, String format, Object arg) {
+		delegate.warn(marker, format, arg);
+	}
+
+	public void warn(Marker marker, String format, Object arg1, Object arg2) {
+		delegate.warn(marker, format, arg1, arg2);
+	}
+
+	public void warn(Marker marker, String format, Object[] argArray) {
+		delegate.warn(marker, format, argArray);
+	}
+
+	public void warn(Marker marker, String msg, Throwable t) {
+		delegate.warn(marker, msg, t);
+	}
+
+	public boolean isErrorEnabled() {
+		return delegate.isErrorEnabled();
+	}
+	
+	public void error(String msg) {
+		delegate.error(msg);
+	}
+
+	public void error(String format, Object arg) {
+		delegate.error(format, arg);
+	}
+
+	public void error(String format, Object arg1, Object arg2) {
+		delegate.error(format, arg1, arg2);
+	}
+
+	public void error(String format, Object[] argArray) {
+		delegate.error(format, argArray);
+	}
+
+	public void error(String msg, Throwable t) {
+		delegate.error(msg, t);
+	}
+
+	public boolean isErrorEnabled(Marker marker) {
+		return delegate.isErrorEnabled(marker);
+	}
+
+	public void error(Marker marker, String msg) {
+		delegate.error(marker, msg);
+	}
+
+	public void error(Marker marker, String format, Object arg) {
+		delegate.error(marker, format, arg);
+	}
+
+	public void error(Marker marker, String format, Object arg1, Object arg2) {
+		delegate.error(marker, format, arg1, arg2);
+	}
+
+	public void error(Marker marker, String format, Object[] argArray) {
+		delegate.error(marker, format, argArray);
+	}
+
+	public void error(Marker marker, String msg, Throwable t) {
+		delegate.error(marker, msg, t);
+	}
+
+	private final Logger delegate;
+    
+
     
 }

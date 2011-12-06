@@ -7,8 +7,8 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 
-	private static final Log ourLog = LogFactory.getLog(Hl7InputStreamMessageStringIterator.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(Hl7InputStreamMessageStringIterator.class);
 	private StringBuilder myBuffer = new StringBuilder();
 	private boolean myFoundMessageInBuffer = false;
 	private Boolean myHasNext;

@@ -3,44 +3,96 @@
  */
 package ca.uhn.hl7v2.app;
 
-import java.net.Socket;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.net.Socket;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import junit.framework.TestCase;
+import ca.uhn.hl7v2.util.RandomServerPortProvider;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
- * Unit tests for Initiator. 
+ * Unit tests for Initiator.
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author:
+ *          jamesagnew $
  */
-public class InitiatorTest extends TestCase {
 
-    /**
-     * @param arg0
-     */
-    public InitiatorTest(String arg0) {
-        super(arg0);
-    }
+public class InitiatorTest {
 
-    public void testSendAndReceive() throws Exception {
-        int port = 5678;
-        Parser parser = new PipeParser();
-        MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
-        
-        SimpleServer ss = new SimpleServer(port, protocol, parser);
-        ss.start();
-        Socket socket = new Socket("localhost", port);
-        Connection conn = new Connection(parser, protocol, socket);
-        
-        String msgText = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
-        Message out = parser.parse(msgText);
-        Message in = conn.getInitiator().sendAndReceive(out);
-        
-        assertTrue(in != null);
-    }
+	private static SimpleServer ss;
+	private static int port;
+	private static final String msgText = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
+
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		port = RandomServerPortProvider.findFreePort();
+		ss = new SimpleServer(port, LowerLayerProtocol.makeLLP(),
+				new PipeParser());
+		ss.start();
+	}
+
+	@AfterClass
+	public static void afterClass() throws Exception {
+		ss.stopAndWait();
+		DefaultExecutorService.getDefaultService().shutdown();
+	}
+
+	@Test
+	public void testSendAndReceive() throws Exception {
+		Parser parser = new PipeParser();
+		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
+		Socket socket = new Socket("localhost", port);
+		Connection conn = new Connection(parser, protocol, socket);
+		Message out = parser.parse(msgText);
+		Message in = conn.getInitiator().sendAndReceive(out);
+		assertTrue(in != null);
+		assertEquals(Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1),
+				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
+	}
+	
+	@Test
+	public void testConcurrentSendAndReceive() throws Exception {
+		int n = 50; // TODO fails with 100
+		final Parser parser = new PipeParser();
+		final Connection conn = new Connection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
+		final Random r = new Random(System.currentTimeMillis());
+		Callable<Boolean> t = new Callable<Boolean>() {
+			public Boolean call() {
+				try {
+					String id = Long.toString(r.nextLong());
+					Message out = parser.parse(msgText);
+					Terser.set((Segment)out.get("MSH"), 10, 0, 1, 1, id);
+					Message in = conn.getInitiator().sendAndReceive(out);
+					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1).equals(
+							Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
+				} catch (Exception e) {
+				}
+				return false;
+			}
+		};
+		List<Future<Boolean>> results = DefaultExecutorService.getDefaultService()
+				.invokeAll(TestUtils.fill(t, n));
+		for (Future<Boolean> future : results) {
+			assertTrue(future.get());
+		}
+
+	}	
 
 }

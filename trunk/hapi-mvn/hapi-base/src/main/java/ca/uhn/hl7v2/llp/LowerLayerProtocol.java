@@ -31,8 +31,8 @@ package ca.uhn.hl7v2.llp;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a particular "lower layer protocol" over which HL7 messages can be 
@@ -45,7 +45,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class LowerLayerProtocol {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(LowerLayerProtocol.class);
+    private static final Logger log = LoggerFactory.getLogger(LowerLayerProtocol.class);
     private static boolean logChars = false;
     
     /** 

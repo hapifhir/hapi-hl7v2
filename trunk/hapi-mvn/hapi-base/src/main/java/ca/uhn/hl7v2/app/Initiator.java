@@ -24,12 +24,17 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
 
-*/
+ */
 
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -39,199 +44,179 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
- * <p>Performs the initiation role of a message exchange (i.e sender of the first message; 
- * analagous to the client in a client-server interaction), according to HL7's original 
- * mode processing rules.</p>
- * <p>The <code>sendAndReceive(...)</code> method blocks until either a response is received 
- * with the matching message ID, or until a timeout period has passed.  The timeout defaults to 
- * 10000 ms (10 sec) but can be configured by setting the system property "ca.uhn.hl7v2.app.initiator.timeout"
- * to an integer value representing the number of ms after which to time out.</p>
- * <p>At the time of writing, enhanced mode, two-phase reply, continuation messages, and 
- * batch processing are unsupported. </p>
- * @author  Bryan Tripp
+ * <p>
+ * Performs the initiation role of a message exchange (i.e sender of the first
+ * message; analogous to the client in a client-server interaction), according
+ * to HL7's original mode processing rules.
+ * </p>
+ * <p>
+ * The <code>sendAndReceive(...)</code> method blocks until either a response is
+ * received with the matching message ID, or until a timeout period has passed.
+ * The timeout defaults to 10000 ms (10 sec) but can be configured by setting
+ * the system property "ca.uhn.hl7v2.app.initiator.timeout" to an integer value
+ * representing the number of ms after which to time out.
+ * </p>
+ * <p>
+ * At the time of writing, enhanced mode, two-phase reply, continuation
+ * messages, and batch processing are unsupported.
+ * </p>
+ * 
+ * @author Bryan Tripp
  */
 public class Initiator {
-    
-    private static final HapiLog log = HapiLogFactory.getHapiLog(Initiator.class); 
 
-    //private Parser parser;
-    private Connection conn;
-    //private boolean keepListening;    
-    private int timeoutMillis = 10000;
+	private static final Logger log = LoggerFactory.getLogger(Initiator.class);
+	private static final Logger rawOutbound = LoggerFactory
+			.getLogger("ca.uhn.hl7v2.raw.outbound");
+	private static final Logger rawInbound = LoggerFactory
+			.getLogger("ca.uhn.hl7v2.raw.inbound");
+	private Connection conn;
+	private int timeoutMillis = 10000;
 
-	private boolean myLogMessages;
+	/**
+	 * Creates a new instance of Initiator.
+	 * 
+	 * @param conn
+	 *            the Connection associated with this Initiator.
+	 */
+	Initiator(Connection conn) throws LLPException {
+		this.conn = conn;
 
-    /** 
-     * Creates a new instance of Initiator.  
-     * @param conn the Connection associated with this Initiator.   
-     */
-    protected Initiator(Connection conn) throws LLPException {
-        this.conn = conn;
+		// see if timeout has been set
+		String timeout = System
+				.getProperty("ca.uhn.hl7v2.app.initiator.timeout");
+		if (timeout != null) {
+			try {
+				timeoutMillis = Integer.parseInt(timeout);
+				log.debug("Setting Initiator timeout to {} ms", timeout);
+			} catch (NumberFormatException e) {
+				log.warn(timeout
+						+ " is not a valid integer - Initiator is using default timeout");
+			}
+		}
+	}
 
-        //see if timeout has been set
-        String timeout = System.getProperty("ca.uhn.hl7v2.app.initiator.timeout");
-        if (timeout != null) {
-            try {
-                timeoutMillis = Integer.parseInt(timeout);
-                log.debug("Setting Initiator timeout to " + timeout + " ms");
-            }
-            catch (NumberFormatException e) {
-                log.warn(timeout + " is not a valid integer - Initiator is using default timeout");
-            }
-        }
-    }
-
-    /**
-     * Sends a message to a responder system, receives the reply, and 
-     * returns the reply as a Message object.  This method is thread-safe - multiple  
-     * threads can share an Initiator and call this method.  Responses are returned to 
-     * the calling thread on the basis of message ID.  
-     */
-    public Message sendAndReceive(Message out) throws HL7Exception, LLPException, IOException {
-        HapiLog rawOutbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.outbound");
-        HapiLog rawInbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.inbound");
-        
-        if (out == null) {
-            throw new HL7Exception("Can't encode null message", HL7Exception.REQUIRED_FIELD_MISSING);
+	/**
+	 * Sends a message to a responder system, receives the reply, and returns
+	 * the reply as a Message object. This method is thread-safe - multiple
+	 * threads can share an Initiator and call this method. Responses are
+	 * returned to the calling thread on the basis of message ID.
+	 */
+	public Message sendAndReceive(Message out) throws HL7Exception,
+			LLPException, IOException {
+		if (out == null) {
+			throw new HL7Exception("Can't encode null message",
+					HL7Exception.REQUIRED_FIELD_MISSING);
 		}
 
-        //register message with response Receiver(s) (by message ID)
-        Terser t = new Terser(out);
-        String messID = t.get("/MSH-10");
+		// register message with response Receiver(s) (by message ID)
+		Terser t = new Terser(out);
+		String messID = t.get("/MSH-10");
 
 		if (messID == null || messID.length() == 0) {
-			throw new HL7Exception("MSH segment missing required field Control ID (MSH-10)", HL7Exception.REQUIRED_FIELD_MISSING);
+			throw new HL7Exception(
+					"MSH segment missing required field Control ID (MSH-10)",
+					HL7Exception.REQUIRED_FIELD_MISSING);
 		}
 
-        MessageReceipt mr = this.conn.reserveResponse(messID);
+		// log and send message
+		String outbound = conn.getParser().encode(out);
+		rawOutbound.debug(outbound);
+		Future<String> inbound = null;
+		try {
+			String message = null;
+			inbound = conn.waitForResponse(messID, timeoutMillis);
+			conn.getSendWriter().writeMessage(outbound);
+			if (inbound != null && (message = inbound.get()) != null) {
+				// log that we got the message
+				log.debug("Initiator received message: {}", message);
+				rawInbound.debug(message);
+				Message response = conn.getParser().parse(message);
+				log.debug("response parsed");
+				return response;
+			}
+		} catch (IOException e) {
+			if (inbound != null)
+				inbound.cancel(true);
+			conn.close();
+			throw e;
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+		}
 
-        //log and send message 
-        String outbound = conn.getParser().encode(out);
-        if (myLogMessages) {
-        	rawOutbound.info(outbound);
-        }
-        
-        try {
-            this.conn.getSendWriter().writeMessage(outbound);
-        }
-        catch (IOException e) {
-            conn.close();
-            throw e;
-        }
+		throw new HL7Exception(
+				"Timeout waiting for response to message with control ID "
+						+ messID);
+	}
 
-        //wait for response
-        boolean done = false;
-        Message response = null;
-        long startTime = System.currentTimeMillis();
-        while (!done) {
-            synchronized (mr) {
-                try {
-                    mr.wait(500); //if it comes, notifyAll() will be called
-                }
-                catch (InterruptedException e) {
-                }
+	/**
+	 * Sets the time (in milliseconds) that the initiator will wait for a
+	 * response for a given message before timing out and throwing an exception
+	 * (default is 10 seconds).
+	 */
+	public void setTimeoutMillis(int timeout) {
+		this.timeoutMillis = timeout;
+	}
 
-                if (mr.getMessage() != null) {
-                    //get message from receipt 
-                    String inbound = mr.getMessage();
-                    
-                    //log that we got the message
-                    if (myLogMessages) {
-                    	rawInbound.info(inbound);
-                    }
-                    
-                    //parse message
-                    response = conn.getParser().parse(inbound);
-                    log.debug("response parsed");
-                    done = true;
-                    
-                }
+	/**
+	 * Test harness
+	 */
+	public static void main(String args[]) {
+		if (args.length != 2) {
+			System.out.println("Usage: ca.uhn.hl7v2.app.Initiator host port");
+		}
 
-                if (System.currentTimeMillis() > startTime + timeoutMillis)
-                    throw new HL7Exception("Timeout waiting for response to message with control ID '" + messID);
-            }
-        }
+		try {
 
-        return response;
-    }
+			// set up connection to server
+			String host = args[0];
+			int port = Integer.parseInt(args[1]);
 
-    /**
-     * Sets the time (in milliseconds) that the initiator will wait for a response 
-     * for a given message before timing out and throwing an exception (default 
-     * is 10 seconds). 
-     */
-    public void setTimeoutMillis(int timeout) {
-        this.timeoutMillis = timeout;
-    }
+			final Parser parser = new PipeParser();
+			LowerLayerProtocol llp = LowerLayerProtocol.makeLLP();
+			Connection connection = new Connection(parser, llp, new Socket(
+					host, port));
+			final Initiator initiator = connection.getInitiator();
+			final String outText = "MSH|^~\\&|||||||ACK^^ACK|||R|2.4|\rMSA|AA";
 
-    /**
-     * Test harness
-     */
-    public static void main(String args[]) {
-        if (args.length != 2) {
-            System.out.println("Usage: ca.uhn.hl7v2.app.Initiator host port");
-        }
+			// get a bunch of threads to send messages
+			for (int i = 0; i < 1000; i++) {
+				Thread sender = new Thread(new Runnable() {
+					public void run() {
+						try {
+							// get message ID
+							String ID = MessageIDGenerator.getInstance()
+									.getNewID();
+							Message out = parser.parse(outText);
+							Terser tOut = new Terser(out);
+							tOut.set("/MSH-10", ID);
 
-        try {
+							// send, get response
+							Message in = initiator.sendAndReceive(out);
+							// get ACK ID
+							Terser tIn = new Terser(in);
+							String ackID = tIn.get("/MSA-2");
+							if (ID.equals(ackID)) {
+								System.out.println("OK - ack ID matches");
+							} else {
+								throw new RuntimeException(
+										"Ack ID for message " + ID + " is "
+												+ ackID);
+							}
 
-            //set up connection to server
-            String host = args[0];
-            int port = Integer.parseInt(args[1]);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				sender.start();
+			}
 
-            final Parser parser = new PipeParser();
-            LowerLayerProtocol llp = LowerLayerProtocol.makeLLP();
-            Connection connection = new Connection(parser, llp, new Socket(host, port));
-            final Initiator initiator = connection.getInitiator();
-            final String outText = "MSH|^~\\&|||||||ACK^^ACK|||R|2.4|\rMSA|AA";
-
-            //get a bunch of threads to send messages
-            for (int i = 0; i < 1000; i++) {
-                Thread sender = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                                //get message ID
-                        	String ID = MessageIDGenerator.getInstance().getNewID();
-                            Message out = parser.parse(outText);
-                            Terser tOut = new Terser(out);
-                            tOut.set("/MSH-10", ID);
-
-                            //send, get response
-                            Message in = initiator.sendAndReceive(out);
-
-                            //get ACK ID
-                            Terser tIn = new Terser(in);
-                            String ackID = tIn.get("/MSA-2");
-                            if (ID.equals(ackID)) {
-                                System.out.println("OK - ack ID matches");
-                            }
-                            else {
-                                throw new RuntimeException("Ack ID for message " + ID + " is " + ackID);
-                            }
-
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                sender.start();
-            }
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * If set to <code>false</code> (default is <code>true</code>), raw messages will not be logged.
-     */
-	public void setLogMessages(boolean theLogMessages) {
-		myLogMessages = theLogMessages;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

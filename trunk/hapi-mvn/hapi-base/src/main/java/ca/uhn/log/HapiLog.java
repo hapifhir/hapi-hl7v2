@@ -5,12 +5,9 @@
  */
 package ca.uhn.log;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
- * A logging interface that enhances the <code> Log </code>
- * interface with ancillary method to easy up the log messages generation
- * by adding MessageFormat like functionality.
  * 
  * Instantiate using {@link HapiLogFactory#getLog( Class clazz)}
  * or {@link HapiLogFactory#getLog( String name)}
@@ -52,19 +49,13 @@ import org.apache.commons.logging.Log;
  * </pre>
  * 
  * @author <a href="mailto:alexei.guevara@uhn.on.ca">Alexei Guevara</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:52 $ by $Author: jamesagnew $
+ * @deprecated use slf4j Logger directly
  */
-public interface HapiLog extends Log {
-    
-    /**
-     * 
-     * @see MessageFormat#format( ... )
-     * 
-     * @param msgPattern
-     * @param values
-     * @param e
-     */
-    public void debug( String msgPattern, Object[] values, Throwable e );
+public interface HapiLog extends Logger {
 
+	/**
+	 * @deprecated not available in sl4j. Use {@link #error(String, Throwable)}
+	 */
+	void error(Exception e);
 
 }

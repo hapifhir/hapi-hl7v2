@@ -8,6 +8,7 @@ import java.util.Iterator;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
 //import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -43,7 +44,7 @@ public class ReadOnlyMessageIteratorTest extends TestCase {
     public void testFiltered() throws EncodingNotSupportedException, HL7Exception {
         PipeParser parser = new PipeParser();
         Message msg = parser.parse(getMessageOne());
-        Iterator it = ReadOnlyMessageIterator.createPopulatedSegmentIterator(msg);
+        Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedSegmentIterator(msg);
 
         assertEquals("MSH", ((Segment) it.next()).getName());
         assertEquals("PID", ((Segment) it.next()).getName());

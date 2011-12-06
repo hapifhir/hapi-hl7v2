@@ -3,7 +3,8 @@ package ca.uhn.hl7v2;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to log the HAPI version when HAPI is first used (mostly for troubleshooting purposes)
@@ -11,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 public class VersionLogger {
 
     private static boolean ourInitialized = false;
+    private static final Logger LOG = LoggerFactory.getLogger(VersionLogger.class);
     
     /**
      * Non-instantiable
@@ -29,7 +31,7 @@ public class VersionLogger {
                 InputStream is = VersionLogger.class.getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties");
                 Properties p = new Properties();
                 p.load(is);
-                LogFactory.getLog(VersionLogger.class).info("HAPI version is: " + p.getProperty("version"));
+                LOG.info("HAPI version is: " + p.getProperty("version"));
             } catch (Exception e) {
                 // ignore
             }

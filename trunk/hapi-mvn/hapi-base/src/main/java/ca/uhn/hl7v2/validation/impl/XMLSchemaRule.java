@@ -28,7 +28,6 @@ package ca.uhn.hl7v2.validation.impl;
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
-import org.w3c.dom.Document;
 import org.apache.xpath.XPathAPI;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -52,6 +51,7 @@ import ca.uhn.log.*;
  * <p>Validate hl7 version 2 messages encoded according to the HL7 XML Encoding Syntax against xml schemas provided by hl7.org</p>
  * @author  Nico Vannieuwenhuyze
  */
+@SuppressWarnings("serial")
 public class XMLSchemaRule implements EncodingRule {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(XMLSchemaRule.class);
@@ -178,7 +178,7 @@ public class XMLSchemaRule implements EncodingRule {
             validationErrors.add(new ValidationException("Unable to parse message - please verify that it's a valid xml document" + " [IOException] " + e.getMessage()));
         }
  
-        return (ValidationException[]) validationErrors.toArray(new ValidationException[0]);
+        return validationErrors.toArray(new ValidationException[0]);
 
     }
     

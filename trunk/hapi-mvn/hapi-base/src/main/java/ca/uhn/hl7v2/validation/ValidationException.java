@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.validation;
  * A failure to validate against a rule.  
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public class ValidationException extends java.lang.Exception {
     
     /**

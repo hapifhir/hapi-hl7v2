@@ -1,24 +1,27 @@
 package ca.uhn.hl7v2.llp;
 
+import static ca.uhn.hl7v2.llp.MinLLPReader.END_MESSAGE;
+import static ca.uhn.hl7v2.llp.MinLLPReader.LAST_CHARACTER;
+import static ca.uhn.hl7v2.llp.MinLLPReader.START_MESSAGE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.preparser.PreParser;
-import static ca.uhn.hl7v2.llp.MinLLPReader.*;
 
 /**
  * MLLP writer which uses the charset from the message being transmitted
  */
 public class ExtendedMinLLPWriter implements HL7Writer {
 
-	private static final Log ourLog = LogFactory.getLog(ExtendedMinLLPWriter.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(ExtendedMinLLPWriter.class);
 	private OutputStream myOutputStream;
 
 	public ExtendedMinLLPWriter(OutputStream theOut) {

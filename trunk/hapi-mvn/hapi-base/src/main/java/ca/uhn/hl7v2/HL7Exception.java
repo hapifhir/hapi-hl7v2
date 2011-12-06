@@ -36,8 +36,8 @@ import ca.uhn.hl7v2.util.Terser;
  * an HL7 message.  
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
+@SuppressWarnings("serial")
 public class HL7Exception extends Exception {
-
 
     /** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept */
     public static final int ACK_AA = 1;

@@ -43,6 +43,7 @@ public class ConnectionDialog extends JDialog {
     private JTextField outPort;
     private JTextField host;
     private JRadioButton onePort;
+    private JCheckBox tls;  
     private TestPanel testPanel;
     
     /** Creates a new instance of ConnectionDialog */
@@ -59,36 +60,48 @@ public class ConnectionDialog extends JDialog {
         
         host = new JTextField(20);        
         JPanel hostPanel = new JPanel();
+        ((FlowLayout) hostPanel.getLayout()).setAlignment(FlowLayout.LEFT);
         hostPanel.add(new JLabel(" Host:  "));
         hostPanel.add(host);
         box.add(hostPanel);
-        
-        JRadioButton twoPort = new JRadioButton();
-        JPanel twoPortPanel = new JPanel();
-        ((FlowLayout) twoPortPanel.getLayout()).setAlignment(FlowLayout.LEFT);
-        twoPortPanel.add(twoPort);
-        twoPortPanel.add(new JLabel(" Separate Inbound & Outbound Ports "));
-        box.add(twoPortPanel);
-        
-        JPanel twoPortPanel2 = new JPanel();
-        ((FlowLayout) twoPortPanel2.getLayout()).setAlignment(FlowLayout.LEFT);
-        twoPortPanel2.add(new JLabel("     Inbound: "), FlowLayout.LEFT);
-        inPort = new JTextField(5);
-        twoPortPanel2.add(inPort);
-        twoPortPanel2.add(new JLabel(" Outbound: "));
-        outPort = new JTextField(5);
-        twoPortPanel2.add(outPort);
-        box.add(twoPortPanel2);
 
-        onePort = new JRadioButton();
+
+        onePort = new JRadioButton(" Single Port ");
         onePort.setSelected(true);
         port = new JTextField(5);
         JPanel onePortPanel = new JPanel();
         ((FlowLayout) onePortPanel.getLayout()).setAlignment(FlowLayout.LEFT);
-        onePortPanel.add(onePort, FlowLayout.LEFT);
-        onePortPanel.add(new JLabel(" Single Port "));        
+        onePortPanel.add(onePort, FlowLayout.LEFT);       
         onePortPanel.add(port);
         box.add(onePortPanel);
+
+        
+        JRadioButton twoPort = new JRadioButton(" Separate Inbound & Outbound Ports ");
+        JPanel twoPortPanel = new JPanel();
+        ((FlowLayout) twoPortPanel.getLayout()).setAlignment(FlowLayout.LEFT);
+        twoPortPanel.add(twoPort);
+        box.add(twoPortPanel);
+        
+        JPanel twoPortPanel2 = new JPanel();
+        ((FlowLayout) twoPortPanel2.getLayout()).setAlignment(FlowLayout.LEFT);
+        twoPortPanel2.add(new JLabel(" Inbound: "));
+        inPort = new JTextField(5);
+        inPort.setEnabled(false);
+        twoPortPanel2.add(inPort);
+        twoPortPanel2.add(new JLabel(" Outbound: "));
+        outPort = new JTextField(5);
+        outPort.setEnabled(false);
+        twoPortPanel2.add(outPort);
+        box.add(twoPortPanel2);
+
+        
+        tls = new JCheckBox("use TLS");
+        tls.setSelected(false);
+        box.add(tls);
+        JPanel tlsPanel = new JPanel();
+        ((FlowLayout) tlsPanel.getLayout()).setAlignment(FlowLayout.LEFT);
+        tlsPanel.add(tls, FlowLayout.LEFT);     
+        box.add(tlsPanel);
         
         JPanel buttonPanel = new JPanel();
         JButton OK = new JButton("  OK  ");
@@ -112,6 +125,25 @@ public class ConnectionDialog extends JDialog {
                 close();
             }
         });
+        
+        onePort.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				inPort.setEnabled(false);
+				outPort.setEnabled(false);
+				port.setEnabled(true);
+			}
+
+        });
+        twoPort.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				inPort.setEnabled(true);
+				outPort.setEnabled(true);
+				port.setEnabled(false);
+			}
+
+        });        
         
         pack();
         setVisible(true);

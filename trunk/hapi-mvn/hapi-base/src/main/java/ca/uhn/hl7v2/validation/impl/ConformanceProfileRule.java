@@ -27,6 +27,8 @@ package ca.uhn.hl7v2.validation.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
@@ -49,6 +51,7 @@ import ca.uhn.log.HapiLogFactory;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("serial")
 public class ConformanceProfileRule implements MessageRule {
 
     private static final HapiLog log = HapiLogFactory.getHapiLog(ConformanceProfileRule.class);
@@ -75,7 +78,7 @@ public class ConformanceProfileRule implements MessageRule {
      * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
      */
     public ValidationException[] test(Message msg) {
-        ArrayList<ValidationException> problems = new ArrayList<ValidationException>(20);
+        List<ValidationException> problems = new ArrayList<ValidationException>(20);
         String[] ids = {myProfileID};
         
         try {
@@ -88,9 +91,7 @@ public class ConformanceProfileRule implements MessageRule {
                 try {
                     ValidationException[] shortList = testAgainstProfile(msg, ids[i]);
                     log.debug(shortList.length + " non-conformances");
-                    for (int j = 0; j < shortList.length; j++) {
-                        problems.add(shortList[j]);
-                    }
+                    problems.addAll(Arrays.asList(shortList));
                 } catch (ProfileException e) {
                     problems.add(new ValidationException("Can't validate", e));
                 }
@@ -106,7 +107,7 @@ public class ConformanceProfileRule implements MessageRule {
         Terser t = new Terser(theMessage);
         boolean noMore = false;
         int c = 0;
-        ArrayList<String> declaredProfiles = new ArrayList<String>(8);
+        List<String> declaredProfiles = new ArrayList<String>(8);
         while (!noMore) {
             String path = "MSH-21(" + c++ + ")";
             String idRep = t.get(path);
@@ -117,7 +118,7 @@ public class ConformanceProfileRule implements MessageRule {
                 declaredProfiles.add(idRep);
             }
         }
-        return (String[]) declaredProfiles.toArray(new String[0]);
+        return declaredProfiles.toArray(new String[0]);
     }
     
     private ValidationException[] testAgainstProfile(Message message, String id) throws ProfileException, HL7Exception {
