@@ -27,18 +27,43 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.conf.check;
 
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.conf.spec.message.*;
-import ca.uhn.hl7v2.conf.spec.*;
-import ca.uhn.hl7v2.util.Terser;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
-import ca.uhn.hl7v2.parser.*;
-import java.util.ArrayList;
-import java.io.*;
-import ca.uhn.log.*;
-import ca.uhn.hl7v2.conf.store.*;
+import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
+import ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer;
+import ca.uhn.hl7v2.conf.spec.message.Component;
+import ca.uhn.hl7v2.conf.spec.message.Field;
+import ca.uhn.hl7v2.conf.spec.message.ProfileStructure;
+import ca.uhn.hl7v2.conf.spec.message.Seg;
+import ca.uhn.hl7v2.conf.spec.message.SegGroup;
+import ca.uhn.hl7v2.conf.spec.message.StaticDef;
+import ca.uhn.hl7v2.conf.spec.message.SubComponent;
+import ca.uhn.hl7v2.conf.store.CodeStore;
+import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
+import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.parser.EncodingCharacters;
+import ca.uhn.hl7v2.parser.GenericParser;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * A default conformance validator.
@@ -47,7 +72,7 @@ import ca.uhn.hl7v2.conf.store.*;
 public class DefaultValidator implements Validator {
     
     private EncodingCharacters enc;  //used to check for content in parts of a message
-    private static final HapiLog log = HapiLogFactory.getHapiLog( DefaultValidator.class );
+    private static final Logger log = LoggerFactory.getLogger(DefaultValidator.class);
     
     /** Creates a new instance of DefaultValidator */
     public DefaultValidator() {
@@ -414,8 +439,8 @@ public class DefaultValidator implements Validator {
         HL7Exception ret = null;
         CodeStore store = ProfileStoreFactory.getCodeStore(profileID, codeSystem);
         if (store == null) {
-            log.warn("Not checking value " + value + ": no code store was found for profile " + profileID 
-                + " code system " + codeSystem);
+            log.warn("Not checking value {}: no code store was found for profile {} code system {}"
+            		, new Object[] {value, profileID, codeSystem});
         } else {
             if (!store.isValidCode(codeSystem, value))
                 ret = new ProfileNotFollowedException("Code " + value + " not found in table " + codeSystem + ", profile " + profileID);

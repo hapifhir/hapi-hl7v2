@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
@@ -40,8 +43,6 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A MessageRule that checks conformance to message profiles. Messges can either be tested 
@@ -54,7 +55,7 @@ import ca.uhn.log.HapiLogFactory;
 @SuppressWarnings("serial")
 public class ConformanceProfileRule implements MessageRule {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ConformanceProfileRule.class);
+    private static final Logger log = LoggerFactory.getLogger(ConformanceProfileRule.class);
 
     private String myProfileID;
 
@@ -87,10 +88,10 @@ public class ConformanceProfileRule implements MessageRule {
             }
             
             for (int i = 0; i < ids.length; i++) {
-                log.debug("Testing message against profile: " + ids[i]);
+                log.debug("Testing message against profile: {}", ids[i]);
                 try {
                     ValidationException[] shortList = testAgainstProfile(msg, ids[i]);
-                    log.debug(shortList.length + " non-conformances");
+                    log.debug("{} non-conformances", shortList.length);
                     problems.addAll(Arrays.asList(shortList));
                 } catch (ProfileException e) {
                     problems.add(new ValidationException("Can't validate", e));

@@ -29,11 +29,12 @@ package ca.uhn.hl7v2.protocol.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A base implementation of <code>TransportLayer</code> which looks after the 
@@ -44,7 +45,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class AbstractTransport implements TransportLayer {
     
-    private static HapiLog log = HapiLogFactory.getHapiLog(AbstractTransport.class);
+    private static Logger log = LoggerFactory.getLogger(AbstractTransport.class);
     
     private Map<String, Object> myCommonMetadata;
     private boolean myIsConnected = false;
@@ -74,7 +75,7 @@ public abstract class AbstractTransport implements TransportLayer {
             message.getMetadata().putAll(myCommonMetadata);
         }
         
-        log.info("Received: " + (message == null ? null : message.getMessage()));
+        log.info("Received: {} ", (message == null ? null : message.getMessage()));
              
         return message;
     }
@@ -99,7 +100,7 @@ public abstract class AbstractTransport implements TransportLayer {
         
         doSend(theMessage);
         
-        log.info("Sent: " + (theMessage == null ? null : theMessage.getMessage()));
+        log.info("Sent: {}", (theMessage == null ? null : theMessage.getMessage()));
     }
     
     /**

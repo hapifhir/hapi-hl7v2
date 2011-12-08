@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.util.Home;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>Implements CodeMapper using files to store code values.  Files are arranged
@@ -38,7 +38,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class FileCodeMapper extends CodeMapper {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(FileCodeMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(FileCodeMapper.class);
 
     private boolean throwIfNoMatch = false;
     File baseDir;
@@ -82,7 +82,7 @@ public class FileCodeMapper extends CodeMapper {
             for (int i = 0; i < interfaceDirs.length; i++) {
 
                 log.info(
-                    "Checking directory " + interfaceDirs[i].getName() + " for interface code maps.");
+                    "Checking directory {} for interface code maps.", interfaceDirs[i].getName());
 
                 //get list of .li (local -> interface) and .il (interface -> local) files
                 File[] mapFiles = interfaceDirs[i].listFiles(new FilenameFilter() {
@@ -101,7 +101,7 @@ public class FileCodeMapper extends CodeMapper {
                 HashMap li = new HashMap(50);
                 HashMap il = new HashMap(50);
                 for (int j = 0; j < mapFiles.length; j++) {
-                    log.info("Reading map entries from file " + mapFiles[j]);
+                    log.info("Reading map entries from file {}", mapFiles[j]);
 
                     String fName = mapFiles[j].getName();
                     String tableName = fName.substring(0, fName.lastIndexOf('.'));
@@ -128,23 +128,13 @@ public class FileCodeMapper extends CodeMapper {
                     //add to appropriate map for this interface
                     if (mapDirection.equals("il")) {
                         il.put(tableName.toUpperCase(), codeMap);
-                        log.debug("Adding "
-                                + codeMap.size()
-                                + " codes to interface -> local map for "
-                                + tableName
-                                + " in "
-                                + interfaceDirs[i].getName()
-                                + " interface");
+                        log.debug("Adding {} codes to interface -> local map for {} in {} interface",
+                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});
                     }
                     else {
                         li.put(tableName.toUpperCase(), codeMap);
-                        log.debug("Adding "
-                                + codeMap.size()
-                                + " codes to local -> interface map for "
-                                + tableName
-                                + " in "
-                                + interfaceDirs[i].getName()
-                                + " interface");
+                        log.debug("Adding {} codes to local -> interface map for {} in {} interface",
+                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});
                     }
                 }
 

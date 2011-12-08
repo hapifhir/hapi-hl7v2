@@ -38,6 +38,7 @@ package ca.uhn.hl7v2.conf.classes.exceptions;
  *                <tr>Shawn Dyck</tr>
  * 				  <tr>Cory Metcalf</tr></table>
  */
+@SuppressWarnings("serial")
 public class ConformanceError extends Error {
 
    /** Constructor for ConformanceError

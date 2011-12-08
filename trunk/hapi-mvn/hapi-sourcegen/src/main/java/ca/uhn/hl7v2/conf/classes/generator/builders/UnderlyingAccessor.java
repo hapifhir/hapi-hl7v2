@@ -38,13 +38,14 @@ package ca.uhn.hl7v2.conf.classes.generator.builders;
 
 import java.lang.reflect.Method;
 
-import ca.uhn.hl7v2.conf.classes.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceError;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * This class is used to determine the name of the accessor method on the
@@ -63,7 +64,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class UnderlyingAccessor {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(UnderlyingAccessor.class);
+    private static final Logger log = LoggerFactory.getLogger(UnderlyingAccessor.class);
     
     boolean acceptsRep;    
     String theAccessor;
@@ -146,7 +147,7 @@ public class UnderlyingAccessor {
         try {
             c = Class.forName(theUnderlyingClassName);
         } catch (ClassNotFoundException e) {
-            log.debug("Interpreting class " + theUnderlyingClassName + " as a GenericSegment");
+            log.debug("Interpreting class {} as a GenericSegment", theUnderlyingClassName);
             c = GenericSegment.class;
         }
         return c;

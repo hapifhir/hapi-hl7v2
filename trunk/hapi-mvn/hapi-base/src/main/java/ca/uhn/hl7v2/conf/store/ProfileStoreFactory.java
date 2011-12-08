@@ -11,7 +11,7 @@ import ca.uhn.hl7v2.util.Home;
 public class ProfileStoreFactory {
     
     private static ProfileStore instance;
-    private static ArrayList codeStores = new ArrayList();
+    private static List<CodeStoreRegistration> codeStores = new ArrayList<CodeStoreRegistration>();
     
     /** 
      * Returns a single configurable instance of a ProfileStore.   
@@ -81,7 +81,7 @@ public class ProfileStoreFactory {
     public static CodeStore getCodeStore(String profileID, String codeSystem) {
         CodeStore store = null;
         for (int i = 0; i < codeStores.size() && store == null; i++) {            
-            CodeStoreRegistration reg = (CodeStoreRegistration) codeStores.get(i);
+            CodeStoreRegistration reg = codeStores.get(i);
             
             if (reg.pattern.matcher(profileID).matches() 
                 && reg.store.knowsCodes(codeSystem))

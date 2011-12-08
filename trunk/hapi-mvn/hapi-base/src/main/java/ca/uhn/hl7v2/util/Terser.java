@@ -30,7 +30,9 @@ package ca.uhn.hl7v2.util;
 import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.HL7Exception;
 import java.util.StringTokenizer;
-import ca.uhn.log.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Wraps a message to provide access to fields using a terse location
@@ -73,7 +75,7 @@ import ca.uhn.log.*;
 public class Terser {
     
     private SegmentFinder finder;
-    private static HapiLog log = HapiLogFactory.getHapiLog(Terser.class);
+    private static Logger log = LoggerFactory.getLogger(Terser.class);
     
     /** Creates a new instance of Terser */
     public Terser(Message message) {
@@ -373,9 +375,8 @@ public class Terser {
         Segment segment = getSegment(tok.nextToken());
         
         int[] ind = getIndices(spec);
-        if (log.isDebugEnabled()) {
-            log.debug("Setting " + spec + " seg: " + segment.getName() + " ind: " + ind[0] + " " + ind[1] + " " + ind[2] + " " + ind[3]);            
-        }
+        log.debug("Setting {} seg: {} ind: {} {} {} {}", 
+        		new Object[] {spec, segment.getName(), ind[0], ind[1], ind[2], ind[3]});            
         set(segment, ind[0], ind[1], ind[2], ind[3], value);
     }
     

@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Iterates over all defined nodes (ie segments, groups) in a message,
@@ -35,7 +36,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private boolean myHandleUnexpectedSegments;
     private List<Position> myCurrentDefinitionPath = new ArrayList<Position>();
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(MessageIterator.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageIterator.class);
 
     /*
      * may add configurability later ... private boolean findUpToFirstRequired;
@@ -75,9 +76,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             if (theDefinitionPath.size() > 1) {
                 return popUntilMatchFound(theDefinitionPath); // recurse
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Popped to root of message and did not find a match for " + myDirection);
-                }
+            	log.debug("Popped to root of message and did not find a match for {}", myDirection);
                 return null;
             }
         }
@@ -90,7 +89,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      */
     public boolean hasNext() {
 
-        log.debug("hasNext() for direction " + myDirection);
+        log.debug("hasNext() for direction {}", myDirection);
         if (myDirection == null) {
             throw new IllegalStateException("Direction not set");
         }
@@ -99,9 +98,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
 
             Position currentPosition = getCurrentPosition();
 
-            if (log.isDebugEnabled()) {
-                log.debug("hasNext() current position: " + currentPosition);
-            }
+            log.debug("hasNext() current position: {}", currentPosition);
 
             IStructureDefinition structureDefinition = currentPosition.getStructureDefinition();
             if (structureDefinition.isSegment() && structureDefinition.getName().startsWith(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
@@ -148,9 +145,8 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     }
 
     private void addNonStandardSegmentAtCurrentPosition() throws Error {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating non standard segment " + myDirection + " on group: " + getCurrentPosition().getStructureDefinition().getParent().getName());
-        }
+    	log.debug("Creating non standard segment {} on group: {}", 
+    			myDirection, getCurrentPosition().getStructureDefinition().getParent().getName());
         List<Position> parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
         Group parentStructure = (Group) navigateToStructure(parentDefinitionPath);
 

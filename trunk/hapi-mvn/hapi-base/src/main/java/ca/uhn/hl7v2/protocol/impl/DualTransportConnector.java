@@ -5,8 +5,6 @@ package ca.uhn.hl7v2.protocol.impl;
 
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>A utility for connecting separate inbound and outbound 
@@ -22,8 +20,6 @@ import ca.uhn.log.HapiLogFactory;
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
  */
 public class DualTransportConnector {
-
-    private static HapiLog log = HapiLogFactory.getHapiLog(DualTransportConnector.class);
 
     private final TransportLayer myTransportA;
     private final TransportLayer myTransportB;
@@ -125,7 +121,6 @@ public class DualTransportConnector {
             try {
                 myTransport.connect();
             } catch (TransportException e) {
-                log.equals(e);
                 myException = e;
             }
         }

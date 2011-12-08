@@ -2,8 +2,8 @@ package ca.uhn.hl7v2.conf.store;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created on 27-Aug-2003
@@ -13,7 +13,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class AbstractCodeStore implements CodeStore {
 
-	private static HapiLog log = HapiLogFactory.getHapiLog(AbstractCodeStore.class);
+	private static Logger log = LoggerFactory.getLogger(AbstractCodeStore.class);
 	private WildcardPattern[] wildcards;
 
 	/**

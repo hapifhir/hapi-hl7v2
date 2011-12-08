@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -50,8 +53,6 @@ import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Parses HL7 message Strings into HL7 Message objects and 
@@ -60,7 +61,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class Parser {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(Parser.class);
+    private static final Logger log = LoggerFactory.getLogger(Parser.class);
     private static Map<String, Properties> messageStructures = null;
     
     private ModelClassFactory myFactory;
@@ -408,7 +409,7 @@ public abstract class Parser {
 				throw new ClassNotFoundException("Can't find message class in current package list: " + theName);
 			}
 			
-			log.debug("Instantiating msg of class " + messageClass.getName()); 
+			log.debug("Instantiating msg of class {}", messageClass.getName()); 
 			Constructor<? extends Message> constructor = messageClass.getConstructor(new Class[]{ModelClassFactory.class}); 
 			result = (Message) constructor.newInstance(new Object[]{myFactory}); 
 		} catch (Exception e) { 
@@ -593,7 +594,7 @@ public abstract class Parser {
             if (messageClass == null)
                 throw new ClassNotFoundException("Can't find message class in current package list: " 
                     + theName);
-            log.debug("Instantiating msg of class " + messageClass.getName());
+            log.debug("Instantiating msg of class {}", messageClass.getName());
             Constructor<? extends Message> constructor = messageClass.getConstructor(new Class[]{ModelClassFactory.class});
             result = constructor.newInstance(new Object[]{myFactory});
         } catch (Exception e) {            

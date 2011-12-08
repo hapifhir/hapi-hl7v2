@@ -38,6 +38,8 @@ import java.io.StringReader;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.parsers.StandardParserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -61,8 +63,6 @@ import ca.uhn.hl7v2.conf.spec.message.Seg;
 import ca.uhn.hl7v2.conf.spec.message.SegGroup;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.conf.spec.message.SubComponent;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>
@@ -96,7 +96,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ProfileParser {
 
-	private static final HapiLog log = HapiLogFactory.getHapiLog(ProfileParser.class);
+	private static final Logger log = LoggerFactory.getLogger(ProfileParser.class);
 
 	private DOMParser parser;
 	private boolean alwaysValidate;
@@ -545,7 +545,7 @@ public class ProfileParser {
 			// System.out.println(xml);
 
 			ProfileParser pp = new ProfileParser(true);
-			RuntimeProfile spec = pp.parse(xml);
+			pp.parse(xml);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

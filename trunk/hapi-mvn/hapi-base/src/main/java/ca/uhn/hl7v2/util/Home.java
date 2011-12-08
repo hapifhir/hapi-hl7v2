@@ -1,7 +1,9 @@
 package ca.uhn.hl7v2.util;
 
 import java.io.File;
-import ca.uhn.log.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to access the hapi.home system property.  Note that the property 
@@ -11,7 +13,7 @@ import ca.uhn.log.*;
 public class Home {
     
     private static File home;
-    private static HapiLog log = HapiLogFactory.getHapiLog(Home.class);
+    private static Logger log = LoggerFactory.getLogger(Home.class);
     
     /** Creates a new instance of Home */
     public Home() {
@@ -39,8 +41,7 @@ public class Home {
         
         if (!home.isDirectory()) {
             home = new File("."); 
-            log.warn("The system property hapi.home is not a valid directory: " 
-                + dir + ".  Using . instead");
+            log.warn("The system property hapi.home is not a valid directory: {}.  Using . instead", dir);
         }
          
         log.info("hapi.home is set to " + home.getAbsolutePath());

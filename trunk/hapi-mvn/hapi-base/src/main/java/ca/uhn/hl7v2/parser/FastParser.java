@@ -40,14 +40,15 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A Parser for the ER7 encoding, which is faster than PipeParser, but fussier and harder to use.
@@ -66,7 +67,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class FastParser extends Parser {
 
-    private static final HapiLog ourLog = HapiLogFactory.getHapiLog(FastParser.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(FastParser.class);
     
     private static char ourSegmentSeparator = '\r';
     private Map myEventGuideMap;
@@ -286,8 +287,8 @@ public class FastParser extends Parser {
         
         StructRef root = (StructRef) myEventGuideMap.get(structure[0]);
         if (root == null) {
-            ourLog.debug("FastParser delegating to PipeParser because no metadata available for event " 
-                    + structure[0]);
+            ourLog.debug("FastParser delegating to PipeParser because no metadata available for event {}", 
+                    structure[0]);
             result = myPipeParser.parse(message);
         } else {
             int csIndex = mshFields[11].indexOf(ec.getComponentSeparator());
@@ -350,9 +351,7 @@ public class FastParser extends Parser {
                         fields = new int[0];
                     } else {
                         ref = newref;
-                        if (ourLog.isDebugEnabled()) {
-                            ourLog.debug("Parsing into segment " + ref.getFullPath());
-                        }
+                        ourLog.debug("Parsing into segment {}", ref.getFullPath());
                         segment = t.getSegment(ref.getFullPath());
                         fields = ref.getFields();
                     }

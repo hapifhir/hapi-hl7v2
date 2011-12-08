@@ -27,11 +27,12 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Validation utilities for parsed and encoded messages.  
@@ -42,7 +43,7 @@ public class MessageValidator {
 
     private static final MessageRule[] EMPTY_MESSAGE_RULES_ARRAY = new MessageRule[0];
     private static final EncodingRule[] EMPTY_ENCODING_RULES_ARRAY = new EncodingRule[0];
-	private static final HapiLog ourLog = HapiLogFactory.getHapiLog(MessageValidator.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(MessageValidator.class);
     
     private ValidationContext myContext;
     private boolean failOnError;

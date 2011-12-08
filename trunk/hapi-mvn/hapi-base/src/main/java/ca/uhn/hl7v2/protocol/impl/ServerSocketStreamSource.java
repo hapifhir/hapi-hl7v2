@@ -29,11 +29,12 @@ package ca.uhn.hl7v2.protocol.impl;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.protocol.TransportException;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
-import java.net.SocketTimeoutException;
 
 /**
  * A <code>StreamSource</code> that gets streams from ServerSockets.  This 
@@ -94,7 +95,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
      */
     private static class Acceptor {
         
-        private static final HapiLog log = HapiLogFactory.getHapiLog(Acceptor.class);
+        private static final Logger log = LoggerFactory.getLogger(Acceptor.class);
         
         private Socket mySocket;
         
@@ -108,7 +109,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
         public Acceptor(final ServerSocket theServer, final String theAddress) {
             final Acceptor a = this;
             if (theAddress != null) {
-                log.info("Server socket is about to try to accept a connection from " + theAddress);
+                log.info("Server socket is about to try to accept a connection from {}", theAddress);
             } else {
                 log.info("Server socket is about to try to accept a connection from any addess");
             }
@@ -129,7 +130,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
 	                                    a.notifyAll();
 	                                }
 	                            } else {
-	                                log.info("Ignoring connection from " + address + ": expecting " + theAddress);
+	                                log.info("Ignoring connection from {}: expecting ", address, theAddress);
 	                            }
                         	}
                         	
@@ -140,7 +141,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
                         } // try-catch
 
                         if (a.getSocket() != null) {
-                            log.info("Accepted connection from address: " + a.getSocket().getInetAddress());
+                            log.info("Accepted connection from address: {}", a.getSocket().getInetAddress());
                             return;
                         }
 

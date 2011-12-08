@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
@@ -42,8 +45,6 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * An implementation of Parser that supports traditionally encoded (ie delimited
@@ -54,7 +55,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class PipeParser extends Parser {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(PipeParser.class);
+    private static final Logger log = LoggerFactory.getLogger(PipeParser.class);
 
     private final static String segDelim = "\r"; // see section 2.8 of spec
 
@@ -359,16 +360,7 @@ public class PipeParser extends Parser {
 
             for (int j = 0; j < reps.length; j++) {
                 try {
-                    if (log.isDebugEnabled()) {
-                        StringBuilder statusMessage = new StringBuilder("Parsing field ");
-                        statusMessage.append(i + fieldOffset);
-                        statusMessage.append(" repetition ");
-                        statusMessage.append(j);
-                        log.debug(statusMessage.toString());
-                    }
-                    // parse(destination.getField(i + fieldOffset, j), reps[j],
-                    // encodingChars, false);
-
+                	log.debug("Parsing field {} repetition {}", i + fieldOffset, j);
                     Type field = destination.getField(i + fieldOffset, j);
                     if (isMSH2) {
                         Terser.getPrimitive(field, 1, 1).setValue(reps[j]);
@@ -949,7 +941,7 @@ public class PipeParser extends Parser {
                 ackID = message.substring(start, end);
             }
         }
-        log.debug("ACK ID: " + ackID);
+        log.debug("ACK ID: {}", ackID);
         return ackID;
     }
 
@@ -1109,7 +1101,7 @@ public class PipeParser extends Parser {
                     }
                 }
 
-                log.debug("Parsing segment " + name);
+                log.debug("Parsing segment {}", name);
 
                 messageIter.setDirection(name);
 

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.app.Responder;
@@ -19,8 +22,6 @@ import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.Transportable;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>A default implementation of <code>ApplicationRouter</code> </p>  
@@ -33,7 +34,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ApplicationRouterImpl implements ApplicationRouter {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ApplicationRouterImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ApplicationRouterImpl.class);
     
     /**
      * Key under which raw message text is stored in metadata Map sent to 
@@ -90,10 +91,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * @return {text, charset}
      */
     private String[] processMessage(String incomingMessageString, Map<String, Object> theMetadata) throws HL7Exception {
-        HapiLog rawOutbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.outbound");
-        HapiLog rawInbound = HapiLogFactory.getHapiLog("ca.uhn.hl7v2.raw.inbound");
+        Logger rawOutbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.outbound");
+        Logger rawInbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.inbound");
         
-        log.info( "ApplicationRouterImpl got message: " + incomingMessageString );
+        log.info( "ApplicationRouterImpl got message: {}", incomingMessageString );
         rawInbound.info(incomingMessageString);
         
         Message incomingMessageObject = null;
@@ -119,9 +120,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
                 ReceivingApplication app = findApplication(incomingMessageObject);
                 theMetadata.put(RAW_MESSAGE_KEY, incomingMessageString);
                 
-                if (log.isDebugEnabled()) {
-                	log.debug("Sending message to application: " + app.toString());
-                }
+                log.debug("Sending message to application: {}", app.toString());
                 Message response = app.processMessage(incomingMessageObject, theMetadata);
                 
                 //Here we explicitly use the same encoding as that of the inbound message - this is important with GenericParser, which might use a different encoding by default
@@ -135,7 +134,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             }
         }
         
-        log.info( "ApplicationRouterImpl sending message: " + outgoingMessageString );
+        log.info( "ApplicationRouterImpl sending message: {}", outgoingMessageString );
         rawOutbound.info(outgoingMessageString);
         
         return new String[] {outgoingMessageString, outgoingMessageCharset};

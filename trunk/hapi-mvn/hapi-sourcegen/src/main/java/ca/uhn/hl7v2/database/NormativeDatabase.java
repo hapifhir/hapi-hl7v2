@@ -33,8 +33,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -71,7 +71,7 @@ public class NormativeDatabase
 	/** User system property constant */
     public static final String PROP_DATABASE_PASSWORD = "ca.on.uhn.hl7.database.password";
 
-	private static final HapiLog log = HapiLogFactory.getHapiLog(NormativeDatabase.class);
+	private static final Logger log = LoggerFactory.getLogger(NormativeDatabase.class);
 
     private static final NormativeDatabase INSTANCE = new NormativeDatabase();
 

@@ -5,6 +5,7 @@ package ca.uhn.hl7v2.conf.check;
  * message.  
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public class XElementPresentException extends ProfileNotFollowedException {        
     
     /**

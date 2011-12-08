@@ -42,6 +42,8 @@ import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.parsers.StandardParserConfiguration;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,8 +66,6 @@ import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Parses and encodes HL7 messages in XML form, according to HL7's normative XML encoding
@@ -79,7 +79,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class XMLParser extends Parser {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(XMLParser.class);
+    private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
 
     private DOMParser parser;
     private String textEncoding;
@@ -325,8 +325,8 @@ public abstract class XMLParser extends Parser {
                     int fieldNum = Integer.parseInt(fieldNumString);
                     parseReps(segmentObject, segmentElement, elementName, fieldNum);                        
                 } else {                        
-                    log.debug("Child of segment " + segmentObject.getName() 
-                            + " doesn't look like a field: " + elementName);
+                    log.debug("Child of segment {} doesn't look like a field {}",
+                    		segmentObject.getName(), elementName);
                 }
             }
         }
@@ -508,8 +508,8 @@ public abstract class XMLParser extends Parser {
                     if (dotIndex > -1) {
                         compNum = Integer.parseInt(localName.substring(dotIndex + 1)) - 1;
                     } else {
-                        log.debug("Datatype element " + datatypeElement.getLocalName() 
-                                + " doesn't have a valid numbered name, usgin default index of " + compNum);
+                        log.debug("Datatype element {} doesn't have a valid numbered name, usgin default index of {}",
+                        		datatypeElement.getLocalName(), compNum);
                     }
                     Type nextComponent = datatypeObject.getComponent(compNum);
                     parse(nextComponent, nextElement);

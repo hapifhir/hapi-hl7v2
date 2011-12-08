@@ -28,7 +28,11 @@
 package ca.uhn.hl7v2.parser;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
@@ -38,11 +42,9 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.util.MessageIterator;
 import ca.uhn.hl7v2.util.FilterIterator;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import ca.uhn.hl7v2.util.MessageIterator;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * This is a legacy implementation of the PipeParser and should not be used
@@ -58,7 +60,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class OldPipeParser extends Parser {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(PipeParser.class);
+    private static final Logger log = LoggerFactory.getLogger(PipeParser.class);
     
     private final static String segDelim = "\r"; //see section 2.8 of spec
     
@@ -247,9 +249,7 @@ public class OldPipeParser extends Parser {
         //destination.setName(fields[0]);
         for (int i = 1; i < fields.length; i++) {
             String[] reps = split(fields[i], String.valueOf(encodingChars.getRepetitionSeparator()));
-            if (log.isDebugEnabled()) {
-                log.debug(reps.length + "reps delimited by: " + encodingChars.getRepetitionSeparator());                
-            }
+            log.debug("{} reps delimited by: {}", reps.length, encodingChars.getRepetitionSeparator());                
             
             //MSH-2 will get split incorrectly so we have to fudge it ...
             boolean isMSH2 = isDelimDefSegment(destination.getName()) && i+fieldOffset == 2;
@@ -326,25 +326,13 @@ public class OldPipeParser extends Parser {
             }
         }
     }
-        
-    /** Returns the component or subcomponent separator from the given encoding characters. */
-    private static char getSeparator(boolean subComponents, EncodingCharacters encodingChars) {
-        char separator;
-        if (subComponents) {
-            separator = encodingChars.getSubcomponentSeparator();
-        }
-        else {
-            separator = encodingChars.getComponentSeparator();
-        }
-        return separator;
-    }
     
     /**
      * Splits the given composite string into an array of components using the given
      * delimiter.
      */
     public static String[] split(String composite, String delim) {
-        ArrayList components = new ArrayList();
+        List<String> components = new ArrayList<String>();
         
         //defend against evil nulls
         if (composite == null)
@@ -367,12 +355,7 @@ public class OldPipeParser extends Parser {
             }
         }
         
-        String[] ret = new String[components.size()];
-        for (int i = 0; i < components.size(); i++) {
-            ret[i] = (String) components.get(i);
-        }
-        
-        return ret;
+        return components.toArray(new String[components.size()]);
     }
     
     /**
@@ -662,7 +645,7 @@ public class OldPipeParser extends Parser {
                 ackID = message.substring(start, end);
             }
         }
-        log.debug("ACK ID: " + ackID);
+        log.debug("ACK ID: {}", ackID);
         return ackID;
     }
     
@@ -776,18 +759,14 @@ public class OldPipeParser extends Parser {
                       }
                  }
 
-                log.debug("Parsing segment " + name);
+                log.debug("Parsing segment {}", name);
 
                 messageIter.setDirection(name);
                 FilterIterator.Predicate byDirection = new FilterIterator.Predicate() {
                     public boolean evaluate(Object obj) {
                         Structure s = (Structure) obj;
-                        log.debug("PipeParser iterating message in direction " + name + " at " + s.getName());
-                        if (s.getName().matches(name + "\\d*")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        log.debug("PipeParser iterating message in direction {} at {} ", name, s.getName());
+                        return s.getName().matches(name + "\\d*");
                     }
                 };
                 FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);

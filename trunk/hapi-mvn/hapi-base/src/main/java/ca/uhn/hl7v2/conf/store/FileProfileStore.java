@@ -1,8 +1,14 @@
 package ca.uhn.hl7v2.conf.store;
 
-import java.io.*;
-import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.log.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stores profiles in a local directory.  Profiles are stored as text
@@ -12,7 +18,7 @@ import ca.uhn.log.*;
 public class FileProfileStore implements ProfileStore {
     
     private File root;
-    private static final HapiLog log = HapiLogFactory.getHapiLog(FileProfileStore.class);
+    private static final Logger log = LoggerFactory.getLogger(FileProfileStore.class);
     
     /** Creates a new instance of FileProfileStore */
     public FileProfileStore(String file) {
@@ -40,7 +46,7 @@ public class FileProfileStore implements ProfileStore {
                 + " bytes of file " + source.getAbsolutePath());
             profile = new String(buf);
         }
-        log.info("Got profile " + ID + ": \r\n" + profile);
+        log.info("Got profile {}: \r\n {}", ID, profile);
         return profile;
     }
     
