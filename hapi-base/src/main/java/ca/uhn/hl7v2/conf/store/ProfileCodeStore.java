@@ -87,8 +87,8 @@ public class ProfileCodeStore extends AbstractCodeStore {
         //obtain the table for the codesystem
         try {
             Element table = getCodeTable(codeSystem);
-            List tableElementList = table.getChildren("tableElement");
-            Iterator itr = tableElementList.iterator();
+            List<?> tableElementList = table.getChildren("tableElement");
+            Iterator<?> itr = tableElementList.iterator();
             codeValues = new String[tableElementList.size()];
             int i = 0;
             while (itr.hasNext()) {

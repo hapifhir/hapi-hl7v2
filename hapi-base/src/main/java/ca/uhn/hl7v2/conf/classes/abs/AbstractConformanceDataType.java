@@ -31,11 +31,12 @@
 
 package ca.uhn.hl7v2.conf.classes.abs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.conf.classes.exceptions.ConfDataException;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Primitive;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /** This class contains the functionality for a Data Type in the Conformance class set
  * @author <table><tr>James Agnew</tr>
@@ -46,7 +47,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class AbstractConformanceDataType {
 	
-	private static final HapiLog log = HapiLogFactory.getHapiLog(AbstractConformanceDataType.class);
+	private static final Logger log = LoggerFactory.getLogger(AbstractConformanceDataType.class);
     
     private Primitive hapiPrimitive;
     

@@ -5,6 +5,9 @@ package ca.uhn.hl7v2.protocol.impl;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
@@ -16,8 +19,6 @@ import ca.uhn.hl7v2.protocol.Processor;
 import ca.uhn.hl7v2.protocol.ProcessorContext;
 import ca.uhn.hl7v2.protocol.Transportable;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Checks whether messages can be accepted and creates appropriate
@@ -28,7 +29,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class AcceptAcknowledger {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(AcceptAcknowledger.class);
+    private static final Logger log = LoggerFactory.getLogger(AcceptAcknowledger.class);
     
     private static Parser ourParser = new GenericParser();
     

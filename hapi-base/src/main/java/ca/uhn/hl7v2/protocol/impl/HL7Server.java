@@ -35,6 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.Processor;
@@ -42,8 +45,6 @@ import ca.uhn.hl7v2.protocol.ProcessorContext;
 import ca.uhn.hl7v2.protocol.SafeStorage;
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A TCP/IP based server. 
@@ -53,14 +54,13 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class HL7Server {
 
-    private static HapiLog log = HapiLogFactory.getHapiLog(HL7Server.class);
+    private static Logger log = LoggerFactory.getLogger(HL7Server.class);
     
     private final ServerSocket myServerSocket;
     private ServerSocket myServerSocket2;
     private final ApplicationRouter myRouter;
     private final SafeStorage myStorage;
     
-    private ProcessorContext myContext;
     private boolean myIsRunning = false;
     private List<Processor> myProcessors;
     

@@ -41,13 +41,13 @@ import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * This class is responsible for generating source code for HL7 segment objects.
@@ -58,8 +58,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class SegmentGenerator extends java.lang.Object {
 
-	private static final HapiLog log = HapiLogFactory.getHapiLog(SegmentGenerator.class);
-
+	private static final Logger log = LoggerFactory.getLogger(SegmentGenerator.class);
 
 	/**
 	 * <p>Creates skeletal source code (without correct data structure but no business
@@ -75,7 +74,8 @@ public class SegmentGenerator extends java.lang.Object {
 		ArrayList<String> segments = getSegmentNames(version);
 
 		if (segments.size() == 0) {
-			log.warn("No version " + version + " segments found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
+			log.warn("No version {} segments found in database {}", 
+					version, System.getProperty("ca.on.uhn.hl7.database.url"));
 		}
 
 		for (int i = 0; i < segments.size(); i++) {
@@ -226,7 +226,7 @@ public class SegmentGenerator extends java.lang.Object {
 
 
 	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages, String theTemplatePackage) throws Exception {
-		log.info("Writing segment: " + fileName);
+		log.info("Writing segment: {}", fileName);
 		
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 		

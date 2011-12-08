@@ -4,6 +4,7 @@ package ca.uhn.hl7v2.conf.check;
  * An exception indicating that a static profile doesn't correspond to HL7 rules.  
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public class ProfileNotHL7CompliantException extends ca.uhn.hl7v2.HL7Exception {
     
     /**

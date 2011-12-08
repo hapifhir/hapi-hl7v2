@@ -42,6 +42,9 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Group;
@@ -53,8 +56,6 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * This is a Swing panel that displays the contents of a Message object in a JTree.
@@ -64,7 +65,7 @@ import ca.uhn.log.HapiLogFactory;
 @SuppressWarnings("serial")
 public class TreePanel extends javax.swing.JPanel {
 	
-	private static final HapiLog log = HapiLogFactory.getHapiLog(TreePanel.class);
+	private static final Logger log = LoggerFactory.getLogger(TreePanel.class);
     
     private EncodingCharacters encChars;
     private Message message;

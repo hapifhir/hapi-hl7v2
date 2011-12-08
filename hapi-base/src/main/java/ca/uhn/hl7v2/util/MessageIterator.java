@@ -1,9 +1,15 @@
 package ca.uhn.hl7v2.util;
 
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.log.*;
+import java.util.NoSuchElementException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
-import java.util.*;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
 
 /**
  * Iterates over all defined nodes (ie segments, groups) in a message, 
@@ -27,7 +33,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private Position next;
     private boolean handleUnexpectedSegments;
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(MessageIterator.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageIterator.class);
     
     /* may add configurability later ... 
     private boolean findUpToFirstRequired;
@@ -97,7 +103,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
                 }
             }
         }
-        log.debug("MessageIterator.hasNext() in direction " + this.direction + "? " + has);
+        log.debug("MessageIterator.hasNext() in direction {}? {}", direction, has);
         return has;
     }
     
@@ -203,7 +209,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             Position parentPos = new Position(grandparent, getIndex(grandparent, pos.parent));
             matchExists = matchExistsAfterPosition(parentPos, name, firstDescendentsOnly, upToFirstRequired);
         }
-        log.debug("Match exists after position " + pos + " for " + name + "? " + matchExists);
+        log.debug("Match exists after position {} for {}? {}", new Object[] {pos, name, matchExists});
         return matchExists;
     }
     
@@ -212,7 +218,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      * given group. 
      */
     private void newSegment(Group parent, String name) throws HL7Exception {
-        log.info("MessageIterator creating new segment: " + name);
+        log.info("MessageIterator creating new segment: {}", name);
         parent.addNonstandardSegment(name);
         next = new Position(parent, parent.getNames()[parent.getNames().length-1], 0);
     }
@@ -346,7 +352,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
                         }
                     }
                 } catch (HL7Exception e) {
-                    log.error("", e);
+                    log.error(e.getMessage(), e);
                     throw new Error("Internal HL7Exception finding structure index: " + e.getMessage());
                 }
             }

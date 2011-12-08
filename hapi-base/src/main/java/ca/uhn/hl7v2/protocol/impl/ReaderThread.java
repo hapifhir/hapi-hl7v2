@@ -28,8 +28,8 @@ package ca.uhn.hl7v2.protocol.impl;
 import java.io.IOException;
 import java.io.Reader;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class <code> ReaderThread </code> read from a Reader into a char[] buffer.
@@ -39,7 +39,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ReaderThread extends Thread {
     
-    private static final HapiLog ourLog = HapiLogFactory.getHapiLog( ReaderThread.class );    
+    private static final Logger ourLog = LoggerFactory.getLogger( ReaderThread.class );    
     
     private final Reader myReader;
     private final char[] myBuffer;
@@ -68,7 +68,7 @@ public class ReaderThread extends Thread {
             myBytesReadRef.setValue( _bytesRead );
         }
         catch (IOException e) {
-            ourLog.error(e);
+            ourLog.error(e.getMessage(), e);
         }
     }
 

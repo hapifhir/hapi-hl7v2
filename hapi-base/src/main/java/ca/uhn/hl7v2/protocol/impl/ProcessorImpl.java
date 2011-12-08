@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.preparser.PreParser;
 import ca.uhn.hl7v2.protocol.Processor;
@@ -39,8 +42,6 @@ import ca.uhn.hl7v2.protocol.ProcessorContext;
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A default implementation of <code>Processor</code>.  
@@ -50,7 +51,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ProcessorImpl implements Processor {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ProcessorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessorImpl.class);
 
     private ProcessorContext myContext;
     private final Map myAcceptAcks;
@@ -143,7 +144,7 @@ public class ProcessorImpl implements Processor {
                 
                 if ((response == null && needAcceptAck != null && needAcceptAck.equals(AL))
                         || (response != null && isReject(response))) {
-                    log.info("Resending message " + controlId);
+                    log.info("Resending message {}", controlId);
                     trySend(myContext.getLocallyDrivenTransportLayer(), theMessage);
                     response = null;                    
                 }
@@ -272,12 +273,10 @@ public class ProcessorImpl implements Processor {
         }
         
         // log
-        if (log.isDebugEnabled()) {
-        	if (in != null) {
-                log.debug("Received message: " + in.getMessage());
-        	} else {
-        		log.debug("Received no message");
-        	}
+        if (in != null) {
+               log.debug("Received message: {}", in.getMessage());
+        } else {
+        	log.debug("Received no message");
         }
         
         // If we have a message, handle it
@@ -304,9 +303,7 @@ public class ProcessorImpl implements Processor {
                 if (ack.isAcceptable()) {
                     if (isReserved(ackId)) {
                     	
-                    	if (log.isDebugEnabled()) {
-                    		log.debug("Received expected ACK message with ACK ID: " + ackId);
-                    	}
+                    	log.debug("Received expected ACK message with ACK ID: {}", ackId);
                     	
                         removeReservation(ackId);
                         long expiryTime = System.currentTimeMillis() + 1000 * 60 * 5;                
@@ -314,10 +311,7 @@ public class ProcessorImpl implements Processor {
                         
                     } else {
 
-                    	if (log.isDebugEnabled()) {
-                    		log.debug("Sending message to router");
-                    	}
-
+                    	log.debug("Sending message to router");
                         Transportable out = myContext.getRouter().processMessage(in);
                         sendAppResponse(out);
                         
@@ -331,7 +325,7 @@ public class ProcessorImpl implements Processor {
             }
         } else {
             String transport = expectingAck ? " Locally driven " : "Remotely driven";
-            log.debug(transport + " TransportLayer.receive() returned null.");
+            log.debug("{} TransportLayer.receive() returned null.", transport);
         }
         
         sleepIfNeeded();
@@ -345,10 +339,7 @@ public class ProcessorImpl implements Processor {
         Runnable sender = new Runnable() {
             public void run() {
                 try {
-                    
-                	if (log.isDebugEnabled()) {
-                		log.debug("Sending response: " + theResponse);
-                	}
+                	log.debug("Sending response: {}", theResponse);
                 	
                     //TODO: make configurable 
                 	processor.send(theResponse, 2, 3000);

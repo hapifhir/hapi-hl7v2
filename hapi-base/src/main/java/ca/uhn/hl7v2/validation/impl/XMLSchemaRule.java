@@ -26,26 +26,35 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.validation.impl;
 
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.util.XMLGrammarPoolImpl;
+import org.apache.xerces.xni.grammars.XMLGrammarPool;
 import org.apache.xpath.XPathAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
-import org.apache.xerces.xni.grammars.*;
-import org.apache.xerces.util.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.File;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.log.*;
 
 /**
  * <p>Validate hl7 version 2 messages encoded according to the HL7 XML Encoding Syntax against xml schemas provided by hl7.org</p>
@@ -54,7 +63,7 @@ import ca.uhn.log.*;
 @SuppressWarnings("serial")
 public class XMLSchemaRule implements EncodingRule {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(XMLSchemaRule.class);
+    private static final Logger log = LoggerFactory.getLogger(XMLSchemaRule.class);
     private static final String parserName = "org.apache.xerces.parsers.SAXParser";
     
     private XMLGrammarPool myGrammarPool = new XMLGrammarPoolImpl();
@@ -167,14 +176,14 @@ public class XMLSchemaRule implements EncodingRule {
         catch (SAXException se)
         {
             log.error("Unable to parse message - please verify that it's a valid xml document");
-            log.error("SAXException: ", se);
+            log.error(se.getMessage(), se);
             validationErrors.add(new ValidationException("Unable to parse message - please verify that it's a valid xml document" + " [SAXException] " + se.getMessage()));
             
         }
         catch (IOException e)
         {
             log.error("Unable to parse message - please verify that it's a valid xml document");
-            log.error("IOException: ", e);
+            log.error(e.getMessage(), e);
             validationErrors.add(new ValidationException("Unable to parse message - please verify that it's a valid xml document" + " [IOException] " + e.getMessage()));
         }
  
@@ -238,7 +247,7 @@ public class XMLSchemaRule implements EncodingRule {
             Node schemaNode = XPathAPI.selectSingleNode(domDocumentToValidate, "//@xsi:schemaLocation" , myNamespaceNode); 
             if (schemaNode != null)
             {
-                log.debug("Schema defined in document: " + schemaNode.getNodeValue());
+                log.debug("Schema defined in document: {}", schemaNode.getNodeValue());
                 String schemaItems[] = schemaNode.getNodeValue().split(" ");
                 if (schemaItems.length == 2)
                 {
@@ -251,7 +260,7 @@ public class XMLSchemaRule implements EncodingRule {
                     }
                     else
                     {
-                        log.warn("Schema file defined in xml document not found on disk: " + schemaItems[1].toString());
+                        log.warn("Schema file defined in xml document not found on disk: {}", schemaItems[1].toString());
                     }
                 }
              }
@@ -268,13 +277,13 @@ public class XMLSchemaRule implements EncodingRule {
                 if (versionNode != null)
                 {
                     String schemaLocationProperty = new String("ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation.") + versionNode.getNodeValue();
-                    log.debug("Lookup schema location system property: " + schemaLocationProperty);
+                    log.debug("Lookup schema location system property: {}", schemaLocationProperty);
                     schemaLocation = System.getProperty(schemaLocationProperty);
                     if (schemaLocation == null)
                     {
-                        log.warn("System property for schema location path " + schemaLocationProperty + " not defined");
+                        log.warn("System property for schema location path {} not defined", schemaLocationProperty);
                         schemaLocation = System.getProperty("user.dir") + "\\v"+ versionNode.getNodeValue().replaceAll("\\.", "") + "\\xsd";
-                        log.info("Using default schema location path (current directory\\v2x\\xsd) " + schemaLocation);
+                        log.info("Using default schema location path (current directory\\v2x\\xsd) {}", schemaLocation);
                     }
 
                     // use the messagestructure as schema file name (root)
@@ -283,11 +292,11 @@ public class XMLSchemaRule implements EncodingRule {
                     if (myFile.exists())
                     {
                         validSchemaInDocument = true;
-                        log.debug("Valid schema file present: " + schemaFilename);
+                        log.debug("Valid schema file present: {}", schemaFilename);
                     }
                     else
                     {
-                        log.warn("Schema file not found on disk: " + schemaFilename);
+                        log.warn("Schema file not found on disk: {}", schemaFilename);
                     }
                 }
                 else

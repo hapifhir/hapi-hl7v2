@@ -35,11 +35,12 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A <code>TransportLayer</code> that exchanges messages through JMS destinations.   
@@ -49,7 +50,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public abstract class AbstractJMSTransport extends AbstractTransport implements TransportLayer {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(URLTransport.class);    
+    private static final Logger log = LoggerFactory.getLogger(URLTransport.class);    
 
     public static final String CLIENT_ID_KEY = "CLIENT_ID";
     public static final String CONNECTION_METADATA_KEY = "CONNECTION_METADATA";

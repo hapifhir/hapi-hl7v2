@@ -34,9 +34,10 @@ import java.io.InputStreamReader;
 import java.net.SocketException;
 import java.nio.charset.Charset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.preparser.PreParser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Charset-aware MLLP stream reader
@@ -47,7 +48,7 @@ import ca.uhn.log.HapiLogFactory;
 public class ExtendedMinLLPReader implements HL7Reader
 {
 
-	private static final HapiLog log = HapiLogFactory.getHapiLog(ExtendedMinLLPReader.class);
+	private static final Logger log = LoggerFactory.getLogger(ExtendedMinLLPReader.class);
 
 	private InputStream inputStream;
 	private Charset myLastCharset;
@@ -107,12 +108,8 @@ public class ExtendedMinLLPReader implements HL7Reader
 			
 			String[] fields = PreParser.getFields(firstLine, "MSH-18(0)");
 			String charset = stripNonLowAscii(fields[0]);
-			Charset javaCs = CharSetUtil.convertHL7CharacterEncodingToCharSetvalue(charset);
-			
-			if (log.isDebugEnabled()) {
-				log.debug("Detected MSH-18 value \"" + charset + "\" so using charset " + javaCs.displayName());
-			}
-			
+			Charset javaCs = CharSetUtil.convertHL7CharacterEncodingToCharSetvalue(charset);			
+			log.debug("Detected MSH-18 value \"{}\" so using charset {}", charset, javaCs.displayName());			
 			return javaCs;
 		}
 		catch(Exception e)
@@ -191,7 +188,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 		}
 		catch(SocketException e)
 		{
-			log.info("SocketException on read() attempt.  Socket appears to have been closed: " + e.getMessage());
+			log.info("SocketException on read() attempt.  Socket appears to have been closed: {}", e.getMessage());
 			return null;
 		}
 

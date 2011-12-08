@@ -44,14 +44,14 @@ import java.util.Arrays;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 
 /**
@@ -62,7 +62,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class DataTypeGenerator extends Object {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(DataTypeGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(DataTypeGenerator.class);
     private static boolean ourMakeAll;
     
     /**
@@ -84,7 +84,8 @@ public class DataTypeGenerator extends Object {
         
         System.out.println("Generating " + types.size() + " datatypes for version " + version);
         if (types.size() == 0) { 
-            log.warn("No version " + version + " data types found in database " + System.getProperty("ca.on.uhn.hl7.database.url"));
+            log.warn("No version {} data types found in database {}", 
+            		version, System.getProperty("ca.on.uhn.hl7.database.url"));
         }
                 
         for (int i = 0; i < types.size(); i++) {
@@ -92,7 +93,7 @@ public class DataTypeGenerator extends Object {
                 String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
                 make(targetDir, (String)types.get(i), version, basePackage, theTemplatePackage, theFileExt);
             } catch (DataTypeException dte) {
-                log.warn(dte.getClass().getName() + " - " + dte.getMessage());
+                log.warn("{} - {}", dte.getClass().getName(), dte.getMessage());
             } catch (Exception e) {
                 log.error("Error creating source code for all data types", e);
             } 

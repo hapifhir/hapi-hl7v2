@@ -36,11 +36,12 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A <code>TransportLayer</code> that reads and writes from an URL (for example
@@ -52,7 +53,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class URLTransport extends AbstractTransport implements TransportLayer {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(URLTransport.class);    
+    private static final Logger log = LoggerFactory.getLogger(URLTransport.class);    
 
     /**
      * Key in Transportable metadata map under which URL is stored.  
@@ -128,8 +129,6 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
             char[] buf = new char[myBufferSize];
             int bytesRead = 0;
 
-            int tryToReadCount = 0;
-
             IntRef bytesReadRef = new IntRef();
 
             while (bytesRead >= 0) {
@@ -156,7 +155,7 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
 
             in.close();
         } catch (IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
 
         if (response.length() == 0) {
@@ -191,7 +190,7 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
         } catch (IOException e) {
             throw new TransportException(e);
         }     
-        log.debug("Made connection to " + myURL.toExternalForm());
+        log.debug("Made connection to {}", myURL.toExternalForm());
     }
     
     /**

@@ -32,14 +32,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Group;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
@@ -51,7 +52,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 
     private static final long serialVersionUID = 1;
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultModelClassFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultModelClassFactory.class);
     
     static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
     private static final HashMap<String, String[]> packages = new HashMap<String, String[]>();
@@ -267,7 +268,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
             try {
                 String line = in.readLine();
                 while (line != null) {
-                    log.info( "Adding package to user-defined package list: " + line );
+                    log.info( "Adding package to user-defined package list: {}", line );
                     packageList.add( line );
                     line = in.readLine();
                 }
@@ -278,7 +279,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
             
         }
         else {
-            log.debug("No user-defined packages for version " + version);
+            log.debug("No user-defined packages for version {}", version);
         }
 
         //add standard package
@@ -327,15 +328,15 @@ public class DefaultModelClassFactory implements ModelClassFactory {
                 classNameToTry = p + subpackage + "." + name;
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Trying to load: " + classNameToTry);                    
+                    log.debug("Trying to load: {}", classNameToTry);                    
                 }
                 compClass = Class.forName(classNameToTry);
                 if (log.isDebugEnabled()) {
-                    log.debug("Loaded: " + classNameToTry + " class: " + compClass);                    
+                    log.debug("Loaded: {} class: {}", classNameToTry, compClass);                    
                 }
             }
             catch (ClassNotFoundException cne) {
-                log.debug("Failed to load: " + classNameToTry);                    
+                log.debug("Failed to load: {}", classNameToTry);                    
                 /* just try next one */
             }
             c++;

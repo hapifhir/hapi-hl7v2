@@ -32,6 +32,8 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,8 +45,6 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>A default XMLParser.  This class assigns segment elements (in an XML-encoded message) 
@@ -64,7 +64,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class DefaultXMLParser extends XMLParser {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(DefaultXMLParser.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultXMLParser.class);
 
     private static final Set<String> ourForceGroupNames;
     
@@ -195,7 +195,7 @@ public class DefaultXMLParser extends XMLParser {
             if (childNames[i].length() != 4) {   
             	parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
             } else {
-            	log.debug("Skipping rep segment: " + childNames[i]);
+            	log.debug("Skipping rep segment: {}", childNames[i]);
             }
         }
         
@@ -211,8 +211,8 @@ public class DefaultXMLParser extends XMLParser {
             String messageName, String childName, String childIndexName) throws HL7Exception {
         
         List<Element> reps = getChildElementsByTagName(groupElement, makeGroupElementName(messageName, childName));
-        log.debug("# of elements matching " 
-            + makeGroupElementName(messageName, childName) + ": " + reps.size());
+        log.debug("# of elements matching {}: {}", 
+        		makeGroupElementName(messageName, childName), reps.size());
 
 		if (groupObject.isRepeating(childIndexName)) {
 			for (int i = 0; i < reps.size(); i++) {
@@ -257,7 +257,7 @@ public class DefaultXMLParser extends XMLParser {
 		else if (theObj instanceof Segment) {
 			parse((Segment) theObj, theElem);
 		}                
-		log.debug("Parsed element: " + theElem.getNodeName());    	
+		log.debug("Parsed element: {}", theElem.getNodeName());    	
     }
     
     //includes direct children only

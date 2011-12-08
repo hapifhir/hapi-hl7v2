@@ -31,11 +31,12 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A SegmentPointer is used when parsing traditionally encoded HL7 messages. 
@@ -48,7 +49,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class SegmentPointer extends Pointer {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(SegmentPointer.class);
+    private static final Logger log = LoggerFactory.getLogger(SegmentPointer.class);
     private PipeParser parser;
     private Group parent;
     private String name;

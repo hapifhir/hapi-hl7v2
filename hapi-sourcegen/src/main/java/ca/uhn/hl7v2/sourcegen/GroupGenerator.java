@@ -38,12 +38,12 @@ import java.util.Arrays;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * Creates source code for Group classes - these are aggregations of segments
@@ -55,7 +55,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class GroupGenerator extends java.lang.Object {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(GroupGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(GroupGenerator.class);
 
 
     public static void writeGroup(String groupName, String fileName, GroupDef group, String version, String basePackageName, String theTemplatePackage, String theDescription) throws Exception {
@@ -327,9 +327,9 @@ public class GroupGenerator extends java.lang.Object {
             } else if (startMarker.equals("[{")) {
                 endMarker = "}]";
             } else {
-                log.error("Problem starting at " + groupStart);
+                log.error("Problem starting at {}", groupStart);
                 for (int i = 0; i < structures.length; i++) {
-                    log.error("Structure " + i + ": " + structures[i].getName());
+                    log.error("Structure {}: ", i, structures[i].getName());
                 }
                 throw new IllegalArgumentException("The segment " + startMarker + " does not begin a group - must be [ or {");
             }

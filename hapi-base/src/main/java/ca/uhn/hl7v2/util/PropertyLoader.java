@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads system properties from a file.  This is intended as a convenient way 
@@ -18,7 +18,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class PropertyLoader {
     
-    private static final HapiLog log = HapiLogFactory.getHapiLog(PropertyLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertyLoader.class);
     private static Set<String> files = new HashSet<String>();
     
     private PropertyLoader() {
@@ -64,7 +64,7 @@ public class PropertyLoader {
                 //set property
                 if (key != null && value != null) {
                     System.setProperty(key, value);
-                    log.debug("Setting system property " + key + " to " + value);
+                    log.debug("Setting system property {} to {}", key, value);
                 }
             }
         }

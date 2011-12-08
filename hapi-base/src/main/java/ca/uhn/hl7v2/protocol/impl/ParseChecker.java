@@ -5,13 +5,15 @@ package ca.uhn.hl7v2.protocol.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * A debugging utility that logs raw messages and parsed/encoded versions, and warnings about 
@@ -23,7 +25,7 @@ import ca.uhn.log.HapiLogFactory;
  */
 public class ParseChecker {
 
-    private static final HapiLog log = HapiLogFactory.getHapiLog(ParseChecker.class);
+    private static final Logger log = LoggerFactory.getLogger(ParseChecker.class);
 
     /**
      * Encodes the given message and compares it to the given string.  Any differences
@@ -35,20 +37,20 @@ public class ParseChecker {
         String newMessageText = parser.encode(parsedMessage);
         
         log.info("******************* Comparing Messages ****************\r\n");
-        log.info("Original:           " + originalMessageText + "\r\n");
-        log.info("Parsed and Encoded: " + newMessageText + "\r\n");
+        log.info("Original:           {}", originalMessageText);
+        log.info("Parsed and Encoded: {}", newMessageText);
         
         if (!originalMessageText.equals(newMessageText)) {
             //check each segment
             StringTokenizer tok = new StringTokenizer(originalMessageText, "\r");
-            ArrayList one = new ArrayList();
+            List<String> one = new ArrayList<String>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)
                     one.add(seg);
             }
             tok = new StringTokenizer(newMessageText, "\r");
-            ArrayList two = new ArrayList();
+            List<String> two = new ArrayList<String>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)
@@ -57,24 +59,24 @@ public class ParseChecker {
             
             if (one.size() != two.size()) {
                 log.info("Warning: inbound and parsed messages have different numbers of segments: \r\n");
-                log.info("Original: " + originalMessageText + "\r\n");
-                log.info("Parsed:   " + newMessageText + "\r\n");
+                log.info("Original: {}", originalMessageText);
+                log.info("Parsed:   {}", newMessageText);
             }
             else {
                 //check each segment
                 for (int i = 0; i < one.size(); i++) {
-                    String origSeg = (String) one.get(i);
-                    String newSeg = (String) two.get(i);
+                    String origSeg = one.get(i);
+                    String newSeg = two.get(i);
                     if (!origSeg.equals(newSeg)) {
                         log.info("Warning: inbound and parsed message segment differs: \r\n");
-                        log.info("Original: " + origSeg + "\r\n");
-                        log.info("Parsed: " + newSeg + "\r\n");
+                        log.info("Original: {}", origSeg);
+                        log.info("Parsed:   {}", newSeg);
                     }
                 }
             }
         }
         else {
-            log.info("No differences found\r\n");
+            log.info("No differences found");
         }
         
         log.info("********************  End Comparison  ******************\r\n");
