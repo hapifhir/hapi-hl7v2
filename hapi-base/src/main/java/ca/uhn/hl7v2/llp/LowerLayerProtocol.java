@@ -85,7 +85,7 @@ public abstract class LowerLayerProtocol {
      * Logs the fact that a character has been received, if configured to do so.  This is a 
      * debugging feature.  This is enabled by setting the system property 
      * ca.uhn.hl7v2.llp.logBytesRead=TRUE (before LowerLayerProtocol is instantiated).  
-     * A message is written to standard out for each character.  THIS IS VERY SLOW and should
+     * A message is logged for each character.  THIS IS VERY SLOW and should
      * normally be turned off. 
      * </p><p>
      * Note that as of HAPI 1.3, this will be logged using commons-logging at
