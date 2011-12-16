@@ -117,6 +117,7 @@ public abstract class HL7Service extends Service {
 	 */
 	@Override
 	protected void afterTermination() {
+		super.afterTermination();
 		cleanerExecutorService.shutdown();
 		for (Connection c : connections) {
 			c.close();

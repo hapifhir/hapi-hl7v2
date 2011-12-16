@@ -175,6 +175,10 @@ public class Responder {
 				Application app = findApplication(incomingMessageObject);
 				Message response = app.processMessage(incomingMessageObject);
 
+				if (response == null) {
+					throw new HL7Exception("Application of type " + app.getClass().getName() + " failed to return a response message from 'processMessage'");
+				}
+				
 				// Here we explicitly use the same encoding as that of the
 				// inbound message - this is important with GenericParser, which
 				// might use a different encoding by default

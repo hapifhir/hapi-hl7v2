@@ -150,6 +150,16 @@ public class Connection {
 		return s.getInetAddress();
 	}
 
+	/**
+	 * Returns the remote port on the remote host to which this Connection is
+	 * connected. If separate inbound and outbound sockets are used, the port
+	 * of the outbound socket is returned.
+	 */
+	public int getRemotePort() {
+		Socket s = sockets.get(0);
+		return s.getPort();
+	}
+
 	/** Returns the Initiator associated with this connection */
 	public Initiator getInitiator() {
 		return this.initiator;
