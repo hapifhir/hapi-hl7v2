@@ -73,10 +73,19 @@ public class DefaultValidator implements Validator {
     
     private EncodingCharacters enc;  //used to check for content in parts of a message
     private static final Logger log = LoggerFactory.getLogger(DefaultValidator.class);
+    private boolean validateChildren = true;
     
     /** Creates a new instance of DefaultValidator */
     public DefaultValidator() {
         enc = new EncodingCharacters('|', null);  //the | is assumed later -- don't change
+    }
+    
+    /**
+     * If set to false (default is true), each testXX and validateXX method will only
+     * test the direct object it is responsible for, not its children.
+     */
+    public void setValidateChildren(boolean validateChildren) {
+    	this.validateChildren = validateChildren;
     }
     
     /**
@@ -108,10 +117,12 @@ public class DefaultValidator implements Validator {
             exList.add(e);
         }
         
-        HL7Exception[] childExceptions; 
-        childExceptions = testGroup(message, profile, profile.getIdentifier());
-        for (int i = 0; i < childExceptions.length; i++) {
-            exList.add(childExceptions[i]);
+        if (validateChildren) {
+	        HL7Exception[] childExceptions; 
+	        childExceptions = testGroup(message, profile, profile.getIdentifier());
+	        for (int i = 0; i < childExceptions.length; i++) {
+	            exList.add(childExceptions[i]);
+	        }
         }
         
         return toArray(exList);
@@ -144,11 +155,14 @@ public class DefaultValidator implements Validator {
                     if (ce != null) exList.add(ce);
                     
                     //test children on instances with content
-                    for (int j = 0; j < instancesWithContent.size(); j++) {
-                        Structure s = (Structure) instancesWithContent.get(j);
-                        HL7Exception[] childExceptions = testStructure(s, struct, profileID);
-                        addToList(childExceptions, exList);
+                    if (validateChildren) {
+	                    for (int j = 0; j < instancesWithContent.size(); j++) {
+	                        Structure s = (Structure) instancesWithContent.get(j);
+	                        HL7Exception[] childExceptions = testStructure(s, struct, profileID);
+	                        addToList(childExceptions, exList);
+	                    }
                     }
+                    
                 } catch (HL7Exception he) {
                     exList.add(new ProfileNotHL7CompliantException(struct.getName() + " not found in message"));
                 }
@@ -266,19 +280,22 @@ public class DefaultValidator implements Validator {
                     }
                     
                     //test field instances with content
-                    for (int j = 0; j < instancesWithContent.size(); j++) {
-                        Type s = (Type) instancesWithContent.get(j);
-                        
-                        boolean escape = true; //escape field value when checking length
-                        if (profile.getName().equalsIgnoreCase("MSH") && i < 3) {
-                            escape = false;
-                        }
-                        HL7Exception[] childExceptions = testField(s, field, escape, profileID);
-                        for (int k = 0; k < childExceptions.length; k++) {
-                            childExceptions[k].setFieldPosition(i);
-                        }
-                        addToList(childExceptions, exList);
+                    if (validateChildren) {
+	                    for (int j = 0; j < instancesWithContent.size(); j++) {
+	                        Type s = (Type) instancesWithContent.get(j);
+	                        
+	                        boolean escape = true; //escape field value when checking length
+	                        if (profile.getName().equalsIgnoreCase("MSH") && i < 3) {
+	                            escape = false;
+	                        }
+	                        HL7Exception[] childExceptions = testField(s, field, escape, profileID);
+	                        for (int k = 0; k < childExceptions.length; k++) {
+	                            childExceptions[k].setFieldPosition(i);
+	                        }
+	                        addToList(childExceptions, exList);
+	                    }
                     }
+                    
                 } catch (HL7Exception he) {
                     exList.add(new ProfileNotHL7CompliantException("Field " + i + " not found in message"));
                 }
@@ -338,10 +355,9 @@ public class DefaultValidator implements Validator {
 
         if ( !profile.getUsage().equals("X") ) {
             //check datatype
-            String typeClass = type.getClass().getName();
-            if (typeClass.indexOf("." + profile.getDatatype()) < 0) {
-                typeClass = typeClass.substring(typeClass.lastIndexOf('.') + 1);
-                exList.add(new ProfileNotHL7CompliantException("HL7 datatype " + typeClass + " doesn't match profile datatype " + profile.getDatatype()));
+            String typeName = type.getName();
+            if (!typeName.equals(profile.getDatatype())) {
+                exList.add(new ProfileNotHL7CompliantException("HL7 datatype " + typeName + " doesn't match profile datatype " + profile.getDatatype()));
             }
             
             //check length
@@ -467,23 +483,25 @@ public class DefaultValidator implements Validator {
         addToList(testType(type, profile, encoded, profileID), exList);
         
         //test children
-        if (profile.getComponents() > 0 && !profile.getUsage().equals("X")) {
-            if (Composite.class.isAssignableFrom(type.getClass())) {
-                Composite comp = (Composite) type;
-                for (int i = 1; i <= profile.getComponents(); i++) {
-                    Component childProfile = profile.getComponent(i);
-                    try {
-                        Type child = comp.getComponent(i-1);
-                        addToList(testComponent(child, childProfile, profileID), exList);
-                    } catch (DataTypeException de) {
-                        exList.add(new ProfileNotHL7CompliantException("More components in profile than allowed in message: " + de.getMessage()));
-                    }
-                }
-                addToList(checkExtraComponents(comp, profile.getComponents()), exList);
-            } else {
-                exList.add(new ProfileNotHL7CompliantException(
-                "A field has type primitive " + type.getClass().getName() + " but the profile defines components"));
-            }
+        if (validateChildren) {
+	        if (profile.getComponents() > 0 && !profile.getUsage().equals("X")) {
+	            if (Composite.class.isAssignableFrom(type.getClass())) {
+	                Composite comp = (Composite) type;
+	                for (int i = 1; i <= profile.getComponents(); i++) {
+	                    Component childProfile = profile.getComponent(i);
+	                    try {
+	                        Type child = comp.getComponent(i-1);
+	                        addToList(testComponent(child, childProfile, profileID), exList);
+	                    } catch (DataTypeException de) {
+	                        exList.add(new ProfileNotHL7CompliantException("More components in profile than allowed in message: " + de.getMessage()));
+	                    }
+	                }
+	                addToList(checkExtraComponents(comp, profile.getComponents()), exList);
+	            } else {
+	                exList.add(new ProfileNotHL7CompliantException(
+	                "A field has type primitive " + type.getClass().getName() + " but the profile defines components"));
+	            }
+	        }
         }
         
         return toArray(exList);
