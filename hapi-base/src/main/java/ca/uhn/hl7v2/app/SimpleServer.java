@@ -149,6 +149,10 @@ public class SimpleServer extends HL7Service {
 	 */
 	@Override
 	protected void handle() {
+		if (acceptor.getServiceExitedWithException() != null) {
+			setServiceExitedWithException(acceptor.getServiceExitedWithException());
+		}
+		
 		try {
 			// Wait some period of time for connections
 			AcceptedSocket newSocket = queue.poll(AcceptorThread.TIMEOUT, TimeUnit.MILLISECONDS);

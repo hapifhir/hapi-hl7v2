@@ -133,6 +133,13 @@ public class TwoPortService extends HL7Service {
 	 * Polls for accepted sockets
 	 */
 	protected void handle() {
+		if (inboundAcceptor.getServiceExitedWithException() != null) {
+			setServiceExitedWithException(inboundAcceptor.getServiceExitedWithException());
+		}
+		if (outboundAcceptor.getServiceExitedWithException() != null) {
+			setServiceExitedWithException(outboundAcceptor.getServiceExitedWithException());
+		}
+		
 		try {
 			Connection conn = acceptConnection(queue.poll(2, TimeUnit.SECONDS));
 			if (conn != null) {

@@ -15,7 +15,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
+GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -50,6 +50,7 @@ public abstract class Service implements Runnable {
 	private final String name;
 	private final ExecutorService executorService;
 	private Future<?> thread;
+	private Throwable serviceExitedWithException;
 
 	public Service(String name, ExecutorService executorService) {
 		super();
@@ -177,7 +178,11 @@ public abstract class Service implements Runnable {
 				handle();
 			}
 			log.debug("Thread {} leaving main loop", name);
+		} catch (RuntimeException t) {
+			serviceExitedWithException = t.getCause();
+			log.warn("Thread exiting main loop due to exception:", t.getCause());
 		} catch (Throwable t) {
+			serviceExitedWithException = t;
 			log.warn("Thread exiting main loop due to exception:", t);
 		} finally {
 			afterTermination();
@@ -186,11 +191,26 @@ public abstract class Service implements Runnable {
 	}
 
 	/**
+	 * Provide the exception which caused this service to fail
+	 */
+	protected void setServiceExitedWithException(Throwable theThreadExitedWithException) {
+		serviceExitedWithException = theThreadExitedWithException;
+	}
+
+	/**
 	 * Shuts down the used ExecutorService, which can be used to force the
 	 * application to exit.
 	 */
 	public final void shutdown() {
 		executorService.shutdown();
+	}
+
+	/**
+	 * If this service exited with an exception, ths method returns that exception. This is useful for
+	 * detecting if the service failed unexpectedly
+	 */
+	public Throwable getServiceExitedWithException() {
+		return serviceExitedWithException;
 	}
 
 }

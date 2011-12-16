@@ -134,6 +134,12 @@ public class ConnectionHub {
 		return attach(host, port, 0, parser, llpClass, tls);
 	}
 
+	public Connection attach(String host, int port, Parser parser,
+			LowerLayerProtocol llp, boolean tls)
+			throws HL7Exception {
+		return attach(host, port, 0, parser, llp, tls);
+	}
+
 	public Connection attach(String host, int outboundPort, int inboundPort,
 			Parser parser, Class<? extends LowerLayerProtocol> llpClass)
 			throws HL7Exception {
@@ -144,8 +150,8 @@ public class ConnectionHub {
 			Parser parser, Class<? extends LowerLayerProtocol> llpClass,
 			boolean tls) throws HL7Exception {
 		try {
-			return attach(new ConnectionData(host, outboundPort, inboundPort,
-					parser, llpClass.newInstance(), tls));
+			LowerLayerProtocol llp = llpClass.newInstance();
+			return attach(host, outboundPort, inboundPort, parser, llp, tls);
 		} catch (InstantiationException e) {
 			throw new HL7Exception("Cannot open connection to " + host + ":"
 					+ outboundPort, e);
@@ -153,6 +159,11 @@ public class ConnectionHub {
 			throw new HL7Exception("Cannot open connection to " + host + ":"
 					+ outboundPort, e);
 		}
+	}
+
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort,
+				parser, llp, tls));
 	}
 
 	public Connection attach(ConnectionData data) throws HL7Exception {

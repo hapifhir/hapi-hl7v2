@@ -98,7 +98,7 @@
         		numeric part of the table name.
         		
         	</action>
-        	<action dev="Nicolas Lefebfre" type="add">
+        	<action dev="Nicolas Lefebvre" type="add">
         		Add a new method to 
         		Parser, 
         		parseForSpecificPackage, 
@@ -121,6 +121,16 @@
 				This prevents stray worker threads from staying alive and cluttering application logs 
 				after the server is stopped.        	
 			</action>
+        	<action dev="James Agnew" type="add">
+				Minor API changes:
+				<![CDATA[
+					<ul>
+						<li>Add a new method to Connection, <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/Connection.html#getRemotePort()">getRemotePort</a>, which returns the port number of the remote socket the connection is bound to.</li>
+						<li>Add several new factory methods to <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a> which allow creating a new connection using an instantiated instance of a LowerLayerProtocol implementation instead of just supplying a type to be instantiated by ConnectionHub</a>
+						<li>Add new method to <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html>SimpleServer</a> and <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/TwoPortService.html">TwoPortService</a> called <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/concurrent/Service.html#getServiceExitedWithException()">getServiceExitedWithException()</a>. In the event that the service exits unexpectedly, this method allows you to retrieve the exception which caused the failure (e.g. a <a href="<a href="http://docs.oracle.com/javase/6/docs/api/java/net/BindException.html">BindException</a> in the event that the port was already in use by another application).						
+					</ul>
+				]]>
+				</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
