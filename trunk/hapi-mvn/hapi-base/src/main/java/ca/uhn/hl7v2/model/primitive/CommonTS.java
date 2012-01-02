@@ -229,7 +229,7 @@ public class CommonTS {
                 //change the offset value from an integer to a signed string
                 int offset = tm.getGMTOffset();
                 String offsetStr = "";
-                if (offset > -99) {
+                if (offset != CommonTM.GMT_OFFSET_NOT_SET_VALUE) {
                     offsetStr = DataTypeUtil.preAppendZeroes(Math.abs(offset), 4);
                     if (tm.getGMTOffset() >= 0) {
                         offsetStr = "+" + offsetStr;
@@ -518,7 +518,8 @@ public class CommonTS {
                 if (timeVal == null && offsetExists == false) {
                     int defaultOffset = DataTypeUtil.getLocalGMTOffset();
                     tm = new CommonTM();
-                    tm.setOffset(defaultOffset);
+                    //tm.setOffset(defaultOffset);
+                    tm.setValue("");
                 } //end if
 
                 //if we have a time value then make a new time object and set it to the
@@ -729,4 +730,15 @@ public class CommonTS {
         return val;
     } //end method
 
+    
+    public static void main(String[] args) throws DataTypeException {
+    	
+    	CommonTS ts = new CommonTS();
+    	ts.setValue("1984");
+    	
+    	System.out.println(ts.getValue());
+    	
+    }
+    
+    
 } //end class
