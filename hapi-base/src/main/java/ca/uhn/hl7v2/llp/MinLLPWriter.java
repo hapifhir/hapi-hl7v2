@@ -33,6 +33,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.llp;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * Title:        MinLLPWriter
@@ -61,6 +62,8 @@ public class MinLLPWriter implements HL7Writer
 
     private OutputStream myOutputStream;
 
+	private Charset charset;
+
     /**
      * Creates a MinLLPWriter with no output stream specified - <code>setOutputStream</code>
      * must be called before attempting to write any messages. 
@@ -76,12 +79,20 @@ public class MinLLPWriter implements HL7Writer
     }
     
     /** 
+     * Creates a MinLLPWriter, specifying the underlying output stream.
+     */
+    public MinLLPWriter(OutputStream out, Charset theCharset) throws IOException {
+    	charset = theCharset;
+        setOutputStream(out);
+    }
+
+    /** 
      * Sets the underlying output stream to which messages are written. 
      */
     public synchronized void setOutputStream(OutputStream out) throws IOException  
     {
         myOutputStream = out;
-        myWriter = new BufferedWriter(getWriter(out));
+       	myWriter = new BufferedWriter(getWriter(out));
     }
 
     /** 
@@ -114,13 +125,17 @@ public class MinLLPWriter implements HL7Writer
         myWriter.close();
     }
     
-    private static OutputStreamWriter getWriter(OutputStream theStream) throws IOException {
-        String charset = System.getProperty(CHARSET_KEY, "US-ASCII");
+    private OutputStreamWriter getWriter(OutputStream theStream) throws IOException {
         
-        if (charset.equals("default")) {
-            return new OutputStreamWriter(theStream);
-        } else {
+        if (charset != null) {
             return new OutputStreamWriter(theStream, charset);
+        } else {
+        	String charsetString = System.getProperty(CHARSET_KEY, "US-ASCII");
+	        if (charsetString.equals("default")) {
+	            return new OutputStreamWriter(theStream);
+	        } else {
+	            return new OutputStreamWriter(theStream, charsetString);
+	        }
         }
     }
     
