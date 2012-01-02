@@ -21,11 +21,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
@@ -56,7 +56,7 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
  */
 public class ProfileSourceGenerator {
 
-    private static final Log ourLog = LogFactory.getLog(ProfileSourceGenerator.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(ProfileSourceGenerator.class);
 
     private final RuntimeProfile myProfile;
     private String myTargetDirectory;

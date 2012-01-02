@@ -40,7 +40,9 @@ import ${basePackageName}segment.*;
 
 import java.util.List;
 
-import ca.uhn.log.HapiLogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -98,7 +100,7 @@ public class $message extends AbstractMessage  {
           this.add(${segment.name}.class, $reqd, $rept);
 #end
        } catch(HL7Exception e) {
-          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
+          LoggerFactory.getLogger(getClass()).error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
        }
     }
 
@@ -124,7 +126,7 @@ public class $message extends AbstractMessage  {
        try {
           ret = (${segment.name})this.get("${segment.indexName}");
        } catch(HL7Exception e) {
-          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
           throw new RuntimeException(e);
        }
        return ret;
@@ -145,7 +147,7 @@ public class $message extends AbstractMessage  {
        try {
           ret = (${segment.name})this.get("${segment.indexName}", rep);
        } catch(HL7Exception e) {
-          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
           throw new RuntimeException(e);
        }
        return ret;
@@ -160,7 +162,7 @@ public class $message extends AbstractMessage  {
             reps = this.getAll("${segment.indexName}").length; 
         } catch (HL7Exception e) { 
             String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
-            HapiLogFactory.getHapiLog(this.getClass()).error(message, e); 
+            LoggerFactory.getLogger(getClass()).error(message, e); 
             throw new RuntimeException(message);
         } 
         return reps; 

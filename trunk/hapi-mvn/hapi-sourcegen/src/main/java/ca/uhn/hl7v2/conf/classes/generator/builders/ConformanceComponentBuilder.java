@@ -33,8 +33,8 @@ package ca.uhn.hl7v2.conf.classes.generator.builders;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.classes.exceptions.ConformanceError;
@@ -53,7 +53,7 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class ConformanceComponentBuilder {
 	
-	private static final Log ourLog = LogFactory.getLog(ConformanceComponentBuilder.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(ConformanceComponentBuilder.class);
 	
    private DeploymentManager depManager; // The deployment manager
    private DocumentationBuilder docBuilder;
