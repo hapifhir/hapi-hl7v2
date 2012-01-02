@@ -63,6 +63,10 @@ public class MessageValidator {
      * @throws HL7Exception if there is at least one error and this validator is set to fail on errors
      */
     public boolean validate(Message message) throws HL7Exception {
+    	if (message == null) {
+    		throw new NullPointerException("Message may not be null");
+    	}
+    	
         Terser t = new Terser(message);
         
         MessageRule[] rules = EMPTY_MESSAGE_RULES_ARRAY;
