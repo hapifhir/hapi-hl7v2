@@ -7,11 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
-
-import junit.framework.TestCase;
-import junitx.framework.Assert;
 
 /**
  * Unit tests for <code>DualTransportConnector</code>.
@@ -76,10 +74,11 @@ public class DualTransportConnectorTest extends TestCase {
         myTwo.close();
 
         if (myFailed != null) {
-            Assert.fail(myFailed);
+            fail(myFailed.toString());
         }
     }
 
+    @SuppressWarnings("unused")
     public void testConnectInOrder() throws Exception {
         startConnect();
         Socket s1 = new Socket(localhost, portOne);
@@ -90,6 +89,7 @@ public class DualTransportConnectorTest extends TestCase {
         assertTrue(myConnector.getTransportB().isConnected());
     }
 
+    @SuppressWarnings("unused")
     public void testConnectOutOfOrder() throws Exception {
         startConnect();
         Socket s2 = new Socket(localhost, portTwo);

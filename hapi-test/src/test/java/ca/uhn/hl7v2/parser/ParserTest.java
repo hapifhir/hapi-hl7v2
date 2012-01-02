@@ -9,13 +9,16 @@ package ca.uhn.hl7v2.parser;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.HL7Exception;
 import junit.framework.TestCase;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * JUnit test harness for Parser
@@ -24,7 +27,7 @@ import junit.framework.TestCase;
  */
 public class ParserTest extends TestCase
 {
-    private static final Log ourLog = LogFactory.getLog(ParserTest.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(ParserTest.class);
 
 
     /** Creates a new instance of ParserTest */

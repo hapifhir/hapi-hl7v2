@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
-
-import org.codehaus.plexus.util.IOUtil;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
@@ -29,7 +26,7 @@ public class EscapeTest extends TestCase {
     
     public void testUnescape() throws Exception {
         String uu = getUuencodedEscapedString();
-        String result = Escape.unescape(uu, enc); 
+        Escape.unescape(uu, enc); 
         //System.out.println(uu);
         //System.out.println(result);
         //BufferedWriter out = new BufferedWriter(new FileWriter("c:/hapi/foo.txt"));
@@ -40,15 +37,7 @@ public class EscapeTest extends TestCase {
     public void testSimpleEscape() {
         String actual = Escape.escape("GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN", enc);
         String expected = "GLUCOSE\\S\\1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN";
-    }
-    
-    public void testEscape() throws IOException {
-        
-        String escaped = getUuencodedEscapedString();
-        String unescaped = getUuencodedString();
-        
-        String actual = Escape.escape(unescaped, enc);
-//        Assert.assertEquals(escaped, actual);
+        assertEquals(expected, actual);
     }
     
     
@@ -69,16 +58,16 @@ public class EscapeTest extends TestCase {
         return content.toString();
     }
     
-    /** 
-     * Loads a uuencoded string from a file (not escaped) -- this is real data
-     * provided by Mark Lee of Skeva Tech.  
-     */
-    private String getUuencodedString() throws IOException {
-        ClassLoader loader = this.getClass().getClassLoader();
-        InputStream inStream = loader.getResourceAsStream("ca/uhn/hl7v2/parser/uuencoded.txt");
-        BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "US-ASCII"));
-        return IOUtil.toString(in);
-    }
+//    /** 
+//     * Loads a uuencoded string from a file (not escaped) -- this is real data
+//     * provided by Mark Lee of Skeva Tech.  
+//     */
+//    private String getUuencodedString() throws IOException {
+//        ClassLoader loader = this.getClass().getClassLoader();
+//        InputStream inStream = loader.getResourceAsStream("ca/uhn/hl7v2/parser/uuencoded.txt");
+//        BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "US-ASCII"));
+//        return IOUtil.toString(in);
+//    }
 
 	public void testFormattingCharacters() throws HL7Exception {
 
