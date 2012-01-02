@@ -1279,6 +1279,8 @@ public class NewPipeParserTest extends TestCase {
 		String encoded = pOnOrc44_11.encode(msg);
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
 				"ORC||||||||||||||||||||||||||||||||||||||||||||^^^^^^^^^^\r";
+		ourLog.info("EXP: " + expected);
+		ourLog.info("ACT: " + encoded);
 		Assert.assertEquals(expected, encoded);
 
 		encoded = pOff.encode(msg);

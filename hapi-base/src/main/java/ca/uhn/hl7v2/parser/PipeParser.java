@@ -526,7 +526,7 @@ public class PipeParser extends Parser {
         int forceUpToFieldNum = 0;
         if (parserConfig != null && currentTerserPath != null) {
         	for (String nextPath : parserConfig.getForcedEncode()) {
-        		if (nextPath.startsWith(currentTerserPath) && nextPath.length() > currentTerserPath.length()) {
+        		if (nextPath.startsWith(currentTerserPath + "-") && nextPath.length() > currentTerserPath.length()) {
         			int endOfFieldDef = nextPath.indexOf('-', currentTerserPath.length());
         			if (endOfFieldDef == -1) {
         				forceUpToFieldNum = 0;
@@ -767,12 +767,19 @@ public class PipeParser extends Parser {
         // loop through fields; for every field delimit any repetitions and add
         // field delimiter after ...
         int numFields = source.numFields();
+
+        int forceUpToFieldNum = 0;
+        if (parserConfig != null && currentTerserPath != null) {
+        	forceUpToFieldNum = parserConfig.determineForcedFieldNumForTerserPath(currentTerserPath);
+        }
+        numFields = Math.max(numFields, forceUpToFieldNum);
+        
         for (int i = startAt; i <= numFields; i++) {
         	
         	String nextFieldTerserPath = currentTerserPath + "-" + i;
             if (parserConfig != null && currentTerserPath != null) {
             	for (String nextPath : parserConfig.getForcedEncode()) {
-            		if (nextPath.startsWith(nextFieldTerserPath)) {
+            		if (nextPath.startsWith(nextFieldTerserPath + "-")) {
             			try {
 							source.getField(i, 0);
 						} catch (HL7Exception e) {
@@ -800,11 +807,6 @@ public class PipeParser extends Parser {
             result.append(encodingChars.getFieldSeparator());
         }
 
-        int forceUpToFieldNum = 0;
-        if (parserConfig != null && currentTerserPath != null) {
-        	forceUpToFieldNum = parserConfig.determineForcedFieldNumForTerserPath(currentTerserPath);
-        }
-        
         // strip trailing delimiters ...
         char fieldSeparator = encodingChars.getFieldSeparator();
 		String retVal = stripExtraDelimiters(result.toString(), fieldSeparator);
