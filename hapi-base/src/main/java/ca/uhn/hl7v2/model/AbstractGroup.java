@@ -206,6 +206,17 @@ public abstract class AbstractGroup implements Group {
     }
 
     /**
+     * Returns a Set containing the names of all non-standard structures
+     * which have been added to this structure
+     */
+    public Set<String> getNonStandardNames() {
+    	if (nonStandardNames == null) {
+    		return Collections.emptySet();
+    	}
+    	return Collections.unmodifiableSet(nonStandardNames);
+    }
+    
+    /**
      * Returns an ordered array of the names of the Structures in this Group.
      * These names can be used to iterate through the group using repeated calls
      * to <code>get(name)</code>.
@@ -277,7 +288,7 @@ public abstract class AbstractGroup implements Group {
      *            an optional name of the structure (used by Generic structures;
      *            may be null)
      */
-    private Structure tryToInstantiateStructure(Class<? extends Structure> c, String name) throws HL7Exception {
+    protected Structure tryToInstantiateStructure(Class<? extends Structure> c, String name) throws HL7Exception {
         Structure s = null;
         try {
             Object o = null;
@@ -447,11 +458,11 @@ public abstract class AbstractGroup implements Group {
 
     /**
      * Inserts a repetition of a given Structure into repetitions of that
-     * structure by name. For example, if the Group contains 10 repititions an
+     * structure by name. For example, if the Group contains 10 repetitions an
      * OBX segment and an OBX is supplied with an index of 2, then this call
-     * would insert the new repetition at index 2. Note that in this case, the
+     * would insert the new repetition at index 2. (Note that in this example, the
      * Set ID field in the OBX segments would also need to be renumbered
-     * manually.
+     * manually).
      * 
      * @throws HL7Exception
      *             if the named Structure is not part of this Group.
@@ -507,6 +518,18 @@ public abstract class AbstractGroup implements Group {
     }
 
     /**
+     * Given a child structure name, returns the child index (which is 1-indexed, meaning
+     * that the first child is at index 1 
+     */
+    public int getFieldNumForName(String name) throws HL7Exception {
+    	int retVal = names.indexOf(name);
+    	if (retVal == -1) {
+    		throw new HL7Exception("Unknown name: " + name);
+    	}
+    	return retVal + 1;
+    }
+    
+    /**
      * Returns the Class of the Structure at the given name index.
      */
     public Class<? extends Structure> getClass(String name) {
@@ -546,7 +569,7 @@ public abstract class AbstractGroup implements Group {
      * (e.g. Z-segments). In contrast, specification of the group's normal
      * children should be done at construction time, using the add(...) method.
      */
-    private String insert(Class<? extends Structure> c, boolean required, boolean repeating, int index, String name) throws HL7Exception {
+    protected String insert(Class<? extends Structure> c, boolean required, boolean repeating, int index, String name) throws HL7Exception {
         // tryToInstantiateStructure(c, name); //may throw exception
 
         // see if there is already something by this name and make a new name if
@@ -598,7 +621,7 @@ public abstract class AbstractGroup implements Group {
      * </p>
      * <p>
      * Note that this method is intended only to be called by {@link AbstractMessage#printStructure()}.
-     * Please to not call this method directly, as the method signature is likely to 
+     * Please use caution if calling this method directly, as the method signature and/or behaviour may 
      * change in the future.
      * </p>
      */
@@ -625,8 +648,8 @@ public abstract class AbstractGroup implements Group {
             
             Class<? extends Structure> nextClass = classes.get(nextName);
             
-            boolean nextOptional = !required.get(nextName).booleanValue();
-            boolean nextRepeating = repeating.get(nextName).booleanValue();
+            boolean nextOptional = !isRequired(nextName);
+            boolean nextRepeating = isRepeating(nextName);
             
             if (AbstractGroup.class.isAssignableFrom(nextClass)) {
                 

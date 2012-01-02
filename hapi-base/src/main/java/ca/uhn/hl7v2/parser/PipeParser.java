@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.DoNotCacheStructure;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
@@ -221,8 +222,12 @@ public class PipeParser extends Parser {
     /**
      * Returns object that contains the field separator and encoding characters
      * for this message.
+     * @throws HL7Exception 
      */
-    private static EncodingCharacters getEncodingChars(String message) {
+    private static EncodingCharacters getEncodingChars(String message) throws HL7Exception {
+    	if (message.length() < 8) {
+        	throw new HL7Exception("Invalid message content: \"" + message + "\"");
+    	}
         return new EncodingCharacters(message.charAt(3), message.substring(4, 8));
     }
 
@@ -266,18 +271,24 @@ public class PipeParser extends Parser {
     /**
      * Generates (or returns the cached value of) the message
      */
-    private IStructureDefinition getStructureDefinition(Class<? extends Message> theClazz) throws HL7Exception {
+    private IStructureDefinition getStructureDefinition(Message theMessage) throws HL7Exception {
 
-        StructureDefinition retVal = myStructureDefinitions.get(theClazz);
+    	Class<? extends Message> clazz = theMessage.getClass();
+        StructureDefinition retVal = myStructureDefinitions.get(clazz);
         if (retVal != null) {
             return retVal;
         }
-
-        Message message = ReflectionUtil.instantiateMessage(theClazz, getFactory());
-        Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
-        retVal = createStructureDefinition(message, previousLeaf);
-        myStructureDefinitions.put(theClazz, retVal);
-
+        
+        if (clazz.isAnnotationPresent(DoNotCacheStructure.class)) {
+            Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
+            retVal = createStructureDefinition(theMessage, previousLeaf);
+        } else {
+        	Message message = ReflectionUtil.instantiateMessage(clazz, getFactory());
+        	Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
+        	retVal = createStructureDefinition(message, previousLeaf);
+        	myStructureDefinitions.put(clazz, retVal);
+        }
+        
         return retVal;
     }
 
@@ -1072,13 +1083,21 @@ public class PipeParser extends Parser {
 
     @Override
     public void parse(Message message, String string) throws HL7Exception {
-        IStructureDefinition structureDef = getStructureDefinition(message.getClass());
+        IStructureDefinition structureDef = getStructureDefinition(message);
 
         // MessagePointer ptr = new MessagePointer(this, m,
         // getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, structureDef, "MSH", true);
 
         String[] segments = split(string, segDelim);
+
+        if (segments.length == 0) {
+        	throw new HL7Exception("Invalid message content: \"" + string + "\"");
+        }
+        
+        if (segments[0] == null || segments[0].length() < 4) {
+        	throw new HL7Exception("Invalid message content: \"" + string + "\"");
+        }
 
         char delim = '|';
         for (int i = 0; i < segments.length; i++) {
@@ -1089,8 +1108,12 @@ public class PipeParser extends Parser {
 
             // sometimes people put extra segment delimiters at end of msg ...
             if (segments[i] != null && segments[i].length() >= 3) {
+            	
                 final String name;
                 if (i == 0) {
+                    if (segments[i].length() < 4) {
+                    	throw new HL7Exception("Invalid message content: \"" + string + "\"");
+                    }
                     name = segments[i].substring(0, 3);
                     delim = segments[i].charAt(3);
                 } else {

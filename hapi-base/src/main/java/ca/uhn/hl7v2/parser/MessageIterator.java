@@ -51,7 +51,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         this.myMessage = start;
         this.myDirection = direction;
         this.myHandleUnexpectedSegments = handleUnexpectedSegments;
-        this.myCurrentDefinitionPath.add(new Position(startDefinition, 0));
+        this.myCurrentDefinitionPath.add(new Position(startDefinition, -1));
     }
 
     private Position getCurrentPosition() {
@@ -110,7 +110,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
                     return false;
                 }
                 addNonStandardSegmentAtCurrentPosition();
-            } else if (structureDefinition.hasChildren() && structureDefinition.getAllPossibleFirstChildren().contains(myDirection)) {
+            } else if (structureDefinition.hasChildren() && structureDefinition.getAllPossibleFirstChildren().contains(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
                 currentPosition.incrementRep();
                 myCurrentDefinitionPath.add(new Position(structureDefinition.getFirstChild(), -1));
             } else if (!structureDefinition.hasChildren() && !structureDefinition.getNamesOfAllPossibleFollowingLeaves().contains(myDirection)) {
@@ -157,11 +157,20 @@ public class MessageIterator implements java.util.Iterator<Structure> {
 		int index = Arrays.asList(parentStructure.getNames()).indexOf(nameAsItAppearsInParent) + 1;
 		
         String newSegmentName;
-        try {
-            newSegmentName = parentStructure.addNonstandardSegment(myDirection, index);
-        } catch (HL7Exception e) {
-            throw new Error("Unable to add nonstandard segment " + myDirection + ": ", e);
-        }
+		
+		// Check if the structure already has a non-standard segment in the appropriate
+		// position
+		String[] currentNames = parentStructure.getNames();
+		if (index < currentNames.length && currentNames[index].startsWith(myDirection)) {
+			newSegmentName = currentNames[index];
+		} else { 
+	        try {
+	            newSegmentName = parentStructure.addNonstandardSegment(myDirection, index);
+	        } catch (HL7Exception e) {
+	            throw new Error("Unable to add nonstandard segment " + myDirection + ": ", e);
+	        }
+	    }
+		
         IStructureDefinition previousSibling = getCurrentPosition().getStructureDefinition();
         IStructureDefinition parentStructureDefinition = parentDefinitionPath.get(parentDefinitionPath.size() - 1).getStructureDefinition();
         NonStandardStructureDefinition nextDefinition = new NonStandardStructureDefinition(parentStructureDefinition, previousSibling, newSegmentName, index);
