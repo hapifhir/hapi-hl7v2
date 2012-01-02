@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,8 @@ public class MinLLPReader implements HL7Reader
     
     private BufferedReader myReader;
 
+	private Charset charset;
+
     /**
      * Character indicating the termination of an HL7 message
      */
@@ -96,10 +99,19 @@ public class MinLLPReader implements HL7Reader
     }
     
     /** Creates a MinLLPReader which reads from the given InputStream. The stream
-        is assumed to be an ASCII bit stream.
-    */
+     *  is assumed to be an ASCII bit stream.
+     */
     public MinLLPReader(InputStream in) throws IOException
     {
+        setInputStream(in);
+    }
+
+    /** Creates a MinLLPReader which reads from the given InputStream. The stream
+     *  is assumed to be an ASCII bit stream.
+     */
+    public MinLLPReader(InputStream in, Charset theCharset) throws IOException
+    {
+    	charset = theCharset;
         setInputStream(in);
     }
 
@@ -109,12 +121,15 @@ public class MinLLPReader implements HL7Reader
      */
     public synchronized void setInputStream(InputStream in) throws IOException 
     {
-        String charset = System.getProperty(CHARSET_KEY, "US-ASCII");
-        
-        if (charset.equals("default")) {
-            myReader = new BufferedReader(new InputStreamReader(in));
-        } else {
+        if (charset != null) {
             myReader = new BufferedReader(new InputStreamReader(in, charset));
+        } else { 
+        	String charsetString = System.getProperty(CHARSET_KEY, "US-ASCII");
+        	if (charsetString.equals("default")) {
+	            myReader = new BufferedReader(new InputStreamReader(in));
+	        } else {
+	            myReader = new BufferedReader(new InputStreamReader(in, charsetString));
+	        }
         }
     }
 
