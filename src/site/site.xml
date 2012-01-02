@@ -3,7 +3,7 @@
 
 	<bannerLeft>
 		<name>HAPI</name>
-		<src>images/hapilogo5.gif</src>
+		<src>images/hapi_banner.png</src>
 		<href>http://hl7api.sourceforge.net/</href>
 	</bannerLeft>
 
@@ -38,14 +38,17 @@
 
 		<menu name="Documentation">
 			<item name="HAPI By Example" href="devbyexample.html" />
-			<item name="JDK 1.4 Support" href="jdk14.html" />
 			<item name="FAQ" href="hapi-faq.html" />
 			<item name="Using the Test Panel" href="testpanel.html" />
 			<item name="Helpful Links" href="links.html" />
 			<item name="Conformance Tools" href="conformance.html" />
 		</menu>
 
-		<menu name="Contribute to HAPI">
+		<menu name="Get Help">
+			<item name="Mailing List" href="mail-lists.html" />
+		</menu>
+		
+		<menu name="Contribute">
 			<item name="Hacking HAPI" href="building.html" />
 			<item name="Submitting Code" href="submissions.html" />
 			<item name="Issue Tracking" href="issue-tracking.html" />
