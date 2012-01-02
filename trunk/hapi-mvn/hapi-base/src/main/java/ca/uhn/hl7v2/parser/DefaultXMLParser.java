@@ -125,8 +125,16 @@ public class DefaultXMLParser extends XMLParser {
             for (int i = 0; i < childNames.length; i++) {
                 Structure[] reps = groupObject.getAll(childNames[i]);
                 for (int j = 0; j < reps.length; j++) {
-                    Element childElement =
-                        groupElement.getOwnerDocument().createElement(makeGroupElementName(messageName, childNames[i]));
+                    String elementName = makeGroupElementName(messageName, childNames[i]);
+					Element childElement;
+					try {
+						childElement = groupElement.getOwnerDocument().createElement(elementName);
+			        } catch (DOMException e) {
+			            throw new HL7Exception(
+			                "Can't encode element " + elementName + " in group " + groupObject.getClass().getName(),
+			                HL7Exception.APPLICATION_INTERNAL_ERROR,
+			                e);
+			        }
                     groupElement.appendChild(childElement);
                     if (reps[j] instanceof Group) {
                         encode((Group) reps[j], childElement);
@@ -136,8 +144,7 @@ public class DefaultXMLParser extends XMLParser {
                     }
                 }
             }
-        }
-        catch (DOMException e) {
+        } catch (DOMException e) {
             throw new HL7Exception(
                 "Can't encode group " + groupObject.getClass().getName(),
                 HL7Exception.APPLICATION_INTERNAL_ERROR,

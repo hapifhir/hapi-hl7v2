@@ -48,6 +48,10 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	 * Constructor
 	 */
 	public NonStandardStructureDefinition(IStructureDefinition theParent, IStructureDefinition thePreviousSibling, String theName, int thePosition) {
+		if (theName == null || theName.length() == 0) {
+			throw new IllegalArgumentException("theName is missing");
+		}
+		
 		myParent = theParent;
 		myName = theName;
 		myPreviousSibling = thePreviousSibling;
