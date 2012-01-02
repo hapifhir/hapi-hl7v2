@@ -13,11 +13,25 @@
 				]]>
 			The old CVS repo will be kept around for now, just in case it is needed. 
         	</action>
-        	<action type="add" dev="James Agnew">
-        		Remove HapiLog, Log, and Status, all of which were used as a logging system prior to
-        		the introduction of commons-logging into HAPI. The old logging system was only used by
-        		one class, MessageLibrary, and led to lots of stray files being generated during
-        		unit test runs. 
+        	<action type="add" dev="Christian Ohr" issue="3421083">
+        		Convert HAPI to use the 
+				<![CDATA[
+	            	<a href="http://www.slf4j.org/">SLF4J</a>
+				]]>
+        		logging framework in place of Apache Jakarta Commons-Logging (JCL). SLF4J is 
+        		conceptually similar to JCL, in that it is a wrapper around an underlying 
+        		framework of your choice (e.g. log4j, java.util.Logger, etc.). It brings a number
+        		of modern features with it, such as parameterized entries and NDCs, and uses a
+        		less confusing discovery process.
+				<![CDATA[<br><br>]]>
+				Applications which use HAPI will now need to add the "slf4j-api.jar" JAR to their
+				classpath, as well as a second JAR such as "slf4j-log4j12.jar" which instructs SLF4J
+				which underlying log framework to use. These two dependencies have been added to the
+				hapi-base pom.xml, so Maven users will see this change automatically.
+				<![CDATA[<br><br>]]>
+        		In addition, HapiLog has been deprecated. HapiLog was used as a logging system prior to
+        		the introduction of commons-logging into HAPI. It is no longer referenced by any
+        		part of HAPI itself, and will be removed at some point in the future.
         	</action>
         	<action type="add" dev="James Agnew">
         		Add new method to group and message structure classes that returns all repetitions
@@ -41,6 +55,17 @@
         		<a href="/xref/ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html">here</a>
         		]]>
         		for an example.
+        		<![CDATA[<br><br>]]>
+        		In addition, 
+        		<![CDATA[
+        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/llp/MinLowerLayerProtocol.html">MinLowerLayerProtocol</a>
+        		]]>
+        		has received a new constructor which accepts a CharSet as a parameter, meaning
+        		that individual LLP instances may have their CharSet specified, as opposed to
+        		using a global
+        		<![CDATA[
+        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/llp/MinLLPReader.html#CHARSET_KEY">System Property</a>
+        		]]>
         	</action>
         	<action type="add" dev="Christian Ohr">
         		Modernize a bunch of the code base to add proper generics support.

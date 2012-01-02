@@ -2,20 +2,14 @@
 <document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
 	<properties>
-		<title>HAPI - The Open Source HL7 API for Java</title>
+		<title>The Open Source HL7 API for Java</title>
 		<author email="jamesagnew@users.sourceforge.net">John Doe</author>
 	</properties>
-
-	<!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
-	<head> 
-		<link rel="icon" href="images/favicon.png" type="image/png"/>
-		<link rel="shortcut icon" href="images/favicon.png" type="image/png"/> 
-	</head>
 
 	<body>
 
 		<!-- The body of the document contains a number of sections -->
-		<section name="HAPI - The Open Source Java HL7 Parser and API">
+		<section name="Welcome">
 
 			<p>
 				This is the home page for the HAPI project. HAPI (HL7 application
@@ -57,9 +51,11 @@
 					to ask questions and find answers.
 				</li>
 				<li>
-					<b>Help improve HAPI:</b> Report an issue, submit an idea, or get started developing
+					<b>Help improve HAPI:</b>
+					Report an issue, submit an idea, or get started developing
 					new features
-					<a href="getinvolved.html">here</a>.
+					<a href="getinvolved.html">here</a>
+					.
 				</li>
 			</ul>
 
@@ -67,8 +63,8 @@
 
 		<section name="HAPI 10th Birthday! October 30, 2011" style="position: relative;">
 
-			<img src="images/cake_64.png" alt="Birthday Cake" style="position: absolute; top: -10px; left: 450px;"/>
-			<!-- <img src="images/cake_64.png" alt="Birthday Cake" style="float:left;"/>-->
+			<img src="images/cake_64.png" alt="Birthday Cake" style="position: absolute; top: -10px; left: 450px;" />
+			<!-- <img src="images/cake_64.png" alt="Birthday Cake" style="float:left;"/> -->
 
 			<p>
 				On October 30 2001. Bryan Tripp and a team at University Health Network registered the HAPI
@@ -80,99 +76,101 @@
 			<p>
 				A few stats:
 			</p>
-				<ul>
-					<li>
-						<b>HAPI keeps growing.</b>
-						Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow.
-						The graph below shows the number of unique visitors to our online documentation each
-						month between 2006 and 2011.
-						<img src="images/10yr_visitors.png" alt="5 years of growth"></img>
-						<br />
-						<br />
-						<br />
-					</li>
-					<li>
-						<b>HAPI is used all over the world.</b>
-						Here are the top 100 cities this year in terms of
-						visits to our
-						online help.
-						<img src="images/10yr_visitors_map.png" alt="5 years of growth"></img>
-						<br />
-						<br />
-						<br />
-					</li>
-					<li>
-						<b>HAPI is used by all types of organizations.</b>
-						Here are the responses from the 2011
-						community survey, to date.
-						<table style="width: 500px;">
-							<thead>
-								<tr>
-									<td>Describe your Organization of Company</td>
-									<td>Percentage of responses</td>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>None / not applicable</td>
-									<td>1.11%</td>
-								</tr>
-								<tr>
-									<td>University / college / other school</td>
-									<td>12.22%</td>
-								</tr>
-								<tr>
-									<td>Government Department, Agency, etc</td>
-									<td>6.67%</td>
-								</tr>
-								<tr>
-									<td>Public Hospital, Clinic, or other health provider</td>
-									<td>12.22%</td>
-								</tr>
-								<tr>
-									<td>Private Hospital, Clinic, or other health provider</td>
-									<td>8.89%</td>
-								</tr>
-								<tr>
-									<td>Insurer, HMO, etc.</td>
-									<td>0</td>
-								</tr>
-								<tr>
-									<td>Small software development company (under 20 developers)</td>
-									<td>23.33%</td>
-								</tr>
-								<tr>
-									<td>Medium software development company (21-100 developers)</td>
-									<td>15.56%</td>
-								</tr>
-								<tr>
-									<td>Large software development company (101+ developers)</td>
-									<td>16.67%</td>
-								</tr>
-								<tr>
-									<td>Other</td>
-									<td>5.56%</td>
-								</tr>
-							</tbody>
-						</table>
-						<br />
-						<br />
-						<br />
-					</li>
-					<li>
-						<b>HAPI is widely deployed.</b>
-						This is just a sample of the companies, hospitals, governments, and educational facilities
-						who have let us know they are using HAPI over the years.
-						Please 
-						<a href="mailto:jamesagnew@users.sourceforge.net">contact us</a> 
-						if we can add (or remove) your company from this list!
-						<img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img>
-						<br />
-						<br />
-						<br />
-					</li>
-				</ul>
-			
+			<!-- <ul> <li> <b>HAPI keeps growing.</b> Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow. The graph below shows the number of unique visitors 
+				to our online documentation each month between 2006 and 2011. <img src="images/10yr_visitors.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used all over the world.</b> 
+				Here are the top 100 cities this year in terms of visits to our online help. <img src="images/10yr_visitors_map.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used by all 
+				types of organizations.</b> Here are the responses from the 2011 community survey, to date. <table style="width: 500px;"> <thead> <tr> <td>Describe your Organization of Company</td> <td>Percentage of responses</td> 
+				</tr> </thead> <tbody> <tr> <td>None / not applicable</td> <td>1.11%</td> </tr> <tr> <td>University / college / other school</td> <td>12.22%</td> </tr> <tr> <td>Government Department, Agency, etc</td> 
+				<td>6.67%</td> </tr> <tr> <td>Public Hospital, Clinic, or other health provider</td> <td>12.22%</td> </tr> <tr> <td>Private Hospital, Clinic, or other health provider</td> <td>8.89%</td> </tr> <tr> <td>Insurer, 
+				HMO, etc.</td> <td>0</td> </tr> <tr> <td>Small software development company (under 20 developers)</td> <td>23.33%</td> </tr> <tr> <td>Medium software development company (21-100 developers)</td> <td>15.56%</td> 
+				</tr> <tr> <td>Large software development company (101+ developers)</td> <td>16.67%</td> </tr> <tr> <td>Other</td> <td>5.56%</td> </tr> </tbody> </table> <br /> <br /> <br /> </li> <li> <b>HAPI is widely 
+				deployed.</b> This is just a sample of the companies, hospitals, governments, and educational facilities who have let us know they are using HAPI over the years. Please <a href="mailto:jamesagnew@users.sourceforge.net">contact 
+				us</a> if we can add (or remove) your company from this list! <img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img> <br /> <br /> <br /> </li> </ul> -->
+			<subsection name="HAPI keeps growing">
+				<p>
+					Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow.
+					The graph below shows the number of unique visitors to our online documentation each
+					month between 2006 and 2011.
+					<img src="images/10yr_visitors.png" alt="5 years of growth"></img>
+				</p>
+			</subsection>
+
+			<subsection name="HAPI is used all over the world">
+				<p>
+					Here are the top 100 cities this year in terms of
+					visits to our
+					online help.
+					<img src="images/10yr_visitors_map.png" alt="5 years of growth"></img>
+				</p>
+			</subsection>
+
+			<subsection name="HAPI is used by all types of organizations">
+				<p>
+					Here are the responses from the 2011
+					community survey, to date.
+				</p>
+				<table style="width: 500px;">
+					<thead>
+						<tr>
+							<td>Describe your Organization of Company</td>
+							<td>Percentage of responses</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>None / not applicable</td>
+							<td>1.11%</td>
+						</tr>
+						<tr>
+							<td>University / college / other school</td>
+							<td>12.22%</td>
+						</tr>
+						<tr>
+							<td>Government Department, Agency, etc</td>
+							<td>6.67%</td>
+						</tr>
+						<tr>
+							<td>Public Hospital, Clinic, or other health provider</td>
+							<td>12.22%</td>
+						</tr>
+						<tr>
+							<td>Private Hospital, Clinic, or other health provider</td>
+							<td>8.89%</td>
+						</tr>
+						<tr>
+							<td>Insurer, HMO, etc.</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<td>Small software development company (under 20 developers)</td>
+							<td>23.33%</td>
+						</tr>
+						<tr>
+							<td>Medium software development company (21-100 developers)</td>
+							<td>15.56%</td>
+						</tr>
+						<tr>
+							<td>Large software development company (101+ developers)</td>
+							<td>16.67%</td>
+						</tr>
+						<tr>
+							<td>Other</td>
+							<td>5.56%</td>
+						</tr>
+					</tbody>
+				</table>
+			</subsection>
+
+			<subsection name="HAPI is widely used and widely deployed">
+				<p>
+					This is just a sample of the companies, hospitals, governments, and educational facilities
+					who have let us know they are using HAPI over the years.
+					Please
+					<a href="mailto:jamesagnew@users.sourceforge.net">contact us</a>
+					if we can add (or remove) your company from this list!
+					<img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img>
+				</p>
+			</subsection>
 
 		</section>
 

@@ -10,6 +10,7 @@
 
 #navcolumn h5 {
 	color: #206020;
+	background-color: #C0FFC0;
 }
 
 #breadcrumbs {
@@ -33,13 +34,17 @@ h1, h2, h3, h4, h5 {
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
 	border-bottom-color: #80FF80;
+	background-color: #C0FFC0;
 }
 
 .section h3 {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
-	border-bottom-color: #C0FFC0;
+	border-bottom-color: #40B040;
 	width: 66%;
+	background-image:url('images/littlehapiface.png');
+	background-repeat:no-repeat;
+	padding-left: 25px;
 }
 
 a, a.externalLink, a:active, a:hover, a:link, a:visited {
