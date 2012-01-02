@@ -1,16 +1,22 @@
 package ca.uhn.hl7v2.conf.check;
 
-import junit.framework.*;
-import ca.uhn.hl7v2.model.v24.datatype.*;
-import ca.uhn.hl7v2.model.v24.message.*;
-import ca.uhn.hl7v2.parser.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.conf.parser.*;
-import ca.uhn.hl7v2.conf.spec.*;
-import ca.uhn.hl7v2.conf.spec.message.*;
-import ca.uhn.hl7v2.conf.store.*;
-import java.io.*;
-import java.net.*;
+import ca.uhn.hl7v2.conf.parser.ProfileParser;
+import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.conf.spec.message.Seg;
+import ca.uhn.hl7v2.conf.store.CodeStore;
+import ca.uhn.hl7v2.conf.store.ProfileCodeStore;
+import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
+import ca.uhn.hl7v2.model.v24.message.ACK;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * JUnit tests for DefaultValidator

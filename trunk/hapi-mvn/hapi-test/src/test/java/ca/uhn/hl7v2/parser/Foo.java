@@ -1,7 +1,7 @@
 package ca.uhn.hl7v2.parser;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
@@ -13,11 +13,10 @@ import ca.uhn.hl7v2.model.v26.segment.MSH;
 import ca.uhn.hl7v2.model.v26.segment.NTE;
 import ca.uhn.hl7v2.model.v26.segment.PID;
 import ca.uhn.hl7v2.model.v26.segment.RF1;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 public class Foo {
 
-    private static final Log log = LogFactory.getLog(Foo.class);
+    private static final Logger log = LoggerFactory.getLogger(Foo.class);
     
     public static void main(String[] args) throws HL7Exception {
         REF_I12 refI12 = new REF_I12();

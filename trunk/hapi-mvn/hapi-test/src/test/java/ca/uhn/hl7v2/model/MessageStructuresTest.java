@@ -1,14 +1,17 @@
 
 package ca.uhn.hl7v2.model;
 
+import java.util.Map;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.model.v251.message.ACK;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
-import java.util.Map;
-import java.util.Properties;
-import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Tests all generated message structures to ensure that they can be instantiated
@@ -16,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MessageStructuresTest extends TestCase {
 
-    private static Log ourLog = LogFactory.getLog(MessageStructuresTest.class);
+    private static Logger ourLog = LoggerFactory.getLogger(MessageStructuresTest.class);
 
     public void testAllMessages() throws Exception {
 

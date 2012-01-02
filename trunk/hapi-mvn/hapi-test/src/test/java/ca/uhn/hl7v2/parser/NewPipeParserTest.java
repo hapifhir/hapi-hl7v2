@@ -7,11 +7,12 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
@@ -48,10 +49,143 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class NewPipeParserTest extends TestCase {
 	private Parser parser;
-	private static final Log ourLog = LogFactory.getLog(NewPipeParserTest.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(NewPipeParserTest.class);
 
 	public void setUp() throws Exception {
 		parser = new PipeParser();
+	}
+
+	/**
+	 * Make sure the appropriate exception is thrown
+	 */
+	public void testInvalidShortMessages() {
+
+		ADT_A01 msg = new ADT_A01();
+		try {
+			msg.parse("");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("M");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MS");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MSH");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MSH|");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+
+		try {
+			msg.parse("\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("M\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MS\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MSH\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			msg.parse("MSH|\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+
+
+		try {
+			parser.parse("");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("M");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MS");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MSH");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MSH|");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+
+		try {
+			parser.parse("\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("M\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MS\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MSH\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+		try {
+			parser.parse("MSH|\r");
+			fail();
+		} catch (HL7Exception e) {
+			// expected
+		}
+
 	}
 
 	/**
@@ -93,32 +227,51 @@ public class NewPipeParserTest extends TestCase {
 
 	}
 
+	public void testParseRepeatingNonRepeatableSegment() throws HL7Exception {
+		String message = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+				+ "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+				+ "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+				+ "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
+				+ "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
+				+ "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
+				+ "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
+				+ "OBX|1|IS|Z114099^Erc^L||ABC||||||F|||200905011111|PMH\r";
+
+		ca.uhn.hl7v2.model.v23.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v23.message.ORU_R01();
+		msg.setParser(parser);
+		msg.parse(message);
+
+		String encoded = msg.encode();
+		Assert.assertEquals(message, encoded);
+
+		ourLog.info(msg.printStructure());
+	}
 
 	public void testPreserveFormattingChars() throws HL7Exception {
-		
-		String msgString = "MSH|^~\\&|PHCN_ULTRA|2220|HSIE|2220|201106161233||ORU^R01|72313573|T|2.4|||AL|AL|AU\r\n" + 
-				"PID|\r"+
-				"PV1||I|^DIS^DIS^2220|||||0129296H^BRAUN^GARY|7MPH^MPH-HL7-RESULT FEED|||||||||I|^^^2220\r\n" + 
-				"ORC|RE|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA||RE\r\n" + 
-				"OBR|1|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA|GAS^GASES (BLOOD)|||201106161000|||||||||0129296H^BRAUN^GARY^^^DR^^^2220^^^^Provider Num||||1295102|7MPH|201106161233||GRP|F||^^^201106161203\r\n" + 
-				"OBX|1|FT|GAS^^LN||Type Venous\\.br\\\\.br\\ Analysis pH : \\H\\ 7.28\\N\\ (7.38-7.43) ";
-		
+
+		String msgString = "MSH|^~\\&|PHCN_ULTRA|2220|HSIE|2220|201106161233||ORU^R01|72313573|T|2.4|||AL|AL|AU\r\n"
+				+ "PID|\r"
+				+ "PV1||I|^DIS^DIS^2220|||||0129296H^BRAUN^GARY|7MPH^MPH-HL7-RESULT FEED|||||||||I|^^^2220\r\n"
+				+ "ORC|RE|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA||RE\r\n"
+				+ "OBR|1|^HNAM_ORDERID|11-6879530-GAS-0^PHCN_ULTRA|GAS^GASES (BLOOD)|||201106161000|||||||||0129296H^BRAUN^GARY^^^DR^^^2220^^^^Provider Num||||1295102|7MPH|201106161233||GRP|F||^^^201106161203\r\n"
+				+ "OBX|1|FT|GAS^^LN||Type Venous\\.br\\\\.br\\ Analysis pH : \\H\\ 7.28\\N\\ (7.38-7.43) ";
+
 		ORU_R01 msg = new ORU_R01();
 		msg.setParser(parser);
 		msg.parse(msgString);
-		
+
 		OBX obx = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX();
 
-		String obx5val = ((FT)obx.getObx5_ObservationValue(0).getData()).getValue();
+		String obx5val = ((FT) obx.getObx5_ObservationValue(0).getData()).getValue();
 		assertTrue(obx5val, obx5val.contains("Type Venous\\.br\\\\.br\\ Analysis"));
 		assertTrue(obx5val, obx5val.contains("pH : \\H\\ 7.28\\N\\ (7.38-7.43) "));
 
 		String obx5encoded = obx.getObx5_ObservationValue(0).encode();
 		assertTrue(obx5encoded, obx5encoded.contains("Type Venous\\.br\\\\.br\\ Analysis"));
 		assertTrue(obx5encoded, obx5encoded.contains("pH : \\H\\ 7.28\\N\\ (7.38-7.43) "));
-		
+
 	}
-	
+
 	/**
 	 * http://sourceforge.net/tracker/?func=detail&aid=3212931&group_id=38899&
 	 * atid=423835
@@ -190,7 +343,7 @@ public class NewPipeParserTest extends TestCase {
 		 */
 
 		msgString = "MSH|^~\\&\r" // -
-				+ "ORC|\r" //- 
+				+ "ORC|\r" // -
 				+ "OBX||AD|||F1C1^F2C1\r";
 
 		msg = new ORU_R01();
@@ -199,28 +352,27 @@ public class NewPipeParserTest extends TestCase {
 		encode = msg.encode();
 
 		String expected = "MSH|^~\\&\r" // -
-				+ "OBR|\r" // - 
+				+ "OBR|\r" // -
 				+ "OBX||AD|||F1C1^F2C1\r";
 		assertEquals(expected.trim(), encode.trim());
 
 		/*
 		 * Try it with encoding optional segments disabled
 		 */
-		
+
 		PipeParser parser2 = new PipeParser();
 		parser2.getParserConfiguration().setEncodeEmptyMandatoryFirstSegments(false);
 		encode = parser2.encode(msg);
 		expected = "MSH|^~\\&\r" // -
 				+ "OBX||AD|||F1C1^F2C1\r";
 		assertEquals(expected.trim(), encode.trim());
-		
-		
+
 		/*
 		 * Optional segment populated at the start of group
 		 */
 
 		msgString = "MSH|^~\\&\r" // -
-				+ "ORC|1\r" //-
+				+ "ORC|1\r" // -
 				+ "OBX||AD|||F1C1^F2C1\r";
 
 		msg = new ORU_R01();
@@ -987,8 +1139,8 @@ public class NewPipeParserTest extends TestCase {
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
 				"ORC|1\r" + // -
 				"OBR|1\r" + // -
- 				"CTD|1\r";
-		
+				"CTD|1\r";
+
 		Assert.assertEquals(expected, actual);
 
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getORC().parse("");
@@ -997,9 +1149,9 @@ public class NewPipeParserTest extends TestCase {
 		ourLog.info("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
-			"OBR|1\r" + // -
-			"CTD|1\r";
-		
+				"OBR|1\r" + // -
+				"CTD|1\r";
+
 		Assert.assertEquals(expected, actual);
 
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBR().parse("");
@@ -1008,100 +1160,98 @@ public class NewPipeParserTest extends TestCase {
 		ourLog.info("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
-			"OBR|\r" + // -
-			"CTD|1\r";
-		
+				"OBR|\r" + // -
+				"CTD|1\r";
+
 		Assert.assertEquals(expected, actual);
-		
+
 	}
 
-
 	public void testDontEncodeHintSegmentForEmptyGroup() throws HL7Exception, IOException {
-		
+
 		MessageWithGroupWithRequiredFinalSegment msg = new MessageWithGroupWithRequiredFinalSegment();
 		msg.initQuickstart("AAA", "A01", "P");
 		msg.getMSH().getMessageControlID().setValue("");
 		msg.getMSH().getDateTimeOfMessage().parse("");
-		
+
 		String expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		String actual = msg.encode();
 		Assert.assertEquals(expected, actual);
-		
+
 		msg.getMyGroup();
-		
+
 		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		actual = msg.encode();
 		Assert.assertEquals(expected, actual);
 
 		msg.getMyGroup().getOBX();
-		
+
 		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		actual = msg.encode();
 		Assert.assertEquals(expected, actual);
-		
+
 		msg.getMyGroup().getNTE();
-		
+
 		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		actual = msg.encode();
 		Assert.assertEquals(expected, actual);
 	}
 
 	public void testEncodeHintSegmentForMandatorySegmentBeforeGroup() throws HL7Exception, IOException {
-		
+
 		MessageWithMandatorySegmentBeforeSubgroup msg = new MessageWithMandatorySegmentBeforeSubgroup();
 		msg.initQuickstart("AAA", "A01", "P");
 		msg.getMSH().getMessageControlID().setValue("");
 		msg.getMSH().getDateTimeOfMessage().parse("");
-		
+
 		String expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		String actual = msg.encode();
 		Assert.assertEquals(expected, actual);
-		
+
 		msg.getMyGroup();
-		
+
 		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
 		actual = msg.encode();
 		Assert.assertEquals(expected, actual);
 
 		msg.getMyGroup().getMySubGroup().getOBX().parse("OBX|1");
-		
+
 		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r" // -
-			+ "EVN|\r" // -
-			+ "OBX|1\r"; 
+				+ "EVN|\r" // -
+				+ "OBX|1\r";
 		actual = msg.encode();
 		Assert.assertEquals(expected, actual);
-		
+
 	}
 
 	public void testEncodeHintSegmentForMandatorySegmentAfterGroup() throws HL7Exception, IOException {
-		
+
 		MessageWithMandatorySegmentAfterSubgroup msg = new MessageWithMandatorySegmentAfterSubgroup();
 		msg.initQuickstart("AAA", "A01", "P");
 		msg.getMSH().getMessageControlID().setValue("");
 		msg.getMSH().getDateTimeOfMessage().parse("");
-		
-//		String expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
-//		String actual = msg.encode();
-//		Assert.assertEquals(expected, actual);
-//		
-//		msg.getMyGroup();
-//		
-//		expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
-//		actual = msg.encode();
-//		Assert.assertEquals(expected, actual);
+
+		// String expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
+		// String actual = msg.encode();
+		// Assert.assertEquals(expected, actual);
+		//
+		// msg.getMyGroup();
+		//
+		// expected = "MSH|^~\\&|||||||AAA^A01||P|2.5\r";
+		// actual = msg.encode();
+		// Assert.assertEquals(expected, actual);
 
 		msg.getMyGroup().getMySubGroup().getOBX().parse("OBX|1");
-		
+
 		String expected2 = "MSH|^~\\&|||||||AAA^A01||P|2.5\r" // -
-			+ "OBX|1\r"; 
+				+ "OBX|1\r";
 		String actual2 = msg.encode();
 		Assert.assertEquals(expected2, actual2);
-		
+
 	}
-	
-	
+
 	public void testEncodeWithForceEncoding() throws HL7Exception, IOException {
-		
+
 		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
 		pOn.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC");
 
@@ -1113,53 +1263,52 @@ public class NewPipeParserTest extends TestCase {
 
 		PipeParser pOnOrc44_11 = PipeParser.getInstanceWithNoValidation();
 		pOnOrc44_11.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-44-11");
-		
+
 		PipeParser pOnOrc4_2 = PipeParser.getInstanceWithNoValidation();
 		pOnOrc4_2.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-4-2");
-		
+
 		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
-		
+
 		ORU_R01 msg = new ORU_R01();
 		msg.initQuickstart("ORU", "R01", "T");
 		msg.getMSH().getMessageControlID().setValue("");
 		msg.getMSH().getDateTimeOfMessage().parse("");
-		
+
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getORC();
 
 		String encoded = pOnOrc44_11.encode(msg);
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
-		           "ORC||||||||||||||||||||||||||||||||||||||||||||^^^^^^^^^^\r";
+				"ORC||||||||||||||||||||||||||||||||||||||||||||^^^^^^^^^^\r";
 		Assert.assertEquals(expected, encoded);
-		
+
 		encoded = pOff.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r";
 		Assert.assertEquals(expected, encoded);
 
 		encoded = pOn.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
-		           "ORC|\r";
+				"ORC|\r";
 		Assert.assertEquals(expected, encoded);
 
 		encoded = pOnOrc4.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
-		           "ORC||||\r";
+				"ORC||||\r";
 		Assert.assertEquals(expected, encoded);
-		
+
 		encoded = pOnOrc4_2.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
-		           "ORC||||^\r";
+				"ORC||||^\r";
 		Assert.assertEquals(expected, encoded);
 
 		encoded = pOnOrc44.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
-		           "ORC||||||||||||||||||||||||||||||||||||||||||||\r";
+				"ORC||||||||||||||||||||||||||||||||||||||||||||\r";
 		Assert.assertEquals(expected, encoded);
-		
+
 	}
 
-	
 	public void testEncodeWithForceEncodingOnMSH() throws HL7Exception, IOException {
-		
+
 		PipeParser pOn = PipeParser.getInstanceWithNoValidation();
 		pOn.getParserConfiguration().addForcedEncode("MSH");
 
@@ -1168,14 +1317,14 @@ public class NewPipeParserTest extends TestCase {
 
 		PipeParser pOnMSH19_2 = PipeParser.getInstanceWithNoValidation();
 		pOnMSH19_2.getParserConfiguration().addForcedEncode("MSH-19-2");
-		
+
 		PipeParser pOff = PipeParser.getInstanceWithNoValidation();
-		
+
 		ORU_R01 msg = new ORU_R01();
 		msg.initQuickstart("ORU", "R01", "T");
 		msg.getMSH().getMessageControlID().setValue("");
 		msg.getMSH().getDateTimeOfMessage().parse("");
-		
+
 		String encoded = pOff.encode(msg);
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r";
 		Assert.assertEquals(expected, encoded);
@@ -1206,7 +1355,7 @@ public class NewPipeParserTest extends TestCase {
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4" + StringUtils.leftPad("", 999 - 12, '|') + "\r";
 		System.out.println(encoded.replace("\r", "\r\n"));
 		Assert.assertEquals(expected, encoded);
-		
+
 		PipeParser pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
 		pOnMSH9_99.getParserConfiguration().addForcedEncode("MSH-9-9");
 		encoded = pOnMSH9_99.encode(msg);
@@ -1225,21 +1374,20 @@ public class NewPipeParserTest extends TestCase {
 		encoded = pOnMSH9_99.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01^^^^^^" + StringUtils.leftPad("", 990, '^') + "||T|2.4\r";
 		Assert.assertEquals(expected, encoded);
-		
+
 	}
-	
-	
+
 	public void testUnescapeComponents() throws HL7Exception {
-		
-		String message = "MSH|^~\\&|NES|NINTENDO|AGNEW|CORNERCUBICLE|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r\n" + 
-				"EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r\n" + 
-				"PID|1||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\r\n" + 
-				"NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\r\n" + 
-				"NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\r\n" + 
-				"PV1|1|O|ABCD^EFGH^|||^^|123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|^DOG^DUCKHUNT^^^^^^^CURRENT||CRD|||||||123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|AO|0123456789|1|||||||||||||||||||MSH||A|||20010101000000";
+
+		String message = "MSH|^~\\&|NES|NINTENDO|AGNEW|CORNERCUBICLE|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r\n"
+				+ "EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r\n"
+				+ "PID|1||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\r\n"
+				+ "NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\r\n"
+				+ "NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\r\n"
+				+ "PV1|1|O|ABCD^EFGH^|||^^|123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|^DOG^DUCKHUNT^^^^^^^CURRENT||CRD|||||||123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|AO|0123456789|1|||||||||||||||||||MSH||A|||20010101000000";
 		ca.uhn.hl7v2.model.v23.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v23.message.ADT_A01();
 		msg.parse(message);
-		
+
 		ST st = msg.getPID().getPid11_PatientAddress(0).getXad2_OtherDesignation();
 		String actual = st.getValue();
 		String expected = "MARIO & LUIGI BROS PLACE";
@@ -1249,7 +1397,7 @@ public class NewPipeParserTest extends TestCase {
 		actual = st.getValue();
 		expected = "MARIO & LUIGI BROS PLACE";
 		assertEquals(expected, actual);
-		
+
 		actual = st.encode();
 		expected = "MARIO \\T\\ LUIGI BROS PLACE";
 		assertEquals(expected, actual);
@@ -1258,29 +1406,54 @@ public class NewPipeParserTest extends TestCase {
 		actual = st.getValue();
 		expected = "MARIO & LUIGI BROS PLACE";
 		assertEquals(expected, actual);
-		
+
 		expected = "123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234";
 		actual = msg.getPID().getPid11_PatientAddress(0).encode();
 		assertEquals(expected, actual);
-		
+
 	}
-	
-	
+
 	public void testParsePrimitiveWithUnexpectedSubcomponents() throws HL7Exception, IOException {
-		
+
 		ORU_R01 msg = new ORU_R01();
 		msg.initQuickstart("ORU", "R01", "P");
-		
+
 		ca.uhn.hl7v2.model.v24.datatype.ST controlID = msg.getMSH().getMessageControlID();
 		controlID.parse("A^1");
 		assertEquals("A", msg.getMSH().getMessageControlID().getValue());
 		assertEquals("1", msg.getMSH().getMessageControlID().getExtraComponents().getComponent(0).encode());
-		
+
 		msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().parse("A&1");
 		assertEquals("A", msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().getValue());
 		assertEquals("1", msg.getMSH().getPrincipalLanguageOfMessage().getAlternateText().getExtraComponents().getComponent(0).encode());
-		
+
 	}
-	
-	
+
+	public void testParseTwice() throws HL7Exception {
+
+		String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -
+				+ "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" // -
+				+ "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" // -
+				+ "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r" // -
+				+ "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r" // -
+				+ "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r" // -
+				+ "OBX|1|IS|Z114099^Erc^L||ABC||||||F|||200905011111|PMH\r";
+
+		ORU_R01 initialMessage = new ORU_R01();
+		initialMessage.parse(string);
+
+		GenericSegment zpi = (GenericSegment) initialMessage.get("ZPI");
+		assertEquals("7005728^^^TML^MR", zpi.getField(3, 0).encode());
+
+		string = string.replace("ZPI|||7005728", "ZPI|||7005729");
+		initialMessage.parse(string);
+
+		ourLog.info(initialMessage.printStructure());
+
+		// Make sure the same generic segment name is reused
+		zpi = (GenericSegment) initialMessage.get("ZPI");
+		assertEquals("7005729^^^TML^MR", zpi.getField(3, 0).encode());
+
+	}
+
 }

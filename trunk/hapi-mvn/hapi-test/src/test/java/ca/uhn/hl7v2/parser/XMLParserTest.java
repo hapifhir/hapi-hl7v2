@@ -11,14 +11,12 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.uhn.hl7v2.HL7Exception;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
@@ -34,7 +32,7 @@ import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 public class XMLParserTest extends TestCase {
 
     XMLParser parser;
-    private static final Log ourLog = LogFactory.getLog(XMLParserTest.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(XMLParserTest.class);
     
     /** Creates a new instance of XMLParserTest */
     public XMLParserTest(String arg) {

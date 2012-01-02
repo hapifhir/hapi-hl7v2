@@ -3,14 +3,14 @@ package ca.uhn.hl7v2.model;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.v24.datatype.CE;
 import ca.uhn.hl7v2.model.v26.datatype.AD;
 import ca.uhn.hl7v2.model.v26.datatype.CD;
 import ca.uhn.hl7v2.model.v26.datatype.ST;
-import ca.uhn.hl7v2.model.v24.datatype.CE;
 import ca.uhn.hl7v2.model.v26.message.ORU_R01;
 import ca.uhn.hl7v2.model.v26.segment.OBX;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
@@ -29,7 +29,7 @@ import ca.uhn.hl7v2.util.Terser;
 public class VariesTest extends TestCase {
 
 	public static final String MSH_TEXT = "MSH|^~\\&|QVDX|WP|CCG-PDC-Workflow|CCG-PDC-Workflow|19990927110328||ORU^R01|19990927110328|P|2.4\r";
-	private static final Log ourLog = LogFactory.getLog(VariesTest.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(VariesTest.class);
 	private EncodingCharacters ec = null;
 	private final EncodingCharacters encoders;
 	private final Message mshOnly;

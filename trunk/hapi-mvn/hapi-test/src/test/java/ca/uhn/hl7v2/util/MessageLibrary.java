@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.llp.MinLLPWriter;
 import ca.uhn.hl7v2.model.Message;
@@ -62,7 +62,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 @SuppressWarnings("serial")
 public class MessageLibrary extends ArrayList<LibraryEntry> {
 	
-	private static final Log LOG = LogFactory.getLog(MessageLibrary.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(MessageLibrary.class);
 	private final String MULTI_LINE_COMMENT_START = "/*";
 	private final String MULTI_LINE_COMMENT_END = "*/";
 	private final String SINGLE_LINE_COMMENT = "//";
@@ -177,7 +177,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						msg = parser.parse(msgStr);
 					} catch (Exception e) {
 						++numParsingErrors;
-						LOG.info("Parsing errors with message:\n" + msgStr, e);
+						ourLog.info("Parsing errors with message:\n" + msgStr, e);
 					}
 					entries.add(new LibraryEntry(new String(msgStr), new HashMap(segments), msg));
 					//reset for next message
@@ -188,9 +188,9 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			LOG.info("Message file not found " + messageFilePath, e);
+			ourLog.info("Message file not found " + messageFilePath, e);
 		} catch (IOException e) {
-			LOG.info("Unable to open message file: " + messageFilePath, e);
+			ourLog.info("Unable to open message file: " + messageFilePath, e);
 		}
 		return entries;
 	}

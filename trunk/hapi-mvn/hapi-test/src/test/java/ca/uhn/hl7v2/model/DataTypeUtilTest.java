@@ -55,7 +55,6 @@ public class DataTypeUtilTest extends TestCase {
 			int num;
 			int totalDigitLength;
 			Object outcome;
-			Exception exception = null;
 		
 			TestSpec(int num, int totalDigitLength, Object outcome) {
 				this.num = num;
@@ -98,7 +97,7 @@ public class DataTypeUtilTest extends TestCase {
 			new TestSpec(54321, 7, "0054321"),
 		};
 	
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

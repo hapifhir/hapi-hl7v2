@@ -5,9 +5,8 @@
 
 package ca.uhn.hl7v2.model;
 
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.PipeParser;
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 public class ConvenienceModelParseTest extends TestCase {
     private PipeParser parser;

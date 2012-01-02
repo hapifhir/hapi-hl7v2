@@ -1,12 +1,13 @@
 package ca.uhn.hl7v2.model;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
-import junit.framework.*;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.ARQ;
+import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
-import ca.uhn.hl7v2.model.v25.segment.OBX;
 
 /**
  * JUnit test cases for AbstractGroup
@@ -35,7 +36,7 @@ public class AbstractGroupTest extends TestCase {
 
         //test known segment
         message.addNonstandardSegment("ARQ");
-        Structure arq0 = message.get("ARQ", 0);
+        message.get("ARQ", 0);
         Structure arq1 = message.get("ARQ", 1);
         assertEquals(ARQ.class.getName(), arq1.getClass().getName());
         
