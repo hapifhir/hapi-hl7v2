@@ -33,11 +33,13 @@
 
 package ${basePackageName}segment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // import ${basePackageName}group.*;
 #foreach ( $datatypePackage in $datatypePackages )
 import ${datatypePackage}.*;
 #end
-import ca.uhn.log.HapiLogFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -103,7 +105,7 @@ public class ${segmentName} extends AbstractSegment {
           this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.descEscaped}");
 #end
        } catch(HL7Exception e) {
-          HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
+          LoggerFactory.getLogger(getClass()).error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
        }
 #end
     }
@@ -123,10 +125,10 @@ public class ${segmentName} extends AbstractSegment {
                 ret[i] = (${element.alternateType})t[i];
             }
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
         return ret;
@@ -144,10 +146,10 @@ public class ${segmentName} extends AbstractSegment {
             Type[] t = this.getField(${velocityCount});
             return t.length;  
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
     }
@@ -165,10 +167,10 @@ public class ${segmentName} extends AbstractSegment {
             Type t = this.getField(${velocityCount}, rep);
             ret = ($element.alternateType)t;
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
         return ret;
@@ -186,10 +188,10 @@ public class ${segmentName} extends AbstractSegment {
             Type t = this.getField(${velocityCount}, rep);
             ret = ($element.alternateType)t;
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
         return ret;
@@ -207,10 +209,10 @@ public class ${segmentName} extends AbstractSegment {
             Type[] t = this.getField(${velocityCount});
             return t.length;  
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
     }
@@ -278,10 +280,10 @@ public class ${segmentName} extends AbstractSegment {
             Type t = this.getField(${velocityCount}, 0);
             ret = ($element.alternateType)t;
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
         return ret;
@@ -298,10 +300,10 @@ public class ${segmentName} extends AbstractSegment {
             Type t = this.getField(${velocityCount}, 0);
             ret = ($element.alternateType)t;
         } catch (ClassCastException cce) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         } catch (HL7Exception he) {
-            HapiLogFactory.getHapiLog(this.getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
+            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
             throw new RuntimeException(he);
         }
         return ret;
