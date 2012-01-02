@@ -295,7 +295,7 @@ public class CommonTSTest {
 			new TestSpec("1", DataTypeException.class),
 			new TestSpec("19", DataTypeException.class),
 			new TestSpec("198", DataTypeException.class),
-			new TestSpec("1984", "1984" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
+			new TestSpec("1984", "1984"),
 			//year & time zone
 			new TestSpec("1984-1", DataTypeException.class),
 			new TestSpec("1984-11", DataTypeException.class),
@@ -312,8 +312,8 @@ public class CommonTSTest {
 			//month
 			new TestSpec("19840", DataTypeException.class),
 			new TestSpec("198400", DataTypeException.class),
-			new TestSpec("198401", "198401" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
-			new TestSpec("198412", "198412"  + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
+			new TestSpec("198401", "198401"),
+			new TestSpec("198412", "198412"),
 			new TestSpec("198413", DataTypeException.class),
 			//month & time zone
 			new TestSpec("198401-1", DataTypeException.class),
@@ -331,8 +331,8 @@ public class CommonTSTest {
 			//day
 			new TestSpec("1984010", DataTypeException.class),
 			new TestSpec("19840100", DataTypeException.class),
-			new TestSpec("19840101", "19840101" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
-			new TestSpec("19840131", "19840131" + String.format("%+05d", DataTypeUtil.getLocalGMTOffset())),
+			new TestSpec("19840101", "19840101"),
+			new TestSpec("19840131", "19840131"),
 			new TestSpec("19840132", DataTypeException.class),
 			//day & time zone
 			new TestSpec("19840101-1", DataTypeException.class),
