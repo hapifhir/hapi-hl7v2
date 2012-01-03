@@ -72,7 +72,7 @@ public abstract class HL7Service extends Service {
 	protected LowerLayerProtocol llp;
 	private MessageTypeRouter router;
 	private List<ConnectionListener> listeners;
-	private final ScheduledExecutorService cleanerExecutorService;
+	private ConnectionCleaner cleaner;
 
 	/** Creates a new instance of Server using a default thread pool */
 	public HL7Service(Parser parser, LowerLayerProtocol llp) {
@@ -88,8 +88,6 @@ public abstract class HL7Service extends Service {
 		this.parser = parser;
 		this.llp = llp;
 		this.router = new MessageTypeRouter();
-		this.cleanerExecutorService = DefaultExecutorService
-				.getScheduledService();
 	}
 
 	/**
@@ -104,10 +102,9 @@ public abstract class HL7Service extends Service {
 	protected void afterStartup() {
 		// Fix for bug 960101: Don't start the cleaner thread until the
 		// server is started.
-		cleanerExecutorService.scheduleAtFixedRate(new ConnectionCleaner(this),
-				500, 500, TimeUnit.MILLISECONDS);
+		cleaner = new ConnectionCleaner(this);
+		getExecutorService().submit(cleaner);
 	}
-
 
 	/**
 	 * Called after the thread has left its main loop. This implementation stops
@@ -118,7 +115,7 @@ public abstract class HL7Service extends Service {
 	@Override
 	protected void afterTermination() {
 		super.afterTermination();
-		cleanerExecutorService.shutdown();
+		cleaner.stopAndWait();
 		for (Connection c : connections) {
 			c.close();
 		}
@@ -296,31 +293,35 @@ public abstract class HL7Service extends Service {
 	 * removing elements from it.
 	 * 
 	 * Note: this could be started as daemon, so we don't need to care about
-	 * termination. Consider using a scheduled service executor
+	 * termination.
 	 */
-	private class ConnectionCleaner implements Runnable {
+	private class ConnectionCleaner extends Service {
 
 		HL7Service service;
 
 		public ConnectionCleaner(HL7Service service) {
+			super("ConnectionCleaner", service.getExecutorService());
 			this.service = service;
 		}
 
-		public void run() {
-			synchronized (service) {
-				Iterator<Connection> it = service.getRemoteConnections()
-						.iterator();
-				while (it.hasNext()) {
-					Connection conn = it.next();
-					if (!conn.isOpen()) {
-						log.debug(
-								"Removing connection from {} from connection list",
-								conn.getRemoteAddress().getHostAddress());
-						it.remove();
-						service.notifyListeners(conn);
+		public void handle() {
+			try {
+				Thread.sleep(500);
+				synchronized (service) {
+					Iterator<Connection> it = service.getRemoteConnections()
+							.iterator();
+					while (it.hasNext()) {
+						Connection conn = it.next();
+						if (!conn.isOpen()) {
+							log.debug(
+									"Removing connection from {} from connection list",
+									conn.getRemoteAddress().getHostAddress());
+							it.remove();
+							service.notifyListeners(conn);
+						}
 					}
 				}
-
+			} catch (InterruptedException e) {
 			}
 		}
 

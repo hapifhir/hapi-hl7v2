@@ -6,6 +6,15 @@
 	</properties>
 	<body>
         <release version="1.3" date="TBD">
+            <action type="add" dev="Christian Ohr" issue="3388301">
+            	Refactored large parts of the networking functionality in the ca.uhn.hl7v2.app package. Most
+				notably, an ExecutorService instance can be injected to customize the threading behavior.
+            </action>
+			<action type="add" dev="Christian Ohr" issue="3421082">
+            	Make TestPanel more usable. Amongst other changes, it's now possible to load HL7 messages 
+				directly from a file and to reuse client-side connections even when the MLLP server was 
+				restarted in the meanwhile.
+            </action>
         	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
         	can be accessed at:
 				<![CDATA[
