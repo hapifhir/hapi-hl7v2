@@ -31,7 +31,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Provides a global cached thread pool if Connections and Servers are not
@@ -59,10 +58,6 @@ public class DefaultExecutorService {
 	 */
 	public static boolean isDefaultService(ExecutorService service) {
 		return service == defaultExecutorService;
-	}
-
-	public static ScheduledExecutorService getScheduledService() {
-		return Executors.newScheduledThreadPool(1);
 	}
 	
 }

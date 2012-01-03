@@ -5,14 +5,14 @@ package ca.uhn.hl7v2.app;
 
 import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.completionService;
 import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.getDefaultService;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 import java.net.Socket;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.junit.AfterClass;
@@ -72,27 +72,29 @@ public class TwoPortInitiatorTest {
 		conn.close();
 		// Thread.sleep(2000);
 	}
-	
+
 	@Test
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50;
 		final Parser parser = new PipeParser();
 		Socket outsocket = new Socket("localhost", port1);
 		Socket insocket = new Socket("localhost", port2);
-		final Connection conn = new Connection(parser, new MinLowerLayerProtocol(), insocket, outsocket);
+		final Connection conn = new Connection(parser,
+				new MinLowerLayerProtocol(), insocket, outsocket);
 		final Random r = new Random(System.currentTimeMillis());
 		Callable<Boolean> t = new Callable<Boolean>() {
 			public Boolean call() {
 				try {
 					String id = Long.toString(r.nextLong());
 					Message out = parser.parse(msgText);
-					Terser.set((Segment)out.get("MSH"), 10, 0, 1, 1, id);
+					Terser.set((Segment) out.get("MSH"), 10, 0, 1, 1, id);
 					Message in = conn.getInitiator().sendAndReceive(out);
-					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1).equals(
-							Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
+					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1)
+							.equals(Terser.get((Segment) in.get("MSA"), 2, 0,
+									1, 1));
 				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
-				return false;
 			}
 		};
 		CompletionService<Boolean> completionService = completionService(getDefaultService());
@@ -102,11 +104,17 @@ public class TwoPortInitiatorTest {
 		while (n > 0) {
 			Future<Boolean> f = completionService.take();
 			assertNotNull(f);
-			assertTrue("Got FALSE response, " + n + " threads left", f.get());
-			n--;
+			try {
+				assertTrue("Got FALSE response, " + n + " threads left",
+						f.get());
+			} catch (ExecutionException e) {
+				fail(e.getMessage() + " " + n + " threads left");
+			} finally {
+				n--;
+			}
 		}
 		conn.close();
 
-	}	
+	}
 
 }
