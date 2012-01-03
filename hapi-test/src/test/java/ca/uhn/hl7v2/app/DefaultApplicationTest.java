@@ -33,6 +33,10 @@ public class DefaultApplicationTest {
         Terser t = new Terser(in);
         t.set("/MSH-1", "|");
         t.set("/MSH-2", "^~\\&");
+        t.set("/MSH-3", "senderapp");
+        t.set("/MSH-4", "senderfac");
+        t.set("/MSH-5", "receiverapp");
+        t.set("/MSH-6", "receiverfac");        
         t.set("/MSH-11", "D");
         t.set("/MSH-12", "2.4");
         t.set("/MSH-10", "boo");
@@ -57,6 +61,10 @@ public class DefaultApplicationTest {
         DefaultApplication.fillResponseHeader(inbound, outbound);
         String id2 = Terser.get(outbound, 10, 0, 1, 1);
         assertTrue(!id1.equals(id2));
+        assertEquals(Terser.get(inbound, 3, 0, 1, 1), Terser.get(outbound, 5, 0, 1, 1));
+        assertEquals(Terser.get(inbound, 4, 0, 1, 1), Terser.get(outbound, 6, 0, 1, 1));
+        assertEquals(Terser.get(inbound, 5, 0, 1, 1), Terser.get(outbound, 3, 0, 1, 1));
+        assertEquals(Terser.get(inbound, 6, 0, 1, 1), Terser.get(outbound, 4, 0, 1, 1));    
     }
     
     @Test

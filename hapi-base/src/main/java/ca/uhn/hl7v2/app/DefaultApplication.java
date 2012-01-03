@@ -184,6 +184,12 @@ public class DefaultApplication implements Application {
         Terser.set(outbound, 7, 0, 1, 1, CommonTS.toHl7TSFormat(now));
         Terser.set(outbound, 10, 0, 1, 1, MessageIDGenerator.getInstance().getNewID());
         Terser.set(outbound, 11, 0, 1, 1, procID);
-    }
+        
+        //revert sender and receiver
+        Terser.set(outbound, 3, 0, 1, 1, Terser.get(inbound, 5, 0, 1, 1));
+        Terser.set(outbound, 4, 0, 1, 1, Terser.get(inbound, 6, 0, 1, 1));
+        Terser.set(outbound, 5, 0, 1, 1, Terser.get(inbound, 3, 0, 1, 1));
+        Terser.set(outbound, 6, 0, 1, 1, Terser.get(inbound, 4, 0, 1, 1));    
+     }
 
 }
