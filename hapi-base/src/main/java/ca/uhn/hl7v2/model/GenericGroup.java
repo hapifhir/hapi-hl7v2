@@ -9,6 +9,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * it's a flat list of segments.    
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public class GenericGroup extends AbstractGroup {
     
     private String name;
@@ -18,15 +19,6 @@ public class GenericGroup extends AbstractGroup {
         super(parent, factory);
         this.name = name;
     }
-    
-    /** Returns the Message object to which this segment belongs.  This should normally be set at
-     * construction time.  A Structure can only belong to a single Message.  This is primarily
-     * to avoid a situation where intended changes in one message cause unintended changes
-     * in another that shares one of the same Structure objects.
-     */
-    /*public Message getMessage() {
-        return super.message;
-    }*/
     
     /**
      * Returns the name specified at construction time. 

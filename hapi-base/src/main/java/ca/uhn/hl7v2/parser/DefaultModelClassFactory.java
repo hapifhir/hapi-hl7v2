@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Segment;
@@ -353,16 +354,15 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	public static void reloadPackages() {
         packages.clear();
         ourVersions = new ArrayList<String>();
-        List<String> versions = Parser.getValidVersions();
-        for (String version : versions) {
+        for (Version v : Version.values()) {
             try {
-                String[] versionPackages = loadPackages(version);
+                String[] versionPackages = loadPackages(v.getVersion());
                 if (versionPackages.length > 0) {
-                    ourVersions.add(version);
+                    ourVersions.add(v.getVersion());
                 }
-                packages.put(version, versionPackages);
+                packages.put(v.getVersion(), versionPackages);
             } catch (HL7Exception e) {
-                throw new Error("Version \"" + version + "\" is invalid. This is a programming error: ", e);
+                throw new Error("Version \"" + v.getVersion() + "\" is invalid. This is a programming error: ", e);
             }
         }		
 	}

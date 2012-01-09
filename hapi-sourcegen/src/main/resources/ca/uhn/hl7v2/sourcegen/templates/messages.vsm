@@ -15,7 +15,7 @@
  * "[one_line_description]" 
  * 
  * The Initial Developer of the Original Code is University Health Network. Copyright (C) 
- * 2002.  All Rights Reserved. 
+ * 2012.  All Rights Reserved. 
  * 
  * Contributor(s): ______________________________________. 
  * 
@@ -39,9 +39,6 @@ import ${basePackageName}group.*;
 import ${basePackageName}segment.*;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -100,7 +97,7 @@ public class $message extends AbstractMessage  {
           this.add(${segment.name}.class, $reqd, $rept);
 #end
        } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
+          log.error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
        }
     }
 
@@ -122,14 +119,7 @@ public class $message extends AbstractMessage  {
      * $segment.indexName (${segment.description}) - creates it if necessary
      */
     public $segment.name get${segment.indexName}() { 
-       ${segment.name} ret = null;
-       try {
-          ret = (${segment.name})this.get("${segment.indexName}");
-       } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       return getTyped("${segment.indexName}", ${segment.name}.class);
     }
 
 
@@ -143,29 +133,14 @@ public class $message extends AbstractMessage  {
      *     greater than the number of existing repetitions.
      */
     public $segment.name get${segment.indexName}(int rep) { 
-       $segment.name ret = null;
-       try {
-          ret = (${segment.name})this.get("${segment.indexName}", rep);
-       } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       return getTyped("${segment.indexName}", rep, ${segment.name}.class);
     }
 
     /** 
      * Returns the number of existing repetitions of ${segment.indexName} 
      */ 
     public int get${segment.indexName}Reps() { 
-        int reps = -1; 
-        try { 
-            reps = this.getAll("${segment.indexName}").length; 
-        } catch (HL7Exception e) { 
-            String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
-            LoggerFactory.getLogger(getClass()).error(message, e); 
-            throw new RuntimeException(message);
-        } 
-        return reps; 
+    	return getReps("${segment.indexName}");
     } 
 
     /** 
@@ -178,7 +153,7 @@ public class $message extends AbstractMessage  {
      * </p>
      */ 
     public List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
-    	return this.getAllAsList("${segment.indexName}", ${segment.name}.class);
+    	return getAllAsList("${segment.indexName}", ${segment.name}.class);
     } 
 
     /**

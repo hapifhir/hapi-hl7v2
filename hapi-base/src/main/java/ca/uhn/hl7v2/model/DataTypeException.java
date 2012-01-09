@@ -35,6 +35,7 @@ import ca.uhn.hl7v2.HL7Exception;
  * to set the value of a primitive type to something invalid for that type. 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */ 
+@SuppressWarnings("serial")
 public class DataTypeException extends HL7Exception {
 
 

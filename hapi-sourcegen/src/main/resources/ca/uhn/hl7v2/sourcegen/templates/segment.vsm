@@ -15,7 +15,7 @@
  * "[one_line_description]" 
  * 
  * The Initial Developer of the Original Code is University Health Network. Copyright (C) 
- * 2002.  All Rights Reserved. 
+ * 2012.  All Rights Reserved. 
  * 
  * Contributor(s): ______________________________________. 
  * 
@@ -32,9 +32,6 @@
 
 
 package ${basePackageName}segment;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // import ${basePackageName}group.*;
 #foreach ( $datatypePackage in $datatypePackages )
@@ -105,7 +102,7 @@ public class ${segmentName} extends AbstractSegment {
           this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.descEscaped}");
 #end
        } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
+          log.error("Unexpected error creating ${segmentName} - this is probably a bug in the source code generator.", e);
        }
 #end
     }
@@ -117,21 +114,8 @@ public class ${segmentName} extends AbstractSegment {
      * Returns all repetitions of ${element.desc} (${segmentName}-${velocityCount}).
      */
     public ${element.alternateType}[] get${element.accessorName}() {
-        ${element.alternateType}[] ret = null;
-        try {
-            Type[] t = this.getField(${velocityCount});  
-            ret = new ${element.alternateType}[t.length];
-            for (int i = 0; i < ret.length; i++) {
-                ret[i] = (${element.alternateType})t[i];
-            }
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
-        return ret;
+    	${element.alternateType}[] retVal = this.getTypedField(${velocityCount}, new ${element.alternateType}[0]);
+    	return retVal;
     }
 
 
@@ -141,17 +125,7 @@ public class ${segmentName} extends AbstractSegment {
      * it will return zero.
      */
     public int get${element.accessorName}Reps() {
-        ${element.alternateType}[] ret = null;
-        try {
-            Type[] t = this.getField(${velocityCount});
-            return t.length;  
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
+    	return this.getReps(${velocityCount});
     }
 
 
@@ -162,18 +136,8 @@ public class ${segmentName} extends AbstractSegment {
      * @param rep The repetition index (0-indexed)
      */
     public ${element.alternateType} get${element.accessorName}(int rep) { 
-        $element.alternateType ret = null;
-        try {
-            Type t = this.getField(${velocityCount}, rep);
-            ret = ($element.alternateType)t;
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
-        return ret;
+		${element.alternateType} retVal = this.getTypedField(${velocityCount}, rep);
+		return retVal;
     }
 
     /**
@@ -183,20 +147,9 @@ public class ${segmentName} extends AbstractSegment {
      * @param rep The repetition index (0-indexed)
      */
     public ${element.alternateType} get${element.alternateAccessorName}(int rep) { 
-        $element.alternateType ret = null;
-        try {
-            Type t = this.getField(${velocityCount}, rep);
-            ret = ($element.alternateType)t;
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
-        return ret;
+		${element.alternateType} retVal = this.getTypedField(${velocityCount}, rep);
+		return retVal;
     }
-
 
     /**
      * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
@@ -204,19 +157,8 @@ public class ${segmentName} extends AbstractSegment {
      * it will return zero.
      */
     public int get${element.alternateAccessorName}Reps() {
-        ${element.alternateType}[] ret = null;
-        try {
-            Type[] t = this.getField(${velocityCount});
-            return t.length;  
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
+    	return this.getReps(${velocityCount});
     }
-
 
 
     /**
@@ -229,7 +171,6 @@ public class ${segmentName} extends AbstractSegment {
     public ${element.alternateType} insert${element.accessorName}(int rep) throws HL7Exception { 
         return ($element.alternateType) super.insertRepetition(${velocityCount}, rep);
     }
-
 
 
     /**
@@ -275,38 +216,17 @@ public class ${segmentName} extends AbstractSegment {
      * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
      */
     public $element.alternateType get${element.accessorName}() { 
-        $element.alternateType ret = null;
-        try {
-            Type t = this.getField(${velocityCount}, 0);
-            ret = ($element.alternateType)t;
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
-        return ret;
+		${element.alternateType} retVal = this.getTypedField(${velocityCount}, 0);
+		return retVal;
     }
-
-
+    
     /**
      * Returns
      * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
      */
     public $element.alternateType get${element.alternateAccessorName}() { 
-        $element.alternateType ret = null;
-        try {
-            Type t = this.getField(${velocityCount}, 0);
-            ret = ($element.alternateType)t;
-        } catch (ClassCastException cce) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", cce);
-            throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            LoggerFactory.getLogger(getClass()).error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
-        }
-        return ret;
+		${element.alternateType} retVal = this.getTypedField(${velocityCount}, 0);
+		return retVal;
     }
 
 #end

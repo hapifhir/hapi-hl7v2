@@ -38,7 +38,9 @@ import ca.uhn.hl7v2.parser.EncodingCharacters;
  */
 public abstract class AbstractType implements Type {
 
-    private final ExtraComponents extra;
+	private static final long serialVersionUID = -6976260024197429201L;
+	
+	private final ExtraComponents extra;
     private final Message message;
     
     /** 
@@ -91,26 +93,6 @@ public abstract class AbstractType implements Type {
 	 * {@inheritDoc }
 	 */
 	public void clear() {
-		if (this instanceof Composite) {
-
-			Composite composite = (Composite) this;
-			for (Type nextComponent : composite.getComponents()) {
-				nextComponent.clear();
-			}
-
-		} else if (!(this instanceof AbstractPrimitive) && (this instanceof Primitive)) {
-
-			// Most primitives don't hit this block because they extend AbstractPrimitive, which
-			// has an implementation of clear which clears the value without invoking validation
-
-			Primitive primitive = (Primitive) this;
-			try {
-				primitive.setValue("");
-			} catch (DataTypeException ex) {
-				throw new Error("Unable to clear the value of a primitive which does not extend AbstractPrimitive. This is likely a software bug.");
-			}
-		}
-
 		extra.clear();
 	}
 

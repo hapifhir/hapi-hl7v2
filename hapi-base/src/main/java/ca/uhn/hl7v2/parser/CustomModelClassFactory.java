@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -81,9 +82,8 @@ public class CustomModelClassFactory implements ModelClassFactory {
             packageName += ".";
         }
 
-        for (String nextVersion : Parser.getValidVersions()) {
-            final String packageVersion = "v" + nextVersion.replace(".", "");
-            customModelClasses.put(nextVersion, new String[] {packageName + packageVersion});
+        for (Version v : Version.values()) {
+            customModelClasses.put(v.getVersion(), new String[] {packageName + v.getPackageVersion()});
         }
     }
 

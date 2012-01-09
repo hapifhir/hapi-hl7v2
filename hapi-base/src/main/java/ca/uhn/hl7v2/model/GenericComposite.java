@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An unspecified Composite datatype that has an undefined number of components, each 
@@ -9,9 +10,10 @@ import java.util.ArrayList;
  * used to store unrecognized message constituents.  
  * @author Bryan Tripp
  */
-public class GenericComposite extends AbstractType implements Composite {
+@SuppressWarnings("serial")
+public class GenericComposite extends AbstractComposite {
     
-    private ArrayList<Type> components;
+    private List<Type> components;
     private Message message;
     
     /** Creates a new instance of GenericComposite */
@@ -29,36 +31,20 @@ public class GenericComposite extends AbstractType implements Composite {
         for (int i = components.size(); i <= number; i++) {
             components.add(new Varies(message));
         }
-        return (Type) components.get(number);
+        return components.get(number);
     }    
     
     /** 
      * Returns an array containing the components of this field.
      */
     public Type[] getComponents() {
-        Type[] ret = new Type[components.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = (Type) components.get(i);
-        }
-        return ret;
+    	return components.toArray(new Type[components.size()]);
     }    
     
     /** Returns the name of the type (used in XML encoding and profile checking)  */
     public String getName() {
         return "UNKNOWN";
     }
-
-	
-	/**
-	 * {@inheritDoc }
-	 */
-	public void clear() {
-		for (Type next : components) {
-			next.clear();
-		}
-	}
-
-
 
 
 }
