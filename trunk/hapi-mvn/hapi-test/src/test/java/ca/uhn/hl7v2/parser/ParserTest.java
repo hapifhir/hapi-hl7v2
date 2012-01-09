@@ -6,9 +6,6 @@
 
 package ca.uhn.hl7v2.parser;
 
-import java.util.Iterator;
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import org.slf4j.Logger;
@@ -124,19 +121,15 @@ public class ParserTest extends TestCase
 
 
     public void testGenericMessageAllVersions() throws Exception {
-        List versions = Parser.getValidVersions();
-        for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
-            String next = (String)iterator.next();
-            if (next.startsWith("2.0")) {
-                continue; // generic messages in 2.0 aren't handled
-            }
-            if (next.startsWith("2.1")) {
+        for (String version : Parser.getValidVersions()) {
+
+            if (version.startsWith("2.1")) {
                 continue; // generic messages in 2.0 aren't handled
             }
 
             // a valid ORU_R01 message in which MSH-9 has been changed
             String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ZZZ^ZZZ|LABGL1199510021852632|P|"
-                    + next
+                    + version
                     + "\r"
                     + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
                     + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r"
@@ -146,14 +139,14 @@ public class ParserTest extends TestCase
                     + "NTE|||           Normal:              Negative\r"
                     + "NTE|||           Toxic Concentration: >80 mg/dL\r";
 
-            ourLog.info("Parsing generic for version " + next);
+            ourLog.info("Parsing generic for version " + version);
             PipeParser p = new PipeParser();
             Message m;
             try {
                 m = p.parse(message);
             } catch (HL7Exception e) {
                 ourLog.error("Failed to parse: ", e);
-                fail("Failed to parse message for version " + next + ". Possibly GenericMessage needs to be modified: " + e.getMessage());
+                fail("Failed to parse message for version " + version + ". Possibly GenericMessage needs to be modified: " + e.getMessage());
                 return;
             }
             Terser t = new Terser(m);

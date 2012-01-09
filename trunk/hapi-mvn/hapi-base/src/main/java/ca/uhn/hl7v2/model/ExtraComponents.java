@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A set of "extra" components (sub-components) that are not a standard part 
@@ -26,7 +27,7 @@ public class ExtraComponents implements Serializable {
 
 	private static final long serialVersionUID = -2614683870975956395L;
     
-    private ArrayList<Varies> comps;
+    private List<Varies> comps;
     private Message message;
     
     /** Creates a new instance of ExtraComponents */
@@ -53,7 +54,7 @@ public class ExtraComponents implements Serializable {
      */
     public Varies getComponent(int comp) {
         ensureComponentAndPredecessorsExist(comp);
-        return (Varies) this.comps.get(comp);
+        return this.comps.get(comp);
     }
     
     /**

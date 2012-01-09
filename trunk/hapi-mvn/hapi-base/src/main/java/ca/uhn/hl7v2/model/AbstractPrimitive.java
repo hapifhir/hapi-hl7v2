@@ -39,6 +39,7 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  *    
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public abstract class AbstractPrimitive extends AbstractType implements Primitive {
     
     /**
@@ -165,7 +166,6 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
     public void clear() {
         super.clear();
         myValue = null;
-        getExtraComponents().clear();
     }
 
 }

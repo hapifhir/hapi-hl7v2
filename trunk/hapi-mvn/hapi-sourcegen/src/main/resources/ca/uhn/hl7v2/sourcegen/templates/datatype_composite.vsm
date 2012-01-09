@@ -15,7 +15,7 @@
  * "[one_line_description]" 
  * 
  * The Initial Developer of the Original Code is University Health Network. Copyright (C) 
- * 2002.  All Rights Reserved. 
+ * 2012.  All Rights Reserved. 
  * 
  * Contributor(s): ______________________________________. 
  * 
@@ -32,14 +32,10 @@
 
 package ${basePackageName}datatype;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.AbstractType;
+import ca.uhn.hl7v2.model.AbstractComposite
 
 /**
  * <p>Represents an HL7 ${datatypeName} (${desc}) data type. 
@@ -51,7 +47,7 @@ import ca.uhn.hl7v2.model.AbstractType;
  * </ul>
  */
 @SuppressWarnings("unused")
-public class ${datatypeName} extends AbstractType implements Composite {
+public class ${datatypeName} extends AbstractComposite {
 
     private Type[] data;
 
@@ -106,14 +102,7 @@ public class ${datatypeName} extends AbstractType implements Composite {
      * casting and handling an exception.
      */
     public ${component.type} get${component.accessorName}() {
-       ${component.type} ret = null;
-       try {
-          ret = (${component.type})getComponent(${idx});
-       } catch (DataTypeException e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected problem accessing known data type component - this is a bug.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       return getTyped(${idx}, ${component.type}.class);
     }
 
     
@@ -122,14 +111,7 @@ public class ${datatypeName} extends AbstractType implements Composite {
      * casting and handling an exception.
      */
     public ${component.type} get${component.alternateAccessorName}() {
-       ${component.type} ret = null;
-       try {
-          ret = (${component.type})getComponent(${idx});
-       } catch (DataTypeException e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected problem accessing known data type component - this is a bug.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       return getTyped(${idx}, ${component.type}.class);
     }
 
 

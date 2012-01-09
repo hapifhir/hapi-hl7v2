@@ -49,8 +49,8 @@ public class SegmentFinder extends MessageNavigator {
      * Returns the first segment with a name that matches the given pattern, in a depth-first search.  
      * Repeated searches are initiated from the location just AFTER where the last segment was found.
      * Call reset() is this is not desired.  Note: this means that the current location will not be found.
-     * @param segmentName the name of the segment to find.  The wildcad * means any number 
-     *      of arbitrary characters; the wildard ? one arbitrary character
+     * @param segmentName the name of the segment to find.  The wildcard * means any number 
+     *      of arbitrary characters; the wildcard ? one arbitrary character
      *      (eg "P*" or "*ID" or "???" or "P??" would match on PID).
      * @param rep the repetition of the segment to return
      */

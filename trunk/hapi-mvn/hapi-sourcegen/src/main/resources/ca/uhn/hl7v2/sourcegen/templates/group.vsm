@@ -16,7 +16,7 @@
  * "[one_line_description]" 
  * 
  * The Initial Developer of the Original Code is University Health Network. Copyright (C) 
- * 2002.  All Rights Reserved. 
+ * 2012.  All Rights Reserved. 
  * 
  * Contributor(s): ______________________________________. 
  * 
@@ -38,16 +38,10 @@ import ${basePackageName}segment.*;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.AbstractGroup;
-import ca.uhn.hl7v2.model.GenericSegment;
 
 /**
  * <p>Represents a $groupName group structure (${typeDescription}).
@@ -97,7 +91,7 @@ public class $groupName extends AbstractGroup {
           this.add(${group.name}.class, $reqd, $rept);
 #end
        } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error creating $groupName - this is probably a bug in the source code generator.", e);
+          log.error("Unexpected error creating $groupName - this is probably a bug in the source code generator.", e);
        }
     }
 
@@ -119,14 +113,8 @@ public class $groupName extends AbstractGroup {
      * $group.indexName (${group.description}) - creates it if necessary
      */
     public $group.name get${group.indexName}() { 
-       ${group.name} ret = null;
-       try {
-          ret = (${group.name})this.get("${group.indexName}");
-       } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       $group.name retVal = getTyped("${group.indexName}", ${group.name}.class);
+       return retVal;
     }
 
 
@@ -140,29 +128,15 @@ public class $groupName extends AbstractGroup {
      *     greater than the number of existing repetitions.
      */
     public $group.name get${group.indexName}(int rep) { 
-       $group.name ret = null;
-       try {
-          ret = (${group.name})this.get("${group.indexName}", rep);
-       } catch(HL7Exception e) {
-          LoggerFactory.getLogger(getClass()).error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-          throw new RuntimeException(e);
-       }
-       return ret;
+       $group.name retVal = getTyped("${group.indexName}", rep, ${group.name}.class);
+       return retVal;
     }
 
     /** 
      * Returns the number of existing repetitions of ${group.indexName} 
      */ 
-    public int get${group.indexName}Reps() { 
-        int reps = -1; 
-        try { 
-            reps = this.getAll("${group.indexName}").length; 
-        } catch (HL7Exception e) { 
-            String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
-            LoggerFactory.getLogger(getClass()).error(message, e); 
-            throw new RuntimeException(message);
-        } 
-        return reps; 
+    public int get${group.indexName}Reps() {  
+        return getReps("${group.indexName}");
     } 
 
     /** 
@@ -175,7 +149,7 @@ public class $groupName extends AbstractGroup {
      * </p>
      */ 
     public List<${group.name}> get${group.indexName}All() throws HL7Exception {
-    	return this.getAllAsList("${group.indexName}", ${group.name}.class);
+    	return getAllAsList("${group.indexName}", ${group.name}.class);
     } 
 
     /**

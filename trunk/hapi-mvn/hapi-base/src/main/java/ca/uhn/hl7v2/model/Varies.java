@@ -28,12 +28,13 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
-import ca.uhn.log.HapiLog;
-import ca.uhn.log.HapiLogFactory;
 
 /**
  * <p>Varies is a Type used as a placeholder for another Type in cases where 
@@ -95,7 +96,7 @@ public class Varies implements Type {
      */ 
     public static final String ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE = "ca.uhn.hl7v2.model.varies.escape_subcomponent_delim_in_primitive";
     
-	private static final HapiLog log = HapiLogFactory.getHapiLog(Varies.class);
+	private static final Logger log = LoggerFactory.getLogger(Varies.class);
 
     private Type data;
     private Message message;
@@ -199,7 +200,7 @@ public class Varies implements Type {
 	                	defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
 	                }
 					if (defaultOBX2Type != null) {
-	                    log.debug("setting default obx2 type to " + defaultOBX2Type);
+	                    log.debug("setting default obx2 type to {}", defaultOBX2Type);
 	                    obx2.setValue(defaultOBX2Type);
 	                }
                 } // if

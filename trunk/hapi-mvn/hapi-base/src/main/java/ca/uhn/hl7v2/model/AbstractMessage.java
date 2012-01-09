@@ -47,6 +47,7 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  * A default implementation of Message. 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
+@SuppressWarnings("serial")
 public abstract class AbstractMessage extends AbstractGroup implements Message {
     
     private ValidationContext myContext;
@@ -58,18 +59,21 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * @param theFactory factory for model classes (e.g. group, segment) for this message 
      */
     public AbstractMessage(ModelClassFactory theFactory) {
-        super(theFactory);
+        super(null, theFactory);
     }
     
     /** 
-     * Returns this Message object - this is an implementation of the 
-     * abstract method in AbstractGroup.  
+     * Returns this Message object.  
      */
     public Message getMessage() {
        return this; 
     }
     
-    /**
+	public Group getParent() {
+		return this;
+	}
+
+	/**
      * Returns the version number.  This default implementation inspects 
      * this.getClass().getName().  This should be overridden if you are putting
      * a custom message definition in your own package, or it will default.  

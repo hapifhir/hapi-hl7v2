@@ -1,15 +1,15 @@
 package ca.uhn.hl7v2.model;
 
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.log.*;
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
 
 /**
  * A generic HL7 message, meant for parsing message with unrecognized structures
  * into a flat list of segments.
  * @author Bryan Tripp
  */
+@SuppressWarnings("serial")
 public abstract class GenericMessage extends AbstractMessage {
     
     /** 
@@ -23,8 +23,8 @@ public abstract class GenericMessage extends AbstractMessage {
             this.addNonstandardSegment("MSH");
         } catch(HL7Exception e) {
             String message = "Unexpected error adding GenericSegment to GenericMessage.";
-            HapiLogFactory.getHapiLog(this.getClass()).error(message, e);
-            throw new Error(message);
+            log.error(message, e);
+            throw new Error(message); // TODO better throw RuntimeException
         }        
     }
     
@@ -33,32 +33,20 @@ public abstract class GenericMessage extends AbstractMessage {
      * This is needed so that version-specific segments can be added as the message
      * is parsed.  
      */
-    public static Class<? extends Message> getGenericMessageClass(String version) {
-        if (!Parser.validVersion(version))
+    @SuppressWarnings("unchecked")
+	public static Class<? extends Message> getGenericMessageClass(String version) {
+        if (!Version.supportsVersion(version))
             throw new IllegalArgumentException("The version " + version + " is not recognized");
         
-        Class<? extends Message> c = null;
-        if (version.equals("2.1")) {
-            c = V21.class;
-        } else if (version.equals("2.2")) {
-            c = V22.class;
-        } else if (version.equals("2.3")) {
-            c = V23.class;
-        } else if (version.equals("2.3.1")) {
-            c = V231.class;
-        } else if (version.equals("2.4")) {
-            c = V24.class;
-        } else if (version.equals("2.5")) {
-            c = V25.class;
-        } else if (version.equals("2.5.1")) {
-            c = V251.class;
-        } else if (version.equals("2.6")) {
-            c = V26.class;
-        } else {
-        	return UnknownVersion.class;
+        Class<? extends Message> c = UnknownVersion.class;
+        try {
+        	String fqn = GenericMessage.class.getName() + "." + Version.versionOf(version).name();
+        	c = (Class<? extends Message>)Class.forName(fqn);
+        } catch (ClassNotFoundException e) {
         }
         return c;
     }
+
 
     public static class UnknownVersion extends GenericMessage {
 		private static final long serialVersionUID = 4773366840392833956L;
@@ -67,8 +55,7 @@ public abstract class GenericMessage extends AbstractMessage {
             super(factory);
         }
         public String getVersion() {
-        	// FIXME: use from somewhere
-        	return "2.6";
+        	return Version.latestVersion().getVersion();
         }
 
     }

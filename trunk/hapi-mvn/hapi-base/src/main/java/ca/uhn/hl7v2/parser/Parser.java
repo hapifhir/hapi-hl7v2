@@ -31,10 +31,7 @@ package ca.uhn.hl7v2.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -42,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Group;
@@ -68,8 +66,6 @@ public abstract class Parser {
     private ValidationContext myContext;
     private MessageValidator myValidator;
     private ParserConfiguration myParserConfiguration = new ParserConfiguration();
-    
-	private static final List<String> versions = Collections.unmodifiableList(Arrays.asList(new String[] { "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6" }));
 
     static {
         VersionLogger.init();
@@ -457,7 +453,7 @@ public abstract class Parser {
         Segment msh = null;
         
         try {
-            Message dummy = (Message) GenericMessage.getGenericMessageClass(version)
+            Message dummy = GenericMessage.getGenericMessageClass(version)
                 .getConstructor(new Class[]{ModelClassFactory.class}).newInstance(new Object[]{factory});
             
             Class<?>[] constructorParamTypes = { Group.class, ModelClassFactory.class };
@@ -477,21 +473,11 @@ public abstract class Parser {
 
     /** 
      * Returns true if the given string represents a valid 2.x version.  Valid versions 
-     * include "2.0", "2.0D", "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", etc 
+     * include "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.6"
      */
     public static boolean validVersion(String version) {
-        return versions.contains(version);
+        return Version.supportsVersion(version);
     }
-    
-    
-    /**
-     * @return A list of strings containing the valid versions of HL7 supported by HAPI ("2.1", "2.2", etc)
-     */
-    public static List<String> getValidVersions() {
-        return versions;
-    }
-    
-    
     
     /**
      * Given a concatenation of message type and event (e.g. ADT_A04), and the 
@@ -558,15 +544,15 @@ public abstract class Parser {
     
     private static Map<String, Properties> loadMessageStructures() throws IOException {
         Map<String, Properties> map = new HashMap<String, Properties>();
-        for (String version : versions) {
-            String resource = "ca/uhn/hl7v2/parser/eventmap/" + version + ".properties";
+        for (Version v : Version.values()) {
+            String resource = "ca/uhn/hl7v2/parser/eventmap/" + v.getVersion() + ".properties";
             InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
             
             Properties structures = null;
             if (in != null) {            
                 structures = new Properties();
                 structures.load(in);
-                map.put(version, structures);
+                map.put(v.getVersion(), structures);
             }
             
         }
