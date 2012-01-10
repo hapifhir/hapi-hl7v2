@@ -40,6 +40,10 @@ public abstract class AbstractStructure implements Structure {
 		log = LoggerFactory.getLogger(getClass());
 	}
 
+    /**
+     * Returns the parent group within which this structure exists (may be root
+     * message group).
+     */
 	public Message getMessage() { 
 		return getParent().getMessage();
 	}
