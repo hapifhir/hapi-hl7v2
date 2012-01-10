@@ -61,7 +61,6 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     private Map<String, Boolean> repeating;
     private Map<String, Class<? extends Structure>> classes;
     // protected Message message;
-    private Group parent;
     private Set<String> nonStandardNames;
     private final ModelClassFactory myFactory;
 
@@ -338,14 +337,6 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             }
         }
         return s;
-    }
-
-    /**
-     * Returns the parent group within which this structure exists (may be root
-     * message group).
-     */
-    public Group getParent() {
-        return this.parent;
     }
 
     /**
