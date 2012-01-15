@@ -131,7 +131,54 @@ public class CommonTSTest {
 	 * Test Cases
 	 ********************************************************** 
 	 */
-	 
+	
+	@Test
+	public void testGetCalendarRespectsDaylightSavings() throws DataTypeException, ParseException {
+		
+    	SimpleDateFormat utcFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+
+    	CommonTS ts = new CommonTS();
+    	ts.setValue("19840601080102-0400");
+
+    	Calendar asCalendar = ts.getValueAsCalendar();
+		assertEquals(8, asCalendar.get(Calendar.HOUR_OF_DAY));
+    	assertEquals(1, asCalendar.get(Calendar.MINUTE));
+    	assertEquals(2, asCalendar.get(Calendar.SECOND));
+    	assertEquals(-4, asCalendar.get(Calendar.ZONE_OFFSET) / (60 * 60 * 1000));
+    	
+    	Date asDate = ts.getValueAsDate();
+    	assertEquals(asCalendar.getTime(), asDate);
+    	assertEquals(asCalendar.getTimeInMillis(), asDate.getTime());
+    	
+    	Date midnightUtc = utcFmt.parse("1984-06-01 12:01:02 +0000");
+    	assertEquals(midnightUtc, ts.getValueAsDate());
+
+    	/*
+    	 * We try this once on Jun 1 and once on Jan 1 so that we cover
+    	 * the case of parsing a non-DST date during DST, as well as
+    	 * a DST date outside of DST.
+    	 */
+    	
+    	ts = new CommonTS();
+    	ts.setValue("19840101070102-0500");
+
+    	asCalendar = ts.getValueAsCalendar();
+		assertEquals(7, asCalendar.get(Calendar.HOUR_OF_DAY));
+    	assertEquals(1, asCalendar.get(Calendar.MINUTE));
+    	assertEquals(2, asCalendar.get(Calendar.SECOND));
+    	assertEquals(-5, asCalendar.get(Calendar.ZONE_OFFSET) / (60 * 60 * 1000));
+    	
+    	asDate = ts.getValueAsDate();
+    	assertEquals(asCalendar.getTime(), asDate);
+    	assertEquals(asCalendar.getTimeInMillis(), asDate.getTime());
+    	
+    	midnightUtc = utcFmt.parse("1984-01-01 12:01:02 +0000");
+
+    	assertEquals(midnightUtc, ts.getValueAsDate());
+
+	}
+	
+	
 	/**
 	 * Test for http://sourceforge.net/support/tracker.php?aid=3410095
 	 */
