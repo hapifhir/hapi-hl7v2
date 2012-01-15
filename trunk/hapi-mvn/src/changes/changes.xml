@@ -88,6 +88,19 @@
         		timezone offset values. Thanks to Jason Thompson for reporting and
         		providing a fix.
         	</action>
+        	<action type="fix" dev="James Agnew">
+        		<![CDATA[
+        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#getValueAsCalendar()">CommonTS#getValueAsCalendar()</a>
+        		]]>
+        		now sets the TimeZone associated with the returned Calendar object to have a TZ-offset equivalent to the
+        		offset provided in the raw HL7 data (e.g. if the value was "201201010800-0400", Calendar.setTimeZone(TimeZone) will be called with
+        		a timezone containing GMT-4:00). 
+        		<![CDATA[
+        		<br><br>
+        		]]>
+        		This prevents issues when parsing times in a locale with Daylight Savings Time outside of
+        		the current DST window, such as parsing 201201010800-0400 in Toronto in June, when the DST offset is actually -0500.  
+        	</action>
         	<!-- 
         	<action type="add" dev="James Agnew">
         		..Introduce ParserConfiguration and setEncodeEmptySegments
@@ -165,7 +178,26 @@
 						<li>Modify Conformance Profile <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/conf/check/DefaultValidator.html">DefaultValidator</a> so that it can be used to validate individual parts of a message (e.g. only one segment, group, etc.) and not just the entire message</li>						
 					</ul>
 				]]>
-				</action>
+			</action>
+			<action dev="James Agnew" type="fix">
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#parse(java.lang.String)">Message#parse(java.lang.String)</a>
+				]]>
+				and
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#encode()">Message#encode()</a>
+				]]>
+				now work correctly when the message parser is an XML based parser. Previously
+				these convenience methods only worked for Pipe parsers. 
+			</action>
+			<action dev="James Agnew" type="fix" issue="3471571">
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#generateACK()">Message#generateACK()</a>
+				]]>
+				now respects the ModelClassFactory used to build/parse the message from which the ACK is being generated. This means
+				for example that if a CanonicalModelClassFactory is used to construct a message, that same CMCF will be used to
+				generate its ACK. Thanks to Rahul Somasunderam for reporting this and providing a workaround!
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
