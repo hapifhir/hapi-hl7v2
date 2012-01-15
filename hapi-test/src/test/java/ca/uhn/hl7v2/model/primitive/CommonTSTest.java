@@ -153,6 +153,11 @@ public class CommonTSTest {
     	Date midnightUtc = utcFmt.parse("1984-06-01 12:01:02 +0000");
     	assertEquals(midnightUtc, ts.getValueAsDate());
 
+    	// Make sure it reverses correctly as well
+    	CommonTS ts2 = new CommonTS();
+    	ts2.setValue(asCalendar);
+    	assertEquals(ts.getValue(), ts2.getValue());
+    	
     	/*
     	 * We try this once on Jun 1 and once on Jan 1 so that we cover
     	 * the case of parsing a non-DST date during DST, as well as
@@ -175,6 +180,11 @@ public class CommonTSTest {
     	midnightUtc = utcFmt.parse("1984-01-01 12:01:02 +0000");
 
     	assertEquals(midnightUtc, ts.getValueAsDate());
+
+    	// Make sure it reverses correctly as well
+    	ts2 = new CommonTS();
+    	ts2.setValue(asCalendar);
+    	assertEquals(ts.getValue(), ts2.getValue());
 
 	}
 	
