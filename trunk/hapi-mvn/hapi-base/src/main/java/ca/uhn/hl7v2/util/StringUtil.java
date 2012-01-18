@@ -6,12 +6,12 @@ package ca.uhn.hl7v2.util;
 public class StringUtil {
 
 	/**
-	 * Counts the number of lines in a string by counting the
-	 * number of "\n" or "\r" or "\r\n" sequences which appear in it
+	 * Counts the number of lines in a string by counting the number of "\n" or
+	 * "\r" or "\r\n" sequences which appear in it
 	 */
 	public static int countLines(String theString) {
 		int retVal = 1;
-		
+
 		for (int i = 0; i < theString.length(); i++) {
 			char nextChar = theString.charAt(i);
 			if (i > 0 && nextChar == '\n' && theString.charAt(i - 1) == '\r') {
@@ -21,12 +21,13 @@ public class StringUtil {
 				retVal++;
 			}
 		}
-		
+
 		return retVal;
 	}
 
 	/**
-	 * Removes any line separators (\r ot \n) from the end of a string and returns that string
+	 * Removes any line separators (\r ot \n) from the end of a string and
+	 * returns that string
 	 */
 	public static String chomp(String theLine) {
 		int i;
@@ -37,7 +38,7 @@ public class StringUtil {
 				break;
 			}
 		}
-		
+
 		if (i == start) {
 			return theLine;
 		} else {
@@ -46,12 +47,28 @@ public class StringUtil {
 	}
 
 	/**
-	 * Throws an IllegalArgumentException if the value is an empty string or null
+	 * Throws an IllegalArgumentException if the value is an empty string or
+	 * null
 	 */
 	public static void validateNotEmpty(String theValue) {
 		if (theValue == null || theValue.length() == 0) {
 			throw new IllegalArgumentException();
 		}
 	}
-	
+
+	/**
+	 * Search within a string and replace one substring with another. Based on
+	 * the method within Commons-Lang StringUtils.
+	 */
+	public static String replace(String theString, String theMatch, String theReplacement) {
+		StringBuffer buf = new StringBuffer(theString.length());
+		int start = 0, end = 0;
+		while ((end = theString.indexOf(theMatch, start)) != -1) {
+			buf.append(theString.substring(start, end)).append(theReplacement);
+			start = end + theMatch.length();
+		}
+		buf.append(theString.substring(start));
+		return buf.toString();
+	}
+
 }
