@@ -29,10 +29,9 @@ package ca.uhn.hl7v2.model.primitive;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.util.StringUtil;
 
 /**
  * Base class for a textual datatype such as FT, TX, ST.
@@ -58,10 +57,28 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 	 * <pre>ABC &lt;center&gt;MIDDLE&lt;center&gt;&lt;br&gt;</pre>
 	 * </p>
 	 * <p>
+	 * The following codes are handled:
+	 * <ul>
+	 * <li>\.br\
+	 * <li>\.ce\
+	 * <li>\.sk\
+	 * <li>\.sp\
+	 * <li>\.sp ###\
+	 * <li>\.fi\
+	 * <li>\.nf\
+	 * <li>\.in\
+	 * <li>\.ti\
+	 * <li>\H\
+	 * <li>\N\
+	 * <li>Ampersands (&amp;) are converted to their HTML equivalent (&amp;amp;)
+	 * <li>Chars over ASCII 160 are HTML encoded (e.g. &amp;#199;) 
+	 * </ul>
+	 * </p>
+	 * <p>
 	 * Note that the returned value is an HTML snippet, not a complete HTML document.
 	 * </p>
 	 */
-	protected String getValueAsHtml() {
+	public String getValueAsHtml() {
 		// See section 2.3.6 from the OLIS spec
 
 		String string = getValue();
@@ -75,7 +92,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 		while (matcher.find()) {
 			String match = matcher.group();
 			String replacement = "\\.br\\<center>" + matcher.group(1) + "</center>" + matcher.group(2);
-			string = StringUtils.replace(string, match, replacement);
+			string = StringUtil.replace(string, match, replacement);
 		}
 
 		// \.sk <number>\ conversion
@@ -94,7 +111,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 			} catch (NumberFormatException e) {
 				replacement = " ";
 			}
-			string = StringUtils.replace(string, match, replacement);
+			string = StringUtil.replace(string, match, replacement);
 		}
 
 		// \.sp <number>\ conversion
@@ -113,7 +130,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 			} catch (NumberFormatException e) {
 				replacement = " ";
 			}
-			string = StringUtils.replace(string, match, replacement);
+			string = StringUtil.replace(string, match, replacement);
 		}
 
 		// \.sp\ conversion
