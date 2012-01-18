@@ -103,7 +103,7 @@ public abstract class HL7Service extends Service {
 		// Fix for bug 960101: Don't start the cleaner thread until the
 		// server is started.
 		cleaner = new ConnectionCleaner(this);
-		getExecutorService().submit(cleaner);
+		cleaner.start();
 	}
 
 	/**
@@ -302,6 +302,12 @@ public abstract class HL7Service extends Service {
 		public ConnectionCleaner(HL7Service service) {
 			super("ConnectionCleaner", service.getExecutorService());
 			this.service = service;
+		}
+
+		@Override
+		public void start() {
+			log.info("Starting ConnectionCleaner service");
+			super.start();
 		}
 
 		public void handle() {
