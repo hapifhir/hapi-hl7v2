@@ -219,6 +219,13 @@ public class ProfileParser {
 		Element root = doc.getDocumentElement();
 		profile.setHL7Version(root.getAttribute("HL7Version"));
 
+		NodeList metadataList = root.getElementsByTagName("MetaData");
+		if (metadataList.getLength() > 0) {
+			Element metadata = (Element) metadataList.item(0);
+			String name = metadata.getAttribute("Name");
+			profile.setName(name);
+		}
+		
 		// get static definition
 		NodeList nl = root.getElementsByTagName("HL7v2xStaticDef");
 		Element staticDef = (Element) nl.item(0);
