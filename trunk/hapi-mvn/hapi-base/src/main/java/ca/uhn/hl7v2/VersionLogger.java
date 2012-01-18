@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class VersionLogger {
 
     private static boolean ourInitialized = false;
+	private static String ourVersion;
     private static final Logger LOG = LoggerFactory.getLogger(VersionLogger.class);
     
     /**
@@ -26,16 +27,24 @@ public class VersionLogger {
      */
     public static void init() {
         if (!ourInitialized) {
-            ourInitialized = true;
             try {
                 InputStream is = VersionLogger.class.getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties");
                 Properties p = new Properties();
                 p.load(is);
-                LOG.info("HAPI version is: " + p.getProperty("version"));
+                ourVersion = p.getProperty("version");
+				LOG.info("HAPI version is: " + ourVersion);
             } catch (Exception e) {
                 // ignore
             }
+            ourInitialized = true;
         }
     }
+
+	/**
+	 * @return Returns the current version of HAPI
+	 */
+	public static String getVersion() {
+		return ourVersion;
+	}
     
 }

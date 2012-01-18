@@ -56,7 +56,7 @@ public enum Version {
 	
 	public static Version versionOf(String version) {
 		for (Version v : Version.values()) {
-			if (version.equals(v.getVersion())) {
+			if (v.getVersion().equals(version)) {
 				return v;
 			}
 		}
