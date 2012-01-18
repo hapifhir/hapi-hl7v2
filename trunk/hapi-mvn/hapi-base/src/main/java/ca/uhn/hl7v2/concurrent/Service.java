@@ -85,6 +85,7 @@ public abstract class Service implements Runnable {
 	 * continues until <code>stop()</code> is called.
 	 */
 	public void start() {
+		log.debug("Starting service {}", name);
 		keepRunning = true;
 		thread = getExecutorService().submit(this);
 	}
