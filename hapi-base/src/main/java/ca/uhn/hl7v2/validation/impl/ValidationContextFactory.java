@@ -47,30 +47,43 @@ import ca.uhn.hl7v2.validation.ValidationException;
 public class ValidationContextFactory {
 
     private static ValidationContext ourContext;
+    
     public static final String CONTEXT_PROPERTY = "ca.uhn.hl7v2.validation.context_class";
+    
+    private static final ValidationContext NO_VALIDATION = new NoValidation();
+    private static final ValidationContext DEFAULT_VALIDATION = new DefaultValidation();
     
     /**
      * Returns a singleton <code>ValidationContext</code>, creating it if necessary.
      * 
      * @return <code>ValidationContext</code> 
      */
-    @SuppressWarnings("unchecked")
 	public synchronized static ValidationContext getContext() throws ValidationException {
         if (ourContext == null) {
             String contextClassName = System.getProperty(CONTEXT_PROPERTY);            
-            if (contextClassName == null) {
-                ourContext = new DefaultValidation();
-            } else {
-                Class<? extends ValidationContext> c;
-                try {
-                    c = (Class<? extends ValidationContext>) Class.forName(contextClassName);
-                    ourContext = (ValidationContext) c.newInstance();
-                } catch (Exception e) {
-                    throw new ValidationException(e);
-                }
-            }
+            ourContext = contextClassName == null ? 
+            		defaultValidation() : 
+            		customValidation(contextClassName);
         }
         return ourContext;
     }
+    
+    public static ValidationContext noValidation() {
+    	return NO_VALIDATION;
+    }
+    
+    public static ValidationContext defaultValidation() {
+    	return DEFAULT_VALIDATION;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static ValidationContext customValidation(String contextClassName) throws ValidationException {
+        try {
+        	Class<? extends ValidationContext> c = (Class<? extends ValidationContext>) Class.forName(contextClassName);
+            return c.newInstance();
+        } catch (Exception e) {
+            throw new ValidationException(e);
+        }
+    }    
 
 }

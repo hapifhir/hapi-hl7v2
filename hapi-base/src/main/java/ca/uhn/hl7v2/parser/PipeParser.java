@@ -46,6 +46,7 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * An implementation of Parser that supports traditionally encoded (ie delimited
@@ -744,7 +745,7 @@ public class PipeParser extends Parser {
      */
     public static PipeParser getInstanceWithNoValidation() {
         PipeParser retVal = new PipeParser();
-        retVal.setValidationContext(new NoValidation());
+        retVal.setValidationContext(ValidationContextFactory.noValidation());
         return retVal;
     }
 

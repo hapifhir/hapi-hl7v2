@@ -49,7 +49,6 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
@@ -93,7 +92,7 @@ public abstract class Parser {
 		} catch (ValidationException e) {
 			log.warn("Failed to get a validation context from the " + 
 					"ValidationContextFactory", e);
-			validationContext = new DefaultValidation();
+			validationContext = ValidationContextFactory.defaultValidation();
 		}
         setValidationContext(validationContext);
     }
