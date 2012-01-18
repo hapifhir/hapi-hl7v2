@@ -218,13 +218,24 @@ public abstract class XMLParser extends Parser {
         Message m = null;
 
         //parse message string into a DOM document 
-        try {
-            Document doc = null;
-            synchronized (this) {
-                parser.parse(new InputSource(new StringReader(message)));
-                doc = parser.getDocument();
-            }
-            m = parseDocument(doc, version);
+        Document doc = null;
+        doc = parseStringIntoDocument(message);
+        m = parseDocument(doc, version);
+
+        return m;
+    }
+
+    /**
+     * Parses a string containing an XML document into a Document object.
+     * 
+     * Note that this method is synchronized currently, as the XML parser is
+     * not thread safe
+     * @throws HL7Exception 
+     */
+	protected synchronized Document parseStringIntoDocument(String message) throws HL7Exception {
+		Document doc;
+		try {
+			parser.parse(new InputSource(new StringReader(message)));
         }
         catch (SAXException e) {
             throw new HL7Exception("SAXException parsing XML", HL7Exception.APPLICATION_INTERNAL_ERROR, e);
@@ -232,9 +243,10 @@ public abstract class XMLParser extends Parser {
         catch (IOException e) {
             throw new HL7Exception("IOException parsing XML", HL7Exception.APPLICATION_INTERNAL_ERROR, e);
         }
-
-        return m;
-    }
+		
+		doc = parser.getDocument();
+		return doc;
+	}
 
     /**
      * Formats a Message object into an HL7 message string using the given
@@ -750,17 +762,6 @@ public abstract class XMLParser extends Parser {
      * @throws Unsupported operation exception
      */
     @Override
-    public void parse(Message message, String string) throws HL7Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
-    /**
-     * Throws unsupported operation exception
-     *
-     * @throws Unsupported operation exception
-     */
-    @Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
         throw new UnsupportedOperationException("Not supported yet.");
 	}
@@ -825,6 +826,11 @@ public abstract class XMLParser extends Parser {
                 }
                 public String getVersion(String message) throws HL7Exception {
                     return null;
+                }
+
+                @Override
+                public void parse(Message message, String string) throws HL7Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
                 }
 
                 @Override

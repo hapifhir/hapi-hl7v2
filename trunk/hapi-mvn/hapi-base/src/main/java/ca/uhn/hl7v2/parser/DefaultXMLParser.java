@@ -363,5 +363,14 @@ public class DefaultXMLParser extends XMLParser {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void parse(Message theMessage, String theString) throws HL7Exception {
+		Document doc = parseStringIntoDocument(theString);
+        parse(theMessage, doc.getDocumentElement());
+	}
+
 
 }
