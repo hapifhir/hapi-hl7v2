@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 
@@ -69,7 +68,7 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
         
         Message ack = null;
         try {
-            ack = ca.uhn.hl7v2.app.DefaultApplication.makeACK((Segment) in.get("MSH"));
+            ack = ca.uhn.hl7v2.app.DefaultApplication.makeACK(in);
             addProblemsToACK(ack, problems);
         } catch (java.io.IOException e) {
             throw new HL7Exception(e);

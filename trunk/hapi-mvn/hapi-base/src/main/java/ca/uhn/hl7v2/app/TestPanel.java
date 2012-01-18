@@ -71,7 +71,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import ca.uhn.hl7v2.view.TreePanel;
 
 /**
@@ -124,7 +124,7 @@ public class TestPanel extends JPanel implements ConnectionListener {
 
 		this.parser = new GenericParser();
 		// Relax all validation
-		this.parser.setValidationContext(new NoValidation());
+		this.parser.setValidationContext(ValidationContextFactory.noValidation());
 		connectionHub = ConnectionHub.getInstance();
 		router = new MessageTypeRouter();
 		initUI();

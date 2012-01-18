@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * A Parser that delegates parsing tasks to an underlying PipeParser and DefaultXMLParser
@@ -305,7 +305,7 @@ public class GenericParser extends Parser {
 				"AL1|2||^PENICILLIN^|";
 		
 		GenericParser parser = new GenericParser();
-		parser.setValidationContext(new NoValidation());
+		parser.setValidationContext(ValidationContextFactory.noValidation());
 		Message msg = parser.parse(msgString);
 		System.out.println(msg.getClass().getName());
 			

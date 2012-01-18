@@ -1,11 +1,18 @@
 package ca.uhn.hl7v2.model;
 
+import java.io.IOException;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.model.v22.segment.MSA;
+import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import java.io.IOException;
-import junit.framework.*;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * JUnit test cases for AbstractMessage
@@ -64,6 +71,22 @@ public class AbstractMessageTest extends TestCase {
         // MSA|AR|LABGL1199510021852632
         // ERR|^^^2&ERROR&hl70357&&Error Message
     }
+    
+    public void testGenerateAckWithCanonicalFactory() throws HL7Exception, IOException {
+
+        String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
+                + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
+                + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
+        ModelClassFactory mcf = new CanonicalModelClassFactory("2.6");
+        Parser p = new PipeParser(mcf);
+        p.setValidationContext(new NoValidation());
+        Message message = new PipeParser().parse(string);
+        Message ack = message.generateACK();
+
+        ca.uhn.hl7v2.model.v26.segment.MSH msh = (ca.uhn.hl7v2.model.v26.segment.MSH)ack.get("MSH");
+        assertEquals("2.2", msh.getVersionID().encode());
+
+    }    
 
 
     public void testParseAndEncode() throws HL7Exception, IOException {
@@ -102,9 +125,7 @@ public class AbstractMessageTest extends TestCase {
 
         ADT_A01 a01 = new ADT_A01();
         a01.parse(string);
-
         a01.getPID().getPid3_PatientIDInternalID(0).parse("1234");
-
     }
 
 }

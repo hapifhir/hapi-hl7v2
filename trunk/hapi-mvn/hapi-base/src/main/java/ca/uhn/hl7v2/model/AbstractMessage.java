@@ -213,7 +213,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */
     public Message generateACK(String theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
-        Message retVal = DefaultApplication.makeACK((Segment) get(getNames()[0]));
+        Message retVal = DefaultApplication.makeACK(this);
 
         if (theAcknowledgementCode == null) {
             theAcknowledgementCode = "AA";
