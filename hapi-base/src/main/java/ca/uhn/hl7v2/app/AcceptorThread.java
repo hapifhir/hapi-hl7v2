@@ -48,7 +48,7 @@ import ca.uhn.hl7v2.concurrent.Service;
  */
 class AcceptorThread extends Service {
 
-	static final int TIMEOUT = 3000;
+	static final int TIMEOUT = 500;
 	private static final Logger log = LoggerFactory
 			.getLogger(AcceptorThread.class);
 	private int port;
