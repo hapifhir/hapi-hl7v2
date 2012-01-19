@@ -75,6 +75,7 @@ public class SendLotsOfMessages {
 		if (conn != null) {
 			connectionHub.detach(conn);
 		}
+		ConnectionHub.shutdown();
 		
 	}
 
