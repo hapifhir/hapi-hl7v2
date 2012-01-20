@@ -1,5 +1,8 @@
 package ca.uhn.hl7v2.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -12,6 +15,8 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 @SuppressWarnings("serial")
 public abstract class GenericMessage extends AbstractMessage {
     
+	private static final Logger log = LoggerFactory.getLogger(GenericMessage.class);
+	
     /** 
      * Creates a new instance of GenericMessage. 
      * 
@@ -38,13 +43,41 @@ public abstract class GenericMessage extends AbstractMessage {
         if (!Version.supportsVersion(version))
             throw new IllegalArgumentException("The version " + version + " is not recognized");
         
-        Class<? extends Message> c = UnknownVersion.class;
-        try {
-        	String fqn = GenericMessage.class.getName() + "." + Version.versionOf(version).name();
-        	c = (Class<? extends Message>)Class.forName(fqn);
-        } catch (ClassNotFoundException e) {
+        if ("2.1".equals(version)) {
+        	return V21.class;
         }
-        return c;
+        
+        if ("2.2".equals(version)) {
+        	return V22.class;
+        }
+
+        if ("2.3".equals(version)) {
+        	return V23.class;
+        }
+
+        if ("2.3.1".equals(version)) {
+        	return V231.class;
+        }
+        
+        if ("2.4".equals(version)) {
+        	return V24.class;
+        }
+
+        if ("2.5.1".equals(version)) {
+        	return V25.class;
+        }
+
+        if ("2.5.1".equals(version)) {
+        	return V251.class;
+        }
+
+        if ("2.6".equals(version)) {
+        	return V26.class;
+        }
+
+        log.debug("Unknown version for generic type {}", version);
+        
+        return UnknownVersion.class;
     }
 
 
