@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.v251.message.ACK;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
@@ -23,16 +24,16 @@ public class MessageStructuresTest extends TestCase {
 
     public void testAllMessages() throws Exception {
 
-        for (String nextVersion : Parser.getValidVersions()) {
+        for (Version nextVersion : Version.values()) {
             
-            Properties structures = Parser.getMessageStructures(nextVersion);
+            Properties structures = Parser.getMessageStructures(nextVersion.getVersion());
             for (Map.Entry<Object, Object> nextEntry : structures.entrySet()) {
                 String nextStructure = nextEntry.getValue().toString();
                 if ("?".equals(nextStructure)) {
                     continue;
                 }
                 
-                String className = DefaultModelClassFactory.getVersionPackageName(nextVersion) + "message." + nextStructure;
+                String className = DefaultModelClassFactory.getVersionPackageName(nextVersion.getVersion()) + "message." + nextStructure;
 
                 /*
                  * The DB has a few weird entries we ignore

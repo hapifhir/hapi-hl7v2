@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -121,8 +122,9 @@ public class ParserTest extends TestCase
 
 
     public void testGenericMessageAllVersions() throws Exception {
-        for (String version : Parser.getValidVersions()) {
+        for (Version versionEnum : Version.values()) {
 
+        	String version = versionEnum.getVersion();
             if (version.startsWith("2.1")) {
                 continue; // generic messages in 2.0 aren't handled
             }

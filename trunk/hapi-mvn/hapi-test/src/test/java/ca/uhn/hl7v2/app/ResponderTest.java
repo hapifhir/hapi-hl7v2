@@ -41,7 +41,20 @@ public class ResponderTest {
 				new GenericParser());
 		server.registerApplication("*", "*", new DummyApplication());
 		server.start();
-		socket = new Socket("localhost", port);
+		
+		for (int i = 0; ; i++) {
+			try {
+				socket = new Socket("localhost", port);
+				break;
+			} catch (Exception e) {
+				if (i == 10) {
+					throw e;
+				} else {
+					Thread.sleep(200);
+				}
+			}
+		}
+		
 		writer = new MinLLPWriter(socket.getOutputStream());
 		reader = new MinLLPReader(socket.getInputStream());
 	}
