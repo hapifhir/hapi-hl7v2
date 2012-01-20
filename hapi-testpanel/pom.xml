@@ -265,7 +265,7 @@
 
 	<profiles>
 		<profile>
-			<id>DIST</id>
+			<id>BUNDLE</id>
 			<build>
 				<plugins>
 
