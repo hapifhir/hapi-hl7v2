@@ -1,0 +1,351 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<artifactId>hapi</artifactId>
+		<groupId>ca.uhn.hapi</groupId>
+		<version>2.0-alpha1</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<version>0.1</version>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-testpanel</artifactId>
+	<name>HAPI - Test Panel</name>
+
+	<packaging>jar</packaging>
+
+	<repositories>
+		<repository>
+			<id>netbeans</id>
+			<name>NetBeans Platform Maven Repository</name>
+			<url>http://bits.netbeans.org/maven2/</url>
+		</repository>
+
+		<!-- For JSyntaxPane -->
+		<repository>
+			<id>hapi</id>
+			<name>HAPI Maven Repository</name>
+			<url>http://hl7api.sourceforge.net/m2</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jflex</id>
+			<name>JFlex repository</name>
+			<url>http://jflex.sourceforge.net/repo/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.9</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.netbeans.api</groupId>
+			<artifactId>org-netbeans-swing-outline</artifactId>
+			<version>RELEASE701</version>
+		</dependency>
+		<dependency>
+			<artifactId>jsyntaxpane</artifactId>
+			<groupId>jsyntaxpane</groupId>
+			<!--<version>0.9.5-b29</version> -->
+			<version>0.9.6-hapi1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v21</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v22</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v23</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v231</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v24</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v25</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v251</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v26</artifactId>
+			<version>${hapi.version.structures}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.apple</groupId>
+			<artifactId>AppleJavaExtensions</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>3.0.9</version>
+			<scope>provided</scope> <!-- For now, since we aren't actually using it.. -->
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>com.sun.tools.xjc.maven2</groupId>
+				<artifactId>maven-jaxb-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generatePackage>ca.uhn.hl7v2.testpanel.xsd</generatePackage>
+							<generateDirectory>${basedir}/target/generated-sources/maven-jaxb-plugin</generateDirectory>
+							<verbose>true</verbose>
+							<schemaDirectory>src/main/resources</schemaDirectory>
+							<includeSchemas>
+								<includeSchema>**/*.xsd</includeSchema>
+							</includeSchemas>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>de.jflex.maven.plugin</groupId>
+				<artifactId>maven-jflex-plugin</artifactId>
+				<!--version>0.2</version -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 
+			<plugin>
+				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+				<artifactId>launch4j-plugin</artifactId>
+				<version>1.5.0.0</version>
+				<executions>
+					<execution>
+						<id>l4j-gui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>target/hapi-testpanel.exe</outfile>
+							<jar>target/hapi-testpanel-2.0-alpha1-jar-with-dependencies.jar</jar>
+							<errTitle>HAPI_TestPanel</errTitle>
+							<classPath>
+								<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
+							</classPath>
+							<jre>
+								<minVersion>1.5.0</minVersion>
+							</jre>
+							<versionInfo>
+								<fileVersion>1.2.3.4</fileVersion>
+								<txtFileVersion>txt file version?</txtFileVersion>
+								<fileDescription>a description</fileDescription>
+								<copyright>my copyright</copyright>
+								<productVersion>4.3.2.1</productVersion>
+								<txtProductVersion>txt product version</txtProductVersion>
+								<productName>E-N-C-C</productName>
+								<internalName>ccne</internalName>
+								<originalFilename>hapi-testpanel.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>keytool-maven-plugin</artifactId>
+				<executions>
+				</executions>
+				<configuration>
+					<keystore>keystore.jks</keystore>
+					<alias>hapi-testpanel</alias>
+					<dname>cn=hl7api.sourceforge.net, ou=None, L=Toronto, ST=Ontario, o=uhn, c=CA</dname>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<configuration>
+					<header>${project.basedir}/../src/license/header.txt</header>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/textresources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>DIST</id>
+			<build>
+				<plugins>
+
+					<!-- WebStart -->
+					<plugin>
+						<groupId>org.codehaus.mojo.webstart</groupId>
+						<artifactId>webstart-maven-plugin</artifactId>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jnlp-inline</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<verbose>true</verbose>
+							<jnlp>
+								<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
+							</jnlp>
+							<jnlpExtensions>
+								<!-- <icon>http://hl7api.sourceforge.net/images/hapi_64.png</icon> -->
+							</jnlpExtensions>
+							<sign>
+								<keystore>${basedir}/keystore.jks</keystore>
+								<keypass>${keypass}</keypass>  <!-- we need to override passwords easily from the command line. ${keypass} -->
+								<storepass>${storepass}</storepass> <!-- ${storepass} -->
+								<alias>hapi-testpanel</alias>
+								<verify>true</verify> <!-- verify that the signing operation succeeded -->
+							</sign>
+							<!-- <outputJarVersions>true</outputJarVersions> -->
+						</configuration>
+					</plugin>
+
+					<!-- Assembly -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<archive>
+										<manifest>
+											<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
+										</manifest>
+									</archive>
+									<descriptorRefs>
+										<descriptorRef>jar-with-dependencies</descriptorRef>
+									</descriptorRefs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- OSX App Bundle -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>osxappbundle-maven-plugin</artifactId>
+						<version>1.0-alpha-1</version>
+						<configuration>
+							<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
+							<iconFile>${basedir}/src/main/resources/ca/uhn/hl7v2/testpanel/images/hapi_icon_osx.icns</iconFile>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>bundle</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>
