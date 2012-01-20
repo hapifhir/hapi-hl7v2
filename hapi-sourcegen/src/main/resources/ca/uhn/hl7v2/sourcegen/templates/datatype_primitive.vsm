@@ -39,7 +39,9 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 
-#if ( $datatype.specialCasePrimitive )
+#if ( $datatype.textPrimitive )
+#set ( $baseClass = 'ca.uhn.hl7v2.model.primitive.AbstractTextPrimitive' )
+#elseif ( $datatype.specialCasePrimitive )
 #set ( $baseClass = ${normalBasePackageName} + 'datatype.' + ${datatype.type} )
 #else
 #set ( $baseClass = 'AbstractPrimitive' )
