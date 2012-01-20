@@ -31,12 +31,17 @@
 			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
 		</menu>
 
+		<menu name="Tools">
+			<item name="TestPanel" href="newtestpanel.html" />
+			<item name="Colouriser" href="colouriser.html" />
+		</menu>
+
 		<menu name="Download">
 			<item name="Downloads" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
 			<item name="Using Maven" href="using_maven.html" />
 		</menu>
 
-		<menu name="Documentation">
+		<menu name="API Documentation">
 			<item name="HAPI By Example" href="devbyexample.html" />
 			<item name="FAQ" href="hapi-faq.html" />
 			<item name="Using the Test Panel" href="testpanel.html" />
