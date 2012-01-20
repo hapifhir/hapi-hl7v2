@@ -3,7 +3,7 @@
 
 	<properties>
 		<title>The Open Source HL7 API for Java</title>
-		<author email="jamesagnew@users.sourceforge.net">John Doe</author>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 
 	<body>
@@ -59,6 +59,15 @@
 				</li>
 			</ul>
 
+		</section>
+
+		<section name="New Developments! Jan 25, 2012">
+		
+			<p>
+				The new year brings three new developments to HAPI! First, and
+				smallest by far, a tool to colourise raw HL7 messages.
+			</p>
+		
 		</section>
 
 		<section name="HAPI 10th Birthday! October 30, 2011" style="position: relative;">

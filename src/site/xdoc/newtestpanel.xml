@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HAPI TestPanel</title>
+		<author email="jamesagnew@users.sourceforge.net">John Doe</author>
+	</properties>
+
+	<body>
+
+		<!-- The body of the document contains a number of sections -->
+		<section name="HAPI TestPanel">
+
+			<b>Jump to...</b>
+
+			<macro name="toc">
+			  <param name="section" value="2"/>
+			  <param name="fromDepth" value="0"/>
+			  <param name="toDepth" value="4"/>
+			</macro>
+
+			<p>
+				The HAPI TestPanel is a full featured HL7 message editor,
+				transmitter and receiver. This software is still an alpha
+				release, so please use it with caution!
+			</p>
+			
+			<p>
+				This software can be used to test applications which use the
+				HAPI Java API, but it can also be used to test applications which
+				don't! It is also intended to be a showcase for HAPI's many features.
+			</p>
+			
+			<img src="images/testpanel_mainwindow.png" alt="Main Window"/>
+			
+		</section>
+
+		<section name="Installing TestPanel">
+		
+			<subsection name="Using WebStart">
+				
+				<p>
+					The easiest way to install TestPanel is using Java WebStart. To do this,
+					<a href="http://hl7api.sourceforge.net/hapi-testpanel/jnlp/launch.jnlp">click here</a>.
+				</p>
+				<p>
+					Alternately, an application bundle is available for Mac/OSX, and an executable
+					JAR is available for Windows/Linux. To access these,
+					<a href="https://sourceforge.net/projects/hl7api/files/hapi-testpanel">click here</a>.
+					(Help Wanted: If you have any experience in bundling desktop applications for Windows,
+					we could use your help!)
+				</p>
+				
+			</subsection>
+		
+		</section>
+
+		<section name="Getting Started">
+
+			<p>
+				Once the application has started, populate it with test data by
+				entering the "Test" menu and 
+				clicking "Populate TestPanel with Sample Message and Connections". 
+			</p>
+		
+			<p>
+				This creates a receiving connection (a connection which receives messages)
+				on a randomly assigned port. It also creates a sending connection (a 
+				connection which sends messages) to that same port, so that you can send
+				a message to yourself. It then creates a sample message for you to send.
+			</p>
+			
+			<subsection name="Sending a message to yourself">
+
+				<p>
+					First, choose the receiving connection by clicking on it's name (near 
+					the bottom left of the window). When the settings dialog opens,
+					click "start".
+				</p>
+				
+				<p>
+					Then, choose the message to send by clicking on the message in the
+					message list (near the top left of the window). Now, click send.
+				</p>
+
+			</subsection>
+			
+			<p>
+				This help document is not yet complete. Want to help finish it?
+				Get in touch!
+			</p>
+			
+			
+		</section>
+
+	</body>
+
+</document>

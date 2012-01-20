@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>The Open Source HL7 API for Java</title>
+		<author email="jamesagnew@users.sourceforge.net">John Doe</author>
+	</properties>
+
+	<body>
+
+		<!-- The body of the document contains a number of sections -->
+		<section name="HL7 Colourizer">
+
+			<p>Welcome to the HL7 Colouriser!</p>
+			
+			<p>
+				This page takes an ER7 encoded HL7 message and gives you a nice colourful version.
+				This can be useful if you need to include message snippets in email, documentation, etc.
+				You can copy and paste from the colourized window below right into Outlook, Word, etc.
+			</p>
+			
+			<p>
+				Note that <b>no information is transmitted to a remote server</b>, as this page
+				works purely with JavaScript, so your information is safe.
+			</p>
+
+			<p>
+				Place your HL7 here:
+			</p>
+			<textarea id="ta" style="width: 95%; height: 100px; white-space: nowrap;    overflow:    scroll;    overflow-y:  hidden;    overflow-x:  scroll;    overflow:    -moz-scrollbars-horizontal;" onfocus="document.getElementById('ta').select();" cols="80" rows="10"></textarea>
+			<br/>
+			
+			<p>
+				Then click here: <input type="button" value="Colourise" onclick="update();"/> 
+			</p>
+		
+			<p>And get colourised HL7 here:</p>
+			<div id="out" style="border: 1px solid #808080; font-family: monospace; color: #000000; white-space: nowrap; overflow: auto;"></div>
+			
+			<p>.. and HTML here:</p>
+			<div id="outHtml" style="border: 1px solid #808080; font-family: monospace; color: #000000; white-space: nowrap; overflow: auto;"></div>
+
+						<script type="text/javascript"><![CDATA[
+			
+				function update() {
+					
+					var value = document.getElementById('ta').value;
+			
+					var lines = value.split("\n");
+					var output = "";
+					for (var index in lines) {
+						var nextLine = lines[index];
+						if (nextLine.length < 3) {
+							output = output + nextLine + "<br>";
+							continue;
+						}
+						
+						var fields = nextLine.split("|");
+						for (var fIndex in fields) {
+							var nextField = fields[fIndex];
+							if (fIndex == 0) {
+								output = output + "<span style=\"color: #000080;\"><b>" + nextField + "</b></span>";
+							} else {
+								
+								var reps = nextField.split("~");
+								for (var rIndex in reps) {
+									var nextRep = reps[rIndex];
+									
+									if (rIndex > 0) {
+										output = output + "<span style=\"color: #808080;\">~</span>";
+									}
+			
+									var comps = nextRep.split("^");
+									for (var cIndex in comps) {
+										var nextComp = comps[cIndex];
+			
+										if (cIndex > 0) {
+											output = output + "<span style=\"color: #808080;\">^</span>";
+										}
+			
+										var subcomps = nextComp.split("&");
+										for (var sIndex in subcomps) {
+											var nextSubComp = subcomps[sIndex];
+											
+											if (sIndex > 0) {
+												output = output + "<span style=\"color: #808080;\">&</span>";
+											}
+											
+											if (nextSubComp.match(/^[0-9./]+/)) {
+												nextSubComp = "<span style=\"color: #006020;\">" + nextSubComp + "</span>";
+											}
+											
+											output = output + nextSubComp;
+											
+										}
+									}
+								}
+							}
+							
+							output = output + "<span style=\"color: #808080;\"><b>|</b></span>";
+							
+						}
+						
+						output = output + "<br>";
+					}
+					
+					document.getElementById('out').innerHTML = output;
+					
+					output = output.replace(/<br>/g, "<br>\n");
+					output = output.replace(/&/g, "&amp;");
+					output = output.replace(/>/g, "&gt;");
+					output = output.replace(/</g, "&lt;");
+					document.getElementById('outHtml').innerHTML = "<pre>" + output + "</pre>";
+					
+					//window.alert(value);
+					
+				}
+				
+				var str = "MSH|^~\\&|NES|NINTENDO|TESTSYSTEM|TESTFACILITY|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\n"+
+					"EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\n"+
+					"PID|1||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\n"+
+					"NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\n"+
+					"NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\n"+
+					"PV1|1|O|ABCD^EFGH^|||^^|123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|^DOG^DUCKHUNT^^^^^^^CURRENT||CRD|||||||123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|AO|0123456789|1|||||||||||||||||||MSH||A|||20010101000000";
+				document.getElementById('ta').value = str;										
+				document.getElementById('ta').wrap='off';
+				
+			//]]></script>
+			
+		</section>
+			
+	</body>
+</document>
