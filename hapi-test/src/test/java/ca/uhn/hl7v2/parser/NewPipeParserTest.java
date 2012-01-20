@@ -30,6 +30,7 @@ import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.EVN;
 import ca.uhn.hl7v2.model.v24.segment.OBX;
 import ca.uhn.hl7v2.model.v24.segment.PID;
+import ca.uhn.hl7v2.model.v25.datatype.TS;
 import ca.uhn.hl7v2.model.v25.message.ADT_A03;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.model.v25.message.REF_I12;
@@ -1073,7 +1074,8 @@ public class NewPipeParserTest extends TestCase {
 		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");
 		msg.getMSH().getMessageControlID().setValue("");
-		msg.getMSH().getDateTimeOfMessage().parse("");
+		TS ts = msg.getMSH().getDateTimeOfMessage();
+		ts.parse("");
 
 		msg.getPV1().parse("PV1|1");
 

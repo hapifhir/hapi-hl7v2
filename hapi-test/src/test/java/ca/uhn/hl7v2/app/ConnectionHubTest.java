@@ -180,8 +180,10 @@ public class ConnectionHubTest {
 					}
 				});
 		long elapsed = System.currentTimeMillis() - now;
+		
 		// Due to synchronization, the threads are executed almost sequentially
-		assertTrue(elapsed < fastestResult.get() * (n - 1));
+		long avg = fastestResult.get() * (n - 1);
+		assertTrue("Elapsed: " + elapsed + ", Avg: " + avg, elapsed < avg);
 		assertEquals(0, hub.allConnections().size());
 	}
 	

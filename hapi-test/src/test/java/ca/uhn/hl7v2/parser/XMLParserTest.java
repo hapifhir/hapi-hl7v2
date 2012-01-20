@@ -24,6 +24,8 @@ import ca.uhn.hl7v2.model.v25.datatype.ED;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
+import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  
 /**
  * JUnit test harness for XMLParser
@@ -162,7 +164,12 @@ public class XMLParserTest extends TestCase {
         
         public Document encodeDocument(Message source) throws HL7Exception {
             return null;
-        }        
+        }
+
+		@Override
+		public void parse(Message theMessage, String theString) throws HL7Exception {
+			throw new UnsupportedOperationException();
+		}        
         
     }
 
@@ -599,6 +606,105 @@ public class XMLParserTest extends TestCase {
 		
     }
     
+
+    public void testWeirdMessage() throws EncodingNotSupportedException, HL7Exception {
+    	
+    	String msg = "<ConformanceMessage xmlns=\"urn:hl7-org:v2xml\">\r\n" + 
+    			"    <MSH>\r\n" + 
+    			"        <MSH.1>|</MSH.1>\r\n" + 
+    			"        <MSH.2>^~\\&amp;</MSH.2>\r\n" + 
+    			"        <MSH.7>\r\n" + 
+    			"            <TS.1>2012010219dd2527.532-0500</TS.1>\r\n" + 
+    			"        </MSH.7>\r\n" + 
+    			"        <MSH.9>\r\n" + 
+    			"            <MSG.1>ADT</MSG.1>\r\n" + 
+    			"            <MSG.2>A11</MSG.2>\r\n" + 
+    			"            <MSG.3>ADT_A01</MSG.3>\r\n" + 
+    			"        </MSH.9>\r\n" + 
+    			"        <MSH.10>160022</MSH.10>\r\n" + 
+    			"        <MSH.11>\r\n" + 
+    			"            <PT.1>T</PT.1>\r\n" + 
+    			"        </MSH.11>\r\n" + 
+    			"        <MSH.12>\r\n" + 
+    			"            <VID.1>2.6</VID.1>\r\n" + 
+    			"        </MSH.12>\r\n" + 
+    			"    </MSH>\r\n" + 
+    			"    <SFT/>\r\n" + 
+    			"    <EVN/>\r\n" + 
+    			"    <PID>\r\n" + 
+    			"        <PID.1>fdsfdf</PID.1>\r\n" + 
+    			"    </PID>\r\n" + 
+    			"    <PD1/>\r\n" + 
+    			"    <ROL/>\r\n" + 
+    			"    <NK1/>\r\n" + 
+    			"    <PV1/>\r\n" + 
+    			"    <PV2/>\r\n" + 
+    			"    <ROL/>\r\n" + 
+    			"    <DB1/>\r\n" + 
+    			"    <OBX/>\r\n" + 
+    			"    <AL1/>\r\n" + 
+    			"    <DG1/>\r\n" + 
+    			"    <DRG/>\r\n" + 
+    			"    <ADT_A01.PROCEDURE>\r\n" + 
+    			"        <PR1/>\r\n" + 
+    			"        <ROL/>\r\n" + 
+    			"    </ADT_A01.PROCEDURE>\r\n" + 
+    			"    <GT1/>\r\n" + 
+    			"    <ADT_A01.INSURANCE>\r\n" + 
+    			"        <IN1/>\r\n" + 
+    			"        <IN2/>\r\n" + 
+    			"        <IN3/>\r\n" + 
+    			"        <ROL/>\r\n" + 
+    			"    </ADT_A01.INSURANCE>\r\n" + 
+    			"    <ACC/>\r\n" + 
+    			"    <UB1/>\r\n" + 
+    			"    <UB2/>\r\n" + 
+    			"    <PDA/>\r\n" + 
+    			"</ConformanceMessage>";
+    	
+		DefaultXMLParser p = new DefaultXMLParser();
+		p.setValidationContext(new ValidationContextImpl());
+		
+		p.parse(msg);
+    	
+    }
+ 
+    
+    public void testMessageParseMethodAndEncodeMethod() throws HL7Exception {
+    	
+        String message = "<ORU_R01 xmlns=\"urn:hl7-org:v2xml\">\r\n" + 
+                "    <MSH>\r\n" + 
+                "        <MSH.1>|</MSH.1>\r\n" + 
+                "        <MSH.2>^~\\&amp;</MSH.2>\r\n" + 
+                "        <MSH.3>LABMI1</MSH.3>\r\n" + 
+                "        <MSH.5>DMCRES</MSH.5>\r\n" + 
+                "        <MSH.7>\r\n" + 
+                "            <TS.1>19951010134000</TS.1>\r\n" + 
+                "        </MSH.7>\r\n" + 
+                "        <MSH.9>\r\n" + 
+                "            <CM_MSG.1>ORU</CM_MSG.1>\r\n" + 
+                "            <CM_MSG.2>R01</CM_MSG.2>\r\n" + 
+                "        </MSH.9>\r\n" + 
+                "        <MSH.10>LABMI1199510101340007</MSH.10>\r\n" + 
+                "        <MSH.11>D</MSH.11>\r\n" + 
+                "        <MSH.12>2.2</MSH.12>\r\n" + 
+                "        <MSH.15>AL</MSH.15>\r\n" + 
+                "    </MSH>\r\n" +
+                "</ORU_R01>";
+        
+        ca.uhn.hl7v2.model.v26.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v26.message.ORU_R01();
+        DefaultXMLParser xmlParser = new DefaultXMLParser();
+        xmlParser.setValidationContext(new ValidationContextImpl());
+		msg.setParser(xmlParser);
+        
+		msg.parse(message);
+		assertEquals("LABMI1199510101340007", msg.getMSH().getMessageControlID().getValue());
+    	
+		String encoded = msg.encode();
+		ourLog.info(encoded);
+		assertTrue(encoded, encoded.contains("<MSH.10>LABMI1199510101340007</MSH.10>"));
+		
+    }
     
     
 }

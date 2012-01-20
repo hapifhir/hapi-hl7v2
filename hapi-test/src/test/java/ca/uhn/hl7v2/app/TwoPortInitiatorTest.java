@@ -49,6 +49,7 @@ public class TwoPortInitiatorTest {
 		port2 = RandomServerPortProvider.findFreePort();
 		tps = new TwoPortService(port1, port2);
 		tps.start();
+		
 	}
 
 	@AfterClass
@@ -61,8 +62,10 @@ public class TwoPortInitiatorTest {
 	public void testSendAndReceive() throws Exception {
 		Parser parser = new PipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
-		Socket outsocket = new Socket("localhost", port1);
-		Socket insocket = new Socket("localhost", port2);
+		
+		Socket outsocket = connectOutsocket();
+		Socket insocket = connectInsocket();
+		
 		Connection conn = new Connection(parser, protocol, insocket, outsocket);
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
@@ -73,12 +76,46 @@ public class TwoPortInitiatorTest {
 		// Thread.sleep(2000);
 	}
 
+	private Socket connectInsocket() throws Exception, InterruptedException {
+		Socket insocket;
+		for (int i = 0; ; i++) {
+			try {
+				insocket = new Socket("localhost", port2);
+				break;
+			} catch (Exception e) {
+				if (i == 10) {
+					throw e;
+				} else {
+					Thread.sleep(200);
+				}
+			}
+		}
+		return insocket;
+	}
+
+	private Socket connectOutsocket() throws Exception, InterruptedException {
+		Socket outsocket;
+		for (int i = 0; ; i++) {
+			try {
+				outsocket = new Socket("localhost", port1);
+				break;
+			} catch (Exception e) {
+				if (i == 10) {
+					throw e;
+				} else {
+					Thread.sleep(200);
+				}
+			}
+		}
+		return outsocket;
+	}
+
 	@Test
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50;
 		final Parser parser = new PipeParser();
-		Socket outsocket = new Socket("localhost", port1);
-		Socket insocket = new Socket("localhost", port2);
+		Socket outsocket = connectOutsocket();
+		Socket insocket = connectInsocket();
 		final Connection conn = new Connection(parser,
 				new MinLowerLayerProtocol(), insocket, outsocket);
 		final Random r = new Random(System.currentTimeMillis());

@@ -58,13 +58,30 @@ public class InitiatorTest {
 	public void testSendAndReceive() throws Exception {
 		Parser parser = new PipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
-		Socket socket = new Socket("localhost", port);
+		Socket socket = connectInsocket();
 		Connection conn = new Connection(parser, protocol, socket);
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
 		assertTrue(in != null);
 		assertEquals(Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1),
 				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
+	}
+
+	private Socket connectInsocket() throws Exception, InterruptedException {
+		Socket insocket;
+		for (int i = 0; ; i++) {
+			try {
+				insocket = new Socket("localhost", port);
+				break;
+			} catch (Exception e) {
+				if (i == 10) {
+					throw e;
+				} else {
+					Thread.sleep(200);
+				}
+			}
+		}
+		return insocket;
 	}
 	
 	@Test

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -71,10 +72,8 @@ public class TwoPortConnectionHubTest {
 	@Test
 	public void testAttach() throws Exception {
 		PipeParser pipeParser = new PipeParser();
-		Connection i1 = hub.attach("localhost", port1, port2, pipeParser,
-				MinLowerLayerProtocol.class);
-		Connection i1again = hub.attach("localhost", port1, port2, pipeParser,
-				MinLowerLayerProtocol.class);
+		Connection i1 = connectInsocket(pipeParser);
+		Connection i1again = connectInsocket(pipeParser);
 		assertTrue(i1 == i1again);
 		assertEquals(1, hub.allConnections().size());
 		hub.allConnections().contains(i1);
@@ -91,6 +90,20 @@ public class TwoPortConnectionHubTest {
 		assertEquals(0, hub.allConnections().size());
 	}
 
+	private Connection connectInsocket(PipeParser pipeParser) throws Exception, InterruptedException {
+		Socket insocket;
+		for (int i = 0; ; i++) {
+			try {
+				return hub.attach("localhost", port1, port2, pipeParser, MinLowerLayerProtocol.class);
+			} catch (Exception e) {
+				if (i == 10) {
+					throw e;
+				} else {
+					Thread.sleep(200);
+				}
+			}
+		}
+	}
 	
 	@Test
 	public void testAttachToExistingServer() throws Exception {
