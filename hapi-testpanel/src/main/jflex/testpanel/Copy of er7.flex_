@@ -1,0 +1,142 @@
+package testpanel;
+
+import jsyntaxpane.lexers.*;
+import jsyntaxpane.Token;
+import jsyntaxpane.TokenType;
+
+%%
+
+%public
+%class Er7Lexer
+%extends DefaultJFlexLexer
+%final
+%unicode
+%char
+%type Token
+%caseless
+
+
+%{
+    /**
+     * Default constructor is needed as we will always call the yyreset
+     */
+    public Er7Lexer() {
+        super();
+    }
+
+	@Override
+    public int yychar() {
+        return yychar;
+    }
+    
+
+%}
+
+/* main character classes */
+LineTerminator = \r|\n|\r\n
+InputCharacter = [^\r\n]
+
+WhiteSpace = {LineTerminator} | [ \t\f]+
+
+Comment = {EndOfLineComment}
+
+EndOfLineComment = "#" {InputCharacter}* {LineTerminator}?
+
+SegmentName = [A-Z][A-Z0-9]{2}
+
+Message = "MSH"
+
+Number = [-0-9\.]+(\||\^|\&|\~|\\)
+
+FieldDelim = "|"
+ComponentDelim = "^"
+SubComponentDelim = "&"
+RepDelim = "~"
+EscapeDelim = "\\"
+
+OneChar = .
+
+/*AnythingElse = [a-zA-Z0-9]+*/
+
+AnythingElse = .
+
+
+/*%state START_DATA*/
+/*%state IN_DATA*/
+/*%state START_SEGMENT*/
+
+%state START_DATA
+%state IN_DATA
+%state AT_START_OF_VALUE
+%state AT_DELIM
+
+%%
+
+<START_DATA> {
+
+  {FieldDelim}                   |
+  {SubComponentDelim}            |
+  {ComponentDelim}               { yybegin(START_DATA); return token(TokenType.TYPE); }
+
+  {Number}					     { return token(TokenType.NUMBER); }
+
+  {AnythingElse}                 { return token(TokenType.TYPE2); }
+
+  {LineTerminator}				 { yybegin(YYINITIAL); }
+
+}
+
+<IN_DATA> {
+
+  {FieldDelim}                   |
+  {SubComponentDelim}            |
+  {ComponentDelim}               { yybegin(START_DATA); return token(TokenType.TYPE); }
+
+  {AnythingElse}                      { return token(TokenType.TYPE2); }
+
+  {LineTerminator}				 { yybegin(YYINITIAL); }
+
+}
+
+<YYINITIAL> {
+
+  {Message}						 { if (yychar == 0) return token(TokenType.KEYWORD); }
+
+  {SegmentName}					 { return token(TokenType.KEYWORD); }
+
+  {FieldDelim}                   |
+  {SubComponentDelim}            |
+  {RepDelim}                     |
+  {EscapeDelim}                  |
+  {ComponentDelim}               { yybegin(AT_START_OF_VALUE); return token(TokenType.TYPE); }
+  
+  {Comment}                      { return token(TokenType.COMMENT); }
+
+}
+
+<AT_DELIM> {
+
+  {OneChar}                      { yybegin(AT_START_OF_VALUE); return token(TokenType.TYPE); }
+
+}
+
+<AT_START_OF_VALUE> {
+  
+  {FieldDelim}                   |
+  {SubComponentDelim}            |
+  {RepDelim}                     |
+  {EscapeDelim}                  |
+  {ComponentDelim}               { yybegin(AT_START_OF_VALUE); return token(TokenType.TYPE); }
+  
+  {LineTerminator}				 { yybegin(YYINITIAL); }
+
+  {Number}				         { yypushback(1); yybegin(AT_DELIM); return token(TokenType.TYPE2); }
+
+  
+}
+
+
+
+/* error fallback */
+.|\n                             { return token(TokenType.OPERATOR); }
+<<EOF>>                          { return null; }
