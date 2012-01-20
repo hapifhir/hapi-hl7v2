@@ -393,8 +393,9 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      */
     public Structure[] getAll(String name) throws HL7Exception {
         List<Structure> list = structures.get(name);
-        if (list == null)
+        if (list == null) {
             throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+        }
         return list.toArray(new Structure[list.size()]);
     }
 
