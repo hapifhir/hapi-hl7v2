@@ -56,4 +56,11 @@ public class DatatypeDef {
                type.equals("DTM") || // Constant
                type.equals("TM");
     }
+
+    public boolean isTextPrimitive() {
+        return type.equals("ST") || // Constant
+               type.equals("TX") || // Constant
+               type.equals("FT");
+    }
+
 }
