@@ -14,7 +14,7 @@
         <fileSet>
             <directory>${project.basedir}/..</directory>
             <includes>
-                <include>hapi-base/target/*-sources.jar</include>
+                <include>hapi-base/target/*-javadoc.jar</include>
             </includes>
             <outputDirectory></outputDirectory>
         </fileSet>
@@ -22,7 +22,7 @@
         <fileSet>
             <directory>${project.basedir}/..</directory>
             <includes>
-                <include>hapi-structures-v2*/target/*-sources.jar</include>
+                <include>hapi-structures-v2*/target/*-javadoc.jar</include>
             </includes>
             <outputDirectory></outputDirectory>
         </fileSet>

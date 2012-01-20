@@ -98,7 +98,8 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/assembly/hapi-all.xml</descriptor>
-								<!-- <descriptor>src/assembly/hapi-src.xml</descriptor>-->
+								<descriptor>src/assembly/hapi-src.xml</descriptor>
+								<descriptor>src/assembly/hapi-javadoc.xml</descriptor>
 								<!-- <descriptor>src/assembly/hapi-jdk14.xml</descriptor> -->
 							</descriptors>
 						</configuration>
