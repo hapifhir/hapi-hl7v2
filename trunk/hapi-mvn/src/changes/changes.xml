@@ -159,6 +159,13 @@
         		re-encoded. Thanks to anonymous bug poster for reporting this and providing a working
         		test case!
         	</action>
+			<action dev="Neal Acharya" type="add">
+				String structure types (ST, FT, TX) now have a new method
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml()">getValueAsHtml()</a>
+				]]>
+				which converts any HL7 formatting codes (\H\, \.sp 55\, \.ce\, etc.) in the string to their HTML equivalent. 
+			</action>
         	<action dev="James Agnew" type="fix">
 				Calling 
 				stop() 
