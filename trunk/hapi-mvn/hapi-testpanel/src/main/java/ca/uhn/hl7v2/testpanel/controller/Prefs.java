@@ -50,7 +50,7 @@ public class Prefs {
 	private static final Preferences ourPrefs = Preferences.userNodeForPackage(Prefs.class);
 	private static final String GET_SAVE_PATH_MESSAGES = "getSavePathMessages";
 	private static final String GET_SAVE_LINE_ENDINGS = "getSaveLineEndings";
-	private static final String GET_TEMP_WORKFILES_DIRECTORY = "getTempWorkfilesDirectory";
+//	private static final String GET_TEMP_WORKFILES_DIRECTORY = "getTempWorkfilesDirectory";
 	private static final String GET_OPENSAVE_CHARSET = "getOpenOrSaveCharset";
 	private static final String GET_SAVE_STRIP_COMMENTS = "getSaveStripComments";
 	private static final String GET_SHOW_LOG_CONSOLE = "getShowLogConsole";

@@ -105,7 +105,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		try {
 			DefaultSyntaxKit.initKit();
 			DefaultSyntaxKit.registerContentType("text/er7", Er7SyntaxKit.class.getName());
-			DefaultSyntaxKit.setUseEditorFont(true);
 			ourLog.info("Registered syntaxKit");
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -191,7 +190,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		messageEditorContainerPanel.setLayout(new BorderLayout(0, 0));
 
 		myMessageEditor = new JEditorPane();
-		myMessageEditor.setFont(Prefs.getHl7EditorFont());
+//		myMessageEditor.setFont(Prefs.getHl7EditorFont());
 
 		myMessageScrollPane = new JScrollPane(myMessageEditor);
 		messageEditorContainerPanel.add(myMessageScrollPane);

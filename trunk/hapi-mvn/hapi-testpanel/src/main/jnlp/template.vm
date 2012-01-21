@@ -58,7 +58,7 @@
 	</shortcut>
 
   <resources>
-    <j2se version="$j2seVersion"/>
+    <j2se version="$j2seVersion" java-vm-args="-Xms128m -Xmx1024m"/>
      $dependencies
 
      <!--

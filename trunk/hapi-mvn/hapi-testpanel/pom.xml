@@ -7,7 +7,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<version>0.1</version>
+	<version>2.0-beta1</version>
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -59,12 +59,17 @@
 			<artifactId>org-netbeans-swing-outline</artifactId>
 			<version>RELEASE701</version>
 		</dependency>
+		
+		<!-- 
+		We're using a customized version of JSyntaxPane.
+		See http://code.google.com/p/jsyntaxpane/issues/detail?id=180
+		 -->
 		<dependency>
 			<artifactId>jsyntaxpane</artifactId>
 			<groupId>jsyntaxpane</groupId>
-			<!--<version>0.9.5-b29</version> -->
-			<version>0.9.6-hapi1</version>
+			<version>0.9.6-hapi2</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
