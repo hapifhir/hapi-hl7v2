@@ -98,40 +98,6 @@ public class App {
 			}
 		});
 		
-		new VersionChecker().start();
-		
-	}
-
-	/**
-	 * Thread which checks if we are running the latest version of the TestPanel
-	 */
-	public static class VersionChecker extends Thread {
-
-		@Override
-		public void run() {
-			VersionLogger.init();
-			String version = VersionLogger.getVersion();
-			if (version.contains("$")) {
-				version = "1.0";
-			}
-			
-			try {
-				URL url = new URL("http://hl7api.sourceforge.net/cgi-bin/testpanelversion.cgi?version=" + version);
-				InputStream is = (InputStream) url.getContent();
-				Reader reader = new InputStreamReader(is, "US-ASCII");
-				String content = FileUtils.readFromReaderIntoString(reader);
-				if (content.contains("OK")) {
-					ourLog.info("HAPI TestPanel is up to date. Great!");
-				} else if (content.contains("ERRORNOE ")){
-					ourLog.warn(content.replace("ERRORNOE ", ""));
-				}
-			} catch (MalformedURLException e) {
-				ourLog.warn("Couldn't parse version checker URL", e);
-			} catch (IOException e) {
-				ourLog.info("Failed to check if we are running the latest version");
-			}
-		}
-
 	}
 
 }

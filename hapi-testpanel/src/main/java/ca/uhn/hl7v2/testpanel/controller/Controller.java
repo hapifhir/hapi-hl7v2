@@ -27,13 +27,19 @@ package ca.uhn.hl7v2.testpanel.controller;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.beans.PropertyVetoException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
@@ -47,6 +53,7 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -682,6 +689,10 @@ public class Controller {
 		JOptionPane.showMessageDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
 	}
 
+	public void showDialogWarning(String message) {
+		JOptionPane.showMessageDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.WARNING_MESSAGE);
+	}
+
 	public int showDialogYesNo(String message) {
 		return JOptionPane.showConfirmDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	}
@@ -704,6 +715,8 @@ public class Controller {
 		} else {
 			setLeftSelectedItem(myNothingSelectedMarker);
 		}
+		
+		new VersionChecker().start();
 	}
 
 	public void startAllInboundConnections() {
@@ -793,6 +806,55 @@ public class Controller {
 			}
 		}
 		return myAppVersionString;
+	}
+
+	
+	/**
+	 * Thread which checks if we are running the latest version of the TestPanel
+	 */
+	private class VersionChecker extends Thread {
+
+		@Override
+		public void run() {
+			String version = getAppVersionString();
+			if (version.contains("$")) {
+				version = "1.0";
+			}
+			
+			boolean isWebstart = true;
+			try {
+				Class.forName("javax.jnlp.ServiceManager");
+			} catch (Throwable t) {
+				isWebstart = false;
+			}
+			
+			try {
+				String javaVersion = System.getProperty("java.version");
+				String os = System.getProperty("os.name").replace(" ", "+");
+				
+				URL url = new URL("http://hl7api.sourceforge.net/cgi-bin/testpanelversion.cgi?version=" + version + "&java=" + javaVersion + "&os=" + os + "&webstart=" + isWebstart + "&end");
+				InputStream is = (InputStream) url.getContent();
+				Reader reader = new InputStreamReader(is, "US-ASCII");
+				String content = FileUtils.readFromReaderIntoString(reader);
+				if (content.contains("OK")) {
+					ourLog.info("HAPI TestPanel is up to date. Great!");
+				} else if (content.contains("ERRORNOE ")){
+					final String message = content.replace("ERRORNOE ", "");
+					ourLog.warn(message);
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							showDialogWarning(message);
+						}});
+				} else {
+					ourLog.warn(content);
+				}
+			} catch (MalformedURLException e) {
+				ourLog.warn("Couldn't parse version checker URL", e);
+			} catch (IOException e) {
+				ourLog.info("Failed to check if we are running the latest version");
+			}
+		}
+
 	}
 
 }
