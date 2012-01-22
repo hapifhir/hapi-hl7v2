@@ -374,4 +374,12 @@ public class Varies implements Type {
 		data.clear();
 	}
 
+	
+	/**
+	 * {@inheritDoc }
+	 */
+	public String toString() {
+		return AbstractType.toString(this);
+	}
+	
 }
