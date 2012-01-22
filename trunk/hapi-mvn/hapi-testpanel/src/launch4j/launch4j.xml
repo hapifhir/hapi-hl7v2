@@ -1,0 +1,28 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>G:\hapi-mvn-svn\hapi-testpanel\target\hapi-testpanel-2.0-beta1-jar-with-dependencies.jar</jar>
+  <outfile>G:\hapi-mvn-svn\hapi-testpanel\target\testpanel.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>G:\hapi-mvn-svn\hapi-testpanel\src\main\resources\hapi_64.ico</icon>
+  <singleInstance>
+    <mutexName>HAPI_TestPanel</mutexName>
+    <windowTitle></windowTitle>
+  </singleInstance>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>64</initialHeapSize>
+    <maxHeapSize>512</maxHeapSize>
+  </jre>
+</launch4jConfig>

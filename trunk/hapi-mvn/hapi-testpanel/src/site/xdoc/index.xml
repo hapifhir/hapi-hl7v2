@@ -61,12 +61,9 @@
 			<subsection name="Downloading">
 
 				<p>
-					Alternately, an application bundle is available for Mac/OSX, and an executable
-					JAR is available for Windows/Linux. To access these, see
+					Alternately, application bundles are available for Windows, Mac/OSX, and Linux. 
+					To access these, see
 					<a href="https://sourceforge.net/projects/hl7api/files/hapi-testpanel">Downloads</a>
-					.
-					(Help Wanted: If you have any experience in bundling desktop applications for Windows,
-					we could use your help! Please get in touch.)
 				</p>
 
 			</subsection>
