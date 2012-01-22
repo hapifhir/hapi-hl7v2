@@ -59,17 +59,14 @@
 			<artifactId>org-netbeans-swing-outline</artifactId>
 			<version>RELEASE701</version>
 		</dependency>
-		
-		<!-- 
-		We're using a customized version of JSyntaxPane.
-		See http://code.google.com/p/jsyntaxpane/issues/detail?id=180
-		 -->
+
+		<!-- We're using a customized version of JSyntaxPane. See http://code.google.com/p/jsyntaxpane/issues/detail?id=180 -->
 		<dependency>
 			<artifactId>jsyntaxpane</artifactId>
 			<groupId>jsyntaxpane</groupId>
 			<version>0.9.6-hapi2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -198,45 +195,11 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 
-			<plugin>
-				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
-				<artifactId>launch4j-plugin</artifactId>
-				<version>1.5.0.0</version>
-				<executions>
-					<execution>
-						<id>l4j-gui</id>
-						<phase>package</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>gui</headerType>
-							<outfile>target/hapi-testpanel.exe</outfile>
-							<jar>target/hapi-testpanel-2.0-alpha1-jar-with-dependencies.jar</jar>
-							<errTitle>HAPI_TestPanel</errTitle>
-							<classPath>
-								<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
-							</classPath>
-							<jre>
-								<minVersion>1.5.0</minVersion>
-							</jre>
-							<versionInfo>
-								<fileVersion>1.2.3.4</fileVersion>
-								<txtFileVersion>txt file version?</txtFileVersion>
-								<fileDescription>a description</fileDescription>
-								<copyright>my copyright</copyright>
-								<productVersion>4.3.2.1</productVersion>
-								<txtProductVersion>txt product version</txtProductVersion>
-								<productName>E-N-C-C</productName>
-								<internalName>ccne</internalName>
-								<originalFilename>hapi-testpanel.exe</originalFilename>
-							</versionInfo>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			 -->
+			<!-- <plugin> <groupId>org.bluestemsoftware.open.maven.plugin</groupId> <artifactId>launch4j-plugin</artifactId> <version>1.5.0.0</version> <executions> <execution> <id>l4j-gui</id> <phase>package</phase> 
+				<goals> <goal>launch4j</goal> </goals> <configuration> <headerType>gui</headerType> <outfile>target/hapi-testpanel.exe</outfile> <jar>target/hapi-testpanel-2.0-alpha1-jar-with-dependencies.jar</jar> <errTitle>HAPI_TestPanel</errTitle> 
+				<classPath> <mainClass>ca.uhn.hl7v2.testpanel.App</mainClass> </classPath> <jre> <minVersion>1.5.0</minVersion> </jre> <versionInfo> <fileVersion>1.2.3.4</fileVersion> <txtFileVersion>txt file version?</txtFileVersion> 
+				<fileDescription>a description</fileDescription> <copyright>my copyright</copyright> <productVersion>4.3.2.1</productVersion> <txtProductVersion>txt product version</txtProductVersion> <productName>E-N-C-C</productName> 
+				<internalName>ccne</internalName> <originalFilename>hapi-testpanel.exe</originalFilename> </versionInfo> </configuration> </execution> </executions> </plugin> -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>keytool-maven-plugin</artifactId>
@@ -311,6 +274,7 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<executions>
 							<execution>
+								<id>JWD</id>
 								<phase>package</phase>
 								<goals>
 									<goal>assembly</goal>
@@ -324,6 +288,18 @@
 									<descriptorRefs>
 										<descriptorRef>jar-with-dependencies</descriptorRef>
 									</descriptorRefs>
+								</configuration>
+							</execution>
+							<execution>
+								<id>JWDBUNDLE</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/hapi-testpanel.xml</descriptor>
+									</descriptors>
 								</configuration>
 							</execution>
 						</executions>

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.0-alpha1</version>
+		<version>2.0-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -110,10 +110,10 @@
 						<configuration>
 							
 							<!-- This is the conformance profile file to use -->
-							<profile>${basedir}/src/main/resources/example_ack.xml</profile>
+							<profile>${project.basedir}/src/main/resources/example_ack.xml</profile>
 							
 						    <!-- Place generated Java source here -->
-							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<targetDirectory>${project.basedir}/target/generated-sources/confgen</targetDirectory>
 							
 							<!-- Generated classes will be placed here -->
 							<packageName>com.foo.ack</packageName>
