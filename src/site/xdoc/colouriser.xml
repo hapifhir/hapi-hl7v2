@@ -87,7 +87,7 @@
 											}
 											
 											if (nextSubComp.match(/^[0-9./]+/)) {
-												nextSubComp = "<span style=\"color: #006020;\">" + nextSubComp + "</span>";
+												nextSubComp = "<span style=\"color: #990033;\">" + nextSubComp + "</span>";
 											}
 											
 											output = output + nextSubComp;
