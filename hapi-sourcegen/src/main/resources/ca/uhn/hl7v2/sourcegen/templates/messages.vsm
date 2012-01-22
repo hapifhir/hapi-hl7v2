@@ -64,6 +64,7 @@ import ca.uhn.hl7v2.model.AbstractMessage;
 #end
  * </ul>
  */
+@SuppressWarnings("unused")
 public class $message extends AbstractMessage  {
 
     /**
