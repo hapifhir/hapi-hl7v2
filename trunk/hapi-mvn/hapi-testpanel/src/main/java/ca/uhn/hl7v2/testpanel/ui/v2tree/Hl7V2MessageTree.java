@@ -229,6 +229,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				addChildren(myMessages.getMessages(), myTop, "");
 			} catch (InterruptedException e) {
 				ourLog.error("Failed up update message tree", e);
+				// TODO: re-run
 			} catch (InvocationTargetException e) {
 				ourLog.error("Failed up update message tree", e);
 			}
