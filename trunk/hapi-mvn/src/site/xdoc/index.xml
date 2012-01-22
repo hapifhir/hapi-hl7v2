@@ -61,13 +61,59 @@
 
 		</section>
 
-		<section name="New Developments! Jan 25, 2012">
+		<section name="New Developments! Jan 22, 2012">
 		
 			<p>
-				The new year brings three new developments to HAPI! First, and
-				smallest by far, a tool to colourise raw HL7 messages.
+				The new year brings three new developments to HAPI!
 			</p>
-		
+			
+			<subsection name="New Beta Release!">
+				<p>
+					First, a new beta release of HAPI has bee posted to the download pages,
+					as well as to the Maven central repo. HAPI 2.0-beta1 brings with it
+					a number of exciting new features, and a number of bug fixes, which you 
+					can read about in the
+					<a href="changes-report.html">Changelog</a>. This release contains a number
+					of contributions from all over the world. Thanks to everyone who got
+					involved!
+				</p> 
+				<p>
+					Please be aware that this is still a beta release, and hasn't yet been
+					thoroughly tested. In particular, <a href="./surefire-report.html">several unit tests</a>
+					are still not passing.
+				</p>
+				<p>
+					<a href="https://sourceforge.net/projects/hl7api/files/hl7api-unstable/2.0-beta1/">Download it here</a>
+				</p>
+			</subsection>
+					
+			<subsection name="New TestPanel!">
+				<p>
+					Secondly, hUnit and the HAPI TestPanel have been combined, to make
+					a fantastic new HL7 testing tool, "TestPanel 2.0". The new panel
+					is a full featured testing and editing suite with support for all
+					kinds of useful things including SSL, MLLP packet capture, validation,
+					conformance profiles, and more.   
+				</p>
+				<p>
+					<a href="./newtestpanel.html">Download it here</a>
+				</p>
+			</subsection>
+
+			<subsection name="Message Colouriser!">
+				<p>
+					Last, and probably least interesting, a new online tool has been added
+					to the site which can be used to colourise ER7 encoded messages. This
+					is mainly useful to people who want to embed HL7 messages or snippet in
+					documentation, emails, web pages, etc. and have them look readable.
+				</p>
+				<p>
+					<a href="./couloriser.html">Check it out</a>
+				</p>
+			</subsection>
+
+			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
+
 		</section>
 
 		<section name="HAPI 10th Birthday! October 30, 2011" style="position: relative;">

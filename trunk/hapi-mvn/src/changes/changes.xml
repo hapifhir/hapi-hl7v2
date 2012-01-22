@@ -5,12 +5,12 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-        <release version="1.3" date="TBD">
+        <release version="2.0" date="TBD">
             <action type="add" dev="Christian Ohr" issue="3388301">
             	Refactored large parts of the networking functionality in the ca.uhn.hl7v2.app package. Most
 				notably, an ExecutorService instance can be injected to customize the threading behavior.
             </action>
-			<action type="add" dev="Christian Ohr" issue="3421082">
+			<action type="add" dev="Christian Ohr / James Agnew" issue="3421082">
             	Make TestPanel more usable. Amongst other changes, it's now possible to load HL7 messages 
 				directly from a file and to reuse client-side connections even when the MLLP server was 
 				restarted in the meanwhile.
@@ -197,7 +197,7 @@
 				now work correctly when the message parser is an XML based parser. Previously
 				these convenience methods only worked for Pipe parsers. 
 			</action>
-			<action dev="James Agnew" type="fix" issue="3471571">
+			<action dev="Christian Ohr" type="fix" issue="3471571">
 				<![CDATA[
 					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#generateACK()">Message#generateACK()</a>
 				]]>
@@ -205,6 +205,10 @@
 				for example that if a CanonicalModelClassFactory is used to construct a message, that same CMCF will be used to
 				generate its ACK. Thanks to Rahul Somasunderam for reporting this and providing a workaround!
 			</action>
+        	<action type="fix">
+        		The "Source" and "Javadoc" JAR bundles are once again being built and can be
+        		downloaded along with the library JARs themselves.
+			</action>			
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a

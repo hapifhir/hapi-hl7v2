@@ -19,7 +19,6 @@
 	<body>
 
 		<links>
-			<item name="hUnit" href="http://hl7api.sf.net/hunit" />
 			<item name="hl7.org" href="http://hl7.org/" />
 			<item name="University Health Network" href="http://www.uhn.ca/" />
 		</links>
@@ -37,7 +36,7 @@
 		</menu>
 
 		<menu name="Download">
-			<item name="Downloads" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
+			<item name="Download API" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
 			<item name="Using Maven" href="using_maven.html" />
 		</menu>
 
