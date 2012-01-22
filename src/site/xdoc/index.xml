@@ -73,7 +73,12 @@
 					as well as to the Maven central repo. HAPI 2.0-beta1 brings with it
 					a number of exciting new features, and a number of bug fixes, which you 
 					can read about in the
-					<a href="changes-report.html">Changelog</a>. This release contains a number
+					<a href="changes-report.html">Changelog</a>. In particular, a huge refactoring
+					of the .app package (containing ConnectionHub, SimpleServer, etc.) to overhaul
+					the thread management was committed by Christian Ohr.
+				</p>
+				<p>
+					This release contains a number
 					of contributions from all over the world. Thanks to everyone who got
 					involved!
 				</p> 
@@ -96,7 +101,7 @@
 					conformance profiles, and more.   
 				</p>
 				<p>
-					<a href="./newtestpanel.html">Download it here</a>
+					<a href="./hapi-testpanel/index.html">Learn More</a>
 				</p>
 			</subsection>
 

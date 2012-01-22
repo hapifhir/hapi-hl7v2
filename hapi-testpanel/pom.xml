@@ -38,6 +38,7 @@
 			<name>JFlex repository</name>
 			<url>http://jflex.sourceforge.net/repo/</url>
 		</pluginRepository>
+		<!-- <pluginRepository> <id>launch4j-xml-plugin-repo</id> <name>launch4j-xml-plugin Repository for Maven</name> <url>https://launch4j-xml-plugin.googlecode.com/svn/repo</url> </pluginRepository> -->
 	</pluginRepositories>
 
 	<dependencies>
@@ -195,11 +196,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <groupId>org.bluestemsoftware.open.maven.plugin</groupId> <artifactId>launch4j-plugin</artifactId> <version>1.5.0.0</version> <executions> <execution> <id>l4j-gui</id> <phase>package</phase> 
-				<goals> <goal>launch4j</goal> </goals> <configuration> <headerType>gui</headerType> <outfile>target/hapi-testpanel.exe</outfile> <jar>target/hapi-testpanel-2.0-alpha1-jar-with-dependencies.jar</jar> <errTitle>HAPI_TestPanel</errTitle> 
-				<classPath> <mainClass>ca.uhn.hl7v2.testpanel.App</mainClass> </classPath> <jre> <minVersion>1.5.0</minVersion> </jre> <versionInfo> <fileVersion>1.2.3.4</fileVersion> <txtFileVersion>txt file version?</txtFileVersion> 
-				<fileDescription>a description</fileDescription> <copyright>my copyright</copyright> <productVersion>4.3.2.1</productVersion> <txtProductVersion>txt product version</txtProductVersion> <productName>E-N-C-C</productName> 
-				<internalName>ccne</internalName> <originalFilename>hapi-testpanel.exe</originalFilename> </versionInfo> </configuration> </execution> </executions> </plugin> -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>keytool-maven-plugin</artifactId>
@@ -231,13 +227,61 @@
 		</resources>
 	</build>
 
+	<reporting>
+		<outputDirectory>${project.basedir}/../target/site/hapi-testpanel</outputDirectory>
+		<plugins>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-site-plugin</artifactId> <configuration> <outputDirectory>${project.basedir}/../target/hapi-testpanel/site</outputDirectory> 
+				</configuration> </plugin> -->
+		</plugins>
+	</reporting>
+
 	<profiles>
 		<profile>
 			<id>BUNDLE</id>
 			<build>
 				<plugins>
-
-					<!-- WebStart -->
+					<!-- Assembly -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>JWD</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<archive>
+										<manifest>
+											<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
+										</manifest>
+									</archive>
+									<descriptorRefs>
+										<descriptorRef>jar-with-dependencies</descriptorRef>
+									</descriptorRefs>
+								</configuration>
+							</execution>
+							<execution>
+								<id>JWDBUNDLE</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/linux.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>WEBSTART</id>
+			<build>
+				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo.webstart</groupId>
 						<artifactId>webstart-maven-plugin</artifactId>
@@ -268,43 +312,13 @@
 							<!-- <outputJarVersions>true</outputJarVersions> -->
 						</configuration>
 					</plugin>
-
-					<!-- Assembly -->
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>JWD</id>
-								<phase>package</phase>
-								<goals>
-									<goal>assembly</goal>
-								</goals>
-								<configuration>
-									<archive>
-										<manifest>
-											<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
-										</manifest>
-									</archive>
-									<descriptorRefs>
-										<descriptorRef>jar-with-dependencies</descriptorRef>
-									</descriptorRefs>
-								</configuration>
-							</execution>
-							<execution>
-								<id>JWDBUNDLE</id>
-								<phase>package</phase>
-								<goals>
-									<goal>assembly</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>src/assembly/hapi-testpanel.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>OSX</id>
+			<build>
+				<plugins>
 					<!-- OSX App Bundle -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -313,6 +327,8 @@
 						<configuration>
 							<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
 							<iconFile>${basedir}/src/main/resources/ca/uhn/hl7v2/testpanel/images/hapi_icon_osx.icns</iconFile>
+							<!-- <zipFile>${project.build.directory}/${project.build.finalName}-mac.zip</zipFile> -->
+							<diskImageFile>${project.build.directory}/${project.build.finalName}-mac.dmg</diskImageFile>
 						</configuration>
 						<executions>
 							<execution>
@@ -323,7 +339,50 @@
 							</execution>
 						</executions>
 					</plugin>
-
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>WINDOWS</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<executable>C:\Program Files\Launch4j\launch4jc.exe</executable>
+							<workingDirectory>${project.basedir}\target</workingDirectory>
+							<arguments>
+								<argument>..\src\launch4j\launch4j.xml</argument>
+							</arguments>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>WINBUNDLE</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/windows.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
