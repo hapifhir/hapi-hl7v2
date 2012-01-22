@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.model;
 
 import java.util.ArrayList;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 import junit.framework.TestCase;
@@ -61,6 +62,7 @@ public class GenericPrimitiveTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
         message = new GenericMessage.V25(new DefaultModelClassFactory());
+        message.initQuickstart("ADT", "A01", "T");
 		genericPrimitive = new GenericPrimitive(message);
 	}
 
@@ -85,6 +87,13 @@ public class GenericPrimitiveTest extends TestCase {
 		assertNotNull("Should have a valid GenericPrimitiveTest object", genericPrimitive);
 	}
 
+	public void testClear() throws HL7Exception {
+		
+		genericPrimitive.parse("AAAA");
+		genericPrimitive.clear();
+		assertEquals(null, genericPrimitive.getValue());
+	}
+	
 	/**
 	 * Testing set/getValue() with various date strings
 	 */

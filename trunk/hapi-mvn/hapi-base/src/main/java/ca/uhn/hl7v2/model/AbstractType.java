@@ -96,6 +96,34 @@ public abstract class AbstractType implements Type {
 		extra.clear();
 	}
 
+	
+	/**
+	 * Returns the datatype and attempts to pipe-encode it. For example, a string implementation
+	 * might return "ST[Value^Value2]". This is only intended for logging/debugging purposes.
+	 */
+	@Override
+	public String toString() {
+		return toString(this);
+	}
+
+	
+	/**
+	 * Returns the datatype and attempts to pipe-encode it. For example, a string implementation
+	 * might return "ST[Value^Value2]". This is only intended for logging/debugging purposes.
+	 */
+	static String toString(Type theType) {
+		StringBuilder b = new StringBuilder();
+		b.append(theType.getClass().getSimpleName());
+		b.append("[");
+		try {
+			b.append(theType.encode());
+		} catch (HL7Exception e) {
+			b.append("Unable to encode");
+		}
+		b.append("]");
+		return b.toString();
+	}
+
 
 	
 
