@@ -80,7 +80,7 @@ public class AbstractMessageTest extends TestCase {
         ModelClassFactory mcf = new CanonicalModelClassFactory("2.6");
         Parser p = new PipeParser(mcf);
         p.setValidationContext(new NoValidation());
-        Message message = new PipeParser().parse(string);
+        Message message = p.parse(string);
         Message ack = message.generateACK();
 
         ca.uhn.hl7v2.model.v26.segment.MSH msh = (ca.uhn.hl7v2.model.v26.segment.MSH)ack.get("MSH");
