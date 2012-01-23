@@ -32,6 +32,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
@@ -130,8 +132,16 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	private UpdaterThread myUpdaterThread;
 
+	private TreeRowModel myTableModel;
+
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				handleKeyPress(e);
+			}
+		});
 
 		setFont(new Font("LUCIDA", Font.PLAIN, 9));
 
@@ -170,7 +180,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				if (myController.isMessageEditorInFollowMode()) {
-					synchronizeTreeWithHighlitedPath();
+					if (Hl7V2MessageTree.this.hasFocus() == false) {
+						synchronizeTreeWithHighlitedPath();
+					}
 				}
 			}
 
@@ -248,6 +260,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					mySelectionHandlingDisabled = true;
 					ourLog.debug("Open paths are: {}", openPaths);
 					if (openPaths.isEmpty() && myShouldOpenDefaultPaths) {
+						ourLog.info("Opening default paths");
 						final AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
 						for (int row = 0; row < layout.getRowCount(); row++) {
 							TreePath path = layout.getPathForRow(row);
@@ -258,6 +271,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 						}
 						myShouldOpenDefaultPaths = false;
 					} else {
+						ourLog.info("Opening pre-existing paths: {} and selected path: {}", openPaths, selectedPath);
 						expandPaths(openPaths, selectedPath);
 					}
 				} finally {
@@ -270,6 +284,23 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		// handleNewSelectedIndex(selectedRow);
 		// }
 
+	}
+
+	private void handleKeyPress(KeyEvent theE) {
+		int row = getSelectedRow();
+		if (row == -1) {
+			return;
+		}
+		
+		if (theE.getKeyCode() == KeyEvent.VK_ENTER || theE.getKeyCode() == KeyEvent.VK_F2) {
+			AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
+			TreePath path = layout.getPathForRow(row);
+			TreeNodeBase baseObj = (TreeNodeBase) path.getLastPathComponent();
+			if (myTableModel.isCellEditable(baseObj, TreeRowModel.COL_VALUE)) {
+				editCellAt(row, TreeRowModel.COL_VALUE + 1);
+				theE.consume();
+			}
+		}
 	}
 
 	/**
@@ -788,8 +819,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		myTop = new TreeNodeRoot();
 		myTreeModel = new DefaultTreeModel(myTop, false);
 
-		RowModel rowModel = new TreeRowModel(myTreeModel);
-		OutlineModel outlineModel = DefaultOutlineModel.createOutlineModel(myTreeModel, rowModel);
+		myTableModel = new TreeRowModel(myTreeModel);
+		OutlineModel outlineModel = DefaultOutlineModel.createOutlineModel(myTreeModel, myTableModel);
 		setModel(outlineModel);
 		setRootVisible(false);
 
@@ -1248,11 +1279,11 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				enc = new EncodingCharacters('|', null);
 			}
 
-			if (isHasContent()) {
-				String encoded = PipeParser.encode(theComposite, enc);
-				HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, myRuntimeProfileId);
-				addValidationExceptions(problems);
-			}
+			// if (isHasContent()) {
+			String encoded = PipeParser.encode(theComposite, enc);
+			HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, myRuntimeProfileId);
+			addValidationExceptions(problems);
+			// }
 
 		}
 
@@ -1352,15 +1383,15 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public TreeNodeGroupConf(ConformanceGroup theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
 			super(theGroup, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
 
-			if (isHasContent()) {
-				try {
-					HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), myRuntimeProfileId);
-					addValidationExceptions(problems);
-				} catch (ProfileException e) {
-					addValidationExceptions(new HL7Exception(e));
-				}
-
+			// if (isHasContent()) {
+			try {
+				HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), myRuntimeProfileId);
+				addValidationExceptions(problems);
+			} catch (ProfileException e) {
+				addValidationExceptions(new HL7Exception(e));
 			}
+
+			// }
 		}
 
 		/**
@@ -1505,10 +1536,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				encoded = thePrimitive.getValue();
 			}
 
-			if (isHasContent()) {
-				HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, myRuntimeProfileId);
-				addValidationExceptions(problems);
-			}
+			// if (isHasContent()) {
+			HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, myRuntimeProfileId);
+			addValidationExceptions(problems);
+			// }
 		}
 
 		/**
@@ -1616,15 +1647,15 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public TreeNodeSegmentConf(ConformanceSegment theSegment, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
 			super(theSegment, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
 
-			if (isHasContent()) {
-				try {
-					HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), myRuntimeProfileId);
-					addValidationExceptions(problems);
-				} catch (ProfileException e) {
-					addValidationExceptions(new HL7Exception(e));
-				}
-
+			// if (isHasContent()) {
+			try {
+				HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), myRuntimeProfileId);
+				addValidationExceptions(problems);
+			} catch (ProfileException e) {
+				addValidationExceptions(new HL7Exception(e));
 			}
+
+			// }
 		}
 
 		/**
@@ -1950,12 +1981,12 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		}
 
-		public boolean isCellEditable(Object theArg0, int theArg1) {
-			if (theArg1 == COL_VALUE) {
-				if (theArg0 instanceof TreeNodeSegment) {
+		public boolean isCellEditable(Object theValue, int theColumn) {
+			if (theColumn == COL_VALUE) {
+				if (theValue instanceof TreeNodeSegment) {
 					return true;
 				}
-				if (theArg0 instanceof TreeNodeType) {
+				if (theValue instanceof TreeNodeType) {
 					return true;
 				}
 			}

@@ -26,14 +26,14 @@
 package ca.uhn.hl7v2.testpanel.model.conf;
 
 import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
+import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 
-public class ConformancePrimitive extends AbstractType implements Primitive, ConformanceType<ConformancePrimitive> {
+public class ConformancePrimitive extends AbstractPrimitive implements Primitive, ConformanceType<ConformancePrimitive> {
 
-	private String myValue;
 	private AbstractComponent myConfDefinition;
 
 	public ConformancePrimitive(Message theMessage, AbstractComponent theConfDefinition) {
@@ -55,20 +55,6 @@ public class ConformancePrimitive extends AbstractType implements Primitive, Con
 	@Override
 	public String getName() {
 		return myConfDefinition.getDatatype();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getValue() {
-		return myValue;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setValue(String theValue) throws DataTypeException {
-		myValue = theValue;
 	}
 
 	/**

@@ -83,6 +83,9 @@ import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.ScreenBoundsUtil;
 import ca.uhn.hl7v2.testpanel.util.SwingLogAppender;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 /**
  * This is the main outer window for the TestPanel
@@ -324,6 +327,7 @@ public class TestPanelWindow implements IDestroyable {
 		mnFile.add(mntmNewMessage);
 
 		mySaveMenuItem = new JMenuItem("Save");
+		mySaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		mySaveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doSaveMessages();

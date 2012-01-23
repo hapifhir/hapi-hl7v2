@@ -79,8 +79,7 @@ public class Prefs {
 	}
 
 	public static File getTempWorkfilesDirectory() throws IOException {
-		File userHome = new File(System.getProperty("user.home"));
-		File testPanelHome = new File(userHome, "HapiTestPanel");
+		File testPanelHome = getTestpanelHomeDirectory();
 		File retVal = new File(testPanelHome, "workfiles");
 		retVal.mkdirs();
 		return retVal;
@@ -102,6 +101,12 @@ public class Prefs {
 		// }
 		// ourPrefs.put(GET_TEMP_WORKFILES_DIRECTORY, retVal.getAbsolutePath());
 		// return retVal;
+	}
+
+	public static File getTestpanelHomeDirectory() {
+		File userHome = new File(System.getProperty("user.home"));
+		File testPanelHome = new File(userHome, "HapiTestPanel");
+		return testPanelHome;
 	}
 
 	public static void setOpenPathConformanceProfile(String theValue) {
