@@ -33,6 +33,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -60,7 +61,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
@@ -91,7 +91,6 @@ import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
-import java.awt.Insets;
 
 public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyable {
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
@@ -565,8 +564,11 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				}
 				Range range = (Range) theEvt.getNewValue();
 
+				myMessageScrollPane.getHorizontalScrollBar().setValue(0);
+				
 				myMessageEditor.select(range.getStart(), range.getEnd());
-				myMessageEditor.grabFocus();
+//				myMessageEditor.grabFocus();
+				myMessageEditor.repaint();
 
 				String substring = myMessage.getSourceMessage().substring(range.getStart(), range.getEnd());
 				ourLog.info("Selected range set to " + range + " which is " + substring);
@@ -586,6 +588,14 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessage.addPropertyChangeListener(Hl7V2MessageCollection.PROP_SAVE_FILENAME, myWindowTitleListener);
 		updateWindowTitle();
 
+		EventQueue.invokeLater(new Runnable() {
+
+			public void run() {
+				myMessageEditor.setCaretPosition(0);
+				myMessageEditor.grabFocus();
+			}});
+		
+		
 	}
 
 	private void updateWindowTitle() {

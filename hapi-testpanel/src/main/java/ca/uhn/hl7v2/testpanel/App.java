@@ -36,12 +36,12 @@ import java.net.URL;
 
 import javax.swing.UIManager;
 
+import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
-import ca.uhn.hl7v2.testpanel.util.FileUtils;
+import ca.uhn.hl7v2.testpanel.controller.Prefs;
 
 public class App {
 	
@@ -62,6 +62,9 @@ public class App {
 			e.printStackTrace();
 		} 
 
+		System.setProperty("tespanel.log.dir", Prefs.getTestpanelHomeDirectory().getAbsolutePath());
+		DOMConfigurator.configure(App.class.getClassLoader().getResource("log4j_testpanel.xml"));
+		
 		myController = new Controller();
 		
 		// only do this setup if we know this is a Mac
