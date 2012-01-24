@@ -341,7 +341,7 @@ public class Responder {
 			// see if it's an HL7Exception (so we can get specific information)
 			// ...
 			if (e.getClass().equals(HL7Exception.class)) {
-				Segment err = (Segment) out.get("ERR");
+//				Segment err = (Segment) out.get("ERR");
 				// ((HL7Exception) e).populate(err); // FIXME: this is broken,
 				// it relies on the database in a place where it's not available
 			} else {
@@ -391,6 +391,7 @@ public class Responder {
 	/**
 	 * Test code.
 	 */
+	@SuppressWarnings("unused")
 	public static void main(String args[]) {
 		if (args.length != 1) {
 			System.err.println("Usage: DefaultApplication message_file");
