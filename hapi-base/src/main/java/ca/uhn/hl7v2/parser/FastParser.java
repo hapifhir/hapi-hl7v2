@@ -70,7 +70,7 @@ public class FastParser extends Parser {
     private static final Logger ourLog = LoggerFactory.getLogger(FastParser.class);
     
     private static char ourSegmentSeparator = '\r';
-    private Map myEventGuideMap;
+    private Map<Object, StructRef> myEventGuideMap;
     private PipeParser myPipeParser;
     
     /**
@@ -82,7 +82,7 @@ public class FastParser extends Parser {
      *      StructRef for the MSH segment from getSuccessor("MSH").  References to other 
      *      segments can be included as needed.   
      */
-    public FastParser(Map theEventGuideMap) {
+    public FastParser(Map<Object, StructRef> theEventGuideMap) {
     	this(null, theEventGuideMap);
     }
 
@@ -96,7 +96,7 @@ public class FastParser extends Parser {
      *      StructRef for the MSH segment from getSuccessor("MSH").  References to other 
      *      segments can be included as needed.   
      */
-    public FastParser(ModelClassFactory theFactory, Map theEventGuideMap) {
+    public FastParser(ModelClassFactory theFactory, Map<Object, StructRef> theEventGuideMap) {
     	super(theFactory);
         myEventGuideMap = theEventGuideMap;
         myPipeParser = new PipeParser();
@@ -135,8 +135,8 @@ public class FastParser extends Parser {
      * @param theMapURL an URL to a file of the form desribed above
      * @return the corresponding Map 
      */
-    public static Map loadEventGuideMap(URL theMapURL) throws HL7Exception {
-        Map result = new HashMap();
+    public static Map<Object, StructRef> loadEventGuideMap(URL theMapURL) throws HL7Exception {
+        Map<Object, StructRef> result = new HashMap<Object, StructRef>();
         
         try {
             URLConnection conn = theMapURL.openConnection();
@@ -167,7 +167,7 @@ public class FastParser extends Parser {
         return result;
     }
     
-    private static void finish(String theEventName, StringBuffer theSpec, Map theMap) {
+    private static void finish(String theEventName, StringBuffer theSpec, Map<Object, StructRef> theMap) {
         if (theEventName != null) {
             RootRef root = parseGuide(theSpec.toString());
             theMap.put(theEventName, root);
@@ -177,9 +177,9 @@ public class FastParser extends Parser {
     private static RootRef parseGuide(String theSpec) {
         StringTokenizer lines = new StringTokenizer(theSpec, "\r", false);
         RootRef result = new RootRef();
-        Stack ancestry = new Stack();
+        Stack<StructRef> ancestry = new Stack<StructRef>();
         ancestry.push(result);
-        Map successors = new HashMap();
+        Map<Object, StructRef> successors = new HashMap<Object, StructRef>();
         
         StructRef previous = result;
         while (lines.hasMoreTokens()) {
@@ -215,8 +215,8 @@ public class FastParser extends Parser {
         return result;
     }
     
-    private static void setGroupSuccessors(Map theSuccessors, String theSegName) {
-        for (Iterator it = theSuccessors.keySet().iterator(); it.hasNext(); ) {
+    private static void setGroupSuccessors(Map<Object, StructRef> theSuccessors, String theSegName) {
+        for (Iterator<Object> it = theSuccessors.keySet().iterator(); it.hasNext(); ) {
             StructRef from = (StructRef) it.next();
             StructRef to = (StructRef) theSuccessors.get(from);
             from.setSuccessor(theSegName, to);
@@ -226,7 +226,7 @@ public class FastParser extends Parser {
     
     private static int[] getFieldList(String theSpec) {
         StringTokenizer tok = new StringTokenizer(theSpec, ",", false); 
-        List fieldList = new ArrayList(30);
+        List<Integer> fieldList = new ArrayList<Integer>(30);
         while (tok.hasMoreTokens()) {
             String token = tok.nextToken();
             int index = token.indexOf('-');
@@ -291,7 +291,7 @@ public class FastParser extends Parser {
                     structure[0]);
             result = myPipeParser.parse(message);
         } else {
-            int csIndex = mshFields[11].indexOf(ec.getComponentSeparator());
+//            int csIndex = mshFields[11].indexOf(ec.getComponentSeparator());
             result = instantiateMessage((String) structure[1], version, ((Boolean) structure[2]).booleanValue());
                 
             StructRef mshRef = null;
@@ -550,12 +550,12 @@ public class FastParser extends Parser {
 
         private StructRef myParent;
         private String myRelativePath;
-        private Map mySuccessors;
+        private Map<Object, StructRef> mySuccessors;
         private int myRep;
         private boolean mySegmentFlag;
         //private boolean myResettableFlag;
         private int[] myFields;
-        private List myChildren;
+        private List<StructRef> myChildren;
         
         /**
          * @param theParent a StructRef for the parent Group of the referenced Structure
@@ -567,7 +567,7 @@ public class FastParser extends Parser {
          */
         public StructRef(StructRef theParent, String theRelativePath, boolean isSegment, int[] theFields) {
             myParent = theParent;
-            myChildren = new ArrayList();
+            myChildren = new ArrayList<StructRef>();
             if (myParent != null) myParent.addChild(this);
             
             myRelativePath = theRelativePath;
@@ -575,7 +575,7 @@ public class FastParser extends Parser {
                 myRelativePath = "/" + myRelativePath;
             }
             mySegmentFlag = isSegment;
-            mySuccessors = new HashMap();
+            mySuccessors = new HashMap<Object, StructRef>();
             myRep = -1;
             if (mySegmentFlag) {
                 myFields = theFields;
