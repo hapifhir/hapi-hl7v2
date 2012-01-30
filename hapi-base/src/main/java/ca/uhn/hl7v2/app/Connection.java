@@ -56,7 +56,7 @@ import ca.uhn.hl7v2.parser.Parser;
  */
 public class Connection {
 
-    private static final Logger log = LoggerFactory.getLogger(Connection.class);
+	private static final Logger log = LoggerFactory.getLogger(Connection.class);
 
 	private Initiator initiator;
 	private Responder responder;
@@ -76,20 +76,20 @@ public class Connection {
 	 */
 	public Connection(Parser parser, LowerLayerProtocol llp,
 			Socket bidirectional) throws LLPException, IOException {
-		this(parser, llp, bidirectional, DefaultExecutorService.getDefaultService());
+		this(parser, llp, bidirectional, DefaultExecutorService
+				.getDefaultService());
 	}
-	
+
 	public Connection(Parser parser, LowerLayerProtocol llp,
-			Socket bidirectional, ExecutorService executorService) throws LLPException, IOException {
+			Socket bidirectional, ExecutorService executorService)
+			throws LLPException, IOException {
 		init(parser, executorService);
 		ackWriter = llp.getWriter(bidirectional.getOutputStream());
 		sendWriter = ackWriter;
 		this.executorService = executorService;
 		sockets.add(bidirectional);
-		Receiver r = new Receiver(this, llp.getReader(bidirectional
-				.getInputStream()));
-		receivers.add(r);
-		r.start();
+		receivers.add(new Receiver(this, llp.getReader(bidirectional
+				.getInputStream())));
 		this.initiator = new Initiator(this);
 	}
 
@@ -99,40 +99,50 @@ public class Connection {
 	 */
 	public Connection(Parser parser, LowerLayerProtocol llp, Socket inbound,
 			Socket outbound) throws LLPException, IOException {
-		this(parser, llp, inbound, outbound, DefaultExecutorService.getDefaultService() );
+		this(parser, llp, inbound, outbound, DefaultExecutorService
+				.getDefaultService());
 	}
-	
+
 	/**
 	 * Creates a new instance of Connection, with inbound communication on one
 	 * port and outbound on another.
 	 */
 	public Connection(Parser parser, LowerLayerProtocol llp, Socket inbound,
-			Socket outbound, ExecutorService executorService) throws LLPException, IOException {
+			Socket outbound, ExecutorService executorService)
+			throws LLPException, IOException {
 		init(parser, executorService);
 		ackWriter = llp.getWriter(inbound.getOutputStream());
 		sendWriter = llp.getWriter(outbound.getOutputStream());
 		sockets.add(outbound); // always add outbound first ... see getRemoteAddress()
 		sockets.add(inbound);
-		Receiver inRec = new Receiver(this, llp.getReader(inbound
-				.getInputStream()));
-		Receiver outRec = new Receiver(this, llp.getReader(outbound
-				.getInputStream()));
 
-		receivers.add(inRec);
-		receivers.add(outRec);
-		inRec.start();
-		outRec.start();
+		receivers.add(new Receiver(this,
+				llp.getReader(inbound.getInputStream())));
+		receivers.add(new Receiver(this, llp.getReader(outbound
+				.getInputStream())));
 		this.initiator = new Initiator(this);
-	}	
+	}
 
 	/** Common initialization tasks */
-	private void init(Parser parser, ExecutorService executorService) throws LLPException {
+	private void init(Parser parser, ExecutorService executorService)
+			throws LLPException {
 		this.parser = parser;
 		this.executorService = executorService;
 		sockets = new ArrayList<Socket>();
 		responses = new BlockingHashMap<String, String>(executorService);
 		receivers = new ArrayList<Receiver>(2);
 		responder = new Responder(parser);
+	}
+
+	/**
+	 * Start the receiver thread(s)
+	 */
+	public void activate() {
+		if (receivers != null) {
+			for (Receiver receiver : receivers) {
+				receiver.start();
+			}
+		}
 	}
 
 	public ExecutorService getExecutorService() {
@@ -152,8 +162,8 @@ public class Connection {
 
 	/**
 	 * Returns the remote port on the remote host to which this Connection is
-	 * connected. If separate inbound and outbound sockets are used, the port
-	 * of the outbound socket is returned.
+	 * connected. If separate inbound and outbound sockets are used, the port of
+	 * the outbound socket is returned.
 	 */
 	public int getRemotePort() {
 		Socket s = sockets.get(0);
@@ -216,7 +226,8 @@ public class Connection {
 	 * Reserves a future incoming message by ack ID. When the incoming message
 	 * with the given ack ID arrives, the message will be returned.
 	 */
-	protected Future<String> waitForResponse(final String messageID, long timeout) throws InterruptedException {
+	protected Future<String> waitForResponse(final String messageID,
+			long timeout) throws InterruptedException {
 		return responses.asyncPoll(messageID, timeout, TimeUnit.MILLISECONDS);
 	}
 
@@ -235,7 +246,8 @@ public class Connection {
 			if (receiver.isRunning())
 				receiver.stop();
 		}
-		// Forces open sockets to be closed. This causes the Receiver threads to eventually terminate
+		// Forces open sockets to be closed. This causes the Receiver threads to
+		// eventually terminate
 		for (Socket socket : sockets) {
 			try {
 				if (!socket.isClosed())
@@ -248,9 +260,8 @@ public class Connection {
 		open = false;
 	}
 
-    public boolean isOpen() {
+	public boolean isOpen() {
 		return open;
 	}
-
 
 }

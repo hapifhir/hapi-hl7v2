@@ -42,18 +42,7 @@ public class ResponderTest {
 		server.registerApplication("*", "*", new DummyApplication());
 		server.start();
 		
-		for (int i = 0; ; i++) {
-			try {
-				socket = new Socket("localhost", port);
-				break;
-			} catch (Exception e) {
-				if (i == 10) {
-					throw e;
-				} else {
-					Thread.sleep(200);
-				}
-			}
-		}
+		socket = TestUtils.acquireClientSocket(port);
 		
 		writer = new MinLLPWriter(socket.getOutputStream());
 		reader = new MinLLPReader(socket.getInputStream());

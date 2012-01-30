@@ -159,8 +159,9 @@ public class SimpleServer extends HL7Service {
 			if (newSocket != null) {
 				log.info("Accepted connection from {}", newSocket.socket
 						.getInetAddress().getHostAddress());
-				newConnection(new Connection(parser, llp, newSocket.socket,
-						getExecutorService()));
+				Connection c = new Connection(parser, llp, newSocket.socket,
+						getExecutorService());
+				newConnection(c);
 			}
 		} catch (InterruptedException ie) { 
 			// just timed out

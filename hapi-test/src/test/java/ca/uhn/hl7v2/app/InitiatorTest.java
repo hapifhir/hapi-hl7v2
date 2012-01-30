@@ -58,8 +58,9 @@ public class InitiatorTest {
 	public void testSendAndReceive() throws Exception {
 		Parser parser = new PipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
-		Socket socket = connectInsocket();
+		Socket socket = TestUtils.acquireClientSocket(port);
 		Connection conn = new Connection(parser, protocol, socket);
+		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
 		assertTrue(in != null);
@@ -67,28 +68,13 @@ public class InitiatorTest {
 				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
 	}
 
-	private Socket connectInsocket() throws Exception, InterruptedException {
-		Socket insocket;
-		for (int i = 0; ; i++) {
-			try {
-				insocket = new Socket("localhost", port);
-				break;
-			} catch (Exception e) {
-				if (i == 10) {
-					throw e;
-				} else {
-					Thread.sleep(200);
-				}
-			}
-		}
-		return insocket;
-	}
 	
 	@Test
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50; // TODO fails with 100
 		final Parser parser = new PipeParser();
 		final Connection conn = new Connection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
+		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());
 		Callable<Boolean> t = new Callable<Boolean>() {
 			public Boolean call() {

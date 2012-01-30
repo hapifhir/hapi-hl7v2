@@ -50,7 +50,7 @@ public class ReceiverTest {
                 super.close();
                 latch.countDown();
             }
-        };
+        }.activate();
         assertTrue(latch.await(1000, TimeUnit.MILLISECONDS));
         at.stopAndWait();
     }
@@ -69,7 +69,7 @@ public class ReceiverTest {
                 super.close();
                 latch.countDown();
             }
-        };
+        }.activate();
 
         clientSocket.close();
         assertTrue(latch.await(1000, TimeUnit.MILLISECONDS));

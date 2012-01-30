@@ -56,6 +56,7 @@ class ConnectionFactory {
 					connectionData.getProtocol(), inbound, outbound,
 					executorService);
 		}
+		connection.activate();
 		return connection;
 	}
 

@@ -63,10 +63,11 @@ public class TwoPortInitiatorTest {
 		Parser parser = new PipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
 		
-		Socket outsocket = connectOutsocket();
-		Socket insocket = connectInsocket();
+		Socket outsocket = TestUtils.acquireClientSocket(port1);
+		Socket insocket = TestUtils.acquireClientSocket(port2);
 		
 		Connection conn = new Connection(parser, protocol, insocket, outsocket);
+		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
 		assertTrue(in != null);
@@ -76,48 +77,16 @@ public class TwoPortInitiatorTest {
 		// Thread.sleep(2000);
 	}
 
-	private Socket connectInsocket() throws Exception, InterruptedException {
-		Socket insocket;
-		for (int i = 0; ; i++) {
-			try {
-				insocket = new Socket("localhost", port2);
-				break;
-			} catch (Exception e) {
-				if (i == 10) {
-					throw e;
-				} else {
-					Thread.sleep(200);
-				}
-			}
-		}
-		return insocket;
-	}
-
-	private Socket connectOutsocket() throws Exception, InterruptedException {
-		Socket outsocket;
-		for (int i = 0; ; i++) {
-			try {
-				outsocket = new Socket("localhost", port1);
-				break;
-			} catch (Exception e) {
-				if (i == 10) {
-					throw e;
-				} else {
-					Thread.sleep(200);
-				}
-			}
-		}
-		return outsocket;
-	}
 
 	@Test
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50;
 		final Parser parser = new PipeParser();
-		Socket outsocket = connectOutsocket();
-		Socket insocket = connectInsocket();
+		Socket outsocket = TestUtils.acquireClientSocket(port1);
+		Socket insocket = TestUtils.acquireClientSocket(port2);
 		final Connection conn = new Connection(parser,
 				new MinLowerLayerProtocol(), insocket, outsocket);
+		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());
 		Callable<Boolean> t = new Callable<Boolean>() {
 			public Boolean call() {
