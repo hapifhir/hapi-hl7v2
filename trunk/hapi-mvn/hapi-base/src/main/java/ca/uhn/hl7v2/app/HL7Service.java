@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,6 +135,7 @@ public abstract class HL7Service extends Service {
 	 */
 	public synchronized void newConnection(Connection c) {
 		c.getResponder().registerApplication(router);
+		c.activate();
 		connections.add(c); // keep track of connections
 		notifyListeners(c);
 	}

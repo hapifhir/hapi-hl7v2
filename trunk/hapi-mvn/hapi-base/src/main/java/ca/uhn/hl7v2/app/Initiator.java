@@ -179,6 +179,7 @@ public class Initiator {
 			Connection connection = new Connection(parser, llp, new Socket(
 					host, port));
 			final Initiator initiator = connection.getInitiator();
+			connection.activate();
 			final String outText = "MSH|^~\\&|||||||ACK^^ACK|||R|2.4|\rMSA|AA";
 
 			// get a bunch of threads to send messages

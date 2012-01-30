@@ -23,6 +23,7 @@ public class LoadTester extends Thread {
         this.interval = intervalMilliseconds;
         this.duration = durationSeconds;
         conn = new Connection(new GenericParser(), new MinLowerLayerProtocol(), new Socket(host, port));
+        conn.activate();
     }
     
     public void run() {
