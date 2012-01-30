@@ -42,8 +42,8 @@ public class FileCodeMapper extends CodeMapper {
 
     private boolean throwIfNoMatch = false;
     File baseDir;
-    private HashMap interfaceToLocal;
-    private HashMap localToInterface;
+    private HashMap<String, HashMap<String, HashMap<String, String>>> interfaceToLocal;
+    private HashMap<String, HashMap<String, HashMap<String, String>>> localToInterface;
 
     /**
      * Creates a new instance of FileCodeMapper.  You should probably not
@@ -62,8 +62,8 @@ public class FileCodeMapper extends CodeMapper {
      * to this method refreshes the values.
      */
     public void refreshCache() throws HL7Exception {
-        localToInterface = new HashMap(10);
-        interfaceToLocal = new HashMap(10);
+        localToInterface = new HashMap<String, HashMap<String, HashMap<String, String>>>(10);
+        interfaceToLocal = new HashMap<String, HashMap<String, HashMap<String, String>>>(10);
 
         log.info("Refreshing cache");
 
@@ -98,8 +98,8 @@ public class FileCodeMapper extends CodeMapper {
                 });
 
                 //read map entries from each file and add to hash maps for li and il codes
-                HashMap li = new HashMap(50);
-                HashMap il = new HashMap(50);
+                HashMap<String, HashMap<String, String>> li = new HashMap<String, HashMap<String, String>>(50);
+                HashMap<String, HashMap<String, String>> il = new HashMap<String, HashMap<String, String>>(50);
                 for (int j = 0; j < mapFiles.length; j++) {
                     log.info("Reading map entries from file {}", mapFiles[j]);
 
@@ -109,7 +109,7 @@ public class FileCodeMapper extends CodeMapper {
 
                     //read values and store in HashMap
                     BufferedReader in = new BufferedReader(new FileReader(mapFiles[j]));
-                    HashMap codeMap = new HashMap(25);
+                    HashMap<String, String> codeMap = new HashMap<String, String>(25);
                     while (in.ready()) {
                         String line = in.readLine();
                         if (!line.startsWith("//")) {
@@ -159,7 +159,7 @@ public class FileCodeMapper extends CodeMapper {
     public String getLocalCode(String interfaceName, int hl7Table, String interfaceCode) throws HL7Exception {
         String localCode = null;
         try {
-            HashMap interfaceMap = (HashMap) interfaceToLocal.get(interfaceName);
+            HashMap<String, HashMap<String, String>> interfaceMap = interfaceToLocal.get(interfaceName);
             localCode = getCode(interfaceMap, hl7Table, interfaceCode);
         }
         catch (NullPointerException npe) {
@@ -180,7 +180,7 @@ public class FileCodeMapper extends CodeMapper {
     /**
      * Common code for getLocalcode and getInterfaceCode
      */
-    private String getCode(HashMap interfaceMap, int hl7Table, String code) {
+    private String getCode(HashMap<String, HashMap<String, String>> interfaceMap, int hl7Table, String code) {
         String ret = null;
 
         //get map for the given table
@@ -193,7 +193,7 @@ public class FileCodeMapper extends CodeMapper {
         if (hl7Table < 10)
             tableName.append("0");
         tableName.append(hl7Table);
-        HashMap tableMap = (HashMap) interfaceMap.get(tableName.toString());
+        HashMap<String, String> tableMap = interfaceMap.get(tableName.toString());
 
         //get code
         ret = tableMap.get(code).toString();
@@ -207,7 +207,7 @@ public class FileCodeMapper extends CodeMapper {
     public String getInterfaceCode(String interfaceName, int hl7Table, String localCode) throws HL7Exception {
         String interfaceCode = null;
         try {
-            HashMap interfaceMap = (HashMap) localToInterface.get(interfaceName);
+            HashMap<String, HashMap<String, String>> interfaceMap = localToInterface.get(interfaceName);
             interfaceCode = getCode(interfaceMap, hl7Table, localCode);
         }
         catch (NullPointerException npe) {
