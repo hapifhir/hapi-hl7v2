@@ -79,6 +79,11 @@
         	<action type="add" dev="Christian Ohr">
         		Modernize a bunch of the code base to add proper generics support.
         	</action>
+        	<action type="fix" dev="Christian Ohr" issue="3001226">
+        		Fixed a race issue that starts the Receiver thread before an Application instance is attached.
+				On the client side, when you don't use the ConnectionHub (you should!), make sure to call Connection#activate() 
+				before sending messages. On the server-side, this is done automatically.
+        	</action>			
         	<action type="fix" dev="Christian Ohr / Jason Thompson" issue="3410095">
         		Correct an integer overflow issue when
         		<![CDATA[
