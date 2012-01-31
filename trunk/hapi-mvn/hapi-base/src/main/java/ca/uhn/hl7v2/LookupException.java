@@ -34,6 +34,7 @@ package ca.uhn.hl7v2;
  * given value is unknown.  
  * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated should be moved to sourcegen
  */
 @SuppressWarnings("serial")
 public class LookupException extends Exception {

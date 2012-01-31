@@ -30,6 +30,7 @@ package ca.uhn.hl7v3.sourcegen;
 /**
  * Creates source code for RIM DataTypes.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public class DataTypeGenerator {
 

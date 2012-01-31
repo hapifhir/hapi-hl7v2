@@ -11,6 +11,7 @@ import ca.uhn.hl7v2.HL7Exception;
  * A composite test application that delegates to multiple other test applications 
  * and returns a combined list of problems.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public class MultiTestApplication extends TestApplication {
     

@@ -12,6 +12,7 @@ import java.util.List;
  * Tests correctness of message parsing by testing equivalence of re-encoded
  * form with original.
  * @author Bryan Tripp
+ * @deprecated
  */
 public class ParseTester {
     

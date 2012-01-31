@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  * Reads HL7 messages from an InputStream
  * 
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:27 $ by $Author: jamesagnew $
+ * @deprecated see {@link Hl7InputStreamMessageIterator} or {@link Hl7InputStreamMessageStringIterator}
  */
 public class Hl7InputStreamReader {
     

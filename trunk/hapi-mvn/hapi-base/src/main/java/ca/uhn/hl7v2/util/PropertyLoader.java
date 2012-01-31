@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Loads system properties from a file.  This is intended as a convenient way 
  * of setting multiple system properties. 
+ * @deprecated
  */
 public class PropertyLoader {
     

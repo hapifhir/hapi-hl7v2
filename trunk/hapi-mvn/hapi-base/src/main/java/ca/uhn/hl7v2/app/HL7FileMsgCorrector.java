@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author <a href="mailto:neal.acharya@uhn.on.ca">Neal Acharya</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:37 $ by $Author: jamesagnew $
+ * @deprecated
  */
 public class HL7FileMsgCorrector {
     

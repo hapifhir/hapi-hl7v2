@@ -12,6 +12,7 @@ import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
  * <p>Note that profiles are referenced by ID, and that the ca.uhn.hl7v2.conf.store
  * package is used to get the actual profiles. </p>
  * @author Bryan Tripp
+ * @deprecated
  */
 public class ProfileTestApplication extends TestApplication {
     

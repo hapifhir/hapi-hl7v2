@@ -33,6 +33,7 @@ import java.rmi.RemoteException;
 /**
  * Base class for EJB implementation of all classes in the RIM.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public abstract class RIMClass implements javax.ejb.EntityBean {
 

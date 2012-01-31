@@ -94,7 +94,7 @@ import ca.uhn.hl7v2.view.TreePanel;
  * 
  * @author Bryan Tripp
  * @author Christian Ohr
- * 
+ * @deprecated use new TestPanel
  */
 @SuppressWarnings("serial")
 public class TestPanel extends JPanel implements ConnectionListener {

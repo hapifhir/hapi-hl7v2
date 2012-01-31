@@ -30,6 +30,7 @@ package ca.uhn.hl7v3.sourcegen;
 /**
  * Contains information about a RIM class, sufficient to generate source code for it.   
  * @author Bryan Tripp
+ * @deprecated
  */
 public class ClassDefinition {
 

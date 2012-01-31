@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Neal Acharya
  * 
  * @version $Revision: 1.2 $ updated on $Date: 2009-03-18 23:27:58 $ by $Author: jamesagnew $
+ * @deprecated
  */
 public class HL7ServerTestHelper {
     

@@ -30,6 +30,7 @@ package ca.uhn.hl7v3.rim.datatype;
 /**
  * Abstract superclass of composite RIM datatypes.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public abstract class Composite implements java.io.Serializable {
 

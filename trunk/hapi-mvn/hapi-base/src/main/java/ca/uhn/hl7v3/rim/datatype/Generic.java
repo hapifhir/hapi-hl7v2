@@ -32,6 +32,7 @@ package ca.uhn.hl7v3.rim.datatype;
  * Abstract superclass of RIM Generic datatypes - this is a temporary 
  * measure as Generics will be supported directly in J2SE 1.5.  
  * @author Bryan Tripp 
+ * @deprecated
  */
 public abstract class Generic implements java.io.Serializable {
 
