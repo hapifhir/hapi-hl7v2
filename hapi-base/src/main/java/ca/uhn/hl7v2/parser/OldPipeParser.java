@@ -60,7 +60,7 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class OldPipeParser extends Parser {
     
-    private static final Logger log = LoggerFactory.getLogger(PipeParser.class);
+    private static final Logger log = LoggerFactory.getLogger(OldPipeParser.class);
     
     private final static String segDelim = "\r"; //see section 2.8 of spec
     

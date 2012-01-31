@@ -64,6 +64,8 @@ import ca.uhn.hl7v2.util.Terser;
  *    
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
+ * 
+ * @deprecated
  */
 public class FastParser extends Parser {
 

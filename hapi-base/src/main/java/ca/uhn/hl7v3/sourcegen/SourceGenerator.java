@@ -33,6 +33,7 @@ import java.sql.*;
 /**
  * Tools for the generation of HL7 v3 source code.
  * @author Bryan Tripp
+ * @deprecated
  */
 public class SourceGenerator {
     

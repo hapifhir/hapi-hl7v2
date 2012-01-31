@@ -32,6 +32,7 @@ import java.util.StringTokenizer;
 /**
  * Contains information about a RIM data type, sufficient to generate source code for it.   
  * @author Bryan Tripp
+ * @deprecated
  */
 public class DataTypeDefinition {
 

@@ -34,6 +34,7 @@ import java.util.ArrayList;
  * Loads definitions for RIM classes, attributes, and data types from the RIM database.  
  * The definition objects are used to generate source code for RIM classes.  
  * @author Bryan Tripp
+ * @deprecated
  */ 
 public class DefinitionLoader {
     

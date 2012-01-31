@@ -30,6 +30,7 @@ package ca.uhn.hl7v3.rim.datatype;
 /**
  * Abstract superclass for RIM primitive types.   
  * @author Bryan Tripp
+ * @deprecated
  */
 public abstract class Primitive implements java.io.Serializable {
 

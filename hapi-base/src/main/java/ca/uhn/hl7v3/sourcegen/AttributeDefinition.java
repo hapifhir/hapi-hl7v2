@@ -32,6 +32,7 @@ package ca.uhn.hl7v3.sourcegen;
  * Contains information about a RIM attribute, for the purpose of generating source 
  * code for a RIM class.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public class AttributeDefinition {
 

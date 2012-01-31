@@ -32,6 +32,7 @@ package ca.uhn.hl7v3.sourcegen;
  * Generates EJB code related to RIM classes, for an entity bean 
  * with container managed persistence.    
  * @author Bryan Tripp
+ * @deprecated
  */
 public class CMPClassGenerator {
 

@@ -44,6 +44,7 @@ import ca.uhn.hl7v2.model.Group;
  * GroupPointer's <code>setSegment(...)</code> method just forwards the request to 
  * it's children (which are GroupPointers and SegmentPointers). </p>
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated
  */
 public abstract class Pointer {
 

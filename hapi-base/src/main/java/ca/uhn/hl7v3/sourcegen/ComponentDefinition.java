@@ -4,6 +4,7 @@ package ca.uhn.hl7v3.sourcegen;
  * Contains information about a RIM data type component, for the purpose of generating source 
  * code for a RIM data type.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public class ComponentDefinition {
 

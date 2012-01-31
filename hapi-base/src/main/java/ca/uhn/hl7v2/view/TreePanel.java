@@ -61,6 +61,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * This is a Swing panel that displays the contents of a Message object in a JTree.
  * The tree currently only expands to the field level (components shown as one node).
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated
  */
 @SuppressWarnings("serial")
 public class TreePanel extends javax.swing.JPanel {
