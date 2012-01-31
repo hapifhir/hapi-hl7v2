@@ -16,6 +16,7 @@ import ca.uhn.hl7v2.util.Terser;
  * sending nor receiving system use HAPI, but it is desired to route messages to HAPI in 
  * parallel so that they can be fully validated.  
  * @author Bryan Tripp
+ * @deprecated
  */
 public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
        
