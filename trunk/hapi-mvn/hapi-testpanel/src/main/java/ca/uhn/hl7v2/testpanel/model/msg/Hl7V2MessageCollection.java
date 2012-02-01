@@ -26,6 +26,7 @@
 package ca.uhn.hl7v2.testpanel.model.msg;
 
 import static org.apache.commons.lang.StringUtils.*;
+
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.StringReader;
@@ -61,6 +62,7 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.model.UnknownMessage;
+import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.util.ClassUtils;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.Range;
@@ -100,6 +102,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private String mySourceMessage;
 	private boolean myStripSaveComments;
 	private ValidationContext myValidationContext = new DefaultValidation();
+
+	private String myValidationTableId;
+
+	private TableFile myValidationTable;
 
 	public Hl7V2MessageCollection() {
 		myParser = new GenericParser();
@@ -398,21 +404,22 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		XmlFormat xml = new XmlFormat();
 
 		xml.myId = this.myId;
-		
-		if (getSaveFileName() == null) { 
+
+		if (getSaveFileName() == null) {
 			xml.mySourceMessage = this.mySourceMessage.replaceAll("((\r\n)|\r)|(\n)", "\n");
 		}
-		
+
 		xml.mySaveCharsetName = mySaveCharset != null ? mySaveCharset.name() : "";
 		xml.mySaved = this.mySaved;
 		xml.mySaveFileName = StringUtils.isNotBlank(mySaveFileName) ? mySaveFileName : "";
 		xml.myEncodingType = myEncoding.name();
 		xml.myValidationContextClass = myValidationContext != null ? myValidationContext.getClass().getName() : "";
 		xml.myRuntimeProfileString = myRuntimeProfileString != null ? myRuntimeProfileString : "";
+		xml.myValidationTableId = myValidationTableId != null ? myValidationTableId : "";
 		xml.mySaveStripComments = Boolean.toString(myStripSaveComments);
 		xml.mySaveLineEndings = mySaveLineEndings != null ? mySaveLineEndings.name() : "";
 		xml.mySaveTimestamp = mySaveFileTimestamp;
-		
+
 		StringWriter stringWriter = new StringWriter();
 		JAXB.marshal(xml, stringWriter);
 		String string = stringWriter.toString();
@@ -556,6 +563,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		return myValidationContext;
 	}
 
+	public String getValidationTableId() {
+		return myValidationTableId;
+	}
+
 	/**
 	 * @return the saved
 	 */
@@ -679,7 +690,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 			firePropertyChange(PROP_HIGHLITED_RANGE, oldValue, myHighlitedRange);
 			return;
 		}
-		
+
 		Message message = theSegment[0].getMessage();
 		int msgIndex = findSegmentMsgIndex(message);
 
@@ -757,10 +768,13 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		String oldValue = null;
 		mySaveFileName = theFileName;
 		firePropertyChange(PROP_SAVE_FILENAME, oldValue, theFileName);
+		
+		updateMessageDescription();
 	}
 
 	/**
-	 * @param theSaveFileTimestamp the saveFileTimestamp to set
+	 * @param theSaveFileTimestamp
+	 *            the saveFileTimestamp to set
 	 */
 	public void setSaveFileTimestamp(long theSaveFileTimestamp) {
 		mySaveFileTimestamp = theSaveFileTimestamp;
@@ -776,7 +790,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	public void setSourceMessage(String theSourceMessage) {
 		ourLog.info("About to set source message for collection");
-		
+
 		ArrayList<AbstractMessage<?>> oldMessages = new ArrayList<AbstractMessage<?>>(myMessages);
 		myMessages.clear();
 		myMessageRanges.clear();
@@ -801,7 +815,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		}
 
 		updateMessageDescription();
-		
+
 		ourLog.info("Done setting source message for collection");
 	}
 
@@ -832,32 +846,59 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, oldValue, theValidationContext);
 	}
 
+	public void setValidationTable(TableFile theSelectedFile) {
+		myValidationTable = theSelectedFile;
+		setValidationTableId(myValidationTable != null ? myValidationTable.getId() : null);
+	}
+
+	/**
+	 * @return the validationTable
+	 */
+	public TableFile getValidationTable() {
+		return myValidationTable;
+	}
+
+	/**
+	 * @param theValidationTableId the validationTableId to set
+	 */
+	public void setValidationTableId(String theValidationTableId) {
+		myValidationTableId = theValidationTableId;
+	}
+
 	private void updateMessageDescription() {
 		String oldValue = myMessageDescription;
 
-		int msgs = 0;
-		AbstractMessage<?> firstNonComment = null;
-		for (AbstractMessage<?> next : myMessages) {
-			if (!(next instanceof Comment)) {
-				if (msgs == 0) {
-					firstNonComment = next;
-				}
-				msgs++;
-			}
-		}
+		if (mySaveFileName == null) {
 
-		if (msgs == 0) {
-			myMessageDescription = "None";
-		} else if (msgs == 1) {
-			if (firstNonComment instanceof UnknownMessage) {
-				myMessageDescription = "Unknown";
-			} else if (firstNonComment instanceof Hl7V2MessageBase) {
-				myMessageDescription = ((Hl7V2MessageBase) firstNonComment).getMessageDescription();
-			} else {
-				myMessageDescription = "None";
+			int msgs = 0;
+			AbstractMessage<?> firstNonComment = null;
+			for (AbstractMessage<?> next : myMessages) {
+				if (!(next instanceof Comment)) {
+					if (msgs == 0) {
+						firstNonComment = next;
+					}
+					msgs++;
+				}
 			}
+
+			if (msgs == 0) {
+				myMessageDescription = "None";
+			} else if (msgs == 1) {
+				if (firstNonComment instanceof UnknownMessage) {
+					myMessageDescription = "Unknown";
+				} else if (firstNonComment instanceof Hl7V2MessageBase) {
+					myMessageDescription = ((Hl7V2MessageBase) firstNonComment).getMessageDescription();
+				} else {
+					myMessageDescription = "None";
+				}
+			} else {
+				myMessageDescription = msgs + " messages";
+			}
+
 		} else {
-			myMessageDescription = msgs + " messages";
+
+			myMessageDescription = mySaveFileName.replaceAll(".*(\\\\|\\/)", "");
+			
 		}
 
 		firePropertyChange(PROP_DESCRIPTION, oldValue, myMessageDescription);
@@ -924,11 +965,11 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		if (theSelectedSaveStripComments) {
 			switch (myEncoding) {
 			case ER_7:
-				
+
 				Pattern p = Pattern.compile("(^|\\r)\\s*#[^\\r]*");
 				Matcher m = p.matcher(toWrite);
 				toWrite = m.replaceAll("").trim() + "\r";
-				
+
 				p = Pattern.compile("\\r\\s*\\r");
 				m = p.matcher(toWrite);
 				toWrite = m.replaceAll("\r");
@@ -959,6 +1000,11 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		if (isNotBlank(xmlFormat.myValidationContextClass)) {
 			retVal.setValidationContext(ClassUtils.instantiateOrReturnNull(xmlFormat.myValidationContextClass, ValidationContext.class));
 		}
+
+		if (isNotBlank(xmlFormat.myValidationTableId)) {
+			retVal.setValidationTableId(xmlFormat.myValidationTableId);
+		}
+
 		if (isNotBlank(xmlFormat.myRuntimeProfileString)) {
 			try {
 				retVal.setRuntimeProfile(xmlFormat.myRuntimeProfileString);
@@ -974,17 +1020,17 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		}
 
 		retVal.setSaveStripComments(Boolean.parseBoolean(xmlFormat.mySaveStripComments));
-		
+
 		retVal.setEncoding("XML".equals(xmlFormat.myEncodingType) ? Hl7V2EncodingTypeEnum.XML : Hl7V2EncodingTypeEnum.ER_7);
-		
+
 		if (StringUtils.isNotBlank(xmlFormat.mySourceMessage)) {
 			retVal.setSourceMessage(xmlFormat.mySourceMessage);
 		} else {
 			retVal.setSourceMessage("");
 		}
-		
+
 		retVal.setSaveFileTimestamp(xmlFormat.mySaveTimestamp);
-		
+
 		// set this last!
 		retVal.setSaved(xmlFormat.mySaved);
 
@@ -1036,6 +1082,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		@XmlElement(required = true, name = "validationContextClass")
 		public String myValidationContextClass;
+
+		@XmlElement(required = true, name = "validationTableId")
+		public String myValidationTableId;
 
 	}
 

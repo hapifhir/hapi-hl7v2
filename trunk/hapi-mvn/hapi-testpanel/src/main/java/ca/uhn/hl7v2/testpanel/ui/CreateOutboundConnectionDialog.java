@@ -27,6 +27,10 @@ package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,10 +39,6 @@ import javax.swing.border.EmptyBorder;
 
 import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class CreateOutboundConnectionDialog extends JDialog implements IDestroyable {
 

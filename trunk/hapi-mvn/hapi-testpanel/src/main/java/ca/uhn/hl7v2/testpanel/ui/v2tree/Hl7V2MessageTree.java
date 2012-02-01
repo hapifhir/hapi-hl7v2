@@ -82,6 +82,9 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
+import ca.uhn.hl7v2.model.primitive.AbstractNumericPrimitive;
+import ca.uhn.hl7v2.model.primitive.ID;
+import ca.uhn.hl7v2.model.primitive.IS;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
@@ -91,6 +94,7 @@ import ca.uhn.hl7v2.testpanel.model.conf.ConformanceGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformancePrimitive;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceSegment;
+import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
@@ -101,6 +105,7 @@ import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.util.SegmentAndComponentPath;
 import ca.uhn.hl7v2.util.StringUtil;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
@@ -111,8 +116,11 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public class Hl7V2MessageTree extends Outline implements IDestroyable {
-	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageTree.class);
+	private static final DefaultValidation ourDefaultValidation = new DefaultValidation();
 
+	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageTree.class);
+	private static final String TABLE_NAMESPACE_HL7 = "HL7";
+	private static final String TBL = " ";
 	private Controller myController;
 	private boolean myCurrentlyEditing;
 	private PropertyChangeListener myHighlitedPathListener;
@@ -126,13 +134,16 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private boolean mySelectionHandlingDisabled;
 	private boolean myShouldOpenDefaultPaths = true;
 	private ShowEnum myShow = ShowEnum.POPULATED;
+
+	private TreeRowModel myTableModel;
+
 	private TreeNodeRoot myTop;
+
 	private DefaultTreeModel myTreeModel;
-	private PropertyChangeListener myValidationContextListener;
 
 	private UpdaterThread myUpdaterThread;
 
-	private TreeRowModel myTableModel;
+	private PropertyChangeListener myValidationContextListener;
 
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
@@ -223,7 +234,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return index;
 	}
 
-	private void addChildren() {
+	void addChildren() throws InterruptedException, InvocationTargetException {
 		if (myMessages.getRuntimeProfile() != null) {
 			myRuntimeProfileValidator = new DefaultValidator();
 			myRuntimeProfileValidator.setValidateChildren(false);
@@ -240,11 +251,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			try {
 				addChildren(myMessages.getMessages(), myTop, "");
 			} catch (InterruptedException e) {
-				ourLog.error("Failed up update message tree", e);
-				// TODO: re-run
+				ourLog.error("Failed up update message tree, going to try again", e);
+				myUpdaterThread.scheduleUpdate();
 			} catch (InvocationTargetException e) {
 				ourLog.error("Failed up update message tree", e);
 			}
+
+			myTop.validate();
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -286,23 +299,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	}
 
-	private void handleKeyPress(KeyEvent theE) {
-		int row = getSelectedRow();
-		if (row == -1) {
-			return;
-		}
-		
-		if (theE.getKeyCode() == KeyEvent.VK_ENTER || theE.getKeyCode() == KeyEvent.VK_F2) {
-			AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
-			TreePath path = layout.getPathForRow(row);
-			TreeNodeBase baseObj = (TreeNodeBase) path.getLastPathComponent();
-			if (myTableModel.isCellEditable(baseObj, TreeRowModel.COL_VALUE)) {
-				editCellAt(row, TreeRowModel.COL_VALUE + 1);
-				theE.consume();
-			}
-		}
-	}
-
 	/**
 	 * Adds the children of the given group under the given tree node.
 	 */
@@ -315,8 +311,18 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			try {
 				String nextName = childNames[i];
 
-				if (myShow == ShowEnum.ALL || myShow == ShowEnum.ERROR) {
+				switch (myShow) {
+				case ALL:
+				case ERROR:
+				case POPULATED:
+					/*
+					 * this creates at least one rep if there are none, since
+					 * these modes want to show the node in the tree regardless
+					 * of whether or not it has content
+					 */
 					messParent.get(nextName);
+				default:
+					// nothing
 				}
 
 				Structure[] childReps = messParent.getAll(nextName);
@@ -341,14 +347,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 						addChildren((Group) nextStructure, newNode, nextTerserPath);
 
-						if (newNode.isHasContent() == false && getShow() == ShowEnum.POPULATED) {
-							continue;
-						}
-
-						if (newNode.isContainError() == false && getShow() == ShowEnum.ERROR) {
-							continue;
-						}
-
 						newNode = insertOrReplaceWithExisting(treeParent, currChild, newNode);
 
 					} else if (nextStructure instanceof Segment) {
@@ -360,14 +358,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 						}
 
 						addChildren((Segment) nextStructure, newNode, nextTerserPath);
-
-						if (newNode.isHasContent() == false && getShow() == ShowEnum.POPULATED) {
-							continue;
-						}
-
-						if (newNode.isContainError() == false && getShow() == ShowEnum.ERROR) {
-							continue;
-						}
 
 						newNode = insertOrReplaceWithExisting(treeParent, currChild, newNode);
 
@@ -440,8 +430,18 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				List<Integer> components = new ArrayList<Integer>();
 				components.add(Integer.valueOf(i));
 
-				if (getShow() == ShowEnum.ALL || getShow() == ShowEnum.ERROR) {
+				switch (myShow) {
+				case ALL:
+				case ERROR:
+				case POPULATED:
+					/*
+					 * this creates at least one rep if there are none, since
+					 * these modes want to show the node in the tree regardless
+					 * of whether or not it has content
+					 */
 					messParent.getField(i, 0);
+				default:
+					// nothing
 				}
 
 				Type[] reps = messParent.getField(i);
@@ -522,14 +522,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 			addChildren(theParentName, composite, newNode, theParent, theComponentNumbers, theTerserPath);
 
-			if (newNode.isHasContent() == false && getShow() == ShowEnum.POPULATED) {
-				return theIndex;
-			}
-
-			if (newNode.isContainError() == false && getShow() == ShowEnum.ERROR) {
-				return theIndex;
-			}
-
 			newNode = (TreeNodeType) insertOrReplaceWithExisting(theTreeParent, theIndex, newNode);
 
 		} else {
@@ -540,26 +532,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				newNode = new TreeNodePrimitiveConf(theParentName, (ConformancePrimitive) primitive, theName, theRepNum, theRepeating, theRequired, theParent, theComponentNumbers, theTerserPath);
 			} else {
 				newNode = new TreeNodePrimitive(theParentName, primitive, theName, theRepNum, theRepeating, theRequired, theParent, theComponentNumbers, theTerserPath);
-			}
-
-			if (myMessages != null && myMessages.getValidationContext() != null) {
-				String version = primitive.getMessage().getVersion();
-				String type = primitive.getName();
-				PrimitiveTypeRule[] rules = myMessages.getValidationContext().getPrimitiveRules(version, type, primitive);
-				for (PrimitiveTypeRule primitiveTypeRule : rules) {
-					boolean test = primitiveTypeRule.test(primitive.getValue());
-					if (!test) {
-						newNode.setErrorDescription(primitiveTypeRule.getDescription());
-					}
-				}
-			}
-
-			if (newNode.isHasContent() == false && getShow() == ShowEnum.POPULATED) {
-				return theIndex;
-			}
-
-			if (newNode.isContainError() == false && getShow() == ShowEnum.ERROR) {
-				return theIndex;
 			}
 
 			addChidrenExtra(theParentName, primitive, newNode, theParent, theComponentNumbers, theTerserPath, theComponentNumbers.size(), 0);
@@ -747,6 +719,23 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return myShow;
 	}
 
+	private void handleKeyPress(KeyEvent theE) {
+		int row = getSelectedRow();
+		if (row == -1) {
+			return;
+		}
+
+		if (theE.getKeyCode() == KeyEvent.VK_ENTER || theE.getKeyCode() == KeyEvent.VK_F2) {
+			AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
+			TreePath path = layout.getPathForRow(row);
+			TreeNodeBase baseObj = (TreeNodeBase) path.getLastPathComponent();
+			if (myTableModel.isCellEditable(baseObj, TreeRowModel.COL_VALUE)) {
+				editCellAt(row, TreeRowModel.COL_VALUE + 1);
+				theE.consume();
+			}
+		}
+	}
+
 	private void handleNewSelectedIndex(int theNewIndex) {
 		if (mySelectionHandlingDisabled) {
 			return;
@@ -789,6 +778,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 	}
 
+	public void scheduleNewValidationPass() {
+		myUpdaterThread.scheduleUpdate();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -822,6 +815,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		myTableModel = new TreeRowModel(myTreeModel);
 		OutlineModel outlineModel = DefaultOutlineModel.createOutlineModel(myTreeModel, myTableModel);
 		setModel(outlineModel);
+
 		setRootVisible(false);
 
 		setDefaultRenderer(NodeValidationFailure.class, new ValidationTreeCellRenderer());
@@ -864,6 +858,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		});
 
+	}
+
+	void setMessageForUnitTest(Hl7V2MessageCollection theMessageModel) {
+		myMessages = theMessageModel;
+	}
+
+	void setRuntimeProfileValidator(DefaultValidator theRuntimeProfileValidator) {
+		myRuntimeProfileValidator = theRuntimeProfileValidator;
 	}
 
 	public void setShow(ShowEnum theValue) {
@@ -955,6 +957,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	}
 
 	/**
+	 * Left pads a string representation of the integer to make it 4 digits long
+	 */
+	public static String toHl7Table(int theTable) {
+		return StringUtils.leftPad(Integer.toString(theTable), 4, '0');
+	}
+
+	/**
 	 * Not sure if it's a bug in outline or what, but this seems to be the only
 	 * way to reliably know what row is selected
 	 */
@@ -1009,7 +1018,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		protected static final String COLOR_REPNUM = "#808000";
 
 		private Boolean myContainError;
-
 		private String myErrorDescription;
 		private Boolean myHasContent;
 		private final String myName;
@@ -1045,6 +1053,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			for (HL7Exception hl7Exception : theExceptions) {
 				myValidationExceptions.add(hl7Exception);
 			}
+		}
+
+		/**
+		 * Subclasses may override if validation is possible
+		 */
+		public void doValidate() {
+			// nothing
 		}
 
 		@Override
@@ -1170,12 +1185,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		 */
 		public boolean isContainError() {
 			if (myContainError == null) {
-				if (getErrorDescription() != null) {
+				if (isHasContent() == false) {
+					myContainError = false;
+				} else if (getErrorDescription() != null) {
 					myContainError = true;
 				} else {
 					for (int i = 0; i < getChildCount(); i++) {
 						TreeNodeBase nextChild = (TreeNodeBase) getChildAt(i);
-						if (nextChild.isContainError()) {
+						if (nextChild.isHasContent() && nextChild.isContainError()) {
 							myContainError = true;
 							break;
 						}
@@ -1220,11 +1237,43 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 		/**
+		 * Subclasses may override
+		 */
+		protected boolean isSupported() {
+			return true;
+		}
+
+		/**
 		 * @param theErrorDescription
 		 *            the errorDescription to set
 		 */
 		public void setErrorDescription(String theErrorDescription) {
 			myErrorDescription = theErrorDescription;
+		}
+
+		public final void validate() throws InterruptedException, InvocationTargetException {
+			for (int i = 0; i < getChildCount(); i++) {
+				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
+
+				if (next.isHasContent()) {
+					next.validate();
+				}
+
+				if ((next.getErrorDescription() == null && getShow() == ShowEnum.ERROR) || (next.isHasContent() == false && getShow() == ShowEnum.POPULATED)
+						|| (next.isSupported() == false && next.getErrorDescription() == null && getShow() == ShowEnum.SUPPORTED)) {
+					final int index = i;
+					EventQueue.invokeAndWait(new Runnable() {
+						public void run() {
+							remove(index);
+						}
+					});
+					i--;
+					continue;
+				}
+
+			}
+
+			doValidate();
 		}
 	}
 
@@ -1255,6 +1304,11 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 		@Override
+		public void doValidate() {
+			// nothing
+		}
+
+		@Override
 		public StringBuilder getNodeText() {
 			StringBuilder retVal = new StringBuilder();
 			retVal.append("<html><font color=\"#00FF00\">");
@@ -1270,21 +1324,21 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public TreeNodeCompositeConf(String theParentName, Type theComposite, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent,
 				List<Integer> theComponentPath, String theTerserPath) {
 			super(theParentName, theComposite, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
+		}
 
+		@Override
+		public void doValidate() {
 			EncodingCharacters enc;
 			try {
-				enc = EncodingCharacters.getInstance(theComposite.getMessage());
+				enc = EncodingCharacters.getInstance(getComposite().getMessage());
 			} catch (HL7Exception e) {
 				ourLog.error("Could not get encoding chars", e);
 				enc = new EncodingCharacters('|', null);
 			}
 
-			// if (isHasContent()) {
-			String encoded = PipeParser.encode(theComposite, enc);
+			String encoded = PipeParser.encode(getComposite(), enc);
 			HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, myRuntimeProfileId);
 			addValidationExceptions(problems);
-			// }
-
 		}
 
 		public ConformanceComposite getComposite() {
@@ -1295,8 +1349,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		protected String getDataType() {
-			return getComposite().getConfDefinition().getDatatype();
+		protected String getDataTypeDescription() {
+			String retVal = getComposite().getConfDefinition().getDatatype();
+			return retVal;
 		}
 
 		@Override
@@ -1307,6 +1362,49 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		@Override
 		public Integer getMaxLength() {
 			return (int) getComposite().getConfDefinition().getLength();
+		}
+
+		protected boolean isSupported() {
+			return !"X".equals(getComposite().getConfDefinition().getUsage());
+		}
+
+	}
+
+	public class TreeNodeGroup extends TreeNodeGroupBase {
+
+		public TreeNodeGroup(Group theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
+			super(theGroup, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
+		}
+
+		private void addToSegList(List<Segment> retVal, Group group) throws HL7Exception {
+			for (String next : group.getNames()) {
+				for (Structure nextStructure : group.getAll(next)) {
+					if (nextStructure instanceof Segment) {
+						retVal.add((Segment) nextStructure);
+					} else {
+						addToSegList(retVal, (Group) nextStructure);
+					}
+				}
+			}
+		}
+
+		public Group getGroup() {
+			return (Group) getUserObject();
+		}
+
+		@Override
+		public String getNodeTextColor() {
+			return "#404000";
+		}
+
+		public List<Segment> getSegments() throws HL7Exception {
+
+			List<Segment> retVal = new ArrayList<Segment>();
+
+			Group group = getGroup();
+			addToSegList(retVal, group);
+
+			return retVal;
 		}
 
 	}
@@ -1339,59 +1437,20 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	}
 
-	public class TreeNodeGroup extends TreeNodeGroupBase {
-
-		public TreeNodeGroup(Group theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
-			super(theGroup, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
-		}
-
-		public List<Segment> getSegments() throws HL7Exception {
-
-			List<Segment> retVal = new ArrayList<Segment>();
-
-			Group group = getGroup();
-			addToSegList(retVal, group);
-
-			return retVal;
-		}
-
-		private void addToSegList(List<Segment> retVal, Group group) throws HL7Exception {
-			for (String next : group.getNames()) {
-				for (Structure nextStructure : group.getAll(next)) {
-					if (nextStructure instanceof Segment) {
-						retVal.add((Segment) nextStructure);
-					} else {
-						addToSegList(retVal, (Group) nextStructure);
-					}
-				}
-			}
-		}
-
-		public Group getGroup() {
-			return (Group) getUserObject();
-		}
-
-		@Override
-		public String getNodeTextColor() {
-			return "#404000";
-		}
-
-	}
-
 	public class TreeNodeGroupConf extends TreeNodeGroup {
 
 		public TreeNodeGroupConf(ConformanceGroup theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
 			super(theGroup, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
+		}
 
-			// if (isHasContent()) {
+		@Override
+		public void doValidate() {
 			try {
 				HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), myRuntimeProfileId);
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
 			}
-
-			// }
 		}
 
 		/**
@@ -1404,6 +1463,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		public ConformanceGroup getGroup() {
 			return (ConformanceGroup) super.getGroup();
+		}
+
+		protected boolean isSupported() {
+			return !"X".equals(getGroup().getConfDefinition().getUsage());
 		}
 
 	}
@@ -1451,7 +1514,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		public TreeNodeMessageConf(int theIndex, Hl7V2MessageBase theMessage) {
 			super(theIndex, theMessage);
+		}
 
+		@Override
+		public void doValidate() {
 			try {
 				HL7Exception[] problems = myRuntimeProfileValidator.validate(getParsedMessage(), getParsedMessage().getConfDefinition());
 				addValidationExceptions(problems);
@@ -1487,8 +1553,86 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			super(theParentName, theGroup, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void doValidate() {
+			super.doValidate();
+
+			Primitive primitive = getPrimitive();
+			if (myMessages != null) {
+				if (myMessages.getRuntimeProfile() != null) {
+
+					// If we're using a conformance profile, also
+					// use datatype validation as well
+					String version = primitive.getMessage().getVersion();
+					String typeName = primitive.getName();
+					PrimitiveTypeRule[] rules = ourDefaultValidation.getPrimitiveRules(version, typeName, primitive);
+					for (PrimitiveTypeRule rule : rules) {
+						if (!rule.test(primitive.getValue())) {
+							addValidationExceptions(new HL7Exception(rule.getDescription()));
+						}
+					}
+
+				} else if (myMessages.getValidationContext() != null) {
+
+					String version = primitive.getMessage().getVersion();
+					String type = primitive.getName();
+					PrimitiveTypeRule[] rules = myMessages.getValidationContext().getPrimitiveRules(version, type, primitive);
+					for (PrimitiveTypeRule primitiveTypeRule : rules) {
+						boolean test = primitiveTypeRule.test(primitive.getValue());
+						if (!test) {
+							// setErrorDescription(primitiveTypeRule.getDescription());
+							addValidationExceptions(new HL7Exception(primitiveTypeRule.getDescription()));
+						}
+					}
+
+				}
+
+				if (myMessages.getValidationTable() != null) {
+					String table = getTable();
+					if (table != null) {
+						TableFile tableFile = myMessages.getValidationTable();
+						if (tableFile.knowsCodes(table)) {
+							String value = StringUtils.defaultString(primitive.getValue());
+							if (!tableFile.isValidCode(table, value)) {
+								addValidationExceptions(new HL7Exception("Not a valid value in table '" + table + "': " + value));
+							}
+						}
+					}
+				}
+
+			}
+
+		}
+
+		@Override
+		protected String getDataTypeDescription() {
+			Primitive primitive = getPrimitive();
+			if (primitive instanceof ID) {
+				return super.getDataTypeDescription() + TBL + toHl7Table(((ID) primitive).getTable());
+			}
+			if (primitive instanceof IS) {
+				return super.getDataTypeDescription() + TBL + toHl7Table(((IS) primitive).getTable());
+			}
+			return super.getDataTypeDescription();
+		}
+
 		public Primitive getPrimitive() {
 			return (Primitive) getUserObject();
+		}
+
+		protected String getTable() {
+			Primitive prim = getPrimitive();
+			String namespace = TABLE_NAMESPACE_HL7;
+			int retVal = 0;
+			if (prim instanceof IS) {
+				retVal = (((IS) prim).getTable());
+			} else if (prim instanceof ID) {
+				retVal = (((ID) prim).getTable());
+			}
+			return retVal > 0 ? namespace + toHl7Table(retVal) : null;
 		}
 
 		@Override
@@ -1523,31 +1667,44 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				List<Integer> theComponentPath, String theTerserPath) {
 			super(theParentName, thePrimitive, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
 
+		}
+
+		@Override
+		public void doValidate() {
+			ConformancePrimitive primitive = getPrimitive();
+			String tp = getTerserPath();
+
 			EncodingCharacters enc;
 			try {
-				enc = EncodingCharacters.getInstance(thePrimitive.getMessage());
+				enc = EncodingCharacters.getInstance(primitive.getMessage());
 			} catch (HL7Exception e) {
 				ourLog.error("Could not get encoding chars", e);
 				enc = new EncodingCharacters('|', null);
 			}
 
-			String encoded = PipeParser.encode(thePrimitive, enc);
-			if (theTerserPath.endsWith("MSH-1") || theTerserPath.endsWith("MSH-2")) {
-				encoded = thePrimitive.getValue();
+			String encoded = PipeParser.encode(primitive, enc);
+			if (tp.endsWith("MSH-1") || tp.endsWith("MSH-2")) {
+				encoded = primitive.getValue();
 			}
 
-			// if (isHasContent()) {
 			HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, myRuntimeProfileId);
 			addValidationExceptions(problems);
-			// }
+
+			super.doValidate();
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		protected String getDataType() {
-			return getPrimitive().getConfDefinition().getDatatype();
+		protected String getDataTypeDescription() {
+			String retVal = getPrimitive().getConfDefinition().getDatatype();
+			String table = getPrimitive().getConfDefinition().getTable();
+			if (StringUtils.isNotBlank(table)) {
+				return retVal + TBL + table;
+			} else {
+				return retVal;
+			}
 		}
 
 		@Override
@@ -1562,6 +1719,24 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		public ConformancePrimitive getPrimitive() {
 			return (ConformancePrimitive) super.getPrimitive();
+		}
+
+		@Override
+		protected String getTable() {
+			String retVal = getPrimitive().getConfDefinition().getTable();
+			if (StringUtils.isBlank(retVal)) {
+				return null;
+			} else {
+				if (AbstractNumericPrimitive.isInteger(retVal)) {
+					return TABLE_NAMESPACE_HL7 + retVal;
+				} else {
+					return retVal;
+				}
+			}
+		}
+
+		protected boolean isSupported() {
+			return !"X".equals(getPrimitive().getConfDefinition().getUsage());
 		}
 
 	}
@@ -1631,14 +1806,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			return (Segment) getUserObject();
 		}
 
-		public boolean isNonStandard() {
-			AbstractGroup parent = (AbstractGroup) getSegment().getParent();
-			return parent.getNonStandardNames().contains(getSegment().getName());
-		}
-
 		@Override
 		public Boolean isHasContent() {
 			return getPipeEncodedValue().length() > 3;
+		}
+
+		public boolean isNonStandard() {
+			AbstractGroup parent = (AbstractGroup) getSegment().getParent();
+			return parent.getNonStandardNames().contains(getSegment().getName());
 		}
 
 	}
@@ -1646,16 +1821,16 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	public class TreeNodeSegmentConf extends TreeNodeSegment {
 		public TreeNodeSegmentConf(ConformanceSegment theSegment, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, String theTerserPath) {
 			super(theSegment, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
+		}
 
-			// if (isHasContent()) {
+		@Override
+		public void doValidate() {
 			try {
 				HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), myRuntimeProfileId);
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
 			}
-
-			// }
 		}
 
 		/**
@@ -1685,6 +1860,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public ConformanceSegment getSegment() {
 			return (ConformanceSegment) getUserObject();
 		}
+
+		protected boolean isSupported() {
+			return !"X".equals(getSegment().getConfDefinition().getUsage());
+		}
 	}
 
 	public class TreeNodeType extends TreeNodeBase {
@@ -1705,7 +1884,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			myComponentPath = new ArrayList<Integer>(theComponentPath);
 		}
 
-		protected String getDataType() {
+		protected String getDataTypeDescription() {
 			return getType().getClass().getSimpleName();
 		}
 
@@ -1729,7 +1908,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				b.append(" ");
 			}
 			b.append(" (");
-			b.append(getDataType());
+			b.append(getDataTypeDescription());
 			b.append(")");
 			b.append("</font>");
 
@@ -2123,13 +2302,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		}
 
-		public void scheduleUpdateNow() {
-			myNextUpdate = System.currentTimeMillis();
+		public void scheduleUpdate() {
+			myNextUpdate = System.currentTimeMillis() + 2000;
 			interrupt();
 		}
 
-		public void scheduleUpdate() {
-			myNextUpdate = System.currentTimeMillis() + 2000;
+		public void scheduleUpdateNow() {
+			myNextUpdate = System.currentTimeMillis();
 			interrupt();
 		}
 

@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
-import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
 import ca.uhn.hl7v2.testpanel.util.Range;
 
 public class Hl7V2MessageImplTest {

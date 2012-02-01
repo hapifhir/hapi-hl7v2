@@ -31,9 +31,7 @@ import java.beans.PropertyVetoException;
 
 import org.junit.Test;
 
-import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageXml;
 import ca.uhn.hl7v2.testpanel.util.Range;
-import ca.uhn.hl7v2.testpanel.util.XmlScanner;
 
 public class Hl7V2MessageXmlTest {
 

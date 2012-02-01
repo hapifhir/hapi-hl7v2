@@ -51,6 +51,14 @@ public class ImageFactory{
         return getImageIcon( "ca/uhn/hl7v2/testpanel/images/button_execute.png" );
     }
 
+    public static ImageIcon getFile(  ){
+        return getImageIcon( "ca/uhn/hl7v2/testpanel/images/file.png" );
+    }
+
+    public static ImageIcon getTable(  ){
+        return getImageIcon( "ca/uhn/hl7v2/testpanel/images/table.png" );
+    }
+
     private static ImageIcon getImageIcon( String theLocation ){
         ImageIcon retVal = ourIcons.get( theLocation );
 

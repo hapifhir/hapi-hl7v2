@@ -25,27 +25,28 @@
  */
 package ca.uhn.hl7v2.testpanel.ui;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JCheckBox;
-import java.awt.GridBagConstraints;
-import javax.swing.JLabel;
-import java.awt.Insets;
-import javax.swing.JRadioButton;
 import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-
-import ca.uhn.hl7v2.testpanel.controller.Prefs;
-import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
-import javax.swing.JComboBox;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+import ca.uhn.hl7v2.testpanel.controller.Prefs;
+import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 
 public class FileChooserSaveAccessory extends JPanel {
 	private JCheckBox mySaveCommentsCheckbox;

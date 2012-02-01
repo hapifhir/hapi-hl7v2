@@ -39,7 +39,6 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.parser.NonStandardStructureDefinition;
 
 public class ConformanceStructureHolderSupport implements ConformanceStructureHolder {
 

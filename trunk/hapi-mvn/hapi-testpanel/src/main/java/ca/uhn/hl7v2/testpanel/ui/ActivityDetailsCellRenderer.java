@@ -26,6 +26,7 @@
 package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.JTable;
@@ -55,7 +56,7 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 	}
 
 	@Override
-	public Component getTableCellRendererComponent(JTable theTable, Object theValue, boolean theIsSelected, boolean theHasFocus, int theRow, int theColumn) {
+	public Component getTableCellRendererComponent(final JTable theTable, Object theValue, boolean theIsSelected, boolean theHasFocus, int theRow, int theColumn) {
 		super.getTableCellRendererComponent(theTable, theValue, theIsSelected, theHasFocus, theRow, theColumn);
 
 		if (theValue instanceof ActivityInfo) {
@@ -79,10 +80,10 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			String text = stringBuilder.toString();
 
 			setText(text);
-			setToolTipText(text);
 			setFont(myVarWidthFont);
 
 		} else if (theValue instanceof ActivityMessage) {
+			
 			ActivityMessage msg = (ActivityMessage) theValue;
 			String rawMessage;
 			if (msg.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
@@ -140,7 +141,6 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			}
 			
 			setText(rawMessage);
-			setToolTipText(rawMessage);
 			setFont(myFixedWidthFont);
 
 		} else if (theValue instanceof ActivityBytesBase) {
@@ -205,7 +205,6 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 			String rawMessage = b.toString();
 			setText(rawMessage);
-			setToolTipText(rawMessage);
 			setFont(myFixedWidthFont);
 
 		}
@@ -217,13 +216,16 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			theTable.setRowHeight(theRow, prefHeight);
 		}
 
-		int minWidth = getPreferredSize().width + 200;
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				int minWidth = getPreferredSize().width + 200;
 
-		if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
-			theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
-			theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
-			theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
-		}
+				if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
+					theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
+					theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
+					theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
+				}
+			}});
 
 		return this;
 	}

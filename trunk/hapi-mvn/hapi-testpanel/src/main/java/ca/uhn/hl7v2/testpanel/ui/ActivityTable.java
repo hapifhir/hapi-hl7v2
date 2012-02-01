@@ -30,8 +30,6 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
@@ -56,9 +54,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.ActivityBase;
@@ -70,7 +65,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.InboundConnection;
 
 public class ActivityTable extends JPanel implements IDestroyable {
-	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
+//	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
 
 	private static final SimpleDateFormat ourTimestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 	private ActivityTableModel myActivityTableModel;
@@ -93,6 +88,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	private JMenuItem mySaveSelectedButton;
 	private JScrollPane myscrollPane;
 	private JTable myTable;
+	private JButton clearButton;
 	
 	public ActivityTable() {
 		super(new BorderLayout());
@@ -103,40 +99,36 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		toolBar.setFloatable(false);
 		add(toolBar, BorderLayout.NORTH);
 		
-		mySaveButton = new JButton("Save");
-		mySaveButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				mySaveButton.setBorderPainted(true && mySaveButton.isEnabled());
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				mySaveButton.setBorderPainted(false);
+		clearButton = new JButton("Clear");
+		clearButton.addMouseListener(new HoverButtonMouseAdapter(clearButton));
+		clearButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/clear.png")));
+		clearButton.setBorderPainted(false);
+		clearButton.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent theE) {
+				myConnection.clearRecentActivity();
 			}
 		});
+		toolBar.add(clearButton);
+		
+		mySaveButton = new JButton("Save");
+		mySaveButton.addMouseListener(new HoverButtonMouseAdapter(mySaveButton));
 		mySaveButton.setBorderPainted(false);
 		mySaveButton.setEnabled(false);
+		mySaveButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/save.png")));
 		mySaveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mySaveMenu.show(mySaveButton, mySaveButton.getX(), mySaveButton.getY() + mySaveButton.getHeight());
 			}
 		});
-		mySaveButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/save.png")));
 		toolBar.add(mySaveButton);
+		
+		
 		
 		myEditButton = new JButton("Edit");		
 		myEditButton.setEnabled(false);
 		myEditButton.setBorderPainted(false);
-		myEditButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				myEditButton.setBorderPainted(true && myEditButton.isEnabled());
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				myEditButton.setBorderPainted(false);
-			}
-		});
+		myEditButton.addMouseListener(new HoverButtonMouseAdapter(myEditButton));
 		myEditButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/edit_one.png")));
 		myEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

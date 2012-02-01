@@ -27,12 +27,11 @@ package ca.uhn.hl7v2.testpanel.ui;
 
 import javax.swing.JEditorPane;
 
+import jsyntaxpane.DefaultSyntaxKit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.testpanel.controller.Prefs;
-
-import jsyntaxpane.DefaultSyntaxKit;
 import testpanel.Er7Lexer;
 
 public class Er7SyntaxKit extends DefaultSyntaxKit {

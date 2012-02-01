@@ -27,8 +27,6 @@ package ca.uhn.hl7v2.testpanel.model.conf;
 
 import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
 import ca.uhn.hl7v2.model.AbstractPrimitive;
-import ca.uhn.hl7v2.model.AbstractType;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 

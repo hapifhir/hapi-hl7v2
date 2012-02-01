@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -84,8 +84,14 @@ import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
+import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
+import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
+import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
+import ca.uhn.hl7v2.testpanel.ui.Er7SyntaxKit;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
+import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 import ca.uhn.hl7v2.testpanel.util.Range;
@@ -154,6 +160,10 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private Component myhorizontalStrut_3;
 	private boolean myHandlingProfileComboboxChange;
 	private JLabel mylabel_4;
+	private JToolBar mytoolBar_1;
+	private JLabel mylabel_5;
+	private JComboBox myTablesComboBox;
+	private TablesComboModel myTablesComboModel;
 
 	/**
 	 * Create the panel.
@@ -172,24 +182,25 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		mysplitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
-				double ratio = (double)mysplitPane.getDividerLocation()/ mysplitPane.getHeight();
+				double ratio = (double) mysplitPane.getDividerLocation() / mysplitPane.getHeight();
 				ourLog.info("Resizing split to ratio: {}", ratio);
 				Prefs.setHl7EditorSplit(ratio);
 			}
 		});
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				mysplitPane.setDividerLocation(Prefs.getHl7EditorSplit());
-			}});
-		
+			}
+		});
+
 		messageEditorContainerPanel = new JPanel();
 		messageEditorContainerPanel.setBorder(null);
 		mysplitPane.setRightComponent(messageEditorContainerPanel);
 		messageEditorContainerPanel.setLayout(new BorderLayout(0, 0));
 
 		myMessageEditor = new JEditorPane();
-//		myMessageEditor.setFont(Prefs.getHl7EditorFont());
+		// myMessageEditor.setFont(Prefs.getHl7EditorFont());
 
 		myMessageScrollPane = new JScrollPane(myMessageEditor);
 		messageEditorContainerPanel.add(myMessageScrollPane);
@@ -211,7 +222,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		myhorizontalStrut = Box.createHorizontalStrut(20);
 		toolBar.add(myhorizontalStrut);
-		
+
 		mylabel_4 = new JLabel("Encoding");
 		toolBar.add(mylabel_4);
 
@@ -235,7 +246,81 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myTopTabBar = new JTabbedPane();
 		treeContainerPanel.add(myTopTabBar);
 		myTopTabBar.setBorder(null);
-		myTopTabBar.add("Message Tree", myTreeScrollPane);
+
+		JPanel treeContainer = new JPanel();
+		treeContainer.setLayout(new BorderLayout(0, 0));
+		treeContainer.add(myTreeScrollPane);
+
+		myTopTabBar.add("Message Tree", treeContainer);
+
+		mytoolBar_1 = new JToolBar();
+		mytoolBar_1.setFloatable(false);
+		treeContainer.add(mytoolBar_1, BorderLayout.NORTH);
+
+		mylabel_3 = new JLabel("Show");
+		mytoolBar_1.add(mylabel_3);
+
+		myShowCombo = new JComboBox();
+		mytoolBar_1.add(myShowCombo);
+		myShowCombo.setPreferredSize(new Dimension(110, 27));
+		myShowCombo.setMinimumSize(new Dimension(110, 27));
+		myShowCombo.setMaximumSize(new Dimension(130, 32767));
+		myShowCombo.setModel(new ShowComboModel());
+
+		myhorizontalStrut_1 = Box.createHorizontalStrut(20);
+		mytoolBar_1.add(myhorizontalStrut_1);
+
+		mylabel_2 = new JLabel("Validate");
+		mytoolBar_1.add(mylabel_2);
+
+		myProfileCombobox = new JComboBox();
+		mytoolBar_1.add(myProfileCombobox);
+		myProfileCombobox.setPreferredSize(new Dimension(200, 27));
+		myProfileCombobox.setMinimumSize(new Dimension(200, 27));
+		myProfileCombobox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				if (myHandlingProfileComboboxChange) {
+					return;
+				}
+
+				myHandlingProfileComboboxChange = true;
+				try {
+					if (myProfileCombobox.getSelectedIndex() == 0) {
+						myMessage.setValidationContext(null);
+					} else if (myProfileCombobox.getSelectedIndex() == 1) {
+						myMessage.setValidationContext(new DefaultValidation());
+					} else if (myProfileCombobox.getSelectedItem() == ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
+						IOkCancelCallback<Void> callback = new IOkCancelCallback<Void>() {
+							public void ok(Void theArg) {
+								myProfileComboboxModel.update();
+							}
+
+							public void cancel(Void theArg) {
+								myProfileCombobox.setSelectedIndex(0);
+							}
+						};
+						myController.chooseAndLoadConformanceProfileForMessage(myMessage, callback);
+					}
+				} finally {
+					myHandlingProfileComboboxChange = false;
+				}
+			}
+		});
+		myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
+		myProfileComboboxModel = new ProfileComboModel();
+		myProfileCombobox.setModel(myProfileComboboxModel);
+
+		myhorizontalStrut_2 = Box.createHorizontalStrut(20);
+		mytoolBar_1.add(myhorizontalStrut_2);
+
+		mylabel_5 = new JLabel("Tables");
+		mytoolBar_1.add(mylabel_5);
+
+		myTablesComboModel = new TablesComboModel(myController);
+		myTablesComboBox = new JComboBox(myTablesComboModel);
+		myTablesComboBox.setMaximumSize(new Dimension(200, 32767));
+		mytoolBar_1.add(myTablesComboBox);
 
 		mytoolBar = new JToolBar();
 		mytoolBar.setFloatable(false);
@@ -271,64 +356,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mytoolBar.add(myhorizontalStrut_3);
 		mySendButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
 		mytoolBar.add(mySendButton);
-
-		myhorizontalStrut_1 = Box.createHorizontalStrut(20);
-		mytoolBar.add(myhorizontalStrut_1);
-
-		myProfileCombobox = new JComboBox();
-		myProfileCombobox.setPreferredSize(new Dimension(200, 27));
-		myProfileCombobox.setMinimumSize(new Dimension(200, 27));
-		myProfileCombobox.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				if (myHandlingProfileComboboxChange) {
-					return;
-				}
-
-				myHandlingProfileComboboxChange = true;
-				try {
-					if (myProfileCombobox.getSelectedIndex() == 0) {
-						myMessage.setValidationContext(null);
-					} else if (myProfileCombobox.getSelectedIndex() == 1) {
-						myMessage.setValidationContext(new DefaultValidation());
-					} else if (myProfileCombobox.getSelectedItem() == ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
-						IOkCancelCallback<Void> callback = new IOkCancelCallback<Void>() {
-							public void ok(Void theArg) {
-								myProfileComboboxModel.update();
-							}
-
-							public void cancel(Void theArg) {
-								myProfileCombobox.setSelectedIndex(0);
-							}
-						};
-						myController.chooseAndLoadConformanceProfileForMessage(myMessage, callback);
-					}
-				} finally {
-					myHandlingProfileComboboxChange = false;
-				}
-			}
-		});
-		myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
-		myProfileComboboxModel = new ProfileComboModel();
-
-		mylabel_2 = new JLabel("Validate");
-		mytoolBar.add(mylabel_2);
-		myProfileCombobox.setModel(myProfileComboboxModel);
-
-		mytoolBar.add(myProfileCombobox);
-
-		myhorizontalStrut_2 = Box.createHorizontalStrut(20);
-		mytoolBar.add(myhorizontalStrut_2);
-
-		mylabel_3 = new JLabel("Show");
-		mytoolBar.add(mylabel_3);
-
-		myShowCombo = new JComboBox();
-		myShowCombo.setPreferredSize(new Dimension(110, 27));
-		myShowCombo.setMinimumSize(new Dimension(110, 27));
-		myShowCombo.setMaximumSize(new Dimension(130, 32767));
-		myShowCombo.setModel(new ShowComboModel());
-		mytoolBar.add(myShowCombo);
 
 		// mySendingPanel = new JPanel();
 		// mySendingPanel.setBorder(null);
@@ -402,6 +429,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myTreePanel.destroy();
 		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST, myOutboundConnectionsListener);
 
+		myTablesComboModel.destroy();
 	}
 
 	private void initLocal() {
@@ -565,9 +593,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				Range range = (Range) theEvt.getNewValue();
 
 				myMessageScrollPane.getHorizontalScrollBar().setValue(0);
-				
+
 				myMessageEditor.select(range.getStart(), range.getEnd());
-//				myMessageEditor.grabFocus();
+				// myMessageEditor.grabFocus();
 				myMessageEditor.repaint();
 
 				String substring = myMessage.getSourceMessage().substring(range.getStart(), range.getEnd());
@@ -593,11 +621,41 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			public void run() {
 				myMessageEditor.setCaretPosition(0);
 				myMessageEditor.grabFocus();
-			}});
-		
-		
+			}
+		});
+
+		String validationTableId = myMessage.getValidationTableId();
+		for (int i = 0; i < myTablesComboModel.getSize(); i++) {
+			Object nextElement = myTablesComboModel.getElementAt(i);
+			if (nextElement.equals(validationTableId)) {
+				myTablesComboBox.setSelectedIndex(i);
+			}
+		}
+		if (myTablesComboBox.getSelectedIndex() == -1) {
+			myTablesComboBox.setSelectedIndex(0);
+		}
+
+		myTablesComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent theE) {
+				updateValidationTables();
+			}
+		});
 	}
 
+
+	private void updateValidationTables() {
+		String selected = (String) myTablesComboBox.getSelectedItem();
+		TableFile selectedFile = null;
+		int selectedIndex = myTablesComboBox.getSelectedIndex();
+		if (selected != TablesComboModel.NONE && selected != TablesComboModel.NONE_DEFINED && selectedIndex >= 0) {
+			selectedFile = myController.getTableFileList().getTableFiles().get(selectedIndex - 1);
+		}
+		
+		myMessage.setValidationTable(selectedFile);
+		myTreePanel.scheduleNewValidationPass();
+	}
+
+	
 	private void updateWindowTitle() {
 		StringBuilder b = new StringBuilder();
 
@@ -653,7 +711,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-//				myMessageEditor.setFont(Prefs.getHl7EditorFont());
+				// myMessageEditor.setFont(Prefs.getHl7EditorFont());
 				vsb.setValue(verticalValue);
 			}
 		});
@@ -735,11 +793,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		private static final String ALL = "All";
 		private static final String ERRORS = "Errors";
 		private static final String POPULATED = "Populated";
+		private static final String SUPPORTED = "Supported";
 
 		public ShowComboModel() {
 			addElement(POPULATED);
 			addElement(ALL);
 			addElement(ERRORS);
+			addElement(SUPPORTED);
 
 			switch (myTreePanel.getShow()) {
 			case ALL:
@@ -750,6 +810,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				break;
 			case POPULATED:
 				setSelectedItem(POPULATED);
+				break;
+			case SUPPORTED:
+				setSelectedItem(SUPPORTED);
 				break;
 			}
 
@@ -763,6 +826,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				myTreePanel.setShow(ShowEnum.ALL);
 			} else if (value == ERRORS) {
 				myTreePanel.setShow(ShowEnum.ERROR);
+			} else if (value == SUPPORTED) {
+				myTreePanel.setShow(ShowEnum.SUPPORTED);
 			} else {
 				myTreePanel.setShow(ShowEnum.POPULATED);
 			}

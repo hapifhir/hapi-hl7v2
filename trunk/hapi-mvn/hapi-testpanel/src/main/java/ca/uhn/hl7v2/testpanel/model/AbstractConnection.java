@@ -58,8 +58,8 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	public static final String NAME_PROPERTY = AbstractConnection.class.getName() + "_NAME";
 	@SuppressWarnings("unused")
 	private static final Logger ourLog = LoggerFactory.getLogger(AbstractConnection.class);
-	public static final String RECENT_ACTIVITY_PROPERTY = AbstractConnection.class.getName() + "_RECENT_ACTIVITY";
 	public static final String PERSISTENT_PROPERTY = AbstractConnection.class.getName() + "_PERSISTENT";
+	public static final String RECENT_ACTIVITY_PROPERTY = AbstractConnection.class.getName() + "_RECENT_ACTIVITY";
 	public static final String STATUS_LINE_PROPERTY = AbstractConnection.class.getName() + "_STATUS_LINE";
 	public static final String STATUS_PROPERTY = AbstractConnection.class.getName() + "_STATUS";
 
@@ -138,6 +138,14 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 				myWriterCapture.reset();
 			}
 		}
+	}
+
+	/**
+	 * Remove all entries from the recent activity list
+	 */
+	public void clearRecentActivity() {
+		myRecentActivity.clear();
+		firePropertyChange(RECENT_ACTIVITY_PROPERTY, null, null);
 	}
 
 	protected String createDescription() {
@@ -491,6 +499,10 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 		setName(name);
 	}
 
+	public enum StatusEnum {
+		FAILED, STARTED, STOPPED, TRYING_TO_START
+	}
+
 	private class StreamWatcherThread extends Thread {
 
 		@Override
@@ -507,10 +519,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 			}
 		}
 
-	}
-
-	public enum StatusEnum {
-		FAILED, STARTED, STOPPED, TRYING_TO_START
 	}
 
 }

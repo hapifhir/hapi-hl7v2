@@ -48,11 +48,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Component;
-import javax.swing.border.LineBorder;
+import javax.swing.Box;
 
 public class AboutDialog extends JDialog {
 
@@ -76,7 +77,7 @@ public class AboutDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AboutDialog() {
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 583, 553);
 		getContentPane().setLayout(new BorderLayout());
 		mycontentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(mycontentPanel, BorderLayout.CENTER);
@@ -106,15 +107,16 @@ public class AboutDialog extends JDialog {
 			JPanel panel = new JPanel();
 			mycontentPanel.add(panel, BorderLayout.CENTER);
 			GridBagLayout gbl_panel = new GridBagLayout();
-			gbl_panel.columnWidths = new int[] { 203, 0 };
-			gbl_panel.rowHeights = new int[] { 16, 0, 0, 0 };
-			gbl_panel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-			gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+			gbl_panel.columnWidths = new int[] { 203, 0, 0 };
+			gbl_panel.rowHeights = new int[] { 16, 0, 0, 0, 0, 0, 0, 0, 0 };
+			gbl_panel.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
+			gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 			panel.setLayout(gbl_panel);
 
 			JLabel lblNewLabel = new JLabel("Welcome to the HAPI TestPanel. ");
 			lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+			gbc_lblNewLabel.gridwidth = 2;
 			gbc_lblNewLabel.insets = new Insets(10, 0, 5, 0);
 			gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
 			gbc_lblNewLabel.anchor = GridBagConstraints.NORTH;
@@ -123,9 +125,10 @@ public class AboutDialog extends JDialog {
 			panel.add(lblNewLabel, gbc_lblNewLabel);
 			{
 				JLabel lblThisSoftwareIs = new JLabel(
-						"<html><center>This is free software, licensed under the terms of the GNU Public License (Version 2) and the Mozilla Public License (Version 1.0).</center></html>");
+						"<html><center>This is free software, licensed under the terms of the GNU General Public License (Version 2) and the Mozilla Public License (Version 1.0).</center></html>");
 				lblThisSoftwareIs.setHorizontalAlignment(SwingConstants.CENTER);
 				GridBagConstraints gbc_lblThisSoftwareIs = new GridBagConstraints();
+				gbc_lblThisSoftwareIs.gridwidth = 2;
 				gbc_lblThisSoftwareIs.fill = GridBagConstraints.HORIZONTAL;
 				gbc_lblThisSoftwareIs.insets = new Insets(0, 20, 5, 20);
 				gbc_lblThisSoftwareIs.gridx = 0;
@@ -134,6 +137,7 @@ public class AboutDialog extends JDialog {
 			}
 			{
 				JLabel lblLearnMore = new JLabel("Learn More");
+				lblLearnMore.setHorizontalAlignment(SwingConstants.CENTER);
 				lblLearnMore.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -147,10 +151,69 @@ public class AboutDialog extends JDialog {
 				lblLearnMore.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				lblLearnMore.setForeground(Color.BLUE);
 				GridBagConstraints gbc_lblLearnMore = new GridBagConstraints();
-				gbc_lblLearnMore.insets = new Insets(10, 0, 0, 0);
+				gbc_lblLearnMore.gridwidth = 2;
+				gbc_lblLearnMore.insets = new Insets(10, 0, 5, 0);
 				gbc_lblLearnMore.gridx = 0;
 				gbc_lblLearnMore.gridy = 2;
 				panel.add(lblLearnMore, gbc_lblLearnMore);
+			}
+			{
+				JLabel lblThisSoftwareAlso = new JLabel("This software also makes use of the following great open source projects:");
+				GridBagConstraints gbc_lblThisSoftwareAlso = new GridBagConstraints();
+				gbc_lblThisSoftwareAlso.gridwidth = 2;
+				gbc_lblThisSoftwareAlso.insets = new Insets(10, 0, 5, 0);
+				gbc_lblThisSoftwareAlso.gridx = 0;
+				gbc_lblThisSoftwareAlso.gridy = 3;
+				panel.add(lblThisSoftwareAlso, gbc_lblThisSoftwareAlso);
+			}
+			{
+				JLabel lblJsyntaxpane = new JLabel("JSyntaxPane");
+				GridBagConstraints gbc_lblJsyntaxpane = new GridBagConstraints();
+				gbc_lblJsyntaxpane.insets = new Insets(0, 0, 5, 5);
+				gbc_lblJsyntaxpane.gridx = 0;
+				gbc_lblJsyntaxpane.gridy = 4;
+				panel.add(lblJsyntaxpane, gbc_lblJsyntaxpane);
+			}
+			{
+				JLabel lblNewLabel_1 = new JLabel("NetBeans.org Outline");
+				GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+				gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 0);
+				gbc_lblNewLabel_1.gridx = 1;
+				gbc_lblNewLabel_1.gridy = 4;
+				panel.add(lblNewLabel_1, gbc_lblNewLabel_1);
+			}
+			{
+				JLabel lblJflex = new JLabel("JFlex");
+				GridBagConstraints gbc_lblJflex = new GridBagConstraints();
+				gbc_lblJflex.insets = new Insets(0, 0, 5, 5);
+				gbc_lblJflex.gridx = 0;
+				gbc_lblJflex.gridy = 5;
+				panel.add(lblJflex, gbc_lblJflex);
+			}
+			{
+				JLabel lblGnuPublicLicense = new JLabel("log4j");
+				GridBagConstraints gbc_lblGnuPublicLicense = new GridBagConstraints();
+				gbc_lblGnuPublicLicense.insets = new Insets(0, 0, 5, 0);
+				gbc_lblGnuPublicLicense.gridx = 1;
+				gbc_lblGnuPublicLicense.gridy = 5;
+				panel.add(lblGnuPublicLicense, gbc_lblGnuPublicLicense);
+			}
+			{
+				Component verticalGlue = Box.createVerticalGlue();
+				GridBagConstraints gbc_verticalGlue = new GridBagConstraints();
+				gbc_verticalGlue.insets = new Insets(0, 0, 5, 5);
+				gbc_verticalGlue.gridx = 0;
+				gbc_verticalGlue.gridy = 6;
+				panel.add(verticalGlue, gbc_verticalGlue);
+			}
+			{
+				JLabel lblNewLabel_2 = new JLabel("");
+				lblNewLabel_2.setIcon(new ImageIcon(AboutDialog.class.getResource("/ca/uhn/hl7v2/testpanel/images/dogs_waiting_175.jpg")));
+				GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+				gbc_lblNewLabel_2.gridwidth = 2;
+				gbc_lblNewLabel_2.gridx = 0;
+				gbc_lblNewLabel_2.gridy = 7;
+				panel.add(lblNewLabel_2, gbc_lblNewLabel_2);
 			}
 		}
 		{

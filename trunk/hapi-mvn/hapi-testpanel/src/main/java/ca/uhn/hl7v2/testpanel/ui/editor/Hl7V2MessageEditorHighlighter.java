@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.editor;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -45,7 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
-import ca.uhn.hl7v2.testpanel.ui.UnderlineHighlighter.UnderlineHighlightPainter;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
+import ca.uhn.hl7v2.testpanel.ui.editor.UnderlineHighlighter.UnderlineHighlightPainter;
 import ca.uhn.hl7v2.testpanel.util.Range;
 
 public class Hl7V2MessageEditorHighlighter implements IDestroyable {

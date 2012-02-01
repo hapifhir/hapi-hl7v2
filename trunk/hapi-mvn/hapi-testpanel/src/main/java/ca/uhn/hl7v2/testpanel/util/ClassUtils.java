@@ -30,8 +30,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.validation.ValidationContext;
-
 public class ClassUtils {
 
 	private static final Logger ourLog = LoggerFactory.getLogger(ClassUtils.class);

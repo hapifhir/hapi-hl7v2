@@ -29,6 +29,7 @@ public enum ShowEnum {
 
 	ALL,
 	POPULATED,
-	ERROR
+	ERROR,
+	SUPPORTED
 	
 }

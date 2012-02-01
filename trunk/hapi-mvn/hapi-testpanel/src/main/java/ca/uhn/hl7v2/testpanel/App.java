@@ -26,26 +26,18 @@
 package ca.uhn.hl7v2.testpanel;
 
 import java.awt.EventQueue;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.swing.UIManager;
 
 import org.apache.log4j.xml.DOMConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 
 public class App {
 	
-	private static final Logger ourLog = LoggerFactory.getLogger(App.class);
+//	private static final Logger ourLog = LoggerFactory.getLogger(App.class);
 	private static Controller myController;
 
 	/**
