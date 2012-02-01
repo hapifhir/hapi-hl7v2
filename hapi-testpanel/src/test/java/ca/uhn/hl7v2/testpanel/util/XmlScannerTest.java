@@ -25,8 +25,9 @@
  */
 package ca.uhn.hl7v2.testpanel.util;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 public class XmlScannerTest {
 

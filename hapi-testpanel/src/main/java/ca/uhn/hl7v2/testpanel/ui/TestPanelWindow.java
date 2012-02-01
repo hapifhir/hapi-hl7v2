@@ -39,6 +39,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -61,6 +62,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -69,8 +71,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sun.security.action.GetLongAction;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
@@ -83,9 +83,6 @@ import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.ScreenBoundsUtil;
 import ca.uhn.hl7v2.testpanel.util.SwingLogAppender;
-import javax.swing.KeyStroke;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
 
 /**
  * This is the main outer window for the TestPanel
@@ -342,6 +339,18 @@ public class TestPanelWindow implements IDestroyable {
 			}
 		});
 		mnFile.add(mySaveAsMenuItem);
+		
+		mymenuItem_3 = new JMenuItem("Open");
+		mymenuItem_3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		mymenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myController.openMessages();
+			}
+		});
+		mnFile.add(mymenuItem_3);
+		
+		myRecentFilesMenu = new JMenu("Open Recent");
+		mnFile.add(myRecentFilesMenu);
 
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
@@ -371,6 +380,17 @@ public class TestPanelWindow implements IDestroyable {
 			}
 		});
 		mymenu_1.add(mymenuItem_1);
+		
+		mymenu_2 = new JMenu("Conformance");
+		menuBar.add(mymenu_2);
+		
+		mymenuItem_2 = new JMenuItem("Profiles and Tables…");
+		mymenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myController.showProfilesAndTablesEditor();
+			}
+		});
+		mymenu_2.add(mymenuItem_2);
 		
 		mymenu = new JMenu("Help");
 		mymenu.setMnemonic('H');
@@ -968,6 +988,10 @@ public class TestPanelWindow implements IDestroyable {
 	private JMenuItem mymenuItem;
 	private JMenu mymenu_1;
 	private JMenuItem mymenuItem_1;
+	private JMenu mymenu_2;
+	private JMenuItem mymenuItem_2;
+	private JMenu myRecentFilesMenu;
+	private JMenuItem mymenuItem_3;
 
 	private final class MyMessageDescriptionListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent theEvt) {
@@ -1184,6 +1208,19 @@ public class TestPanelWindow implements IDestroyable {
 			myAboutDialog = new AboutDialog();
 		}
 		myAboutDialog.setVisible(true);
+	}
+
+	public void setRecentMessageFiles(List<String> theRecentMessageFiles) {
+		myRecentFilesMenu.removeAll();
+		for (final String fileName : theRecentMessageFiles) {
+			JMenuItem nextItem = new JMenuItem(fileName);
+			myRecentFilesMenu.add(nextItem);
+			nextItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent theE) {
+					myController.openOrSwitchToMessage(fileName);
+				}
+			});
+		}
 	}
 
 }

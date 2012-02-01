@@ -42,8 +42,8 @@ public abstract class AbstractModelClass {
 	// ~ Instance fields
 	// ------------------------------------------------------------------------------------------------
 
-	private PropertyChangeSupport myPropertyChangeSupport = new PropertyChangeSupport(this);
-	private VetoableChangeSupport myVetoableChangeSupport = new VetoableChangeSupport(this);
+	private transient PropertyChangeSupport myPropertyChangeSupport = new PropertyChangeSupport(this);
+	private transient VetoableChangeSupport myVetoableChangeSupport = new VetoableChangeSupport(this);
 
 	// ~ Methods
 	// --------------------------------------------------------------------------------------------------------

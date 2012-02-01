@@ -53,7 +53,6 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -65,6 +64,8 @@ import ca.uhn.hl7v2.testpanel.model.InboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.MessagesList;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
+import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
@@ -74,11 +75,11 @@ import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageXml;
 import ca.uhn.hl7v2.testpanel.ui.AddMessageDialog;
 import ca.uhn.hl7v2.testpanel.ui.CreateOutboundConnectionDialog;
 import ca.uhn.hl7v2.testpanel.ui.FileChooserSaveAccessory;
-import ca.uhn.hl7v2.testpanel.ui.Hl7V2MessageEditorPanel;
 import ca.uhn.hl7v2.testpanel.ui.InboundConnectionPanel;
 import ca.uhn.hl7v2.testpanel.ui.NothingSelectedPanel;
 import ca.uhn.hl7v2.testpanel.ui.OutboundConnectionPanel;
 import ca.uhn.hl7v2.testpanel.ui.TestPanelWindow;
+import ca.uhn.hl7v2.testpanel.ui.editor.Hl7V2MessageEditorPanel;
 import ca.uhn.hl7v2.testpanel.util.AllFileFilter;
 import ca.uhn.hl7v2.testpanel.util.ExtensionFilter;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
@@ -91,6 +92,7 @@ public class Controller {
 
 	private static final String DIALOG_TITLE = "TestPanel";
 	private static final Logger ourLog = LoggerFactory.getLogger(Controller.class);
+	private String myAppVersionString;
 	private JFileChooser myConformanceProfileFileChooser;
 	private InboundConnectionList myInboundConnectionList;
 	private Object myLeftSelectedItem;
@@ -99,11 +101,12 @@ public class Controller {
 	private Object myNothingSelectedMarker = new Object();
 	private JFileChooser myOpenMessagesFileChooser;
 	private OutboundConnectionList myOutboundConnectionList;
+	private ProfileFileList myProfileFileList;
+	private ConformanceEditorController myProfilesAndTablesController;
 	private JFileChooser mySaveMessagesFileChooser;
 	private FileChooserSaveAccessory mySaveMessagesFileChooserAccessory;
-
+	private TableFileList myTableFileList;
 	private TestPanelWindow myView;
-	private String myAppVersionString;
 
 	public Controller() {
 		myMessagesList = new MessagesList(this);
@@ -116,7 +119,7 @@ public class Controller {
 		} catch (IOException e1) {
 			ourLog.error("Failed to restore from work direrctory", e1);
 		}
-
+		
 		String savedOutboundList = Prefs.getOutboundConnectionList();
 		if (StringUtils.isNotBlank(savedOutboundList)) {
 			try {
@@ -147,6 +150,10 @@ public class Controller {
 			createDefaultInboundConnectionList();
 		}
 
+		myTableFileList = new TableFileList();
+		
+		myProfileFileList = new ProfileFileList();
+		
 	}
 
 	public void addInboundConnection() {
@@ -289,31 +296,6 @@ public class Controller {
 		System.exit(0);
 	}
 
-	public boolean saveAllMessagesAndReturnFalseIfCancelIsPressed() {
-
-		for (Hl7V2MessageCollection next : myMessagesList.getMessages()) {
-			if (next.isSaved() == false) {
-				int save = showPromptToSaveMessageBeforeClosingIt(next, true);
-				switch (save) {
-				case JOptionPane.YES_OPTION:
-					if (!saveMessages(next)) {
-						return false;
-					}
-					break;
-				case JOptionPane.NO_OPTION:
-					break;
-				case JOptionPane.CANCEL_OPTION:
-					return false;
-				default:
-					// shouldn't happen
-					throw new Error("invalid option:" + save);
-				}
-			}
-		}
-
-		return true;
-	}
-
 	public void closeMessage(Hl7V2MessageCollection theMsg) {
 		if (theMsg.isSaved() == false) {
 			int save = showPromptToSaveMessageBeforeClosingIt(theMsg, true);
@@ -437,6 +419,21 @@ public class Controller {
 
 	}
 
+	public String getAppVersionString() {
+		if (myAppVersionString == null) {
+			//FileUtils.loadResourceFromClasspath(thePath)
+			Properties prop = new Properties();
+			try {
+				prop.load(Controller.class.getClassLoader().getResourceAsStream("testpanelversion.properties"));
+				myAppVersionString = prop.getProperty("app.version");
+			} catch (IOException e) {
+				ourLog.error("Couldn't load version property", e);
+				myAppVersionString = "v.UNK";
+			}
+		}
+		return myAppVersionString;
+	}
+
 	/**
 	 * @return the inboundConnectionList
 	 */
@@ -456,6 +453,17 @@ public class Controller {
 		return myOutboundConnectionList;
 	}
 
+	public ProfileFileList getProfileFileList() {
+		return myProfileFileList;
+	}
+
+	/**
+	 * @return the tableFileList
+	 */
+	public TableFileList getTableFileList() {
+		return myTableFileList;
+	}
+
 	private void handleUnexpectedError(Exception theE) {
 		ourLog.error(theE.getMessage(), theE);
 		showDialogError(theE.getMessage());
@@ -463,6 +471,29 @@ public class Controller {
 
 	public boolean isMessageEditorInFollowMode() {
 		return myMessageEditorInFollowMode;
+	}
+
+	private void openMessageFile(File file) {
+		try {
+			String profileString = FileUtils.readFile(file);
+			Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+			
+			col.setSourceMessage(profileString);
+			col.setSaveFileName(file.getAbsolutePath());
+			col.setSaved(true);
+
+			if (col.getMessages().isEmpty()) {
+				showDialogError("No messages were found in the file");
+			} else {
+
+			setLeftSelectedItem(col);
+			myMessagesList.addMessage(col);
+			updateRecentMessageFiles();
+
+			}
+		} catch (IOException e) {
+			ourLog.error("Failed to load profile", e);
+		}
 	}
 
 	public void openMessages() {
@@ -486,24 +517,25 @@ public class Controller {
 			File file = myOpenMessagesFileChooser.getSelectedFile();
 			Prefs.setOpenPathMessages(file.getPath());
 
-			try {
-				String profileString = FileUtils.readFile(file);
-				Hl7V2MessageCollection col = new Hl7V2MessageCollection();
-				col.setSourceMessage(profileString);
-
-				if (col.getMessages().isEmpty()) {
-					showDialogError("No messages were found in the file");
-					return;
-				}
-
-				setLeftSelectedItem(col);
-				myMessagesList.addMessage(col);
-
-			} catch (IOException e) {
-				ourLog.error("Failed to load profile", e);
-			}
+			openMessageFile(file);
 		}
 
+	}
+
+	public void openOrSwitchToMessage(String theFileName) {
+		for (Hl7V2MessageCollection next : myMessagesList.getMessages()) {
+			if (theFileName.equals(next.getSaveFileName())) {
+				setLeftSelectedItem(next);
+				return;
+			}
+		}
+		
+		File file = new File(theFileName);
+		if (file.exists() == false) {
+			ourLog.error("Can't find file: {}", theFileName);
+		}
+		
+		openMessageFile(file);
 	}
 
 	public void populateWithSampleMessageAndConnections() {
@@ -566,6 +598,31 @@ public class Controller {
 		}
 	}
 
+	public boolean saveAllMessagesAndReturnFalseIfCancelIsPressed() {
+
+		for (Hl7V2MessageCollection next : myMessagesList.getMessages()) {
+			if (next.isSaved() == false) {
+				int save = showPromptToSaveMessageBeforeClosingIt(next, true);
+				switch (save) {
+				case JOptionPane.YES_OPTION:
+					if (!saveMessages(next)) {
+						return false;
+					}
+					break;
+				case JOptionPane.NO_OPTION:
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					return false;
+				default:
+					// shouldn't happen
+					throw new Error("invalid option:" + save);
+				}
+			}
+		}
+
+		return true;
+	}
+
 	public boolean saveMessages(Hl7V2MessageCollection theSelectedValue) {
 		Validate.notNull(theSelectedValue);
 
@@ -574,6 +631,7 @@ public class Controller {
 		} else {
 			return doSave(theSelectedValue);
 		}
+		
 	}
 
 	/**
@@ -637,6 +695,9 @@ public class Controller {
 			theSelectedValue.setSaveLineEndings(mySaveMessagesFileChooserAccessory.getSelectedLineEndings());
 
 			doSave(theSelectedValue);
+			
+			updateRecentMessageFiles();
+
 			return true;
 
 		} else {
@@ -685,6 +746,10 @@ public class Controller {
 		myMessageEditorInFollowMode = theMessageEditorInFollowMode;
 	}
 
+	public void showAboutDialog() {
+		myView.showAboutDialog();
+	}
+
 	public void showDialogError(String message) {
 		JOptionPane.showMessageDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
 	}
@@ -695,6 +760,13 @@ public class Controller {
 
 	public int showDialogYesNo(String message) {
 		return JOptionPane.showConfirmDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+	}
+
+	public void showProfilesAndTablesEditor() {
+		if (myProfilesAndTablesController == null) {
+			myProfilesAndTablesController = new ConformanceEditorController(this);
+		}
+		myProfilesAndTablesController.show();
 	}
 
 	private int showPromptToSaveMessageBeforeClosingIt(Hl7V2MessageCollection theMsg, boolean theShowCancelButton) {
@@ -709,6 +781,8 @@ public class Controller {
 	public void start() {
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
+
+		updateRecentMessageFiles();
 
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
@@ -726,6 +800,21 @@ public class Controller {
 		}
 	}
 
+	public void startAllOutboundConnections() {
+		ourLog.info("Starting all outbound connections");
+		for (OutboundConnection next : myOutboundConnectionList.getConnections()) {
+			next.start();
+		}
+	}
+
+	public void startInboundConnection(InboundConnection theLeftSelectedItem) {
+		theLeftSelectedItem.start();
+	}
+
+	public void startOutboundConnection(OutboundConnection theLeftSelectedItem) {
+		theLeftSelectedItem.start();
+	}
+
 	public void stopAllInboundConnections() {
 		ourLog.info("Stopping all inbound connections");
 		for (InboundConnection next : myInboundConnectionList.getConnections()) {
@@ -733,6 +822,14 @@ public class Controller {
 		}
 	}
 
+	public void stopAllOutboundConnections() {
+		ourLog.info("Stopping all outbound connections");
+		for (OutboundConnection next : myOutboundConnectionList.getConnections()) {
+			next.stop();
+		}
+	}
+
+	
 	private void tryToSelectSomething() {
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
@@ -745,6 +842,15 @@ public class Controller {
 		}
 	}
 
+
+	private void updateRecentMessageFiles() {
+		Prefs.addMessagesFileToRecents(myMessagesList.getMessageFiles());
+		if (myView != null) {
+			myView.setRecentMessageFiles(Prefs.getRecentMessageFiles());
+		}
+	}
+
+	
 	public boolean validateNewValue(String theTerserPath, String theNewValue) {
 		String errorMsg = null;
 		if (theTerserPath.endsWith("MSH-1")) {
@@ -767,48 +873,6 @@ public class Controller {
 		return true;
 	}
 
-	public void showAboutDialog() {
-		myView.showAboutDialog();
-	}
-
-	public void startInboundConnection(InboundConnection theLeftSelectedItem) {
-		theLeftSelectedItem.start();
-	}
-
-	public void startOutboundConnection(OutboundConnection theLeftSelectedItem) {
-		theLeftSelectedItem.start();
-	}
-
-	public void startAllOutboundConnections() {
-		ourLog.info("Starting all outbound connections");
-		for (OutboundConnection next : myOutboundConnectionList.getConnections()) {
-			next.start();
-		}
-	}
-
-	public void stopAllOutboundConnections() {
-		ourLog.info("Stopping all outbound connections");
-		for (OutboundConnection next : myOutboundConnectionList.getConnections()) {
-			next.stop();
-		}
-	}
-
-	public String getAppVersionString() {
-		if (myAppVersionString == null) {
-			//FileUtils.loadResourceFromClasspath(thePath)
-			Properties prop = new Properties();
-			try {
-				prop.load(Controller.class.getClassLoader().getResourceAsStream("testpanelversion.properties"));
-				myAppVersionString = prop.getProperty("app.version");
-			} catch (IOException e) {
-				ourLog.error("Couldn't load version property", e);
-				myAppVersionString = "v.UNK";
-			}
-		}
-		return myAppVersionString;
-	}
-
-	
 	/**
 	 * Thread which checks if we are running the latest version of the TestPanel
 	 */

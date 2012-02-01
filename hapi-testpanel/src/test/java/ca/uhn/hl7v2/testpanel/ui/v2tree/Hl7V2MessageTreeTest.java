@@ -27,7 +27,6 @@ package ca.uhn.hl7v2.testpanel.ui.v2tree;
 
 import static org.junit.Assert.*;
 
-import java.awt.EventQueue;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
-import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeRoot;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeSegment;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeType;
@@ -83,6 +81,8 @@ public class Hl7V2MessageTreeTest {
 		}
 		
 	}
+	
+	
 	
 	@Test
 	public void testMessageTreeTerserPaths() throws HL7Exception, PropertyVetoException, InterruptedException, InvocationTargetException {

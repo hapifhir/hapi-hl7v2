@@ -26,7 +26,6 @@
 package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,21 +35,20 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
 import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
 import ca.uhn.hl7v2.testpanel.model.InboundConnection;
-import javax.swing.JTabbedPane;
 
 public class InboundConnectionPanel extends BaseMainPanel implements IDestroyable {
 	

@@ -27,12 +27,13 @@
 			<item name="University Health Network" href="http://www.uhn.ca/" />
 		</links>
 
-		<menu name="Welcome">
-			<item name="Introduction" href="index.html" />
-		</menu>
-
 		<menu name="HAPI">
 			<item name="HAPI Home" href="../index.html" />
+		</menu>
+
+		<menu name="TestPanel">
+			<item name="Introduction" href="index.html" />
+			<item name="Changelog" href="changes-report.html" />
 		</menu>
 
 		<head>

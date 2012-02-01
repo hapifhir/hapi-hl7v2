@@ -90,7 +90,7 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 	}
 
 	public void clearHighlight() {
-		setHighlitedRangeBasedOnSegment(null);
+		setHighlitedRangeBasedOnSegment((Segment[])null);
 		setHighlitedPathBasedOnRange(null);
 	}
 

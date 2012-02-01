@@ -28,9 +28,7 @@ package ca.uhn.hl7v2.testpanel.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -44,12 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.conf.parser.ProfileParser;
-import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
-import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
@@ -205,6 +197,16 @@ public class MessagesList extends AbstractModelClass {
 			myMessages.add(nextMsg);
 
 		}
+	}
+
+	public List<String> getMessageFiles() {
+		List<String> retVal = new ArrayList<String>();
+		for (Hl7V2MessageCollection next : myMessages) {
+			if (next.getSaveFileName() != null) {
+				retVal.add(next.getSaveFileName());
+			}
+		}
+		return retVal;
 	}
 
 }

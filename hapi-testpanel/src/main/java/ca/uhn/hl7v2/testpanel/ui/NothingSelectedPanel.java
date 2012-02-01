@@ -25,27 +25,26 @@
  */
 package ca.uhn.hl7v2.testpanel.ui;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.Insets;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
-import java.awt.Color;
-import javax.swing.JButton;
-
-import ca.uhn.hl7v2.testpanel.controller.Controller;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import ca.uhn.hl7v2.testpanel.controller.Controller;
 
 public class NothingSelectedPanel extends BaseMainPanel {
 

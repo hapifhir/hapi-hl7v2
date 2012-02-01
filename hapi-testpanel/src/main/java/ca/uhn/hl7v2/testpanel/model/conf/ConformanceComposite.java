@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
-import ca.uhn.hl7v2.conf.spec.message.Component;
 import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.DataTypeException;
