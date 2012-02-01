@@ -143,12 +143,12 @@ public class DefaultValidator implements Validator {
             exList.add(e);
         }
         
-        if (validateChildren) {
+//        if (validateChildren) {
 	        HL7Exception[] childExceptions; 
-	        childExceptions = testGroup(message, profile, profile.getIdentifier());
+	        childExceptions = doTestGroup(message, profile, profile.getIdentifier(), validateChildren);
 	        for (int i = 0; i < childExceptions.length; i++) {
 	            exList.add(childExceptions[i]);
-	        }
+//	        }
         }
         
         return toArray(exList);
@@ -158,7 +158,11 @@ public class DefaultValidator implements Validator {
      * Tests a group against a group section of a profile.
      */
     public HL7Exception[] testGroup(Group group, AbstractSegmentContainer profile, String profileID) throws ProfileException {
-        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        return doTestGroup(group, profile, profileID, true);
+    }
+
+	private HL7Exception[] doTestGroup(Group group, AbstractSegmentContainer profile, String profileID, boolean theValidateChildren) throws ProfileException {
+		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         ArrayList<String> allowedStructures = new ArrayList<String>(20);
         
         for (int i = 1; i <= profile.getChildren(); i++) {
@@ -181,7 +185,7 @@ public class DefaultValidator implements Validator {
                     if (ce != null) exList.add(ce);
                     
                     //test children on instances with content
-                    if (validateChildren) {
+                    if (theValidateChildren) {
 	                    for (int j = 0; j < instancesWithContent.size(); j++) {
 	                        Structure s = (Structure) instancesWithContent.get(j);
 	                        HL7Exception[] childExceptions = testStructure(s, struct, profileID);
@@ -199,7 +203,7 @@ public class DefaultValidator implements Validator {
         addToList(checkForExtraStructures(group, allowedStructures), exList);
         
         return toArray(exList);
-    }
+	}
     
     /**
      * Checks a group's children against a list of allowed structures for the group 
@@ -260,7 +264,7 @@ public class DefaultValidator implements Validator {
         ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         if (profile instanceof Seg) {
             if (Segment.class.isAssignableFrom(s.getClass())) {
-                addToList(testSegment((Segment) s, (Seg) profile, profileID), exList);
+                addToList(doTestSegment((Segment) s, (Seg) profile, profileID, validateChildren), exList);
             } else {
                 exList.add(new ProfileNotHL7CompliantException("Mismatch between a segment in the profile and the structure " 
                         + s.getClass().getName() + " in the message"));
@@ -280,7 +284,11 @@ public class DefaultValidator implements Validator {
      * Tests a segment against a segment section of a profile.
      */
     public HL7Exception[] testSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile, String profileID) throws ProfileException {
-        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        return doTestSegment(segment, profile, profileID, true);
+    }
+
+	private HL7Exception[] doTestSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile, String profileID, boolean theValidateChildren) throws ProfileException {
+		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         ArrayList<Integer> allowedFields = new ArrayList<Integer>(20);
         
         for (int i = 1; i <= profile.getFields(); i++) {
@@ -306,7 +314,7 @@ public class DefaultValidator implements Validator {
                     }
                     
                     //test field instances with content
-                    if (validateChildren) {
+                    if (theValidateChildren) {
 	                    for (int j = 0; j < instancesWithContent.size(); j++) {
 	                        Type s = (Type) instancesWithContent.get(j);
 	                        
@@ -314,7 +322,7 @@ public class DefaultValidator implements Validator {
 	                        if (profile.getName().equalsIgnoreCase("MSH") && i < 3) {
 	                            escape = false;
 	                        }
-	                        HL7Exception[] childExceptions = testField(s, field, escape, profileID);
+	                        HL7Exception[] childExceptions = doTestField(s, field, escape, profileID, validateChildren);
 	                        for (int k = 0; k < childExceptions.length; k++) {
 	                            childExceptions[k].setFieldPosition(i);
 	                        }
@@ -337,7 +345,7 @@ public class DefaultValidator implements Validator {
             ret[i].setSegmentName(profile.getName());
         }
         return ret;
-    }
+	}
     
     /**
      * Checks a segment against a list of allowed fields 
@@ -441,7 +449,7 @@ public class DefaultValidator implements Validator {
             //can't test anything
         } else if (usage.equalsIgnoreCase("X")) {
             if (encoded.length() > 0) 
-                e = new XElementPresentException("Element " + name + " is present but specified as not used (X)");
+                e = new XElementPresentException("Element \"" + name + "\" is present but specified as not used (X)");
         } else if (usage.equalsIgnoreCase("B")) {
             //can't test anything 
         }                
@@ -508,7 +516,11 @@ public class DefaultValidator implements Validator {
     }
     
     public HL7Exception[] testField(Type type, Field profile, boolean escape, String profileID) throws ProfileException {
-        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        return doTestField(type, profile, escape, profileID, true);
+    }
+
+	private HL7Exception[] doTestField(Type type, Field profile, boolean escape, String profileID, boolean theValidateChildren) throws ProfileException {
+		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         
         //account for MSH 1 & 2 which aren't escaped
         String encoded = null;
@@ -517,7 +529,7 @@ public class DefaultValidator implements Validator {
         addToList(testType(type, profile, encoded, profileID), exList);
         
         //test children
-        if (validateChildren) {
+        if (theValidateChildren) {
 	        if (profile.getComponents() > 0 && !profile.getUsage().equals("X")) {
 	            if (Composite.class.isAssignableFrom(type.getClass())) {
 	                Composite comp = (Composite) type;
@@ -525,7 +537,7 @@ public class DefaultValidator implements Validator {
 	                    Component childProfile = profile.getComponent(i);
 	                    try {
 	                        Type child = comp.getComponent(i-1);
-	                        addToList(testComponent(child, childProfile, profileID), exList);
+	                        addToList(doTestComponent(child, childProfile, profileID, validateChildren), exList);
 	                    } catch (DataTypeException de) {
 	                        exList.add(new ProfileNotHL7CompliantException("More components in profile than allowed in message: " + de.getMessage()));
 	                    }
@@ -539,10 +551,14 @@ public class DefaultValidator implements Validator {
         }
         
         return toArray(exList);
-    }
+	}
     
     public HL7Exception[] testComponent(Type type, Component profile, String profileID) throws ProfileException {
-        ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
+        return doTestComponent(type, profile, profileID, true);
+    }
+
+	private HL7Exception[] doTestComponent(Type type, Component profile, String profileID, boolean theValidateChildren) throws ProfileException {
+		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>(20);
         
         addToList(testType(type, profile, null, profileID), exList);
         
@@ -550,15 +566,19 @@ public class DefaultValidator implements Validator {
         if (profile.getSubComponents() > 0 && !profile.getUsage().equals("X") && hasContent(type)) {
             if (Composite.class.isAssignableFrom(type.getClass())) {
                 Composite comp = (Composite) type;
-                for (int i = 1; i <= profile.getSubComponents(); i++) {
-                    SubComponent childProfile = profile.getSubComponent(i);
-                    try {
-                        Type child = comp.getComponent(i-1);
-                        addToList(testType(child, childProfile, null, profileID), exList);
-                    } catch (DataTypeException de) {
-                        exList.add(new ProfileNotHL7CompliantException("More subcomponents in profile than allowed in message: " + de.getMessage()));
-                    }
+                
+                if (theValidateChildren) {
+	                for (int i = 1; i <= profile.getSubComponents(); i++) {
+	                    SubComponent childProfile = profile.getSubComponent(i);
+	                    try {
+	                        Type child = comp.getComponent(i-1);
+	                        addToList(testType(child, childProfile, null, profileID), exList);
+	                    } catch (DataTypeException de) {
+	                        exList.add(new ProfileNotHL7CompliantException("More subcomponents in profile than allowed in message: " + de.getMessage()));
+	                    }
+	                }
                 }
+                
                 addToList(checkExtraComponents(comp, profile.getSubComponents()), exList);
             } else {
                 exList.add(new ProfileNotFollowedException(
@@ -567,7 +587,7 @@ public class DefaultValidator implements Validator {
         }
         
         return toArray(exList);
-    }
+	}
     
     /** Tests for extra components (ie any not defined in the profile) */
     private HL7Exception[] checkExtraComponents(Composite comp, int numInProfile) throws ProfileException {
