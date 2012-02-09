@@ -26,10 +26,11 @@
 package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.Component;
-import java.awt.EventQueue;
+import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +48,16 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 	private Font myFixedWidthFont;
 	private Font myVarWidthFont;
+	private JTextArea myTextArea;
+
+	private boolean myDisplayTextArea;
 
 	public ActivityDetailsCellRenderer(ActivityTable theTablePanel) {
 		super(theTablePanel);
 
 		myFixedWidthFont = new Font("Lucida Console", Font.PLAIN, 12);
 		myVarWidthFont = new Font("Lucida", Font.PLAIN, 12);
+		myTextArea = new JTextArea();
 	}
 
 	@Override
@@ -67,11 +72,12 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			if (theValue instanceof ActivityInfoError) {
 				stringBuilder.append("<font color=\"#800000\">");
 			}
-			
+
 			stringBuilder.append("<nobr>");
-			stringBuilder.append(((ActivityInfo) theValue).getMessage());
+			String message = ((ActivityInfo) theValue).getMessage();
+			stringBuilder.append(message);
 			stringBuilder.append("</nobr>");
-			
+
 			if (theValue instanceof ActivityInfoError) {
 				stringBuilder.append("</font>");
 			}
@@ -79,11 +85,13 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			stringBuilder.append("</html>");
 			String text = stringBuilder.toString();
 
-			setText(text);
+			setText(message);
+			// setText(text);
+
 			setFont(myVarWidthFont);
 
 		} else if (theValue instanceof ActivityMessage) {
-			
+
 			ActivityMessage msg = (ActivityMessage) theValue;
 			String rawMessage;
 			if (msg.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
@@ -133,15 +141,21 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 				b.append("</html>");
 
 				rawMessage = b.toString();
-				
+
 			} else {
-				
+
 				rawMessage = FormatUtil.formatEr7(msg.getRawMessage(), false).replace("\r", "<br>");
-				
+
 			}
-			
-			setText(rawMessage);
-			setFont(myFixedWidthFont);
+
+			// setText(rawMessage);
+			myTextArea.setText(msg.getRawMessage().replace("\r", "\n"));
+			myTextArea.setFont(myFixedWidthFont);
+			myDisplayTextArea = true;
+
+			theTable.setRowHeight(theRow, (int) myTextArea.getPreferredSize().getHeight());
+
+			return myTextArea;
 
 		} else if (theValue instanceof ActivityBytesBase) {
 
@@ -209,25 +223,44 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 		}
 
-		int prefHeight = getPreferredSize().height;
-		prefHeight = Math.max(prefHeight, 10);
-		if (prefHeight != theTable.getRowHeight(theRow)) {
-			ourLog.trace("Setting height of row {} to {}", theRow, prefHeight);
-			theTable.setRowHeight(theRow, prefHeight);
+		// int prefHeight = getPreferredSize().height;
+		// prefHeight = Math.max(prefHeight, 10);
+		// if (prefHeight != theTable.getRowHeight(theRow)) {
+		// ourLog.trace("Setting height of row {} to {}", theRow, prefHeight);
+		// theTable.setRowHeight(theRow, prefHeight);
+		// }
+
+		// EventQueue.invokeLater(new Runnable() {
+		// public void run() {
+		// int minWidth = getPreferredSize().width + 200;
+		//
+		// if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
+		// theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
+		// theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
+		// theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
+		// }
+		// }});
+
+		if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
+			theTable.setRowHeight(theRow, theTable.getRowHeight());
 		}
 
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				int minWidth = getPreferredSize().width + 200;
-
-				if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
-					theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
-					theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
-					theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
-				}
-			}});
-
+		myDisplayTextArea = false;
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.JComponent#getPreferredSize()
+	 */
+	@Override
+	public Dimension getPreferredSize() {
+		if (myDisplayTextArea) {
+			return myTextArea.getPreferredSize();
+		} else {
+			return super.getPreferredSize();
+		}
 	}
 
 }
