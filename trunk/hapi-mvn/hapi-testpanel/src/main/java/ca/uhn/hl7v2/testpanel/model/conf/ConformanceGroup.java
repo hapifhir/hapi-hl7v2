@@ -36,22 +36,22 @@ import ca.uhn.hl7v2.model.Structure;
 public class ConformanceGroup extends AbstractGroup implements ConformanceStructure<ConformanceGroup>, ConformanceStructureHolder {
 
 	private SegGroup myConfDefinition;
-
 	private ConformanceStructureHolderSupport mySupport;
 
 	public ConformanceGroup(Group theParent, SegGroup theConfDefinition) {
-		super(theParent, (((ConformanceMessage)theParent.getMessage()).getModelClassFactory()));
-		
+		super(theParent, (((ConformanceMessage) theParent.getMessage()).getModelClassFactory()));
+
 		mySupport = new ConformanceStructureHolderSupport(this, theConfDefinition);
 		myConfDefinition = theConfDefinition;
 	}
 
 	public ConformanceGroup(Message theMessage, ConformanceStructureHolderSupport theSupport, SegGroup theConfDefinition) {
 		this(theMessage, theConfDefinition);
-		
+
 		myConfDefinition = theConfDefinition;
 		mySupport = theSupport;
 	}
+
 	/**
 	 * Internal method for adding child structures
 	 */
@@ -66,12 +66,12 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 	 */
 	@Override
 	public Structure get(String theName, int theRep) throws HL7Exception {
-		
+
 		Structure retVal = mySupport.getNonStandardSegmentIfNameExists(theName, theRep);
 		if (retVal != null) {
 			return retVal;
 		}
-		
+
 		Structure[] currentReps = getAll(theName);
 		int currentRepsNum = currentReps.length;
 		if (theRep > currentRepsNum) {
@@ -81,7 +81,7 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 		if (theRep < currentRepsNum) {
 			return super.get(theName, theRep);
 		}
-		
+
 		if (getClass(theName) == GenericSegment.class) {
 			retVal = super.get(theName, theRep);
 		} else {
@@ -90,22 +90,6 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 		insertRepetition(theName, retVal, theRep);
 		return retVal;
 	}
-
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public String addNonstandardSegment(String theName) throws HL7Exception {
-//		return mySupport.addNonstandardSegment(theName);
-//	}
-//
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public String addNonstandardSegment(String theName, int theIndex) throws HL7Exception {
-//		return mySupport.addNonstandardSegment(theName, theIndex);
-//	}
 
 	/**
 	 * {@inheritDoc}
@@ -118,11 +102,34 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 		}
 		return retVal;
 	}
+
+	// /**
+	// * {@inheritDoc}
+	// */
+	// @Override
+	// public String addNonstandardSegment(String theName) throws HL7Exception {
+	// return mySupport.addNonstandardSegment(theName);
+	// }
+	//
+	// /**
+	// * {@inheritDoc}
+	// */
+	// @Override
+	// public String addNonstandardSegment(String theName, int theIndex) throws
+	// HL7Exception {
+	// return mySupport.addNonstandardSegment(theName, theIndex);
+	// }
+
 	/**
 	 * @return the confDefinition
 	 */
 	public SegGroup getConfDefinition() {
 		return myConfDefinition;
+	}
+
+	@Override
+	public ConformanceMessage getMessage() {
+		return (ConformanceMessage) super.getMessage();
 	}
 
 	/**
@@ -133,13 +140,13 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 		return mySupport.getName();
 	}
 
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public String[] getNames() {
-//		return mySupport.getNames();
-//	}
+	// /**
+	// * {@inheritDoc}
+	// */
+	// @Override
+	// public String[] getNames() {
+	// return mySupport.getNames();
+	// }
 
 	/**
 	 * {@inheritDoc}
@@ -147,23 +154,23 @@ public class ConformanceGroup extends AbstractGroup implements ConformanceStruct
 	public ConformanceGroup instantiateClone() throws HL7Exception {
 		ConformanceStructureHolderSupport support = mySupport.instantiateClone();
 		ConformanceGroup retVal = new ConformanceGroup(getMessage(), support, myConfDefinition);
-		
+
 		int idx = 0;
 		for (String next : getNames()) {
 			Class<? extends Structure> clazz = getClass(next);
 			boolean rep = isRepeating(next);
 			boolean req = isRequired(next);
-			
+
 			retVal.insert(clazz, req, rep, idx, next);
-			
+
 			idx++;
 		}
-		
+
 		return retVal;
 	}
 
 	/**
-	 * {@inheritDoc} 
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected Structure tryToInstantiateStructure(Class<? extends Structure> theC, String theName) throws HL7Exception {

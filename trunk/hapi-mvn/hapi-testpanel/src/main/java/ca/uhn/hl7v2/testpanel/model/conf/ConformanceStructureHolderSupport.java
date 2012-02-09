@@ -36,7 +36,6 @@ import ca.uhn.hl7v2.conf.spec.message.SegGroup;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 
@@ -157,7 +156,7 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return retVal;
 	}
 
-	public Message getMessage() {
+	public ConformanceMessage getMessage() {
 		throw new UnsupportedOperationException();
 	}
 

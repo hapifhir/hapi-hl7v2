@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.testpanel.model.conf;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public class TableFileList extends AbstractModelClass {
 	public static final String PROP_FILES = TableFileList.class.getName() + "_FILES";
 	
 	private List<TableFile> myTableFiles = new ArrayList<TableFile>();
+	private HashMap<String, TableFile> myIdToTableFiles;
 
 	public TableFileList() {
 		List<File> files = Prefs.getOpenTableFiles();
@@ -52,6 +54,7 @@ public class TableFileList extends AbstractModelClass {
 		file.setFileName(theFileName);
 
 		if (!myTableFiles.contains(file)) {
+			myIdToTableFiles = null;
 			myTableFiles.add(file);
 		}
 		
@@ -79,6 +82,7 @@ public class TableFileList extends AbstractModelClass {
 		try {
 			TableFile newFile = TableFile.readFromFile(theChosenFile);
 			if (!myTableFiles.contains(newFile)) {
+				myIdToTableFiles = null;
 				myTableFiles.add(newFile);
 			}
 			firePropertyChange(PROP_FILES, null, null);
@@ -94,7 +98,18 @@ public class TableFileList extends AbstractModelClass {
 
 	public void removeTableFile(TableFile theSelectedFileOrTable) {
 		myTableFiles.remove(theSelectedFileOrTable);
+		myIdToTableFiles = null;
 		firePropertyChange(PROP_FILES, null, null);
+	}
+
+	public TableFile getTableFile(String theTableFileId) {
+		if (myIdToTableFiles == null) {
+			myIdToTableFiles = new HashMap<String, TableFile>();
+			for (TableFile next : myTableFiles) {
+				myIdToTableFiles.put(next.getId(), next);
+			}
+		}
+		return myIdToTableFiles.get(theTableFileId);
 	}
 	
 }

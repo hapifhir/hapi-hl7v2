@@ -1,8 +1,6 @@
 package ca.uhn.hl7v2.testpanel.model.conf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.UUID;
@@ -33,42 +31,35 @@ public class ProfileProxy {
 
 	private transient RuntimeProfile myProfile;
 
-	@XmlElement(name = "msg Type")
-	private String myStructureMessageType;
-
-	/**
-	 * @return the structureMessageType
-	 */
-	public String getStructureMessageType() {
-		return myStructureMessageType;
-	}
-
-	/**
-	 * @param theStructureMessageType the structureMessageType to set
-	 */
-	public void setStructureMessageType(String theStructureMessageType) {
-		myStructureMessageType = theStructureMessageType;
-	}
-
-	/**
-	 * @return the structureEventType
-	 */
-	public String getStructureEventType() {
-		return myStructureEventType;
-	}
-
-	/**
-	 * @param theStructureEventType the structureEventType to set
-	 */
-	public void setStructureEventType(String theStructureEventType) {
-		myStructureEventType = theStructureEventType;
-	}
-
 	@XmlElement(name = "evtType")
 	private String myStructureEventType;
 
+	@XmlElement(name = "msgType")
+	private String myStructureMessageType;
+
 	public File getFile() {
 		return new File(myFileName);
+	}
+
+	/**
+	 * @return the fileName
+	 */
+	public String getFileName() {
+		return myFileName;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return myId;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return myName;
 	}
 
 	public RuntimeProfile getProfile() throws IOException, ProfileException {
@@ -80,10 +71,66 @@ public class ProfileProxy {
 		return myProfile;
 	}
 
-	public static ProfileProxy loadFromString(String theString) {
-		StringReader r = new StringReader(theString);
-		ProfileProxy retVal = JAXB.unmarshal(r, ProfileProxy.class);
-		return retVal;
+	/**
+	 * @return the structureEventType
+	 */
+	public String getStructureEventType() {
+		return myStructureEventType;
+	}
+
+	/**
+	 * @return the structureMessageType
+	 */
+	public String getStructureMessageType() {
+		return myStructureMessageType;
+	}
+
+	/**
+	 * @param theFileName the fileName to set
+	 */
+	public void setFileName(String theFileName) {
+		myFileName = theFileName;
+	}
+
+	/**
+	 * @param theId the id to set
+	 */
+	public void setId(String theId) {
+		myId = theId;
+	}
+
+	/**
+	 * @param theName the name to set
+	 */
+	public void setName(String theName) {
+		myName = theName;
+	}
+
+	/**
+	 * @param theStructureEventType the structureEventType to set
+	 */
+	public void setStructureEventType(String theStructureEventType) {
+		myStructureEventType = theStructureEventType;
+	}
+
+	/**
+	 * @param theStructureMessageType the structureMessageType to set
+	 */
+	public void setStructureMessageType(String theStructureMessageType) {
+		myStructureMessageType = theStructureMessageType;
+	}
+
+	public static ProfileProxy createFromProfileString(String theProfile) throws IOException, ProfileException {
+		ProfileProxy profileProxy = new ProfileProxy();
+		profileProxy.setId(UUID.randomUUID().toString());
+		
+		profileProxy.myProfile = new ProfileParser(false).parse(theProfile);
+		RuntimeProfile p = profileProxy.getProfile();
+		profileProxy.setName(p.getName());
+		profileProxy.setStructureMessageType(p.getMessage().getMsgType());
+		profileProxy.setStructureEventType(p.getMessage().getEventType());
+		
+		return profileProxy;
 	}
 
 	public static ProfileProxy loadFromFile(File theFile) throws IOException, ProfileException {
@@ -99,46 +146,10 @@ public class ProfileProxy {
 		return profileProxy;
 	}
 
-	/**
-	 * @return the fileName
-	 */
-	public String getFileName() {
-		return myFileName;
-	}
-
-	/**
-	 * @param theFileName the fileName to set
-	 */
-	public void setFileName(String theFileName) {
-		myFileName = theFileName;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return myId;
-	}
-
-	/**
-	 * @param theId the id to set
-	 */
-	public void setId(String theId) {
-		myId = theId;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return myName;
-	}
-
-	/**
-	 * @param theName the name to set
-	 */
-	public void setName(String theName) {
-		myName = theName;
+	public static ProfileProxy loadFromString(String theString) {
+		StringReader r = new StringReader(theString);
+		ProfileProxy retVal = JAXB.unmarshal(r, ProfileProxy.class);
+		return retVal;
 	}
 
 	

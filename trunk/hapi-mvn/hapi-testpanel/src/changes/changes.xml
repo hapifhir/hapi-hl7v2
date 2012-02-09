@@ -20,6 +20,12 @@
             <action type="fix">
             	Navigating the message tree using the keyboard is now possible
             </action>
+            <action type="add">
+            	Introduce profile groups
+            </action>
+            <action type="add">
+            	Add a spinner to show progress while the message tree is being created or updated (including message validation)
+            </action>
 		</release>
 		<release version="2.0-beta1" date="2012-01-22">
 			<action type="update">Initial Release</action>

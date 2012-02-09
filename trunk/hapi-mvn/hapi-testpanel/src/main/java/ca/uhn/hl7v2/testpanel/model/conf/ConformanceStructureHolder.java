@@ -32,4 +32,6 @@ public interface ConformanceStructureHolder extends Group {
 
 	void addChild(ConformanceStructure<?> theStructure, String theName, short theMinReps, short theMaxReps) throws HL7Exception;
 	
+	ConformanceMessage getMessage();
+	
 }

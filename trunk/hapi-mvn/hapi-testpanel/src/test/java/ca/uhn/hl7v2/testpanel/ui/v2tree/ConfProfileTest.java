@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.testpanel.ui.v2tree;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeMessageConf;
@@ -21,6 +23,9 @@ public class ConfProfileTest {
 
 	
 	
+	private Hl7V2MessageTree tree;
+	private TreeNodeRoot treeNodeRoot;
+
 	@Test
 	public void testValidateConfProfile() throws HL7Exception, ProfileException, IOException, InterruptedException, InvocationTargetException {
         
@@ -28,10 +33,11 @@ public class ConfProfileTest {
 		
 		Hl7V2MessageCollection messageModel = new Hl7V2MessageCollection();
 		messageModel.setSourceMessage(testMessageString);
-		messageModel.setRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_reqsft.xml"));
+		ProfileGroup pg = ProfileGroup.createFromRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_reqsft.xml"));
+		messageModel.setRuntimeProfile(pg);
 		
-		Hl7V2MessageTree tree = new Hl7V2MessageTree(null);
-		TreeNodeRoot treeNodeRoot = tree.new TreeNodeRoot();
+		initTree();
+
 		tree.setShow(ShowEnum.ALL);
 		DefaultValidator validator = new DefaultValidator();
 		validator.setValidateChildren(false);
@@ -56,10 +62,11 @@ public class ConfProfileTest {
 		
 		Hl7V2MessageCollection messageModel = new Hl7V2MessageCollection();
 		messageModel.setSourceMessage(testMessageString);
-		messageModel.setRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_segnotsup.xml"));
+		ProfileGroup pg = ProfileGroup.createFromRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_segnotsup.xml"));
+		messageModel.setRuntimeProfile(pg);
 		
-		Hl7V2MessageTree tree = new Hl7V2MessageTree(null);
-		TreeNodeRoot treeNodeRoot = tree.new TreeNodeRoot();
+		initTree();
+		
 		tree.setShow(ShowEnum.ALL);
 		DefaultValidator validator = new DefaultValidator();
 		validator.setValidateChildren(false);
@@ -83,10 +90,10 @@ public class ConfProfileTest {
 		
 		messageModel = new Hl7V2MessageCollection();
 		messageModel.setSourceMessage(testMessageString);
-		messageModel.setRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_segnotsup.xml"));
+		pg = ProfileGroup.createFromRuntimeProfile(FileUtils.loadResourceFromClasspath("ADT_A01_segnotsup.xml"));
+		messageModel.setRuntimeProfile(pg);
 		
-		tree = new Hl7V2MessageTree(null);
-		treeNodeRoot = tree.new TreeNodeRoot();
+		initTree();
 		tree.setShow(ShowEnum.ALL);
 		validator = new DefaultValidator();
 		validator.setValidateChildren(false);
@@ -102,6 +109,15 @@ public class ConfProfileTest {
 		Assert.assertTrue(messageNode.getErrorDescription(), messageNode.getErrorDescription().contains("SFT"));
 		Assert.assertFalse(sftNode.getErrorDescription(), (sftNode.getErrorDescription() + "").contains("Software Vendor Organization"));
 
+	}
+
+	private void initTree() throws InterruptedException, InvocationTargetException {
+		EventQueue.invokeAndWait(new Runnable() {
+
+			public void run() {
+				tree = new Hl7V2MessageTree(null);
+				treeNodeRoot = tree.new TreeNodeRoot();
+			}});
 	}
 	
 	

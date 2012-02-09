@@ -27,7 +27,9 @@ package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
 
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -48,20 +50,16 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 	private Font myFixedWidthFont;
 	private Font myVarWidthFont;
-	private JTextArea myTextArea;
-
-	private boolean myDisplayTextArea;
 
 	public ActivityDetailsCellRenderer(ActivityTable theTablePanel) {
 		super(theTablePanel);
 
 		myFixedWidthFont = new Font("Lucida Console", Font.PLAIN, 12);
 		myVarWidthFont = new Font("Lucida", Font.PLAIN, 12);
-		myTextArea = new JTextArea();
 	}
 
 	@Override
-	public Component getTableCellRendererComponent(final JTable theTable, Object theValue, boolean theIsSelected, boolean theHasFocus, int theRow, int theColumn) {
+	public Component getTableCellRendererComponent(final JTable theTable, Object theValue, boolean theIsSelected, boolean theHasFocus, final int theRow, int theColumn) {
 		super.getTableCellRendererComponent(theTable, theValue, theIsSelected, theHasFocus, theRow, theColumn);
 
 		if (theValue instanceof ActivityInfo) {
@@ -89,6 +87,14 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			// setText(text);
 
 			setFont(myVarWidthFont);
+
+			if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						theTable.setRowHeight(theRow, theTable.getRowHeight());
+					}
+				});
+			}
 
 		} else if (theValue instanceof ActivityMessage) {
 
@@ -149,13 +155,18 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			}
 
 			// setText(rawMessage);
-			myTextArea.setText(msg.getRawMessage().replace("\r", "\n"));
-			myTextArea.setFont(myFixedWidthFont);
-			myDisplayTextArea = true;
 
-			theTable.setRowHeight(theRow, (int) myTextArea.getPreferredSize().getHeight());
+			setText("<html>" + msg.getRawMessage().replace("\r", "<br>") + "</html>");
+			setFont(myFixedWidthFont);
 
-			return myTextArea;
+			final int newHeight = (int) getPreferredSize().getHeight();
+			if (theTable.getRowHeight(theRow) != newHeight) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						theTable.setRowHeight(theRow, newHeight);
+					}
+				});
+			}
 
 		} else if (theValue instanceof ActivityBytesBase) {
 
@@ -221,6 +232,14 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			setText(rawMessage);
 			setFont(myFixedWidthFont);
 
+			if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						theTable.setRowHeight(theRow, theTable.getRowHeight());
+					}
+				});
+			}
+
 		}
 
 		// int prefHeight = getPreferredSize().height;
@@ -241,26 +260,6 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 		// }
 		// }});
 
-		if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
-			theTable.setRowHeight(theRow, theTable.getRowHeight());
-		}
-
-		myDisplayTextArea = false;
 		return this;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.JComponent#getPreferredSize()
-	 */
-	@Override
-	public Dimension getPreferredSize() {
-		if (myDisplayTextArea) {
-			return myTextArea.getPreferredSize();
-		} else {
-			return super.getPreferredSize();
-		}
-	}
-
 }

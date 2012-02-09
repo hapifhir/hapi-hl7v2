@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.0-alpha1</version>
+		<version>2.0-beta1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<version>2.0-beta1</version>
+	<version>2.0-beta2</version>
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -59,6 +59,13 @@
 			<groupId>org.netbeans.api</groupId>
 			<artifactId>org-netbeans-swing-outline</artifactId>
 			<version>RELEASE701</version>
+		</dependency>
+		<dependency>
+			<groupId>org.netbeans.api</groupId>
+			<artifactId>org-netbeans-swing-outline</artifactId>
+			<version>RELEASE701</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- We're using a customized version of JSyntaxPane. See http://code.google.com/p/jsyntaxpane/issues/detail?id=180 -->
@@ -386,6 +393,7 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
+						<!-- 
 						<executions>
 							<execution>
 								<id>WINBUNDLE</id>
@@ -393,13 +401,14 @@
 								<goals>
 									<goal>assembly</goal>
 								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>src/assembly/windows.xml</descriptor>
-									</descriptors>
-								</configuration>
 							</execution>
 						</executions>
+						 -->
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/windows.xml</descriptor>
+							</descriptors>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

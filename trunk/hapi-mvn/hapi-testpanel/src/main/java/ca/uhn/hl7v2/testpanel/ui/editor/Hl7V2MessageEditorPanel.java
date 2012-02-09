@@ -79,12 +79,13 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
-import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
@@ -93,6 +94,7 @@ import ca.uhn.hl7v2.testpanel.ui.Er7SyntaxKit;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree;
+import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.IWorkingListener;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
@@ -153,7 +155,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private PropertyChangeListener myWindowTitleListener;
 	private Component myhorizontalStrut;
 	private Component myhorizontalStrut_1;
-	private Component myhorizontalStrut_2;
 	private boolean myOutboundInterfaceComboModelIsUpdating;
 	private ArrayList<OutboundConnection> myOutboundInterfaceComboModelShadow;
 	private final JPopupMenu myTerserPathPopupMenu = new JPopupMenu();
@@ -161,9 +162,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private boolean myHandlingProfileComboboxChange;
 	private JLabel mylabel_4;
 	private JToolBar mytoolBar_1;
-	private JLabel mylabel_5;
-	private JComboBox myTablesComboBox;
 	private TablesComboModel myTablesComboModel;
+	private PropertyChangeListener myProfilesListener;
+	private PropertyChangeListener myProfilesNamesListener;
+	private JButton mySpinner;
+	private Component myhorizontalGlue;
+	private ImageIcon mySpinnerIconOn;
+	private ImageIcon mySpinnerIconOff;
 
 	/**
 	 * Create the panel.
@@ -240,7 +245,25 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mysplitPane.setLeftComponent(treeContainerPanel);
 		treeContainerPanel.setLayout(new BorderLayout(0, 0));
 
+		mySpinnerIconOn = new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/spinner.gif"));
+		mySpinnerIconOff = new ImageIcon();
+		
 		myTreePanel = new Hl7V2MessageTree(theController);
+		myTreePanel.setWorkingListener(new IWorkingListener() {
+			
+			public void startedWorking() {
+				mySpinner.setText("");
+				mySpinner.setIcon(mySpinnerIconOn);
+				mySpinnerIconOn.setImageObserver(mySpinner);
+			}
+			
+			public void finishedWorking(String theStatus) {
+				mySpinner.setText(theStatus);
+				
+				mySpinner.setIcon(mySpinnerIconOff);
+				mySpinnerIconOn.setImageObserver(null);
+			}
+		});
 		myTreeScrollPane = new JScrollPane(myTreePanel);
 
 		myTopTabBar = new JTabbedPane();
@@ -262,65 +285,26 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		myShowCombo = new JComboBox();
 		mytoolBar_1.add(myShowCombo);
-		myShowCombo.setPreferredSize(new Dimension(110, 27));
-		myShowCombo.setMinimumSize(new Dimension(110, 27));
+		myShowCombo.setPreferredSize(new Dimension(130, 27));
+		myShowCombo.setMinimumSize(new Dimension(130, 27));
 		myShowCombo.setMaximumSize(new Dimension(130, 32767));
 		myShowCombo.setModel(new ShowComboModel());
-
-		myhorizontalStrut_1 = Box.createHorizontalStrut(20);
-		mytoolBar_1.add(myhorizontalStrut_1);
-
-		mylabel_2 = new JLabel("Validate");
-		mytoolBar_1.add(mylabel_2);
-
-		myProfileCombobox = new JComboBox();
-		mytoolBar_1.add(myProfileCombobox);
-		myProfileCombobox.setPreferredSize(new Dimension(200, 27));
-		myProfileCombobox.setMinimumSize(new Dimension(200, 27));
-		myProfileCombobox.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				if (myHandlingProfileComboboxChange) {
-					return;
-				}
-
-				myHandlingProfileComboboxChange = true;
-				try {
-					if (myProfileCombobox.getSelectedIndex() == 0) {
-						myMessage.setValidationContext(null);
-					} else if (myProfileCombobox.getSelectedIndex() == 1) {
-						myMessage.setValidationContext(new DefaultValidation());
-					} else if (myProfileCombobox.getSelectedItem() == ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
-						IOkCancelCallback<Void> callback = new IOkCancelCallback<Void>() {
-							public void ok(Void theArg) {
-								myProfileComboboxModel.update();
-							}
-
-							public void cancel(Void theArg) {
-								myProfileCombobox.setSelectedIndex(0);
-							}
-						};
-						myController.chooseAndLoadConformanceProfileForMessage(myMessage, callback);
-					}
-				} finally {
-					myHandlingProfileComboboxChange = false;
-				}
-			}
-		});
-		myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
+		
+		myhorizontalGlue = Box.createHorizontalGlue();
+		mytoolBar_1.add(myhorizontalGlue);
+		
+		mySpinner = new JButton("");
+		mySpinner.setForeground(Color.DARK_GRAY);
+		mySpinner.setHorizontalAlignment(SwingConstants.RIGHT);
+		mySpinner.setMaximumSize(new Dimension(200, 15));
+		mySpinner.setPreferredSize(new Dimension(200, 15));
+		mySpinner.setMinimumSize(new Dimension(200, 15));
+		mySpinner.setBorderPainted(false);
+		mySpinner.setSize(new Dimension(16, 16));
+		mytoolBar_1.add(mySpinner);
 		myProfileComboboxModel = new ProfileComboModel();
-		myProfileCombobox.setModel(myProfileComboboxModel);
-
-		myhorizontalStrut_2 = Box.createHorizontalStrut(20);
-		mytoolBar_1.add(myhorizontalStrut_2);
-
-		mylabel_5 = new JLabel("Tables");
-		mytoolBar_1.add(mylabel_5);
 
 		myTablesComboModel = new TablesComboModel(myController);
-		myTablesComboBox = new JComboBox(myTablesComboModel);
-		myTablesComboBox.setMaximumSize(new Dimension(200, 32767));
-		mytoolBar_1.add(myTablesComboBox);
 
 		mytoolBar = new JToolBar();
 		mytoolBar.setFloatable(false);
@@ -356,6 +340,55 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mytoolBar.add(myhorizontalStrut_3);
 		mySendButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
 		mytoolBar.add(mySendButton);
+		
+				myhorizontalStrut_1 = Box.createHorizontalStrut(20);
+				mytoolBar.add(myhorizontalStrut_1);
+				
+						mylabel_2 = new JLabel("Validate");
+						mytoolBar.add(mylabel_2);
+						
+								myProfileCombobox = new JComboBox();
+								mytoolBar.add(myProfileCombobox);
+								myProfileCombobox.setPreferredSize(new Dimension(200, 27));
+								myProfileCombobox.setMinimumSize(new Dimension(200, 27));
+								myProfileCombobox.addActionListener(new ActionListener() {
+
+									public void actionPerformed(ActionEvent e) {
+										if (myHandlingProfileComboboxChange) {
+											return;
+										}
+
+										myHandlingProfileComboboxChange = true;
+										try {
+											if (myProfileCombobox.getSelectedIndex() == 0) {
+												myMessage.setValidationContext(null);
+											} else if (myProfileCombobox.getSelectedIndex() == 1) {
+												myMessage.setValidationContext(new DefaultValidation());
+											} else if(myProfileCombobox.getSelectedIndex() > 0) {
+												ProfileGroup profile = myProfileComboboxModel.myProfileGroups.get(myProfileCombobox.getSelectedIndex());
+												myMessage.setRuntimeProfile(profile);
+												
+//											} else if (myProfileCombobox.getSelectedItem() == ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
+//												IOkCancelCallback<Void> callback = new IOkCancelCallback<Void>() {
+//													public void ok(Void theArg) {
+//														myProfileComboboxModel.update();
+//													}
+//
+//													public void cancel(Void theArg) {
+//														myProfileCombobox.setSelectedIndex(0);
+//													}
+//												};
+//												myController.chooseAndLoadConformanceProfileForMessage(myMessage, callback);
+											}
+										} catch (ProfileException e2) {
+											ourLog.error("Failed to load profile", e2);
+										} finally {
+											myHandlingProfileComboboxChange = false;
+										}
+									}
+								});
+								myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
+								myProfileCombobox.setModel(myProfileComboboxModel);
 
 		// mySendingPanel = new JPanel();
 		// mySendingPanel.setBorder(null);
@@ -430,6 +463,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST, myOutboundConnectionsListener);
 
 		myTablesComboModel.destroy();
+		unregisterProfileNamesListeners();
 	}
 
 	private void initLocal() {
@@ -498,6 +532,35 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		});
 		myTerserPathPopupMenu.add(copyMenuItem);
 
+		myProfilesListener = new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent theEvt) {
+				myProfileComboboxModel.update();
+				registerProfileNamesListeners();
+			}
+		};
+		myController.getProfileFileList().addPropertyChangeListener(ProfileFileList.PROP_FILES, myProfilesListener);
+		registerProfileNamesListeners();
+		
+		myProfilesNamesListener = new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent theEvt) {
+				myProfileComboboxModel.update();
+			}
+		};
+
+	}
+
+	
+	private void registerProfileNamesListeners() {
+		unregisterProfileNamesListeners();
+		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
+			next.addPropertyChangeListener(ProfileGroup.PROP_NAME, myProfilesNamesListener);
+		}
+	}
+
+	private void unregisterProfileNamesListeners() {
+		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
+			next.removePropertyChangeListener(ProfileGroup.PROP_NAME, myProfilesNamesListener);
+		}
 	}
 
 	private void updateSendButton() {
@@ -624,36 +687,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 		});
 
-		String validationTableId = myMessage.getValidationTableId();
-		for (int i = 0; i < myTablesComboModel.getSize(); i++) {
-			Object nextElement = myTablesComboModel.getElementAt(i);
-			if (nextElement.equals(validationTableId)) {
-				myTablesComboBox.setSelectedIndex(i);
-			}
-		}
-		if (myTablesComboBox.getSelectedIndex() == -1) {
-			myTablesComboBox.setSelectedIndex(0);
-		}
-
-		myTablesComboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent theE) {
-				updateValidationTables();
-			}
-		});
 	}
 
 
-	private void updateValidationTables() {
-		String selected = (String) myTablesComboBox.getSelectedItem();
-		TableFile selectedFile = null;
-		int selectedIndex = myTablesComboBox.getSelectedIndex();
-		if (selected != TablesComboModel.NONE && selected != TablesComboModel.NONE_DEFINED && selectedIndex >= 0) {
-			selectedFile = myController.getTableFileList().getTableFiles().get(selectedIndex - 1);
-		}
-		
-		myMessage.setValidationTable(selectedFile);
-		myTreePanel.scheduleNewValidationPass();
-	}
 
 	
 	private void updateWindowTitle() {
@@ -753,34 +789,46 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	private class ProfileComboModel extends DefaultComboBoxModel {
 
-		private static final String APPLY_CONFORMANCE_PROFILE = "Apply Conformance Profile...";
+//		private static final String APPLY_CONFORMANCE_PROFILE = "Apply Conformance Profile...";
+		private ArrayList<ProfileGroup> myProfileGroups;
 
 		public void update() {
 			myHandlingProfileComboboxChange = true;
 			try {
 				super.removeAllElements();
+				myProfileGroups = new ArrayList<ProfileGroup>();
 
 				addElement("No Profile/Validation");
+				myProfileGroups.add(null);
+				
 				addElement("Default Datatype Validation (HAPI)");
+				myProfileGroups.add(null);
 
-				RuntimeProfile profile = myMessage.getRuntimeProfile();
-				if (profile != null) {
-					String name = "Conf Profile (" + profile.getMessage().getMsgType() + "^" + profile.getMessage().getEventType() + ")";
-					String profName = myMessage.getRuntimeProfile().getName();
-					if (StringUtils.isNotBlank(profName)) {
-						name = name + ":" + profName;
+//				ProfileGroup profile = myMessage.getRuntimeProfile();
+//				if (profile != null) {
+//					String name = "Conf Profile (" + profile.getMessage().getMsgType() + "^" + profile.getMessage().getEventType() + ")";
+//					String profName = myMessage.getRuntimeProfile().getName();
+//					if (StringUtils.isNotBlank(profName)) {
+//						name = name + ":" + profName;
+//					}
+//
+//					addElement(name);
+//				}
+
+//				addElement(APPLY_CONFORMANCE_PROFILE);
+
+				for (ProfileGroup nextProfile : myController.getProfileFileList().getProfiles()) {
+					String nextString = "Profile Group: " + nextProfile.getName();
+					addElement(nextString);
+					myProfileGroups.add(nextProfile);
+					if (myMessage.getRuntimeProfile() == nextProfile) {
+						setSelectedItem(nextString);
 					}
-
-					addElement(name);
 				}
-
-				addElement(APPLY_CONFORMANCE_PROFILE);
-
-				if (profile != null) {
-					setSelectedItem(getElementAt(2));
-				} else if (myMessage.getValidationContext() instanceof DefaultValidation) {
+				
+				if (myMessage.getValidationContext() instanceof DefaultValidation) {
 					setSelectedItem(getElementAt(1));
-				} else {
+				} else if (getSelectedItem() == null) {
 					setSelectedItem(getElementAt(0));
 				}
 			} finally {

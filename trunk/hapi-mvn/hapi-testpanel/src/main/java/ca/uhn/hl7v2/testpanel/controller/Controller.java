@@ -65,6 +65,7 @@ import ca.uhn.hl7v2.testpanel.model.MessagesList;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
@@ -87,10 +88,11 @@ import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.PortUtil;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
+import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 
 public class Controller {
 
-	private static final String DIALOG_TITLE = "TestPanel";
+	static final String DIALOG_TITLE = "TestPanel";
 	private static final Logger ourLog = LoggerFactory.getLogger(Controller.class);
 	private String myAppVersionString;
 	private JFileChooser myConformanceProfileFileChooser;
@@ -109,6 +111,10 @@ public class Controller {
 	private TestPanelWindow myView;
 
 	public Controller() {
+		myTableFileList = new TableFileList();
+		
+		myProfileFileList = new ProfileFileList();
+		
 		myMessagesList = new MessagesList(this);
 		try {
 			File workfilesDir = Prefs.getTempWorkfilesDirectory();
@@ -149,10 +155,6 @@ public class Controller {
 			ourLog.info("No saved inbound connection list found");
 			createDefaultInboundConnectionList();
 		}
-
-		myTableFileList = new TableFileList();
-		
-		myProfileFileList = new ProfileFileList();
 		
 	}
 
@@ -177,6 +179,7 @@ public class Controller {
 		DefaultModelClassFactory mcf = new DefaultModelClassFactory();
 		try {
 			Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+			col.setValidationContext(new DefaultValidation());
 
 			Class<? extends Message> messageClass = mcf.getMessageClass(theStructure, theVersion, true);
 			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.newInstance();
@@ -251,7 +254,7 @@ public class Controller {
 
 			try {
 				String profileString = FileUtils.readFile(file);
-				theMessage.setRuntimeProfile(profileString);
+				theMessage.setRuntimeProfile(ProfileGroup.createFromRuntimeProfile(profileString));
 
 				theCallback.ok(null);
 
@@ -540,6 +543,7 @@ public class Controller {
 
 	public void populateWithSampleMessageAndConnections() {
 		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+		col.setValidationContext(new DefaultValidation());
 
 		String message = "MSH|^~\\&|NES|NINTENDO|TESTSYSTEM|TESTFACILITY|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r"
 				+ "EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r"

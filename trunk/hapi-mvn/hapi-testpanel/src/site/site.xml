@@ -28,11 +28,19 @@
 		</links>
 
 		<menu name="HAPI">
-			<item name="HAPI Home" href="../index.html" />
+			<item name="&larr; HAPI Home" href="../index.html" />
 		</menu>
 
 		<menu name="TestPanel">
 			<item name="Introduction" href="index.html" />
+			<item name="Install" href="install.html" />
+		</menu>
+
+		<menu name="Documentation">
+			<item name="Message Validation" href="validation.html" />
+		</menu>
+
+		<menu name="Project Info">
 			<item name="Changelog" href="changes-report.html" />
 		</menu>
 

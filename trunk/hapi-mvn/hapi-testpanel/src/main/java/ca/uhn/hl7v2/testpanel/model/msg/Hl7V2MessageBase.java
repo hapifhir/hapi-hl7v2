@@ -26,6 +26,7 @@
 package ca.uhn.hl7v2.testpanel.model.msg;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -36,15 +37,15 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.hl7v2.conf.parser.ProfileParser;
-import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
-import ca.uhn.hl7v2.testpanel.ex.ConfigurationException;
+import ca.uhn.hl7v2.preparser.PreParser;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
 import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.util.SegmentAndComponentPath;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
@@ -59,7 +60,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 	private int myIndexWithinCollection;
 	private Message myParsedMessage;
 	private GenericParser myParser;
-	private RuntimeProfile myRuntimeProfile;
+	private ProfileGroup myRuntimeProfile;
 	private String mySourceMessage;
 
 	/**
@@ -70,27 +71,6 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		initParser();
 	}
 
-	public Hl7V2MessageBase(Hl7V2MessageDefinition theConfig) throws ConfigurationException {
-		super(theConfig);
-
-		RuntimeProfile profile;
-		try {
-			profile = new ProfileParser(false).parse(theConfig.getRuntimeProfile());
-			setRuntimeProfile(profile);
-		} catch (ProfileException e) {
-			ourLog.error("Failed to parse profile", e);
-		}
-
-		setEncoding(theConfig.getEncoding());
-
-		try {
-			setSourceMessage(theConfig.getText());
-		} catch (PropertyVetoException ex) {
-			throw new ConfigurationException(ex.getMessage(), ex);
-		}
-
-		initParser();
-	}
 
 	public Hl7V2MessageBase(String theId) {
 		super(theId);
@@ -169,7 +149,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 	/**
 	 * @return the runtimeProfile
 	 */
-	public RuntimeProfile getRuntimeProfile() {
+	public ProfileGroup getRuntimeProfile() {
 		return myRuntimeProfile;
 	}
 
@@ -237,7 +217,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		myIndexWithinCollection = theIndexWithinCollection;
 	}
 
-	public void setRuntimeProfile(RuntimeProfile theRuntimeProfile) {
+	public void setRuntimeProfile(ProfileGroup theRuntimeProfile) {
 		if (myRuntimeProfile == theRuntimeProfile) {
 			return;
 		}
@@ -277,9 +257,15 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 			ourLog.info("About to parse message");
 			
 			if (myRuntimeProfile != null) {
-				parsedMessage = ConformanceMessage.newInstanceFromStaticDef(myRuntimeProfile.getMessage());
-				parsedMessage.setParser(myParser);
-				parsedMessage.parse(text);
+				Entry profile = determineRuntimeProfile(text);
+				
+				if (profile != null) {
+					parsedMessage = ConformanceMessage.newInstanceFromStaticDef(profile.getProfileProxy().getProfile().getMessage(), profile.getTablesId());
+					parsedMessage.setParser(myParser);
+					parsedMessage.parse(text);
+				} else {
+					parsedMessage = myParser.parse(text);
+				}
 			} else {
 				parsedMessage = myParser.parse(text);
 			}
@@ -292,6 +278,12 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		} catch (HL7Exception e) {
 			ourLog.error("Failed to parse message", e);
 			throw new PropertyVetoException(e.getMessage(), null);
+		} catch (IOException e) {
+			ourLog.error("Failed to parse message", e);
+			throw new PropertyVetoException(e.getMessage(), null);
+		} catch (ProfileException e) {
+			ourLog.error("Failed to parse message", e);
+			throw new PropertyVetoException(e.getMessage(), null);
 		}
 
 		myParsedMessage = parsedMessage;
@@ -300,6 +292,26 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		recalculateIndexes();
 
 		firePropertyChange(PARSED_MESSAGE_PROPERTY, original, text);
+	}
+
+
+	private Entry determineRuntimeProfile(String text) throws HL7Exception {
+		String[] fields = PreParser.getFields(text, "MSH-9-1", "MSH-9-2");
+		Entry profile = null;
+		try {
+			profile = myRuntimeProfile.getProfileForMessage(fields[0], fields[1]);
+			if (profile != null) {
+				profile.getProfileProxy().getProfile();
+			}
+		} catch (IOException e) {
+			ourLog.error("Failed to load profile", e);
+			profile = null;
+		} catch (ProfileException e) {
+			ourLog.error("Failed to load profile", e);
+			profile = null;
+		}
+		
+		return profile;
 	}
 
 	private void updateParser() {
@@ -339,14 +351,19 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		// System.out.println(theNewSource.replace("\r", "\n"));
 
 		try {
-			if (myRuntimeProfile != null) {
-				myParsedMessage = ConformanceMessage.newInstanceFromStaticDef(myRuntimeProfile.getMessage());
+			Entry profile = determineRuntimeProfile(theNewSource);
+			if (profile != null) {
+				myParsedMessage = ConformanceMessage.newInstanceFromStaticDef(profile.getProfileProxy().getProfile().getMessage(), profile.getTablesId());
 				myParsedMessage.setParser(myParser);
 				myParsedMessage.parse(theNewSource);
 			} else {
 				myParsedMessage.parse(theNewSource);
 			}
 		} catch (HL7Exception e) {
+			ourLog.error("Failed to parse message", e);
+		} catch (IOException e) {
+			ourLog.error("Failed to parse message", e);
+		} catch (ProfileException e) {
 			ourLog.error("Failed to parse message", e);
 		}
 

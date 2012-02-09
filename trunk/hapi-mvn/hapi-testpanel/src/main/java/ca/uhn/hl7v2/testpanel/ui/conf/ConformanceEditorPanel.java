@@ -12,12 +12,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.Box;
+import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +36,8 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -39,6 +47,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.swing.outline.DefaultOutlineModel;
 import org.netbeans.swing.outline.Outline;
 import org.netbeans.swing.outline.RenderDataProvider;
@@ -46,35 +55,33 @@ import org.netbeans.swing.outline.RowModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.controller.ConformanceEditorController;
 import ca.uhn.hl7v2.testpanel.model.conf.Code;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileProxy;
 import ca.uhn.hl7v2.testpanel.model.conf.Table;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.ui.HoverButtonMouseAdapter;
+import ca.uhn.hl7v2.testpanel.ui.ImageFactory;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
 
 public class ConformanceEditorPanel {
 
+	public static final String ACK = "ACK";
+
 	private static final String CARD_BLANK = "name_1327851037962818000";
-
-
-
-
-
-
-
 	private static final String CARD_CODES = "name_1327850619969970000";
-
 	private static final String CARD_TABLE_FILE = "name_1327850895484802000";
 
 	private static final Logger ourLog = LoggerFactory.getLogger(ConformanceEditorPanel.class);
+	private JButton myAddProfileButton;
 	private JButton myAddTableButton;
 	private JPanel myBlankPanel;
-	
 	private JButton myCloseFileButton;
 	private JButton myCloseTableButton;
 	private JPanel myCodesPanel;
@@ -82,19 +89,29 @@ public class ConformanceEditorPanel {
 	private MyCodesTableModel myCodesTableModel;
 	private ConformanceEditorController myController;
 	private JDialog myframe;
+	private JButton myNewProfileGroupButton;
 	private Outline myProfilesOutline;
 	private MyProfilesOutlineModel myProfilesOutlineModel;
 	private DefaultMutableTreeNode myProfilesOutlineRoot = new DefaultMutableTreeNode();
 	private MyProfilesTreeModel myProfilesOutlineTreeModel;
+	private JButton myRemoveProfileButton;
+	private JButton myRemoveProfileGroupButton;
 	private boolean myRespondingToChange;
 	private JPanel myRightCardPanel;
 	private JTextField myTableFileNameTextF;
 	private JPanel myTableFilePanel;
+
 	private JTree myTableFilesTable;
+
 	private DefaultTreeModel myTableFilesTreeModel;
+
 	private DefaultMutableTreeNode myTableFilesTreeRoot;
+
 	private JTextField myTableIdTextField;
+
 	private JTextField myTableNameTextField;
+
+	private JButton myRenameButton;
 
 	/**
 	 * Create the application.
@@ -121,7 +138,9 @@ public class ConformanceEditorPanel {
 
 		});
 
+		updateProfileTree(null);
 	}
+
 	private void addTable() {
 		Object selectedObject = getSelectedFileOrTable();
 
@@ -143,11 +162,42 @@ public class ConformanceEditorPanel {
 		updateFileTree(table);
 
 	}
+
 	public Component getFrame() {
 		return myframe;
 	}
+
+	public DefaultMutableTreeNode getNodeForRow(int theRowIndex) {
+		final AbstractLayoutCache layout = myProfilesOutlineModel.getLayout();
+		TreePath selectionPath = layout.getPathForRow(theRowIndex);
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+		return selectedNode;
+	}
+
 	private Object getSelectedFileOrTable() {
 		TreePath selectionPath = myTableFilesTable.getSelectionPath();
+		Object selectedObject;
+		if (selectionPath == null) {
+			selectedObject = null;
+		} else {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+			if (selectedNode == null) {
+				selectedObject = null;
+			} else {
+				selectedObject = selectedNode.getUserObject();
+			}
+		}
+		return selectedObject;
+	}
+
+	private Object getSelectedProfileGroupOrFile() {
+		int selIndex = myProfilesOutline.getSelectionModel().getLeadSelectionIndex();
+		if (selIndex == -1) {
+			return null;
+		}
+
+		final AbstractLayoutCache layout = myProfilesOutlineModel.getLayout();
+		TreePath selectionPath = layout.getPathForRow(selIndex);
 		Object selectedObject;
 		if (selectionPath == null) {
 			selectedObject = null;
@@ -175,50 +225,151 @@ public class ConformanceEditorPanel {
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		myframe.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		
+
 		JPanel profilesPanel = new JPanel();
 		tabbedPane.addTab("Profiles", null, profilesPanel, null);
 		profilesPanel.setLayout(new BorderLayout(0, 0));
-		
+
+		myProfilesOutlineTreeModel = new MyProfilesTreeModel();
+		myProfilesOutlineModel = new MyProfilesOutlineModel(myProfilesOutlineTreeModel);
+
+		myProfilesOutline = new Outline(myProfilesOutlineModel);
+		// myProfilesOutline.setFullyEditable(true);
+		myProfilesOutline.setFillsViewportHeight(true);
+		myProfilesOutline.setCellSelectionEnabled(false);
+		myProfilesOutline.setRowSelectionAllowed(false);
+		myProfilesOutline.setRootVisible(false);
+		myProfilesOutline.setGridColor(Color.WHITE);
+		myProfilesOutline.setColumnHidingAllowed(false);
+		myProfilesOutline.setRenderDataProvider(new MyProfilesOutlinesRenderProvider());
+		myProfilesOutline.setDefaultEditor(Object.class, new ProfileGroupCellEditor());
+		myProfilesOutline.setDefaultEditor(String.class, new ProfileGroupCellComboboxEditor());
+		myProfilesOutline.setDefaultRenderer(String.class, new ProfilesTreeRenderer(this));
+		myProfilesOutline.getColumnModel().getColumn(1).setPreferredWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(1).setMinWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(1).setMaxWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(2).setPreferredWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(2).setMinWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(2).setMaxWidth(60);
+		myProfilesOutline.getColumnModel().getColumn(3).setPreferredWidth(200);
+		myProfilesOutline.getColumnModel().getColumn(3).setMinWidth(200);
+		myProfilesOutline.getColumnModel().getColumn(3).setMaxWidth(200);
+		myProfilesOutline.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent theE) {
+				updateSelectedProfilesItem();
+			}
+		});
+
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setViewportView(myProfilesOutline);
+		profilesPanel.add(scrollPane_2, BorderLayout.CENTER);
+
+		JPanel panel_1 = new JPanel();
+		profilesPanel.add(panel_1, BorderLayout.NORTH);
+		GridBagLayout gbl_panel_1 = new GridBagLayout();
+		gbl_panel_1.columnWidths = new int[] { 644, 0 };
+		gbl_panel_1.rowHeights = new int[] { 48, 24, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		panel_1.setLayout(gbl_panel_1);
+
+		JLabel lblNewLabel_1 = new JLabel(
+				"<html><center>\nConformance profiles are arranged in groups called <b>Profile Groups</b>. Each Profile Group can define different conformance profiles to be used to validate specific message types. You may also optionally define <b>Table Sets</b> (see the tables tab) to validate code values within messages.\n</center></html>");
+		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+		gbc_lblNewLabel_1.anchor = GridBagConstraints.NORTH;
+		gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 10, 0);
+		gbc_lblNewLabel_1.gridx = 0;
+		gbc_lblNewLabel_1.gridy = 0;
+		panel_1.add(lblNewLabel_1, gbc_lblNewLabel_1);
+
 		JToolBar profilesToolbar = new JToolBar();
+		GridBagConstraints gbc_profilesToolbar = new GridBagConstraints();
+		gbc_profilesToolbar.anchor = GridBagConstraints.NORTH;
+		gbc_profilesToolbar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_profilesToolbar.gridx = 0;
+		gbc_profilesToolbar.gridy = 1;
+		panel_1.add(profilesToolbar, gbc_profilesToolbar);
 		profilesToolbar.setFloatable(false);
-		profilesPanel.add(profilesToolbar, BorderLayout.NORTH);
-		
-		JButton btnNewProfileGroup = new JButton("New Profile Group");
-		btnNewProfileGroup.setBorderPainted(false);
-		btnNewProfileGroup.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/new_tree.png")));
-		btnNewProfileGroup.addMouseListener(new HoverButtonMouseAdapter(btnNewProfileGroup));
-		btnNewProfileGroup.addActionListener(new ActionListener() {
+
+		myNewProfileGroupButton = new JButton("New Profile Group");
+		myNewProfileGroupButton.setBorderPainted(false);
+		myNewProfileGroupButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/new_tree.png")));
+		myNewProfileGroupButton.addMouseListener(new HoverButtonMouseAdapter(myNewProfileGroupButton));
+		myNewProfileGroupButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
 				newProfileGroup();
 			}
 		});
-		profilesToolbar.add(btnNewProfileGroup);
+		profilesToolbar.add(myNewProfileGroupButton);
 
-		myProfilesOutlineTreeModel = new MyProfilesTreeModel();
-		myProfilesOutlineModel = new MyProfilesOutlineModel(myProfilesOutlineTreeModel);
-		myProfilesOutline = new Outline(myProfilesOutlineModel);
-		myProfilesOutline.setRootVisible(false);
-		myProfilesOutline.setGridColor(Color.LIGHT_GRAY);
-		myProfilesOutline.setColumnHidingAllowed(false);
-		myProfilesOutline.setRenderDataProvider(new MyProfilesOutlinesRenderProvider());
-		profilesPanel.add(myProfilesOutline, BorderLayout.CENTER);
-		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Tables", null, panel, null);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
-		gbl_panel.columnWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
-		panel.setLayout(gbl_panel);
+		myAddProfileButton = new JButton("Add Profile");
+		myAddProfileButton.addMouseListener(new HoverButtonMouseAdapter(myAddProfileButton));
+		myAddProfileButton.setBorderPainted(false);
+		myAddProfileButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object sel = getSelectedProfileGroupOrFile();
+				if (sel instanceof ProfileGroup) {
+					myController.addProfile((ProfileGroup) sel);
+				} else if (sel instanceof ProfileGroup.Entry) {
+					myController.addProfile(((ProfileGroup.Entry) sel).getProfileGroup());
+				}
+			}
+		});
+
+		myRemoveProfileGroupButton = new JButton("Remove Profile Group");
+		myRemoveProfileGroupButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProfileGroup sel = (ProfileGroup) getSelectedProfileGroupOrFile();
+				myController.closeProfileGroup(sel);
+			}
+		});
+
+		myRenameButton = new JButton("Rename");
+		myRenameButton.addMouseListener(new HoverButtonMouseAdapter(myRenameButton));
+		myRenameButton.setBorderPainted(false);
+		myRenameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProfileGroup sel = (ProfileGroup) getSelectedProfileGroupOrFile();
+				myController.renameProfileGroup(sel);
+			}
+		});
+		myRenameButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/rename.png")));
+		profilesToolbar.add(myRenameButton);
+		myRemoveProfileGroupButton.setBorderPainted(false);
+		myRemoveProfileGroupButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/delete.png")));
+		myRemoveProfileGroupButton.addMouseListener(new HoverButtonMouseAdapter(myRemoveProfileGroupButton));
+		profilesToolbar.add(myRemoveProfileGroupButton);
+		myAddProfileButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/profile.png")));
+		profilesToolbar.add(myAddProfileButton);
+
+		myRemoveProfileButton = new JButton("Remove Profile");
+		myRemoveProfileButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProfileGroup.Entry sel = (Entry) getSelectedProfileGroupOrFile();
+				sel.getProfileGroup().removeEntry(sel);
+			}
+		});
+		myRemoveProfileButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/close.png")));
+		myRemoveProfileButton.setBorderPainted(false);
+		myRemoveProfileButton.addMouseListener(new HoverButtonMouseAdapter(myRemoveProfileButton));
+		profilesToolbar.add(myRemoveProfileButton);
+
+		JPanel tablesPanel = new JPanel();
+		tabbedPane.addTab("Tables", null, tablesPanel, null);
+		GridBagLayout gbl_tablesPanel = new GridBagLayout();
+		gbl_tablesPanel.columnWidths = new int[] { 0, 0, 0, 0 };
+		gbl_tablesPanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_tablesPanel.columnWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_tablesPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		tablesPanel.setLayout(gbl_tablesPanel);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut = new GridBagConstraints();
 		gbc_horizontalStrut.insets = new Insets(0, 0, 5, 5);
 		gbc_horizontalStrut.gridx = 1;
 		gbc_horizontalStrut.gridy = 0;
-		panel.add(horizontalStrut, gbc_horizontalStrut);
+		tablesPanel.add(horizontalStrut, gbc_horizontalStrut);
 
 		JToolBar toolBar = new JToolBar();
 		toolBar.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -228,7 +379,7 @@ public class ConformanceEditorPanel {
 		gbc_toolBar.insets = new Insets(0, 0, 5, 5);
 		gbc_toolBar.gridx = 0;
 		gbc_toolBar.gridy = 1;
-		panel.add(toolBar, gbc_toolBar);
+		tablesPanel.add(toolBar, gbc_toolBar);
 
 		JButton btnAddTableFile = new JButton("Add File");
 		btnAddTableFile.addActionListener(new ActionListener() {
@@ -251,6 +402,7 @@ public class ConformanceEditorPanel {
 		});
 
 		myCloseFileButton = new JButton("Close File");
+		myCloseFileButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/close.png")));
 		myCloseFileButton.addMouseListener(new HoverButtonMouseAdapter(myCloseFileButton));
 		myCloseFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -264,19 +416,27 @@ public class ConformanceEditorPanel {
 		});
 		myCloseFileButton.setBorderPainted(false);
 		toolBar.add(myCloseFileButton);
-		
+
 		myAddTableButton.setBorderPainted(false);
 		myAddTableButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/table.png")));
 		myAddTableButton.addMouseListener(new HoverButtonMouseAdapter(myAddTableButton));
 		toolBar.add(myAddTableButton);
 
 		myCloseTableButton = new JButton("Close Table");
+		myCloseTableButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/close.png")));
 		myCloseTableButton.setBorderPainted(false);
 		myCloseTableButton.addMouseListener(new HoverButtonMouseAdapter(myCloseTableButton));
 		myCloseTableButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
-				Table table = (Table) getSelectedFileOrTable();
-				TableFile tableFile = table.getTableFile();
+				TableFile tableFile;
+				Object sel = getSelectedFileOrTable();
+				Table table;
+				if (sel instanceof Table) {
+					table = (Table) sel;
+					tableFile = table.getTableFile();
+				} else {
+					return;
+				}
 				tableFile.removeTable(table);
 				myController.markFileForSaving(tableFile);
 			}
@@ -290,12 +450,12 @@ public class ConformanceEditorPanel {
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 2;
-		panel.add(scrollPane, gbc_scrollPane);
+		tablesPanel.add(scrollPane, gbc_scrollPane);
 
 		myTableFilesTable = new JTree();
 		myTableFilesTable.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
-				updateSelectedItem();
+				updateSelectedCodesItem();
 			}
 		});
 		myTableFilesTable.setCellRenderer(new TableTreeRenderer());
@@ -304,12 +464,14 @@ public class ConformanceEditorPanel {
 		myTableFilesTable.setModel(myTableFilesTreeModel);
 		scrollPane.setViewportView(myTableFilesTable);
 
-		JLabel lblNewLabel = new JLabel("Tables");
+		JLabel lblNewLabel = new JLabel(
+				"<html><center>\nA <b>Table</b> contains a list of allowed values which may be used within\na particular field. Any field with a datatype of ID or IS will have an associated table number, and a Table may be used to define values for it. A <b>Table Group</b> contains one or more tables, and may be applied to a message to validate the various coded fields within it.\n</center></html>");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
-		panel.add(lblNewLabel, gbc_lblNewLabel);
+		tablesPanel.add(lblNewLabel, gbc_lblNewLabel);
 
 		myRightCardPanel = new JPanel();
 		GridBagConstraints gbc_RightCardPanel = new GridBagConstraints();
@@ -317,7 +479,7 @@ public class ConformanceEditorPanel {
 		gbc_RightCardPanel.fill = GridBagConstraints.BOTH;
 		gbc_RightCardPanel.gridx = 2;
 		gbc_RightCardPanel.gridy = 0;
-		panel.add(myRightCardPanel, gbc_RightCardPanel);
+		tablesPanel.add(myRightCardPanel, gbc_RightCardPanel);
 		myRightCardPanel.setLayout(new CardLayout(0, 0));
 
 		myCodesPanel = new JPanel();
@@ -482,14 +644,15 @@ public class ConformanceEditorPanel {
 	}
 
 	private void newProfileGroup() {
-		myController.newProfileGroup();		
+		myController.newProfileGroup();
 	}
 
 	public void show() {
 		myframe.setVisible(true);
 
 		updateFileTree(null);
-		updateSelectedItem();
+		updateSelectedCodesItem();
+		updateSelectedProfilesItem();
 	}
 
 	private void updateFileTree(Object theSelectedObject) {
@@ -566,13 +729,13 @@ public class ConformanceEditorPanel {
 		List<ProfileGroup> profileFiles = myController.getProfileFileList().getProfiles();
 		int row = 0;
 		for (int i = 0; i < profileFiles.size(); i++) {
-			ProfileGroup nextGroup = profileFiles.get(i);
+			final ProfileGroup nextGroup = profileFiles.get(i);
 
 			if (myProfilesOutlineRoot.getChildCount() <= i || ((DefaultMutableTreeNode) myProfilesOutlineRoot.getChildAt(i)).getUserObject() != nextGroup) {
 				myProfilesOutlineRoot.insert(new ProfileGroupNode(nextGroup), i);
-				nextGroup.addPropertyChangeListener(ProfileGroup.PROP_GROUPS, new PropertyChangeListener() {
+				nextGroup.addPropertyChangeListener(ProfileGroup.PROP_PROFILES, new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent theEvt) {
-						updateProfileTree(null);
+						updateProfileTree(theEvt.getNewValue());
 					}
 				});
 			}
@@ -603,10 +766,6 @@ public class ConformanceEditorPanel {
 					});
 				}
 
-				while (nextFileNode.getChildCount() > nextGroup.getEntries().size()) {
-					nextFileNode.remove(nextGroup.getEntries().size());
-				}
-
 				row++;
 
 				DefaultMutableTreeNode nextTableNode = (DefaultMutableTreeNode) nextFileNode.getChildAt(j);
@@ -623,6 +782,10 @@ public class ConformanceEditorPanel {
 
 			}
 
+			while (nextFileNode.getChildCount() > nextGroup.getEntries().size()) {
+				nextFileNode.remove(nextGroup.getEntries().size());
+			}
+
 			row++;
 		}
 
@@ -633,7 +796,7 @@ public class ConformanceEditorPanel {
 		myProfilesOutlineTreeModel.reload();
 	}
 
-	private void updateSelectedItem() {
+	private void updateSelectedCodesItem() {
 		myRespondingToChange = true;
 		CardLayout cl = (CardLayout) (myRightCardPanel.getLayout());
 
@@ -657,7 +820,7 @@ public class ConformanceEditorPanel {
 			cl.show(myRightCardPanel, CARD_TABLE_FILE);
 			myAddTableButton.setEnabled(true);
 			myCloseFileButton.setEnabled(true);
-			myCloseTableButton.setEnabled(true);
+			myCloseTableButton.setEnabled(false);
 
 		} else {
 
@@ -671,7 +834,28 @@ public class ConformanceEditorPanel {
 		myRespondingToChange = false;
 	}
 
-	
+	private void updateSelectedProfilesItem() {
+
+		Object sel = getSelectedProfileGroupOrFile();
+		if (sel instanceof ProfileGroup) {
+			myRemoveProfileGroupButton.setEnabled(true);
+			myRemoveProfileButton.setEnabled(false);
+			myAddProfileButton.setEnabled(true);
+			myRenameButton.setEnabled(true);
+		} else if (sel instanceof ProfileGroup.Entry) {
+			myRemoveProfileGroupButton.setEnabled(false);
+			myRemoveProfileButton.setEnabled(true);
+			myAddProfileButton.setEnabled(true);
+			myRenameButton.setEnabled(false);
+		} else {
+			myRemoveProfileGroupButton.setEnabled(false);
+			myRemoveProfileButton.setEnabled(false);
+			myAddProfileButton.setEnabled(false);
+			myRenameButton.setEnabled(false);
+		}
+
+	}
+
 	private class MyCodesTableModel extends DefaultTableModel {
 
 		private Table myTable;
@@ -748,16 +932,49 @@ public class ConformanceEditorPanel {
 			super(theTreeModel, new MyProfilesRowModel(), false, "Profiles");
 		}
 
+		@Override
+		public boolean isCellEditable(int theRowIndex, int theColumnIndex) {
+			if (theColumnIndex == 0) {
+				DefaultMutableTreeNode selectedNode = getNodeForRow(theRowIndex);
+				if (selectedNode instanceof ProfileGroupNode) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			return super.isCellEditable(theRowIndex, theColumnIndex);
+		}
+
+		@Override
+		protected void setTreeValueAt(Object theAValue, int theRowIndex) {
+			DefaultMutableTreeNode selectedNode = getNodeForRow(theRowIndex);
+			if (selectedNode instanceof ProfileGroupNode) {
+				((ProfileGroupNode) selectedNode).getUserObject().setName(theAValue.toString());
+			} else {
+				ourLog.error("Unknown type {}", selectedNode.getClass());
+			}
+
+			myController.getProfileFileList().updatePrefs();
+		}
 	}
 
-	public class MyProfilesOutlinesRenderProvider implements RenderDataProvider {
+	private class MyProfilesOutlinesRenderProvider implements RenderDataProvider {
 
 		public Color getBackground(Object theArg0) {
 			return Color.white;
 		}
 
 		public String getDisplayName(Object theArg0) {
-			return null;
+			if (theArg0 instanceof ProfileGroupNode) {
+				return ((ProfileGroupNode) theArg0).getUserObject().getName();
+			}
+
+			if (theArg0 instanceof ProfileNode) {
+				ProfileProxy profileProxy = ((ProfileNode) theArg0).getUserObject().getProfileProxy();
+				return profileProxy.getName();
+			}
+
+			return "Unknown";
 		}
 
 		public Color getForeground(Object theArg0) {
@@ -765,28 +982,29 @@ public class ConformanceEditorPanel {
 		}
 
 		public Icon getIcon(Object theArg0) {
-			// TODO Auto-generated method stub
-			return null;
+			if (theArg0 instanceof ProfileGroupNode) {
+				return ImageFactory.getProfileGroup();
+			} else {
+				return ImageFactory.getProfile();
+			}
 		}
 
 		public String getTooltipText(Object theArg0) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		public boolean isHtmlDisplayName(Object theArg0) {
-			// TODO Auto-generated method stub
-			return false;
+			return true;
 		}
 
 	}
 
 	public class MyProfilesRowModel implements RowModel {
 
-		private static final int COL_MSG_TYPE = 0;
-		private static final int COL_TABLES = 2;
-		private static final int COL_TRIGGER = 1;
-		
+		public static final int COL_MSG_TYPE = 0;
+		public static final int COL_TABLES = 2;
+		public static final int COL_TRIGGER = 1;
+
 		public Class<?> getColumnClass(int theArg0) {
 			return String.class;
 		}
@@ -797,46 +1015,77 @@ public class ConformanceEditorPanel {
 
 		public String getColumnName(int theArg0) {
 			switch (theArg0) {
-			case COL_MSG_TYPE: return "Msg Type";
-			case COL_TRIGGER: return "Trigger";
-			case COL_TABLES: return "Tables";
+			case COL_MSG_TYPE:
+				return "Msg Type";
+			case COL_TRIGGER:
+				return "Trigger";
+			case COL_TABLES:
+				return "Tables";
 			}
 			return null;
 		}
 
 		public Object getValueFor(Object theNode, int theColumn) {
 			if (theNode instanceof ProfileNode) {
-				ProfileNode pn = (ProfileNode)theNode;
+				ProfileNode pn = (ProfileNode) theNode;
 				switch (theColumn) {
 				case COL_MSG_TYPE:
 					return pn.getUserObject().getMessageType();
 				case COL_TRIGGER:
 					return pn.getUserObject().getEventType();
 				case COL_TABLES:
-					return pn.getUserObject().getTablesId();
+					String tableFileId = pn.getUserObject().getTablesId();
+					if (tableFileId == null) {
+						return null;
+					}
+					TableFile tableFile = myController.getTableFileList().getTableFile(tableFileId);
+					if (tableFile == null) {
+						return null;
+					}
+					return tableFile.getName();
 				}
 			}
 			return null;
 		}
 
 		public boolean isCellEditable(Object theNode, int theColumn) {
-			if (theNode instanceof ProfileNode) {
-				ProfileNode pn = (ProfileNode)theNode;
-				switch (theColumn) {
-				case COL_TABLES:
-					return true;
-				}
+			if (theNode instanceof ProfileGroupNode) {
+				return false;
+			} else if (theNode instanceof ProfileNode) {
+				return true;
+			} else {
+				ourLog.error("Unknown type {}", theNode.getClass());
+				return false;
 			}
-			return false;
 		}
 
 		public void setValueFor(Object theNode, int theColumn, Object theValue) {
 			if (theNode instanceof ProfileNode) {
-				ProfileNode pn = (ProfileNode)theNode;
+				ProfileNode pn = (ProfileNode) theNode;
 				switch (theColumn) {
+				case COL_MSG_TYPE:
+					pn.getUserObject().setMessageType(theValue.toString());
+					break;
+				case COL_TRIGGER:
+					pn.getUserObject().setEventType(theValue.toString());
+					break;
 				case COL_TABLES:
-					// TODO: handle
+					if (TBL_OPT_NONE.equals(theValue.toString())) {
+						pn.getUserObject().setTablesId(null);
+					} else if (theValue.toString().contains(":") == false) {
+						// the value isn't changing in this case
+						return;
+					} else {
+						String value = theValue.toString().replaceAll(":.*", "");
+						int index = Integer.parseInt(value) - 1;
+						String tblId = myController.getTableFileList().getTableFiles().get(index).getId();
+						pn.getUserObject().setTablesId(tblId);
+					}
+					break;
 				}
+
+				myController.getProfileFileList().updatePrefs();
+
 			}
 		}
 
@@ -845,35 +1094,176 @@ public class ConformanceEditorPanel {
 	public class MyProfilesTreeModel extends DefaultTreeModel {
 
 		public MyProfilesTreeModel() {
-			super(myProfilesOutlineRoot );
+			super(myProfilesOutlineRoot);
 		}
 
 	}
-	
-	private class ProfileGroupNode extends DefaultMutableTreeNode
-	{
+
+	private static final String TBL_OPT_NONE = "None";
+
+	public class ProfileGroupCellComboboxEditor extends DefaultCellEditor {
+
+		public ProfileGroupCellComboboxEditor() {
+			super(new JComboBox());
+		}
+
+		private List<String> getSortedStructures() {
+			ArrayList<String> retVal = new ArrayList<String>();
+			try {
+				for (Object next : Parser.getMessageStructures(Version.latestVersion().getVersion()).keySet()) {
+					retVal.add(next.toString());
+				}
+			} catch (IOException e) {
+				ourLog.error("Failed to load structures", e);
+			}
+
+			Collections.sort(retVal);
+
+			return retVal;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * javax.swing.DefaultCellEditor#getTableCellEditorComponent(javax.swing
+		 * .JTable, java.lang.Object, boolean, int, int)
+		 */
+		@Override
+		public Component getTableCellEditorComponent(JTable theTable, Object theValue, boolean theIsSelected, int theRow, int theColumn) {
+
+			final AbstractLayoutCache layout = myProfilesOutlineModel.getLayout();
+			TreePath selectionPath = layout.getPathForRow(theRow);
+			ProfileNode selectedNode = (ProfileNode) selectionPath.getLastPathComponent();
+
+			JComboBox retVal = (JComboBox) super.getTableCellEditorComponent(theTable, theValue, theIsSelected, theRow, theColumn);
+			retVal.removeAllItems();
+
+			Properties structures = new Properties();
+			try {
+				structures = Parser.getMessageStructures(Version.latestVersion().getVersion());
+			} catch (IOException e) {
+				ourLog.error("Failed to load message types", e);
+			}
+
+			if (theColumn - 1 == MyProfilesRowModel.COL_MSG_TYPE) {
+
+				if (!"*".equals(theValue)) {
+					retVal.addItem("*");
+				}
+
+				if (!ACK.equals(theValue)) {
+					retVal.addItem(ACK);
+				}
+
+				String prevKey = "";
+				for (String nextStruct : getSortedStructures()) {
+					String[] nextParts = nextStruct.split("_");
+					if (StringUtils.isNotBlank(nextParts[0]) && nextParts[0].equals(prevKey) == false) {
+						prevKey = nextParts[0];
+						retVal.addItem(prevKey);
+					}
+				}
+
+				retVal.setSelectedItem(theValue);
+
+			} else if (theColumn - 1 == MyProfilesRowModel.COL_TRIGGER) {
+
+				if (!"*".equals(theValue)) {
+					retVal.addItem("*");
+				}
+
+				for (String nextStruct : getSortedStructures()) {
+					String[] nextParts = nextStruct.split("_");
+					String selMsgType = selectedNode.getUserObject().getMessageType();
+					if (nextParts.length > 1 && StringUtils.isNotBlank(nextParts[0]) && StringUtils.isNotBlank(nextParts[1]) && (nextParts[0].equals(selMsgType) || "*".equals(selMsgType))) {
+						retVal.addItem(nextParts[1]);
+					}
+				}
+
+				retVal.setSelectedItem(theValue);
+
+			} else if (theColumn - 1 == MyProfilesRowModel.COL_TABLES) {
+
+				retVal.addItem(TBL_OPT_NONE);
+				retVal.setSelectedIndex(0);
+
+				for (int i = 1; i < myController.getTableFileList().getTableFiles().size(); i++) {
+					TableFile tableFile = myController.getTableFileList().getTableFiles().get(i - 1);
+					retVal.addItem((i) + ": " + tableFile.getName());
+
+					if (tableFile.getId().equals(selectedNode.getUserObject().getTablesId())) {
+						retVal.setSelectedIndex(i);
+					}
+
+				}
+
+			}
+
+			return retVal;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * javax.swing.DefaultCellEditor#getTreeCellEditorComponent(javax.swing
+		 * .JTree, java.lang.Object, boolean, boolean, boolean, int)
+		 */
+		@Override
+		public Component getTreeCellEditorComponent(JTree theTree, Object theValue, boolean theIsSelected, boolean theExpanded, boolean theLeaf, int theRow) {
+			return super.getTreeCellEditorComponent(theTree, theValue, theIsSelected, theExpanded, theLeaf, theRow);
+		}
+
+	}
+
+	private final class ProfileGroupCellEditor extends DefaultCellEditor {
+		public ProfileGroupCellEditor() {
+			super(new JTextField());
+			setClickCountToStart(1);
+		}
+
+		private ProfileGroupCellEditor(JTextField theTextField) {
+			super(theTextField);
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable theTable, Object theValue, boolean theIsSelected, int theRow, int theColumn) {
+			Component retVal = super.getTableCellEditorComponent(theTable, theValue, theIsSelected, theRow, theColumn);
+			if (theValue instanceof ProfileGroupNode) {
+				ProfileGroupNode value = (ProfileGroupNode) theValue;
+				((JTextField) retVal).setText(value.getUserObject().getName());
+				// } else {
+				// ProfileNode value = (ProfileNode) theValue;
+				// ((JTextField)
+				// retVal).setText(value.getUserObject().getName());
+			}
+			return retVal;
+		}
+
+		@Override
+		public Component getTreeCellEditorComponent(JTree theTree, Object theValue, boolean theIsSelected, boolean theExpanded, boolean theLeaf, int theRow) {
+			Component retVal = super.getTreeCellEditorComponent(theTree, theValue, theIsSelected, theExpanded, theLeaf, theRow);
+			return retVal;
+		}
+	}
+
+	public class ProfileGroupNode extends DefaultMutableTreeNode {
 		public ProfileGroupNode(ProfileGroup theProfileGroup) {
 			super(theProfileGroup);
 		}
-		
+
 		@Override
 		public ProfileGroup getUserObject() {
 			return (ProfileGroup) super.getUserObject();
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	private class ProfileNode extends DefaultMutableTreeNode
-	{
+	public class ProfileNode extends DefaultMutableTreeNode {
 		public ProfileNode(ProfileGroup.Entry theProfile) {
 			super(theProfile);
 		}
-		
+
 		@Override
 		public ProfileGroup.Entry getUserObject() {
 			return (ProfileGroup.Entry) super.getUserObject();

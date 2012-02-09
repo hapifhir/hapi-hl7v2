@@ -27,6 +27,7 @@ package ca.uhn.hl7v2.testpanel.ui.v2tree;
 
 import static org.junit.Assert.*;
 
+import java.awt.EventQueue;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -82,26 +83,31 @@ public class Hl7V2MessageTreeTest {
 		
 	}
 	
+	private Hl7V2MessageTree myTree;
+	private TreeNodeRoot myTreeNodeRoot;
 	
 	
 	@Test
 	public void testMessageTreeTerserPaths() throws HL7Exception, PropertyVetoException, InterruptedException, InvocationTargetException {
-//		EventQueue.invokeAndWait(new Runnable() {
-//
-//			public void run() {
-				Hl7V2MessageTree tree = new Hl7V2MessageTree(null);
-				TreeNodeRoot treeNodeRoot = tree.new TreeNodeRoot();
-				tree.setShow(ShowEnum.POPULATED);
+		Runnable r = new Runnable() {
+
+
+			public void run() {
+				myTree = new Hl7V2MessageTree(null);
+				myTreeNodeRoot = myTree.new TreeNodeRoot();
+				myTree.setShow(ShowEnum.POPULATED);
+			}};
+			invoke(r);
 				
 				try {
-					tree.addChildren(messageModel.getMessages(), treeNodeRoot, "");
+					myTree.addChildren(messageModel.getMessages(), myTreeNodeRoot, "");
 				} catch (InterruptedException e) {
 					throw new Error(e);
 				} catch (InvocationTargetException e) {
 					throw new Error(e);
 				}
 				
-				TreeNode treeNodeMsg = treeNodeRoot.getChildAt(0);
+				TreeNode treeNodeMsg = myTreeNodeRoot.getChildAt(0);
 				TreeNodeSegment zpiNode = (TreeNodeSegment) treeNodeMsg.getChildAt(1);
 				assertEquals("/ZPI", zpiNode.getTerserPath());
 				TreeNodeType zpi3 = (TreeNodeType)zpiNode.getChildAt(0);
@@ -112,9 +118,20 @@ public class Hl7V2MessageTreeTest {
 				assertEquals("/ZPI-3(2)", zpi3.getTerserPath());
 				zpi3_1 = (TreeNodeType)zpi3.getChildAt(0);
 				assertEquals("/ZPI-3(2)-1", zpi3_1.getTerserPath());
-//			}});
+			
+			
 	}
 	
+	private void invoke(Runnable theR) throws InterruptedException, InvocationTargetException {
+		if (EventQueue.isDispatchThread()) {
+			theR.run();
+		} else {
+			EventQueue.invokeAndWait(theR);
+		}
+	}
+
+
+
 	@Test
 	public void testModelTerserPaths() {
 		

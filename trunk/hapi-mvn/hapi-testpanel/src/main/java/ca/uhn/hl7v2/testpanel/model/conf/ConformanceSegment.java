@@ -48,6 +48,11 @@ public class ConformanceSegment extends AbstractSegment implements ConformanceSt
 		myConfDefinition = theConfDefinition;
 	}
 
+	@Override
+	public ConformanceMessage getMessage() {
+		return (ConformanceMessage) super.getMessage();
+	}
+
 	/**
 	 * Add a child prototype
 	 */

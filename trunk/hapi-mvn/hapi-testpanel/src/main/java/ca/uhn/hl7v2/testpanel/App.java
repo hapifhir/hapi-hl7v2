@@ -70,16 +70,16 @@ public class App {
 			}
 		}
 		
-//		// only do this setup if we know this is Windows
-//		if (System.getProperty("os.name").toLowerCase().contains("win")) {
-//			try {
-//				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.WindowsInitializer");
-//				Method runMethod = clazz.getMethod("run", Controller.class);
-//				runMethod.invoke(clazz.newInstance(), myController);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
+		// only do this setup if we know this is Windows
+		if (System.getProperty("os.name").toLowerCase().contains("win")) {
+			try {
+				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.WindowsInitializer");
+				Method runMethod = clazz.getMethod("run", Controller.class);
+				runMethod.invoke(clazz.newInstance(), myController);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
 		EventQueue.invokeLater(new Runnable() {
 

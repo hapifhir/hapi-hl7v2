@@ -202,9 +202,9 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 138, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
 		JLabel lblHost = new JLabel("Host");
@@ -506,7 +506,7 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 		JLabel lblCharset = new JLabel("Charset");
 		GridBagConstraints gbc_lblCharset = new GridBagConstraints();
 		gbc_lblCharset.anchor = GridBagConstraints.WEST;
-		gbc_lblCharset.insets = new Insets(0, 5, 0, 5);
+		gbc_lblCharset.insets = new Insets(0, 5, 5, 5);
 		gbc_lblCharset.gridx = 0;
 		gbc_lblCharset.gridy = 5;
 		add(lblCharset, gbc_lblCharset);
@@ -514,6 +514,7 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_2.fill = GridBagConstraints.BOTH;
 		gbc_panel_2.gridx = 1;
 		gbc_panel_2.gridy = 5;
