@@ -44,17 +44,24 @@ public class ActivityCellRendererBase extends DefaultTableCellRenderer {
 	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable theTable, Object theValue, boolean theIsSelected, boolean theHasFocus, int theRow, int theColumn) {
-		Component retVal = super.getTableCellRendererComponent(theTable, theValue, theIsSelected, theHasFocus, theRow, theColumn);
+		Component theComponent = super.getTableCellRendererComponent(theTable, theValue, theIsSelected, theHasFocus, theRow, theColumn);
+		ActivityTable theTablePanel = myTablePanel;
 		
+		adjustBackground(theIsSelected, theRow, theComponent, theTablePanel);
+		
+		return theComponent;
+	}
+
+	public static void adjustBackground(boolean theIsSelected, int theRow, Component retVal, ActivityTable theTablePanel) {
 		if (theIsSelected) {
 			// leave it as is
-		} else if (myTablePanel.isResponseAtRow(theRow)) {
-			setBackground(RESPONSE_ROW_COLOUR);
 		} else {
-			setBackground(Color.WHITE);
+			if (theTablePanel.isResponseAtRow(theRow)) {
+				retVal.setBackground(RESPONSE_ROW_COLOUR);
+			} else {
+				retVal.setBackground(Color.WHITE);
+			}
 		}
-		
-		return retVal;
 	}
 
 }

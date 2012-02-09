@@ -94,6 +94,7 @@ import ca.uhn.hl7v2.testpanel.model.conf.ConformanceGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformancePrimitive;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceSegment;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
@@ -128,8 +129,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private PropertyChangeListener myParsedMessagesListener;
 	private PipeParser myPipeParser;
 	private boolean myRespondingToManualRangeChange;
-	private RuntimeProfile myRuntimeProfile;
-	private String myRuntimeProfileId;
 	private DefaultValidator myRuntimeProfileValidator;
 	private boolean mySelectionHandlingDisabled;
 	private boolean myShouldOpenDefaultPaths = true;
@@ -144,6 +143,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private UpdaterThread myUpdaterThread;
 
 	private PropertyChangeListener myValidationContextListener;
+
+	private IWorkingListener myWorkingListener;
 
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
@@ -235,11 +236,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	}
 
 	void addChildren() throws InterruptedException, InvocationTargetException {
-		if (myMessages.getRuntimeProfile() != null) {
+		if (myMessages != null && myMessages.getRuntimeProfile() != null) {
 			myRuntimeProfileValidator = new DefaultValidator();
 			myRuntimeProfileValidator.setValidateChildren(false);
-			myRuntimeProfile = myMessages.getRuntimeProfile();
-			myRuntimeProfileId = myRuntimeProfile.getMessage().getIdentifier();
 		}
 
 		final Set<String> openPaths = getOpenPaths();
@@ -251,7 +250,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			try {
 				addChildren(myMessages.getMessages(), myTop, "");
 			} catch (InterruptedException e) {
-				ourLog.error("Failed up update message tree, going to try again", e);
+				ourLog.info("Interrupted during an update loop, going to schedule another pass");
 				myUpdaterThread.scheduleUpdate();
 			} catch (InvocationTargetException e) {
 				ourLog.error("Failed up update message tree", e);
@@ -314,7 +313,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				switch (myShow) {
 				case ALL:
 				case ERROR:
-				case POPULATED:
+//				case POPULATED:
 					/*
 					 * this creates at least one rep if there are none, since
 					 * these modes want to show the node in the tree regardless
@@ -433,7 +432,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				switch (myShow) {
 				case ALL:
 				case ERROR:
-				case POPULATED:
+//				case POPULATED:
 					/*
 					 * this creates at least one rep if there are none, since
 					 * these modes want to show the node in the tree regardless
@@ -875,6 +874,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 	}
 
+	/**
+	 * @param theWorkingListener the workingListener to set
+	 */
+	public void setWorkingListener(IWorkingListener theWorkingListener) {
+		myWorkingListener = theWorkingListener;
+	}
+
 	private void synchronizeTreeWithHighlitedPath() {
 		try {
 			mySelectionHandlingDisabled = true;
@@ -961,6 +967,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	 */
 	public static String toHl7Table(int theTable) {
 		return StringUtils.leftPad(Integer.toString(theTable), 4, '0');
+	}
+
+	public interface IWorkingListener
+	{
+		void finishedWorking(String theStatus);
+		
+		void startedWorking();
+		
 	}
 
 	/**
@@ -1055,6 +1069,18 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		}
 
+		public int countExceptions() {
+			int retVal = 0;
+			
+			for (int i = 0; i < getChildCount(); i++) {
+				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
+				retVal += next.countExceptions();
+			}
+			
+			retVal += myValidationExceptions.size();
+			return retVal;
+		}
+		
 		/**
 		 * Subclasses may override if validation is possible
 		 */
@@ -1337,7 +1363,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 
 			String encoded = PipeParser.encode(getComposite(), enc);
-			HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, myRuntimeProfileId);
+			HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, "");
 			addValidationExceptions(problems);
 		}
 
@@ -1446,7 +1472,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		@Override
 		public void doValidate() {
 			try {
-				HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), myRuntimeProfileId);
+				HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), "");
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
@@ -1590,19 +1616,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 				}
 
-				if (myMessages.getValidationTable() != null) {
-					String table = getTable();
-					if (table != null) {
-						TableFile tableFile = myMessages.getValidationTable();
-						if (tableFile.knowsCodes(table)) {
-							String value = StringUtils.defaultString(primitive.getValue());
-							if (!tableFile.isValidCode(table, value)) {
-								addValidationExceptions(new HL7Exception("Not a valid value in table '" + table + "': " + value));
-							}
-						}
-					}
-				}
-
 			}
 
 		}
@@ -1687,8 +1700,28 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				encoded = primitive.getValue();
 			}
 
-			HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, myRuntimeProfileId);
+			HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, "");
 			addValidationExceptions(problems);
+
+			if (myMessages.getRuntimeProfile() != null) {
+				String table = getTable();
+				if (table != null) {
+					
+					ConformanceMessage msg = getPrimitive().getMessage();
+					String tablesId = msg.getTablesId();
+					if (StringUtils.isNotBlank(tablesId)) {
+						TableFile tableFile = myController.getTableFileList().getTableFile(tablesId);
+						if (tableFile != null) {
+							if (tableFile.knowsCodes(table)) {
+								String value = StringUtils.defaultString(primitive.getValue());
+								if (!tableFile.isValidCode(table, value)) {
+									addValidationExceptions(new HL7Exception("Not a valid value in table '" + table + "': " + value));
+								}
+							}
+						}
+					}
+				}
+			}
 
 			super.doValidate();
 		}
@@ -1754,6 +1787,16 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					((IDestroyable) next).destroy();
 				}
 			}
+		}
+
+		public int countMessages() {
+			int retVal = 0;
+			for (int i = 0; i < getChildCount(); i++) {
+				if (getChildAt(i) instanceof TreeNodeMessage) {
+					retVal++;
+				}
+			}
+			return retVal;
 		}
 
 	}
@@ -1826,7 +1869,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		@Override
 		public void doValidate() {
 			try {
-				HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), myRuntimeProfileId);
+				HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), "");
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
@@ -2078,7 +2121,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 	}
-
+	
 	private class TreeRowModel implements RowModel {
 
 		private static final int COL_LENGTH = 2;
@@ -2259,7 +2302,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 	}
-
+	
+	
 	private class UpdaterThread extends Thread {
 		private long myNextUpdate = 0;
 
@@ -2281,10 +2325,39 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 					if (myNextUpdate > 0 && myNextUpdate <= System.currentTimeMillis()) {
 						ourLog.info("Running an update of the Message Tree");
+
 						addChildren();
+
+						int messages = myTop.countMessages();
+						
+						final StringBuilder b = new StringBuilder();
+						b.append(messages > 0 ? messages : "No");
+						b.append(" message");
+						b.append(messages != 1 ? "s" : "");
+						if (myMessages.isValidating()) {
+							b.append(", ");
+							int countExceptions = myTop.countExceptions();
+							b.append(countExceptions > 0 ? countExceptions : "No");
+							b.append(" problem");
+							b.append(countExceptions != 1 ? "s" : "");
+						}
+						
+						if (myWorkingListener != null) {
+							EventQueue.invokeAndWait(new Runnable() {
+								public void run() {
+									myWorkingListener.finishedWorking(b.toString());
+								}
+							});
+						}
+
 						myNextUpdate = 0;
 					}
 
+				} catch (InterruptedException e) {
+
+					// We can ignore these, they happen if the message is updated by
+					// the UI during a middle of an update loop 
+					
 				} catch (Throwable e) {
 
 					ourLog.info("Exception caught during update loop", e);
@@ -2305,11 +2378,29 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public void scheduleUpdate() {
 			myNextUpdate = System.currentTimeMillis() + 2000;
 			interrupt();
+			
+			if (myWorkingListener != null) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						myWorkingListener.startedWorking();
+					}
+				});
+			}
+
 		}
 
 		public void scheduleUpdateNow() {
 			myNextUpdate = System.currentTimeMillis();
 			interrupt();
+			
+			if (myWorkingListener != null) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						myWorkingListener.startedWorking();
+					}
+				});
+			}
+
 		}
 
 		public void stopThread() {

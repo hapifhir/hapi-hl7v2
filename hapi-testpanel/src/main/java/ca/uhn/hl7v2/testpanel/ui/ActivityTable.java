@@ -141,11 +141,12 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		add(myscrollPane, BorderLayout.CENTER);
 		
 		myTable = new JTable();
+		myTable.setFillsViewportHeight(true);
 		myTable.setGridColor(Color.LIGHT_GRAY);
 //		myTable.setCellSelectionEnabled(true);
 //		myTable.setRowSelectionAllowed(true);
 		myTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		myscrollPane.setViewportView(myTable);
 
 		myEditMenu = new JPopupMenu();
@@ -261,7 +262,9 @@ public class ActivityTable extends JPanel implements IDestroyable {
 
 		myTable.getColumnModel().getColumn(0).setCellRenderer(new ActivityCellRendererBase(this));
 		myTable.getColumnModel().getColumn(1).setCellRenderer(new ActivityTypeCellRenderer(this, theConnection instanceof InboundConnection));
-		myTable.getColumnModel().getColumn(2).setCellRenderer(new ActivityDetailsCellRenderer(this));
+		
+		ActivityDetailsCellRenderer cellRenderer = new ActivityDetailsCellRenderer(this);
+		myTable.getColumnModel().getColumn(2).setCellRenderer(cellRenderer);
 
 		final int timestampWidth = 100;
 		myTable.getColumnModel().getColumn(0).setMaxWidth(timestampWidth);
@@ -273,10 +276,10 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myTable.getColumnModel().getColumn(1).setMinWidth(activityWidth);
 		myTable.getColumnModel().getColumn(1).setPreferredWidth(activityWidth);
 
-		int detailWidth = 500;
-		myTable.getColumnModel().getColumn(2).setMaxWidth(detailWidth);
-		myTable.getColumnModel().getColumn(2).setMinWidth(detailWidth);
-		myTable.getColumnModel().getColumn(2).setPreferredWidth(detailWidth);
+//		int detailWidth = 500;
+//		myTable.getColumnModel().getColumn(2).setMaxWidth(10000);
+//		myTable.getColumnModel().getColumn(2).setMinWidth(detailWidth);
+//		myTable.getColumnModel().getColumn(2).setPreferredWidth(detailWidth);
 	}
 
 	/**

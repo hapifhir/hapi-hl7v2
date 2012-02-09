@@ -176,7 +176,7 @@ public class MessagesList extends AbstractModelClass {
 				continue;
 			}
 
-			Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(contents);
+			Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(myController.getProfileFileList(), contents);
 			if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
 				try {
 					File saveFile = new File(nextMsg.getSaveFileName());

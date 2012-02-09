@@ -50,6 +50,15 @@ public class ImageFactory{
     public static ImageIcon getButtonExecute(  ){
         return getImageIcon( "ca/uhn/hl7v2/testpanel/images/button_execute.png" );
     }
+    
+    public static ImageIcon getProfile(  ){
+        return getImageIcon( "ca/uhn/hl7v2/testpanel/images/profile.png" );
+    }
+
+    
+    public static ImageIcon getProfileGroup() {
+		return getImageIcon("ca/uhn/hl7v2/testpanel/images/new_tree.png");
+    }
 
     public static ImageIcon getFile(  ){
         return getImageIcon( "ca/uhn/hl7v2/testpanel/images/file.png" );
@@ -57,6 +66,10 @@ public class ImageFactory{
 
     public static ImageIcon getTable(  ){
         return getImageIcon( "ca/uhn/hl7v2/testpanel/images/table.png" );
+    }
+
+    public static ImageIcon getNo(  ){
+        return getImageIcon( "ca/uhn/hl7v2/testpanel/images/no.png" );
     }
 
     private static ImageIcon getImageIcon( String theLocation ){

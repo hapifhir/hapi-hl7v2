@@ -27,14 +27,18 @@ package ca.uhn.hl7v2.testpanel.model.conf;
 
 import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
 import ca.uhn.hl7v2.model.AbstractPrimitive;
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 
 public class ConformancePrimitive extends AbstractPrimitive implements Primitive, ConformanceType<ConformancePrimitive> {
 
+	@Override
+	public ConformanceMessage getMessage() {
+		return (ConformanceMessage) super.getMessage();
+	}
+
 	private AbstractComponent myConfDefinition;
 
-	public ConformancePrimitive(Message theMessage, AbstractComponent theConfDefinition) {
+	public ConformancePrimitive(ConformanceMessage theMessage, AbstractComponent theConfDefinition) {
 		super(theMessage);
 		
 		myConfDefinition = theConfDefinition;

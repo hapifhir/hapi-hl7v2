@@ -53,6 +53,7 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 
 	private final StaticDef myConfDefinition;
 	private ConformanceStructureHolderSupport mySupport;
+	private String myTablesId;
 
 	public ConformanceMessage(StaticDef theConfDefinition) {
 		super(new NullModelClassFactory());
@@ -67,11 +68,6 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		mySupport = theSupport;
 	}
 
-	@Override
-	public Message getMessage() {
-		return this;
-	}
-
 	/**
 	 * Internal method for adding child structures
 	 */
@@ -81,27 +77,6 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		super.insert(theStructure.getClass(), mySupport.isRequired(theName), mySupport.isRepeating(theName), num, theName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return myConfDefinition.getMsgStructID();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Structure[] getAll(String theName) throws HL7Exception {
-		Structure[] retVal = mySupport.getAllNonStandardSegmentsIfNameExists(theName);
-		if (retVal == null) {
-			return super.getAll(theName);
-		}
-		return retVal;
-	}
-
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -133,6 +108,31 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		return retVal;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Structure[] getAll(String theName) throws HL7Exception {
+		Structure[] retVal = mySupport.getAllNonStandardSegmentsIfNameExists(theName);
+		if (retVal == null) {
+			return super.getAll(theName);
+		}
+		return retVal;
+	}
+
+	/**
+	 * @return the confDefinition
+	 */
+	public StaticDef getConfDefinition() {
+		return myConfDefinition;
+	}
+
+	
+	@Override
+	public ConformanceMessage getMessage() {
+		return this;
+	}
+
 //	/**
 //	 * {@inheritDoc}
 //	 */
@@ -149,6 +149,34 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 //	public String addNonstandardSegment(String theName, int theIndex) throws HL7Exception {
 //		return mySupport.addNonstandardSegment(theName, theIndex);
 //	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return myConfDefinition.getMsgStructID();
+	}
+
+	/**
+	 * @return the tablesId
+	 */
+	public String getTablesId() {
+		return myTablesId;
+	}
+
+//	/**
+//	 * {@inheritDoc}
+//	 */
+//	@Override
+//	public String[] getNames() {
+//		String[] retVal = mySupport.getNames();
+//		return retVal;
+//	}
+
+	private void setTablesId(String theTablesId) {
+		myTablesId = theTablesId;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -174,22 +202,6 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		}
 		return mySupport.get(theName, 0);
 	}
-
-	/**
-	 * @return the confDefinition
-	 */
-	public StaticDef getConfDefinition() {
-		return myConfDefinition;
-	}
-
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public String[] getNames() {
-//		String[] retVal = mySupport.getNames();
-//		return retVal;
-//	}
 
 	private static void addChildren(ConformanceStructureHolder theParent, Seg theChildDef) throws HL7Exception {
 		ConformanceSegment segment = new ConformanceSegment(theParent, theChildDef);
@@ -269,7 +281,7 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		theSegment.addChild(primitive, theField.getName(), theField.getMin(), theField.getMax(), (int) theField.getLength());
 	}
 
-	public static ConformanceMessage newInstanceFromStaticDef(StaticDef theStaticDef) throws HL7Exception {
+	public static ConformanceMessage newInstanceFromStaticDef(StaticDef theStaticDef, String theTablesId) throws HL7Exception {
 		ConformanceMessage retVal = new ConformanceMessage(theStaticDef);
 
 		for (int i = 0; i < theStaticDef.getChildren(); i++) {
@@ -281,6 +293,8 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 			}
 		}
 
+		retVal.setTablesId(theTablesId);
+		
 		return retVal;
 	}
 
@@ -310,4 +324,5 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		}
 
 	}
+
 }

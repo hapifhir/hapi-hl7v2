@@ -48,7 +48,7 @@ public class ConformanceStructuresTest {
 		RuntimeProfile profile = parser.parseClasspath("testpanel/profiles/ADT_A01.xml");
 		StaticDef staticDef = profile.getMessage();
 		
-		ConformanceMessage msg = ConformanceMessage.newInstanceFromStaticDef(staticDef);
+		ConformanceMessage msg = ConformanceMessage.newInstanceFromStaticDef(staticDef, null);
 		System.out.println(msg.printStructure());
 		
 		String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -
@@ -73,7 +73,7 @@ public class ConformanceStructuresTest {
 		RuntimeProfile profile = parser.parseClasspath("testpanel/profiles/ADT_A01.xml");
 		StaticDef staticDef = profile.getMessage();
 		
-		ConformanceMessage msg = ConformanceMessage.newInstanceFromStaticDef(staticDef);
+		ConformanceMessage msg = ConformanceMessage.newInstanceFromStaticDef(staticDef, null);
 		System.out.println(msg.printStructure());
 		
 		String string = "MSH|^~\\&|ULTRA~AAA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -

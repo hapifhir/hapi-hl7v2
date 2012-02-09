@@ -404,6 +404,14 @@ public class TestPanelWindow implements IDestroyable {
 		});
 		mymenuItem.setIcon(new ImageIcon(TestPanelWindow.class.getResource("/ca/uhn/hl7v2/testpanel/images/hapi_16.png")));
 		mymenu.add(mymenuItem);
+		
+		mymenuItem_4 = new JMenuItem("Licenses...");
+		mymenuItem_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new LicensesDialog().setVisible(true);
+			}
+		});
+		mymenu.add(mymenuItem_4);
 		myframe.getContentPane().setLayout(new BorderLayout(0, 0));
 
 		JSplitPane outerSplitPane = new JSplitPane();
@@ -992,6 +1000,7 @@ public class TestPanelWindow implements IDestroyable {
 	private JMenuItem mymenuItem_2;
 	private JMenu myRecentFilesMenu;
 	private JMenuItem mymenuItem_3;
+	private JMenuItem mymenuItem_4;
 
 	private final class MyMessageDescriptionListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent theEvt) {

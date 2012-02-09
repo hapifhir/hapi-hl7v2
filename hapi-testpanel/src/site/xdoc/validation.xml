@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HAPI TestPanel</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<!-- The body of the document contains a number of sections -->
+		<section name="Message Validation">
+
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+			<script type="text/javascript" src="../jquery.magnifier.js">
+				/***********************************************
+				* jQuery Image Magnify- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+				* This notice MUST stay
+				intact for legal use
+				* Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
+				***********************************************/
+			</script>
+
+			<p>
+				By default, TestPanel uses HAPI's built in validation, known as
+				<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html">DefaultValidation</a>
+				.
+				The validation performs basic data type checks, such as making sure that NM datatype
+				fields do not contain text, TS datatype fields contain valid dates, etc.
+			</p>
+			
+			<img src="images/testpanel_defaultvalidation.png" alt="Main Window" class="magnify" style="width:207px; height:144px" align="left" />
+			<p>
+				To enable or disable this feature, click on the "Validate" selector, and choose either
+				"No Profile/Validation" or "Default HAPI Validation". When validation is enabled, you will
+				see any errors in the column to the left of the value column. You can test this out by
+				enabling validation and changing the MSH-7 (Timestamp) value so that it contains
+				letters within the timestamp. Hovering over the red "X" will give more information
+				about what is wrong. 
+				<br clear="all"/><br/><br/>
+			</p>
+			
+			<subsection name="Conformance Profiles">
+				
+				<p>
+					TestPanel supports validating messages using HL7 Conformance Profiles. Conformance
+					profiles are special XML-based files which constrain the standard HL7 message definitions,
+					allowing you to specify maximum field lengths, required cardinalities, etc. 
+				</p>
+			
+				<p>
+					Conformance profiles are generally created using a tool called Message Workbench (MWB),
+					which is <a href="https://sl.infoway-inforoute.ca/content/disppage.asp?cw_page=infostand_hl7can_software_e">available here</a>.
+				</p>
+
+				<p>
+					To create a conformance profile, use the MWB tool to create your profile, and then select
+					"Export XML Profile" from the File menu to create an XML version which can be loaded into
+					TestPanel.
+				</p>
+				
+				<p>
+					In order to try out TestPanel's support, you can download a zipped profile for
+					an ADT^A01 message <a href="ADT_A01.zip">here</a>.
+				</p>
+
+			</subsection>
+
+			<subsection name="Creating a Profile Group">
+			
+				<p>
+					TestPanel arranges profiles in what it calls a "Profile Group". A profile group
+					is a collection of one or more conformance profiles. Within a profile group,
+					each profile is marked as applying to specific message types, so that for instance
+					you could create a profile group with one profile for ADT^A01 messages and another
+					profile for ORU^R01.
+				</p>
+				
+				
+				<img src="images/testpanel_profiles.png" alt="Main Window" class="magnify" style="width:160px; height:144px" align="left" />
+				<p>
+					To create a profile group, choose "<i>Profiles and Tables...</i>" from the 
+					<i>Conformance</i> menu. This opens the profiles dialog. 
+				</p>
+				<ul>
+					<li>
+						Click on "<i>New Profile Group</i>" to create a new profile group.
+					</li>
+					<li>
+						Select the newly created group, and click on "<i>Add Profile</i>" 
+						to add a conformance profile to the group. The allows you to select an
+						XML based conformance profile, and then assign it to one or more
+						message types. 
+					</li>
+				</ul>
+
+				<br clear="left"/>
+								
+				<p>
+					<img src="images/testpanel_validatingwithprofile.png" alt="Main Window" class="magnify" style="width:207px; height:144px" align="left" />
+					To apply your new profile group to a message (or a collection of messages),
+					open the messages in the main message editor, and choose your new profile group
+					from the "<i>Validate</i>" picker, near the top right of the window.
+				</p>
+				<p>
+					If there are any problems with your message, you will now see them highlited. Try
+					removing values, or putting in very long values to see new problems. If you 
+					can't see any errors, you might want to make sure that your profile group matches
+					the message type of the message you are using. (e.g. ADT^A04 vs. ADT^A01)
+				</p>
+
+				<br clear="left"/>
+
+			</subsection>
+
+		</section>
+
+		<section name="Tables">
+		
+			<img src="images/testpanel_tables.png" alt="Main Window" class="magnify" style="width:160px; height:144px" align="left" />
+			<p>
+				TestPanel also allows you to define tables from which coded values are drawn.
+				Tables are stored in table files, and a table file contains one ore more tables. 
+			</p>
+			<p>
+				To create a table file, choose "<i>Profiles and Tables...</i>" from the 
+				<i>Conformance</i> menu, and navigate to the <i>Tables</i> tab. Click on
+				"<i>Add File</i>" and create a new file.
+			</p>
+			<p>
+				Now, create a new table. HL7 tables are generally represented by four digits.
+				For example, component 1 of a CE such as MSH-3 "Sending Application" is table 0300.
+				To create a validation table, add the prefix HL7, as shown in the screenshot.
+			</p>
+			<p>
+				Once you have created your tables, return to the <i>Profiles</i> tab, and assign
+				your table file to the Profile Group by clicking on the word "None" with the small
+				circle next to it.
+			</p>
+			
+		</section>
+
+	</body>
+
+</document>

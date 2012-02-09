@@ -41,6 +41,7 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.testpanel.model.UnknownMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.Range;
@@ -59,6 +60,82 @@ public class Hl7V2MessageCollectionTest {
 		List<AbstractMessage<?>> msgs = col.getMessages();
 		assertEquals(2, msgs.size());
 
+	}
+
+	@Test
+	public void testFirstLineComment() {
+
+		String fullMsg = 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription().contains("2"));
+
+		fullMsg =
+				"#THIS\r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().equals("THIS"));
+
+		fullMsg =
+				"#THIS IS A COMMENT\r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().equals("THIS IS A COMMENT"));
+
+		fullMsg =
+				"#     THIS IS A COMMENT\r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().equals("THIS IS A COMMENT"));
+
+		fullMsg =
+				"#     THIS IS A COMMENT     \r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().equals("THIS IS A COMMENT"));
+
+		fullMsg =
+				"#\r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().contains("2"));
+
+		fullMsg =
+				"#  \r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().contains("2"));
+
+		fullMsg =
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"#  \r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().contains("2"));
+
+		fullMsg =
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"# BLAH \r" +
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+		col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+		assertTrue(col.getMessageDescription(), col.getMessageDescription().contains("2"));
+	
 	}
 
 	@Test
@@ -335,7 +412,8 @@ public class Hl7V2MessageCollectionTest {
 		String msg = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
 
 		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
-		col.setRuntimeProfile(FileUtils.loadResourceFromClasspath("testpanel/profiles/ADT_A01.xml"));
+		ProfileGroup pg = ProfileGroup.createFromRuntimeProfile(FileUtils.loadResourceFromClasspath("testpanel/profiles/ADT_A01.xml"));
+		col.setRuntimeProfile(pg);
 		col.setSourceMessage(msg);
 
 		Assert.assertEquals(ConformanceMessage.class, col.getMessages().get(0).getParsedMessage().getClass());

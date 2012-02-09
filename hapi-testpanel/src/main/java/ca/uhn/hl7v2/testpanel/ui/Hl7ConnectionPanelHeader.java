@@ -124,6 +124,20 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 		} else {
 			myStatusLabel.setText("");
 		}
+		
+		switch (myConnection.getStatus()) {
+		case FAILED:
+		case STOPPED:
+			myStartButton.setEnabled(true);
+			myStopButton.setEnabled(false);
+			break;
+		case STARTED:
+		case TRYING_TO_START:
+			myStartButton.setEnabled(false);
+			myStopButton.setEnabled(true);
+			break;
+		}
+		
 	}
 
 	/**

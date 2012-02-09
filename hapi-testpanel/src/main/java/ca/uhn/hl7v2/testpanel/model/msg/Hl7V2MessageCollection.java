@@ -55,14 +55,13 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.hl7v2.conf.parser.ProfileParser;
-import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.model.UnknownMessage;
-import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.util.ClassUtils;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.Range;
@@ -92,8 +91,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private List<Range> myMessageRanges = new ArrayList<Range>();
 	private List<AbstractMessage<?>> myMessages = new ArrayList<AbstractMessage<?>>();
 	private GenericParser myParser;
-	private RuntimeProfile myRuntimeProfile;
-	private String myRuntimeProfileString;
+	private String myProfileId;
+	private ProfileGroup myRuntimeProfile;
 	private Charset mySaveCharset;
 	private boolean mySaved;
 	private String mySaveFileName;
@@ -102,10 +101,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private String mySourceMessage;
 	private boolean myStripSaveComments;
 	private ValidationContext myValidationContext = new DefaultValidation();
-
-	private String myValidationTableId;
-
-	private TableFile myValidationTable;
 
 	public Hl7V2MessageCollection() {
 		myParser = new GenericParser();
@@ -414,8 +409,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		xml.mySaveFileName = StringUtils.isNotBlank(mySaveFileName) ? mySaveFileName : "";
 		xml.myEncodingType = myEncoding.name();
 		xml.myValidationContextClass = myValidationContext != null ? myValidationContext.getClass().getName() : "";
-		xml.myRuntimeProfileString = myRuntimeProfileString != null ? myRuntimeProfileString : "";
-		xml.myValidationTableId = myValidationTableId != null ? myValidationTableId : "";
+		xml.myProfileId = myProfileId != null ? myProfileId : "";
 		xml.mySaveStripComments = Boolean.toString(myStripSaveComments);
 		xml.mySaveLineEndings = mySaveLineEndings != null ? mySaveLineEndings.name() : "";
 		xml.mySaveTimestamp = mySaveFileTimestamp;
@@ -520,7 +514,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	/**
 	 * @return the runtimeProfile
 	 */
-	public RuntimeProfile getRuntimeProfile() {
+	public ProfileGroup getRuntimeProfile() {
 		return myRuntimeProfile;
 	}
 
@@ -563,10 +557,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		return myValidationContext;
 	}
 
-	public String getValidationTableId() {
-		return myValidationTableId;
-	}
-
 	/**
 	 * @return the saved
 	 */
@@ -579,6 +569,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	 */
 	public boolean isSaveStripComments() {
 		return myStripSaveComments;
+	}
+
+	public boolean isValidating() {
+		return myValidationContext != null || myRuntimeProfile != null;
 	}
 
 	public void setEncoding(Hl7V2EncodingTypeEnum theEncoding) {
@@ -715,23 +709,22 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myId = theId;
 	}
 
-	public void setRuntimeProfile(String theProfileString) throws ProfileException {
-		if (theProfileString == null && myRuntimeProfile == null && myValidationContext == null) {
+	public void setRuntimeProfile(ProfileGroup theProfileGroup) throws ProfileException {
+		if (theProfileGroup == null && myRuntimeProfile == null && myValidationContext == null) {
 			return;
 		}
 
-		if (theProfileString == null && myRuntimeProfile == null && myValidationContext != null) {
+		if (theProfileGroup == null && myRuntimeProfile == null && myValidationContext != null) {
 			myValidationContext = null;
-			myRuntimeProfileString = null;
+			myRuntimeProfile = null;
+			myProfileId = null;
 			firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, null, null);
 			return;
 		}
 
-		RuntimeProfile profile = new ProfileParser(false).parse(theProfileString);
-
-		myRuntimeProfileString = theProfileString;
-		myRuntimeProfile = profile;
+		myRuntimeProfile = theProfileGroup;
 		myValidationContext = null;
+		myProfileId = theProfileGroup.getId();
 
 		for (AbstractMessage<?> next : myMessages) {
 			if (next instanceof Hl7V2MessageBase) {
@@ -768,7 +761,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		String oldValue = null;
 		mySaveFileName = theFileName;
 		firePropertyChange(PROP_SAVE_FILENAME, oldValue, theFileName);
-		
+
 		updateMessageDescription();
 	}
 
@@ -830,7 +823,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		if (theValidationContext != null) {
 			myRuntimeProfile = null;
-			myRuntimeProfileString = null;
+			myRuntimeProfile = null;
 		}
 
 		ourLog.info("Setting validation context to: " + theValidationContext);
@@ -846,29 +839,17 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, oldValue, theValidationContext);
 	}
 
-	public void setValidationTable(TableFile theSelectedFile) {
-		myValidationTable = theSelectedFile;
-		setValidationTableId(myValidationTable != null ? myValidationTable.getId() : null);
-	}
-
-	/**
-	 * @return the validationTable
-	 */
-	public TableFile getValidationTable() {
-		return myValidationTable;
-	}
-
-	/**
-	 * @param theValidationTableId the validationTableId to set
-	 */
-	public void setValidationTableId(String theValidationTableId) {
-		myValidationTableId = theValidationTableId;
-	}
-
+	private static final Pattern FIRSTLINE_COMMENT_PATTERN = Pattern.compile("^\\#\\s*(\\S.*)");
+	
 	private void updateMessageDescription() {
 		String oldValue = myMessageDescription;
 
-		if (mySaveFileName == null) {
+		Matcher matcher = FIRSTLINE_COMMENT_PATTERN.matcher(StringUtils.defaultString(mySourceMessage));
+		if (matcher.find()) {
+			
+			myMessageDescription = matcher.group(1).trim();
+			
+		} else if (mySaveFileName == null) {
 
 			int msgs = 0;
 			AbstractMessage<?> firstNonComment = null;
@@ -898,7 +879,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		} else {
 
 			myMessageDescription = mySaveFileName.replaceAll(".*(\\\\|\\/)", "");
-			
+
 		}
 
 		firePropertyChange(PROP_DESCRIPTION, oldValue, myMessageDescription);
@@ -983,7 +964,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		theWriter.append(toWrite);
 	}
 
-	public static Hl7V2MessageCollection fromXml(String theContents) {
+	public static Hl7V2MessageCollection fromXml(ProfileFileList theProfileFileList, String theContents) {
 		XmlFormat xmlFormat = JAXB.unmarshal(new StringReader(theContents), XmlFormat.class);
 
 		Hl7V2MessageCollection retVal = new Hl7V2MessageCollection();
@@ -1001,15 +982,11 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 			retVal.setValidationContext(ClassUtils.instantiateOrReturnNull(xmlFormat.myValidationContextClass, ValidationContext.class));
 		}
 
-		if (isNotBlank(xmlFormat.myValidationTableId)) {
-			retVal.setValidationTableId(xmlFormat.myValidationTableId);
-		}
-
-		if (isNotBlank(xmlFormat.myRuntimeProfileString)) {
+		if (isNotBlank(xmlFormat.myProfileId)) {
 			try {
-				retVal.setRuntimeProfile(xmlFormat.myRuntimeProfileString);
+				retVal.setRuntimeProfile(theProfileFileList.getProfile(xmlFormat.myProfileId));
 			} catch (ProfileException e) {
-				ourLog.error("Failed to restore runtime conformance profile", e);
+				ourLog.error("Failed to retrieve profile with id: " + xmlFormat.myProfileId, e);
 			}
 		}
 
@@ -1056,8 +1033,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		@XmlAttribute(required = true, name = "id")
 		public String myId;
 
-		@XmlElement(required = true, name = "conformanceProfile")
-		public String myRuntimeProfileString;
+		@XmlElement(required = true, name = "profileId")
+		public String myProfileId;
 
 		@XmlAttribute(required = true, name = "charsetName")
 		private String mySaveCharsetName;
@@ -1082,9 +1059,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		@XmlElement(required = true, name = "validationContextClass")
 		public String myValidationContextClass;
-
-		@XmlElement(required = true, name = "validationTableId")
-		public String myValidationTableId;
 
 	}
 

@@ -65,6 +65,11 @@ public class ConformanceComposite extends AbstractType implements Composite, Con
 		myName.add(theName);
 	}
 	
+	@Override
+	public ConformanceMessage getMessage() {
+		return (ConformanceMessage) super.getMessage();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

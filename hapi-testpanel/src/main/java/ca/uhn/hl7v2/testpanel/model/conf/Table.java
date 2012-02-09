@@ -42,8 +42,8 @@ public class Table extends AbstractModelClass implements Comparable<Table> {
 
 	private Map<String, Code> getCodeIdToCodes() {
 		if (myCodeIdToCodes == null) {
-			myCodeIdToCodes = new LinkedHashMap<String, Code>(myCodes.size() + 10);
-			for (Code next : myCodes) {
+			myCodeIdToCodes = new LinkedHashMap<String, Code>(getCodes().size() + 10);
+			for (Code next : getCodes()) {
 				next.setTable(this);
 				myCodeIdToCodes.put(next.getCode(), next);
 			}
