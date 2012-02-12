@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.conn;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -46,12 +46,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
-import ca.uhn.hl7v2.testpanel.model.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
+import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
+import javax.swing.ScrollPaneConstants;
 
 public class InboundConnectionPanel extends BaseMainPanel implements IDestroyable {
-	
+
 	private ActivityTable myActivityTable;
 	private InboundConnection myConnection;
 	private PropertyChangeListener myConnectionsListener;
@@ -63,78 +67,87 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 	private JSplitPane myActivitySplitPaneTab;
 	private JTabbedPane myTabbedPane;
 	private PropertyChangeListener myStatusPropertyChangeListener;
+	private ValidationHeaderPanel myValidationPanel;
 
-	
 	/**
 	 * Create the panel.
+	 * 
+	 * @param theController
 	 */
-	public InboundConnectionPanel() {
+	public InboundConnectionPanel(Controller theController) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 559, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 315, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 315, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
-		
+
 		myHeaderPanel = new Hl7ConnectionPanelHeader();
-		myHeaderPanel.setBorder(null);
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
 		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_2.fill = GridBagConstraints.BOTH;
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 0;
 		add(myHeaderPanel, gbc_panel_2);
-		
+
+		myValidationPanel = new ValidationHeaderPanel(theController);
+		GridBagConstraints gbc_ValidationPanel = new GridBagConstraints();
+		gbc_ValidationPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_ValidationPanel.fill = GridBagConstraints.BOTH;
+		gbc_ValidationPanel.gridx = 0;
+		gbc_ValidationPanel.gridy = 1;
+		add(myValidationPanel, gbc_ValidationPanel);
+
 		myTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_TabbedPane = new GridBagConstraints();
 		gbc_TabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_TabbedPane.gridx = 0;
-		gbc_TabbedPane.gridy = 1;
+		gbc_TabbedPane.gridy = 2;
 		add(myTabbedPane, gbc_TabbedPane);
 		mySettingPanelTab = new Hl7ConnectionPanel();
 		myTabbedPane.addTab("Settings", null, mySettingPanelTab, null);
 		mySettingPanelTab.setBorder(null);
-		
-				myActivitySplitPaneTab = new JSplitPane();
-				myTabbedPane.addTab("Activity", null, myActivitySplitPaneTab, null);
-				myActivitySplitPaneTab.setResizeWeight(0.3);
-				
-						JPanel panel_1 = new JPanel();
-						myActivitySplitPaneTab.setLeftComponent(panel_1);
-						panel_1.setLayout(new BorderLayout(0, 0));
-						
-								JLabel lblConnections = new JLabel("Connections");
-								panel_1.add(lblConnections, BorderLayout.NORTH);
-								
-										JScrollPane scrollPane = new JScrollPane();
-										panel_1.add(scrollPane, BorderLayout.CENTER);
-										
-										myConnectionsTableModel = new ConnectionsTableModel();
-												myConnectionsTable = new JTable();
-												myConnectionsTable.setModel(myConnectionsTableModel);
-												scrollPane.setViewportView(myConnectionsTable);
-												
-														JPanel panel = new JPanel();
-														myActivitySplitPaneTab.setRightComponent(panel);
-														panel.setLayout(new BorderLayout(0, 0));
-														
-																JLabel lblActivity = new JLabel("Activity");
-																panel.add(lblActivity, BorderLayout.NORTH);
-																
-																		myActivityTable = new ActivityTable();
-																		panel.add(myActivityTable, BorderLayout.CENTER);
+
+		myActivitySplitPaneTab = new JSplitPane();
+		myTabbedPane.addTab("Activity", null, myActivitySplitPaneTab, null);
+		myActivitySplitPaneTab.setResizeWeight(0.3);
+
+		JPanel panel_1 = new JPanel();
+		myActivitySplitPaneTab.setLeftComponent(panel_1);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		JLabel lblConnections = new JLabel("Connections");
+		panel_1.add(lblConnections, BorderLayout.NORTH);
+
+		JScrollPane scrollPane = new JScrollPane();
+		panel_1.add(scrollPane, BorderLayout.CENTER);
+
+		myConnectionsTableModel = new ConnectionsTableModel();
+		myConnectionsTable = new JTable();
+		myConnectionsTable.setModel(myConnectionsTableModel);
+		scrollPane.setViewportView(myConnectionsTable);
+
+		JPanel panel = new JPanel();
+		myActivitySplitPaneTab.setRightComponent(panel);
+		panel.setLayout(new BorderLayout(0, 0));
+
+		JLabel lblActivity = new JLabel("Activity");
+		panel.add(lblActivity, BorderLayout.NORTH);
+
+		myActivityTable = new ActivityTable();
+		myActivityTable.getScrollPane().setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		myActivityTable.getScrollPane().setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		myActivityTable.setController(theController);
+		panel.add(myActivityTable, BorderLayout.CENTER);
 	}
 
-	public void setController(Controller theController) {
-		myActivityTable.setController(theController);
-	}
-	
 	public void destroy() {
 		mySettingPanelTab.destroy();
 		myConnection.removePropertyChangeListener(InboundConnection.CONNECTIONS_PROPERTY, myConnectionsListener);
 		myConnection.removePropertyChangeListener(InboundConnection.NAME_PROPERTY, myNameListener);
 		myActivityTable.destroy();
 		myHeaderPanel.destroy();
+		myValidationPanel.destroy();
 		myConnection.removePropertyChangeListener(AbstractConnection.STATUS_PROPERTY, myStatusPropertyChangeListener);
 	}
 
@@ -143,6 +156,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		myHeaderPanel.setConnection(theConnection);
 		myConnection = theConnection;
 		myActivityTable.setConnection(theConnection);
+		myValidationPanel.setConnection(theConnection);
 
 		myConnectionsListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
@@ -151,7 +165,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		};
 		theConnection.addPropertyChangeListener(InboundConnection.CONNECTIONS_PROPERTY, myConnectionsListener);
 		myConnectionsTableModel.update();
-		
+
 		myNameListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				updateWindowTitle();
@@ -159,20 +173,20 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		};
 		theConnection.addPropertyChangeListener(InboundConnection.NAME_PROPERTY, myNameListener);
 		updateWindowTitle();
-		
+
 		if (theConnection.getStatus() == StatusEnum.STARTED || theConnection.getStatus() == StatusEnum.TRYING_TO_START) {
 			myTabbedPane.setSelectedIndex(1);
 		} else {
 			myTabbedPane.setSelectedIndex(0);
 		}
-		
+
 		myStatusPropertyChangeListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				StatusEnum oldVal = (StatusEnum) theEvt.getOldValue();
 				StatusEnum newVal = (StatusEnum) theEvt.getNewValue();
-				if (oldVal == StatusEnum.STOPPED && (newVal == StatusEnum.TRYING_TO_START||newVal == StatusEnum.STARTED)) {
+				if (oldVal == StatusEnum.STOPPED && (newVal == StatusEnum.TRYING_TO_START || newVal == StatusEnum.STARTED)) {
 					myTabbedPane.setSelectedIndex(1);
-				}else if ((oldVal == StatusEnum.TRYING_TO_START||oldVal == StatusEnum.STARTED) && newVal == StatusEnum.STOPPED) {
+				} else if ((oldVal == StatusEnum.TRYING_TO_START || oldVal == StatusEnum.STARTED) && newVal == StatusEnum.STOPPED) {
 					myTabbedPane.setSelectedIndex(0);
 				}
 			}
@@ -180,11 +194,10 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		myConnection.addPropertyChangeListener(AbstractConnection.STATUS_PROPERTY, myStatusPropertyChangeListener);
 	}
 
-
 	private void updateWindowTitle() {
 		setWindowTitle(myConnection.getName());
 	}
-	
+
 	private class ConnectionsTableModel implements TableModel {
 
 		private List<TableModelListener> myTableListeners = new ArrayList<TableModelListener>();
@@ -215,7 +228,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		public Object getValueAt(int theRowIndex, int theColumnIndex) {
 			InetAddress address = myConnection.getConnections().get(theRowIndex).getRemoteAddress();
 			int port = myConnection.getConnections().get(theRowIndex).getRemotePort();
-			return address.getCanonicalHostName() + ":" + port; 
+			return address.getCanonicalHostName() + ":" + port;
 		}
 
 		public boolean isCellEditable(int theRowIndex, int theColumnIndex) {

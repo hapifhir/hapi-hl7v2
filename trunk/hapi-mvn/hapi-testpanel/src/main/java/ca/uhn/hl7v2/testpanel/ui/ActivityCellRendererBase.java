@@ -39,6 +39,13 @@ public class ActivityCellRendererBase extends DefaultTableCellRenderer {
 		myTablePanel = theTablePanel;
 	}
 	
+	/**
+	 * @return the tablePanel
+	 */
+	public ActivityTable getTablePanel() {
+		return myTablePanel;
+	}
+
 	/* (non-Javadoc)
 	 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */

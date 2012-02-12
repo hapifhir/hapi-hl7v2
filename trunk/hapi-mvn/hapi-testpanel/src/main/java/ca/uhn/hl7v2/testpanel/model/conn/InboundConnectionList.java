@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.model;
+package ca.uhn.hl7v2.testpanel.model.conn;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -39,32 +39,31 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.Validate;
 
+import ca.uhn.hl7v2.testpanel.controller.Controller;
+import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InboundConnectionList")
-public class OutboundConnectionList extends AbstractModelClass {
+public class InboundConnectionList extends AbstractModelClass {
 
-	public static final String PROP_LIST = OutboundConnectionList.class.getName() + "_LIST";
+	public static final String PROP_LIST = InboundConnectionList.class.getName() + "_LIST";
+	
+	private List<InboundConnection> myConnections = new ArrayList<InboundConnection>();
 
-	private List<OutboundConnection> myConnections = new ArrayList<OutboundConnection>();
-
-	public OutboundConnectionList() {
+	private transient Controller myController;
+	
+	public InboundConnectionList() {
 	}
 
-	public void addConnection(OutboundConnection theCon) {
-		Validate.notNull(theCon);
-		myConnections.add(theCon);
-		firePropertyChange(PROP_LIST, null, null);
-	}
-
-	public OutboundConnection createDefaultConnection(int port) {
-		OutboundConnection initialConnection = new OutboundConnection();
+	public InboundConnection createDefaultConnection(int port) {
+		InboundConnection initialConnection = new InboundConnection();
 		initialConnection.setCharSet(Charset.defaultCharset().displayName());
 		initialConnection.setDualPort(false);
 		initialConnection.setIncomingOrSinglePort(port);
 		initialConnection.setHost("localhost");
 		initialConnection.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
+		initialConnection.setController(myController);
 		return initialConnection;
 	}
 
@@ -75,18 +74,34 @@ public class OutboundConnectionList extends AbstractModelClass {
 		return writer.toString();
 	}
 
-	public static OutboundConnectionList fromXml(String theXml) {
-		return JAXB.unmarshal(new StringReader(theXml), OutboundConnectionList.class);
+	public static InboundConnectionList fromXml(Controller theController, String theXml) {
+		InboundConnectionList retVal = JAXB.unmarshal(new StringReader(theXml), InboundConnectionList.class);
+		retVal.myController = theController;
+		
+		for (InboundConnection next : retVal.getConnections()) {
+			next.setController(theController);
+		}
+		
+		return retVal;
 	}
 
 	/**
 	 * @return the connections
 	 */
-	public List<OutboundConnection> getConnections() {
+	public List<InboundConnection> getConnections() {
 		return myConnections;
 	}
 
-	public void removeConnecion(OutboundConnection theCon) {
+	public void addConnection(InboundConnection theCon) {
+		Validate.notNull(theCon);
+		
+		myConnections.add(theCon);
+		theCon.setController(myController);
+		
+		firePropertyChange(PROP_LIST, null, null);
+	}
+
+	public void removeConnecion(InboundConnection theCon) {
 		Validate.notNull(theCon);
 		myConnections.remove(theCon);
 		firePropertyChange(PROP_LIST, null, null);
@@ -96,12 +111,12 @@ public class OutboundConnectionList extends AbstractModelClass {
 	 * Remove all connections from this list which are not {@link AbstractConnection#isPersistent() persistent}
 	 */
 	public void removeNonPersistantConnections() {
-		for (Iterator<OutboundConnection> iter = myConnections.iterator(); iter.hasNext(); ) {
+		for (Iterator<InboundConnection> iter = myConnections.iterator(); iter.hasNext(); ) {
 			if (!iter.next().isPersistent()) {
 				iter.remove();
 			}
 		}
 	}
 
-
+	
 }

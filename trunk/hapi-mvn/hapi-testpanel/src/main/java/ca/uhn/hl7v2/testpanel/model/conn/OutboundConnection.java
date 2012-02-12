@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.model;
+package ca.uhn.hl7v2.testpanel.model.conn;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -49,6 +49,10 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
+import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
+import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;

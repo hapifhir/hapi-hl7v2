@@ -74,12 +74,12 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.InboundConnection;
-import ca.uhn.hl7v2.testpanel.model.InboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.MessagesList;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnectionList;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.ScreenBoundsUtil;
 import ca.uhn.hl7v2.testpanel.util.SwingLogAppender;
@@ -1197,18 +1197,19 @@ public class TestPanelWindow implements IDestroyable {
 	 * {@inheritDoc}
 	 */
 	public void destroy() {
+		
+		// For some reason, on OSX once a window has been maximized it will keep reporting
+		// that it is even once it no longer is
 		int extState = myframe.getExtendedState();
-		switch (extState) {
-		case JFrame.MAXIMIZED_BOTH:
+		if (extState == JFrame.MAXIMIZED_BOTH && !System.getProperty("os.name").contains("Mac")) { 
 			Prefs.setWindowMaximized(true);
-			break;
-		default:
+		} else {			
 			Point location = myframe.getLocation();
 			Dimension size = myframe.getSize();
 			ourLog.info("Saving window location of {} and size of {}", location, size);
 			Prefs.setWindowPosition(location);
 			Prefs.setWindowDimension(size);
-			break;
+			Prefs.setWindowMaximized(false);
 		}
 	}
 

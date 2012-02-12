@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.conn;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -37,9 +37,12 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
+import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 
 public class OutboundConnectionPanel extends BaseMainPanel implements IDestroyable {
 
@@ -64,7 +67,6 @@ public class OutboundConnectionPanel extends BaseMainPanel implements IDestroyab
 		setLayout(gridBagLayout);
 		
 		myHeaderPanel = new Hl7ConnectionPanelHeader();
-		myHeaderPanel.setBorder(null);
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.fill = GridBagConstraints.BOTH;

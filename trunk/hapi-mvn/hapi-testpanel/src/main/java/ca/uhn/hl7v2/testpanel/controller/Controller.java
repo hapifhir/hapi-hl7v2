@@ -59,14 +59,14 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityMessage;
-import ca.uhn.hl7v2.testpanel.model.InboundConnection;
-import ca.uhn.hl7v2.testpanel.model.InboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.MessagesList;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnectionList;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
@@ -74,12 +74,12 @@ import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageEr7;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageXml;
 import ca.uhn.hl7v2.testpanel.ui.AddMessageDialog;
-import ca.uhn.hl7v2.testpanel.ui.CreateOutboundConnectionDialog;
 import ca.uhn.hl7v2.testpanel.ui.FileChooserSaveAccessory;
-import ca.uhn.hl7v2.testpanel.ui.InboundConnectionPanel;
 import ca.uhn.hl7v2.testpanel.ui.NothingSelectedPanel;
-import ca.uhn.hl7v2.testpanel.ui.OutboundConnectionPanel;
 import ca.uhn.hl7v2.testpanel.ui.TestPanelWindow;
+import ca.uhn.hl7v2.testpanel.ui.conn.CreateOutboundConnectionDialog;
+import ca.uhn.hl7v2.testpanel.ui.conn.InboundConnectionPanel;
+import ca.uhn.hl7v2.testpanel.ui.conn.OutboundConnectionPanel;
 import ca.uhn.hl7v2.testpanel.ui.editor.Hl7V2MessageEditorPanel;
 import ca.uhn.hl7v2.testpanel.util.AllFileFilter;
 import ca.uhn.hl7v2.testpanel.util.ExtensionFilter;
@@ -144,7 +144,7 @@ public class Controller {
 		String savedInboundList = Prefs.getInboundConnectionList();
 		if (StringUtils.isNotBlank(savedInboundList)) {
 			try {
-				myInboundConnectionList = InboundConnectionList.fromXml(savedInboundList);
+				myInboundConnectionList = InboundConnectionList.fromXml(this, savedInboundList);
 			} catch (Exception e) {
 				ourLog.error("Failed to load inbound connections from storage, going to create default value", e);
 				createDefaultInboundConnectionList();
@@ -733,8 +733,7 @@ public class Controller {
 			panel.setConnection((OutboundConnection) myLeftSelectedItem);
 			myView.setMainPanel(panel);
 		} else if (myLeftSelectedItem instanceof InboundConnection) {
-			InboundConnectionPanel panel = new InboundConnectionPanel();
-			panel.setController(this);
+			InboundConnectionPanel panel = new InboundConnectionPanel(this);
 			panel.setConnection((InboundConnection) myLeftSelectedItem);
 			myView.setMainPanel(panel);
 		} else if (myLeftSelectedItem == myNothingSelectedMarker) {

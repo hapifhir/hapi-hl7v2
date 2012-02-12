@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.conn;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -44,11 +44,13 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
-import ca.uhn.hl7v2.testpanel.model.InboundConnection;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
+import javax.swing.border.TitledBorder;
 
 public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 	private JTextField myNameBox;
@@ -60,7 +62,6 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 	private JButton myStopButton;
 	private PropertyChangeListener myStatusLinePropertyChangeListener;
 	private JLabel myStatusLabel;
-	private JLabel myTitleLabel;
 	private JCheckBox myRememberAsCheckBox;
 
 
@@ -68,9 +69,9 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 		myConnection = theConnection;
 
 		if (myConnection instanceof InboundConnection) {
-			myTitleLabel.setText("Incoming Message Receiver");
+			setLabelText("Incoming Message Receiver");
 		} else {
-			myTitleLabel.setText("Outgoing Message Sender");
+			setLabelText("Outgoing Message Sender");
 		}
 		
 		myNameBox.setText(theConnection.getName());
@@ -151,28 +152,21 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 	public void setLabelText(String theText) {
 		assert StringUtils.isNotBlank(theText);
 		
-		myTitleLabel.setText(theText);
+		TitledBorder titledBorder = (TitledBorder)getBorder();
+		titledBorder.setTitle(theText);
 	}
 	
 	/**
 	 * Create the panel.
 	 */
 	public Hl7ConnectionPanelHeader() {
-		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Outbound Message Sender", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 138, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
-
-		myTitleLabel = new JLabel("Outbound Message Sender");
-		GridBagConstraints gbc_TitleLabel = new GridBagConstraints();
-		gbc_TitleLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_TitleLabel.gridwidth = 2;
-		gbc_TitleLabel.gridx = 0;
-		gbc_TitleLabel.gridy = 0;
-		add(myTitleLabel, gbc_TitleLabel);
 
 		myNameBox = new JTextField();
 		myNameBox.getDocument().addDocumentListener(new SimpleDocumentListener() {
@@ -198,13 +192,13 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 		GridBagConstraints gbc_RememberAsCheckBox = new GridBagConstraints();
 		gbc_RememberAsCheckBox.insets = new Insets(0, 0, 5, 5);
 		gbc_RememberAsCheckBox.gridx = 0;
-		gbc_RememberAsCheckBox.gridy = 1;
+		gbc_RememberAsCheckBox.gridy = 0;
 		add(myRememberAsCheckBox, gbc_RememberAsCheckBox);
 		GridBagConstraints gbc_NameBox = new GridBagConstraints();
 		gbc_NameBox.insets = new Insets(0, 0, 5, 0);
 		gbc_NameBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_NameBox.gridx = 1;
-		gbc_NameBox.gridy = 1;
+		gbc_NameBox.gridy = 0;
 		add(myNameBox, gbc_NameBox);
 		myNameBox.setColumns(10);
 
@@ -213,7 +207,7 @@ public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 		gbc_panel_5.anchor = GridBagConstraints.WEST;
 		gbc_panel_5.fill = GridBagConstraints.VERTICAL;
 		gbc_panel_5.gridx = 1;
-		gbc_panel_5.gridy = 2;
+		gbc_panel_5.gridy = 1;
 		add(panel_5, gbc_panel_5);
 
 		myStartButton = new JButton("Start");

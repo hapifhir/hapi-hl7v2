@@ -82,10 +82,10 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
@@ -188,7 +188,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mysplitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				double ratio = (double) mysplitPane.getDividerLocation() / mysplitPane.getHeight();
-				ourLog.info("Resizing split to ratio: {}", ratio);
+				ourLog.debug("Resizing split to ratio: {}", ratio);
 				Prefs.setHl7EditorSplit(ratio);
 			}
 		});
