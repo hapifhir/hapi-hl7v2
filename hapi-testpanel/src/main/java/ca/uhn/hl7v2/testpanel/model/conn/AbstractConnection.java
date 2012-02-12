@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.model;
+package ca.uhn.hl7v2.testpanel.model.conn;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
@@ -47,6 +47,11 @@ import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.testpanel.controller.Controller;
+import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
+import ca.uhn.hl7v2.testpanel.model.ActivityBase;
+import ca.uhn.hl7v2.testpanel.model.ActivityIncomingBytes;
+import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.llp.ByteCapturingMinLowerLayerProtocolWrapper;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
@@ -67,6 +72,7 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	private boolean myCaptureBytes;
 	@XmlAttribute(required = true)
 	private String myCharSet;
+	private transient Controller myController;
 	@XmlAttribute(required = true)
 	private boolean myDetectCharSetInMessage;
 	@XmlAttribute(required = true)
@@ -221,6 +227,13 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	/**
+	 * @return the controller
+	 */
+	public Controller getController() {
+		return myController;
+	}
+
+	/**
 	 * @return the encoding
 	 */
 	public Hl7V2EncodingTypeEnum getEncoding() {
@@ -358,6 +371,14 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	 */
 	public void setCharSet(String theCharSet) {
 		myCharSet = theCharSet;
+	}
+
+	/**
+	 * @param theController
+	 *            the controller to set
+	 */
+	public void setController(Controller theController) {
+		myController = theController;
 	}
 
 	/**
@@ -500,7 +521,17 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	public enum StatusEnum {
-		FAILED, STARTED, STOPPED, TRYING_TO_START
+		FAILED(false), STARTED(true), STOPPED(false), TRYING_TO_START(true);
+
+		private boolean myRunning;
+
+		private StatusEnum(boolean theRunning) {
+			myRunning = theRunning;
+		}
+
+		public boolean isRunning() {
+			return myRunning;
+		}
 	}
 
 	private class StreamWatcherThread extends Thread {

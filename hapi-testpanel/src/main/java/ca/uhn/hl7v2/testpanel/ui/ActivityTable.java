@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.BoundedRangeModel;
+import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -54,20 +56,25 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.testpanel.controller.Controller;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.ActivityBase;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
-import ca.uhn.hl7v2.testpanel.model.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import javax.swing.ScrollPaneConstants;
 
 public class ActivityTable extends JPanel implements IDestroyable {
-//	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
-
+	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
 	private static final SimpleDateFormat ourTimestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+
+	private JButton clearButton;
 	private ActivityTableModel myActivityTableModel;
 	private AbstractConnection myConnection;
 	private Controller myController;
@@ -86,10 +93,9 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	private JPopupMenu mySaveMenu;
 
 	private JMenuItem mySaveSelectedButton;
-	private JScrollPane myscrollPane;
+	private JScrollPane myScrollPane;
 	private JTable myTable;
-	private JButton clearButton;
-	
+	private ActivityDetailsCellRenderer myDetailsCellRenderer;
 	public ActivityTable() {
 		super(new BorderLayout());
 		setBorder(null);
@@ -137,17 +143,17 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		});
 		toolBar.add(myEditButton);
 		
-		myscrollPane = new JScrollPane();
-		add(myscrollPane, BorderLayout.CENTER);
+		myScrollPane = new JScrollPane();
+		myScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		add(myScrollPane, BorderLayout.CENTER);
 		
 		myTable = new JTable();
-		myTable.setFillsViewportHeight(true);
 		myTable.setGridColor(Color.LIGHT_GRAY);
 //		myTable.setCellSelectionEnabled(true);
 //		myTable.setRowSelectionAllowed(true);
 		myTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		myscrollPane.setViewportView(myTable);
+//		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		myScrollPane.setViewportView(myTable);
 
 		myEditMenu = new JPopupMenu();
 
@@ -189,11 +195,18 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		updateUiBasedOnSelectedRow();
 	}
 	
-	
+	/**
+	 * @return the scrollPane
+	 */
+	public JScrollPane getScrollPane() {
+		return myScrollPane;
+	}
+
 	public void destroy() {
 		removeListeners();
 	}
-
+	
+	
 	/**
 	 * @return the connection
 	 */
@@ -247,12 +260,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						myActivityTableModel.update();
-						EventQueue.invokeLater(new Runnable() {
-							public void run() {
-								JScrollBar vsb = myscrollPane.getVerticalScrollBar();
-								vsb.setValue(vsb.getMaximum());
-							}
-						});
+						myDetailsCellRenderer.markScrollToBottom();
+						
 					}
 				});
 			}
@@ -260,11 +269,15 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myConnection.addPropertyChangeListener(AbstractConnection.RECENT_ACTIVITY_PROPERTY, myRecentActivityListener);
 		myActivityTableModel.update();
 
+//		JScrollBar vsb = myscrollPane.getVerticalScrollBar();
+//		BoundedRangeModel vsbModel = new MyVerticalScrollbarModel();
+//		vsb.setModel(vsbModel);
+		
 		myTable.getColumnModel().getColumn(0).setCellRenderer(new ActivityCellRendererBase(this));
 		myTable.getColumnModel().getColumn(1).setCellRenderer(new ActivityTypeCellRenderer(this, theConnection instanceof InboundConnection));
 		
-		ActivityDetailsCellRenderer cellRenderer = new ActivityDetailsCellRenderer(this);
-		myTable.getColumnModel().getColumn(2).setCellRenderer(cellRenderer);
+		myDetailsCellRenderer = new ActivityDetailsCellRenderer(this);
+		myTable.getColumnModel().getColumn(2).setCellRenderer(myDetailsCellRenderer);
 
 		final int timestampWidth = 100;
 		myTable.getColumnModel().getColumn(0).setMaxWidth(timestampWidth);
@@ -276,10 +289,10 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myTable.getColumnModel().getColumn(1).setMinWidth(activityWidth);
 		myTable.getColumnModel().getColumn(1).setPreferredWidth(activityWidth);
 
-//		int detailWidth = 500;
-//		myTable.getColumnModel().getColumn(2).setMaxWidth(10000);
-//		myTable.getColumnModel().getColumn(2).setMinWidth(detailWidth);
-//		myTable.getColumnModel().getColumn(2).setPreferredWidth(detailWidth);
+		int detailWidth = 5000;
+		myTable.getColumnModel().getColumn(2).setMaxWidth(detailWidth);
+		myTable.getColumnModel().getColumn(2).setMinWidth(detailWidth);
+		myTable.getColumnModel().getColumn(2).setPreferredWidth(detailWidth);
 	}
 
 	/**
@@ -305,7 +318,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myEditSelectedButton.setEnabled(messageSelected);
 	}
 
-	private class ActivityTableModel implements TableModel {
+	class ActivityTableModel implements TableModel {
 
 		private List<TableModelListener> myTableListeners = new ArrayList<TableModelListener>();
 
@@ -382,5 +395,58 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		}
 
 	}
+
+	public ActivityTableModel getTableModel() {
+		return myActivityTableModel;
+	}
+
+//	public class MyVerticalScrollbarModel extends DefaultBoundedRangeModel implements BoundedRangeModel {
+//
+//		@Override
+//		public void setRangeProperties(int theNewValue, int theNewExtent, int theNewMin, int theNewMax, boolean theAdjusting) {
+//			super.setRangeProperties(theNewValue, theNewExtent, theNewMin, theNewMax, theAdjusting);
+//			
+//			int oldVal = getValue();
+//			int newVal = getMaximum();
+//	        newVal = Math.min(newVal, Integer.MAX_VALUE - getExtent());
+//
+//	        newVal = Math.max(newVal, getMinimum());
+//	        if (newVal + getExtent() > getMaximum()) {
+//	            newVal = getMaximum() - getExtent(); 
+//	        }
+//
+//			if (oldVal != newVal) {
+//				ourLog.info("Changing scrollbar max from {} to {}", oldVal, newVal);
+//				setValue(getMaximum());
+//			}
+//		}
+//
+//		@Override
+//		public void setMaximum(int theN) {
+//			super.setMaximum(theN);
+//
+//			int oldVal = getValue();
+//			int newVal = getMaximum();
+//			
+//			if (oldVal != newVal) {
+//				ourLog.info("Changing scrollbar max/max from {} to {}", oldVal, newVal);
+//				setValue(getMaximum());
+//			}
+//		}
+//		
+//		 public void setValue(int n) {
+//		        n = Math.min(n, Integer.MAX_VALUE - getExtent());
+//
+//		        int newValue = Math.max(n, getMinimum());
+//		        if (newValue + getExtent() > getMaximum()) {
+//		            newValue = getMaximum() - getExtent(); 
+//		        }
+//		        
+//				ourLog.info("Changing scrollbarval to {}", newValue);
+//
+//		        super.setRangeProperties(newValue, getExtent(), getMinimum(), getMaximum(), getValueIsAdjusting());
+//		    }
+//
+//	}
 
 }

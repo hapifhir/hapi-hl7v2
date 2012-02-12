@@ -29,6 +29,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+
 public class OutboundConnectionTest {
 	
 	@Test

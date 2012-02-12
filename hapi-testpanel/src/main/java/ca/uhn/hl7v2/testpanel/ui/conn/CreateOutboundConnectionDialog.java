@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.conn;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -37,7 +37,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 
 public class CreateOutboundConnectionDialog extends JDialog implements IDestroyable {

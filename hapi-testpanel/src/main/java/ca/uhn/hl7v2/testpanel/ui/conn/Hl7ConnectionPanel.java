@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.ui;
+package ca.uhn.hl7v2.testpanel.ui.conn;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -53,9 +53,10 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.AbstractConnection.StatusEnum;
-import ca.uhn.hl7v2.testpanel.model.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 

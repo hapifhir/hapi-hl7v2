@@ -29,6 +29,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnectionList;
+
 public class InboundConnectionListTest {
 	
 	@Test
@@ -49,7 +52,7 @@ public class InboundConnectionListTest {
 		String val = list.exportConfigToXml();
 		System.out.println(val);
 		
-		InboundConnectionList actual = InboundConnectionList.fromXml(val);
+		InboundConnectionList actual = InboundConnectionList.fromXml(null, val);
 		
 		Assert.assertEquals(2, actual.getConnections().size());
 	}

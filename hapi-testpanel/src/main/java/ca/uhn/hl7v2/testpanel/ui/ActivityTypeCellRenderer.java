@@ -36,6 +36,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
 import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 
 public class ActivityTypeCellRenderer extends ActivityCellRendererBase {
 
@@ -88,6 +89,15 @@ public class ActivityTypeCellRenderer extends ActivityCellRendererBase {
 		} else if (obj instanceof ActivityOutgoingBytes) {
 			setText(myOutgoingBytesDescription);
 			setIcon(ImageFactory.getMessageOut());
+		} else if (obj instanceof ActivityValidationOutcome) {
+			ActivityValidationOutcome v = (ActivityValidationOutcome)obj;
+			if (v.isValidated()) {
+				setIcon(ImageFactory.getValPassedGreen());
+			} else {
+				setIcon(ImageFactory.getValFailed());
+			}
+			setText("Validation");
+//			setIcon(null);
 		} else if (obj instanceof ActivityInfoError) {
 			setText("Error");
 			setIcon(null);

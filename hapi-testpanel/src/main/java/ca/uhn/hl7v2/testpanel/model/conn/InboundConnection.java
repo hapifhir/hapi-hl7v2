@@ -23,7 +23,7 @@
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
-package ca.uhn.hl7v2.testpanel.model;
+package ca.uhn.hl7v2.testpanel.model.conn;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 import org.slf4j.Logger;
@@ -50,30 +51,37 @@ import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.conf.ProfileException;
+import ca.uhn.hl7v2.conf.check.DefaultValidator;
+import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
+import ca.uhn.hl7v2.util.Terser;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InboundConnection")
 public class InboundConnection extends AbstractConnection {
 
 	public static final String CONNECTIONS_PROPERTY = InboundConnection.class.getName() + "_CONNECTIONS_PROP";
-
 	private static final Logger ourLog = LoggerFactory.getLogger(InboundConnection.class);
+
+	public static final String PROP_VALIDATE_INCOMING = InboundConnection.class.getName() + "_VALIDATE_INCOMING";
 	private transient List<Connection> myConnections = new ArrayList<Connection>();
 	private transient Handler myHandler = new Handler();
 	private transient MonitorThread myMonitorThread;
-	private transient HL7Service myService;
 	private transient Parser myParser;
+	private transient HL7Service myService;
 
-	/**
-	 * @return the connections
-	 */
-	public List<Connection> getConnections() {
-		return myConnections;
-	}
-	
+
+	@XmlAttribute(name="validateIncomingUsingProfileGroupId")
+	private String myValidateIncomingUsingProfileGroupId;
+
 	@Override
 	public String exportConfigToXml() {
 		StringWriter writer = new StringWriter();
@@ -81,10 +89,29 @@ public class InboundConnection extends AbstractConnection {
 		return writer.toString();
 	}
 
-	public static InboundConnection fromXml(String theXml) {
-		return JAXB.unmarshal(new StringReader(theXml), InboundConnection.class);
+	/**
+	 * @return the connections
+	 */
+	public List<Connection> getConnections() {
+		return myConnections;
+	}
+
+	/**
+	 * @return the validateIncomingUsingProfileGroupId
+	 */
+	public String getValidateIncomingUsingProfileGroupId() {
+		return myValidateIncomingUsingProfileGroupId;
 	}
 	
+	/**
+	 * @param theValidateIncomingUsingProfileGroupId the validateIncomingUsingProfileGroupId to set
+	 */
+	public void setValidateIncomingUsingProfileGroupId(String theValidateIncomingUsingProfileGroupId) {
+		String oldValue = myValidateIncomingUsingProfileGroupId;
+		myValidateIncomingUsingProfileGroupId = theValidateIncomingUsingProfileGroupId;
+		firePropertyChange(PROP_VALIDATE_INCOMING, oldValue, theValidateIncomingUsingProfileGroupId);
+	}
+
 	@Override
 	public void start() {
 		super.start();
@@ -111,7 +138,7 @@ public class InboundConnection extends AbstractConnection {
 
 		updateStatus();
 	}
-
+	
 	@Override
 	public void stop() {
 		super.stop();
@@ -151,6 +178,10 @@ public class InboundConnection extends AbstractConnection {
 		}
 	}
 
+	public static InboundConnection fromXml(String theXml) {
+		return JAXB.unmarshal(new StringReader(theXml), InboundConnection.class);
+	}
+
 	/**
 	 * Listens to the service for updates
 	 */
@@ -186,6 +217,28 @@ public class InboundConnection extends AbstractConnection {
 				
 				final Message response = theIn.generateACK();
 
+				if (getValidateIncomingUsingProfileGroupId() != null) {
+					ProfileGroup profileGroup = getController().getProfileFileList().getProfile(getValidateIncomingUsingProfileGroupId());
+					Terser t = new Terser(theIn);
+					String evtType = t.get("/MSH-9-1");
+					String evtTrigger = t.get("/MSH-9-2");
+					try {
+						Entry profileEntry = profileGroup.getProfileForMessage(evtType, evtTrigger);
+						RuntimeProfile profile = profileEntry.getProfileProxy().getProfile();
+						
+						DefaultValidator validator = new DefaultValidator();
+						if (profileEntry.getTablesId() != null) {
+							validator.setCodeStore(getController().getTableFileList().getTableFile(profileEntry.getTablesId()));
+						}
+						HL7Exception[] problems = validator.validate(theIn, profile.getMessage());
+						addActivity(new ActivityValidationOutcome(new Date(), problems));
+						
+					} catch (ProfileException e) {
+						ourLog.error("Failed to load profile", e);
+					}
+				}
+				
+				
 				addActivity(new ActivityOutgoingMessage(new Date(), getEncoding(), myParser.encode(response), EncodingCharacters.getInstance(response)));
 
 				return response;

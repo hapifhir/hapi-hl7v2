@@ -25,22 +25,24 @@
  */
 package ca.uhn.hl7v2.testpanel.ui;
 
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Graphics;
 
+import javax.swing.JScrollBar;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.testpanel.model.ActivityBytesBase;
 import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
 import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
 import ca.uhn.hl7v2.testpanel.model.ActivityMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 import ca.uhn.hl7v2.testpanel.util.FormatUtil;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 
@@ -50,6 +52,8 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 	private Font myFixedWidthFont;
 	private Font myVarWidthFont;
+
+	private boolean myScrollToBottom;
 
 	public ActivityDetailsCellRenderer(ActivityTable theTablePanel) {
 		super(theTablePanel);
@@ -64,41 +68,208 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 		if (theValue instanceof ActivityInfo) {
 
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<html>");
-
-			if (theValue instanceof ActivityInfoError) {
-				stringBuilder.append("<font color=\"#800000\">");
-			}
-
-			stringBuilder.append("<nobr>");
-			String message = ((ActivityInfo) theValue).getMessage();
-			stringBuilder.append(message);
-			stringBuilder.append("</nobr>");
-
-			if (theValue instanceof ActivityInfoError) {
-				stringBuilder.append("</font>");
-			}
-
-			stringBuilder.append("</html>");
-			String text = stringBuilder.toString();
-
-			setText(message);
-			// setText(text);
-
-			setFont(myVarWidthFont);
-
-			if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						theTable.setRowHeight(theRow, theTable.getRowHeight());
-					}
-				});
-			}
+			renderInfo(theTable, theValue, theRow);
 
 		} else if (theValue instanceof ActivityMessage) {
 
-			ActivityMessage msg = (ActivityMessage) theValue;
+			renderMessage(theTable, theValue, theRow, theIsSelected);
+
+		} else if (theValue instanceof ActivityBytesBase) {
+
+			renderBytes(theTable, theValue, theRow);
+
+		} else if (theValue instanceof ActivityValidationOutcome) {
+
+			renderValidation(theTable, (ActivityValidationOutcome) theValue, theRow);
+
+		}
+
+		// int prefHeight = getPreferredSize().height;
+		// prefHeight = Math.max(prefHeight, 10);
+		// if (prefHeight != theTable.getRowHeight(theRow)) {
+		// ourLog.trace("Setting height of row {} to {}", theRow, prefHeight);
+		// theTable.setRowHeight(theRow, prefHeight);
+		// }
+
+		// EventQueue.invokeLater(new Runnable() {
+		// public void run() {
+		// int minWidth = getPreferredSize().width + 200;
+		//
+		// if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
+		// theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
+		// theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
+		// theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
+		// }
+		// }});
+
+		// ourLog.info("Rendering row {}", theRow);
+
+		// EventQueue.invokeLater(new Runnable() {
+		// public void run() {
+		// getTablePanel().
+		// JScrollBar vsb = myscrollPane.getVerticalScrollBar();
+		// vsb.setValue(vsb.getMaximum());
+		// ourLog.info("Setting scrollbar to bottom: {}", vsb.getMaximum());
+		// }
+		// });
+		if (myScrollToBottom) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					JScrollBar vsb = getTablePanel().getScrollPane().getVerticalScrollBar();
+					int newValue = vsb.getMaximum();
+					int existingValue = vsb.getValue();
+					if (newValue != existingValue) {
+						vsb.setValue(newValue);
+						ourLog.debug("Setting scrollbar to bottom, from {} to {}", existingValue, newValue);
+					}
+
+					if (theRow == getTablePanel().getTableModel().getRowCount() - 1) {
+						myScrollToBottom = false;
+					}
+				}
+			});
+
+		}
+
+		return this;
+	}
+
+	private void renderValidation(JTable theTable, ActivityValidationOutcome theValue, int theRow) {
+		if (theValue.isValidated()) {
+
+			setText("No Errors");
+
+		} else {
+
+			StringBuilder b = new StringBuilder("<html>");
+
+			b.append("<font color=\"#800000\">");
+			b.append("<ul>");
+
+			for (HL7Exception next : theValue.getIssues()) {
+				b.append("<li>");
+				if (StringUtils.isNotBlank(next.getSegmentName())) {
+					b.append("<b>");
+					b.append(next.getSegmentName());
+					if (next.getSegmentRepetition() > 1) {
+						b.append("(").append(next.getSegmentRepetition()).append(")");
+					}
+					if (next.getFieldPosition() > 0) {
+						b.append("-");
+						b.append(next.getFieldPosition());
+					}
+					b.append("</b>: ");
+				}
+				b.append("<nobr>").append(next.getMessage()).append("</nobr>");
+				b.append("</li>");
+			}
+
+			b.append("</ul>");
+			b.append("</font>");
+			b.append("</html>");
+			setText(b.toString());
+
+		}
+
+		updatePreferredHeight(theTable, theRow);
+
+	}
+
+	private void renderBytes(final JTable theTable, Object theValue, final int theRow) {
+		ActivityBytesBase msg = (ActivityBytesBase) theValue;
+
+		StringBuilder b = new StringBuilder();
+		b.append("<html>");
+		b.append("<table>");
+
+		StringBuilder charsB = new StringBuilder();
+		StringBuilder bytesB = new StringBuilder();
+
+		byte[] bytes = msg.getBytes();
+		for (int i = 0; i < bytes.length; i++) {
+
+			if (i == 0) {
+				b.append("<tr>");
+			} else if (i % 20 == 0) {
+				b.append("<td><nobr>");
+				b.append(charsB.toString());
+				for (int j = charsB.toString().length(); j < 20; j++) {
+					b.append("&nbsp;");
+				}
+				b.append("</nobr></td><td><nobr>");
+				b.append(bytesB.toString());
+				b.append("</nobr></td></tr><tr>");
+				charsB.setLength(0);
+				bytesB.setLength(0);
+			}
+
+			byte nextByte = bytes[i];
+			if (nextByte < 32) {
+				charsB.append("&nbsp;");
+			} else {
+				charsB.append(new String(new byte[] { nextByte }));
+			}
+
+			String byteToString = Integer.toString(nextByte);
+			if (nextByte < 32) {
+				byteToString = "<font color=\"#FF0000\">" + byteToString + "</font>";
+			}
+
+			if (nextByte < 100) {
+				bytesB.append("&nbsp;");
+			}
+			bytesB.append(byteToString).append("&nbsp;");
+
+		}
+
+		b.append("<td><nobr>");
+		b.append(charsB.toString());
+		for (int j = charsB.toString().length(); j < 20; j++) {
+			b.append("&nbsp;");
+		}
+		b.append("</nobr></td><td><nobr>");
+		b.append(bytesB.toString());
+		b.append("</nobr></td></tr><tr>");
+		b.append("</tr>");
+		b.append("</table>");
+		b.append("</html>");
+
+		String rawMessage = b.toString();
+		setText(rawMessage);
+		setFont(myFixedWidthFont);
+		setForeground(Color.black);
+
+		updatePreferredHeight(theTable, theRow);
+//		updateHeight(theTable, theRow);
+	}
+
+	private void renderInfo(final JTable theTable, Object theValue, final int theRow) {
+		if (theValue instanceof ActivityInfoError) {
+			setForeground(Color.red);
+		} else {
+			setForeground(Color.black);
+		}
+
+		String message = ((ActivityInfo) theValue).getMessage();
+		setText(message);
+		// setText(text);
+
+		setFont(myVarWidthFont);
+
+		if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					theTable.setRowHeight(theRow, theTable.getRowHeight());
+				}
+			});
+		}
+	}
+
+	private void renderMessage(final JTable theTable, Object theValue, final int theRow, boolean theSelected) {
+		ActivityMessage msg = (ActivityMessage) theValue;
+
+		if (theSelected) {
+
 			String rawMessage;
 			if (msg.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
 				StringBuilder b = new StringBuilder();
@@ -154,112 +325,32 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 			}
 
-			// setText(rawMessage);
+			setText(rawMessage);
+
+		} else {
 
 			setText("<html>" + msg.getRawMessage().replace("\r", "<br>") + "</html>");
-			setFont(myFixedWidthFont);
-
-			final int newHeight = (int) getPreferredSize().getHeight();
-			if (theTable.getRowHeight(theRow) != newHeight) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						theTable.setRowHeight(theRow, newHeight);
-					}
-				});
-			}
-
-		} else if (theValue instanceof ActivityBytesBase) {
-
-			ActivityBytesBase msg = (ActivityBytesBase) theValue;
-
-			StringBuilder b = new StringBuilder();
-			b.append("<html>");
-			b.append("<table>");
-
-			StringBuilder charsB = new StringBuilder();
-			StringBuilder bytesB = new StringBuilder();
-
-			byte[] bytes = msg.getBytes();
-			for (int i = 0; i < bytes.length; i++) {
-
-				if (i == 0) {
-					b.append("<tr>");
-				} else if (i % 20 == 0) {
-					b.append("<td><nobr>");
-					b.append(charsB.toString());
-					for (int j = charsB.toString().length(); j < 20; j++) {
-						b.append("&nbsp;");
-					}
-					b.append("</nobr></td><td><nobr>");
-					b.append(bytesB.toString());
-					b.append("</nobr></td></tr><tr>");
-					charsB.setLength(0);
-					bytesB.setLength(0);
-				}
-
-				byte nextByte = bytes[i];
-				if (nextByte < 32) {
-					charsB.append("&nbsp;");
-				} else {
-					charsB.append(new String(new byte[] { nextByte }));
-				}
-
-				String byteToString = Integer.toString(nextByte);
-				if (nextByte < 32) {
-					byteToString = "<font color=\"#FF0000\">" + byteToString + "</font>";
-				}
-
-				if (nextByte < 100) {
-					bytesB.append("&nbsp;");
-				}
-				bytesB.append(byteToString).append("&nbsp;");
-
-			}
-
-			b.append("<td><nobr>");
-			b.append(charsB.toString());
-			for (int j = charsB.toString().length(); j < 20; j++) {
-				b.append("&nbsp;");
-			}
-			b.append("</nobr></td><td><nobr>");
-			b.append(bytesB.toString());
-			b.append("</nobr></td></tr><tr>");
-			b.append("</tr>");
-			b.append("</table>");
-			b.append("</html>");
-
-			String rawMessage = b.toString();
-			setText(rawMessage);
-			setFont(myFixedWidthFont);
-
-			if (theTable.getRowHeight(theRow) != theTable.getRowHeight()) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						theTable.setRowHeight(theRow, theTable.getRowHeight());
-					}
-				});
-			}
-
 		}
 
-		// int prefHeight = getPreferredSize().height;
-		// prefHeight = Math.max(prefHeight, 10);
-		// if (prefHeight != theTable.getRowHeight(theRow)) {
-		// ourLog.trace("Setting height of row {} to {}", theRow, prefHeight);
-		// theTable.setRowHeight(theRow, prefHeight);
-		// }
+		setBackground(Color.white);
+		setForeground(Color.black);
+		setFont(myFixedWidthFont);
 
-		// EventQueue.invokeLater(new Runnable() {
-		// public void run() {
-		// int minWidth = getPreferredSize().width + 200;
-		//
-		// if (minWidth > theTable.getColumnModel().getColumn(2).getWidth()) {
-		// theTable.getColumnModel().getColumn(2).setMinWidth(getPreferredSize().width);
-		// theTable.getColumnModel().getColumn(2).setMaxWidth(getPreferredSize().width);
-		// theTable.getColumnModel().getColumn(2).setPreferredWidth(getPreferredSize().width);
-		// }
-		// }});
+		updatePreferredHeight(theTable, theRow);
+	}
 
-		return this;
+	private void updatePreferredHeight(final JTable theTable, final int theRow) {
+		final int newHeight = (int) getPreferredSize().getHeight();
+		if (theTable.getRowHeight(theRow) != newHeight) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					theTable.setRowHeight(theRow, newHeight);
+				}
+			});
+		}
+	}
+
+	public void markScrollToBottom() {
+		myScrollToBottom = true;
 	}
 }
