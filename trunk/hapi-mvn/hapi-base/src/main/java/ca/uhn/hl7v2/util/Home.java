@@ -25,7 +25,7 @@ public class Home {
      * first time this method is called, so changes will not take place 
      * until a new VM is started.  
      * This method is guaranteed to return a directory.  If hapi.home is 
-     * not set, or is set to a non-directory path, the current directory will 
+     * not set, or is set to a non-directory path, the current working directory will 
      * be used.  
      */
     public static File getHomeDirectory() {
