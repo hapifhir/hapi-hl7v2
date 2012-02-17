@@ -127,7 +127,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 			//BufferedReader in = new BufferedReader(new FileReader(messageFilePath));
 	 
 			StringBuffer msgBuf = new StringBuffer();
-			HashMap segments = new HashMap();
+			HashMap<String, String> segments = new HashMap<String, String>();
 			Message msg = null;
 		
 			boolean eof = false;
@@ -163,9 +163,11 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						Integer.parseInt(lineSplit[1]);
 						lineKey = lineKey + "|" + lineSplit[1];
 					} catch (NumberFormatException e) {
-						int stop = 1;
+						// Ignore
+//						int stop = 1;
 					} catch (ArrayIndexOutOfBoundsException e) {
-						int stop = 1;
+						// Ignore
+//						int stop = 1;
 					}
 					segments.put(lineKey, line);
 					msgBuf.append(line+"\r");
@@ -179,7 +181,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						++numParsingErrors;
 						ourLog.info("Parsing errors with message:\n" + msgStr, e);
 					}
-					entries.add(new LibraryEntry(new String(msgStr), new HashMap(segments), msg));
+					entries.add(new LibraryEntry(new String(msgStr), new HashMap<String, String>(segments), msg));
 					//reset for next message
 					msgBuf.setLength(0);
 					segments.clear();
@@ -204,11 +206,10 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 * @return a stream of HL7 messages
 	 */
 	public ByteArrayInputStream getAsByteArrayInputStream() {
-		Iterator msgs = this.iterator();
+		Iterator<LibraryEntry> msgs = this.iterator();
 		StringBuffer inputMessages = new StringBuffer();
 		while (msgs.hasNext()) {
 			LibraryEntry entry = (LibraryEntry) msgs.next();
-			String temp = entry.messageString();
 			inputMessages.append(START_MESSAGE + entry.messageString() + END_MESSAGE + LAST_CHARACTER);
 		}			
 		return new ByteArrayInputStream(inputMessages.toString().getBytes());
