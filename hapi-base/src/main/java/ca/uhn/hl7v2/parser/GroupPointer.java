@@ -134,7 +134,7 @@ public class GroupPointer extends Pointer {
         for (int i = 0; i < childNames.length; i++) {
             Pointer p;
             //make new SegmentPointer or GroupPointer depending on whether child is a Group ... 
-            Class childClass = currentGroup.getClass(childNames[i]);
+            Class<?> childClass = currentGroup.getClass(childNames[i]);
             if (Group.class.isAssignableFrom(childClass)) {
                 p = new GroupPointer(this.parser, currentGroup, i, this.encodingChars);
             }
