@@ -1,10 +1,8 @@
 package ca.uhn.hl7v2.model.composite;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Message;
-//import ca.uhn.hl7v2.model.v25.datatype.XCN;
 
 /**
  * NOT YET IN USE
