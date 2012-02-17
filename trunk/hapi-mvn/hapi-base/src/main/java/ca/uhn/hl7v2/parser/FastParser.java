@@ -51,16 +51,10 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
- * A Parser for the ER7 encoding, which is faster than PipeParser, but fussier and harder to use.
- * It's harder to use in that you must tell it ahead of time which segments and fields to parse 
- * for each event, as well as where in a message structure to find each segment.  It's fussier in 
- * that each segment you identify as to-be-parsed must always be present in the message (although 
- * it can be empty -- the minimum needed is the segment name and a carriage return).  
+ * This class has been deprecated and should not be used.
  * 
- * Note that an instance of configuration data (see StructRef below) takes on some state during parsing, 
- * so it can only be used to parse one message at a time.  There is a synchronized block to ensure this, 
- * but if parallel parsing with the same configuration (e.g. parsing multiple messages of the same event 
- * at once) is needed, you may want to pool some FastParsers or use separate ones in separate threads. 
+ * PipeParser has been optimized and is now roughly 20% faster than FastParser (see
+ * FastParserTest for a test of this) 
  *    
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $
