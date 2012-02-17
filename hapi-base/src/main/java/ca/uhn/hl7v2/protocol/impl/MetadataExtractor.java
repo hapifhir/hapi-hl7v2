@@ -26,11 +26,11 @@ public class MetadataExtractor {
      *      form required by <code>Terser</code>.  
      * @return a Map from Terser paths to field values 
      */
-    public static Map getFields(Message theMessage, List theTerserPaths) throws HL7Exception {
-        Map fields = new HashMap();
+    public static Map<String, String> getFields(Message theMessage, List<String> theTerserPaths) throws HL7Exception {
+        Map<String, String> fields = new HashMap<String, String>();
         Terser terser = new Terser(theMessage);
         for (int i = 0; i < theTerserPaths.size(); i++) {
-            String path = (String) theTerserPaths.get(i);
+            String path = theTerserPaths.get(i);
             String fieldValue = terser.get(path);
             fields.put(path, fieldValue);
         }
