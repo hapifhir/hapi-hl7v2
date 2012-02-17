@@ -38,11 +38,11 @@ public class MetadataExtractorTest extends TestCase {
         String a = "/MSH-10";
         String b = "/MSH-12";
         String c = "/.ROL-10-1";
-        ArrayList paths = new ArrayList();
+        ArrayList<String> paths = new ArrayList<String>();
         paths.add(a);
         paths.add(b);
         paths.add(c);
-        Map fields = MetadataExtractor.getFields(message, paths);
+        Map<String, String> fields = MetadataExtractor.getFields(message, paths);
         
         assertEquals("a", fields.get(a));
         assertEquals("b", fields.get(b));
