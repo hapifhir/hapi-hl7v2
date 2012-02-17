@@ -32,8 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
-import ca.uhn.hl7v2.util.LibraryEntry;
 import ca.uhn.hl7v2.util.MessageLibrary;
 
 /**
@@ -51,7 +49,7 @@ public class MinLLPReaderTest extends TestCase {
     static final char LAST_CHARACTER = 13;
 
     private String message;
-    private byte[] sendMessage;
+//    private byte[] sendMessage;
     private MinLLPReader minLLPReader;
     private ByteArrayInputStream inputStream;
 
@@ -74,7 +72,7 @@ public class MinLLPReaderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         message = "This is a test HL7 message";
-        sendMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
+//        sendMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
         minLLPReader = new MinLLPReader();
         inputStream = MinLLPWriterTest.getMessageLib().getAsByteArrayInputStream();
     }
@@ -85,7 +83,7 @@ public class MinLLPReaderTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         message = null;
-        sendMessage = null;
+//        sendMessage = null;
         minLLPReader = null;
     }
 
@@ -222,7 +220,7 @@ public class MinLLPReaderTest extends TestCase {
                 new TestSpec(Integer.toString(LAST_CHARACTER), LLPException.class),
                 new TestSpec(Integer.toString(START_MESSAGE) + Integer.toString(END_MESSAGE) + Integer.toString(LAST_CHARACTER), LLPException.class), };
 
-        ArrayList failedTests = new ArrayList();
+        ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
         for (int i = 0; i < tests.length; i++) {
             if (!tests[i].executeTest())
@@ -243,7 +241,7 @@ public class MinLLPReaderTest extends TestCase {
             fail("Problem setting up test conditions");
         }
         try {
-            String recvMessage = minLLPReader.getMessage();
+            minLLPReader.getMessage();
             fail("Input stream should be closed");
         } catch (IOException ioe) {
         } catch (LLPException llpe) {
