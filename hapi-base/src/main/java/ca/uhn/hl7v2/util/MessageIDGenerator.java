@@ -6,14 +6,24 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates unique message IDs.  IDs are stored in a file called <hapi.home>/id_file for persistence
+ * <p>
+ * Creates unique message IDs.  IDs are stored in a file called {@link Home#getHomeDirectory() hapi.home}/id_file for persistence
  * across JVM sessions.  Note that if one day you run the JVM with a new working directory,
  * you must move or copy id_file into this directory so that new ID numbers will begin
  * with the last one used, rather than starting over again.
+ * </p>
+ * <p>
+ * Note that as of HAPI 2.0, by default this class will not fail even if the id_file can
+ * not be read/written. In this case, HAPI will try to fail gracefully by simply generating
+ * a numeric sequence starting at zero. This behaviour can be overwritten using 
+ * {@link #NEVER_FAIL_PROPERTY}
+ * </p>
+ * 
  * @author Neal Acharya
  */
 public class MessageIDGenerator {
@@ -21,6 +31,16 @@ public class MessageIDGenerator {
 	private static final Logger ourLog = LoggerFactory.getLogger(MessageIDGenerator.class.getName());
     private static MessageIDGenerator messageIdGenerator;
     private static final String idFile = Home.getHomeDirectory().getAbsolutePath() + "/id_file";
+    
+    /**
+     * System property key which indicates that this class should never fail. If this
+     * system property is set to false (default is true), as in the following code:<br>
+     * <code>System.setProperty(MessageIDGenerator.NEVER_FAIL_PROPERTY, Boolean.FALSE.toString());</code><br>
+     * this class will fail if the underlying disk file can not be
+     * read or written. This means you are roughly guaranteed a unique
+     * ID number between JVM sessions (barring the file getting lost or corrupted). 
+     */
+    public static final String NEVER_FAIL_PROPERTY = MessageIDGenerator.class.getName() + "_NEVER_FAIL_PROPERTY";
     
     private long id;
     private FileWriter fileW;
@@ -72,10 +92,17 @@ public class MessageIDGenerator {
                 //Fix for bug 1100881:  Close the file after writing.
                 fileR.close();
             }//end else
-        }//end try
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             ourLog.error("Failed to locate ID file", e);
-        }//end catch
+        } catch (IOException e) {
+        	if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {
+        		ourLog.warn("Could not retrieve ID file, going to default to ID of 0. Message was: {}", e.getMessage());
+        		id = 0;
+        		return;
+        	} else {
+        		throw e;
+        	}
+        }
     }//end constructor code
     
     /**
@@ -91,16 +118,24 @@ public class MessageIDGenerator {
      * Synchronized method used to return the incremented id value
      */
     public synchronized String getNewID()throws IOException{
-        //increment the private field
-        id = id + 1;
-        //create an instance of the Filewriter Object pointing to "C:\\extfiles\\Idfile.txt"
-        fileW = new FileWriter(idFile, false);
-        //write the id value to the file
-        String idStr = String.valueOf(id);
-        fileW.write(idStr);
-        fileW.flush();
-        fileW.close();
-        return String.valueOf(id);
+    	try {
+	    	//increment the private field
+	        id = id + 1;
+	        //create an instance of the Filewriter Object pointing to "C:\\extfiles\\Idfile.txt"
+	        fileW = new FileWriter(idFile, false);
+	        //write the id value to the file
+	        String idStr = String.valueOf(id);
+	        fileW.write(idStr);
+	        fileW.flush();
+	        fileW.close();
+    	} catch (IOException e) {
+        	if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {
+        		ourLog.debug("Failed to create next file. Message was: {}", e.getMessage());
+        	} else {
+        		throw e;
+        	}
+    	}
+    	return String.valueOf(id);
     }//end method
     
 }
