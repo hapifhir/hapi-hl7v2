@@ -34,6 +34,7 @@ import java.awt.*;
 /**
  * A dialog box for opening a new Connection (used with TestPanel). 
  * @author Bryan Tripp
+ * @deprecated
  */
 @SuppressWarnings("serial")
 public class ConnectionDialog extends JDialog {
@@ -149,7 +150,8 @@ public class ConnectionDialog extends JDialog {
         setVisible(true);
     }
     
-    private void connect() {
+    @SuppressWarnings("deprecation")
+	private void connect() {
         try {
             if (onePort.isSelected()) {
                 testPanel.connect(host.getText(), Integer.parseInt(port.getText()));
@@ -169,11 +171,4 @@ public class ConnectionDialog extends JDialog {
     }
     
 
-    public static void main(String[] args) {             
-        try {
-            new ConnectionDialog(new TestPanel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
