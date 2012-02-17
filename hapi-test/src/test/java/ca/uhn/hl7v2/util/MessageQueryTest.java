@@ -17,6 +17,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:30 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("deprecation")
 public class MessageQueryTest extends TestCase {
 
     private PipeParser myParser = new PipeParser();
