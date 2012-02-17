@@ -528,7 +528,7 @@ public class CommonTS {
                 //if the offset does not exist and a timvalue does not exist then
                 //we must provide a default offset = to the local time zone
                 if (timeVal == null && offsetExists == false) {
-                    int defaultOffset = DataTypeUtil.getLocalGMTOffset();
+//                    int defaultOffset = DataTypeUtil.getLocalGMTOffset();
                     tm = new CommonTM();
                     //tm.setOffset(defaultOffset);
                     tm.setValue("");
