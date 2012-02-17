@@ -220,6 +220,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValue(Calendar theCalendar) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValue(theCalendar);
     }
 
@@ -234,6 +235,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValue(Date theDate) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValue(theDate);
     }
     
@@ -246,6 +248,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValueToMinute(Calendar theCalendar) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValueToMinute(theCalendar);
     }
 
@@ -259,6 +262,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValueToMinute(Date theDate) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValueToMinute(theDate);
     }
 
@@ -271,6 +275,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValueToSecond(Calendar theCalendar) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValueToSecond(theCalendar);
     }
 
@@ -283,6 +288,7 @@ public abstract class TSComponentOne extends AbstractPrimitive {
      * @since 1.1 
      */
     public void setValueToSecond(Date theDate) throws DataTypeException {
+    	setValue((String)null);
         getDetail().setValueToSecond(theDate);
     }
 

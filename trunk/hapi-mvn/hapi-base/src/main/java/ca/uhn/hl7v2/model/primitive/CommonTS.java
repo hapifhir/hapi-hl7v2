@@ -245,10 +245,16 @@ public class CommonTS {
     } //end method
     
     /**
-     * Return the value as a calendar object
+     * Return the value as a calendar object. If the value is null (e.g. no value has
+     * been set), returns null
+     * 
      * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
+    	if (getValue() == null) {
+    		return null;
+    	}
+    	
         Calendar retVal = tm.getValueAsCalendar();
 
         retVal.set(Calendar.YEAR, getYear());
@@ -259,11 +265,17 @@ public class CommonTS {
     }
 
     /**
-     * Return the value as a date object
+     * Return the value as a date objectIf the value is null (e.g. no value has
+     * been set), returns null
+     * 
      * @since 1.1 
      */
     public Date getValueAsDate() {
-        return getValueAsCalendar().getTime();
+    	if (getValue() == null) {
+    		return null;
+    	}
+
+    	return getValueAsCalendar().getTime();
     }
     
     /**
