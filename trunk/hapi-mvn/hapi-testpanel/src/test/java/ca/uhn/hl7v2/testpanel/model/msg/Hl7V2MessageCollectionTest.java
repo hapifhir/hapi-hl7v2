@@ -36,8 +36,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.testpanel.model.UnknownMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
@@ -46,6 +49,7 @@ import ca.uhn.hl7v2.testpanel.util.FileUtils;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
+import ca.uhn.hl7v2.util.Terser;
 
 public class Hl7V2MessageCollectionTest {
 	
@@ -60,6 +64,25 @@ public class Hl7V2MessageCollectionTest {
 		List<AbstractMessage<?>> msgs = col.getMessages();
 		assertEquals(2, msgs.size());
 
+	}
+
+	@Test
+	public void testModifyBackToBackMessages() throws HL7Exception {
+
+		String fullMsg = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+				"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169839|T|2.3\r";
+
+		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+
+		List<AbstractMessage<?>> msgs = col.getMessages();
+		Hl7V2MessageEr7 msg1 = (Hl7V2MessageEr7) msgs.get(0);
+		Message parsedMessage = msg1.getParsedMessage();
+		Terser.set((Segment) parsedMessage.get("MSH"), 12, 0, 1, 1, "2.4");
+
+		col.updateSourceMessageBasedOnParsedMessage(0, parsedMessage);
+		
+		assertEquals(fullMsg.replace("20169838|T|2.3", "20169838|T|2.4"), col.getSourceMessage());
 	}
 
 	@Test

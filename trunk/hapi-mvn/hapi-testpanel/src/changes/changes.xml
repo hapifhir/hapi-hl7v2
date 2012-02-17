@@ -5,7 +5,20 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-        <release version="2.0-beta2" date="TBD">
+        <release version="2.0-beta3" date="TBD">
+            <action type="fix">
+            	Modifying a message via the message tree with another message immediately
+            	following it could corrupt the following message
+            </action>
+            <action type="fix" issue="3488484" dev="Jens Villadsen">
+            	Fix a null pointer exception on startup if a previously open file has been deleted
+            </action>
+            <action type="add">
+            	Make the editor window highlight the selected message part in a more obvious way
+            	when a node is selected in the message tree
+            </action>
+		</release>
+        <release version="2.0-beta2" date="2012-02-03">
             <action type="fix">
             	Fix issue where some populated nodes don't show up in message tree when
             	a conformance profile is activated

@@ -25,10 +25,6 @@
  */
 package ca.uhn.hl7v2.testpanel.ui.editor;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -37,16 +33,12 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.LayeredHighlighter;
-import javax.swing.text.Position;
-import javax.swing.text.View;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
-import ca.uhn.hl7v2.testpanel.ui.editor.UnderlineHighlighter.UnderlineHighlightPainter;
 import ca.uhn.hl7v2.testpanel.util.Range;
 
 public class Hl7V2MessageEditorHighlighter implements IDestroyable {
@@ -55,7 +47,7 @@ public class Hl7V2MessageEditorHighlighter implements IDestroyable {
 	
 	protected JTextComponent myComp;
 
-	protected UnderlineHighlightPainter myPainter;
+//	protected UnderlineHighlightPainter myPainter;
 
 	private Hl7V2MessageCollection myMessage;
 
@@ -63,7 +55,7 @@ public class Hl7V2MessageEditorHighlighter implements IDestroyable {
 
 	public Hl7V2MessageEditorHighlighter(final JTextComponent comp, Hl7V2MessageCollection theMessage) {
 		myComp = comp;
-		myPainter = new UnderlineHighlighter.UnderlineHighlightPainter();
+//		myPainter = new UnderlineHighlighter.UnderlineHighlightPainter();
 		myMessage = theMessage;
 		
 		myRangeListener = new PropertyChangeListener() {
@@ -72,11 +64,11 @@ public class Hl7V2MessageEditorHighlighter implements IDestroyable {
 				if (theEvt.getNewValue() != null) {
 					Range newRange = (Range) theEvt.getNewValue();
 					Highlighter highlighter = myComp.getHighlighter();
-					try {
-						highlighter.addHighlight(newRange.getStart(), newRange.getEnd(), myPainter);
-					} catch (BadLocationException e) {
-						ourLog.error("Failed to add highliter", e);
-					}
+//					try {
+//						highlighter.addHighlight(newRange.getStart(), newRange.getEnd(), myPainter);
+//					} catch (BadLocationException e) {
+//						ourLog.error("Failed to add highliter", e);
+//					}
 
 					if (ourLog.isDebugEnabled()) {
 						try {
@@ -122,11 +114,11 @@ public class Hl7V2MessageEditorHighlighter implements IDestroyable {
 
 		while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
 			int endIndex = lastIndex + wordSize;
-			try {
-				highlighter.addHighlight(lastIndex, endIndex, myPainter);
-			} catch (BadLocationException e) {
-				// Nothing to do
-			}
+//			try {
+//				highlighter.addHighlight(lastIndex, endIndex, myPainter);
+//			} catch (BadLocationException e) {
+//				// Nothing to do
+//			}
 			if (firstOffset == -1) {
 				firstOffset = lastIndex;
 			}
@@ -151,79 +143,4 @@ public class Hl7V2MessageEditorHighlighter implements IDestroyable {
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.PROP_HIGHLITED_RANGE, myRangeListener);
 	}
 
-}
-
-class UnderlineHighlighter extends DefaultHighlighter {
-	protected static final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter();
-
-	public UnderlineHighlighter() {
-	}
-
-	// Convenience method to add a highlight with
-	// the default painter.
-	public Object addHighlight(int p0, int p1) throws BadLocationException {
-		return addHighlight(p0, p1, sharedPainter);
-	}
-
-	public void setDrawsLayeredHighlights(boolean newValue) {
-		// Illegal if false - we only support layered highlights
-		if (newValue == false) {
-			throw new IllegalArgumentException("UnderlineHighlighter only draws layered highlights");
-		}
-		super.setDrawsLayeredHighlights(true);
-	}
-
-	// Painter for underlined highlights
-	public static class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
-//		protected Color fillColour = new Color(0.8f, 0.8f, 1.0f);
-//		protected Color lineColour = new Color(0.6f, 0.6f, 1.0f);
-		protected Color lineColour = new Color(0.0f, 0.5f, 0.0f);
-		protected Color fillColour = new Color(0.6f, 1.0f, 0.6f);
-
-		public UnderlineHighlightPainter() {
-		}
-
-		public void paint(Graphics g, int offs0, int offs1, Shape bounds, JTextComponent c) {
-			// Do nothing: this method will never be called
-		}
-
-		public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds, JTextComponent c, View view) {
-
-			Rectangle alloc = null;
-			if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
-				if (bounds instanceof Rectangle) {
-					alloc = (Rectangle) bounds;
-				} else {
-					alloc = bounds.getBounds();
-				}
-			} else {
-				try {
-					Shape shape = view.modelToView(offs0, Position.Bias.Forward, offs1, Position.Bias.Backward, bounds);
-					alloc = (shape instanceof Rectangle) ? (Rectangle) shape : shape.getBounds();
-				} catch (BadLocationException e) {
-					return null;
-				}
-			}
-
-//			FontMetrics fm = c.getFontMetrics(c.getFont());
-//			int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
-			
-//			g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
-//			g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width, baseline + 1);
-
-//			g.setColor(fillColour);
-//			g.fillRect(alloc.x + 1, alloc.y + 1, alloc.width - 1, alloc.height - 1);
-
-			g.setColor(lineColour);
-//			g.drawRect(alloc.x, alloc.y, alloc.width, alloc.height - 2);
-//			g.drawRect(alloc.x, alloc.y, alloc.width - 1, alloc.height - 3);
-			
-			int y = alloc.y + alloc.height - 2;
-			g.drawLine(alloc.x, y, alloc.x + alloc.width, y);
-			y++;
-			g.drawLine(alloc.x, y, alloc.x + alloc.width, y);
-			
-			return alloc;
-		}
-	}
 }

@@ -71,6 +71,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Highlighter;
 
 import jsyntaxpane.DefaultSyntaxKit;
 
@@ -205,6 +206,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		messageEditorContainerPanel.setLayout(new BorderLayout(0, 0));
 
 		myMessageEditor = new JEditorPane();
+		Highlighter h = new UnderlineHighlighter();
+		myMessageEditor.setHighlighter(h);
 		// myMessageEditor.setFont(Prefs.getHl7EditorFont());
 
 		myMessageScrollPane = new JScrollPane(myMessageEditor);
@@ -655,10 +658,19 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				}
 				Range range = (Range) theEvt.getNewValue();
 
-				myMessageScrollPane.getHorizontalScrollBar().setValue(0);
+//				myMessageScrollPane.getHorizontalScrollBar().setValue(0);
 
-				myMessageEditor.select(range.getStart(), range.getEnd());
-				// myMessageEditor.grabFocus();
+//				myMessageEditor.select(range.getStart(), range.getEnd());
+//				myMessageEditor.setCaretPosition(range.getStart());
+				
+
+		        myMessageEditor.setCaretPosition(range.getStart());
+		        myMessageEditor.moveCaretPosition(range.getEnd());
+
+		        myMessageEditor.setCaretPosition(range.getEnd());
+		        myMessageEditor.moveCaretPosition(range.getStart());
+		        
+		        // myMessageEditor.grabFocus();
 				myMessageEditor.repaint();
 
 				String substring = myMessage.getSourceMessage().substring(range.getStart(), range.getEnd());
