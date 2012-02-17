@@ -31,6 +31,19 @@ public class ProfileGroup extends AbstractModelClass {
 	@XmlElement(name = "entry")
 	private List<Entry> myEntries;
 
+	@XmlElement(name = "tableFile")
+	private List<TableFile> myTableFiles;
+
+	/**
+	 * @return the tableFiles
+	 */
+	public List<TableFile> getTableFiles() {
+		if (myTableFiles == null) {
+			myTableFiles = new ArrayList<TableFile>();
+		}
+		return myTableFiles;
+	}
+
 	@XmlElement(name = "id")
 	private String myId;
 

@@ -34,6 +34,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
+import ca.uhn.hl7v2.util.MessageIDGenerator;
 
 public class App {
 	
@@ -46,7 +47,8 @@ public class App {
 	public static void main(String[] args) {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HAPI TestPanel");
-
+		System.setProperty(MessageIDGenerator.NEVER_FAIL_PROPERTY, Boolean.TRUE.toString());
+		
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

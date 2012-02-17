@@ -559,23 +559,22 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		int lastSegmentRow = -1;
 		int currentSegmentRow = -1;
 		int currentSelectedRow = -1;
-		int messageIndex = 0;
+		int currentMessageIndex=-1;
 		for (int row = 0; row < layout.getRowCount(); row++) {
 
 			TreePath path = layout.getPathForRow(row);
 			Object component = path.getLastPathComponent();
 			if (component instanceof TreeNodeMessage) {
-				if (highlitedPath.startsWith(messageIndex + "/")) {
+				currentMessageIndex = ((TreeNodeMessage) component).getMessageIndex();
+				if (highlitedPath.startsWith(currentMessageIndex + "/")) {
 					expandPath(path);
 				} else {
 					collapsePath(path);
 				}
-				messageIndex++;
 				continue;
 			}
 
 			if (component instanceof TreeNodeUnknown) {
-				messageIndex++;
 				continue;
 			}
 
@@ -585,7 +584,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 			TreeNodeBase node = (TreeNodeBase) component;
 
-			String terserPath = (messageIndex - 1) + node.getTerserPath();
+			String terserPath = (currentMessageIndex - 1) + node.getTerserPath();
 			if (highlitedPath != null && highlitedPath.startsWith(terserPath) && !highlitedPath.startsWith(terserPath + "(")) {
 				expandPath(path);
 				if (highlitedPath.equals(terserPath)) {

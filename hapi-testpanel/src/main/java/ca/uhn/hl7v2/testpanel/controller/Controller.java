@@ -754,15 +754,19 @@ public class Controller {
 	}
 
 	public void showDialogError(String message) {
-		JOptionPane.showMessageDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(provideViewFrameIfItExists(), message, DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+	}
+
+	private Component provideViewFrameIfItExists() {
+		return myView != null ? myView.getMyframe() : null;
 	}
 
 	public void showDialogWarning(String message) {
-		JOptionPane.showMessageDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(provideViewFrameIfItExists(), message, DIALOG_TITLE, JOptionPane.WARNING_MESSAGE);
 	}
 
 	public int showDialogYesNo(String message) {
-		return JOptionPane.showConfirmDialog(myView.getMyframe(), message, DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		return JOptionPane.showConfirmDialog(provideViewFrameIfItExists(), message, DIALOG_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	}
 
 	public void showProfilesAndTablesEditor() {

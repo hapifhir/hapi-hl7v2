@@ -898,7 +898,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		String oldValue = mySourceMessage;
 
 		String preMessage = mySourceMessage.substring(0, range.getStart());
-		String postMessage = mySourceMessage.length() > range.getEnd() ? mySourceMessage.substring(range.getEnd() + 1) : "";
+		String postMessage = mySourceMessage.length() > range.getEnd() ? mySourceMessage.substring(range.getEnd()) : "";
 		mySourceMessage = preMessage + theEncodedMessage + postMessage;
 
 		int sizeDifference = theEncodedMessage.length() - range.getDelta();
