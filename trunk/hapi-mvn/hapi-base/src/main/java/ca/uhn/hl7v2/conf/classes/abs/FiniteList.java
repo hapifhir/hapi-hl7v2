@@ -43,25 +43,25 @@ import java.util.ArrayList;
  */
 public class FiniteList {
 
-	private ArrayList reps; // Stores the reps
+	private ArrayList<Repeatable> reps; // Stores the reps
 	private int maxReps; // The maximum allowable number of reps	
-	private int minReps; // The minimum allowable number of reps	
-	private Class repType; // The type of repetition being stored here
+//	private int minReps; // The minimum allowable number of reps	
+	private Class<? extends Repeatable> repType; // The type of repetition being stored here
 	private Object underlyingObject; // The underlying HAPI object
 
 	/** Constructor for FiniteList
 	 * @param repType the Class which is repeating
 	 * @param underlyingObject the underlying object that the extending class represents
 	 */
-	public FiniteList(Class repType, Object underlyingObject) {
+	public FiniteList(Class<? extends Repeatable> repType, Object underlyingObject) {
 		this.repType = repType;
 		this.underlyingObject = underlyingObject;
 
 		Repeatable firstRep = createRep(0);
 		this.maxReps = firstRep.getMaxReps();
-		this.minReps = firstRep.getMinReps();
+//		this.minReps = firstRep.getMinReps();
 
-		reps = new ArrayList();
+		reps = new ArrayList<Repeatable>();
 		reps.add(firstRep);
 		createNewReps(maxReps);
 	}
@@ -79,7 +79,7 @@ public class FiniteList {
 	 */
 	private Repeatable createRep(int rep) {
 		try {
-			Constructor theCon = repType.getConstructors()[0];
+			Constructor<?> theCon = repType.getConstructors()[0];
 			Repeatable thisRep = (Repeatable) theCon.newInstance(new Object[] { underlyingObject, new Integer(rep)});
 			return thisRep;
 		} catch (InvocationTargetException e) {
@@ -102,7 +102,7 @@ public class FiniteList {
 		rep--; // Decremented because HL7 standard wants 1-offset arrays
 		createNewReps(rep); // Create new reps if needed
 
-		return (Repeatable) reps.get(rep);
+		return reps.get(rep);
 	}
 
 }
