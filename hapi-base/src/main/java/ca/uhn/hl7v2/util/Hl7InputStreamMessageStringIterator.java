@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
  */
 public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 
+	@SuppressWarnings("unused")
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7InputStreamMessageStringIterator.class);
+	
 	private StringBuilder myBuffer = new StringBuilder();
 	private boolean myFoundMessageInBuffer = false;
 	private Boolean myHasNext;
