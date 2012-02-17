@@ -500,8 +500,11 @@ public class DefaultValidator implements Validator {
             log.warn("Not checking value {}: no code store was found for profile {} code system {}"
             		, new Object[] {value, profileID, codeSystem});
         } else {
-            if (!store.isValidCode(codeSystem, value))
-                ret = new ProfileNotFollowedException("Code " + value + " not found in table " + codeSystem + ", profile " + profileID);
+            if (!store.knowsCodes(codeSystem)) {
+            	log.warn("Not checking value {}: Don't have a table for code system {}", value, codeSystem);
+            } else if (!store.isValidCode(codeSystem, value)) {
+                ret = new ProfileNotFollowedException("Code '" + value + "' not found in table " + codeSystem + ", profile " + profileID);
+            }
         }
         return ret;
     }
