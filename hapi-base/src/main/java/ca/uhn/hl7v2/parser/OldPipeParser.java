@@ -725,8 +725,8 @@ public class OldPipeParser extends Parser {
     public void parse(Message message, String string) throws HL7Exception {
         //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, "MSH", true);
-        FilterIterator.Predicate segmentsOnly = new FilterIterator.Predicate() {
-            public boolean evaluate(Object obj) {
+        FilterIterator.Predicate<Structure> segmentsOnly = new FilterIterator.Predicate<Structure>() {
+            public boolean evaluate(Structure obj) {
                 if (Segment.class.isAssignableFrom(obj.getClass())) {
                     return true;
                 } else {
@@ -734,7 +734,7 @@ public class OldPipeParser extends Parser {
                 }
             }
         };
-        FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
+        FilterIterator<Structure> segmentIter = new FilterIterator<Structure>(messageIter, segmentsOnly);
 
         String[] segments = split(string, segDelim);
 
@@ -762,14 +762,14 @@ public class OldPipeParser extends Parser {
                 log.debug("Parsing segment {}", name);
 
                 messageIter.setDirection(name);
-                FilterIterator.Predicate byDirection = new FilterIterator.Predicate() {
-                    public boolean evaluate(Object obj) {
+                FilterIterator.Predicate<Structure> byDirection = new FilterIterator.Predicate<Structure>() {
+                    public boolean evaluate(Structure obj) {
                         Structure s = (Structure) obj;
                         log.debug("PipeParser iterating message in direction {} at {} ", name, s.getName());
                         return s.getName().matches(name + "\\d*");
                     }
                 };
-                FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
+                FilterIterator<Structure> dirIter = new FilterIterator<Structure>(segmentIter, byDirection);
                 if (dirIter.hasNext()) {
                     parse((Segment) dirIter.next(), segments[i], getEncodingChars(string));
                 }
