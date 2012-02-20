@@ -28,13 +28,15 @@ package ca.uhn.hl7v2.parser;
 
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v23.message.ADT_A31;
+import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.Varies;
+import ca.uhn.hl7v2.model.v24.datatype.HD;
+import ca.uhn.hl7v2.model.v24.datatype.SI;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
-import ca.uhn.hl7v2.model.*;
-import ca.uhn.hl7v2.model.v24.datatype.SI;
-import ca.uhn.hl7v2.model.v24.datatype.HD;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
@@ -48,6 +50,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  * JUnit test harness for PipeParser
  * @author Bryan Tripp
  */
+@SuppressWarnings("deprecation")
 public class OldPipeParserTest extends TestCase {
 
     OldPipeParser parser;
@@ -201,7 +204,9 @@ public class OldPipeParserTest extends TestCase {
         parser.setValidationContext(context);
         
         String text = "MSH|^~\\&|bar|foo|||||ORU^R01|1|D|2.4|12345\r";
-        Message m = parser.parse(text);
+        
+        @SuppressWarnings("unused")
+		Message m = parser.parse(text);
         
         try {
             text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|12345\r";
@@ -235,7 +240,7 @@ public class OldPipeParserTest extends TestCase {
                 "OBR|1||13198751|^^^207252^CULTURE,SALMONELLA/SHIG^L|||200607280943|||||||20060729101650|STOOL-STOOL&STOOL-STOOL|^HERTZ, JOHN Q|^^^^^518^5551212||||||||F\r\n" + 
                 "ZLR|456 WASHINGTON BLVD^SUITE 100^ALBANY^NY^12345|HERTZ^JOHN^Q^^^MD|456 WASHINGTON BLVD^SUITE 100^ALBANY^NY^12345|^^^^^518^4567890\r\n" + 
                 "OBX|1|CE|^^^60101058^CULTURE,SALMONELLA/SHIGELLA,STOOL^L|1|^^^SASP^Salmonella sp., not typhi^L||||||F|||200608011318|33D0123456^Big Laboratory^CLIA";
-        Message message = parser.parse(msg);
+        parser.parse(msg);
         
     }
     
@@ -260,7 +265,7 @@ public class OldPipeParserTest extends TestCase {
         		"EVN|A03|20071023160622\r\n" + 
         		"PID|1||00J8804997^^^1444^MR~165640^^^CANON^JHN^^^^^WT||Aalan^Angus^^^^^L||19620404|F|||101 Ames Ave^^Toronto^CA- ON^M2N7J6^CAN^H||^PRN^PH^^1^416^5551545|^PRN^PH^^1^416^2227788|| C||||||||||||||N\r\n" + 
         		"PV1";
-        Message message = parser.parse(msg);
+        parser.parse(msg);
     }
     
     
