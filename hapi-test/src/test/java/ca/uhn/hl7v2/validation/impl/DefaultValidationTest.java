@@ -15,6 +15,7 @@ import ca.uhn.hl7v2.model.v25.datatype.DTM;
 import ca.uhn.hl7v2.model.v25.datatype.NM;
 import ca.uhn.hl7v2.model.v25.datatype.SI;
 import ca.uhn.hl7v2.model.v25.datatype.TM;
+import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -47,6 +48,52 @@ public class DefaultValidationTest extends TestCase {
     public DefaultValidationTest(String arg0) {
         super(arg0);
     }
+    
+    /**
+     * https://sourceforge.net/tracker/?func=detail&aid=3471934&group_id=38899&atid=423835
+     */
+    public void testPhoneExceptionMessage() {
+    	
+    	String messageString = "MSH|^~\\&|ABCDEFG&1.23.4&ISO|CDS|LABADT|MCM|20120109|SECURITY|ADT^A04|MSG00001|P|2.4\r"+
+    			"EVN|A01|198808181123\r"+
+    			"PID|||R2D002^^^BADFAC&1.2.8.9.3.4.2.8&ISO||Smith^Michael^^^Mr||19800930|M||2106-3|1205 S Main STREET^^San Jose^CA^27401-1020|GL|(919)379-1212|(919)271-3434~(919)277-3114||S||ADT_PID18^2^M10|123456789|9-87654^NC\r"+
+    			"NK1|1|JONES^BARBARA^K|SPO|||||20011105\r"+
+    			"NK1|1|JONES^MICHAEL^A|FTH\r";
+
+		CanonicalModelClassFactory c = new CanonicalModelClassFactory();
+		PipeParser p = new PipeParser(c);
+
+		try {
+			p.parse(messageString);
+			fail();
+		} catch (EncodingNotSupportedException e) {
+			fail(e.getMessage());
+		} catch (HL7Exception e) {
+			if (e.getMessage().contains("rep")) {
+				fail(e.getMessage());
+			}
+		}
+
+    	messageString = "MSH|^~\\&|ABCDEFG&1.23.4&ISO|CDS|LABADT|MCM|20120109|SECURITY|ADT^A04|MSG00001|P|2.4\r"+
+    			"EVN|A01|198808181123\r"+
+    			"PID|\r"+
+    			"PID|||R2D002^^^BADFAC&1.2.8.9.3.4.2.8&ISO||Smith^Michael^^^Mr||19800930|M||2106-3|1205 S Main STREET^^San Jose^CA^27401-1020|GL|(919)379-1212|(919)271-3434~(919)277-3114||S||ADT_PID18^2^M10|123456789|9-87654^NC\r"+
+    			"NK1|1|JONES^BARBARA^K|SPO|||||20011105\r"+
+    			"NK1|1|JONES^MICHAEL^A|FTH\r";
+
+		try {
+			p.parse(messageString);
+			fail();
+		} catch (EncodingNotSupportedException e) {
+			fail(e.getMessage());
+		} catch (HL7Exception e) {
+			if (!e.getMessage().contains("rep")) {
+				fail(e.getMessage());
+			}
+		}
+
+    }
+    
     
     /**
      * @throws Exception ... 

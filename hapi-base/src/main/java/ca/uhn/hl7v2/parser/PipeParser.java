@@ -382,7 +382,7 @@ public class PipeParser extends Parser {
                 } catch (HL7Exception e) {
                     // set the field location and throw again ...
                     e.setFieldPosition(i);
-                    if (theRepetition != null) {
+                    if (theRepetition != null && theRepetition > 1) {
                         e.setSegmentRepetition(theRepetition);
                     }
                     e.setSegmentName(destination.getName());
@@ -1103,6 +1103,8 @@ public class PipeParser extends Parser {
         }
 
         char delim = '|';
+        String prevName = null;
+        int repNum = 1;
         for (int i = 0; i < segments.length; i++) {
 
             // get rid of any leading whitespace characters ...
@@ -1129,12 +1131,18 @@ public class PipeParser extends Parser {
 
                 log.debug("Parsing segment {}", name);
 
+                if (name.equals(prevName)) {
+                	repNum++;
+                } else {
+                	repNum = 1;
+                	prevName = name;
+                }
+                
                 messageIter.setDirection(name);
 
                 if (messageIter.hasNext()) {
                     Segment next = (Segment) messageIter.next();
-                    int nextIndexWithinParent = messageIter.getNextIndexWithinParent();
-                    parse(next, segments[i], getEncodingChars(string), nextIndexWithinParent);
+                    parse(next, segments[i], getEncodingChars(string), repNum);
                 }
             }
         }
