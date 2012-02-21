@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.mockito.exceptions.verification.NeverWantedButInvoked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
