@@ -7,7 +7,7 @@ import java.util.List;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.PipeParser;
 
-class TestUtils {
+public class TestUtils {
 
 	private static final int SLEEP = 1000;
 	private static final int RETRIES = 10;

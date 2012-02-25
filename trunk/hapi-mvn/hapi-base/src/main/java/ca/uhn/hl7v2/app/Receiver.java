@@ -28,6 +28,7 @@
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,16 +62,17 @@ public class Receiver extends Service {
 		try {
 			String message = in.getMessage();
 			if (message == null) {
-				log.info("Closing connection (no more messages available).");
-				conn.close();
+				log.debug("Failed to read a message");
 			} else {
 				processMessage(message);
 			}
+		} catch (SocketException e)  {
+			// This probably means that the client closed the server connection normally
+			conn.close();
+			log.warn("SocketException: closing Connection, will no longer read messages with this Receiver. ", e);
 		} catch (IOException e) {
 			conn.close();
-			log.warn(
-					"IOException: closing Connection, will no longer read messages with this Receiver. ",
-					e);
+			log.warn("IOException: closing Connection, will no longer read messages with this Receiver. ", e);
 		} catch (Exception e) {
 			log.error("Error while closing connection: ", e);
 		}

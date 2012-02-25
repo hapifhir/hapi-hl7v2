@@ -85,6 +85,7 @@ class AcceptorThread extends Service {
 	protected void handle() {
 		try {
 			Socket s = ss.accept();
+			s.setSoTimeout(TIMEOUT);
 			if (!queue.offer(new AcceptedSocket(s))) {
 				log.error("Denied enqueuing server-side socket {}", s);
 				s.close();

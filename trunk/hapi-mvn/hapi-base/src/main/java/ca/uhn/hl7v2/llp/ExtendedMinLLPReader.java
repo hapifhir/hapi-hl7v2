@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 
 import org.slf4j.Logger;
@@ -124,6 +125,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 	}
 
 	private String stripNonLowAscii(String theString) {
+		if (theString == null) return "";
 		StringBuilder b = new StringBuilder();
 		
 		for (int i = 0; i < theString.length(); i++) {
@@ -189,14 +191,18 @@ public class ExtendedMinLLPReader implements HL7Reader
 		catch(SocketException e)
 		{
 			log.info("SocketException on read() attempt.  Socket appears to have been closed: {}", e.getMessage());
+			throw e;
+		}
+		catch(SocketTimeoutException e)
+		{
+			log.info("SocketTimeoutException on read() attempt.");
 			return null;
 		}
-
 		// trying to read when there is no data (stream may have been closed at other end)
 		if(c == -1)
 		{
 			log.info("End of input stream reached.");
-			return null;
+			throw new SocketException("End of input stream reached");
 		}
 		LowerLayerProtocol.logCharacterReceived(c);
 

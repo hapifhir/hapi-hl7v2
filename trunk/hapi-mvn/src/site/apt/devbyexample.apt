@@ -56,6 +56,9 @@ Developing using HAPI - By Example
   * Handle different  
     {{{./xref/ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html}character encoding schemes}} (charsets), such
     as UTF-8, or ISO-8859/2.
+	
+  * Configure   
+    {{{./xref/ca/uhn/hl7v2/examples/CustomThreading.html} threading}} strategies by using custom ExecutorServices.
 
 * Parsing Messages
 
