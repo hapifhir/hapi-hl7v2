@@ -1,28 +1,42 @@
 package ca.uhn.hl7v2.llp;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.app.Application;
+import ca.uhn.hl7v2.app.ApplicationException;
+import ca.uhn.hl7v2.app.SimpleServer;
+import ca.uhn.hl7v2.app.TestUtils;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class ExtendedMinLowerLayerProtocolTest extends TestCase {
+public class ExtendedMinLowerLayerProtocolTest implements Application {
 
+	private int myMsgCount;
+
+	@Test
 	public void testMinLowerLayerProtocolReaderAndWriter() throws HL7Exception, IOException, LLPException {
 		
 		ADT_A01 a01 = new ADT_A01();
@@ -154,6 +168,68 @@ public class ExtendedMinLowerLayerProtocolTest extends TestCase {
 		
 		
 	}
+	
+	
+	@Test
+	public void testReceiveWithDelayInBetween() throws Exception {
+
+		int port = RandomServerPortProvider.findFreePort();
+		SimpleServer server = new SimpleServer(port, new ExtendedMinLowerLayerProtocol(), PipeParser.getInstanceWithNoValidation());
+		server.registerApplication("*", "*", this);
+		server.start();
+		
+		Socket socket = TestUtils.acquireClientSocket(port);
+		MinLLPWriter w = new MinLLPWriter(socket.getOutputStream());
+		MinLLPReader r = new MinLLPReader(socket.getInputStream());
+		
+		ADT_A01 msg = new ADT_A01();
+		msg.initQuickstart("ADT", "A01", "T");
+		w.writeMessage(msg.encode());
+		String resp = r.getMessage();
+		ourLog.info(resp.replace("\r", "\n"));
+		
+		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
+		
+		msg = new ADT_A01();
+		msg.initQuickstart("ADT", "A01", "T");
+		w.writeMessage(msg.encode());
+		resp = r.getMessage();
+		ourLog.info(resp.replace("\r", "\n"));
+		
+		assertEquals(2, myMsgCount);
+
+		assertFalse(server.getRemoteConnections().isEmpty());
+
+		socket.close();
+		
+		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
+		
+		assertTrue(server.getRemoteConnections().isEmpty());
+		
+		
+	}
+
+	private static final Logger ourLog = LoggerFactory.getLogger(ExtendedMinLowerLayerProtocolTest.class);
+	
+	@Before
+	public void setUp() {
+		myMsgCount = 0;
+	}
+	
+	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+		try {
+			Message ack = theIn.generateACK();
+			myMsgCount++;
+			return ack;
+		} catch (IOException e) {
+			throw new HL7Exception(e);
+		}
+	}
+
+	public boolean canProcess(Message theIn) {
+		return true;
+	}
+	
 	
 	
 }

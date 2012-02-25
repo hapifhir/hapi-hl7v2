@@ -85,7 +85,7 @@ public class HL7Exception extends Exception {
      *        these codes as integer constants that can be used here (e.g. 
      *        HL7Exception.UNSUPPORTED_MESSAGE_TYPE)
      * 
-     * @param cause The excption that caused this exception tobe thrown.
+     * @param cause The exception that caused this exception to be thrown.
      */
     public HL7Exception(String message, int errorCondition, Throwable cause) {
         super(message, cause);

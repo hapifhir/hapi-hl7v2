@@ -73,7 +73,7 @@ public class SimpleServer extends HL7Service {
 	/**
 	 * Socket timeout for simple server
 	 */
-	public static final int SO_TIMEOUT = 3000;
+	public static final int SO_TIMEOUT = AcceptorThread.TIMEOUT;
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SimpleServer.class);
