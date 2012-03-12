@@ -5,41 +5,33 @@
 
 	<bannerLeft>
 		<name>HAPI</name>
-		<src>images/hapilogo5.gif</src>
+		<src>http://hl7api.sourceforge.net/images/hapi_banner.png</src>
 		<href>http://hl7api.sourceforge.net/</href>
 	</bannerLeft>
 
-	<bannerRight>
-		<name>Sourceforge</name>
-		<src>http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=16</src>
-		<href>https://sourceforge.net/projects/hl7api/</href>
-	</bannerRight>
-
 	<poweredBy>
-		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2"/>
-		<logo name="Built with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
+		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2" />
 	</poweredBy>
 
-	<version position="left"/>
+	<version position="left" />
 
 	<body>
 
+		<breadcrumbs>
+			<item name="HAPI" href="http://hl7api.sourceforge.net"></item>
+		</breadcrumbs>
+
 		<links>
-            <item name="hUnit" href="http://hl7api.sf.net/hunit" />
 			<item name="hl7.org" href="http://hl7.org/" />
 			<item name="University Health Network" href="http://www.uhn.ca/" />
 		</links>
 
-		<menu ref="parent"/>
-
-		<menu name="Plugin">
-			<item name="Goals" href="plugin-info.html"/>
+		<menu name="HAPI">
+			<item name="&larr; HAPI Home" href="../index.html" />
 		</menu>
 
-		<menu name="Reports">
-			<item name="Unit Test Report" href="surefire-report.html"/>
-            <item name="Team List" href="team-list.html"/>
-            <item name="Source Tag List" href="taglist.html"/>
+		<menu name="Maven Plugin">
+			<item name="confgen Goal" href="confgen-mojo.html"/>
 		</menu>
 
 	</body>

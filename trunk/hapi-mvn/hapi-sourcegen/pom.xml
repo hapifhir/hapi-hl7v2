@@ -111,27 +111,28 @@
 	</build>
 
 	<reporting>
+		<outputDirectory>${project.basedir}/../target/site/hapi-sourcegen</outputDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-plugin-plugin</artifactId>
 				<version>2.5</version>
-				</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.1.2</version>
+				<configuration>
+				</configuration>
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1.2</version>
                 <reportSets>
                     <reportSet>
                         <reports>
+                            <!-- 
                             <report>project-team</report>
                             <report>mailing-list</report>
                             <report>issue-tracking</report>
                             <report>license</report>
                             <report>scm</report>
+                             -->
                         </reports>
                     </reportSet>
                 </reportSets>

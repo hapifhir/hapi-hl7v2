@@ -39,10 +39,21 @@ import ca.uhn.hl7v2.UndefinedTableException;
 import ca.uhn.hl7v2.UnknownValueException;
 
 /**
+ * <p>
  * Implements TableRepository by looking up values from the default HL7
- * normative database.  Values are cached after they are looked up once.  
+ * normative database.  Values are cached after they are looked up once. 
+ * </p>
+ * <p>
+ * This can be used to provide vaidation of message coded values
+ * agaist the official HL7 Database, although you will need 
+ * a copy in order to use this.
+ * </p>
+ *  
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated This has not been used in a long time. Please let us know if you are stil
+ * using it, otherwise it will be removed in a future release.
  */
+@SuppressWarnings("deprecation")
 public class DBTableRepository extends TableRepository {
 
     private int[] tableList;
@@ -103,7 +114,7 @@ public class DBTableRepository extends TableRepository {
     /**
      * Returns a list of the values for the given table in the normative database. 
      */
-    public String[] getValues(int table) throws LookupException, UndefinedTableException {
+	public String[] getValues(int table) throws LookupException, UndefinedTableException {
         Integer key = new Integer(table);
         String[] values = null;
 
