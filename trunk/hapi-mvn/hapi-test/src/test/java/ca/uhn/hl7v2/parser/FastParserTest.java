@@ -10,6 +10,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.model.v22.message.ORU_R01;
+import ca.uhn.hl7v2.parser.FastParser.StructRef;
 import ca.uhn.hl7v2.util.Terser;
 
 import junit.framework.TestCase;
@@ -20,6 +21,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:50 $ by $Author: jamesagnew $
  */
+@SuppressWarnings("deprecation")
 public class FastParserTest extends TestCase {
 
     /**
@@ -29,9 +31,9 @@ public class FastParserTest extends TestCase {
         super(arg0);
     }
 
-    public void testLoadEventGuideMap() throws Exception {
+	public void testLoadEventGuideMap() throws Exception {
         URL url = FastParserTest.class.getClassLoader().getResource("ca/uhn/hl7v2/parser/guide.txt");
-        Map map = FastParser.loadEventGuideMap(url);
+        Map<Object, StructRef> map = FastParser.loadEventGuideMap(url);
         
         FastParser.RootRef rr = (FastParser.RootRef) map.get("ORU^R01");
         assertEquals(true, rr.getSuccessor("MSH").isSegment());
@@ -68,9 +70,9 @@ public class FastParserTest extends TestCase {
                 .getSuccessor("OBX").getSuccessor("OBX").getSuccessor("PID").getRelativePath());
     }
 
-    public void testParse() throws HL7Exception {
+	public void testParse() throws HL7Exception {
         URL url = FastParserTest.class.getClassLoader().getResource("ca/uhn/hl7v2/parser/guide.txt");
-        Map map = FastParser.loadEventGuideMap(url);
+        Map<Object, StructRef> map = FastParser.loadEventGuideMap(url);
         
         FastParser parser = new FastParser(map);
 
@@ -95,19 +97,19 @@ public class FastParserTest extends TestCase {
      * A performance test.  
      * @param args
      */
-    public static void main(String[] args) {
-        FastParserTest test = new FastParserTest("");
+	public static void main(String[] args) {
+//        FastParserTest test = new FastParserTest("");
         try {
             URL url = FastParserTest.class.getClassLoader().getResource("ca/uhn/hl7v2/parser/guide.txt");
-            Map map = FastParser.loadEventGuideMap(url);
+            Map<Object, StructRef> map = FastParser.loadEventGuideMap(url);
             FastParser fast = new FastParser(map);
-            PipeParser slow = new PipeParser();
+            PipeParser slow = PipeParser.getInstanceWithNoValidation();
             
             String message = getORU();
             int reps = 1000;
             
             System.out.println("slow parser: " + timeParses(message, slow, reps) + "ms");        
-//            System.out.println("fast parser: " + timeParses(message, fast, reps) + "ms");
+            System.out.println("fast parser: " + timeParses(message, fast, reps) + "ms");
         } catch (HL7Exception e) {
             e.printStackTrace();
         }

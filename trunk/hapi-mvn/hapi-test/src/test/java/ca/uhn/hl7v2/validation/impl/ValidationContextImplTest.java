@@ -76,6 +76,9 @@ public class ValidationContextImplTest extends TestCase {
         assertEquals(rule1, rules[0]);
     }
 
+    
+    
+    
 //    public void testGetCheckPrimitivesOnSet() {
 //        assertEquals(true, myContext.getCheckPrimitivesOnSet());
 //        myContext.setCheckPrimitivesOnSet(false);

@@ -60,6 +60,10 @@ public class ConnectionHubTest {
 		ss2.registerApplication("*", "*", new MyApp());
 		ss2.start();
 		hub = ConnectionHub.getInstance();
+		
+		// Give the servers time to start up
+		Thread.sleep(1000);
+		
 	}
 
 	@After
@@ -181,9 +185,14 @@ public class ConnectionHubTest {
 				});
 		long elapsed = System.currentTimeMillis() - now;
 		
+		ourLog.info("Elapsed was {}", elapsed);
+		for (Future<Long> next : results) {
+			ourLog.info("Result was {}", next.get());
+		}
+		
 		// Due to synchronization, the threads are executed almost sequentially
 		long avg = fastestResult.get() * (n - 1);
-		assertTrue("Elapsed: " + elapsed + ", Avg: " + avg, elapsed < avg);
+		assertTrue("Elapsed: " + elapsed + ", Avg: " + avg, elapsed <= avg);
 		assertEquals(0, hub.allConnections().size());
 	}
 	

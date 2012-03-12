@@ -1,11 +1,7 @@
 package ca.uhn.hl7v2.conf.store;
 
-import org.jdom.Document;
-
-import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.hl7v2.conf.store.ProfileCodeStore;
-
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
  * @author Administrator
@@ -117,7 +113,7 @@ public class ProfileCodeStoreTest extends TestCase {
     public void testIsValidCodePos3() throws ProfileException {
         String codeSys = "HL70361";
         String code1 = "Misys CPR"; 
-        String[] list = codeStore.getValidCodes(codeSys);
+        codeStore.getValidCodes(codeSys);
         //for (int i = 0; i < list.length; i++) {
         //        System.out.println(list[i]);   
         //} //end for
@@ -149,7 +145,7 @@ public class ProfileCodeStoreTest extends TestCase {
 	 */
 	public void testGetValidCodesNeg2() throws ProfileException {
 		try {
-			String[] list = codeStore.getValidCodes("HL7XXXX");
+			codeStore.getValidCodes("HL7XXXX");
 			fail("codeSystem should not exist");
 		} //end try
 		catch (ProfileException e) {
@@ -164,7 +160,7 @@ public class ProfileCodeStoreTest extends TestCase {
 	 */
 	public void testGetValidCodesNeg3() throws ProfileException {
 		try {
-			String[] list = codeStore.getValidCodes(null);
+			codeStore.getValidCodes(null);
 			fail("codeSystem should not exist");
 		} //end try
 		catch (ProfileException e) {
@@ -179,7 +175,7 @@ public class ProfileCodeStoreTest extends TestCase {
 	 */
 	public void testGetValidCodesNeg4() throws ProfileException {
 		try {
-			String[] list = codeStore.getValidCodes("XXX");
+			codeStore.getValidCodes("XXX");
 			fail("codeSystem should not exist");
 		} //end try
 		catch (ProfileException e) {

@@ -19,19 +19,19 @@ import ca.uhn.hl7v2.protocol.impl.AbstractTransport;
  */
 public class MockTransport extends AbstractTransport implements TransportLayer {
 
-    private List mySentMessages; 
+    private List<Transportable> mySentMessages; 
     //private Transportable myNextReceived;
-    private List myNextReceivedMsgs; 
-    private Map myMetadata;
+    private List<Transportable> myNextReceivedMsgs; 
+    private Map<String, Object> myMetadata;
     
     /**
      * @param theMessagesToBeReceived a list of <code>Transportable</code>s that 
      *      should be returned by receive() (in the order they are to be returned)
      */
     public MockTransport() {
-        mySentMessages = new ArrayList();
-        myNextReceivedMsgs = new ArrayList();
-        myMetadata = new HashMap();
+        mySentMessages = new ArrayList<Transportable>();
+        myNextReceivedMsgs = new ArrayList<Transportable>();
+        myMetadata = new HashMap<String, Object>();
         myMetadata.put("MOCK", "This is a mock transport layer");
     }
 
@@ -47,12 +47,12 @@ public class MockTransport extends AbstractTransport implements TransportLayer {
         myNextReceivedMsgs.add(toBeReceived);
     }
     
-    public List getSentMessages() {
+    public List<Transportable> getSentMessages() {
         return mySentMessages;
     }
     
     public Transportable getLastSent() {
-        return (Transportable) mySentMessages.get(mySentMessages.size()-1);
+        return mySentMessages.get(mySentMessages.size()-1);
     }
 
     /**
@@ -62,7 +62,12 @@ public class MockTransport extends AbstractTransport implements TransportLayer {
     public synchronized Transportable doReceive() throws TransportException {
         Transportable next = null;
         if (myNextReceivedMsgs.size() > 0) {
-            next = (Transportable) myNextReceivedMsgs.remove(0);
+            next = myNextReceivedMsgs.remove(0);
+        } else {
+        	try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
         }
         return next;
         //return (Transportable) myMessagesToBeReceived.get(myNumberReceived++);
@@ -71,7 +76,7 @@ public class MockTransport extends AbstractTransport implements TransportLayer {
     /** 
      * Returns a map with an entry saying this is a mock transport layer.  
      */
-    public Map getCommonMetadata() {
+    public Map<String, Object> getCommonMetadata() {
         return myMetadata;
     }
 

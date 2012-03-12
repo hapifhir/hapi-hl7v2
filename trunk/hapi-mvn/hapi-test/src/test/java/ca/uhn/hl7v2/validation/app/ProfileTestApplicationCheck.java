@@ -26,7 +26,8 @@ public class ProfileTestApplicationCheck {
         return suite;
     }*/
     
-    public void testProcessMessage() throws Exception {
+    @SuppressWarnings("deprecation")
+	public void testProcessMessage() throws Exception {
         ProfileTestApplication app = new ProfileTestApplication();
         addProfileToStore();
         app.processMessage(getTestMessage());            

@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v26.message.ADT_A45;
 
 public class CanonicalModelClassFactoryTest {
 

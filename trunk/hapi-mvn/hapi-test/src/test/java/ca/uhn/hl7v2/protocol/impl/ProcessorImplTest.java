@@ -134,7 +134,14 @@ public class ProcessorImplTest extends TestCase {
         Transportable got = myProcessor.receive("msg-a", 2000);
         assertEquals(b, got.getMessage());
     }
-    
+
+    public void testReceiveWithInvalid() throws Exception {
+        String b = "MSH{{{{{|LABGL1||DMCRES||19951002180700||ORU^R01|msg-b|P|2.2\rMSA|AA|msg-a\r";
+        receiveLater(myRemotelyDrivenTransport, b, 200);
+        Transportable got = myProcessor.receive("msg-a", 2000);
+        assertEquals(null, got);
+    }
+
     public void testReceiveNotAvailable() throws Exception {
         Transportable got = myProcessor.receive("msg-a", 2000);
         assertEquals(null, got); 

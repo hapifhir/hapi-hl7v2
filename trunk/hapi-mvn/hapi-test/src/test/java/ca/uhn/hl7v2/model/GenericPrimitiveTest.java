@@ -28,10 +28,9 @@ package ca.uhn.hl7v2.model;
 
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-
-import junit.framework.TestCase;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.GenericPrimitive
@@ -146,7 +145,7 @@ public class GenericPrimitiveTest extends TestCase {
 			new TestSpec(null, null),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -63,6 +64,291 @@ public class DefaultValidatorTest extends TestCase {
         msg =  (ACK) (new PipeParser()).parse(message);
     }    
     
+//    public void testOptionality() throws Exception {
+//    	
+//        ClassLoader cl = ProfileParser.class.getClassLoader();
+//        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_ConstrainedExample.xml");
+//        if (instream == null) throw new Exception("can't find the xml file");
+//        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+//        int tmp = 0;
+//        StringBuffer buf = new StringBuffer();
+//        while ((tmp = in.read()) != -1) {
+//            buf.append((char) tmp);
+//        }        
+//        String profileString = buf.toString();
+//        //System.out.println(profileString);
+//        ProfileParser parser = new ProfileParser(false);
+//        RuntimeProfile prof = parser.parse(profileString);
+//
+//        DefaultValidator v = new DefaultValidator();
+//    	
+//        // This message has an unsupported second component in MSH-7 
+//		String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500^000||ADT^A01|1|D|2.4\r";
+//		ADT_A01 msg = new ADT_A01();
+//		msg.parse(message);
+//        
+//		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+//		
+//		assertTrue(problems.length > 0);
+//		assertTrue(problems[0].getSegmentName(), problems[0].getSegmentName().equals("MSH"));
+//		assertTrue(problems[0].getSegmentRepetition() + "", problems[0].getSegmentRepetition() == 1);
+//		assertTrue(problems[0].getFieldPosition() + "", problems[0].getFieldPosition() == 7);
+//		assertTrue(problems[0].getMessage(), problems[0].getMessage().toLowerCase().contains("not supported"));
+//		
+//    }
+
+    
+    public void testRequiredSegment() throws Exception {
+    	
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_reqsft.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        String profileString = buf.toString();
+        //System.out.println(profileString);
+        ProfileParser parser = new ProfileParser(false);
+        RuntimeProfile prof = parser.parse(profileString);
+
+        DefaultValidator v = new DefaultValidator();
+    	
+        // This message has an unsupported second component in MSH-7 
+		String message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(problems.length > 0);
+		assertTrue(toString, toString.contains("SFT must have at least 1"));
+		
+    }
+
+    public void testNotSupportedSegment() throws Exception {
+    	
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_segnotsup.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        String profileString = buf.toString();
+        //System.out.println(profileString);
+        ProfileParser parser = new ProfileParser(false);
+        RuntimeProfile prof = parser.parse(profileString);
+
+        DefaultValidator v = new DefaultValidator();
+    	
+		String message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 1);
+		assertTrue(toString, toString.contains("SFT"));
+		
+    }
+    
+    public void testNotSupportedField() throws Exception {
+    	
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_fieldnotsup.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        String profileString = buf.toString();
+        //System.out.println(profileString);
+        ProfileParser parser = new ProfileParser(false);
+        RuntimeProfile prof = parser.parse(profileString);
+
+        DefaultValidator v = new DefaultValidator();
+    	
+		String message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 1);
+		assertTrue(toString, toString.contains("Field 2"));
+
+    }
+    
+    public void testNotSupportedComponent() throws Exception {
+    	
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_compnotsup.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        String profileString = buf.toString();
+        //System.out.println(profileString);
+        ProfileParser parser = new ProfileParser(false);
+        RuntimeProfile prof = parser.parse(profileString);
+
+        DefaultValidator v = new DefaultValidator();
+    	
+		String message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+	
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123^1111|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 1);
+		assertTrue(toString, toString.contains("organization name type code"));
+
+    }
+
+    public void testNotSupportedSubComponent() throws Exception {
+    	
+        ClassLoader cl = ProfileParser.class.getClassLoader();
+        InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_subcompnotsup.xml");
+        if (instream == null) throw new Exception("can't find the xml file");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        int tmp = 0;
+        StringBuffer buf = new StringBuffer();
+        while ((tmp = in.read()) != -1) {
+            buf.append((char) tmp);
+        }        
+        String profileString = buf.toString();
+        //System.out.println(profileString);
+        ProfileParser parser = new ProfileParser(false);
+        RuntimeProfile prof = parser.parse(profileString);
+
+        DefaultValidator v = new DefaultValidator();
+    	
+		String message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+		ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+		
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+	
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|123^1111|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+
+		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
+				"SFT|1^2^3^4^5^6&aaa|sssss";
+		msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
+		msg.parse(message);
+        
+		problems = v.validate(msg, prof.getMessage());
+		toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length > 0);
+		assertTrue(toString, toString.contains("universal ID"));
+
+    }
+
     public void testTableValidation() throws Exception {
         DefaultValidator v = new DefaultValidator();
         Seg mshProfile = (Seg) profile.getMessage().getChild(1);
