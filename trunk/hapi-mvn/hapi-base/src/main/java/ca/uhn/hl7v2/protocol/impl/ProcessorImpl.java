@@ -54,9 +54,9 @@ public class ProcessorImpl implements Processor {
     private static final Logger log = LoggerFactory.getLogger(ProcessorImpl.class);
 
     private ProcessorContext myContext;
-    private final Map myAcceptAcks;
-    private final Map myReservations;
-    private final Map myAvailableMessages;
+    private final Map<String, ExpiringTransportable> myAcceptAcks;
+    private final Map<String, Long> myReservations;
+    private final Map<String, ExpiringTransportable> myAvailableMessages;
     private boolean myThreaded; //true if separate threads are calling cycle()  
     private Cycler ackCycler;
     private Cycler nonAckCycler;
@@ -81,9 +81,9 @@ public class ProcessorImpl implements Processor {
     public ProcessorImpl(ProcessorContext theContext, boolean isThreaded) {
         myContext = theContext;
         myThreaded = isThreaded;
-        myAcceptAcks = new HashMap();
-        myReservations = new HashMap();
-        myAvailableMessages = new HashMap();
+        myAcceptAcks = new HashMap<String, ExpiringTransportable>();
+        myReservations = new HashMap<String, Long>();
+        myAvailableMessages = new HashMap<String, ExpiringTransportable>();
         
         if (isThreaded) {
             myResponseExecutorService = Executors.newSingleThreadExecutor(); 
@@ -132,7 +132,7 @@ public class ProcessorImpl implements Processor {
                 long until = System.currentTimeMillis() + retryIntervalMillis;
                 while (response == null && System.currentTimeMillis() < until) {
                     synchronized (this) {
-                        ExpiringTransportable et = (ExpiringTransportable) myAcceptAcks.remove(controlId);
+                        ExpiringTransportable et = myAcceptAcks.remove(controlId);
                         if (et == null) {
                             cycleIfNeeded(true);
                         } else {
@@ -281,13 +281,22 @@ public class ProcessorImpl implements Processor {
         
         // If we have a message, handle it
         if (in != null) { 
-            String[] fieldPaths = {"MSH-15", "MSH-16", "MSA-1", "MSA-2"};
-            String[] fields = PreParser.getFields(in.getMessage(), fieldPaths);         
-            String acceptAckNeeded = fields[0];
-            String appAckNeeded = fields[1];
-            String ackCode = fields[2];
-            String ackId = fields[3];
-        
+            String acceptAckNeeded = null;
+//            String appAckNeeded = null;
+            String ackCode = null;
+            String ackId = null;
+            
+            try {
+	            String[] fieldPaths = {"MSH-15", "MSH-16", "MSA-1", "MSA-2"};
+	            String[] fields = PreParser.getFields(in.getMessage(), fieldPaths);         
+				acceptAckNeeded = fields[0];
+//				appAckNeeded = fields[1];
+				ackCode = fields[2];
+				ackId = fields[3];
+            } catch (HL7Exception e) {
+            	log.warn("Failed to parse accept ack fields in incoming message", e);
+            }
+            
             if (ackId != null && ackCode != null && ackCode.startsWith("C")) {
                 long expiryTime = System.currentTimeMillis() + 1000 * 60;
                 myAcceptAcks.put(ackId, new ExpiringTransportable(in, expiryTime));
@@ -361,10 +370,10 @@ public class ProcessorImpl implements Processor {
      * Removes expired message reservations from the reservation list.  
      */
     private synchronized void cleanReservations() {
-        Iterator it = myReservations.keySet().iterator();
+        Iterator<String> it = myReservations.keySet().iterator();
         while (it.hasNext()) {
-            String ackId = (String) it.next();
-            Long expiry = (Long) myReservations.get(ackId);
+            String ackId = it.next();
+            Long expiry = myReservations.get(ackId);
             if (System.currentTimeMillis() > expiry.longValue()) {
                 it.remove();
             }
@@ -375,10 +384,10 @@ public class ProcessorImpl implements Processor {
      * Discards expired accept acknowledgements (these are used in retry protocol; see send()).   
      */
     private synchronized void cleanAcceptAcks() {
-        Iterator it = myAcceptAcks.keySet().iterator();
+        Iterator<String> it = myAcceptAcks.keySet().iterator();
         while (it.hasNext()) {
-            String ackId = (String) it.next();
-            ExpiringTransportable et = (ExpiringTransportable) myAcceptAcks.get(ackId);
+            String ackId = it.next();
+            ExpiringTransportable et = myAcceptAcks.get(ackId);
             if (System.currentTimeMillis() > et.expiryTime) {
                 it.remove();
             }
@@ -386,10 +395,10 @@ public class ProcessorImpl implements Processor {
     }
     
     private synchronized void cleanReservedMessages() throws HL7Exception {
-        Iterator it = myAvailableMessages.keySet().iterator();
+        Iterator<String> it = myAvailableMessages.keySet().iterator();
         while (it.hasNext()) {
-            String ackId = (String) it.next();            
-            ExpiringTransportable et = (ExpiringTransportable) myAvailableMessages.get(ackId);
+            String ackId = it.next();            
+            ExpiringTransportable et = myAvailableMessages.get(ackId);
             if (System.currentTimeMillis() > et.expiryTime) {
                 it.remove();
                 
@@ -436,7 +445,7 @@ public class ProcessorImpl implements Processor {
         long until = System.currentTimeMillis() + theTimeoutMillis;
         do {
             synchronized (this) {
-                ExpiringTransportable et = (ExpiringTransportable) myAvailableMessages.get(theAckId);                
+                ExpiringTransportable et = myAvailableMessages.get(theAckId);                
                 if (et == null) {
                     cycleIfNeeded(false);
                 } else {
