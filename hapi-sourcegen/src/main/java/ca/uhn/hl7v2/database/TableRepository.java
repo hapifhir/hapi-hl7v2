@@ -41,6 +41,8 @@ import ca.uhn.hl7v2.UnknownValueException;
  * underlying repository must supply the values for standard HL7 tables.
  * Site-defined tables may also be supported.
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @deprecated This code is probably no longer used and will be removed in an upcoming
+ *    release. Please get in touch if you are still using it.
  */
 public abstract class TableRepository {
 
