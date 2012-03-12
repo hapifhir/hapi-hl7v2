@@ -17,12 +17,12 @@ Conformance
   This feature was developed by University Health Network, and is currently being used quite heavily in a production
   ESB/interface engine to create message structures for translating messages between arbitrary formats. Applications
   that can produce message with custom Z-segments, out of order segments, and other nuances are no longer an issue. 
+
+  For a complete reference on how the plugin works,
+  check out the {{{./hapi-sourcegen/confgen-mojo.html}Maven Plugin Documentation}}
   
   Important: Note that this functionality is still a work in progress, and has the following limitations:
   
-  * Messages are constrained only down to the Segment level. Generated segment classes still rely on HAPI datatypes,
-    so it is not possible to add or remove components from individual fields.
-    
   * Fields which are marked as "not used" are not yet constrained away. As such, this plugin is really currently
     only useful for extending existing message types, not constraining them. Constraining is the next planned use-case
     for implementation. Get in touch if you would like to help.

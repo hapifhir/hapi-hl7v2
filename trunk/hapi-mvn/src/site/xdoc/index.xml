@@ -12,7 +12,8 @@
 		<section name="Welcome">
 
 			<p>
-				This is the home page for the HAPI project. HAPI (HL7 application
+				This is the home page for the HAPI project. 
+				HAPI (HL7 application
 				programming interface;
 				pronounced "happy") is an open-source,
 				object-oriented HL7 2.x parser for
@@ -29,8 +30,15 @@
 				project was initiated by
 				<a href="http://www.uhn.ca">University Health Network</a>
 				(a large multi-site teaching hospital in Toronto, Canada).
+				
 			</p>
-
+			
+			<table border="0">
+				<tr>	
+					<td style="background: #FFFFFF;" width="50%">
+						<h3>HAPI Java API</h3>
+						A full featured Java API you can use to add HL7 capabilities to 
+						your applications.
 			<ul>
 				<li>
 					<b>Support HAPI:</b>
@@ -58,7 +66,16 @@
 					.
 				</li>
 			</ul>
-
+					</td>
+					<td style="background: #FFFFFF;" width="50%">
+						<h3>HAPI TestPanel</h3>
+						A rich testing application which can be used to edit HL7 messages,
+						transmit them, validate them, and more.
+						<img src="images/testpanel_screenshot.png"/>
+					</td>
+				</tr>
+			</table>
+			
 		</section>
 
 		<section name="New Developments! Jan 22, 2012">
@@ -109,11 +126,11 @@
 				<p>
 					Last, and probably least interesting, a new online tool has been added
 					to the site which can be used to colourise ER7 encoded messages. This
-					is mainly useful to people who want to embed HL7 messages or snippet in
+					is mainly useful to people who want to embed HL7 messages or snippets in
 					documentation, emails, web pages, etc. and have them look readable.
 				</p>
 				<p>
-					<a href="./colouriser.html.html">Check it out</a>
+					<a href="./colouriser.html">Check it out</a>
 				</p>
 			</subsection>
 
