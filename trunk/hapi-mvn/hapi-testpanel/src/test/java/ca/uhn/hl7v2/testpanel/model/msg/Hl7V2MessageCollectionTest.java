@@ -252,7 +252,7 @@ public class Hl7V2MessageCollectionTest {
 
 		String normalMsgLine = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\rPID|1\r";
 		String commentLine = "#COMMENT\r";
-		String junkLine = "0123456789\r";
+//		String junkLine = "0123456789\r";
 		String emptyLine = "\r";
 
 		// 1 message
@@ -362,7 +362,7 @@ public class Hl7V2MessageCollectionTest {
 
 		// 2 empty, 1 message
 		{
-			int start0 = 0;
+//			int start0 = 0;
 			String string = "";
 			string += emptyLine;
 			string += emptyLine;

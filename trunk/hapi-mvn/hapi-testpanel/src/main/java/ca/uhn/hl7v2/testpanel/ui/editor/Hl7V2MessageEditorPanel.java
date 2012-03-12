@@ -479,10 +479,15 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 
 			private void handleChange(DocumentEvent theE) {
+				long start = System.currentTimeMillis();
+				
 				String newSource = myMessageEditor.getText();
 				int changeStart = theE.getOffset();
 				int changeEnd = changeStart + theE.getLength();
 				myMessage.updateSourceMessage(newSource, changeStart, changeEnd);
+				
+				ourLog.info("Handled document update in {} ms", System.currentTimeMillis() - start);
+				
 			}
 
 			public void insertUpdate(DocumentEvent theE) {

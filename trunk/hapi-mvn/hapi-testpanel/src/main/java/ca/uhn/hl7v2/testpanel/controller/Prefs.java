@@ -67,7 +67,7 @@ public class Prefs {
 	private static Font myHl7EditorFont;
 	private static final Logger ourLog = LoggerFactory.getLogger(Prefs.class);
 
-	private static final Preferences ourPrefs = Preferences.userNodeForPackage(Prefs.class);
+	private static final Preferences ourPrefs = Preferences.userNodeForPackage(ca.uhn.hl7v2.testpanel.controller.Prefs.class);
 
 	/** Non instantiable */
 	private Prefs() {

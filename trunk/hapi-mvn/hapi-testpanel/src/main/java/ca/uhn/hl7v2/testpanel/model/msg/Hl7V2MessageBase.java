@@ -124,7 +124,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 	public String getMessageDescription() {
 		StringBuilder retVal = new StringBuilder();
 
-		Terser t = new Terser(myParsedMessage);
+		Terser t = new Terser(getParsedMessage());
 
 		try {
 			retVal.append(t.get("/.MSH-9-1"));
@@ -195,7 +195,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 
 		String prev = mySourceMessage;
 		try {
-			mySourceMessage = myParser.encode(myParsedMessage);
+			mySourceMessage = myParser.encode(getParsedMessage());
 		} catch (HL7Exception e) {
 			ourLog.error("Could not re-encode message: " + e.getMessage(), e);
 		}

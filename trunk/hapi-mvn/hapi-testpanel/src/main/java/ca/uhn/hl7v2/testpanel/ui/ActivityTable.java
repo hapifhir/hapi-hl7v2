@@ -27,7 +27,6 @@ package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -37,18 +36,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BoundedRangeModel;
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -68,10 +65,12 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
-import javax.swing.ScrollPaneConstants;
 
 public class ActivityTable extends JPanel implements IDestroyable {
+	
+	@SuppressWarnings("unused")
 	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
+	
 	private static final SimpleDateFormat ourTimestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
 	private JButton clearButton;
