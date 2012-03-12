@@ -28,9 +28,8 @@ package ca.uhn.hl7v2.model;
 
 import java.util.ArrayList;
 
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.GenericComposite
@@ -115,7 +114,7 @@ public class GenericCompositeTest extends TestCase {
 						return outcome == null;
 					}
 				} catch (Exception e) {
-					if (((Class) outcome).isAssignableFrom(e.getClass())) {
+					if (((Class<?>) outcome).isAssignableFrom(e.getClass())) {
 						return true;
 					} else {
 						this.exception = e;
@@ -133,7 +132,7 @@ public class GenericCompositeTest extends TestCase {
 			new TestSpec(100, Varies.class),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -183,7 +182,7 @@ public class GenericCompositeTest extends TestCase {
 			new TestSpec(100, 101),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

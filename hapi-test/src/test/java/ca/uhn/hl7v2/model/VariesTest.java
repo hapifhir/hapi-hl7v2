@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.model;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -344,5 +346,24 @@ public class VariesTest extends TestCase {
 
 	}
 
+	/**
+	 * Checking a problem that was reported by email
+	 */
+	public void testMultipleValuesInObx5() throws HL7Exception, IOException {
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		
+		String input = "OBX|10|FT|2239^Opm." + 
+				"fundus^L^OPFU^FUFOFA||TEKST\\\\E\\\\.br\\\\E\\\\Unclear; niet te" + 
+				"beoordelen.&line 2&line 3|\\\"\\\"|\\\"\\\"|\\\"\\\"|||F";
+		OBX obx = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX();
+		obx.parse(input);
+		
+		String encoded = obx.encode();
+		ourLog.info("Encoded: \n{}", encoded);
+		
+	}
+	
 	
 }

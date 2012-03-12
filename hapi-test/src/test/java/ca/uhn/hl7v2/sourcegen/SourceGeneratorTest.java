@@ -140,7 +140,7 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.6", "ca/uhn/hl7v2/model/v26/")
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -206,7 +206,7 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.6", "ca.uhn.hl7v2.model.v26.")
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -237,11 +237,7 @@ public class SourceGeneratorTest extends TestCase {
 			public boolean executeTest() {
 				try {
 					String retval = "get" + SourceGenerator.makeAccessorName(fieldDesc, "");
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
+					return retval.equals(outcome);
 				} catch (Exception e) {
 					if (e.getClass().equals(outcome)) {
 						return true;
@@ -263,8 +259,6 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("foo (TS)", "getFoo"),
 			new TestSpec("(INTERNAL)", "getINTERNAL"),
 		};
-
-		ArrayList failedTests = new ArrayList();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 
@@ -321,7 +315,7 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("test", "2.4", "test"),
 		};
 
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

@@ -3,7 +3,6 @@ package ca.uhn.hl7v2.model.v24.datatype;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
@@ -128,7 +127,7 @@ public class IDTest extends TestCase {
 			new TestSpec(2, getString(201, 'a'), DataTypeException.class),
 		};
 
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length; i++) {
 			if (!tests[i].executeTest())
@@ -193,7 +192,7 @@ public class IDTest extends TestCase {
 			new TestSpec(getString(201, 'a'), DataTypeException.class),
 		};
 
-		ArrayList failedTests = new ArrayList();
+		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length; i++) {
 			if (!tests[i].executeTest())

@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.model.primitive;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -8,12 +8,15 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import junit.framework.Assert;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v25.datatype.DTM;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
@@ -59,6 +62,53 @@ public class TsComponentOneTest {
 		System.out.println(formatted);
 		assertEquals("2011-02-01T12:12:33.000-0500", formatted);
 		// Tue Feb 01 12:12:33 EST 2011
+
+	}
+
+	@Test
+	public void testGetOperationsOnNull() throws DataTypeException {
+		
+		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
+		Assert.assertEquals(null, dtm.getValueAsCalendar());
+		Assert.assertEquals(null, dtm.getValueAsDate());
+		Assert.assertEquals(null, dtm.getValue());
+		
+	}
+	
+	/**
+	 * This caused an exception at one point
+	 */
+	@Test
+	public void testSetWithInvalid() throws HL7Exception {
+		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
+		dtm.setValue("HELP I'M A BUG");
+		dtm.setValue(new Date());
+	}
+
+	/**
+	 * This caused an exception at one point
+	 */
+	@Test
+	public void testGetWithInvalid() throws HL7Exception {
+		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
+		dtm.setValue("HELP I'M A BUG");
+		
+		dtm.getValue();
+		
+		try {
+			dtm.getValueAsCalendar();
+			fail();
+		} catch (DataTypeException e) {
+			e.toString();
+		}
+		
+		try {
+			dtm.getValueAsDate();
+			fail();
+		} catch (DataTypeException e) {
+			e.toString();
+		}
+		
 
 	}
 

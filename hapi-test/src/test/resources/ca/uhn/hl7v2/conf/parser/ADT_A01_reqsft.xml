@@ -284,7 +284,7 @@
 				</Component>
 			</Field>
 		</Segment>
-		<Segment Name="SFT" LongName="Software Segment" Usage="O" Min="0" Max="*">
+		<Segment Name="SFT" LongName="Software Segment" Usage="R" Min="1" Max="*">
 			<Field Name="Software Vendor Organization" Usage="R" Min="1" Max="1" Datatype="XON" Length="567" ItemNo="01834">
 				<Reference>2.15.12.1</Reference>
 				<Component Name="organization name" Usage="O" Datatype="ST" Length="50">
