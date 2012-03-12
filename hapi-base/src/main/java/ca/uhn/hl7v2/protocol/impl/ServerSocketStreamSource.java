@@ -46,6 +46,9 @@ import ca.uhn.hl7v2.protocol.TransportException;
  */
 public class ServerSocketStreamSource extends SocketStreamSource {
 
+	/** The default SO_TIMEOUT value for sockets returned by this class */
+	public static final int TIMEOUT = 500;
+	
     private ServerSocket myServerSocket;
     private String myExpectedAddress;
     private Socket mySocket;
@@ -123,6 +126,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
 
                         	if (!theServer.isClosed()) {
 	                            s = theServer.accept();
+	                            s.setSoTimeout(TIMEOUT);
 	                            String address = s.getInetAddress().getHostAddress();
 	                            if (theAddress == null || address.equals(theAddress)) {
 	                                a.setSocket(s);

@@ -24,8 +24,8 @@ public class ProcessorContextImpl implements ProcessorContext {
     private final TransportLayer myLocallyDrivenTransport;
     private final TransportLayer myRemotelyDrivenTransport;
     private final SafeStorage mySafeStorage;
-    private final List myValidators;
-    private final List myMetadataFields;
+    private final List<AcceptValidator> myValidators;
+    private final List<String> myMetadataFields;
 
     /**
      * Creates a new instance that uses the given resources.  
@@ -45,8 +45,8 @@ public class ProcessorContextImpl implements ProcessorContext {
         myLocallyDrivenTransport = theTransport;
         mySafeStorage = theStorage;
         
-        myValidators = new ArrayList(8);
-        myMetadataFields = new ArrayList(30);
+        myValidators = new ArrayList<AcceptValidator>(8);
+        myMetadataFields = new ArrayList<String>(30);
     }
 
     /**
@@ -70,8 +70,8 @@ public class ProcessorContextImpl implements ProcessorContext {
         myLocallyDrivenTransport = theLocallyDrivenTransport;
         mySafeStorage = theStorage;
         
-        myValidators = new ArrayList(8);
-        myMetadataFields = new ArrayList(30);
+        myValidators = new ArrayList<AcceptValidator>(8);
+        myMetadataFields = new ArrayList<String>(30);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ProcessorContextImpl implements ProcessorContext {
      * @see ca.uhn.hl7v2.protocol.ProcessorContext#getValidators()
      */
     public AcceptValidator[] getValidators() {
-        return (AcceptValidator[]) myValidators.toArray(new AcceptValidator[0]);
+        return myValidators.toArray(new AcceptValidator[0]);
     }
     
     /**
@@ -122,7 +122,7 @@ public class ProcessorContextImpl implements ProcessorContext {
     /** 
      * @see ca.uhn.hl7v2.protocol.ProcessorContext#getMetadataFields()
      */
-    public List getMetadataFields() {
+    public List<String> getMetadataFields() {
         return myMetadataFields;
     }
 
