@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.DefaultCellEditor;
@@ -1139,12 +1138,12 @@ public class ConformanceEditorPanel {
 			JComboBox retVal = (JComboBox) super.getTableCellEditorComponent(theTable, theValue, theIsSelected, theRow, theColumn);
 			retVal.removeAllItems();
 
-			Properties structures = new Properties();
-			try {
-				structures = Parser.getMessageStructures(Version.latestVersion().getVersion());
-			} catch (IOException e) {
-				ourLog.error("Failed to load message types", e);
-			}
+//			Properties structures = new Properties();
+//			try {
+//				structures = Parser.getMessageStructures(Version.latestVersion().getVersion());
+//			} catch (IOException e) {
+//				ourLog.error("Failed to load message types", e);
+//			}
 
 			if (theColumn - 1 == MyProfilesRowModel.COL_MSG_TYPE) {
 
