@@ -74,7 +74,6 @@ public class DefaultValidator implements Validator {
     private EncodingCharacters enc;  //used to check for content in parts of a message
     private static final Logger log = LoggerFactory.getLogger(DefaultValidator.class);
     private boolean validateChildren = true;
-    private boolean validateTables = true;
 	private CodeStore codeStore;
     
 
@@ -90,17 +89,7 @@ public class DefaultValidator implements Validator {
     public void setValidateChildren(boolean validateChildren) {
     	this.validateChildren = validateChildren;
     }
-    
-    /**
-     * If set to false (default is true), table values will not be validated
-     * 
-     * @see CodeStore
-     * @see ProfileStoreFactory
-     */
-    public void setValidateTables(boolean theValidateTables) {
-    	validateTables = theValidateTables;
-    }
-    
+        
     /**
      * <p>
      * Provides a code store to use to provide the code tables which will be
