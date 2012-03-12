@@ -26,6 +26,7 @@
 		<menu name="Welcome">
 			<item name="Introduction" href="index.html" />
 			<item name="Changelog" href="changes-report.html" />
+			<item name="Blog" href="http://onintegration.blogspot.com/" />
 
 			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
 		</menu>

@@ -27,7 +27,7 @@
 			<p>
 				Place your HL7 here:
 			</p>
-			<textarea id="ta" style="width: 95%; height: 100px; white-space: nowrap;    overflow:    scroll;    overflow-y:  hidden;    overflow-x:  scroll;    overflow:    -moz-scrollbars-horizontal;" onfocus="document.getElementById('ta').select();" cols="80" rows="10"></textarea>
+			<textarea id="ta" style="width: 95%; height: 100px; white-space: nowrap;    overflow:    scroll;    overflow-y:  hidden;    overflow-x:  scroll;    overflow:    -moz-scrollbars-horizontal;" onfocus="selectTa();" cols="80" rows="10"></textarea>
 			<br/>
 			
 			<p>
@@ -40,7 +40,15 @@
 			<p>.. and HTML here:</p>
 			<div id="outHtml" style="border: 1px solid #808080; font-family: monospace; color: #000000; white-space: nowrap; overflow: auto;"></div>
 
-						<script type="text/javascript"><![CDATA[
+			<script type="text/javascript"><![CDATA[
+				var firstFocus = false;
+			
+				function selectTa() {
+					if (!firstFocus) {
+						document.getElementById('ta').select();
+						firstFocus = true;
+					}
+				}
 			
 				function update() {
 					

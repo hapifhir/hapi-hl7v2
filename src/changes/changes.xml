@@ -6,6 +6,13 @@
 	</properties>
 	<body>
         <release version="2.0" date="TBD">
+        	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
+        	can be accessed at:
+				<![CDATA[
+	            	<a href="https://hl7api.svn.sourceforge.net/svnroot/hl7api">https://hl7api.svn.sourceforge.net/svnroot/hl7api</a>
+				]]>
+			The old CVS repo will be kept around for now, just in case it is needed. 
+        	</action>
             <action type="add" dev="Christian Ohr" issue="3388301">
             	Refactored large parts of the networking functionality in the ca.uhn.hl7v2.app package. Most
 				notably, an ExecutorService instance can be injected to customize the threading behavior.
@@ -15,13 +22,6 @@
 				directly from a file and to reuse client-side connections even when the MLLP server was 
 				restarted in the meanwhile.
             </action>
-        	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
-        	can be accessed at:
-				<![CDATA[
-	            	<a href="https://hl7api.svn.sourceforge.net/svnroot/hl7api">https://hl7api.svn.sourceforge.net/svnroot/hl7api</a>
-				]]>
-			The old CVS repo will be kept around for now, just in case it is needed. 
-        	</action>
         	<action type="add" dev="Christian Ohr" issue="3421083">
         		Convert HAPI to use the 
 				<![CDATA[
@@ -105,6 +105,23 @@
         		]]>
         		This prevents issues when parsing times in a locale with Daylight Savings Time outside of
         		the current DST window, such as parsing 201201010800-0400 in Toronto in June, when the DST offset is actually -0500.  
+        		<![CDATA[
+        		<br><br>
+        		]]>
+        	</action>
+        	<action type="fix" dev="James Agnew">
+        		Correct several minor issues with CommonTS and TSComponentOne. Specifically:
+        		<![CDATA[
+        		<ul>
+        			<li>
+        				Allow setValue(String) to work correctly if the previous value was 
+        				invalid (instead of throwing a DataTypeException).
+        			</li>
+        			<li>
+        				getValueAsDate() and getValueAsCalendar() now return null if the
+        				field contains null, instead of throwing a NullPointerException.
+        			</li>
+        		]]>
         	</action>
         	<!-- 
         	<action type="add" dev="James Agnew">
@@ -214,6 +231,28 @@
         		The "Source" and "Javadoc" JAR bundles are once again being built and can be
         		downloaded along with the library JARs themselves.
 			</action>			
+			<action dev="James Agnew" type="add">
+				Add a system property to 
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/MessageIDGenerator.html#NEVER_FAIL_PROPERTY">MessageIDGenerator</a>
+				]]>
+				which prevents it from failing if it is unable to read or write the message file.
+			</action>
+			<action dev="James Agnew" type="add">
+				MessageIDGenerator has been modified so that it will never fail in the
+				event of a problem reading or writing a file. This should help with
+				unpredictable failures when id_file permissions get messed up or
+				id_file gets corrupted.
+			</action>
+			<action dev="mblanchette" type="fix" issue="3472728">
+				Correct an issue with the new ForcedEncode mode where for instance
+				"PID-11-7" is read as "PID-1-7" and then incorrectly encoded.
+			</action>
+			<action dev="Rahul Somasunderam (Certify)" type="fix" issue="3471934">
+				Prevent incorrect segment repetition number from appearing in 
+				validation failure exception messages. Thanks to Rahul for providing a
+				report with a working test case.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
