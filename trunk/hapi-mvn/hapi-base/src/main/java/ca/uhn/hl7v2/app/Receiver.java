@@ -69,7 +69,7 @@ public class Receiver extends Service {
 		} catch (SocketException e)  {
 			// This probably means that the client closed the server connection normally
 			conn.close();
-			log.warn("SocketException: closing Connection, will no longer read messages with this Receiver. ", e);
+			log.info("SocketException: closing Connection, will no longer read messages with this Receiver: " + e.getMessage());
 		} catch (IOException e) {
 			conn.close();
 			log.warn("IOException: closing Connection, will no longer read messages with this Receiver. ", e);
