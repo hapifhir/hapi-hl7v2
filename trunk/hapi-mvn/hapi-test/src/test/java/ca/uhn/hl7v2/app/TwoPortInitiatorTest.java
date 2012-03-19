@@ -8,6 +8,7 @@ import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.getDefaultService;
 import static org.junit.Assert.*;
 
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -15,10 +16,13 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
@@ -36,26 +40,30 @@ import ca.uhn.hl7v2.util.Terser;
  *          jamesagnew $
  */
 
-public class TwoPortInitiatorTest {
+public class TwoPortInitiatorTest implements Application {
 
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(TwoPortInitiatorTest.class);
+	
 	private static TwoPortService tps;
 	private static int port1;
 	private static int port2;
 	private static final String msgText = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
+	@Before
+	public void before() throws Exception {
 		port1 = RandomServerPortProvider.findFreePort();
 		port2 = RandomServerPortProvider.findFreePort();
 		tps = new TwoPortService(port1, port2);
+		tps.registerApplication("*", "*", this);
 		tps.start();
-		
 	}
 
-	@AfterClass
-	public static void afterClass() throws Exception {
+	@After
+	public void after() throws Exception {
 		tps.stopAndWait();
 		DefaultExecutorService.getDefaultService().shutdown();
+		
+		ourLog.info("Finished test");
 	}
 
 	@Test
@@ -74,7 +82,6 @@ public class TwoPortInitiatorTest {
 		assertEquals(Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1),
 				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
 		conn.close();
-		// Thread.sleep(2000);
 	}
 
 
@@ -94,6 +101,7 @@ public class TwoPortInitiatorTest {
 					String id = Long.toString(r.nextLong());
 					Message out = parser.parse(msgText);
 					Terser.set((Segment) out.get("MSH"), 10, 0, 1, 1, id);
+					ourLog.info("Sending message with ID: {}", id);
 					Message in = conn.getInitiator().sendAndReceive(out);
 					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1)
 							.equals(Terser.get((Segment) in.get("MSA"), 2, 0,
@@ -121,6 +129,21 @@ public class TwoPortInitiatorTest {
 		}
 		conn.close();
 
+	}
+
+	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+		
+		ourLog.info("Received message with ID {}", new Terser(theIn).get("/MSH-10"));
+		
+		try {
+			return theIn.generateACK();
+		} catch (IOException e) {
+			throw new Error(e);
+		}
+	}
+
+	public boolean canProcess(Message theIn) {
+		return true;
 	}
 
 }

@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.llp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
@@ -254,7 +255,12 @@ public class MinLLPReaderTest extends TestCase {
                                                                   // closed
                                                                   // remotely
         MinLLPReader reader = new MinLLPReader(in);
-        String message = reader.getMessage();
-        assertEquals(null, message);
+
+        try {
+        reader.getMessage();
+        fail();
+        } catch (SocketException e) {
+        	return;
+        }
     }
 }

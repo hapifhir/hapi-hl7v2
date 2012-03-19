@@ -140,5 +140,16 @@ public class BlockingHashMapTest {
 		assertFalse(map.containsKey(KEY));
 	}
 	
+	@Test
+	public void testAsyncPoll() throws Exception {
+		for (int i = 0; i < 1000; i++) {
+			String key = "" + i;
+			Future<Object> future = map.asyncPoll(key, 1000, TimeUnit.MILLISECONDS);
+			boolean gave = map.give(key, key);
+			assertTrue("Failed on " + i, gave);
+			assertEquals("Failed on " + i, key, future.get(1000, TimeUnit.MILLISECONDS));
+		}
+	}
+	
 	// Parallel producer/consumer
 }
