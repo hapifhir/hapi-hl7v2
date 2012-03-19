@@ -6,6 +6,14 @@
 	</properties>
 	<body>
         <release version="2.0" date="TBD">
+        	<action type="fix">
+				<![CDATA[
+        		<i>Regression in 2.0-beta1:</i> 
+				]]>
+        		Fix issue where occasionally a Connection which is
+        		sending a message would "miss" an ACK/response message it received and report 
+        		that the send timed out. 
+        	</action>
         	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
         	can be accessed at:
 				<![CDATA[

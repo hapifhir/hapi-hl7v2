@@ -94,6 +94,7 @@ public class BlockingHashMap<K, V> implements BlockingMap<K, V> {
 	
 
 	public Future<V> asyncTake(final K key) throws InterruptedException {
+		latchFor(key);
 		return executor.submit(new Callable<V>() {
 
 			public V call() throws Exception {
@@ -112,6 +113,7 @@ public class BlockingHashMap<K, V> implements BlockingMap<K, V> {
 	}
 	
 	public Future<V> asyncPoll(final K key, final long timeout, final TimeUnit unit) {
+		latchFor(key);
 		return executor.submit(new Callable<V>() {
 
 			public V call() throws Exception {
