@@ -138,7 +138,7 @@ public class Responder {
 				.getLogger("ca.uhn.hl7v2.raw.outbound");
 		Logger rawInbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.inbound");
 
-		log.info("Responder got message: {}", incomingMessageString);
+		log.debug("Responder got message: {}", incomingMessageString);
 		rawInbound.debug(incomingMessageString);
 
 		Message incomingMessageObject = null;
@@ -191,7 +191,7 @@ public class Responder {
 			}
 		}
 
-		log.info("Responder sending message: {}", outgoingMessageString);
+		log.debug("Responder sending message: {}", outgoingMessageString);
 		rawOutbound.debug(outgoingMessageString);
 
 		return outgoingMessageString;
