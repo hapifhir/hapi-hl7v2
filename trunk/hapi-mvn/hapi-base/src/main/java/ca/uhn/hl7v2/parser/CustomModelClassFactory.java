@@ -23,10 +23,6 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.parser;
 
-/**
- *
- * @author James
- */
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +42,7 @@ import ca.uhn.hl7v2.model.Type;
  * structure, DefaultModelClassFactory is used.
  *
  * @author Based on implementation by Christian Ohr
+ * @author James Agnew
  * @since 1.0
  */
 public class CustomModelClassFactory implements ModelClassFactory {
@@ -92,7 +89,7 @@ public class CustomModelClassFactory implements ModelClassFactory {
      * Constructor
      * @param map Map of packages to include.
      * <p>
-     * Keys are versions of HL7, e.g. "v25".
+     * Keys are versions of HL7, e.g. "2.5".
      * </p>
      * <p>
      * Values are an array of packages to search in for custom model classes.
