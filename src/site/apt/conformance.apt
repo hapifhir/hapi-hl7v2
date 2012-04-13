@@ -133,8 +133,6 @@ target/generated-sources/confgen
 *-----------------------+------------------------------------------------------------+
 | {{{http://www.hl7.org/lib_admin/docs.cfm?dir=library/committees/conf&comm=conf}The Messaging Workbench}} | This is a graphical profile editor created by Peter Rontey of the US Veteran's Administration.    It can be downloaded from the HL7 Conformance SIG's documents page.  
 *-----------------------+------------------------------------------------------------+
-| {{{./conf/darius}Custom Z API Generator}} | An XSL tool by Darius Kemeklis that generates custom Z segment API classes for HAPI based on a conformance profile.  Standalone as well as integrated into the Messaging Workbench.   
-*-----------------------+------------------------------------------------------------+
 | {{{http://www.nist.gov/messagemaker}Message Maker}} | This tool by Rob Snelick and colleagues (NIST) generates test messages from a conformance profile.    
 *-----------------------+------------------------------------------------------------+
 | {{{http://hl7api.sourceforge.net/conf/Conf_FOP.zip}PDF Transform}} | Lloyd McKenzie and Jennifer Puyenbroek's XSL stylesheet which transforms a profile into PDF or HTML.  
