@@ -261,6 +261,15 @@
 				validation failure exception messages. Thanks to Rahul for providing a
 				report with a working test case.
 			</action>
+			<action dev="Christian Ohr" type="fix" issue="2793050">
+				Provide the
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html>DefaultValidationWithoutTN</a>
+				]]>  
+				class for default validation without the TN rule which is specific for U.S. phone numbers.
+				In this context, adding RuleBindings to the ValidationContext has been made type-safe. A minor API
+				change was necessary: RuleBindings require dedicated Rule types for initialization.
+			</action>			
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a

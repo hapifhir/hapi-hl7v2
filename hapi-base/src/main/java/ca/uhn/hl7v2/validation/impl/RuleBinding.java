@@ -36,14 +36,14 @@ import ca.uhn.hl7v2.validation.Rule;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2010-04-25 16:22:52 $ by $Author: jamesagnew $
  */
-public class RuleBinding implements Serializable {
+public class RuleBinding<T extends Rule> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
     private boolean myActiveFlag;
     private String myVersion;
     private String myScope;
-    private Rule myRule;
+    private T myRule;
     
     /**
      * Active by default.  
@@ -52,7 +52,7 @@ public class RuleBinding implements Serializable {
      * @param theScope see {@link #getScope()}
      * @param theRule see {@link #getRule()}
      */
-    public RuleBinding(String theVersion, String theScope, Rule theRule) {
+    public RuleBinding(String theVersion, String theScope, T theRule) {
         myActiveFlag = true;
         myVersion = theVersion;
         myScope = theScope;
@@ -93,7 +93,7 @@ public class RuleBinding implements Serializable {
     /**
      * @return a <code>Rule</code> that applies to the associated version and scope
      */
-    public Rule getRule() {
+    public T getRule() {
         return myRule;
     }
 

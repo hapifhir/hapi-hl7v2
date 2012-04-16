@@ -25,33 +25,28 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.validation.impl;
 
+import java.util.regex.Pattern;
+
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 
 /**
  * Performs no validation but removes leading whitespace in the correct() method.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public class TrimLeadingWhitespace implements PrimitiveTypeRule {
 
+	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
+	
     /** 
      * Removes leading whitespace. 
      * 
      * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
      */
     public String correct(String value) {
-        String trmValue = null;
-        if (value != null) {
-            char[] stringChr = value.toCharArray();
-            for (int i=0; i < stringChr.length && trmValue == null; i++){
-                if (!Character.isWhitespace(stringChr[i])){
-                    trmValue = String.valueOf(stringChr,i,(stringChr.length - i));
-                }
-            }
-        }
-        return trmValue;
+    	return value != null ? LEADING_WHITESPACE.matcher(value).replaceAll("") : null;
     }
 
     /** 

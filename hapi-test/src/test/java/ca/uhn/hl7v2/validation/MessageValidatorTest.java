@@ -38,8 +38,8 @@ public class MessageValidatorTest extends TestCase {
         ValidationContextImpl context = new ValidationContextImpl();
         context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
         context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
-        context.getEncodingRuleBindings().add(new RuleBinding("*", "*", new MockEncodingRule()));
-        context.getEncodingRuleBindings().add(new RuleBinding("*", "*", new MockEncodingRule()));
+        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
+        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
 
         myFailingValidator = new MessageValidator(context, true);
         myNonFailingValidator = new MessageValidator(context, false);
@@ -106,7 +106,8 @@ public class MessageValidatorTest extends TestCase {
         }
     }
 
-    private class MockMessageRule implements MessageRule {
+    @SuppressWarnings("serial")
+	private class MockMessageRule implements MessageRule {
 
         public ValidationException[] test(Message msg) {
             return new ValidationException[] { new ValidationException("testing validator") };
@@ -121,15 +122,8 @@ public class MessageValidatorTest extends TestCase {
         }
     }
 
-    private class MockEncodingRule implements EncodingRule {
-
-        public boolean appliesToER7() {
-            return true;
-        }
-
-        public boolean appliesToXML() {
-            return true;
-        }
+    @SuppressWarnings("serial")
+	private class MockEncodingRule implements EncodingRule {
 
         public ValidationException[] test(String msg) {
             return new ValidationException[] { new ValidationException("test validator") };

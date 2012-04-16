@@ -22,7 +22,7 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import java.io.Serializable;
@@ -37,123 +37,90 @@ import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
 /**
- * A default implementation of <code>ValidationContext</code>. 
+ * A default implementation of <code>ValidationContext</code>.
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.3 $ updated on $Date: 2010-08-23 01:14:44 $ by $Author: jamesagnew $
+ * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public class ValidationContextImpl implements ValidationContext, Serializable {
 
-    private List<RuleBinding> myPrimitiveRuleBindings;
-    private List<RuleBinding> myMessageRuleBindings;
-    private List<RuleBinding> myEncodingRuleBindings;
-    
-    public ValidationContextImpl() {
-        myPrimitiveRuleBindings = new ArrayList<RuleBinding>(30);
-        myMessageRuleBindings = new ArrayList<RuleBinding>(20);
-        myEncodingRuleBindings = new ArrayList<RuleBinding>(10);
-    }
+	private List<RuleBinding<PrimitiveTypeRule>> myPrimitiveRuleBindings;
+	private List<RuleBinding<MessageRule>> myMessageRuleBindings;
+	private List<RuleBinding<EncodingRule>> myEncodingRuleBindings;
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.ValidationContext#getDataTypeRules(java.lang.String, java.lang.String)
-     * @param theType ignored 
-     */
-    public PrimitiveTypeRule[] getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
-        List<Rule> active = new ArrayList<Rule>(myPrimitiveRuleBindings.size());
-        for (int i = 0; i < myPrimitiveRuleBindings.size(); i++) {
-            Object o = myPrimitiveRuleBindings.get(i);
-            if ( !(o instanceof RuleBinding) ) {
-                throw new ClassCastException("Item in rule binding list is not a RuleBinding");
-            }
-            
-            RuleBinding binding = (RuleBinding) o;
-            if (binding.getActive() 
-                    && binding.appliesToVersion(theVersion) 
-                    && binding.appliesToScope(theTypeName)) {
-                active.add(binding.getRule());
-            }
-        }
-        return (PrimitiveTypeRule[]) active.toArray(new PrimitiveTypeRule[0]);
-    }
-    
-    /**
-     * @return a List of <code>RuleBinding</code>s for <code>PrimitiveTypeRule</code>s.    
-     */
-    public List<RuleBinding> getPrimitiveRuleBindings() {
-        return myPrimitiveRuleBindings;
-    }
+	public ValidationContextImpl() {
+		myPrimitiveRuleBindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
+		myMessageRuleBindings = new ArrayList<RuleBinding<MessageRule>>();
+		myEncodingRuleBindings = new ArrayList<RuleBinding<EncodingRule>>();
+	}
 
-    /**
-     * @see ca.uhn.hl7v2.validation.ValidationContext
-     *      #getMessageRules(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public MessageRule[] getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
-            
-        List<Rule> active = new ArrayList<Rule>(myMessageRuleBindings.size());
-        for (int i = 0; i < myMessageRuleBindings.size(); i++) {
-            Object o = myMessageRuleBindings.get(i);
-            if ( !(o instanceof RuleBinding) ) {
-                throw new ClassCastException("Item in rule binding list is not a RuleBinding");
-            }
-        
-            RuleBinding binding = (RuleBinding) o;
-            if (binding.getActive() 
-                    && binding.appliesToVersion(theVersion) 
-                    && binding.appliesToScope(theMessageType + "^" + theTriggerEvent)) {
-                active.add(binding.getRule());
-            }
-        }
-        return (MessageRule[]) active.toArray(new MessageRule[0]);
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.ValidationContext#getDataTypeRules(java.lang.String,
+	 *      java.lang.String)
+	 * @param theType ignored
+	 */
+	public PrimitiveTypeRule[] getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
+		return getRules(myPrimitiveRuleBindings, theVersion, theTypeName, PrimitiveTypeRule.class);
+	}
 
-    /**
-     * @return a List of <code>RuleBinding</code>s for <code>MessageRule</code>s.    
-     */
-    public List<RuleBinding> getMessageRuleBindings() {
-        return myMessageRuleBindings;
-    }
+	/**
+	 * @return a List of <code>RuleBinding</code>s for
+	 *         <code>PrimitiveTypeRule</code>s.
+	 */
+	public List<RuleBinding<PrimitiveTypeRule>> getPrimitiveRuleBindings() {
+		return myPrimitiveRuleBindings;
+	}
+		
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.ValidationContext#getEncodingRules(java.lang.String, java.lang.String)
-     */
-    public EncodingRule[] getEncodingRules(String theVersion, String theEncoding) {
-        List<Rule> active = new ArrayList<Rule>(myEncodingRuleBindings.size());
-        for (int i = 0; i < myEncodingRuleBindings.size(); i++) {
-            Object o = myEncodingRuleBindings.get(i);
-            if ( !(o instanceof RuleBinding) ) {
-                throw new ClassCastException("Item in rule binding list is not a RuleBinding");
-            }
-            
-            RuleBinding binding = (RuleBinding) o;
-            if (binding.getActive() 
-                    && binding.appliesToVersion(theVersion) 
-                    && binding.appliesToScope(theEncoding)) {
-                active.add(binding.getRule());
-            }
-        }
-        return (EncodingRule[]) active.toArray(new EncodingRule[0]);
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.ValidationContext
+	 *      #getMessageRules(java.lang.String, java.lang.String,
+	 *      java.lang.String)
+	 */
+	public MessageRule[] getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
+		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent, MessageRule.class);
+	}
 
-    /**
-     * @return a List of <code>RuleBinding</code>s for <code>EncodingRule</code>s.    
-     */
-    public List<RuleBinding> getEncodingRuleBindings() {
-        return myEncodingRuleBindings;
-    }
+	/**
+	 * @return a List of <code>RuleBinding</code>s for <code>MessageRule</code>s.
+	 */
+	public List<RuleBinding<MessageRule>> getMessageRuleBindings() {
+		return myMessageRuleBindings;
+	}
 
-//    /**
-//     * @see ca.uhn.hl7v2.validation.ValidationContext#getCheckPrimitivesOnSet()
-//     */
-//    public boolean getCheckPrimitivesOnSet() {
-//        return myCheckPrimitivesFlag;
-//    }
-//
-//    /**
-//     * @see ca.uhn.hl7v2.validation.ValidationContext#setCheckPrimitivesOnSet(boolean)
-//     */
-//    public void setCheckPrimitivesOnSet(boolean check) {
-//        myCheckPrimitivesFlag = check;
-//    }
-    
+	/**
+	 * @see ca.uhn.hl7v2.validation.ValidationContext#getEncodingRules(java.lang.String,
+	 *      java.lang.String)
+	 */
+	public EncodingRule[] getEncodingRules(String theVersion, String theEncoding) {
+		return getRules(myEncodingRuleBindings, theVersion, theEncoding, EncodingRule.class);
+	}
+
+	/**
+	 * @return a List of <code>RuleBinding</code>s for <code>EncodingRule</code>s.
+	 */
+	public List<RuleBinding<EncodingRule>> getEncodingRuleBindings() {
+		return myEncodingRuleBindings;
+	}
+	
+	private <T extends Rule> T[] getRules(List<RuleBinding<T>> bindings, String version, String scope,
+			Class<T> ruleClass) {
+		List<T> active = new ArrayList<T>(bindings.size());
+		for (RuleBinding<T> binding : bindings) {
+			if (applies(binding, version, scope))
+				active.add(binding.getRule());
+		}
+		return toArray(active, ruleClass);
+	}
+
+	private boolean applies(RuleBinding<?> binding, String version, String scope) {
+		return (binding.getActive() && binding.appliesToVersion(version) && binding.appliesToScope(scope));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(List<T> list, Class<T> c) {
+		return list.toArray((T[]) java.lang.reflect.Array.newInstance(c, list.size()));
+	}
+
 }

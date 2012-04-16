@@ -42,6 +42,7 @@ import ca.uhn.hl7v2.parser.testmodel.MessageWithMandatorySegmentBeforeSubgroup;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
+import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
@@ -810,9 +811,9 @@ public class NewPipeParserTest extends TestCase {
 
 	public void testValidation() throws Exception {
 		ValidationContextImpl context = new ValidationContextImpl();
-		context.getEncodingRuleBindings().add(new RuleBinding("*", "*", new FooEncodingRule()));
+		context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new FooEncodingRule()));
 		context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new BarMessageRule()));
-		context.getPrimitiveRuleBindings().add(new RuleBinding("*", "NM", new SizeRule(5)));
+		context.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NM", new SizeRule(5)));
 		parser.setValidationContext(context);
 
 		String text = "MSH|^~\\&|bar|foo|||||ORU^R01|1|D|2.4|12345\r";
@@ -966,6 +967,7 @@ public class NewPipeParserTest extends TestCase {
 		Message message = parser.parse(msg);
 	}
 
+	@SuppressWarnings("serial")
 	private static class FooEncodingRule implements EncodingRule {
 		/**
 		 * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
@@ -993,6 +995,7 @@ public class NewPipeParserTest extends TestCase {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private static class BarMessageRule implements MessageRule {
 
 		/**
