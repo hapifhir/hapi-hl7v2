@@ -3,9 +3,15 @@
  */
 package ca.uhn.hl7v2.validation.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
@@ -13,39 +19,41 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.ValidationException;
-import junit.framework.TestCase;
 
 /**
  * Unit tests for ConformanceProfileRule. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:33 $ by $Author: jamesagnew $
+ * @author Christian Ohr
  */
-public class ConformanceProfileRuleTest extends TestCase {
+public class ConformanceProfileRuleTest {
 
     private static String PROFILE_ID = "TestProfile";
     
     private ConformanceProfileRule myRule1;
     private ConformanceProfileRule myRule2;
     
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         myRule1 = new ConformanceProfileRule(PROFILE_ID);
         myRule2 = new ConformanceProfileRule();
     }
+    
+    @BeforeClass
+    public static void addProfileToStore() throws Exception {
+        InputStream instream = ProfileParser.class.getClassLoader().getResourceAsStream("ca/uhn/hl7v2/conf/parser/example_ack.xml");
+        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+        StringBuffer profile = new StringBuffer();
+        int i;
+        while ((i = in.read()) != -1) {
+            profile.append( (char) i );
+        }
+        in.close();
+        
+        ProfileStoreFactory.getProfileStore().persistProfile(PROFILE_ID, profile.toString());
+    }    
 
-    /**
-     * Constructor for ConformanceProfileRuleTest.
-     * @param arg0
-     */
-    public ConformanceProfileRuleTest(String arg0) throws Exception {
-        super(arg0);
-        addProfileToStore();
-    }
-
+    @Test
     public void testTest() throws Exception {
         Parser p = new PipeParser();        
         Message m1 = p.parse(getMessage1());
@@ -71,18 +79,7 @@ public class ConformanceProfileRuleTest extends TestCase {
         assertEquals(12, errors.length); //gets tested twice
     }
     
-    private void addProfileToStore() throws Exception {
-        InputStream instream = ProfileParser.class.getClassLoader().getResourceAsStream("ca/uhn/hl7v2/conf/parser/example_ack.xml");
-        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        StringBuffer profile = new StringBuffer();
-        int i;
-        while ((i = in.read()) != -1) {
-            profile.append( (char) i );
-        }
-        in.close();
-        
-        ProfileStoreFactory.getProfileStore().persistProfile(PROFILE_ID, profile.toString());
-    }
+
 
     private String getMessage1() {
         return "MSH|^~\\&|Fake Sending App|Fake Sending Facility||Fake Receiving Facility|200108151718||ACK^A01^ACK|20|P|2.4|||||||||TestProfile|\rMSA|AA\r";

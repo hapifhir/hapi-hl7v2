@@ -36,7 +36,7 @@ import ca.uhn.hl7v2.validation.MessageRule;
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
 @SuppressWarnings("serial")
-public class MessageRuleBinding extends RuleBinding {
+public class MessageRuleBinding extends RuleBinding<MessageRule> {
 
     private String myMessageType;
     private String myTriggerEvent;
@@ -59,7 +59,6 @@ public class MessageRuleBinding extends RuleBinding {
      *      by a carat)
      */
     public boolean appliesToScope(String theScope) {
-        boolean applies = false;
         
         if (!theScope.matches(".*\\^.*")) {
             throw new IllegalArgumentException("arg theScope must be of the form type^event");
@@ -69,11 +68,7 @@ public class MessageRuleBinding extends RuleBinding {
         String itemType = tok.nextToken();
         String itemEvent = tok.nextToken();
         
-        if (applies(myMessageType, itemType) && applies(myTriggerEvent, itemEvent)) {
-            applies = true;
-        }
-        
-        return applies;
+        return (applies(myMessageType, itemType) && applies(myTriggerEvent, itemEvent));
     }
 
 }

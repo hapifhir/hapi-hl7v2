@@ -3,44 +3,41 @@
  */
 package ca.uhn.hl7v2.validation.impl;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * Unit tests for SizeRule. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:33 $ by $Author: jamesagnew $
+ * @author Christian Ohr 
  */
-public class SizeRuleTest extends TestCase {
+public class SizeRuleTest {
 
     private SizeRule myRule;
     
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         myRule = new SizeRule(5);
     }
 
-    /**
-     * Constructor for SizeRuleTest.
-     * @param arg0
-     */
-    public SizeRuleTest(String arg0) {
-        super(arg0);
-    }
-
+    @Test
     public void testCorrect() {
         String x = "xxxxxx";
         assertEquals(x, myRule.correct(x));
     }
 
+    @Test    
     public void testTest() {
-        assertEquals(true, myRule.test(null));
-        assertEquals(true, myRule.test("foo"));
-        assertEquals(true, myRule.test("foooo"));
-        assertEquals(false, myRule.test("fooooo"));
+        assertTrue(myRule.test(null));
+        assertTrue(myRule.test("foo"));
+        assertTrue(myRule.test("foooo"));
+        assertFalse(myRule.test("fooooo"));
     }
 
 }

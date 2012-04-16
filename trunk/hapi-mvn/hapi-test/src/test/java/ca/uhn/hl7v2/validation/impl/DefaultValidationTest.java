@@ -3,7 +3,13 @@
  */
 package ca.uhn.hl7v2.validation.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
@@ -19,39 +25,29 @@ import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
-import junit.framework.TestCase;
 
 /**
  * Test cases for various default validation rules.  
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Leslie Mann
- * @version $Revision: 1.2 $ updated on $Date: 2009-08-31 20:55:38 $ by $Author: jamesagnew $
+ * @author Christian Ohr 
  */
-public class DefaultValidationTest extends TestCase {
+public class DefaultValidationTest {
     
     private Message myMessage;
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         myMessage = new GenericMessage.V25(new DefaultModelClassFactory());
         myMessage.setValidationContext(new DefaultValidation());
     }
 
-    /**
-     * Constructor for DefaultValidationTest.
-     * @param arg0
-     */
-    public DefaultValidationTest(String arg0) {
-        super(arg0);
-    }
     
     /**
      * https://sourceforge.net/tracker/?func=detail&aid=3471934&group_id=38899&atid=423835
      */
+    @Test
     public void testPhoneExceptionMessage() {
     	
     	String messageString = "MSH|^~\\&|ABCDEFG&1.23.4&ISO|CDS|LABADT|MCM|20120109|SECURITY|ADT^A04|MSG00001|P|2.4\r"+
@@ -98,6 +94,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test
     public void testDT() throws Exception {
         //adapted from CommonDTTest ... 
         class TestSpec {
@@ -183,6 +180,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test
     public void testTM() throws Exception {
         //adapted from CommonTMTest ... 
         class TestSpec {
@@ -266,6 +264,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test    
     public void testTS() throws Exception {
         class TestSpec {
             String value;
@@ -452,6 +451,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test    
     public void testTN() throws Exception {
         //adapted from CommonTNTest ... 
         class TestSpec {
@@ -607,6 +607,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test    
     public void testNM() throws Exception {
         //adapted from CommonNMTest ...  
 
@@ -699,6 +700,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * @throws Exception ... 
      */
+    @Test    
     public void testSI() throws Exception {
         assertSIOK(null);
         assertSIOK("");
@@ -730,6 +732,7 @@ public class DefaultValidationTest extends TestCase {
     /**
      * Make sure invalid DTs fail correctly, in response to a report from Serbulent Unsal.
      */
+    @Test    
     public void testValidateTSComponentOne() {
         String validMessage = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|something wrong here ||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r\n"
              + "EVN|A31|200903230934\r\n"

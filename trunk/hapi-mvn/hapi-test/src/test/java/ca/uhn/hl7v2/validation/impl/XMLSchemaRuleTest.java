@@ -3,29 +3,26 @@
  */
 package ca.uhn.hl7v2.validation.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 
+import org.junit.Test;
+
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import junit.framework.TestCase;
 
 /**
  * Unit tests for <code>ValidatesAgainstSchema</code>.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.4 $ updated on $Date: 2011-05-09 22:04:40 $ by $Author: jamesagnew $
+ * @author Christian Ohr
  */
-public class XMLSchemaRuleTest extends TestCase {
+public class XMLSchemaRuleTest {
 
-    /**
-     * @param arg0
-     */
-    public XMLSchemaRuleTest(String arg0) {
-        super(arg0);
-    }
-
+	@Test
     public void testTest() throws IOException {
         
         URL res = XMLSchemaRuleTest.class.getClassLoader().getResource("ca/uhn/hl7v2/validation/impl/ACK.xsd");

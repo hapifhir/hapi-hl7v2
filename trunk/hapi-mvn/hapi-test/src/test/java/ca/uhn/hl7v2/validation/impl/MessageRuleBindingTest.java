@@ -3,34 +3,23 @@
  */
 package ca.uhn.hl7v2.validation.impl;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 
 /**
  * Unit tests for MessageRuleBinding. 
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:33 $ by $Author: jamesagnew $
+ * @author Christian Ohr 
  */
-public class MessageRuleBindingTest extends TestCase {
+public class MessageRuleBindingTest {
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
-    /**
-     * Constructor for MessageRuleBindingTest.
-     * @param arg0
-     */
-    public MessageRuleBindingTest(String arg0) {
-        super(arg0);
-    }
-
-    /**
-     * ...
-     */
+	@Test
     public void testAppliesToScope() {
         MessageRuleBinding binding1 = new MessageRuleBinding("*", "*", "*", null);
         assertTrue(binding1.appliesToVersion("2.1"));
@@ -44,9 +33,9 @@ public class MessageRuleBindingTest extends TestCase {
         
         MessageRuleBinding binding2 = new MessageRuleBinding("2.5", "ADT", "A01", null);
         assertTrue(binding2.appliesToVersion("2.5"));
-        assertEquals(false, binding2.appliesToVersion("2.1"));
+        assertFalse(binding2.appliesToVersion("2.1"));
         assertTrue(binding2.appliesToScope("ADT^A01"));
-        assertEquals(false, binding2.appliesToScope("ADT^A04"));        
+        assertFalse(binding2.appliesToScope("ADT^A04"));        
     }
 
 }
