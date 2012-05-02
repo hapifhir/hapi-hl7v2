@@ -119,7 +119,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T[] toArray(List<T> list, Class<T> c) {
+	private <T> T[] toArray(List<T> list, Class<T> c) {
 		return list.toArray((T[]) java.lang.reflect.Array.newInstance(c, list.size()));
 	}
 
