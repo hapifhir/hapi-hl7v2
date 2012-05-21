@@ -269,6 +269,10 @@
 				class for default validation without the TN rule which is specific for U.S. phone numbers.
 				In this context, adding RuleBindings to the ValidationContext has been made type-safe. A minor API
 				change was necessary: RuleBindings require dedicated Rule types for initialization.
+			</action>
+			<action dev="Christian Ohr" type="fix" issue="3520790">
+				MessageTypeRouter calls Application#canProcess method of selected application before
+				delegating message handling. Thanks for submitting a patch.
 			</action>			
 		</release>
         <release version="1.2" date="2011-06-26"
