@@ -6,7 +6,6 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  * specific language governing rights and limitations under the License.
  *
- * The Original Code is "CommonTS.java".  Description:
  *
  *
  * The Initial Developer of the Original Code is University Health Network. Copyright (C)
@@ -537,13 +536,14 @@ public class CommonTS {
                 //if we have a time value then make a new time object and set it to the
                 //input time value (as long as the time val has time + offset or just time only)
                 if (timeVal != null && timeValIsOffsetOnly == false) {
-                    //must make sure that the time component contains both hours and minutes
-                    //at the very least -- must be at least 4chars in length.
-                    if (timeValLessOffset.length() < 4) {
+                    // must make sure that the time component contains both hours 
+                    // at the very least -- must be at least 2 chars in length.
+                	// Note: this changed as of v2.5, before hours AND minutes were required.
+                    if (timeValLessOffset.length() < 2) {
                         String msg =
                             "The length of the time component for the TM datatype"
                                 + " value does not conform to the allowable format"
-                                + " YYYY[MM[DD[HHMM[SS[.S[S[S[S]]]]]]]][+/-ZZZZ].";
+                                + " YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ].";
                         DataTypeException e = new DataTypeException(msg);
                         throw e;
                     } //end if

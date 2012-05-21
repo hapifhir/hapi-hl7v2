@@ -521,7 +521,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * <p>
 	 * <b>Note that this method will not currently work to parse an MSH segment
 	 * if the encoding characters are not already set. This limitation should be
-	 * resulved in a future version</b>
+	 * resolved in a future version</b>
 	 * </p>
 	 */
 	public void parse(String string) throws HL7Exception {
