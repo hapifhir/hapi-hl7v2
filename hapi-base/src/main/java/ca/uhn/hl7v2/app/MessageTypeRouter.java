@@ -62,7 +62,8 @@ public class MessageTypeRouter implements Application,
 	 */
 	public boolean canProcess(Message in) {
 		try {
-			return (getMatchingApplication(in) != null);
+			Application match = getMatchingApplication(in);
+			return match != null ? match.canProcess(in) : false;
 		} catch (Exception e) {
 			return false;
 		}
