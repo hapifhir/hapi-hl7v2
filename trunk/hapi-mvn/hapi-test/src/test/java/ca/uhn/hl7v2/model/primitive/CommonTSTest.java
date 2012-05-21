@@ -406,7 +406,7 @@ public class CommonTSTest {
 			new TestSpec("19840101+11111", DataTypeException.class),
 			//hour
 			new TestSpec("198401011", DataTypeException.class),
-			new TestSpec("1984010111", DataTypeException.class),
+			new TestSpec("1984010111", "1984010111"), // allowed as of v2.5
 			new TestSpec("19840101111", DataTypeException.class),
 			new TestSpec("198401010000", "198401010000"),
 			new TestSpec("198401010100", "198401010100"),

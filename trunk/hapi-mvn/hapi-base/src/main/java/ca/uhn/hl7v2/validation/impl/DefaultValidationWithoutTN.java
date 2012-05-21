@@ -60,19 +60,32 @@ public class DefaultValidationWithoutTN extends ValidationContextImpl {
 		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NM", number));
 
 		String datePattern = "(\\d{4}([01]\\d(\\d{2})?)?)?"; // YYYY[MM[DD]]
-		PrimitiveTypeRule date = new RegexPrimitiveRule(datePattern, "Version 2.5 Section 2.16.24");
+		PrimitiveTypeRule date = new RegexPrimitiveRule(datePattern, "Version 2.5 Section 2.A.21");
 		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "DT", date));
 
 		String timePattern // HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]
 		= "([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
-		PrimitiveTypeRule time = new RegexPrimitiveRule(timePattern, "Version 2.5 Section 2.16.79");
+		PrimitiveTypeRule time = new RegexPrimitiveRule(timePattern, "Version 2.5 Section 2.A.75");
 		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "TM", time));
 
-		String datetimePattern = "(\\d{4}([01]\\d(\\d{2}([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
-		PrimitiveTypeRule datetime = new RegexPrimitiveRule(datetimePattern, "Version 2.5 Section 2.16.25");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "TSComponentOne", datetime));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "DTM", datetime));
+		String datetimePattern // YYYY[MM[DD[HHMM[SS[.S[S[S[S]]]]]]]][+/-ZZZZ]
+		= "(\\d{4}([01]\\d(\\d{2}([012]\\d[0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
+		PrimitiveTypeRule datetime = new RegexPrimitiveRule(datetimePattern, "Version 2.4 Section 2.9.47");
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.2", "TSComponentOne", datetime));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.3", "TSComponentOne", datetime));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.3.1", "TSComponentOne", datetime));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.4", "TSComponentOne", datetime));
 
+		String datetimePattern25 // YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ]
+		= "(\\d{4}([01]\\d(\\d{2}([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
+		PrimitiveTypeRule datetime25 = new RegexPrimitiveRule(datetimePattern25, "Version 2.5 Section 2.A.22");
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "TSComponentOne", datetime25));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "DTM", datetime25));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5.1", "TSComponentOne", datetime25));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5.1", "DTM", datetime25));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.6", "TSComponentOne", datetime25));
+		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.6", "DTM", datetime25));
+		
 		// NULLDT shouldn't have a value
 		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NULLDT", new WithdrawnDatatypeRule()));
 	}
