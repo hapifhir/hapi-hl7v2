@@ -106,6 +106,7 @@ public abstract class XMLParser extends Parser {
      * @param theFactory custom factory to use for model class lookup 
      */
     public XMLParser(ModelClassFactory theFactory) {
+    	super(theFactory);
         parser = new DOMParser(new StandardParserConfiguration());
         try {
             parser.setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
