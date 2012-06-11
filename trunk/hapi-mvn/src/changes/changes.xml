@@ -276,7 +276,11 @@
 			</action>
 			<action dev="Christian Ohr" type="fix" issue="3519668">
 				DTM/TSComponentOne did not allow hour-precision timestamps as defined as of HL7 v2.5.
-			</action>			
+			</action>
+			<action dev="Christian Ohr" type="fix" issue="3532775">
+				DTM contained non-serializable primitives (CommonTS, CommonTM, CommonDT). 
+				Thanks to Guillaume (gga11729) for reporting.
+			</action>						
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
