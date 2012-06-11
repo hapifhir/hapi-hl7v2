@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.model.primitive;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.io.Serializable;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -50,7 +51,8 @@ import ca.uhn.hl7v2.model.DataTypeUtil;
  * @author Neal Acharya
  */
 
-public class CommonDT {
+@SuppressWarnings("serial")
+public class CommonDT implements Serializable {
 
     private String value;
     private int year;

@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+import java.io.Serializable;
 
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -71,7 +72,9 @@ import ca.uhn.hl7v2.model.DataTypeUtil;
  * |13| 1pm (with a precision of hours), local time of sender.
  * @author Neal Acharya
  */
-public class CommonTM {
+
+@SuppressWarnings("serial")
+public class CommonTM implements Serializable {
     
 	/**
      * Value returned by {@link #getGMTOffset()} if no offset is set
