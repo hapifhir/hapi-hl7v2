@@ -75,6 +75,7 @@ public class PipeParser extends Parser {
     
 	/** Creates a new PipeParser */
     public PipeParser() {
+    	this(null);
     }
 
 

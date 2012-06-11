@@ -280,7 +280,11 @@
 			<action dev="Christian Ohr" type="fix" issue="3532775">
 				DTM contained non-serializable primitives (CommonTS, CommonTM, CommonDT). 
 				Thanks to Guillaume (gga11729) for reporting.
-			</action>						
+			</action>
+			<action dev="Christian Ohr" type="fix" issue="3530793">
+				XMLParser now uses custom ModelClassFactory if provided. 
+				Thanks to Stephen Doxsee for reporting.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a

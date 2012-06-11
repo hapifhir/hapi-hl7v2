@@ -75,6 +75,7 @@ public class DefaultXMLParser extends XMLParser {
     
     /** Creates a new instance of DefaultXMLParser */
     public DefaultXMLParser() {
+    	super();
     }
 
     /** 
