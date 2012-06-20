@@ -13,6 +13,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * @author bryan
  */
 public class AbstractSegmentTest extends TestCase {
+    private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractSegmentTest.class);
     
     public AbstractSegmentTest(java.lang.String testName) {
         super(testName);
@@ -94,6 +95,19 @@ public class AbstractSegmentTest extends TestCase {
         msg.getRESPONSE(0).getPATIENT().getPID().insertPid3_PatientIDInternalID(0).parse("0999");
         Assert.assertEquals("PID|||0999~1000~1001", msg.getRESPONSE(0).getPATIENT().getPID().encode());
 
+	}
+	
+	
+	public void testParseMshWithNoContent() {
+		
+		try {
+			ADT_A01 msg = new ADT_A01();
+			msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");
+			fail();
+		} catch (HL7Exception e) {
+			ourLog.error("Caught exception, as we should", e);
+		}
+		
 	}
 	
 }
