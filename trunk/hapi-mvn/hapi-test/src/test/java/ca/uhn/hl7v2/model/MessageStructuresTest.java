@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.v251.message.ACK;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -77,12 +78,12 @@ public class MessageStructuresTest extends TestCase {
     /**
      * Make sure the "reps" methods are generated
      */
-    public void testRepsMethods() {
+    public void testRepsMethods() throws HL7Exception {
     	
     	ACK ack = new ACK();
     	ack.getERR().getErr1_ErrorCodeAndLocationReps();
     	ack.getERR().getErrorCodeAndLocationReps();
-    	
+    	ack.getERRAll();
     	
     }
     
