@@ -525,6 +525,10 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * </p>
 	 */
 	public void parse(String string) throws HL7Exception {
+		if (string == null) {
+			throw new NullPointerException("String can not be null");
+		}
+		
 		EncodingCharacters encodingCharacters;
 		try {
 			encodingCharacters = EncodingCharacters.getInstance(getMessage());
