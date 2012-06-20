@@ -525,8 +525,12 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * </p>
 	 */
 	public void parse(String string) throws HL7Exception {
-		EncodingCharacters encodingCharacters = EncodingCharacters
-				.getInstance(getMessage());
+		EncodingCharacters encodingCharacters;
+		try {
+			encodingCharacters = EncodingCharacters.getInstance(getMessage());
+		} catch (HL7Exception e) {
+			throw new HL7Exception("Can not invoke parse(String) on a segment if the encoding characters (MSH-1 and MSH-2) are not already correctly set on the message");
+		}
 		clear();
 		getMessage().getParser().parse(this, string, encodingCharacters);
 	}
