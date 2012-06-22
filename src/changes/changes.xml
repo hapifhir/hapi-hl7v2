@@ -11,7 +11,7 @@
         		<i>Regression in 2.0-beta1:</i> 
 				]]>
         		Fix issue where occasionally a Connection which is
-        		sending a message would "miss" an ACK/response message it received and report 
+        		sending a message would ignore an ACK/response message it received and report 
         		that the send timed out. 
         	</action>
         	<action type="add">HAPI has now switched from CVS to Subversion for version control purposes. The new repo 
@@ -131,11 +131,18 @@
         			</li>
         		]]>
         	</action>
-        	<!-- 
         	<action type="add" dev="James Agnew">
-        		..Introduce ParserConfiguration and setEncodeEmptySegments
+        		A new configuration bean,
+        		<![CDATA[
+        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html">ParserConfiguration</a>
+        		]]>
+        		has been added which allows the parser to be configured
+        		for specific behaviour.
+        		<![CDATA[
+        		<a href="configuring_hapi.html">See here</a>
+        		]]>
+        		for more information.
         	</action>
-        	 -->
         	<action type="add" dev="James Agnew">
         		Add a new method to 
         		<![CDATA[
@@ -284,6 +291,11 @@
 			<action dev="Christian Ohr" type="fix" issue="3530793">
 				XMLParser now uses custom ModelClassFactory if provided. 
 				Thanks to Stephen Doxsee for reporting.
+			</action>
+			<action dev="James Agnew" type="fix">
+				Calling AbstractPrimitive#parse(String), for instance on an ST datatype,
+				with a value of null now clears the value instead of throwing a NullPointerException. This
+				brings the behaviour in line with that of AbstractComposite#parse(String)
 			</action>
 		</release>
         <release version="1.2" date="2011-06-26"

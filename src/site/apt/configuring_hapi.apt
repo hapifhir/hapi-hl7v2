@@ -1,0 +1,78 @@
+Configuring HAPI
+
+  HAPI has a number of configurable properties which may be used to customize
+  the way it operates.
+  
+* System Properties
+
+  A number of settings are set using system properties. A future release, hopefully 
+  before long, will deprecate these properties and move to runtime flags which may
+  by configured by individual instances of the HAPI parser and other components.
+  
+  An {{{https://sourceforge.net/tracker/?func=detail&aid=3515833&group_id=38899&atid=423838}issue}} has been opened
+  to track this task.
+  
+* HAPI Parser
+
+  The HAPI Parser may be configured using a 
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ParserConfiguration.html}ParserConfiguration}}
+  object.
+  
+  The ParserConfiguration is a bean which sets and retrieves parser configuration 
+  properties and may be shared among multiple parser instances.
+  
+** Default behaviour for OBX-2
+
+  In a normal OBX (Observation) segment, OBX-2 provides the datatype to be
+  applied to OBX-5. So, for instance if an OBX repetition was conveying a timestamp (TS),
+  it might look like:
+  
+-----
+OBX||TS|||200901011259
+-----
+
+  If the OBX-2 value is missing (which sometimes happens because of a misbehaving
+  sending system), you may see an error such as
+  "OBX-5 is valued, but OBX-2 is not.  A datatype for OBX-5 must be specified using OBX-2".
+  
+  In this case, you may specify that HAPI should use a default type when none is
+  found by specifying a default OBX-2 type:
+  
+------
+parser.getParserConfiguration().setDefaultObx2Type("ST");
+ORU_R01 parsedMessage = (ORU_R01)parser.parse(someInvalidMessage);
+------
+
+  If the OBX-2 value is invalid, meaning that it has a value but that value
+  is not a valid HL7 datatype (e.g. "String" instead of "ST"), you may
+  specify a default type to assume if the OBX-2 value can not be understood.      
+  
+------
+parser.getParserConfiguration().setInvalidObx2Type("ST");
+ORU_R01 parsedMessage = (ORU_R01)parser.parse(someInvalidMessage);
+------
+  
+** Forced Encoding
+
+  By default, when encoding a message HAPI will not encode any segments
+  or fields that have no content and therefore have no semantic meaning in 
+  the message.
+  
+  This can cause problems if you need to transmit a message to a system
+  that expects certain empty content to be present in order to get
+  "hints" about where in the message it is.
+  
+  The addForcedEncode method may be used to add Terser paths which 
+  should be forced to be encoded:
+  
+----
+parser.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATION/ORC-4");
+// ORC-4 will still exist (but be empty) even if ORC has no content
+String encoded = parser.encode(message);
+----
+
+  See {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setDefaultObx2Type%28java.lang.String%29}the JavaDoc}}
+  for examples.
+
+
+  
