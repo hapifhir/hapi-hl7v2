@@ -111,7 +111,12 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
      */
     @Override
     public void parse(String string) throws HL7Exception {
-        EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
+        if (string == null) {
+        	clear();
+        	return;
+        }
+    	
+    	EncodingCharacters encodingCharacters = EncodingCharacters.getInstance(getMessage());
         char subc = encodingCharacters.getSubcomponentSeparator();
         char cmpc = encodingCharacters.getComponentSeparator();
 
