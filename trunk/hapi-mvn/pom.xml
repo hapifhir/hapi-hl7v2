@@ -424,6 +424,16 @@
 			</modules>
 		</profile>
 		<profile>
+			<id>MINISITE</id>
+			<build>
+			</build>
+			<modules>
+				<module>hapi-base</module>
+				<module>hapi-examples</module>
+				<module>hapi-sourcegen</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>MYSQL</id>
 			<properties>
 				<sourcegen.jdbcUrl.old>jdbc:mysql://localhost:3306/hl7v25</sourcegen.jdbcUrl.old>
