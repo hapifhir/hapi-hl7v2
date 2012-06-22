@@ -65,5 +65,17 @@ public class PrimitiveTest extends TestCase {
 				
 	}
 
+
+	public void testParseNull() throws HL7Exception, IOException {
+		
+		ORU_R01 msg = new ORU_R01();
+		msg.initQuickstart("ORU", "R01", "T");
+		
+		assertTrue(msg.getMSH().getMessageControlID().getValue().length() > 0);
+		msg.getMSH().getMessageControlID().parse(null);
+		
+		assertNull(msg.getMSH().getMessageControlID().getValue());
+		
+	}
 	
 }
