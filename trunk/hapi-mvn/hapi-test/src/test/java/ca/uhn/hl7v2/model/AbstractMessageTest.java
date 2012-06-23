@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.model;
 
 import java.io.IOException;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -127,5 +128,27 @@ public class AbstractMessageTest extends TestCase {
         a01.parse(string);
         a01.getPID().getPid3_PatientIDInternalID(0).parse("1234");
     }
+    
+    /**
+     * If a group contains two segments with the same name in different positions,
+     * they should be shown separately
+     */
+    public void testPrintMessageStructureCorrectlyShowsMultipleSegmentsWithSameName() throws HL7Exception, IOException {
+    	
+    	ADT_A01 msg = new ADT_A01();
+    	msg.initQuickstart("ADT", "A01", "P");
+
+    	msg.addNonstandardSegment("ZZZ");
+    	((Segment)msg.get("ZZZ")).parse("ZZZ|1");
+    	
+    	msg.addNonstandardSegment("ZZZ");
+    	((Segment)msg.get("ZZZ2")).parse("ZZZ|2");
+    	
+    	String struct = msg.printStructure();
+    	Assert.assertTrue(struct.contains(" ZZZ "));
+    	Assert.assertTrue(struct.contains(" ZZZ2 "));
+    	
+    }
+    
 
 }
