@@ -251,7 +251,8 @@
 				<![CDATA[
 					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/MessageIDGenerator.html#NEVER_FAIL_PROPERTY">MessageIDGenerator</a>
 				]]>
-				which prevents it from failing if it is unable to read or write the message file.
+				which prevents it from failing if it is unable to read or write the message file. (Not that this feature
+				sometimes failed to work in 2.0-beta1. This has been corrected.)
 			</action>
 			<action dev="James Agnew" type="add">
 				MessageIDGenerator has been modified so that it will never fail in the
