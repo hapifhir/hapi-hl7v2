@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/maven-jaxb-plugin"/>
+	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/jflex"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/textresources"/>
+	<classpathentry kind="var" path="M2_REPO/com/apple/AppleJavaExtensions/1.5.4/applejavaextensions-1.5.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" sourcepath="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/commons-lang/commons-lang/2.4/commons-lang-2.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v21-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v21-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v21-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0-beta1/hapi-structures-v22-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0-beta1/hapi-structures-v22-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v22/2.0-beta1/hapi-structures-v22-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0-beta1/hapi-structures-v23-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0-beta1/hapi-structures-v23-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v23/2.0-beta1/hapi-structures-v23-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0-beta1/hapi-structures-v231-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0-beta1/hapi-structures-v231-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v231/2.0-beta1/hapi-structures-v231-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0-beta1/hapi-structures-v24-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0-beta1/hapi-structures-v24-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v24/2.0-beta1/hapi-structures-v24-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0-beta1/hapi-structures-v25-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0-beta1/hapi-structures-v25-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v25/2.0-beta1/hapi-structures-v25-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0-beta1/hapi-structures-v251-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0-beta1/hapi-structures-v251-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v251/2.0-beta1/hapi-structures-v251-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0-beta1/hapi-structures-v26-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0-beta1/hapi-structures-v26-2.0-beta1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v26/2.0-beta1/hapi-structures-v26-2.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar" sourcepath="M2_REPO/org/jdom/jdom/1.1/jdom-1.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/jdom/jdom/1.1/jdom-1.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/com/sun/jna/jna/3.0.9/jna-3.0.9.jar" sourcepath="M2_REPO/com/sun/jna/jna/3.0.9/jna-3.0.9-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar" sourcepath="M2_REPO/junit/junit/4.9/junit-4.9-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/junit/junit/4.9/junit-4.9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar" sourcepath="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-core/1.8.5/mockito-core-1.8.5.jar" sourcepath="M2_REPO/org/mockito/mockito-core/1.8.5/mockito-core-1.8.5-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/objenesis/objenesis/1.0/objenesis-1.0.jar" sourcepath="M2_REPO/org/objenesis/objenesis/1.0/objenesis-1.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/objenesis/objenesis/1.0/objenesis-1.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-netbeans-swing-outline/RELEASE701/org-netbeans-swing-outline-RELEASE701-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-netbeans-swing-outline/RELEASE701/org-netbeans-swing-outline-RELEASE701.jar" sourcepath="M2_REPO/org/netbeans/api/org-netbeans-swing-outline/RELEASE701/org-netbeans-swing-outline-RELEASE701-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-openide-awt/RELEASE701/org-openide-awt-RELEASE701.jar" sourcepath="M2_REPO/org/netbeans/api/org-openide-awt/RELEASE701/org-openide-awt-RELEASE701-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/netbeans/api/org-openide-awt/RELEASE701/org-openide-awt-RELEASE701-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-openide-filesystems/RELEASE701/org-openide-filesystems-RELEASE701.jar" sourcepath="M2_REPO/org/netbeans/api/org-openide-filesystems/RELEASE701/org-openide-filesystems-RELEASE701-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/netbeans/api/org-openide-filesystems/RELEASE701/org-openide-filesystems-RELEASE701-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-openide-util/RELEASE701/org-openide-util-RELEASE701.jar" sourcepath="M2_REPO/org/netbeans/api/org-openide-util/RELEASE701/org-openide-util-RELEASE701-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/netbeans/api/org-openide-util/RELEASE701/org-openide-util-RELEASE701-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/netbeans/api/org-openide-util-lookup/RELEASE701/org-openide-util-lookup-RELEASE701.jar" sourcepath="M2_REPO/org/netbeans/api/org-openide-util-lookup/RELEASE701/org-openide-util-lookup-RELEASE701-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/netbeans/api/org-openide-util-lookup/RELEASE701/org-openide-util-lookup-RELEASE701-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar" sourcepath="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0.jar" sourcepath="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" sourcepath="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="var" path="M2_REPO/jsyntaxpane/jsyntaxpane/0.9.6-hapi2/jsyntaxpane-0.9.6-hapi2.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

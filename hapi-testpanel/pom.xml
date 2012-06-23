@@ -30,6 +30,12 @@
 			<name>HAPI Maven Repository</name>
 			<url>http://hl7api.sourceforge.net/m2</url>
 		</repository>
+
+		<!-- For Apple Java Extensions -->
+		<repository>
+			<id>ooo-maven-repo</id>
+			<url>http://ooo-maven.googlecode.com/hg/repository</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -127,8 +133,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.apple</groupId>
-			<artifactId>AppleJavaExtensions</artifactId>
-			<version>1.4</version>
+			<artifactId>applejavaextensions</artifactId>
+			<version>1.5.4</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -254,7 +260,7 @@
 					<outputDirectory>${project.basedir}/../target/site/hapi-testpanel</outputDirectory>
 				</configuration>
 			</plugin>
-				
+
 		</plugins>
 	</reporting>
 
@@ -391,17 +397,7 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<!-- 
-						<executions>
-							<execution>
-								<id>WINBUNDLE</id>
-								<phase>package</phase>
-								<goals>
-									<goal>assembly</goal>
-								</goals>
-							</execution>
-						</executions>
-						 -->
+						<!-- <executions> <execution> <id>WINBUNDLE</id> <phase>package</phase> <goals> <goal>assembly</goal> </goals> </execution> </executions> -->
 						<configuration>
 							<descriptors>
 								<descriptor>src/assembly/windows.xml</descriptor>
