@@ -155,7 +155,7 @@ public class MinLLPReader implements HL7Reader
             try {
                 c = myReader.read();  
             } catch (SocketTimeoutException e) {
-                log.info("SocketTimeoutException on read() attempt.");
+                log.debug("SocketTimeoutException on read() attempt.");
                 return null;               
             } catch (SocketException e) {
                 log.info("SocketException on read() attempt.  Socket appears to have been closed: " + e.getMessage());
