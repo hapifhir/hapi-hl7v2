@@ -195,7 +195,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 		}
 		catch(SocketTimeoutException e)
 		{
-			log.info("SocketTimeoutException on read() attempt.");
+			log.debug("SocketTimeoutException on read() attempt.");
 			return null;
 		}
 		// trying to read when there is no data (stream may have been closed at other end)
