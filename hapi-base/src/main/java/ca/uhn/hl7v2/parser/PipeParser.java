@@ -59,7 +59,10 @@ public class PipeParser extends Parser {
 
     private static final Logger log = LoggerFactory.getLogger(PipeParser.class);
 
-    private final static String segDelim = "\r"; // see section 2.8 of spec
+    /**
+     * The HL7 ER7 segment delimiter (see section 2.8 of spec)
+     */
+    final static String SEGMENT_DELIMITER = "\r";
 
     private final HashMap<Class<? extends Message>, StructureDefinition> myStructureDefinitions = new HashMap<Class<? extends Message>, StructureDefinition>();
 
@@ -100,48 +103,14 @@ public class PipeParser extends Parser {
      * using any other encoding than the one returned.
      */
     public String getEncoding(String message) {
-        String encoding = null;
-
-        // quit if the string is too short
-        if (message.length() < 4)
-            return null;
-
-        // see if it looks like this message is | encoded ...
-        boolean ok = true;
-
-        // string should start with "MSH"
-        if (!message.startsWith("MSH"))
-            return null;
-
-        // 4th character of each segment should be field delimiter
-        char fourthChar = message.charAt(3);
-        StringTokenizer st = new StringTokenizer(message, String.valueOf(segDelim), false);
-        while (st.hasMoreTokens()) {
-            String x = st.nextToken();
-            if (x.length() > 0) {
-                if (Character.isWhitespace(x.charAt(0)))
-                    x = stripLeadingWhitespace(x);
-                if (x.length() >= 4 && x.charAt(3) != fourthChar)
-                    return null;
-            }
+        if (EncodingDetector.isEr7Encoded(message)) {
+            return "VB";
         }
-
-        // should be at least 11 field delimiters (because MSH-12 is required)
-        int nextFieldDelimLoc = 0;
-        for (int i = 0; i < 11; i++) {
-            nextFieldDelimLoc = message.indexOf(fourthChar, nextFieldDelimLoc + 1);
-            if (nextFieldDelimLoc < 0)
-                return null;
-        }
-
-        if (ok)
-            encoding = "VB";
-
-        return encoding;
+        return null;
     }
 
 
-    /**
+	/**
      * @return the preferred encoding of this Parser
      */
     public String getDefaultEncoding() {
@@ -182,7 +151,7 @@ public class PipeParser extends Parser {
         boolean explicityDefined = true;
         String wholeFieldNine;
         try {
-            String[] fields = split(message.substring(0, Math.max(message.indexOf(segDelim), message.length())), String.valueOf(ec.getFieldSeparator()));
+            String[] fields = split(message.substring(0, Math.max(message.indexOf(SEGMENT_DELIMITER), message.length())), String.valueOf(ec.getFieldSeparator()));
             wholeFieldNine = fields[8];
 
             // message structure is component 3 but we'll accept a composite of
@@ -711,7 +680,7 @@ public class PipeParser extends Parser {
                         	result.append(encodingChars.getFieldSeparator());
                         }
                         
-                        result.append(segDelim);
+                        result.append(SEGMENT_DELIMITER);
                         
                         haveEncounteredContent = true;
                         
@@ -734,7 +703,7 @@ public class PipeParser extends Parser {
         if (firstMandatorySegmentName != null && !haveHadMandatorySegment && 
         		!haveHadSegmentBeforeMandatorySegment && haveEncounteredContent && 
         		parserConfiguration.isEncodeEmptyMandatorySegments()) {
-        	return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + segDelim + result;
+        	return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + SEGMENT_DELIMITER + result;
         } else {
         	return result.toString();
         }
@@ -939,7 +908,7 @@ public class PipeParser extends Parser {
             char fieldDelim = message.charAt(startFieldOne - 1);
             int start = message.indexOf(fieldDelim, startFieldOne) + 1;
             int end = message.indexOf(fieldDelim, start);
-            int segEnd = message.indexOf(String.valueOf(segDelim), start);
+            int segEnd = message.indexOf(String.valueOf(SEGMENT_DELIMITER), start);
             if (segEnd > start && segEnd < end)
                 end = segEnd;
 
@@ -1048,7 +1017,7 @@ public class PipeParser extends Parser {
      */
     public String getVersion(String message) throws HL7Exception {
         int startMSH = message.indexOf("MSH");
-        int endMSH = message.indexOf(PipeParser.segDelim, startMSH);
+        int endMSH = message.indexOf(PipeParser.SEGMENT_DELIMITER, startMSH);
         if (endMSH < 0)
             endMSH = message.length();
         String msh = message.substring(startMSH, endMSH);
@@ -1093,7 +1062,7 @@ public class PipeParser extends Parser {
         // getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, structureDef, "MSH", true);
 
-        String[] segments = split(string, segDelim);
+        String[] segments = split(string, SEGMENT_DELIMITER);
 
         if (segments.length == 0) {
         	throw new HL7Exception("Invalid message content: \"" + string + "\"");

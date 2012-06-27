@@ -127,21 +127,13 @@ public abstract class XMLParser extends Parser {
      * Returns null if the encoding is not recognized.
      */
     public String getEncoding(String message) {
-        String encoding = null;
-
-        //check for a number of expected strings 
-        String[] expected = { "<MSH.1", "<MSH.2", "</MSH>" };
-        boolean isXML = true;
-        for (int i = 0; i < expected.length; i++) {
-            if (message.indexOf(expected[i]) < 0)
-                isXML = false;
+        if (EncodingDetector.isXmlEncoded(message)) {
+            return "XML";
         }
-        if (isXML)
-            encoding = "XML";
-
-        return encoding;
+        return null;
     }
 
+    
     /**
      * Returns true if and only if the given encoding is supported
      * by this Parser.
