@@ -60,4 +60,18 @@ public class DefaultExecutorService {
 		return service == defaultExecutorService;
 	}
 	
+	/**
+	 * @see {@link ExecutorService#shutdown()}
+	 */
+	public static void shutdown() {
+		defaultExecutorService.shutdown();
+	}
+	
+	/**
+	 * @see {@link ExecutorService#shutdownNow()}
+	 */
+	public static void shutdownNow() {
+		defaultExecutorService.shutdownNow();
+	}	
+	
 }

@@ -198,13 +198,6 @@ public abstract class Service implements Runnable {
 		serviceExitedWithException = theThreadExitedWithException;
 	}
 
-	/**
-	 * Shuts down the used ExecutorService, which can be used to force the
-	 * application to exit.
-	 */
-	public final void shutdown() {
-		executorService.shutdown();
-	}
 
 	/**
 	 * If this service exited with an exception, ths method returns that exception. This is useful for
