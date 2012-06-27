@@ -9,7 +9,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.GenericParser;
+import ca.uhn.hl7v2.parser.EncodingDetector;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -27,8 +27,6 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class PreParser {
 
-    private static GenericParser ourParser = new GenericParser();
-    
     /**
      * Extracts selected fields from a message.  
      *   
@@ -75,19 +73,17 @@ public class PreParser {
      */     
     private static String[] getFields(String theMessageText, DatumPath[] thePaths) throws HL7Exception {
         String[] fields = new String[thePaths.length];
-        String encoding = ourParser.getEncoding(theMessageText);
-        if (encoding == null) {
-            throw new HL7Exception("Message encoding is not recognized"); 
-        }        
         Properties props = new Properties();
         
         List<DatumPath> mask = Arrays.asList(thePaths);
 
         boolean OK = false;
-        if (encoding.equals("VB")) {
+        if (EncodingDetector.isEr7Encoded(theMessageText)) {
             OK = ER7.parseMessage(props, mask, theMessageText);
-        } else if (encoding.equals("XML")) {
+        } else if (EncodingDetector.isXmlEncoded(theMessageText)) {
             OK = XML.parseMessage(props, theMessageText, null);
+        } else {
+            throw new HL7Exception("Message encoding is not recognized"); 
         }
         
         if (!OK) {

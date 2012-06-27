@@ -65,7 +65,7 @@
         			</ul>
         		]]>
         	</action>
-        	<action type="add" dev="Jens Kristian Villadsen">
+        	<action type="add" dev="Jens Kristian Villadsen" issue="3518763">
         		Add a new LowerLayerProtocol implementation which respects MSH-18 (Character Set)
         		values to determine the underlying transport character set. See
         		<![CDATA[
@@ -82,7 +82,10 @@
         		using a global
         		<![CDATA[
         		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/llp/MinLLPReader.html#CHARSET_KEY">System Property</a>
+        		<br><br>
         		]]>
+        		Note that a dependency existed in HAPI 2.0-beta1 on XML libraries being
+        		present on the classpath. This has been corrected in HAPI 2.0. 
         	</action>
         	<action type="add" dev="Christian Ohr">
         		Modernize a bunch of the code base to add proper generics support.
