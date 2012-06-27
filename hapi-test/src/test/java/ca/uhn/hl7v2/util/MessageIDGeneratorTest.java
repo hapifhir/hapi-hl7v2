@@ -12,6 +12,9 @@ public class MessageIDGeneratorTest {
 	@Test
 	public void testNeverFail() throws IOException {
 		
+		MessageIDGenerator.getInstance().getNewID();
+		MessageIDGenerator.getInstance().getNewID();
+		
 		File file = new File(MessageIDGenerator.DEFAULT_ID_FILE);
 		if (!file.delete()) {
 			fail();
@@ -26,6 +29,8 @@ public class MessageIDGeneratorTest {
 		
 		System.setProperty(MessageIDGenerator.NEVER_FAIL_PROPERTY, Boolean.TRUE.toString());
 		MessageIDGenerator instance = MessageIDGenerator.getInstance();
+		instance.initialize();
+		
 		String id = instance.getNewID();
 		
 		assertEquals("1", id);
