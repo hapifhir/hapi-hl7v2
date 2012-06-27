@@ -124,7 +124,7 @@ public class ProcessorImpl implements Processor {
         trySend(myContext.getLocallyDrivenTransportLayer(), theMessage);
         
         boolean originalMode = (needAcceptAck == null && needAppAck == null); 
-        if (originalMode || !needAcceptAck.equals(NE)) {
+        if (originalMode || !NE.equals(needAcceptAck)) {
         
             Transportable response = null;
             int retries = 0;
