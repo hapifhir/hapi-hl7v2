@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.sourcegen;
 
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
@@ -124,5 +125,13 @@ public class CheckParticularsTest extends TestCase {
 	}
 
 	
+	/**
+	 * See bug 3520523
+	 */
+	public void testRSP_K21_QueryResponse_isRepeatable() throws HL7Exception {
+		new ca.uhn.hl7v2.model.v25.message.RSP_K21().getQUERY_RESPONSEAll();
+		new ca.uhn.hl7v2.model.v251.message.RSP_K21().getQUERY_RESPONSEAll();
+		new ca.uhn.hl7v2.model.v26.message.RSP_K21().getQUERY_RESPONSEAll();
+	}
 
 }

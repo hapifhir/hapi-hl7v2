@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 
@@ -217,6 +218,8 @@ public class GroupGenerator extends java.lang.Object {
                     if (name != null) {
                     	name = name.replace("TIIMING", "TIMING");
                     }
+
+//                    log.info("Name is: " + name + " - Message is: " + message);
                     
                     int endOfNewGroup = findGroupEnd(message, structures, currLongListPos);
                     StructureDef[] newGroupStructures = new StructureDef[endOfNewGroup - currLongListPos + 1];
@@ -247,16 +250,35 @@ public class GroupGenerator extends java.lang.Object {
                                                                        // assignment
         System.arraycopy(shortList, 0, finalList, 0, currShortListPos);
         for (int i = 0; i < finalList.length; i++) {
+        	StructureDef nextStruct = finalList[i];
         	
         	// Fix mistakes in the DB
-        	if (finalList[i].getUnqualifiedName().equals("ED")) {
+			if (nextStruct.getUnqualifiedName().equals("ED")) {
         		continue;
         	}
-        	if (finalList[i] instanceof GroupDef && ((GroupDef)finalList[i]).getRawGroupName() != null && ((GroupDef)finalList[i]).getRawGroupName().contains("TIIMING")) {
-        		((GroupDef)finalList[i]).setRawGroupName(((GroupDef)finalList[i]).getRawGroupName().replace("TIIMING", "TIMING"));
+        	if (nextStruct instanceof GroupDef && ((GroupDef)nextStruct).getRawGroupName() != null && ((GroupDef)nextStruct).getRawGroupName().contains("TIIMING")) {
+        		((GroupDef)nextStruct).setRawGroupName(((GroupDef)nextStruct).getRawGroupName().replace("TIIMING", "TIMING"));
         	}
         	
-            ret.addStructure(finalList[i]);
+        	/*
+        	 * Versions 2.5 through 2.6 have two definitions of RSP_K21 (the second is under
+        	 * trigger K22 - see chapter 3) and the second definition shows this group as
+        	 * repeatable. See bug 3520523.
+        	 * 
+        	 * This issue has been corrected in 2.7
+        	 */
+        	String nextName = nextStruct.getUnqualifiedName();
+            if ("QUERY_RESPONSE".equals(nextName)) {
+            	if ("RSP_K21".equals(message)) {
+            		if (Version.versionOf(version) == Version.V25 || Version.versionOf(version) == Version.V251
+            				|| Version.versionOf(version) == Version.V26) {
+                        log.info("Forcing repeatable group");
+            			((GroupDef)nextStruct).setRepeating(true);
+            		}
+            	}
+            }
+        	
+            ret.addStructure(nextStruct);
         }
 
         return ret;
