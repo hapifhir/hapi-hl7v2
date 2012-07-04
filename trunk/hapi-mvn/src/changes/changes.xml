@@ -307,6 +307,7 @@
 				]]>
 				structure for v2.5.1 and v2.6 now has a repeatable QUERY_RESPONSE group. This 
 				addresses an inconsistency in the HL7 specification for those two versions.
+				Thanks to Jens Villadsen for reporting.
 			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
