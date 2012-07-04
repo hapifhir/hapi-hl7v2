@@ -301,6 +301,13 @@
 				with a value of null now clears the value instead of throwing a NullPointerException. This
 				brings the behaviour in line with that of AbstractComposite#parse(String)
 			</action>
+			<action dev="James Agnew" type="fix" issue="3520523">
+				<![CDATA[
+				<a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/RSP_K21.html">RSP_K21</a>
+				]]>
+				structure for v2.5.1 and v2.6 now has a repeatable QUERY_RESPONSE group. This 
+				addresses an inconsistency in the HL7 specification for those two versions.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a

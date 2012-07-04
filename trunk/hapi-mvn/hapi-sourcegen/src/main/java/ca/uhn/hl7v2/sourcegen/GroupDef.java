@@ -224,6 +224,10 @@ public class GroupDef implements StructureDef {
      */
     public boolean isSegment() {
         return false;
-    }    
+    }
+
+	public void setRepeating(boolean theB) {
+		repeating = theB;
+	}    
     
 }
