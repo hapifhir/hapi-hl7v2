@@ -309,6 +309,14 @@
 				addresses an inconsistency in the HL7 specification for those two versions.
 				Thanks to Jens Villadsen for reporting.
 			</action>
+			<action dev="James Agnew" type="fix" issue="3538074">
+				<![CDATA[
+				<a href="http://hl7api.sourceforge.net/v251/apidocs/ca/uhn/hl7v2/model/v251/message/ORL_O34.html">ORL_O34</a>
+				]]>
+				structure for v2.5.1 has two child structures with the same name (SPECIMEN). The second is now
+				named OBSERVATION_REQUEST_SPECIMEN to prevent a recursive loop when parsing an ORL^O34
+				message. Thanks to Jure Grom for reporting.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a

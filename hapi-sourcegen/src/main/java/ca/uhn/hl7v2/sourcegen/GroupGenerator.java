@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -173,6 +175,8 @@ public class GroupGenerator extends java.lang.Object {
         int currShortListPos = 0;
         int currLongListPos = 0;
 
+        Set<String> childStructureNames = new HashSet<String>();
+        
         try {
             // check for rep and opt (see if start & end elements are [] or {}
             // AND they are each others' pair) ...
@@ -217,7 +221,17 @@ public class GroupGenerator extends java.lang.Object {
                     // Fix mistakes in DB
                     if (name != null) {
                     	name = name.replace("TIIMING", "TIMING");
+
+                        if ("OBSERVATION_REQUEST".equals(groupName)) {
+                        	if ("ORL_O34".equals(message)) {
+                        		if ("SPECIMEN".equals(name))
+                        		if (Version.versionOf(version) == Version.V251) {
+                        			name = "OBSERVATION_REQUEST_SPECIMEN";
+                        		}
+                        	}
+                        }
                     }
+                    
 
 //                    log.info("Name is: " + name + " - Message is: " + message);
                     
@@ -278,6 +292,23 @@ public class GroupGenerator extends java.lang.Object {
             	}
             }
         	
+        	/*
+        	 * See 3538074
+        	 * 
+        	 * Current simplified definition (only relevant branch of message strucutre) is:
+		 	 * ORL_O34 -> ORL_O34_RESPONSE -> ORL_O34_PATIENT->ORL_O34_SPECIMEN->ORL_O34_ORDER->ORL_O34_OBSERVATION_REQUEST->ORL_O34_SPECIMEN (!cycle reference).
+			 * Instead of last ORL_O34_SPECIMEN there should be ORL_O34_OBSERVATION_REQUEST_SPECIMEN.
+        	 */
+            if ("OBSERVATION_REQUEST".equals(ret.getUnqualifiedName())) {
+            	if ("ORL_O34".equals(message)) {
+            		if ("SPECIMEN".equals(nextName))
+            		if (Version.versionOf(version) == Version.V251) {
+            			((GroupDef)nextStruct).setRawGroupName("OBSERVATION_REQUEST_SPECIMEN");
+            			log.info("Forcing name to " + ((GroupDef)nextStruct).getRawGroupName());
+            		}
+            	}
+            }
+
             ret.addStructure(nextStruct);
         }
 
