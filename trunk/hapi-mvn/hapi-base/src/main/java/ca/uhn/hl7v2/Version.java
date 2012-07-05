@@ -25,9 +25,6 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2;
 
-import java.util.Arrays;
-import java.util.List;
-
 public enum Version {
 
 	V21("2.1"),
@@ -74,16 +71,12 @@ public enum Version {
 	 * specified version
 	 */
 	public boolean isGreaterThan(Version theVersion) {
-		if (theVersion == null) {
-			throw new NullPointerException();
-		}
-		
-		List<Version> allVersions = Arrays.asList(values());
-		return allVersions.indexOf(this) > allVersions.indexOf(theVersion);
+		return compareTo(theVersion) > 0;
 	}
 	
 	public static Version latestVersion() {
-		return V26;
+		Version[] versions = Version.values();
+		return versions[versions.length - 1];
 	}
 	
 	
