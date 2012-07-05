@@ -6,6 +6,7 @@ import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
+import ca.uhn.hl7v2.model.v25.message.ORL_O34;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -151,6 +152,10 @@ public class CheckParticularsTest extends TestCase {
 	 * @author Jure Grom
 	 */
 	public void testParseORL_O34() throws Exception {
+		
+		ca.uhn.hl7v2.model.v25.message.ORL_O34 msg = new ORL_O34();
+		msg.getRESPONSE().getPATIENT();
+		
 		for (Version next : Version.values()) {
 			if (next.isGreaterThan(Version.V21)) {
 				String message = 
