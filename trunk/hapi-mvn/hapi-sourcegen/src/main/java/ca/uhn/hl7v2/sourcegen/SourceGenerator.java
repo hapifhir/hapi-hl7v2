@@ -63,9 +63,9 @@ public class SourceGenerator extends Object {
         
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            DataTypeGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
-            SegmentGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
             MessageGenerator.makeAll(baseDirectory, version, failOnError, theTemplatePackage, theFileExt);
+            SegmentGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
+            DataTypeGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
             // group and message not implemented
         } catch (Exception e) {
         	throw new HL7Exception(e);

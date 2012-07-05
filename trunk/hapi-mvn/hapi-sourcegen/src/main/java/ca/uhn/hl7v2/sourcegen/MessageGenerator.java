@@ -102,6 +102,9 @@ public class MessageGenerator extends Object {
 
         for (int i = 0; i < messages.size(); i++) {
             String message = (String) messages.get(i);
+//            if (!"ORL_O34".equals(message)) {
+//            	continue;
+//            }
             try {
                 make(message, baseDirectory, (String) chapters.get(i), version, theTemplatePackage, theFileExt);
             } catch (HL7Exception e) {
