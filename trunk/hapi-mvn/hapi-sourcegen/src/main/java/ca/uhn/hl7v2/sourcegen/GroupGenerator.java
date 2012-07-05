@@ -34,8 +34,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -167,6 +165,18 @@ public class GroupGenerator extends java.lang.Object {
         boolean repeating = false;
         boolean rep_opt = false;
 
+        /*
+         * Fix issues
+         */
+        // See bug 3373654 
+        // !"RESPONSE".equals(((SegmentDef)structures[5]).getGroupName())
+        if (null == (groupName) && "2.5".equals(version) && "ORL_O34".equals(message) && !structuresContainsSegmentWithGroupName(structures, "RESPONSE")) {
+        	java.util.ArrayList tmpStructures = new java.util.ArrayList<StructureDef>(java.util.Arrays.asList(structures));
+        	tmpStructures.add(new SegmentDef("]", "RESPONSE", false, false, ""));
+        	tmpStructures.add(5, new SegmentDef("[", "RESPONSE", false, false, ""));
+        	structures = (StructureDef[]) tmpStructures.toArray(new StructureDef[structures.length]);
+        }
+        
         int len = structures.length;
         StructureDef[] shortList = new StructureDef[len]; // place to put final
                                                           // list of
@@ -175,8 +185,6 @@ public class GroupGenerator extends java.lang.Object {
         int currShortListPos = 0;
         int currLongListPos = 0;
 
-        Set<String> childStructureNames = new HashSet<String>();
-        
         try {
             // check for rep and opt (see if start & end elements are [] or {}
             // AND they are each others' pair) ...
@@ -230,6 +238,7 @@ public class GroupGenerator extends java.lang.Object {
                         		}
                         	}
                         }
+
                     }
                     
 
@@ -316,7 +325,17 @@ public class GroupGenerator extends java.lang.Object {
     }
 
 
-    /**
+    private static boolean structuresContainsSegmentWithGroupName(StructureDef[] theStructures, String theString) {
+    	for (StructureDef structureDef : theStructures) {
+			if (theString.equals(((SegmentDef)structureDef).getGroupName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	/**
      * Returns true if opening is "[{" and closing is "}]"
      */
     private static boolean repoptMarkers(String opening, String closing) {
