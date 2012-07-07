@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
+import ca.uhn.hl7v2.testpanel.controller.Hl7V2FileDiffController;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.MessagesList;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
@@ -89,6 +90,7 @@ import ca.uhn.hl7v2.testpanel.util.SwingLogAppender;
  */
 public class TestPanelWindow implements IDestroyable {
 
+	private Hl7V2FileDiffController myHl7V2FileDiff;
 	private Controller myController;
 	private JFrame myframe;
 	private JList myMessagesList;
@@ -380,6 +382,21 @@ public class TestPanelWindow implements IDestroyable {
 			}
 		});
 		mymenu_1.add(mymenuItem_1);
+		
+		mymenu_3 = new JMenu("Tools");
+		menuBar.add(mymenu_3);
+		
+		mnHl7V2FileDiff = new JMenuItem("HL7 v2 File Diff");
+		mnHl7V2FileDiff.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				if (myHl7V2FileDiff == null) {
+					myHl7V2FileDiff = new Hl7V2FileDiffController(myController);
+				}
+				myHl7V2FileDiff.show();
+			}
+		});
+		mymenu_3.add(mnHl7V2FileDiff);
 		
 		mymenu_2 = new JMenu("Conformance");
 		menuBar.add(mymenu_2);
@@ -1001,6 +1018,8 @@ public class TestPanelWindow implements IDestroyable {
 	private JMenu myRecentFilesMenu;
 	private JMenuItem mymenuItem_3;
 	private JMenuItem mymenuItem_4;
+	private JMenu mymenu_3;
+	private JMenuItem mnHl7V2FileDiff;
 
 	private final class MyMessageDescriptionListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent theEvt) {

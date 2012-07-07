@@ -786,6 +786,8 @@ public class Controller {
 	}
 
 	public void start() {
+		ourLog.info("Starting TestPanel Controller...");
+		
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
 

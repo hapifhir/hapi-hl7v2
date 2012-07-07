@@ -48,6 +48,10 @@ import ca.uhn.hl7v2.util.StringUtil;
 public class Prefs {
 
 	private static final String GET_HL7_EDITOR_SPLIT = "getHl7EditorSplit";
+	private static final String GET_HL7V2_DIFF_FILE1 = "getHl7V2DiffFile1";
+	private static final String GET_HL7V2_DIFF_FILE2 = "getHl7V2DiffFile2";
+	private static final String GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR = "getHl7V2DiffShowWholeMessageOnError";
+	private static final String GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR = "getHl7V2DiffStopOnFirstError";
 	private static final String GET_INBOUND_CONNECTION_LIST = "getInboundConnectionList";
 	private static final String GET_OPEN_PATH_CONFORMANCE_PROFILE = "getOpenPathConformanceProfile";
 	private static final String GET_OPEN_PATH_MESSAGES = "getOpenPathMessages";
@@ -64,9 +68,9 @@ public class Prefs {
 	private static final String GET_WINDOW_POSITIONW = "getWindowPositionW";
 	private static final String GET_WINDOW_POSITIONX = "getWindowPositionX";
 	private static final String GET_WINDOW_POSITIONY = "getWindowPositionY";
+
 	private static Font myHl7EditorFont;
 	private static final Logger ourLog = LoggerFactory.getLogger(Prefs.class);
-
 	private static final Preferences ourPrefs = Preferences.userNodeForPackage(ca.uhn.hl7v2.testpanel.controller.Prefs.class);
 
 	/** Non instantiable */
@@ -138,6 +142,22 @@ public class Prefs {
 	public static double getHl7EditorSplit() {
 		double retVal = ourPrefs.getDouble(GET_HL7_EDITOR_SPLIT, 0.4);
 		return enforceHl7EditorSplitLimits(retVal);
+	}
+
+	public static String getHl7V2DiffFile1() {
+		return ourPrefs.get(GET_HL7V2_DIFF_FILE1, "");
+	}
+
+	public static String getHl7V2DiffFile2() {
+		return ourPrefs.get(GET_HL7V2_DIFF_FILE2, "");
+	}
+
+	public static boolean getHl7V2DiffShowWholeMessageOnError() {
+		return ourPrefs.getBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, false);
+	}
+
+	public static boolean getHl7V2DiffStopOnFirstError() {
+		return ourPrefs.getBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, false);
 	}
 
 	public static String getInboundConnectionList() {
@@ -310,6 +330,18 @@ public class Prefs {
 		ourPrefs.putDouble(GET_HL7_EDITOR_SPLIT, theRatio);
 	}
 
+	public static void setHl7V2DiffFile1(String theFile) {
+		ourPrefs.put(GET_HL7V2_DIFF_FILE1, theFile);
+	}
+
+	public static void setHl7V2DiffFile2(String theFile) {
+		ourPrefs.put(GET_HL7V2_DIFF_FILE2, theFile);
+	}
+
+	public static void setHl7V2DiffStopOnFirstError(boolean theValue) {
+		ourPrefs.putBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, theValue);
+	}
+
 	public static void setInboundConnectionList(String theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.put(GET_INBOUND_CONNECTION_LIST, theValue);
@@ -397,7 +429,7 @@ public class Prefs {
 		Validate.notNull(theValue);
 		ourPrefs.putBoolean(GET_SHOW_LOG_CONSOLE, theValue);
 	}
-	
+
 	public static void setWindowDimension(Dimension theDimension) {
 		assert theDimension != null;
 
@@ -415,4 +447,9 @@ public class Prefs {
 		ourPrefs.putInt(GET_WINDOW_POSITIONX, thePosition.x);
 		ourPrefs.putInt(GET_WINDOW_POSITIONY, thePosition.y);
 	}
+
+	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
+		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
+	}
+
 }

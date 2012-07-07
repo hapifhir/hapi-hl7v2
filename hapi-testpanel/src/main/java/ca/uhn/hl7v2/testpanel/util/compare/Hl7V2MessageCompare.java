@@ -57,7 +57,9 @@ public class Hl7V2MessageCompare {
 	private PipeParser myEncodingParser;
 	private Message myExpectedMessage;
 	private Set<String> myFieldsToIgnore;
-	
+	private String myExpectedDesc = BulkHl7V2Comparison.EXPECTED_DESC;
+	private String myActualDesc = BulkHl7V2Comparison.ACTUAL_DESC;
+
 	/**
 	 * Constructor
 	 */
@@ -65,7 +67,7 @@ public class Hl7V2MessageCompare {
 		myEncodingParser = new PipeParser();
 		myEncodingParser.setValidationContext(new ValidationContextImpl());
 	}
-	
+
 	/**
 	 * Constructor
 	 */
@@ -174,7 +176,7 @@ public class Hl7V2MessageCompare {
 				}
 			}
 		}
-		
+
 		int maxReps = (reps1.length > reps2.length) ? reps1.length : reps2.length;
 
 		List<Type> sameFields = new ArrayList<Type>();
@@ -224,16 +226,16 @@ public class Hl7V2MessageCompare {
 	private GroupComparison compareGroups(Group theStructure1, Group theStructure2) throws HL7Exception {
 		List<String> originalNames1 = Arrays.asList(theStructure1.getNames());
 		ArrayList<String> names1 = new ArrayList<String>(originalNames1);
-		for (Iterator<String> iter = names1.iterator(); iter.hasNext(); ) {
+		for (Iterator<String> iter = names1.iterator(); iter.hasNext();) {
 			String nextName = iter.next();
 			if (theStructure1.getAll(nextName).length == 0) {
 				iter.remove();
 			}
 		}
-		
+
 		List<String> originalNames2 = Arrays.asList(theStructure2.getNames());
 		ArrayList<String> names2 = new ArrayList<String>(originalNames2);
-		for (Iterator<String> iter = names2.iterator(); iter.hasNext(); ) {
+		for (Iterator<String> iter = names2.iterator(); iter.hasNext();) {
 			String nextName = iter.next();
 			if (theStructure2.getAll(nextName).length == 0) {
 				iter.remove();
@@ -351,11 +353,11 @@ public class Hl7V2MessageCompare {
 
 		for (SegmentComparison nextSegment : myComparison.flattenMessage()) {
 			if (nextSegment.getExpectSegment() != null) {
-				retVal.append("Expected: ").append(PipeParser.encode(nextSegment.getExpectSegment(), myEncodingCharacters)).append("\r\n");
+				retVal.append(myExpectedDesc).append(": ").append(PipeParser.encode(nextSegment.getExpectSegment(), myEncodingCharacters)).append("\r\n");
 			}
 
 			if (nextSegment.getActualSegment() != null) {
-				retVal.append("Actual  : ").append(PipeParser.encode(nextSegment.getActualSegment(), myEncodingCharacters)).append("\r\n");
+				retVal.append(myActualDesc).append(": ").append(PipeParser.encode(nextSegment.getActualSegment(), myEncodingCharacters)).append("\r\n");
 			}
 
 			if (!nextSegment.isSame() && (nextSegment.getFieldComparisons() != null)) {
@@ -376,10 +378,10 @@ public class Hl7V2MessageCompare {
 							retVal.append(":\r\n");
 
 							Type expectedType = next.getDiffFieldsExpected().get(rep - 1);
-							retVal.append("  Expected: ").append(encode(expectedType)).append("\r\n");
+							retVal.append("  ").append(myExpectedDesc).append(": ").append(encode(expectedType)).append("\r\n");
 
 							Type actualType = next.getDiffFieldsActual().get(rep - 1);
-							retVal.append("  Actual  : ").append(encode(actualType));
+							retVal.append("  ").append(myActualDesc).append(": ").append(encode(actualType));
 							retVal.append("\r\n");
 						}
 					}
@@ -506,18 +508,25 @@ public class Hl7V2MessageCompare {
 	}
 
 	private static boolean nameIsEqual(ArrayList<String> theNames1, ArrayList<String> theNames2, int i1, int i2) {
-	    String name1 = theNames1.get(i1);
+		String name1 = theNames1.get(i1);
 		if (!name1.contains("_") && name1.length() > 3) {
-    		name1 = name1.substring(0, 3);
-    	}
+			name1 = name1.substring(0, 3);
+		}
 
 		String name2 = theNames2.get(i2);
 		if (!name2.contains("_") && name2.length() > 3) {
-    		name2 = name2.substring(0, 3);
-    	}
+			name2 = name2.substring(0, 3);
+		}
 
 		return StringUtils.equals(name1, name2);
-    }
+	}
 
-	
+	/**
+	 * @see BulkHl7V2Comparison#setActualAndExpectedDescription(String, String)
+	 */
+	public void setExpectedAndActualDescription(String theExpectedDesc, String theActualDesc) {
+		myExpectedDesc = theExpectedDesc;
+		myActualDesc = theActualDesc;
+	}
+
 }
