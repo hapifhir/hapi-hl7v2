@@ -16,23 +16,28 @@ import ca.uhn.hl7v2.util.Terser;
 
 public class BulkHl7V2Comparison {
 
+	static final String ACTUAL_DESC = "Actual";
+	static final String EXPECTED_DESC = "Expected";
+
 	private static final Logger ourLog = Logger.getLogger(BulkHl7V2Comparison.class.getName());
 	
 	private Iterator<Message> myActualMessages;
 	private List<IMessageTransformer<Message>> myActualMessageTransformers = new ArrayList<IMessageTransformer<Message>>();
+	private boolean myCancelled;
 	private Iterator<Message> myExpectedMessages;
 	private List<IMessageTransformer<Message>> myExpectedMessageTransformers = new ArrayList<IMessageTransformer<Message>>();
-	private List<Hl7V2MessageCompare> myFailedComparisons = new ArrayList<Hl7V2MessageCompare>();
 	private Set<String> myFieldsToIgnore = new HashSet<String>();
+	private List<IComparisonListener> myListeners = new ArrayList<IComparisonListener>();
 	private PipeParser myParser;
 	private boolean myStopOnFirstFailure;
 	private int myTotalMessages = -1;
+	private String myExpectedDesc = EXPECTED_DESC;
+	private String myActualDesc = ACTUAL_DESC;
 
 	public BulkHl7V2Comparison() {
 		myParser = PipeParser.getInstanceWithNoValidation();
 	}
-	
-	
+
 	public void addActualMessageTransformer(IMessageTransformer<Message> theTransformer) {
 		myActualMessageTransformers.add(theTransformer);
 	}
@@ -40,7 +45,6 @@ public class BulkHl7V2Comparison {
 	public void addExpectedMessageTransformer(IMessageTransformer<Message> theTransformer) {
 		myExpectedMessageTransformers.add(theTransformer);
 	}
-
 	/**
 	 * @param theFieldToIgnore
 	 *            the terserPathsToIgnore to set
@@ -49,13 +53,19 @@ public class BulkHl7V2Comparison {
 		myFieldsToIgnore.add(theFieldToIgnore);
 	}
 	
-	
+	/**
+	 * Request that the comparison stop running
+	 */
+	public void cancel() {
+		myCancelled = true;
+	}
+
 	public void compare() throws UnexpectedTestFailureException {
 		
 		int actualIndex = 0;
 		int expectedIndex = 0;
 		
-		while (myActualMessages.hasNext() && myExpectedMessages.hasNext()) {
+		while (myActualMessages.hasNext() && myExpectedMessages.hasNext() && !myCancelled) {
 						
 			Message actualMessage = myActualMessages.next();
 			Message expectedMessage = myExpectedMessages.next();
@@ -76,23 +86,28 @@ public class BulkHl7V2Comparison {
 				msg.append((actualIndex + 1) + "/" + myTotalMessages);
 			}
 			try {
-	            msg.append(" - MSH-10 Expected[" + eTerser.get("/.MSH-10") + "] Actual[" + aTerser.get("/.MSH-10") + "]");
+	            msg.append(" - MSH-10 " + myExpectedDesc + "[" + eTerser.get("/.MSH-10") + "] " + myActualDesc + "[" + aTerser.get("/.MSH-10") + "]");
             } catch (HL7Exception e) {
             	// ignore, just for logging
             }
-            ourLog.info(msg.toString());
+            String msgLine = msg.toString();
+			ourLog.info(msgLine);
             
+			for (IComparisonListener next : myListeners) {
+				next.progressLog(msgLine);
+			}
+			
 			Hl7V2MessageCompare comparison = new Hl7V2MessageCompare(myParser);
 			comparison.setFieldsToIgnore(myFieldsToIgnore);
+			comparison.setExpectedAndActualDescription(myExpectedDesc, myActualDesc);
 			comparison.compare(expectedMessage, actualMessage);
 			
+			notyfyListeners(comparison);
+
 			if (!comparison.isSame()) {
-				myFailedComparisons.add(comparison);
-				
 				if (myStopOnFirstFailure) {
 					break;
 				}
-				
 			}
 			
 			actualIndex++;
@@ -100,47 +115,25 @@ public class BulkHl7V2Comparison {
 		}
 		
 	}
-
-	public String describeDifferences() throws HL7Exception {
-		StringBuilder retVal = new StringBuilder();
-		
-		for (Hl7V2MessageCompare next : myFailedComparisons) {
-		
-			retVal.append("Expected Type: ");
-			retVal.append(next.getExpectedMessage().getClass().getName());
-			retVal.append("\nActual Type: ");
-			retVal.append(next.getActualMessage().getClass().getName());
-
-			retVal.append("\n\nExpected Message:\n");
-			retVal.append(next.getExpectedMessage().encode().replace("\r", "\n"));
-			retVal.append("\n\nActual Message:\n");
-			retVal.append(next.getActualMessage().encode().replace("\r", "\n"));
-
-			retVal.append("\n\nExpected Structure:\n");
-			retVal.append(next.getExpectedMessage().printStructure());
-			retVal.append("\n\nActual Structure:\n");
-			retVal.append(next.getActualMessage().printStructure());
-			
-			retVal.append("\n\nDifferences:\n");
-			retVal.append(next.describeDifference());
-			retVal.append("\n\n");
-		}
-		
-		return retVal.toString();
-	}
-
-	/**
-	 * @return the failedComparisons
-	 */
-	public List<Hl7V2MessageCompare> getFailedComparisons() {
-		return myFailedComparisons;
-	}
-
+	
+	
 	/**
 	 * @return the stopOnFirstFailure
 	 */
 	public boolean isStopOnFirstFailure() {
 		return myStopOnFirstFailure;
+	}
+
+	private void notyfyListeners(Hl7V2MessageCompare theCompare) {
+		if (theCompare.isSame()) {
+			for (IComparisonListener next : myListeners) {
+				next.success(theCompare);
+			}
+		}else {
+			for (IComparisonListener next : myListeners) {
+				next.failure(theCompare);
+			}
+		}
 	}
 
 	/**
@@ -184,6 +177,24 @@ public class BulkHl7V2Comparison {
 	 */
 	public void setStopOnFirstFailure(boolean theStopOnFirstFailure) {
 		myStopOnFirstFailure = theStopOnFirstFailure;
+	}
+
+	public void addComparisonListener(IComparisonListener theListeners) {
+		myListeners.add(theListeners);
+	}
+
+	public void setActualAndExpectedDescription(String theString, String theString2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * By default the tools will print the words "expected" and "actual" in descriptions
+	 * but this can be overridden with alternate phrases.
+	 */
+	public void setExpectedAndActualDescription(String theExpectedDesc, String theActualDesc) {
+		myExpectedDesc = theExpectedDesc;
+		myActualDesc = theActualDesc;
 	}
 	
 }
