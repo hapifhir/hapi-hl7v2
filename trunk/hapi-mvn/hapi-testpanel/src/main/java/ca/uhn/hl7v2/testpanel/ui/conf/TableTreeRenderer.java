@@ -27,6 +27,7 @@ public class TableTreeRenderer extends DefaultTreeCellRenderer {
 		Object obj = ((DefaultMutableTreeNode)theValue).getUserObject();
 		if (obj instanceof TableFile) {
 			TableFile tf = (TableFile)obj;
+			b.append("Table File: ");
 			b.append(tf.getName());
 			b.append(" (");
 			b.append(tf.getFileName());
