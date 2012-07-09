@@ -273,7 +273,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane);
 				{
-					JList<String> list = new JList<String>();
+					JList list = new JList();
 					list.setModel(new OutputListModel());
 					scrollPane.setViewportView(list);
 				}
@@ -386,7 +386,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 		myStopOnFirstErrorCheck.setEnabled(!running);
 	}
 
-	public class OutputListModel implements ListModel<String> {
+	public class OutputListModel implements ListModel {
 
 		private List<ListDataListener> myListeners = new ArrayList<ListDataListener>();
 		

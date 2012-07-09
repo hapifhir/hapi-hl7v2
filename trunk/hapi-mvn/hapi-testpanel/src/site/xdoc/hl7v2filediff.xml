@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HAPI TestPanel - HL7 v2 File Diff</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<!-- The body of the document contains a number of sections -->
+		<section name="File Diff">
+
+			<p>
+				The HL7 v2 File Diff can be used to compare two files, each containing
+				raw HL7 messages, for differences.
+			</p>
+			
+			<p>
+				Each message is parsed, and the parsed message is then compared at a segment-by-segment
+				and field-by-field level. This means that messages are compared to see if
+				they are semantically identical as opposed to performing a rigid byte level
+				comparison.
+			</p>
+			
+			<p>
+				This means for example that the following segments are considered identical:<br/>
+				<code>PID|||7000135^^^UHN|||||</code><br/>
+				<code>PID|||7000135^^^UHN</code>			
+				<br clear="all"/><br/><br/>
+			</p>
+			
+			<subsection name="Using the HL7 v2 File Diff">
+				
+				<p>
+					To access the file diff, start the Test Panel, and choose "HL7 v2 File Diff" from the
+					tools menu. This will bring up the diff dialog. In this dialog, two files
+					(file 1, and file 2) must be selected. These files must contain raw HL7 messages. Note that
+					any lines beginning with hash (#) will be treated as comments and ignored. 
+				</p>
+			
+				<p>
+					When both files have been selected, you may click on the "begin" button to
+					start comparing. Any differences which are found will be highlited.
+				</p>
+
+				<img src="images/testpanel_filediff.png" alt="Main Window" width="660" height="528" />
+
+			</subsection>
+
+		</section>
+
+	</body>
+
+</document>

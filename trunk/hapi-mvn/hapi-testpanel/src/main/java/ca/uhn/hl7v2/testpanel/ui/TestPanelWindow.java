@@ -386,7 +386,7 @@ public class TestPanelWindow implements IDestroyable {
 		mymenu_3 = new JMenu("Tools");
 		menuBar.add(mymenu_3);
 		
-		mnHl7V2FileDiff = new JMenuItem("HL7 v2 File Diff");
+		mnHl7V2FileDiff = new JMenuItem("HL7 v2 File Diff...");
 		mnHl7V2FileDiff.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -401,7 +401,7 @@ public class TestPanelWindow implements IDestroyable {
 		mymenu_2 = new JMenu("Conformance");
 		menuBar.add(mymenu_2);
 		
-		mymenuItem_2 = new JMenuItem("Profiles and Tables…");
+		mymenuItem_2 = new JMenuItem("Profiles and Tables...");
 		mymenuItem_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				myController.showProfilesAndTablesEditor();
