@@ -26,6 +26,9 @@
 			<macro name="toc">
 			</macro>
 			 -->
+			<p>
+			    SOCIALPLUGINSHERE
+			</p>
 			 
 			<p>
 				The HAPI TestPanel is a full featured HL7 message editor,

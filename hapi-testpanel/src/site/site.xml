@@ -36,6 +36,7 @@
 
 		<menu name="Documentation">
 			<item name="Message Validation" href="validation.html" />
+			<item name="Message Diff/Compare" href="hl7v2filediff.html" />
 		</menu>
 
 		<menu name="Project Info">

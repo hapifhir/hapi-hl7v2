@@ -72,8 +72,9 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class Hl7V2MessageCollection extends AbstractModelClass {
-	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageCollection.class);
+	private static final Pattern FIRSTLINE_COMMENT_PATTERN = Pattern.compile("^\\#\\s*(\\S.*)");
 
+	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageCollection.class);
 	public static final String PARSED_MESSAGES_PROPERTY = Hl7V2MessageCollection.class.getName() + "PARSED_MESSAGES_PROPERTY";
 	public static final String PROP_DESCRIPTION = Hl7V2MessageCollection.class.getName() + "DESCRIPTION";
 	public static final String PROP_HIGHLITED_PATH = Hl7V2MessageCollection.class.getName() + "HIGHLITED_PATH";
@@ -81,12 +82,13 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	public static final String PROP_SAVE_FILENAME = Hl7V2MessageCollection.class.getName() + "SAVE_FILENAME";
 	public static final String PROP_VALIDATIONCONTEXT_OR_PROFILE = Hl7V2MessageCollection.class.getName() + "VALIDATIONCONTEXT";
 	public static final String SAVED_PROPERTY = AbstractMessage.class.getName() + "SAVED_PROPERTY";
-	public static final String SOURCE_MESSAGE_PROPERTY = Hl7V2MessageCollection.class.getName() + "SOURCE_MESSAGE_PROPERTY";
 
+	public static final String SOURCE_MESSAGE_PROPERTY = Hl7V2MessageCollection.class.getName() + "SOURCE_MESSAGE_PROPERTY";
 	private Hl7V2EncodingTypeEnum myEncoding = Hl7V2EncodingTypeEnum.ER_7;
 	private String myHighlitedPath;
 	private Range myHighlitedRange;
 	private String myId;
+	private String myLastSendToInterfaceId;
 	private String myMessageDescription;
 	private List<Range> myMessageRanges = new ArrayList<Range>();
 	private List<AbstractMessage<?>> myMessages = new ArrayList<AbstractMessage<?>>();
@@ -413,6 +415,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		xml.mySaveStripComments = Boolean.toString(myStripSaveComments);
 		xml.mySaveLineEndings = mySaveLineEndings != null ? mySaveLineEndings.name() : "";
 		xml.mySaveTimestamp = mySaveFileTimestamp;
+		xml.myLastSendToInterfaceId = myLastSendToInterfaceId;
 
 		StringWriter stringWriter = new StringWriter();
 		JAXB.marshal(xml, stringWriter);
@@ -488,6 +491,13 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	public String getId() {
 		return myId;
+	}
+
+	/**
+	 * @return the lastSendToInterfaceId
+	 */
+	public String getLastSendToInterfaceId() {
+		return myLastSendToInterfaceId;
 	}
 
 	public String getMessageDescription() {
@@ -709,6 +719,13 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myId = theId;
 	}
 
+	/**
+	 * @param theLastSendToInterfaceId the lastSendToInterfaceId to set
+	 */
+	public void setLastSendToInterfaceId(String theLastSendToInterfaceId) {
+		myLastSendToInterfaceId = theLastSendToInterfaceId;
+	}
+
 	public void setRuntimeProfile(ProfileGroup theProfileGroup) throws ProfileException {
 		if (theProfileGroup == null && myRuntimeProfile == null && myValidationContext == null) {
 			return;
@@ -838,8 +855,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myValidationContext = theValidationContext;
 		firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, oldValue, theValidationContext);
 	}
-
-	private static final Pattern FIRSTLINE_COMMENT_PATTERN = Pattern.compile("^\\#\\s*(\\S.*)");
 	
 	private void updateMessageDescription() {
 		String oldValue = myMessageDescription;
@@ -971,6 +986,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		retVal.setSaveFileName(isNotBlank(xmlFormat.mySaveFileName) ? xmlFormat.mySaveFileName : null);
 		retVal.setId(xmlFormat.myId);
+		retVal.setLastSendToInterfaceId(xmlFormat.myLastSendToInterfaceId);
 
 		try {
 			retVal.setSaveCharset(isNotEmpty(xmlFormat.mySaveCharsetName) ? Charset.forName(xmlFormat.mySaveCharsetName) : null);
@@ -1059,6 +1075,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		@XmlElement(required = true, name = "validationContextClass")
 		public String myValidationContextClass;
+
+		@XmlAttribute(required = false, name = "lastSendToInterfaceId")
+		private String myLastSendToInterfaceId;
 
 	}
 
