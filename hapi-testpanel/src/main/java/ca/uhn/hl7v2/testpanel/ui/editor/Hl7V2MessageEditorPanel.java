@@ -250,19 +250,19 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		mySpinnerIconOn = new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/spinner.gif"));
 		mySpinnerIconOff = new ImageIcon();
-		
+
 		myTreePanel = new Hl7V2MessageTree(theController);
 		myTreePanel.setWorkingListener(new IWorkingListener() {
-			
+
 			public void startedWorking() {
 				mySpinner.setText("");
 				mySpinner.setIcon(mySpinnerIconOn);
 				mySpinnerIconOn.setImageObserver(mySpinner);
 			}
-			
+
 			public void finishedWorking(String theStatus) {
 				mySpinner.setText(theStatus);
-				
+
 				mySpinner.setIcon(mySpinnerIconOff);
 				mySpinnerIconOn.setImageObserver(null);
 			}
@@ -292,10 +292,10 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myShowCombo.setMinimumSize(new Dimension(130, 27));
 		myShowCombo.setMaximumSize(new Dimension(130, 32767));
 		myShowCombo.setModel(new ShowComboModel());
-		
+
 		myhorizontalGlue = Box.createHorizontalGlue();
 		mytoolBar_1.add(myhorizontalGlue);
-		
+
 		mySpinner = new JButton("");
 		mySpinner.setForeground(Color.DARK_GRAY);
 		mySpinner.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -343,55 +343,58 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mytoolBar.add(myhorizontalStrut_3);
 		mySendButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
 		mytoolBar.add(mySendButton);
-		
-				myhorizontalStrut_1 = Box.createHorizontalStrut(20);
-				mytoolBar.add(myhorizontalStrut_1);
-				
-						mylabel_2 = new JLabel("Validate");
-						mytoolBar.add(mylabel_2);
-						
-								myProfileCombobox = new JComboBox();
-								mytoolBar.add(myProfileCombobox);
-								myProfileCombobox.setPreferredSize(new Dimension(200, 27));
-								myProfileCombobox.setMinimumSize(new Dimension(200, 27));
-								myProfileCombobox.addActionListener(new ActionListener() {
 
-									public void actionPerformed(ActionEvent e) {
-										if (myHandlingProfileComboboxChange) {
-											return;
-										}
+		myhorizontalStrut_1 = Box.createHorizontalStrut(20);
+		mytoolBar.add(myhorizontalStrut_1);
 
-										myHandlingProfileComboboxChange = true;
-										try {
-											if (myProfileCombobox.getSelectedIndex() == 0) {
-												myMessage.setValidationContext(null);
-											} else if (myProfileCombobox.getSelectedIndex() == 1) {
-												myMessage.setValidationContext(new DefaultValidation());
-											} else if(myProfileCombobox.getSelectedIndex() > 0) {
-												ProfileGroup profile = myProfileComboboxModel.myProfileGroups.get(myProfileCombobox.getSelectedIndex());
-												myMessage.setRuntimeProfile(profile);
-												
-//											} else if (myProfileCombobox.getSelectedItem() == ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
-//												IOkCancelCallback<Void> callback = new IOkCancelCallback<Void>() {
-//													public void ok(Void theArg) {
-//														myProfileComboboxModel.update();
-//													}
-//
-//													public void cancel(Void theArg) {
-//														myProfileCombobox.setSelectedIndex(0);
-//													}
-//												};
-//												myController.chooseAndLoadConformanceProfileForMessage(myMessage, callback);
-											}
-										} catch (ProfileException e2) {
-											ourLog.error("Failed to load profile", e2);
-										} finally {
-											myHandlingProfileComboboxChange = false;
-										}
-									}
-								});
-								myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
-								myProfileCombobox.setModel(myProfileComboboxModel);
+		mylabel_2 = new JLabel("Validate");
+		mytoolBar.add(mylabel_2);
+
+		myProfileCombobox = new JComboBox();
+		mytoolBar.add(myProfileCombobox);
+		myProfileCombobox.setPreferredSize(new Dimension(200, 27));
+		myProfileCombobox.setMinimumSize(new Dimension(200, 27));
+		myProfileCombobox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				if (myHandlingProfileComboboxChange) {
+					return;
+				}
+
+				myHandlingProfileComboboxChange = true;
+				try {
+					if (myProfileCombobox.getSelectedIndex() == 0) {
+						myMessage.setValidationContext(null);
+					} else if (myProfileCombobox.getSelectedIndex() == 1) {
+						myMessage.setValidationContext(new DefaultValidation());
+					} else if (myProfileCombobox.getSelectedIndex() > 0) {
+						ProfileGroup profile = myProfileComboboxModel.myProfileGroups.get(myProfileCombobox.getSelectedIndex());
+						myMessage.setRuntimeProfile(profile);
+
+						// } else if (myProfileCombobox.getSelectedItem() ==
+						// ProfileComboModel.APPLY_CONFORMANCE_PROFILE) {
+						// IOkCancelCallback<Void> callback = new
+						// IOkCancelCallback<Void>() {
+						// public void ok(Void theArg) {
+						// myProfileComboboxModel.update();
+						// }
+						//
+						// public void cancel(Void theArg) {
+						// myProfileCombobox.setSelectedIndex(0);
+						// }
+						// };
+						// myController.chooseAndLoadConformanceProfileForMessage(myMessage,
+						// callback);
+					}
+				} catch (ProfileException e2) {
+					ourLog.error("Failed to load profile", e2);
+				} finally {
+					myHandlingProfileComboboxChange = false;
+				}
+			}
+		});
+		myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
+		myProfileCombobox.setModel(myProfileComboboxModel);
 
 		// mySendingPanel = new JPanel();
 		// mySendingPanel.setBorder(null);
@@ -480,14 +483,14 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 			private void handleChange(DocumentEvent theE) {
 				long start = System.currentTimeMillis();
-				
+
 				String newSource = myMessageEditor.getText();
 				int changeStart = theE.getOffset();
 				int changeEnd = changeStart + theE.getLength();
 				myMessage.updateSourceMessage(newSource, changeStart, changeEnd);
-				
+
 				ourLog.info("Handled document update in {} ms", System.currentTimeMillis() - start);
-				
+
 			}
 
 			public void insertUpdate(DocumentEvent theE) {
@@ -548,7 +551,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		};
 		myController.getProfileFileList().addPropertyChangeListener(ProfileFileList.PROP_FILES, myProfilesListener);
 		registerProfileNamesListeners();
-		
+
 		myProfilesNamesListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				myProfileComboboxModel.update();
@@ -557,7 +560,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
-	
 	private void registerProfileNamesListeners() {
 		unregisterProfileNamesListeners();
 		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
@@ -575,12 +577,14 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		String selected = (String) myOutboundInterfaceCombo.getSelectedItem();
 		if (selected == null || selected == NO_CONNECTIONS) {
 			mySendButton.setEnabled(false);
+			myMessage.setLastSendToInterfaceId(null);
 			return;
 		}
 
 		if (selected == CREATE_NEW_CONNECTION) {
 			IOkCancelCallback<OutboundConnection> handler = new IOkCancelCallback<OutboundConnection>() {
 				public void ok(OutboundConnection theArg) {
+					myMessage.setLastSendToInterfaceId(theArg.getId());
 					myOutboundInterfaceCombo.setSelectedIndex(myOutboundInterfaceComboModel.getSize() - 2);
 				}
 
@@ -590,6 +594,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			};
 			myController.addOutboundConnectionToSendTo(handler);
 			return;
+		}
+
+		if (myMessage != null) {
+			int selectedIndex = myOutboundInterfaceCombo.getSelectedIndex();
+			OutboundConnection connection = myController.getOutboundConnectionList().getConnections().get(selectedIndex);
+			myMessage.setLastSendToInterfaceId(connection.getId());
 		}
 
 		mySendButton.setEnabled(true);
@@ -603,6 +613,16 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		Validate.isTrue(myMessage == null);
 
 		myMessage = theMessage;
+
+		// Prepopulate the "send to interface" combo to the last value it had
+		if (StringUtils.isNotBlank(myMessage.getLastSendToInterfaceId())) {
+			for (int i = 0; i < myOutboundInterfaceComboModelShadow.size(); i++) {
+				if (myOutboundInterfaceComboModelShadow.get(i).getId().equals(myMessage.getLastSendToInterfaceId())) {
+					myOutboundInterfaceCombo.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
 
 		updateEncodingButtons();
 		myRdbtnEr7.addActionListener(new ActionListener() {
@@ -663,19 +683,18 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				}
 				Range range = (Range) theEvt.getNewValue();
 
-//				myMessageScrollPane.getHorizontalScrollBar().setValue(0);
+				// myMessageScrollPane.getHorizontalScrollBar().setValue(0);
 
-//				myMessageEditor.select(range.getStart(), range.getEnd());
-//				myMessageEditor.setCaretPosition(range.getStart());
-				
+				// myMessageEditor.select(range.getStart(), range.getEnd());
+				// myMessageEditor.setCaretPosition(range.getStart());
 
-		        myMessageEditor.setCaretPosition(range.getStart());
-		        myMessageEditor.moveCaretPosition(range.getEnd());
+				myMessageEditor.setCaretPosition(range.getStart());
+				myMessageEditor.moveCaretPosition(range.getEnd());
 
-		        myMessageEditor.setCaretPosition(range.getEnd());
-		        myMessageEditor.moveCaretPosition(range.getStart());
-		        
-		        // myMessageEditor.grabFocus();
+				myMessageEditor.setCaretPosition(range.getEnd());
+				myMessageEditor.moveCaretPosition(range.getStart());
+
+				// myMessageEditor.grabFocus();
 				myMessageEditor.repaint();
 
 				String substring = myMessage.getSourceMessage().substring(range.getStart(), range.getEnd());
@@ -706,9 +725,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
-
-
-	
 	private void updateWindowTitle() {
 		StringBuilder b = new StringBuilder();
 
@@ -806,7 +822,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	private class ProfileComboModel extends DefaultComboBoxModel {
 
-//		private static final String APPLY_CONFORMANCE_PROFILE = "Apply Conformance Profile...";
+		// private static final String APPLY_CONFORMANCE_PROFILE =
+		// "Apply Conformance Profile...";
 		private ArrayList<ProfileGroup> myProfileGroups;
 
 		public void update() {
@@ -817,22 +834,24 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 				addElement("No Profile/Validation");
 				myProfileGroups.add(null);
-				
+
 				addElement("Default Datatype Validation (HAPI)");
 				myProfileGroups.add(null);
 
-//				ProfileGroup profile = myMessage.getRuntimeProfile();
-//				if (profile != null) {
-//					String name = "Conf Profile (" + profile.getMessage().getMsgType() + "^" + profile.getMessage().getEventType() + ")";
-//					String profName = myMessage.getRuntimeProfile().getName();
-//					if (StringUtils.isNotBlank(profName)) {
-//						name = name + ":" + profName;
-//					}
-//
-//					addElement(name);
-//				}
+				// ProfileGroup profile = myMessage.getRuntimeProfile();
+				// if (profile != null) {
+				// String name = "Conf Profile (" +
+				// profile.getMessage().getMsgType() + "^" +
+				// profile.getMessage().getEventType() + ")";
+				// String profName = myMessage.getRuntimeProfile().getName();
+				// if (StringUtils.isNotBlank(profName)) {
+				// name = name + ":" + profName;
+				// }
+				//
+				// addElement(name);
+				// }
 
-//				addElement(APPLY_CONFORMANCE_PROFILE);
+				// addElement(APPLY_CONFORMANCE_PROFILE);
 
 				for (ProfileGroup nextProfile : myController.getProfileFileList().getProfiles()) {
 					String nextString = "Profile Group: " + nextProfile.getName();
@@ -842,7 +861,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 						setSelectedItem(nextString);
 					}
 				}
-				
+
 				if (myMessage.getValidationContext() instanceof DefaultValidation) {
 					setSelectedItem(getElementAt(1));
 				} else if (getSelectedItem() == null) {
