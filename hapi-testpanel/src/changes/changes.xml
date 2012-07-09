@@ -29,7 +29,11 @@
             	Message editor now remembers which interface was last used to send specific 
             	messages to.
             </action>
-            		</release>
+            <action type="fix">
+                Conformance Profile Group editor didn't show first entry in list of
+                Table Files. Thanks to Thomas Robinson for reporting!
+            </action>
+		</release>
         <release version="2.0-beta2" date="2012-02-03">
             <action type="fix">
             	Fix issue where some populated nodes don't show up in message tree when

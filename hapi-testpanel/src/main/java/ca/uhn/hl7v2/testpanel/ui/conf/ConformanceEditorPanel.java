@@ -68,6 +68,7 @@ import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.ui.HoverButtonMouseAdapter;
 import ca.uhn.hl7v2.testpanel.ui.ImageFactory;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
+import java.awt.Dimension;
 
 public class ConformanceEditorPanel {
 
@@ -216,7 +217,7 @@ public class ConformanceEditorPanel {
 	 */
 	private void initialize() {
 		myframe = new JDialog();
-		myframe.setBounds(100, 100, 665, 571);
+		myframe.setBounds(100, 100, 726, 571);
 		myframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		myTableFilesTreeRoot = new DefaultMutableTreeNode();
 		myTableFilesTreeModel = new DefaultTreeModel(myTableFilesTreeRoot);
@@ -415,13 +416,19 @@ public class ConformanceEditorPanel {
 		});
 		myCloseFileButton.setBorderPainted(false);
 		toolBar.add(myCloseFileButton);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1.setMaximumSize(new Dimension(100, 32767));
+		horizontalStrut_1.setPreferredSize(new Dimension(100, 0));
+		horizontalStrut_1.setMinimumSize(new Dimension(100, 0));
+		toolBar.add(horizontalStrut_1);
 
 		myAddTableButton.setBorderPainted(false);
 		myAddTableButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/table.png")));
 		myAddTableButton.addMouseListener(new HoverButtonMouseAdapter(myAddTableButton));
 		toolBar.add(myAddTableButton);
 
-		myCloseTableButton = new JButton("Close Table");
+		myCloseTableButton = new JButton("Remove Table");
 		myCloseTableButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/close.png")));
 		myCloseTableButton.setBorderPainted(false);
 		myCloseTableButton.addMouseListener(new HoverButtonMouseAdapter(myCloseTableButton));
@@ -464,7 +471,7 @@ public class ConformanceEditorPanel {
 		scrollPane.setViewportView(myTableFilesTable);
 
 		JLabel lblNewLabel = new JLabel(
-				"<html><center>\nA <b>Table</b> contains a list of allowed values which may be used within\na particular field. Any field with a datatype of ID or IS will have an associated table number, and a Table may be used to define values for it. A <b>Table Group</b> contains one or more tables, and may be applied to a message to validate the various coded fields within it.\n</center></html>");
+				"<html><center>\nA <b>Table</b> contains a list of allowed values which may be used within\na particular field. Any field with a datatype of ID or IS will have an associated table number, and a Table may be used to define values for it. \n<br><br>\nA <b>Table File</b> contains one or more tables, and may be applied to a message to validate the various coded fields within it.\n</center></html>");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
@@ -1019,7 +1026,7 @@ public class ConformanceEditorPanel {
 			case COL_TRIGGER:
 				return "Trigger";
 			case COL_TABLES:
-				return "Tables";
+				return "Table File";
 			}
 			return null;
 		}
@@ -1187,7 +1194,7 @@ public class ConformanceEditorPanel {
 				retVal.addItem(TBL_OPT_NONE);
 				retVal.setSelectedIndex(0);
 
-				for (int i = 1; i < myController.getTableFileList().getTableFiles().size(); i++) {
+				for (int i = 1; i <= myController.getTableFileList().getTableFiles().size(); i++) {
 					TableFile tableFile = myController.getTableFileList().getTableFiles().get(i - 1);
 					retVal.addItem((i) + ": " + tableFile.getName());
 
