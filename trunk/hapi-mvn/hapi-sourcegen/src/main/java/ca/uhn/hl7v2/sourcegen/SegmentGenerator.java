@@ -199,10 +199,16 @@ public class SegmentGenerator extends java.lang.Object {
 					se.type = "CE";
 				}
 
+				// Fix problems
 				if (se.type.equals("-") || se.type.equals("NUL")) {
 					se.type = "NULLDT";
 				}
-
+				
+				// 3454369
+				if (version.equals("2.3") && name.equals("MRG") && index == 7) {
+					se.type = "XPN";
+				}
+				
 				elements.add(se);
 				/*System.out.println("Segment: " + name + " Field: " + se.field + " Rep: " + se.rep +
 				" Repetitions: " + se.repetitions + " Desc: " + se.desc + " Length: " + se.length +

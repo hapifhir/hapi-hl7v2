@@ -6,7 +6,6 @@ import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
-import ca.uhn.hl7v2.model.v25.message.ORL_O34;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -80,6 +79,14 @@ public class CheckParticularsTest extends TestCase {
 		failIfExists("ca.uhn.hl7v2.model.v26.group.OML_O33_TIIMING");
 		failIfExists("ca.uhn.hl7v2.model.v26.group.OML_O35_TIIMING");
 	}
+	
+	/**
+	 * See 3454369. MRG-7 in v2.3 should be XPN
+	 */
+	public void testv23Mrg7TypeIsXpn() {
+		new ca.uhn.hl7v2.model.v23.message.ADT_A06().getMRG().getMrg7_PriorPatientName().getXpn1_FamilyName();
+	}
+	
 
 	/**
 	 * The first component of TS should be TSComponentOne in older versions of
@@ -153,9 +160,10 @@ public class CheckParticularsTest extends TestCase {
 	 */
 	public void testParseORL_O34() throws Exception {
 		
-		ca.uhn.hl7v2.model.v25.message.ORL_O34 msg = new ORL_O34();
-		msg.getRESPONSE().getPATIENT();
+		// See bug 3373654
+		new ca.uhn.hl7v2.model.v25.message.ORL_O34().getRESPONSE().getPATIENT();
 		
+		// Fix overall
 		for (Version next : Version.values()) {
 			if (next.isGreaterThan(Version.V21)) {
 				String message = 
