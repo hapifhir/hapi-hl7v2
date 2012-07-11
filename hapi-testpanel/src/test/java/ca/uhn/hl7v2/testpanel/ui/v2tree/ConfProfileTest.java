@@ -38,7 +38,7 @@ public class ConfProfileTest {
 		
 		initTree();
 
-		tree.setShow(ShowEnum.ALL);
+		tree.setEditorShowModeAndUpdateAccordingly(ShowEnum.ALL);
 		DefaultValidator validator = new DefaultValidator();
 		validator.setValidateChildren(false);
 		tree.setRuntimeProfileValidator(validator);
@@ -67,7 +67,7 @@ public class ConfProfileTest {
 		
 		initTree();
 		
-		tree.setShow(ShowEnum.ALL);
+		tree.setEditorShowModeAndUpdateAccordingly(ShowEnum.ALL);
 		DefaultValidator validator = new DefaultValidator();
 		validator.setValidateChildren(false);
 		tree.setRuntimeProfileValidator(validator);
@@ -94,7 +94,7 @@ public class ConfProfileTest {
 		messageModel.setRuntimeProfile(pg);
 		
 		initTree();
-		tree.setShow(ShowEnum.ALL);
+		tree.setEditorShowModeAndUpdateAccordingly(ShowEnum.ALL);
 		validator = new DefaultValidator();
 		validator.setValidateChildren(false);
 		tree.setRuntimeProfileValidator(validator);

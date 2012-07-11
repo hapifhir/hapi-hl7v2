@@ -72,7 +72,6 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
-import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.AbstractGroup;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Group;
@@ -94,7 +93,6 @@ import ca.uhn.hl7v2.testpanel.model.conf.ConformanceGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformancePrimitive;
 import ca.uhn.hl7v2.testpanel.model.conf.ConformanceSegment;
-import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
@@ -132,7 +130,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private DefaultValidator myRuntimeProfileValidator;
 	private boolean mySelectionHandlingDisabled;
 	private boolean myShouldOpenDefaultPaths = true;
-	private ShowEnum myShow = ShowEnum.POPULATED;
 
 	private TreeRowModel myTableModel;
 
@@ -220,8 +217,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		myUpdaterThread.start();
 	}
 
-	private int addChidrenExtra(String theParentName, Type thePrimitive, TreeNodeBase treeParent, Segment theSegment, List<Integer> theComponentPath, String theTerserPath, int cpIndex, int index)
-			throws InterruptedException, InvocationTargetException {
+	private int addChidrenExtra(String theParentName, Type thePrimitive, TreeNodeBase treeParent, Segment theSegment, List<Integer> theComponentPath, String theTerserPath, int cpIndex, int index) throws InterruptedException, InvocationTargetException {
 		// Extra components
 		for (int i = 0; i < thePrimitive.getExtraComponents().numComponents(); i++) {
 			Type nextType = thePrimitive.getExtraComponents().getComponent(i);
@@ -310,10 +306,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			try {
 				String nextName = childNames[i];
 
-				switch (myShow) {
+				switch (myMessages.getEditorShowMode()) {
 				case ALL:
 				case ERROR:
-//				case POPULATED:
+					// case POPULATED:
 					/*
 					 * this creates at least one rep if there are none, since
 					 * these modes want to show the node in the tree regardless
@@ -429,10 +425,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				List<Integer> components = new ArrayList<Integer>();
 				components.add(Integer.valueOf(i));
 
-				switch (myShow) {
+				switch (myMessages.getEditorShowMode()) {
 				case ALL:
 				case ERROR:
-//				case POPULATED:
+					// case POPULATED:
 					/*
 					 * this creates at least one rep if there are none, since
 					 * these modes want to show the node in the tree regardless
@@ -480,8 +476,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	 * Adds components of a composite to the tree ...
 	 * 
 	 */
-	void addChildren(String theParentName, Composite messParent, TreeNodeBase treeParent, Segment theSegment, List<Integer> theComponentPath, String theTerserPath) throws InterruptedException,
-			InvocationTargetException {
+	void addChildren(String theParentName, Composite messParent, TreeNodeBase treeParent, Segment theSegment, List<Integer> theComponentPath, String theTerserPath) throws InterruptedException, InvocationTargetException {
 		Type[] components = messParent.getComponents();
 
 		int cpIndex = theComponentPath.size();
@@ -504,8 +499,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	}
 
-	int addChildren(String theParentName, TreeNodeBase theTreeParent, boolean theRepeating, boolean theRequired, String theName, int theRepNum, Type theType, Segment theParent,
-			List<Integer> theComponentNumbers, int theIndex, String theTerserPath) throws InterruptedException, InvocationTargetException {
+	int addChildren(String theParentName, TreeNodeBase theTreeParent, boolean theRepeating, boolean theRequired, String theName, int theRepNum, Type theType, Segment theParent, List<Integer> theComponentNumbers, int theIndex, String theTerserPath) throws InterruptedException,
+			InvocationTargetException {
 		if (theType instanceof Varies) {
 			theType = ((Varies) theType).getData();
 		}
@@ -542,6 +537,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return theIndex + 1;
 	}
 
+	public void collapseAll() {
+		AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
+		for (int i = 0; i < layout.getRowCount(); i++) {
+			TreePath path = layout.getPathForRow(i);
+			collapsePath(path);
+		}
+	}
+
 	public void destroy() {
 		removeMessageListeners();
 
@@ -559,7 +562,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		int lastSegmentRow = -1;
 		int currentSegmentRow = -1;
 		int currentSelectedRow = -1;
-		int currentMessageIndex=-1;
+		int currentMessageIndex = -1;
 		for (int row = 0; row < layout.getRowCount(); row++) {
 
 			TreePath path = layout.getPathForRow(row);
@@ -569,7 +572,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				if (highlitedPath.startsWith(currentMessageIndex + "/")) {
 					expandPath(path);
 				} else {
-//					collapsePath(path);
+					// collapsePath(path);
 				}
 				continue;
 			}
@@ -593,7 +596,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					currentSegmentRow = lastSegmentRow;
 				}
 			} else {
-//				collapsePath(path);
+				// collapsePath(path);
 			}
 
 		}
@@ -619,6 +622,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				}
 			});
 
+		}
+	}
+
+	public void expandAll() {
+		AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
+		for (int i = 0; i < layout.getRowCount(); i++) {
+			TreePath path = layout.getPathForRow(i);
+			expandPath(path);
 		}
 	}
 
@@ -710,13 +721,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return null;
 	}
 
-	/**
-	 * @return the show
-	 */
-	public ShowEnum getShow() {
-		return myShow;
-	}
-
 	private void handleKeyPress(KeyEvent theE) {
 		int row = getSelectedRow();
 		if (row == -1) {
@@ -794,6 +798,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		super.setEditingRow(theARow);
 	}
 
+	public void setEditorShowModeAndUpdateAccordingly(ShowEnum theValue) {
+		if (theValue != myMessages.getEditorShowMode()) {
+			myMessages.setEditorShowMode(theValue);
+			myUpdaterThread.scheduleUpdateNow();
+		}
+	}
+
 	/**
 	 * Updates the panel with a new Message.
 	 */
@@ -866,15 +877,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		myRuntimeProfileValidator = theRuntimeProfileValidator;
 	}
 
-	public void setShow(ShowEnum theValue) {
-		if (myShow != theValue) {
-			myShow = theValue;
-			myUpdaterThread.scheduleUpdateNow();
-		}
-	}
-
 	/**
-	 * @param theWorkingListener the workingListener to set
+	 * @param theWorkingListener
+	 *            the workingListener to set
 	 */
 	public void setWorkingListener(IWorkingListener theWorkingListener) {
 		myWorkingListener = theWorkingListener;
@@ -968,12 +973,11 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return StringUtils.leftPad(Integer.toString(theTable), 4, '0');
 	}
 
-	public interface IWorkingListener
-	{
+	public interface IWorkingListener {
 		void finishedWorking(String theStatus);
-		
+
 		void startedWorking();
-		
+
 	}
 
 	/**
@@ -1070,16 +1074,16 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		public int countExceptions() {
 			int retVal = 0;
-			
+
 			for (int i = 0; i < getChildCount(); i++) {
 				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
 				retVal += next.countExceptions();
 			}
-			
+
 			retVal += myValidationExceptions.size();
 			return retVal;
 		}
-		
+
 		/**
 		 * Subclasses may override if validation is possible
 		 */
@@ -1284,8 +1288,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					next.validate();
 				}
 
-				if ((next.getErrorDescription() == null && getShow() == ShowEnum.ERROR) || (next.isHasContent() == false && getShow() == ShowEnum.POPULATED)
-						|| (next.isSupported() == false && next.getErrorDescription() == null && getShow() == ShowEnum.SUPPORTED)) {
+				ShowEnum showMode = myMessages.getEditorShowMode();
+				if ((next.getErrorDescription() == null && showMode == ShowEnum.ERROR) || (next.isHasContent() == false && showMode == ShowEnum.POPULATED) || (next.isSupported() == false && next.getErrorDescription() == null && showMode == ShowEnum.SUPPORTED)) {
 					final int index = i;
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
@@ -1346,8 +1350,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	public class TreeNodeCompositeConf extends TreeNodeType {
 
-		public TreeNodeCompositeConf(String theParentName, Type theComposite, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent,
-				List<Integer> theComponentPath, String theTerserPath) {
+		public TreeNodeCompositeConf(String theParentName, Type theComposite, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent, List<Integer> theComponentPath, String theTerserPath) {
 			super(theParentName, theComposite, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
 		}
 
@@ -1573,8 +1576,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	public class TreeNodePrimitive extends TreeNodeType {
 
-		public TreeNodePrimitive(String theParentName, Primitive theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent,
-				List<Integer> theComponentPath, String theTerserPath) {
+		public TreeNodePrimitive(String theParentName, Primitive theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent, List<Integer> theComponentPath, String theTerserPath) {
 			super(theParentName, theGroup, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
 		}
 
@@ -1675,8 +1677,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	public class TreeNodePrimitiveConf extends TreeNodePrimitive {
 
-		public TreeNodePrimitiveConf(String theParentName, ConformancePrimitive thePrimitive, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent,
-				List<Integer> theComponentPath, String theTerserPath) {
+		public TreeNodePrimitiveConf(String theParentName, ConformancePrimitive thePrimitive, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent, List<Integer> theComponentPath, String theTerserPath) {
 			super(theParentName, thePrimitive, theGroupName, theRepNum, theRepeating, theRequired, theParent, theComponentPath, theTerserPath);
 
 		}
@@ -1705,7 +1706,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			if (myMessages.getRuntimeProfile() != null) {
 				String table = getTable();
 				if (table != null) {
-					
+
 					ConformanceMessage msg = getPrimitive().getMessage();
 					String tablesId = msg.getTablesId();
 					if (StringUtils.isNotBlank(tablesId)) {
@@ -1779,15 +1780,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			super(null);
 		}
 
-		public void destroy() {
-			for (int i = 0; i < getChildCount(); i++) {
-				TreeNode next = getChildAt(i);
-				if (next instanceof IDestroyable) {
-					((IDestroyable) next).destroy();
-				}
-			}
-		}
-
 		public int countMessages() {
 			int retVal = 0;
 			for (int i = 0; i < getChildCount(); i++) {
@@ -1796,6 +1788,15 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				}
 			}
 			return retVal;
+		}
+
+		public void destroy() {
+			for (int i = 0; i < getChildCount(); i++) {
+				TreeNode next = getChildAt(i);
+				if (next instanceof IDestroyable) {
+					((IDestroyable) next).destroy();
+				}
+			}
 		}
 
 	}
@@ -1913,8 +1914,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		private String myParentName;
 		private Segment mySegment;
 
-		public TreeNodeType(String theParentName, Type theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent, List<Integer> theComponentPath,
-				String theTerserPath) {
+		public TreeNodeType(String theParentName, Type theGroup, String theGroupName, int theRepNum, boolean theRepeating, boolean theRequired, Segment theParent, List<Integer> theComponentPath, String theTerserPath) {
 			super(theGroup, theGroupName, theRepNum, theRepeating, theRequired, theTerserPath);
 
 			Validate.notNull(theParent);
@@ -2120,7 +2120,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 	}
-	
+
 	private class TreeRowModel implements RowModel {
 
 		private static final int COL_LENGTH = 2;
@@ -2301,8 +2301,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 	}
-	
-	
+
 	private class UpdaterThread extends Thread {
 		private long myNextUpdate = 0;
 
@@ -2328,7 +2327,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 						addChildren();
 
 						int messages = myTop.countMessages();
-						
+
 						final StringBuilder b = new StringBuilder();
 						b.append(messages > 0 ? messages : "No");
 						b.append(" message");
@@ -2340,7 +2339,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 							b.append(" problem");
 							b.append(countExceptions != 1 ? "s" : "");
 						}
-						
+
 						if (myWorkingListener != null) {
 							EventQueue.invokeAndWait(new Runnable() {
 								public void run() {
@@ -2354,9 +2353,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 				} catch (InterruptedException e) {
 
-					// We can ignore these, they happen if the message is updated by
-					// the UI during a middle of an update loop 
-					
+					// We can ignore these, they happen if the message is
+					// updated by
+					// the UI during a middle of an update loop
+
 				} catch (Throwable e) {
 
 					ourLog.info("Exception caught during update loop", e);
@@ -2377,7 +2377,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public void scheduleUpdate() {
 			myNextUpdate = System.currentTimeMillis() + 2000;
 			interrupt();
-			
+
 			if (myWorkingListener != null) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
@@ -2391,7 +2391,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public void scheduleUpdateNow() {
 			myNextUpdate = System.currentTimeMillis();
 			interrupt();
-			
+
 			if (myWorkingListener != null) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
