@@ -117,6 +117,23 @@ The survey will run until the fall.
                 } catch(err) {}</script>
                 </head>
     <frameset]]></replacevalue>
+        </replace>        
+		  <replace dir="target/site/hapi-testpanel" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
+            <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
         </replace>
+		  <replace dir="target/site/hapi-testpanel" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[SOCIALPLUGINSHERE]]></replacetoken>
+            <replacevalue><![CDATA[
+<!-- Place this tag in your head or just before your close body tag -->
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+<!-- Place this tag where you want the +1 button to render -->
+<div class="g-plusone" data-annotation="inline"></div>
+				]]></replacevalue>
+        </replace>
+ 
     </target>
 </project>

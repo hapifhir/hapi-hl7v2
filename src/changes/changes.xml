@@ -325,6 +325,13 @@
 				nested group, so it doesn't do much but its absence could affect XML encoding.
 				Thanks to Eric Poisseau for reporting.
 			</action>
+			<action dev="Fco. Javier Broullón" type="fix" issue="3454369">
+				<![CDATA[
+				<a href="http://hl7api.sourceforge.net/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/MRG.html">MRG</a>
+				]]>
+				segment for v2.3 should have type XPN in position MRG.7 (Prior Patient Name) instead of type CX.
+				Thanks to Fco. Javier Broullón for reporting.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
