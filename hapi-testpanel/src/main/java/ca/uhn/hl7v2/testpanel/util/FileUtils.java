@@ -26,17 +26,33 @@
 package ca.uhn.hl7v2.testpanel.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 public class FileUtils {
 
+	@SuppressWarnings("unused")
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(FileUtils.class);
+
+	public static String loadResourceFromClasspath(String thePath) throws IOException {
+		InputStream is = FileUtils.class.getClassLoader().getResourceAsStream(thePath);
+		return readFromReaderIntoString(new InputStreamReader(is));
+	}
+
 	public static String readFile(File file) throws FileNotFoundException, IOException {
-		FileReader reader = new FileReader(file);
+		return readFile(file, null);
+	}
+
+	public static String readFile(File theFile, Charset theCharset) throws IOException {
+		if (theCharset == null) {
+			theCharset = Charset.defaultCharset();
+		}
+		Reader reader = new InputStreamReader(new FileInputStream(theFile), theCharset);
 		return readFromReaderIntoString(reader);
 	}
 
@@ -52,9 +68,4 @@ public class FileUtils {
 		return profileString;
 	}
 
-	public static String loadResourceFromClasspath(String thePath) throws IOException {
-		InputStream is = FileUtils.class.getClassLoader().getResourceAsStream(thePath);
-		return readFromReaderIntoString(new InputStreamReader(is));
-	}
-	
 }

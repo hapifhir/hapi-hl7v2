@@ -50,6 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class Hl7V2MessageCollection extends AbstractModelClass {
 	private static final Pattern FIRSTLINE_COMMENT_PATTERN = Pattern.compile("^\\#\\s*(\\S.*)");
-
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageCollection.class);
 	public static final String PARSED_MESSAGES_PROPERTY = Hl7V2MessageCollection.class.getName() + "PARSED_MESSAGES_PROPERTY";
 	public static final String PROP_DESCRIPTION = Hl7V2MessageCollection.class.getName() + "DESCRIPTION";
@@ -82,8 +82,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	public static final String PROP_SAVE_FILENAME = Hl7V2MessageCollection.class.getName() + "SAVE_FILENAME";
 	public static final String PROP_VALIDATIONCONTEXT_OR_PROFILE = Hl7V2MessageCollection.class.getName() + "VALIDATIONCONTEXT";
 	public static final String SAVED_PROPERTY = AbstractMessage.class.getName() + "SAVED_PROPERTY";
-
 	public static final String SOURCE_MESSAGE_PROPERTY = Hl7V2MessageCollection.class.getName() + "SOURCE_MESSAGE_PROPERTY";
+	
 	private Hl7V2EncodingTypeEnum myEncoding = Hl7V2EncodingTypeEnum.ER_7;
 	private String myHighlitedPath;
 	private Range myHighlitedRange;
@@ -103,14 +103,17 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private String mySourceMessage;
 	private boolean myStripSaveComments;
 	private ValidationContext myValidationContext = new DefaultValidation();
-
+	
+	/**
+	 * Constructor
+	 */
 	public Hl7V2MessageCollection() {
 		myParser = new GenericParser();
 		myParser.setValidationContext(new ValidationContextImpl());
 
 		myId = UUID.randomUUID().toString();
 	}
-
+	
 	public void addComment(String theComment) {
 		String oldValue = mySourceMessage;
 
@@ -396,8 +399,31 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object theObj) {
+		if (!(theObj instanceof Hl7V2MessageCollection)) {
+			return false;
+		}
+		Hl7V2MessageCollection o = (Hl7V2MessageCollection) theObj;
+		return StringUtils.equals(myId, o.myId);
+	}
+
 	@Override
 	public String exportConfigToXml() {
+		XmlFormat xml = exportCreate();
+		return exportWrite(xml);
+	}
+
+	public String exportConfigToXmlWithoutContents() {
+		XmlFormat xml = exportCreate();
+		xml.mySourceMessage = null;
+		return exportWrite(xml);
+	}
+
+	private XmlFormat exportCreate() {
 		XmlFormat xml = new XmlFormat();
 
 		xml.myId = this.myId;
@@ -416,7 +442,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		xml.mySaveLineEndings = mySaveLineEndings != null ? mySaveLineEndings.name() : "";
 		xml.mySaveTimestamp = mySaveFileTimestamp;
 		xml.myLastSendToInterfaceId = myLastSendToInterfaceId;
+		return xml;
+	}
 
+	private String exportWrite(XmlFormat xml) {
 		StringWriter stringWriter = new StringWriter();
 		JAXB.marshal(xml, stringWriter);
 		String string = stringWriter.toString();
@@ -565,6 +594,14 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	 */
 	public ValidationContext getValidationContext() {
 		return myValidationContext;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(myId).toHashCode();
 	}
 
 	/**
@@ -828,7 +865,15 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		ourLog.info("Done setting source message for collection");
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return Hl7V2MessageCollection.class.getSimpleName() + "[" + getSaveFileName() + "]";
+	}
+	
 	/**
 	 * @param theValidationContext
 	 *            the validationContext to set
@@ -855,7 +900,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myValidationContext = theValidationContext;
 		firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, oldValue, theValidationContext);
 	}
-	
+
 	private void updateMessageDescription() {
 		String oldValue = myMessageDescription;
 
@@ -1049,6 +1094,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		@XmlAttribute(required = true, name = "id")
 		public String myId;
 
+		@XmlAttribute(required = false, name = "lastSendToInterfaceId")
+		private String myLastSendToInterfaceId;
+
 		@XmlElement(required = true, name = "profileId")
 		public String myProfileId;
 
@@ -1075,9 +1123,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		@XmlElement(required = true, name = "validationContextClass")
 		public String myValidationContextClass;
-
-		@XmlAttribute(required = false, name = "lastSendToInterfaceId")
-		private String myLastSendToInterfaceId;
 
 	}
 

@@ -40,7 +40,9 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -74,6 +76,7 @@ import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageEr7;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageXml;
 import ca.uhn.hl7v2.testpanel.ui.AddMessageDialog;
+import ca.uhn.hl7v2.testpanel.ui.FileChooserOpenAccessory;
 import ca.uhn.hl7v2.testpanel.ui.FileChooserSaveAccessory;
 import ca.uhn.hl7v2.testpanel.ui.NothingSelectedPanel;
 import ca.uhn.hl7v2.testpanel.ui.TestPanelWindow;
@@ -109,6 +112,7 @@ public class Controller {
 	private FileChooserSaveAccessory mySaveMessagesFileChooserAccessory;
 	private TableFileList myTableFileList;
 	private TestPanelWindow myView;
+	private FileChooserOpenAccessory myOpenMessagesFileChooserAccessory;
 
 	public Controller() {
 		myTableFileList = new TableFileList();
@@ -318,6 +322,8 @@ public class Controller {
 			}
 		}
 
+		updateRecentMessageFiles(theMsg);
+		
 		myMessagesList.removeMessage(theMsg);
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
@@ -476,9 +482,9 @@ public class Controller {
 		return myMessageEditorInFollowMode;
 	}
 
-	private void openMessageFile(File file) {
+	private void openMessageFile(File file, Charset theCharset) {
 		try {
-			String profileString = FileUtils.readFile(file);
+			String profileString = FileUtils.readFile(file, theCharset);
 			Hl7V2MessageCollection col = new Hl7V2MessageCollection();
 			
 			col.setSourceMessage(profileString);
@@ -491,7 +497,6 @@ public class Controller {
 
 			setLeftSelectedItem(col);
 			myMessagesList.addMessage(col);
-			updateRecentMessageFiles();
 
 			}
 		} catch (IOException e) {
@@ -502,6 +507,8 @@ public class Controller {
 	public void openMessages() {
 		if (myOpenMessagesFileChooser == null) {
 			myOpenMessagesFileChooser = new JFileChooser(Prefs.getOpenPathMessages());
+			myOpenMessagesFileChooserAccessory = new FileChooserOpenAccessory();
+			myOpenMessagesFileChooser.setAccessory(myOpenMessagesFileChooserAccessory);
 			myOpenMessagesFileChooser.setDialogTitle("Choose a file containing HL7 messages");
 
 			FileFilter type = new ExtensionFilter("HL7 Files", new String[] { ".hl7" });
@@ -520,25 +527,25 @@ public class Controller {
 			File file = myOpenMessagesFileChooser.getSelectedFile();
 			Prefs.setOpenPathMessages(file.getPath());
 
-			openMessageFile(file);
+			openMessageFile(file, myOpenMessagesFileChooserAccessory.getSelectedCharset());
 		}
 
 	}
 
-	public void openOrSwitchToMessage(String theFileName) {
+	public void openOrSwitchToMessage(Hl7V2MessageCollection theFile) {
 		for (Hl7V2MessageCollection next : myMessagesList.getMessages()) {
-			if (theFileName.equals(next.getSaveFileName())) {
+			if (theFile.equals(next.getSaveFileName())) {
 				setLeftSelectedItem(next);
 				return;
 			}
 		}
 		
-		File file = new File(theFileName);
+		File file = new File(theFile.getSaveFileName());
 		if (file.exists() == false) {
-			ourLog.error("Can't find file: {}", theFileName);
+			ourLog.error("Can't find file: {}", theFile);
 		}
 		
-		openMessageFile(file);
+		openMessageFile(file, theFile.getSaveCharset());
 	}
 
 	public void populateWithSampleMessageAndConnections() {
@@ -700,8 +707,6 @@ public class Controller {
 
 			doSave(theSelectedValue);
 			
-			updateRecentMessageFiles();
-
 			return true;
 
 		} else {
@@ -791,8 +796,6 @@ public class Controller {
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
 
-		updateRecentMessageFiles();
-
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
 		} else {
@@ -852,10 +855,10 @@ public class Controller {
 	}
 
 
-	private void updateRecentMessageFiles() {
-		Prefs.addMessagesFileToRecents(myMessagesList.getMessageFiles());
+	private void updateRecentMessageFiles(Hl7V2MessageCollection theMessage) {
+		Prefs.addMessagesFileXmlToRecents(myProfileFileList, Arrays.asList(theMessage));
 		if (myView != null) {
-			myView.setRecentMessageFiles(Prefs.getRecentMessageFiles());
+			myView.setRecentMessageFiles(Prefs.getRecentMessageXmlFiles(myProfileFileList));
 		}
 	}
 

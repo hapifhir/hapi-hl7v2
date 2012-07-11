@@ -12,7 +12,25 @@
             	semantic differences, with any differences presented in context
             	of the message.
             </action>
-		</release>
+            <action type="add">
+            	Message editor now remembers which interface was last used to send specific 
+            	messages to.
+            </action>
+            <action type="fix">
+                Conformance Profile Group editor didn't show first entry in list of
+                Table Files. Thanks to Thomas Robinson for reporting!
+            </action>
+            <action type="fix">
+                Files being re-opened when TestPanel is restarted to not respect the previously chosen charset,
+                which can lead to corruption. 
+            </action>
+            <action type="fix">
+                Open File dialog allows user to select a charset 
+            </action>
+            <action>
+                Recent messages submenu in File menu doesn't show currently open files                
+            </action>
+        </release>
 	    <release version="2.0-beta3" date="2012-02-14">
             <action type="fix">
             	Modifying a message via the message tree with another message immediately
@@ -24,14 +42,6 @@
             <action type="add">
             	Make the editor window highlight the selected message part in a more obvious way
             	when a node is selected in the message tree
-            </action>
-            <action type="add">
-            	Message editor now remembers which interface was last used to send specific 
-            	messages to.
-            </action>
-            <action type="fix">
-                Conformance Profile Group editor didn't show first entry in list of
-                Table Files. Thanks to Thomas Robinson for reporting!
             </action>
 		</release>
         <release version="2.0-beta2" date="2012-02-03">

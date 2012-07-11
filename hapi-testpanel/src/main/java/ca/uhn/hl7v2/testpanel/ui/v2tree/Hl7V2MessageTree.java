@@ -569,7 +569,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				if (highlitedPath.startsWith(currentMessageIndex + "/")) {
 					expandPath(path);
 				} else {
-					collapsePath(path);
+//					collapsePath(path);
 				}
 				continue;
 			}
@@ -584,7 +584,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 			TreeNodeBase node = (TreeNodeBase) component;
 
-			String terserPath = (currentMessageIndex - 1) + node.getTerserPath();
+			String terserPath = (currentMessageIndex) + node.getTerserPath();
 			if (highlitedPath != null && highlitedPath.startsWith(terserPath) && !highlitedPath.startsWith(terserPath + "(")) {
 				expandPath(path);
 				if (highlitedPath.equals(terserPath)) {
@@ -593,7 +593,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					currentSegmentRow = lastSegmentRow;
 				}
 			} else {
-				collapsePath(path);
+//				collapsePath(path);
 			}
 
 		}

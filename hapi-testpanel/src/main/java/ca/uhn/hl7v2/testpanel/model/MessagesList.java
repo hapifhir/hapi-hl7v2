@@ -180,7 +180,7 @@ public class MessagesList extends AbstractModelClass {
 			if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
 				try {
 					File saveFile = new File(nextMsg.getSaveFileName());
-					contents = FileUtils.readFile(saveFile);
+					contents = FileUtils.readFile(saveFile, nextMsg.getSaveCharset());
 					
 					nextMsg.setSourceMessage(contents);
 					nextMsg.setSaveFileTimestamp(next.lastModified());
@@ -197,16 +197,6 @@ public class MessagesList extends AbstractModelClass {
 			myMessages.add(nextMsg);
 
 		}
-	}
-
-	public List<String> getMessageFiles() {
-		List<String> retVal = new ArrayList<String>();
-		for (Hl7V2MessageCollection next : myMessages) {
-			if (next.getSaveFileName() != null) {
-				retVal.add(next.getSaveFileName());
-			}
-		}
-		return retVal;
 	}
 
 }

@@ -67,6 +67,36 @@ public class Hl7V2MessageCollectionTest {
 	}
 
 	@Test
+	public void testTerserPathInMsh2() {
+
+		String fullMsg = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 
+		"MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r";
+
+		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
+		col.setSourceMessage(fullMsg);
+
+		col.setHighlitedPathBasedOnRange(new Range(0));
+		assertEquals("0/MSH-1", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(1));
+		assertEquals("0/MSH-1", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(2));
+		assertEquals("0/MSH-1", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(3));
+		assertEquals("0/MSH-1", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(4));
+		assertEquals("0/MSH-2", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(5));
+		assertEquals("0/MSH-2", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(6));
+		assertEquals("0/MSH-2", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(7));
+		assertEquals("0/MSH-2", col.getHighlitedPath());
+		col.setHighlitedPathBasedOnRange(new Range(8));
+		assertEquals("0/MSH-2", col.getHighlitedPath());
+		
+	}
+
+	@Test
 	public void testModifyBackToBackMessages() throws HL7Exception {
 
 		String fullMsg = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + 

@@ -1239,14 +1239,14 @@ public class TestPanelWindow implements IDestroyable {
 		myAboutDialog.setVisible(true);
 	}
 
-	public void setRecentMessageFiles(List<String> theRecentMessageFiles) {
+	public void setRecentMessageFiles(List<Hl7V2MessageCollection> theList) {
 		myRecentFilesMenu.removeAll();
-		for (final String fileName : theRecentMessageFiles) {
-			JMenuItem nextItem = new JMenuItem(fileName);
+		for (final Hl7V2MessageCollection nextFile : theList) {
+			JMenuItem nextItem = new JMenuItem(nextFile.getSaveFileName());
 			myRecentFilesMenu.add(nextItem);
 			nextItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent theE) {
-					myController.openOrSwitchToMessage(fileName);
+					myController.openOrSwitchToMessage(nextFile);
 				}
 			});
 		}
