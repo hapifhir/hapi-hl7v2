@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -40,7 +41,9 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.FontUtil;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.util.StringUtil;
@@ -78,9 +81,12 @@ public class Prefs {
 
 	}
 
-	public static void addMessagesFileToRecents(List<String> theMessageFiles) {
-		List<String> current = getRecentMessageFiles();
-		for (String next : theMessageFiles) {
+	public static void addMessagesFileXmlToRecents(ProfileFileList theProfileFileList, List<Hl7V2MessageCollection> theMessageFiles) {
+		List<Hl7V2MessageCollection> current = getRecentMessageXmlFiles(theProfileFileList);
+		for (Hl7V2MessageCollection next : theMessageFiles) {
+			if (StringUtils.isBlank(next.getSaveFileName())) {
+				continue;
+			}
 			if (current.contains(next) == false) {
 				current.add(0, next);
 			}
@@ -91,8 +97,8 @@ public class Prefs {
 		}
 
 		StringBuilder b = new StringBuilder();
-		for (String string : current) {
-			b.append(string).append('\n');
+		for (Hl7V2MessageCollection string : current) {
+			b.append(string.exportConfigToXmlWithoutContents().replaceAll("\\r|\\n", "")).append('\n');
 		}
 		ourPrefs.put(GET_RECENT_MESSAGE_FILES, b.toString());
 	}
@@ -228,12 +234,20 @@ public class Prefs {
 		return retVal;
 	}
 
-	public static List<String> getRecentMessageFiles() {
-		ArrayList<String> retVal = new ArrayList<String>();
-		String[] savedVals = ourPrefs.get(GET_RECENT_MESSAGE_FILES, "").split("\\n");
+	public static List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
+		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
+		ArrayList<String> savedVals = new ArrayList<String>(Arrays.asList(ourPrefs.get(GET_RECENT_MESSAGE_FILES, "").split("\\n")));
 		for (String string : savedVals) {
 			if (StringUtils.isNotBlank(string)) {
-				retVal.add(string);
+				try {
+					Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
+					assert nextMsg.getSourceMessage() == null;
+					if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
+						retVal.add(nextMsg);
+					}
+				} catch (Exception e) {
+					ourLog.error("Failed to restore profile", e);
+				}
 			}
 		}
 		return retVal;
@@ -450,6 +464,10 @@ public class Prefs {
 
 	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
 		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
+	}
+
+	public static void clearRecentMessageXmlFiles() {
+		ourPrefs.put(GET_RECENT_MESSAGE_FILES, "");
 	}
 
 }

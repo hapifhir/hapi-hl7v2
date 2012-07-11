@@ -305,6 +305,7 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 			if (fieldIndex == 2) {
 				cmpIndex = 1;
 				subCmpIndex = 1;
+				repIndex = 0;
 			}
 		}
 
@@ -351,6 +352,14 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 			}
 		}
 		String fullPath = fullPathB.toString();
+		
+//		/*
+//		 * The encoding characters in MSH-2 make this think that we're in subcomponents
+//		 * and repetitions
+//		 */
+//		if (fullPath.startsWith("MSH-2")) {
+//			fullPath = "MSH-2";
+//		}
 
 		ourLog.info("Highlited path is now: " + fullPath);
 
