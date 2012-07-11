@@ -94,7 +94,8 @@ import ca.uhn.hl7v2.view.TreePanel;
  * 
  * @author Bryan Tripp
  * @author Christian Ohr
- * @deprecated use new TestPanel
+ * @deprecated This class has been replaced by the standalone TestPanel application. 
+ * 	The new testpanel is located in a different HAPI module called "hapi-testpanel"  
  */
 @SuppressWarnings("serial")
 public class TestPanel extends JPanel implements ConnectionListener {
