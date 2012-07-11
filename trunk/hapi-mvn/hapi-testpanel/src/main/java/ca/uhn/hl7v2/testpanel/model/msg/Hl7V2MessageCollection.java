@@ -63,6 +63,7 @@ import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.model.UnknownMessage;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.util.ClassUtils;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.Range;
@@ -83,7 +84,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	public static final String PROP_VALIDATIONCONTEXT_OR_PROFILE = Hl7V2MessageCollection.class.getName() + "VALIDATIONCONTEXT";
 	public static final String SAVED_PROPERTY = AbstractMessage.class.getName() + "SAVED_PROPERTY";
 	public static final String SOURCE_MESSAGE_PROPERTY = Hl7V2MessageCollection.class.getName() + "SOURCE_MESSAGE_PROPERTY";
-	
+
 	private Hl7V2EncodingTypeEnum myEncoding = Hl7V2EncodingTypeEnum.ER_7;
 	private String myHighlitedPath;
 	private Range myHighlitedRange;
@@ -103,7 +104,25 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private String mySourceMessage;
 	private boolean myStripSaveComments;
 	private ValidationContext myValidationContext = new DefaultValidation();
-	
+	private ShowEnum myShow;
+
+	/**
+	 * @return the show
+	 */
+	public ShowEnum getEditorShowMode() {
+		if (myShow == null) {
+			myShow = ShowEnum.POPULATED;
+		}
+		return myShow;
+	}
+
+	/**
+	 * @param theShow the show to set
+	 */
+	public void setEditorShowMode(ShowEnum theShow) {
+		myShow = theShow;
+	}
+
 	/**
 	 * Constructor
 	 */
@@ -113,7 +132,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		myId = UUID.randomUUID().toString();
 	}
-	
+
 	public void addComment(String theComment) {
 		String oldValue = mySourceMessage;
 
@@ -442,6 +461,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		xml.mySaveLineEndings = mySaveLineEndings != null ? mySaveLineEndings.name() : "";
 		xml.mySaveTimestamp = mySaveFileTimestamp;
 		xml.myLastSendToInterfaceId = myLastSendToInterfaceId;
+		xml.myEditorShowMode = getEditorShowMode();
 		return xml;
 	}
 
@@ -757,7 +777,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	}
 
 	/**
-	 * @param theLastSendToInterfaceId the lastSendToInterfaceId to set
+	 * @param theLastSendToInterfaceId
+	 *            the lastSendToInterfaceId to set
 	 */
 	public void setLastSendToInterfaceId(String theLastSendToInterfaceId) {
 		myLastSendToInterfaceId = theLastSendToInterfaceId;
@@ -865,7 +886,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		ourLog.info("Done setting source message for collection");
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -873,7 +894,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	public String toString() {
 		return Hl7V2MessageCollection.class.getSimpleName() + "[" + getSaveFileName() + "]";
 	}
-	
+
 	/**
 	 * @param theValidationContext
 	 *            the validationContext to set
@@ -906,9 +927,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		Matcher matcher = FIRSTLINE_COMMENT_PATTERN.matcher(StringUtils.defaultString(mySourceMessage));
 		if (matcher.find()) {
-			
+
 			myMessageDescription = matcher.group(1).trim();
-			
+
 		} else if (mySaveFileName == null) {
 
 			int msgs = 0;
@@ -1032,7 +1053,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		retVal.setSaveFileName(isNotBlank(xmlFormat.mySaveFileName) ? xmlFormat.mySaveFileName : null);
 		retVal.setId(xmlFormat.myId);
 		retVal.setLastSendToInterfaceId(xmlFormat.myLastSendToInterfaceId);
-
+		retVal.setEditorShowMode(xmlFormat.myEditorShowMode);
+		
 		try {
 			retVal.setSaveCharset(isNotEmpty(xmlFormat.mySaveCharsetName) ? Charset.forName(xmlFormat.mySaveCharsetName) : null);
 		} catch (IllegalCharsetNameException e) {
@@ -1088,6 +1110,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	@XmlRootElement(name = "Hl7V2MessageCollection", namespace = "urn:ca.uhn.hapi:testpanel")
 	private static class XmlFormat {
+		
+		@XmlAttribute(required = false, name = "editorShowMode")
+		public ShowEnum myEditorShowMode;
+
 		@XmlAttribute(required = true, name = "encodingType")
 		public String myEncodingType;
 

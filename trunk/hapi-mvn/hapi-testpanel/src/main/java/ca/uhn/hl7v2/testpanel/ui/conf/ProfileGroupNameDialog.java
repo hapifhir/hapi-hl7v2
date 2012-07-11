@@ -2,22 +2,20 @@ package ca.uhn.hl7v2.testpanel.ui.conf;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import javax.swing.JTextField;
-
-import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
-
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dialog.ModalityType;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
 
 public class ProfileGroupNameDialog extends JDialog {
 

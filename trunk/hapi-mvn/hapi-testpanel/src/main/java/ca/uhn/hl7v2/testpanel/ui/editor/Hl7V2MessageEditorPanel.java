@@ -92,6 +92,7 @@ import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
 import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
 import ca.uhn.hl7v2.testpanel.ui.Er7SyntaxKit;
+import ca.uhn.hl7v2.testpanel.ui.HoverButtonMouseAdapter;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.ui.ShowEnum;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree;
@@ -170,6 +171,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private Component myhorizontalGlue;
 	private ImageIcon mySpinnerIconOn;
 	private ImageIcon mySpinnerIconOff;
+	private JButton collapseAllButton;
+	private JButton expandAllButton;
 
 	/**
 	 * Create the panel.
@@ -219,6 +222,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		toolBar.setRollover(true);
 
 		myFollowToggle = new JToggleButton("Follow");
+		myFollowToggle.setToolTipText("Keep the message tree (above) and the message editor (below) in sync");
 		myFollowToggle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				theController.setMessageEditorInFollowMode(myFollowToggle.isSelected());
@@ -291,7 +295,30 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myShowCombo.setPreferredSize(new Dimension(130, 27));
 		myShowCombo.setMinimumSize(new Dimension(130, 27));
 		myShowCombo.setMaximumSize(new Dimension(130, 32767));
-		myShowCombo.setModel(new ShowComboModel());
+		
+		collapseAllButton = new JButton();
+		collapseAllButton.setBorderPainted(false);
+		collapseAllButton.addMouseListener(new HoverButtonMouseAdapter(collapseAllButton));
+		collapseAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myTreePanel.collapseAll();
+			}
+		});
+		collapseAllButton.setToolTipText("Collapse All");
+		collapseAllButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/collapse_all.png")));
+		mytoolBar_1.add(collapseAllButton);
+		
+		expandAllButton = new JButton();
+		expandAllButton.setBorderPainted(false);
+		expandAllButton.addMouseListener(new HoverButtonMouseAdapter(expandAllButton));
+		expandAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myTreePanel.expandAll();
+			}
+		});
+		expandAllButton.setToolTipText("Expand All");
+		expandAllButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/expand_all.png")));
+		mytoolBar_1.add(expandAllButton);
 
 		myhorizontalGlue = Box.createHorizontalGlue();
 		mytoolBar_1.add(myhorizontalGlue);
@@ -614,6 +641,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		myMessage = theMessage;
 
+		myShowCombo.setModel(new ShowComboModel());
+
 		// Prepopulate the "send to interface" combo to the last value it had
 		if (StringUtils.isNotBlank(myMessage.getLastSendToInterfaceId())) {
 			for (int i = 0; i < myOutboundInterfaceComboModelShadow.size(); i++) {
@@ -885,7 +914,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			addElement(ERRORS);
 			addElement(SUPPORTED);
 
-			switch (myTreePanel.getShow()) {
+			switch (myMessage.getEditorShowMode()) {
 			case ALL:
 				setSelectedItem(ALL);
 				break;
@@ -907,13 +936,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			String value = (String) myShowCombo.getSelectedItem();
 
 			if (value == ALL) {
-				myTreePanel.setShow(ShowEnum.ALL);
+				myTreePanel.setEditorShowModeAndUpdateAccordingly(ShowEnum.ALL);
 			} else if (value == ERRORS) {
-				myTreePanel.setShow(ShowEnum.ERROR);
+				myTreePanel.setEditorShowModeAndUpdateAccordingly(ShowEnum.ERROR);
 			} else if (value == SUPPORTED) {
-				myTreePanel.setShow(ShowEnum.SUPPORTED);
+				myTreePanel.setEditorShowModeAndUpdateAccordingly(ShowEnum.SUPPORTED);
 			} else {
-				myTreePanel.setShow(ShowEnum.POPULATED);
+				myTreePanel.setEditorShowModeAndUpdateAccordingly(ShowEnum.POPULATED);
 			}
 
 		}

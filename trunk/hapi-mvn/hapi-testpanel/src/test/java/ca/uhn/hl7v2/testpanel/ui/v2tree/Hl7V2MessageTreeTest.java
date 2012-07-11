@@ -95,7 +95,7 @@ public class Hl7V2MessageTreeTest {
 			public void run() {
 				myTree = new Hl7V2MessageTree(null);
 				myTreeNodeRoot = myTree.new TreeNodeRoot();
-				myTree.setShow(ShowEnum.POPULATED);
+				myTree.setEditorShowModeAndUpdateAccordingly(ShowEnum.POPULATED);
 			}};
 			invoke(r);
 				
