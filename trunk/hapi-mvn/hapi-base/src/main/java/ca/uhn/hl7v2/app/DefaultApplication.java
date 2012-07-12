@@ -168,8 +168,7 @@ public class DefaultApplication implements Application {
 			return out;
 
 		} catch (Exception e) {
-			throw new HL7Exception("Can't instantiate ACK of class "
-					+ clazz.getName(), e);
+			throw new HL7Exception("Can't instantiate ACK", e);
 		}
 
 	}

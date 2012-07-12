@@ -146,6 +146,8 @@ public class Responder {
 		try {
 			incomingMessageObject = parser.parse(incomingMessageString);
 		} catch (HL7Exception e) {
+			// TODO this may also throw an Exception, which hides the
+			// previous one.
 			outgoingMessageString = logAndMakeErrorMessage(e,
 					parser.getCriticalResponseData(incomingMessageString),
 					parser, parser.getEncoding(incomingMessageString));
