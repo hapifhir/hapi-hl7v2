@@ -70,6 +70,7 @@ public class PipeParser extends Parser {
      * System property key. If value is "true", legacy mode will default to true
      * 
      * @see #isLegacyMode()
+     * @deprecated This will be removed in HAPI 3.0
      */
     public static final String DEFAULT_LEGACY_MODE_PROPERTY = "ca.uhn.hl7v2.parser.PipeParser.default_legacy_mode";
 
@@ -934,6 +935,7 @@ public class PipeParser extends Parser {
      * Defaults to <code>false</code>
      * 
      * @see #isLegacyMode()
+     * @deprecated This will be removed in HAPI 3.0
      */
     public void setLegacyMode(boolean legacyMode) {
         this.myLegacyMode = legacyMode;
@@ -993,6 +995,8 @@ public class PipeParser extends Parser {
      * behaviour of the {@link #parse(java.lang.String)} and
      * {@link #encode(ca.uhn.hl7v2.model.Message) } methods
      * </p>
+     * 
+     * @deprecated This will be removed in HAPI 3.0
      */
     public boolean isLegacyMode() {
         if (myLegacyMode == null) {
