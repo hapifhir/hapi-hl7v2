@@ -87,7 +87,18 @@ public class CheckParticularsTest extends TestCase {
 		new ca.uhn.hl7v2.model.v23.message.ADT_A06().getMRG().getMrg7_PriorPatientName().getXpn1_FamilyName();
 	}
 	
-
+	/**
+	 * See 2864817. PID-5 in v2.3 should be repeatable
+	 */
+	public void testv23Pid5IsRepeatable() {
+		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPid5_PatientName();
+		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPid5_PatientName(1);
+		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPatientName();
+		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPatientName(1);
+		
+	}
+	
+	
 	/**
 	 * The first component of TS should be TSComponentOne in older versions of
 	 * HL7

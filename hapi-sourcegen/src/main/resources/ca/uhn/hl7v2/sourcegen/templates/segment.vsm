@@ -120,6 +120,15 @@ public class ${segmentName} extends AbstractSegment {
 
 
     /**
+     * Returns all repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     */
+    public ${element.alternateType}[] get${element.alternateAccessorName}() {
+    	${element.alternateType}[] retVal = this.getTypedField(${velocityCount}, new ${element.alternateType}[0]);
+    	return retVal;
+    }
+
+
+    /**
      * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
      * This method does not create a repetition, so if no repetitions have currently been defined or accessed,
      * it will return zero.
