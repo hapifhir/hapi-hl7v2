@@ -69,8 +69,8 @@ import ca.uhn.hl7v2.util.Terser;
 public class InboundConnection extends AbstractConnection {
 
 	public static final String CONNECTIONS_PROPERTY = InboundConnection.class.getName() + "_CONNECTIONS_PROP";
-	private static final Logger ourLog = LoggerFactory.getLogger(InboundConnection.class);
 
+	private static final Logger ourLog = LoggerFactory.getLogger(InboundConnection.class);
 	public static final String PROP_VALIDATE_INCOMING = InboundConnection.class.getName() + "_VALIDATE_INCOMING";
 	private transient List<Connection> myConnections = new ArrayList<Connection>();
 	private transient Handler myHandler = new Handler();
@@ -78,23 +78,25 @@ public class InboundConnection extends AbstractConnection {
 	private transient Parser myParser;
 	private transient HL7Service myService;
 
-
 	@XmlAttribute(name="validateIncomingUsingProfileGroupId")
 	private String myValidateIncomingUsingProfileGroupId;
 
+	
 	@Override
 	public String exportConfigToXml() {
 		StringWriter writer = new StringWriter();
 		JAXB.marshal(this, writer);
 		return writer.toString();
 	}
-
+	
+	
 	/**
 	 * @return the connections
 	 */
 	public List<Connection> getConnections() {
 		return myConnections;
 	}
+
 
 	/**
 	 * @return the validateIncomingUsingProfileGroupId
@@ -241,6 +243,13 @@ public class InboundConnection extends AbstractConnection {
 				
 				addActivity(new ActivityOutgoingMessage(new Date(), getEncoding(), myParser.encode(response), EncodingCharacters.getInstance(response)));
 
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						addNewMessage();
+					}
+				});
+				
 				return response;
 			} catch (IOException e) {
 				throw new HL7Exception(e);

@@ -31,6 +31,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 	private JTabbedPane myTabbedPane;
 	private PropertyChangeListener myStatusPropertyChangeListener;
 	private ValidationHeaderPanel myValidationPanel;
+	private VetoableChangeListener myNewMessagesPropertyListener;
 
 	/**
 	 * Create the panel.
@@ -157,6 +160,26 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		myConnection = theConnection;
 		myActivityTable.setConnection(theConnection);
 		myValidationPanel.setConnection(theConnection);
+
+		theConnection.clearNewMessages();
+		myNewMessagesPropertyListener = new VetoableChangeListener() {
+			@Override
+			public void vetoableChange(PropertyChangeEvent theEvt) throws PropertyVetoException {
+				/*
+				 * This window displays messages as they arrive, so the message model
+				 * object doesn't need to accumulate the count
+				 */
+				if (theEvt.getPropertyName() == AbstractConnection.NEW_MESSAGES_PROPERTY) {
+					Integer oldValue = (Integer) theEvt.getOldValue();
+					Integer newValue = (Integer) theEvt.getNewValue();
+					if (oldValue != null && newValue != null && newValue > oldValue) {
+						throw new PropertyVetoException("", theEvt);
+					}
+				}
+			}
+		};
+		myConnection.addVetoableyChangeListener(AbstractConnection.NEW_MESSAGES_PROPERTY, myNewMessagesPropertyListener);
+		
 
 		myConnectionsListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {

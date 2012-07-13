@@ -219,7 +219,9 @@ public class TestPanelWindow implements IDestroyable {
 		myDeleteMessageButton.setEnabled(isMsg);
 		mySaveMenuItem.setEnabled(isMsg);
 		mySaveAsMenuItem.setEnabled(isMsg);
-
+		myRevertToSavedMenuItem.setEnabled(leftMessageHasSaveFilename());
+		
+		
 		if (myController.getLeftSelectedItem() instanceof OutboundConnection) {
 			myDeleteOutboundConnectionButton.setEnabled(true);
 			myStartOneOutboundButton.setEnabled(true);
@@ -238,6 +240,14 @@ public class TestPanelWindow implements IDestroyable {
 
 	}
 	
+	private boolean leftMessageHasSaveFilename() {
+		if (myController.getLeftSelectedItem() instanceof Hl7V2MessageCollection) {
+			Hl7V2MessageCollection left = (Hl7V2MessageCollection) myController.getLeftSelectedItem();
+			return StringUtils.isNotBlank(left.getSaveFileName());
+		}
+		return false;
+	}
+
 	private void updateLeftToolbarInboundStatusButtons() {
 		boolean haveStarted = false;
 		boolean haveStopped = false;
@@ -349,6 +359,14 @@ public class TestPanelWindow implements IDestroyable {
 				myController.openMessages();
 			}
 		});
+		
+		myRevertToSavedMenuItem = new JMenuItem("Revert to Saved");
+		myRevertToSavedMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myController.revertMessage((Hl7V2MessageCollection) myController.getLeftSelectedItem());
+			}
+		});
+		mnFile.add(myRevertToSavedMenuItem);
 		mnFile.add(mymenuItem_3);
 		
 		myRecentFilesMenu = new JMenu("Open Recent");
@@ -897,12 +915,14 @@ public class TestPanelWindow implements IDestroyable {
 				myInboundConnectionsListModel.addElement(next);
 				next.addPropertyChangeListener(InboundConnection.NAME_PROPERTY, new MyInboundConnectionDescriptionListener(next));
 				next.addPropertyChangeListener(InboundConnection.STATUS_PROPERTY, new MyInboundConnectionDescriptionListener(next));
+				next.addPropertyChangeListener(InboundConnection.NEW_MESSAGES_PROPERTY, new MyInboundConnectionDescriptionListener(next));
 
 			} else if (myInboundConnectionsListModel.getElementAt(index) != next) {
 
 				myInboundConnectionsListModel.add(index, next);
 				next.addPropertyChangeListener(InboundConnection.NAME_PROPERTY, new MyInboundConnectionDescriptionListener(next));
 				next.addPropertyChangeListener(InboundConnection.STATUS_PROPERTY, new MyInboundConnectionDescriptionListener(next));
+				next.addPropertyChangeListener(InboundConnection.NEW_MESSAGES_PROPERTY, new MyInboundConnectionDescriptionListener(next));
 
 			}
 
@@ -930,10 +950,12 @@ public class TestPanelWindow implements IDestroyable {
 		}
 
 		public void propertyChange(PropertyChangeEvent theEvt) {
+			String propertyName = theEvt.getPropertyName();
+
 			int rowIndex = myInboundConnectionsListModel.indexOf(myConnection);
 			myInboundConnectionsListModel.fireChangeAtRow(rowIndex);
 			
-			if (theEvt.getPropertyName() == InboundConnection.STATUS_PROPERTY) {
+			if (propertyName == InboundConnection.STATUS_PROPERTY) {
 				updateLeftToolbarInboundStatusButtons();
 			}
 		}
@@ -1020,6 +1042,7 @@ public class TestPanelWindow implements IDestroyable {
 	private JMenuItem mymenuItem_4;
 	private JMenu mymenu_3;
 	private JMenuItem mnHl7V2FileDiff;
+	private JMenuItem myRevertToSavedMenuItem;
 
 	private final class MyMessageDescriptionListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent theEvt) {
@@ -1094,13 +1117,26 @@ public class TestPanelWindow implements IDestroyable {
 				break;
 			}
 
-			if (obj.isPersistent()) {
-				setText(obj.getName());
-			} else {
-				setText("<html><nobr><font color=\"red\" size=\"2\">temp</font> " + obj.getName() + "</nobr></html>");
+			StringBuilder b = new StringBuilder();
+			b.append(obj.getName());
+			boolean html = false;
+			
+			if (!obj.isPersistent()) {
+				b.insert(0, "<font color=\\\"red\\\" size=\\\"2\\\">temp</font> ");
+				html = true;
 			}
 
-
+			if (obj.getNewMessages() > 0) {
+				b.append(" - <font color=\\\"red\\\">").append(obj.getNewMessages()).append(" new</font> ");
+				html = true;
+			}
+			
+			if (html) {
+				setText("<html><nobr>" + b.toString()+"</nobr></html>");
+			}else {
+				setText(b.toString());
+			}
+			
 			if (theValue == myController.getLeftSelectedItem()) {
 				setBackground(BG_SELECTED);
 			} else {
@@ -1138,12 +1174,26 @@ public class TestPanelWindow implements IDestroyable {
 				break;
 			}
 
-			if (obj.isPersistent()) {
-				setText(obj.getName());
-			} else {
-				setText("<html><nobr><font color=\"red\" size=\"2\">temp</font> " + obj.getName() + "</nobr></html>");
+			StringBuilder b = new StringBuilder();
+			b.append(obj.getName());
+			boolean html = false;
+			
+			if (!obj.isPersistent()) {
+				b.insert(0, "<font color=\"red\" size=\"2\">temp</font> ");
+				html = true;
 			}
 
+			if (obj.getNewMessages() > 0) {
+				b.append(" <font color=\"red\" size=\"2\">(").append(obj.getNewMessages()).append(" new)</font> ");
+				html = true;
+			}
+			
+			if (html) {
+				setText("<html><nobr>" + b.toString()+"</nobr></html>");
+			}else {
+				setText(b.toString());
+			}
+			
 			if (theValue == myController.getLeftSelectedItem()) {
 				setBackground(BG_SELECTED);
 			} else {

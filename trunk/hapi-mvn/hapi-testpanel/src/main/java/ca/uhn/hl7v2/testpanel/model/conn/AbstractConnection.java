@@ -25,6 +25,7 @@
  */
 package ca.uhn.hl7v2.testpanel.model.conn;
 
+import java.beans.PropertyVetoException;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -67,6 +68,43 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	public static final String RECENT_ACTIVITY_PROPERTY = AbstractConnection.class.getName() + "_RECENT_ACTIVITY";
 	public static final String STATUS_LINE_PROPERTY = AbstractConnection.class.getName() + "_STATUS_LINE";
 	public static final String STATUS_PROPERTY = AbstractConnection.class.getName() + "_STATUS";
+	public static final String NEW_MESSAGES_PROPERTY = InboundConnection.class.getName() + "_NEW_MESSAGES_PROP";
+	private transient int myNewMessages;
+
+	public void addNewMessage() {
+		int oldValue = myNewMessages;
+		int newValue = myNewMessages + 1;
+		
+		try {
+			fireVetoableChange(NEW_MESSAGES_PROPERTY, oldValue, newValue);
+		} catch (PropertyVetoException e) {
+			ourLog.debug("Property {} vetoed", NEW_MESSAGES_PROPERTY);
+			return;
+		}
+		
+		myNewMessages = newValue;
+		firePropertyChange(NEW_MESSAGES_PROPERTY, oldValue, myNewMessages);
+	}
+
+	public void clearNewMessages() {
+		int oldValue = myNewMessages;
+		
+		try {
+			fireVetoableChange(NEW_MESSAGES_PROPERTY, oldValue, 0);
+		} catch (PropertyVetoException e) {
+			ourLog.debug("Property {} vetoed", NEW_MESSAGES_PROPERTY);
+			return;
+		}
+
+		myNewMessages = 0;
+		firePropertyChange(NEW_MESSAGES_PROPERTY, oldValue, myNewMessages);
+	}
+	/**
+	 * @return the newMessages
+	 */
+	public int getNewMessages() {
+		return myNewMessages;
+	}
 
 	@XmlAttribute(required = true)
 	private boolean myCaptureBytes;
