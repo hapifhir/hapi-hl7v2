@@ -59,9 +59,9 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 	 * <p>
 	 * The following codes are handled:
 	 * <ul>
-	 * <li>\.br\
-	 * <li>\.ce\
-	 * <li>\.sk\
+	 * <li>\.br\ (converted to &lt;br&gt;)
+	 * <li>\.ce\ (converted to &lt;center&gt;)
+	 * <li>\.sk\ (converted to &amp;nbsp;)
 	 * <li>\.sp\
 	 * <li>\.sp ###\
 	 * <li>\.fi\
@@ -75,7 +75,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * Note that the returned value is an HTML snippet, not a complete HTML document.
+	 * Note that the returned value from this method is an HTML snippet, not a complete HTML document.
 	 * </p>
 	 */
 	public String getValueAsHtml() {
@@ -106,7 +106,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 			try {
 				k = Integer.parseInt(number);
 				for (int n = 0; n < k; n++) {
-					replacement = replacement + " ";
+					replacement = replacement + "&nbsp;";
 				}
 			} catch (NumberFormatException e) {
 				replacement = " ";
@@ -125,7 +125,7 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 			try {
 				k = Integer.parseInt(number);
 				for (int n = 0; n < k; n++) {
-					replacement = replacement + "\n";
+					replacement = replacement + "<br>";
 				}
 			} catch (NumberFormatException e) {
 				replacement = " ";
@@ -134,9 +134,12 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 		}
 
 		// \.sp\ conversion
-		string = string.replaceAll("\\\\\\.sp\\\\", "\n");
+		string = string.replaceAll("\\\\\\.sp\\\\", "<br>");
+
 		// \.br\ conversion
-		string = string.replaceAll("\\\\\\.br\\\\", "\n");
+		pattern = Pattern.compile("\\\\\\.br\\\\", Pattern.CASE_INSENSITIVE);
+		string = pattern.matcher(string).replaceAll("<br>");
+		
 		// \H\ conversion
 		string = string.replaceAll("\\\\H\\\\", "<b>");
 		// \N\ conversion
