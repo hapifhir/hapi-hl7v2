@@ -19,6 +19,7 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
+import ca.uhn.hl7v2.model.v23.message.ADT_A04;
 import ca.uhn.hl7v2.model.v23.message.SIU_S12;
 import ca.uhn.hl7v2.model.v231.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
@@ -190,6 +191,29 @@ public class NewPipeParserTest extends TestCase {
 
 	}
 
+	/**
+	 * See 1643780
+	 */
+	public void testMisplacedAl1() throws Exception {
+
+		// AIL is non-standard
+		String msgText = "MSH|^~\\&|IDX|XXXX|COMMON|EXTERNAL|200608140653||ADT^A04|60491_4054_SC1|P|2.3\r" + 
+				"PID|||868063820614||||^003|F||1|^^^^84606|||||S\r" + 
+				"PV1||O||10||||||||||||||||||||||||||||||||||||||||200501091835\r" + 
+				"AIL|1||871|10|\r" + 
+				"DG1||||RASH ON BACK AND RT LEG\r" + 
+				"IN1||||||||||||||||||||||||||||||||||||||||||||";
+		
+		ADT_A04 msg = new ADT_A04();
+		msg.setParser(parser);
+		msg.parse(msgText);
+
+		ourLog.info(msg.printStructure());
+		
+		assertEquals("RASH ON BACK AND RT LEG", msg.getDG1().getDg14_DiagnosisDescription().getValue());
+	}
+	
+	
 	/**
 	 * ADT^A45 has the structure:
 	 * 
