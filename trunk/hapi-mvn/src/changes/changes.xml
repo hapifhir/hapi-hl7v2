@@ -332,6 +332,13 @@
 				segment for v2.3 should have type XPN in position MRG.7 (Prior Patient Name) instead of type CX.
 				Thanks to Fco. Javier Broullón for reporting.
 			</action>
+			<action dev="Stéphane" type="fix" issue="2864817">
+				<![CDATA[
+				<a href="http://hl7api.sourceforge.net/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/PID.html">PID</a>
+				]]>
+				segment for v2.3 should allow repeatable elements in PID-5 (Patient Name).
+				Thanks to Stéphane for reporting.
+			</action>
 		</release>
         <release version="1.2" date="2011-06-26"
             description="This release brings some bug fixes and a
