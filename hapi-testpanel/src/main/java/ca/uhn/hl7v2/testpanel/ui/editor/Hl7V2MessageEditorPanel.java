@@ -120,6 +120,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		}
 	}
 
+	private boolean myDontRespondToSourceMessageChanges;
 	private JPanel bottomPanel;
 	private JPanel messageEditorContainerPanel;
 	private JComboBox myShowCombo;
@@ -351,6 +352,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mytoolBar.add(myOutboundInterfaceCombo);
 
 		mySendButton = new JButton("Send");
+		mySendButton.addMouseListener(new HoverButtonMouseAdapter(mySendButton));
+		mySendButton.setBorderPainted(false);
 		mySendButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// int selectedIndex =
@@ -509,6 +512,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 
 			private void handleChange(DocumentEvent theE) {
+				myDontRespondToSourceMessageChanges = true;
+				try {
 				long start = System.currentTimeMillis();
 
 				String newSource = myMessageEditor.getText();
@@ -517,7 +522,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				myMessage.updateSourceMessage(newSource, changeStart, changeEnd);
 
 				ourLog.info("Handled document update in {} ms", System.currentTimeMillis() - start);
-
+				}finally {
+					myDontRespondToSourceMessageChanges = false;
+				}
 			}
 
 			public void insertUpdate(DocumentEvent theE) {
@@ -674,6 +681,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		myMessageListeneer = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent theEvt) {
+				if (myDontRespondToSourceMessageChanges) {
+					return;
+				}
 				try {
 					myDisableCaretUpdateHandling = true;
 					updateMessageEditor();

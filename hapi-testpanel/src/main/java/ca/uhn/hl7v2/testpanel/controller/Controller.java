@@ -933,4 +933,36 @@ public class Controller {
 
 	}
 
+	
+	public void revertMessage(Hl7V2MessageCollection theMsg) {
+		if (StringUtils.isBlank(theMsg.getSaveFileName())) {
+			showDialogError("Message has not yet been saved");
+			return;
+		}
+		
+		File file= new File(theMsg.getSaveFileName());
+		if (file.exists() == false || file.isDirectory() || !file.canRead()) {
+			showDialogError("File \"" + theMsg.getSaveFileName() + "\" can not be read");
+			return;
+		}
+		
+		int revert = showDialogYesNo("Revert file to saved contents? You will lose all changes.");
+		if (revert == JOptionPane.NO_OPTION) {
+			return;
+		}
+		
+		Charset charSet = theMsg.getSaveCharset();
+		String contents;
+		try {
+			contents = FileUtils.readFile(file, charSet);
+		} catch (IOException e) {
+			ourLog.error("Failed to read from file " + file.getAbsolutePath(), e);
+			showDialogError("Failed to read from file: " + e.getMessage());
+			return;
+		}
+
+		theMsg.setSourceMessage(contents);
+		
+	}
+
 }

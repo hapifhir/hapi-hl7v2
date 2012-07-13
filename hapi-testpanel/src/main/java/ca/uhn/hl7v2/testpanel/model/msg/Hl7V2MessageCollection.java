@@ -873,11 +873,12 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		String oldValue = mySourceMessage;
 		mySourceMessage = theSourceMessage;
-
+		
 		ourLog.info("Firing message change event");
 
 		firePropertyChange(PARSED_MESSAGES_PROPERTY, oldMessages, myMessages);
-
+		firePropertyChange(SOURCE_MESSAGE_PROPERTY, oldValue, mySourceMessage);
+		
 		if (StringUtils.equals(oldValue, mySourceMessage) == false) {
 			setSaved(false);
 		}
