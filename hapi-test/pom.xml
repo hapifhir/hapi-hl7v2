@@ -153,6 +153,18 @@
 							<generateDateTypes>NONE</generateDateTypes>
 						</configuration>
 					</execution>
+					<execution>
+						<id>with_namespace</id>
+						<goals>
+							<goal>confgen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+							<packageName>ca.uhn.hl7v2.test.withns</packageName>
+							<profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01_withnamespace.xml</profile>
+							<generateDateTypes>ALL</generateDateTypes>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
