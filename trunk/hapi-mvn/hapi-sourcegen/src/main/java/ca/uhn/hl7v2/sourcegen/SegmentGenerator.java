@@ -208,7 +208,13 @@ public class SegmentGenerator extends java.lang.Object {
 				if (version.equals("2.3") && name.equals("MRG") && index == 7) {
 					se.type = "XPN";
 				}
-				
+
+				// 2864817
+				if (version.equals("2.3") && name.equals("PID") && index == 5) {
+					se.rep = "Y";
+					se.repetitions = -1;
+				}
+
 				elements.add(se);
 				/*System.out.println("Segment: " + name + " Field: " + se.field + " Rep: " + se.rep +
 				" Repetitions: " + se.repetitions + " Desc: " + se.desc + " Length: " + se.length +
