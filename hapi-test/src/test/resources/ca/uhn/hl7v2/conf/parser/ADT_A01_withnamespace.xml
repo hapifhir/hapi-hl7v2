@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7v2xConformanceProfile HL7Version="2.5" ProfileType="HL7">
+	<MetaData Name="test a01 spec" OrgName="" Version="" Status="" Topics="confsig--2.5-profile-accNE_accAL-Deferred" />
+	<Encodings>
+		<Encoding>ER7</Encoding>
+	</Encodings>
+	<DynamicDef AccAck="NE" AppAck="AL" MsgAckMode="Deferred" />
+	<HL7v2xStaticDef MsgType="ADT" EventType="A01" MsgStructID="ADT_A01" EventDesc="" Role="Sender">
+		<MetaData Name="test a01 spec" OrgName="" Version="" Status="" Topics="confsig--2.5-static-ADT-A01-null-ADT_A01---Sender" />
+		<Segment Name="MSH" LongName="Message Header" Usage="R" Min="1" Max="1">
+			<Field Name="Field Separator" Usage="R" Min="1" Max="1" Datatype="ST" Length="1" ItemNo="00001">
+				<Reference>2.15.9.1</Reference>
+			</Field>
+			<Field Name="Encoding Characters" Usage="R" Min="1" Max="1" Datatype="ST" Length="4" ItemNo="00002">
+				<Reference>2.15.9.2</Reference>
+			</Field>
+			<Field Name="Sending Application" Usage="O" Min="0" Max="1" Datatype="HD" Length="227" Table="0361" ItemNo="00003">
+				<Reference>2.15.9.3</Reference>
+				<Component Name="namespace ID" Usage="O" Datatype="IS" Length="20" Table="TESTNS0300">
+				</Component>
+				<Component Name="universal ID" Usage="C" Datatype="ST" Length="199">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+				<Component Name="universal ID type" Usage="C" Datatype="ID" Length="6" Table="0301">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+			</Field>
+			<Field Name="Sending Facility" Usage="O" Min="0" Max="1" Datatype="HD" Length="227" Table="0362" ItemNo="00004">
+				<Reference>2.15.9.4</Reference>
+				<Component Name="namespace ID" Usage="O" Datatype="IS" Length="20" Table="0300">
+				</Component>
+				<Component Name="universal ID" Usage="C" Datatype="ST" Length="199">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+				<Component Name="universal ID type" Usage="C" Datatype="ID" Length="6" Table="0301">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+			</Field>
+			<Field Name="Receiving Application" Usage="O" Min="0" Max="1" Datatype="HD" Length="227" Table="0361" ItemNo="00005">
+				<Reference>2.15.9.5</Reference>
+				<Component Name="namespace ID" Usage="O" Datatype="IS" Length="20" Table="0300">
+				</Component>
+				<Component Name="universal ID" Usage="C" Datatype="ST" Length="199">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+				<Component Name="universal ID type" Usage="C" Datatype="ID" Length="6" Table="0301">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+			</Field>
+			<Field Name="Receiving Facility" Usage="O" Min="0" Max="1" Datatype="HD" Length="227" Table="0362" ItemNo="00006">
+				<Reference>2.15.9.6</Reference>
+				<Component Name="namespace ID" Usage="O" Datatype="IS" Length="20" Table="0300">
+				</Component>
+				<Component Name="universal ID" Usage="C" Datatype="ST" Length="199">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+				<Component Name="universal ID type" Usage="C" Datatype="ID" Length="6" Table="0301">
+					<Predicate>If the first component for the HD data type is present,
+						the second and third components are optional. If the
+						third component is present, then the second must also
+						be present (although in this case the first is optional).
+						The second and third components must either both be
+						valued (both non-null), or both be not valued (both null).
+						This means that if all three components of the HD are
+						valued, the entity identified by the first component is the
+						same as the entity identified by components two and
+						three taken together. However, implementers may
+						choose, by site agreement, to specify that if all three
+						components of the HD are valued, the first component
+						defines a member in the set defined by the second and
+						third components.
+					</Predicate>
+				</Component>
+			</Field>
+			<Field Name="Date/Time Of Message" Usage="R" Min="1" Max="1" Datatype="TS" Length="26" ItemNo="00007">
+				<Reference>2.15.9.7</Reference>
+				<Component Name="time" Usage="R" Datatype="DTM" Length="24">
+					<DataValues ExValue="20040328134623.1234+0300" />
+				</Component>
+				<Component Name="degree of precision" Usage="X" Datatype="ST" Length="1" Table="0529">
+					<ImpNote>Retained for backward compatibility only
+					</ImpNote>
+					<DataValues ExValue="D" />
+				</Component>
+			</Field>
+			<Field Name="Security" Usage="O" Min="0" Max="1" Datatype="ST" Length="40" ItemNo="00008">
+				<Reference>2.15.9.8</Reference>
+			</Field>
+			<Field Name="Message Type" Usage="R" Min="1" Max="1" Datatype="MSG" Length="15" ItemNo="00009">
+				<Reference>2.15.9.9</Reference>
+				<Component Name="message code" Usage="R" Datatype="ID" Length="3" Table="0076">
+				</Component>
+				<Component Name="trigger event" Usage="R" Datatype="ID" Length="3" Table="0003">
+				</Component>
+				<Component Name="message structure" Usage="R" Datatype="ID" Length="7" Table="0354">
+				</Component>
+			</Field>
+			<Field Name="Message Control ID" Usage="R" Min="1" Max="1" Datatype="ST" Length="20" ItemNo="00010">
+				<Reference>2.15.8.2</Reference>
+			</Field>
+			<Field Name="Processing ID" Usage="R" Min="1" Max="1" Datatype="PT" Length="3" ItemNo="00011">
+				<Reference>2.15.9.11</Reference>
+				<Component Name="processing ID" Usage="O" Datatype="ID" Length="1" Table="0103">
+				</Component>
+				<Component Name="processing mode" Usage="O" Datatype="ID" Length="1" Table="0207">
+				</Component>
+			</Field>
+			<Field Name="Version ID" Usage="R" Min="1" Max="1" Datatype="VID" Length="971" ItemNo="00012">
+				<Reference>2.15.9.12</Reference>
+				<Component Name="version ID" Usage="O" Datatype="ID" Length="5" Table="0104">
+				</Component>
+				<Component Name="internationalization code" Usage="O" Datatype="CE" Length="483" Table="0399">
+					<SubComponent Name="identifier" Usage="O" Datatype="ST" Length="20">
+					</SubComponent>
+					<SubComponent Name="text" Usage="O" Datatype="ST" Length="199">
+					</SubComponent>
+					<SubComponent Name="name of coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+					</SubComponent>
+					<SubComponent Name="alternate identifier" Usage="O" Datatype="ST" Length="20">
+					</SubComponent>
+					<SubComponent Name="alternate text" Usage="O" Datatype="ST" Length="199">
+					</SubComponent>
+					<SubComponent Name="name of alternate coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+					</SubComponent>
+				</Component>
+				<Component Name="international version ID" Usage="O" Datatype="CE" Length="483">
+					<SubComponent Name="identifier" Usage="O" Datatype="ST" Length="20">
+					</SubComponent>
+					<SubComponent Name="text" Usage="O" Datatype="ST" Length="199">
+					</SubComponent>
+					<SubComponent Name="name of coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+					</SubComponent>
+					<SubComponent Name="alternate identifier" Usage="O" Datatype="ST" Length="20">
+					</SubComponent>
+					<SubComponent Name="alternate text" Usage="O" Datatype="ST" Length="199">
+					</SubComponent>
+					<SubComponent Name="name of alternate coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+					</SubComponent>
+				</Component>
+			</Field>
+			<Field Name="Sequence Number" Usage="O" Min="0" Max="1" Datatype="NM" Length="15" ItemNo="00013">
+				<Reference>2.15.9.13</Reference>
+			</Field>
+			<Field Name="Continuation Pointer" Usage="O" Min="0" Max="1" Datatype="ST" Length="180" ItemNo="00014">
+				<Reference>2.15.4.1</Reference>
+			</Field>
+			<Field Name="Accept Acknowledgment Type" Usage="O" Min="0" Max="1" Datatype="ID" Length="2" Table="0155" ItemNo="00015">
+				<Reference>2.15.9.15</Reference>
+			</Field>
+			<Field Name="Application Acknowledgment Type" Usage="O" Min="0" Max="1" Datatype="ID" Length="2" Table="0155" ItemNo="00016">
+				<Reference>2.15.9.16</Reference>
+			</Field>
+			<Field Name="Country Code" Usage="O" Min="0" Max="1" Datatype="ID" Length="3" Table="TESTNS0399" ItemNo="00017">
+				<Reference>2.15.9.17</Reference>
+			</Field>
+			<Field Name="Character Set" Usage="O" Min="0" Max="*" Datatype="ID" Length="16" Table="0211" ItemNo="00692">
+				<Reference>2.15.9.18</Reference>
+			</Field>
+			<Field Name="Principal Language Of Message" Usage="O" Min="0" Max="1" Datatype="CE" Length="478" ItemNo="00693">
+				<Reference>2.15.9.19</Reference>
+				<Component Name="identifier" Usage="O" Datatype="ST" Length="20">
+				</Component>
+				<Component Name="text" Usage="O" Datatype="ST" Length="199">
+				</Component>
+				<Component Name="name of coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+				</Component>
+				<Component Name="alternate identifier" Usage="O" Datatype="ST" Length="20">
+				</Component>
+				<Component Name="alternate text" Usage="O" Datatype="ST" Length="199">
+				</Component>
+				<Component Name="name of alternate coding system" Usage="O" Datatype="ID" Length="20" Table="0396">
+				</Component>
+			</Field>
+			<Field Name="Alternate Character Set Handling Scheme" Usage="O" Min="0" Max="1" Datatype="ID" Length="20" Table="0356" ItemNo="01317">
+				<Reference>2.15.9.20</Reference>
+			</Field>
+			<Field Name="Message Profile Identifier" Usage="O" Min="0" Max="*" Datatype="EI" Length="427" ItemNo="01598">
+				<Reference>2.15.9.21</Reference>
+				<Component Name="entity identifier" Usage="O" Datatype="ST" Length="199">
+				</Component>
+				<Component Name="namespace ID" Usage="O" Datatype="IS" Length="20" Table="0363">
+				</Component>
+				<Component Name="universal ID" Usage="C" Datatype="ST" Length="199">
+				</Component>
+				<Component Name="universal ID type" Usage="C" Datatype="ID" Length="6" Table="0301">
+				</Component>
+			</Field>
+		</Segment>
+	</HL7v2xStaticDef>
+</HL7v2xConformanceProfile>
+
