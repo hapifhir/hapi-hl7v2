@@ -204,7 +204,12 @@
 				<![CDATA[
 					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml()">getValueAsHtml()</a>
 				]]>
-				which converts any HL7 formatting codes (\H\, \.sp 55\, \.ce\, etc.) in the string to their HTML equivalent. 
+				which converts any HL7 formatting codes (\H\, \.sp 55\, \.ce\, etc.) in the string to their HTML equivalent. This 
+				functionality can also be used to convert any other string containing HL7 formatting codes to the
+				equivalent HTML codes using:
+				<![CDATA[
+					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/FormattedTextEncoder.html">FormattedTextEncoder</a>
+				]]>
 			</action>
         	<action dev="James Agnew" type="fix">
 				Calling 
