@@ -97,7 +97,7 @@
 					<linksource>true</linksource>
 					<detectLinks>true</detectLinks>
 					<links>
-					   <link>http://hl7api.sourceforge.net/apidocs/</link>
+					   <link>http://hl7api.sourceforge.net/base/apidocs/</link>
 					</links>
 				</configuration>
 			</plugin>
