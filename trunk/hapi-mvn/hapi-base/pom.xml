@@ -1,19 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.0-beta1</version>
+		<version>2.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-
 	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>hapi-base</artifactId>
 	<name>HAPI - 01 - Base Module</name>
-
 	<packaging>jar</packaging>
-
 	<dependencies>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -30,13 +25,13 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-j2ee</artifactId>
@@ -59,7 +54,6 @@
 			<version>2.4.0</version>
 		</dependency>
 	</dependencies>
-
 	<reporting>
 		<plugins>
 			<plugin>
@@ -77,7 +71,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-				<!-- <version>2.3</version>  -->
+				<version>2.4</version>
 				<configuration>
 					<tags>
 						<tag>TODO</tag>
@@ -87,11 +81,24 @@
 					</tags>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+				</configuration>
+			</plugin>
 		</plugins>
 	</reporting>
-
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<siteDirectory>${baseDir}/../src/site</siteDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<!-- make sure our code doesn't have 1.5+ dependencies except where we know it -->
 				<groupId>org.codehaus.mojo</groupId>
@@ -111,7 +118,7 @@
 								<version>1.0</version>
 							</signature>
 							<ignores>
-							 <ignore>java.lang.StringBuilder</ignore>
+								<ignore>java.lang.StringBuilder</ignore>
 							</ignores>
 						</configuration>
 					</execution>
@@ -133,6 +140,8 @@
 								</copy>
 								<copy todir="../target/site/" file="target/site/taglist.html">
 								</copy>
+								<copy todir="../target/site/" file="target/site/findbugs.html">
+								</copy>
 							</tasks>
 						</configuration>
 						<goals>
@@ -152,7 +161,6 @@
 			</resource>
 		</resources>
 	</build>
-
 	<profiles>
 		<profile>
 			<id>DIST</id>
@@ -206,5 +214,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
