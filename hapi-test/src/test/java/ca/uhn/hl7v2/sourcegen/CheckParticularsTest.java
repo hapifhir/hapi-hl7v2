@@ -5,6 +5,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.v23.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -91,10 +92,12 @@ public class CheckParticularsTest extends TestCase {
 	 * See 2864817. PID-5 in v2.3 should be repeatable
 	 */
 	public void testv23Pid5IsRepeatable() {
-		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPid5_PatientName();
-		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPid5_PatientName(1);
-		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPatientName();
-		new ca.uhn.hl7v2.model.v23.message.ADT_A01().getPID().getPatientName(1);
+		ca.uhn.hl7v2.model.v23.message.ADT_A01 a01 = new ca.uhn.hl7v2.model.v23.message.ADT_A01();
+		PID pid = a01.getPID();
+		pid.getPid5_PatientName(0);
+		pid.getPid5_PatientName(1);
+		pid.getPatientName(0);
+		pid.getPatientName(1);
 		
 	}
 	
