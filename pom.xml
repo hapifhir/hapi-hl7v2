@@ -369,10 +369,10 @@
 							<minmemory>128m</minmemory>
 							<maxmemory>1g</maxmemory>
 							<linksource>true</linksource>
-							<destDir>apidocs</destDir>
+							<!-- <destDir>apidocs</destDir>  -->
 							<verbose>true</verbose>
 							<debug>true</debug>
-							<reportOutputDirectory>${project.reporting.outputDirectory}/apidocs</reportOutputDirectory>
+							<!-- <reportOutputDirectory>${project.reporting.outputDirectory}/apidocs</reportOutputDirectory>  -->
 						</configuration>
 					</plugin>
 					<plugin>
