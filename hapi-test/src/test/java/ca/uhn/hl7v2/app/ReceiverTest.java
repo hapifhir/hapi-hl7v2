@@ -42,6 +42,12 @@ public class ReceiverTest {
         };
         AcceptorThread at = new AcceptorThread(port, false, DefaultExecutorService.getDefaultService(), queue);
         at.start();
+
+        /* TODO: it would be better to actually use a latch or something to
+         * avoid this, but under heavy load this test can fail intermittently
+         * because at.start() can return before the socket is actually listening
+         */
+        Thread.sleep(1000);
         
         Socket clientSocket = new Socket("localhost", port);
         final CountDownLatch latch = new CountDownLatch(1);
@@ -62,6 +68,12 @@ public class ReceiverTest {
         AcceptorThread at = new AcceptorThread(port, false, DefaultExecutorService.getDefaultService(), queue);
         at.start();
         
+        /* TODO: it would be better to actually use a latch or something to
+         * avoid this, but under heavy load this test can fail intermittently
+         * because at.start() can return before the socket is actually listening
+         */
+        Thread.sleep(1000);
+
         Socket clientSocket = new Socket("localhost", port);
         final CountDownLatch latch = new CountDownLatch(1);
         new Connection(new PipeParser(), new MinLowerLayerProtocol(), clientSocket) {
