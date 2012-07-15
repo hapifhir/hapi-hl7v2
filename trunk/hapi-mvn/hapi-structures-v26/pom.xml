@@ -112,35 +112,31 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.8.1</version>
 						<executions>
 							<execution>
-								<id>make-assembly</id> <!-- this is used for inheritance merges -->
-								<phase>package</phase> <!-- append to the packaging phase. -->
+								<phase>verify</phase>
 								<goals>
-									<goal>single</goal> <!-- goals == mojos -->
+									<goal>jar</goal>
 								</goals>
-								<inherited>true</inherited>
-								<configuration>
-									<descriptors>
-										<descriptor>../src/assembly/structures-source.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-							<execution>
-								<id>javadoc</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>../src/assembly/javadoc.xml</descriptor>
-									</descriptors>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.1.2</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>				
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>retrotranslator-maven-plugin</artifactId>

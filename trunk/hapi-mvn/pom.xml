@@ -236,6 +236,7 @@
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
 		<hapi.version>2.0</hapi.version>
 		<hapi.version.structures>2.0</hapi.version.structures>
+		<slf4j.version>1.6.1</slf4j.version>
 	</properties>
 
 	<reporting>
@@ -351,6 +352,7 @@
 			<build>
 				<plugins>
 					<plugin>
+					    <!-- 
 						<executions>
 							<execution>
 								<phase>compile</phase>
@@ -359,8 +361,9 @@
 								</goals>
 							</execution>
 						</executions>
+						 -->
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.8</version>
+						<version>2.8.1</version>
 						<inherited>true</inherited>
 						<configuration>
 							<minmemory>128m</minmemory>
@@ -389,7 +392,6 @@
 			</build>
 			<modules>
 				<module>hapi-base</module>
-				<!--<module>hapi-examples</module>-->
 				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
@@ -399,7 +401,6 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-				<!--<module>hapi-test</module>-->
 				<module>hapi-osgi-base</module>
 				<module>hapi-dist</module>
 			</modules>

@@ -17,6 +17,18 @@
 	<packaging>pom</packaging>
 
 	<dependencies>
+	    
+	    <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+	    
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
@@ -93,9 +105,10 @@
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>assembly</goal>
+							<goal>single</goal>
 						</goals>
 						<configuration>
+						    <attach>false</attach>
 							<descriptors>
 								<descriptor>${project.basedir}/src/assembly/hapi-all.xml</descriptor>
 								<descriptor>${project.basedir}/src/assembly/hapi-src.xml</descriptor>

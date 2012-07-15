@@ -1,0 +1,114 @@
+Downloading HAPI
+
+  If you aren't using Maven, HAPI can be downloaded at our {{{http://sourceforge.net/projects/hl7api/files/hl7api/}Sourceforge Download Site}}.
+
+Adding HAPI to your application
+
+  Adding HAPI to your application requires one or more HAPI JARs to be added to your application
+  classpath.
+  
+* HAPI Libraries
+
+*-----------------------------+----------------------------------------------------------------------------------+ 
+| hapi-base-${project.version}.jar           | This is the base HAPI library. It contains parsers, transports, validators, etc. |
+*-----------------------------+----------------------------------------------------------------------------------+
+| hapi-structures-vXX-${project.version}.jar | Each HL7 version (2.1, 2.2, etc) has a messsage library contained within a structures JAR. If you are constructing messages of that particular version of HL7, you should include the appropriate JAR. 
+*-----------------------------+----------------------------------------------------------------------------------+
+
+* HAPI Dependencies
+
+  HAPI also requires the following JARs to function. Newer versions of these JARs *should* also work.
+  Note that these dependencies can be found in the "hapi-all" bundle available in the 
+  Download area.
+  
+*-----------------------------+----------------------------------------------------------------------------------+ 
+| log4j-1.29.jar              | HAPI uses {{{http://www.slf4j.org/}SLF4J}} for logging. SLF4J is a logging abstraction 
+| slf4j-api-1.6.1.jar         | framework which generally uses an underlying logger to write the logs to disk. {{{http://logging.apache.org/log4j/}LOG4J}} and 
+| slf4j-log4j12-1.6.1.jar     | can be used, but others will work as well.
+|                             | 
+*-----------------------------+----------------------------------------------------------------------------------+
+| xercesImpl-2.4.0.jar        | These JARs are used for the various XML operations within HAPI, including generation of XML encoded messages, parsing conformance profiles.  If you are not using XML in your application, you may not need them.
+| xmlParserAPIs-2.6.2.jar     | 
+| xalan-2.7.0.jar             | 
+| jaxen-1.0-FCS-2.7.0.jar     | 
+| saxpath-1.0-FCS.jar         | 
+| jdom-1.1.jar                | 
+*-----------------------------+----------------------------------------------------------------------------------+
+  
+* Maven Dependencies
+
+  To use HAPI , add hapi-base to your dependencies section, and add the structures versions you need.
+  
++-------------
+<!-- This is the core HAPI library -->
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-base</artifactId>
+	<version>${project.version}</version>
+</dependency>       
+
+<!-- This is the structure JAR for HL7 v2.1 -->
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v21</artifactId>
+	<version>${project.version}</version>
+</dependency>
+
+<!-- 
+	If you want to use log4j for logging (recommended), you should include
+	it, as well as the slf4j adaptor
+-->
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>${slf4j.version}</version>
+</dependency>
+<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.16</version>
+</dependency>
+
+<!-- 
+	Also add hapi-structures-v22, v23, etc. depending on which versions 
+	of HL7 you need to create or parse 
+-->     
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v22</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v23</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v231</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v24</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v25</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v251</artifactId>
+	<version>${project.version}</version>
+</dependency>
+<dependency>
+	<groupId>ca.uhn.hapi</groupId>
+	<artifactId>hapi-structures-v26</artifactId>
+	<version>${project.version}</version>
+</dependency>
++-------------
+
+
+  

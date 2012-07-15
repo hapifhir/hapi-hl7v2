@@ -23,7 +23,7 @@
 	<classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v21-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v21-2.0-beta1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0-beta1/hapi-structures-v22-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v22-2.0-beta1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0-beta1/hapi-structures-v23-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0-beta1/hapi-structures-v23-2.0-beta1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0-beta1/hapi-structures-v231-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0-beta1/hapi-structures-v231-2.0-beta1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0-beta1/hapi-structures-v24-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0-beta1/hapi-structures-v24-2.0-beta1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0-beta1/hapi-structures-v25-2.0-beta1.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0-beta1/hapi-structures-v25-2.0-beta1-sources.jar"/>

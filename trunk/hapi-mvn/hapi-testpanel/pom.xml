@@ -1,43 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.0-beta1</version>
+		<version>2.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-
-	<version>2.0-beta3</version>
-
+	<version>2.0</version>
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-testpanel</artifactId>
 	<name>HAPI - Test Panel</name>
-
 	<packaging>jar</packaging>
-
 	<repositories>
 		<repository>
 			<id>netbeans</id>
 			<name>NetBeans Platform Maven Repository</name>
 			<url>http://bits.netbeans.org/maven2/</url>
 		</repository>
-
 		<!-- For JSyntaxPane -->
 		<repository>
 			<id>hapi</id>
 			<name>HAPI Maven Repository</name>
 			<url>http://hl7api.sourceforge.net/m2</url>
 		</repository>
-
 		<!-- For Apple Java Extensions -->
 		<repository>
 			<id>ooo-maven-repo</id>
 			<url>http://ooo-maven.googlecode.com/hg/repository</url>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>jflex</id>
@@ -46,7 +37,6 @@
 		</pluginRepository>
 		<!-- <pluginRepository> <id>launch4j-xml-plugin-repo</id> <name>launch4j-xml-plugin Repository for Maven</name> <url>https://launch4j-xml-plugin.googlecode.com/svn/repo</url> </pluginRepository> -->
 	</pluginRepositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -60,7 +50,6 @@
 			<version>4.9</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.netbeans.api</groupId>
 			<artifactId>org-netbeans-swing-outline</artifactId>
@@ -73,14 +62,12 @@
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- We're using a customized version of JSyntaxPane. See http://code.google.com/p/jsyntaxpane/issues/detail?id=180 -->
 		<dependency>
 			<artifactId>jsyntaxpane</artifactId>
 			<groupId>jsyntaxpane</groupId>
 			<version>0.9.6-hapi2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -137,16 +124,15 @@
 			<version>1.5.4</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.1</version>
+			<version>${slf4j.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -155,16 +141,13 @@
 			<version>1.2.16</version>
 			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 			<groupId>com.sun.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>3.0.9</version>
 			<scope>provided</scope> <!-- For now, since we aren't actually using it.. -->
 		</dependency>
-
 	</dependencies>
-
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
@@ -239,7 +222,6 @@
 			</resource>
 		</resources>
 	</build>
-
 	<reporting>
 		<outputDirectory>${project.basedir}/../target/site/hapi-testpanel</outputDirectory>
 		<plugins>
@@ -260,10 +242,8 @@
 					<outputDirectory>${project.basedir}/../target/site/hapi-testpanel</outputDirectory>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</reporting>
-
 	<profiles>
 		<profile>
 			<id>BUNDLE</id>
@@ -398,15 +378,23 @@
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<!-- <executions> <execution> <id>WINBUNDLE</id> <phase>package</phase> <goals> <goal>assembly</goal> </goals> </execution> </executions> -->
-						<configuration>
-							<descriptors>
-								<descriptor>src/assembly/windows.xml</descriptor>
-							</descriptors>
-						</configuration>
+						<executions>
+							<execution>
+								<id>JWDBUNDLE</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assembly</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/windows.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
 </project>
