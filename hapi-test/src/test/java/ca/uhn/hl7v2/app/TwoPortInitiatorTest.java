@@ -122,6 +122,7 @@ public class TwoPortInitiatorTest implements Application {
 				assertTrue("Got FALSE response, " + n + " threads left",
 						f.get());
 			} catch (ExecutionException e) {
+				ourLog.info("Failed", e);
 				fail(e.getMessage() + " " + n + " threads left");
 			} finally {
 				n--;
