@@ -151,7 +151,7 @@ public class DefaultApplication implements Application {
 			ModelClassFactory mcf = p != null ? p.getFactory() : new DefaultModelClassFactory();
 			String version = inbound.getVersion();
 			if (version == null)
-				version = "2.4";
+				version = "2.4"; // TODO: This should be set dynamically based on available HL7 version
 			clazz = mcf.getMessageClass("ACK", version, false);
 			Message out = clazz.newInstance();
 			Terser terser = new Terser(out);
