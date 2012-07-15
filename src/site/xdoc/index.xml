@@ -79,6 +79,41 @@
 			
 		</section>
 
+		<section name="HAPI 2.0 and TestPanel 2.0 Released! Jul 17, 2012">
+		
+			<p>
+				Today marks a big milestone for HAPI, with the release of version 2.0 of both
+				the HAPI Java API and the HAPI TestPanel.
+			</p>
+		
+			<p>
+				The new release comes packed with tons of bugfixes, plenty of new features,
+				and improvements. See the <a href="changes-report.html">Changelog</a> for 
+				information on everything that is new.
+			</p>
+			
+			<p>
+				One thing to note: Migrating to the new version of the Java API should be
+				very straightforward, but there is one notable difference to watch out for:
+				As of version 2.0 the logging abstraction layer has changes from commons-logging to
+				<a href="http://www.slf4j.org/">SLF4J</a>, so you will need to include the
+				SLf4J API JAR on your classpath. You will probably want to include an 
+				adaptor to an underlying logging framework as well. Maven users can copy the
+				updated POM dependency snippets from <a href="using_maven.html">here</a>. Non-Maven
+				users will find the new requirements in the "hapi-all" bundle on the 
+				<a href="https://sourceforge.net/projects/hl7api/files/hl7api/2.0/">Download</a>
+				area. 
+			</p>
+		
+			<p>
+				Thanks to everyone who contributed! In particular, this release features a huge
+				set of contributions from Christian Ohr, who cleaned up a lot of old codebase,
+				modernized the SimpleServer, and replaced the logging framework. It's great to
+				see that the HAPI community continues to gain traction after a decade!
+			</p>
+		
+		</section>
+
 		<section name="New Developments! Jan 22, 2012">
 		
 			<p>

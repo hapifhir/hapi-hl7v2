@@ -25,7 +25,8 @@
                 <include>ca.uhn.hapi:hapi-structures-v251</include>
                 <include>ca.uhn.hapi:hapi-structures-v26</include>
                 <include>commons-cli:commons-cli</include>
-                <include>commons-logging:commons-logging</include>
+                <include>org.slf4j:slf4j-api</include>
+                <include>org.slf4j:slf4j-log4j12</include>
                 <include>org.jdom:jdom</include>
                 <include>xalan:xalan</include>
                 <include>xerces:xercesImpl</include>
