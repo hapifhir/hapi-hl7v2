@@ -5,7 +5,11 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-        <release version="2.0-beta4" date="TBD">
+        <release version="2.0" date="2012-07-16">
+            <action type="fix">
+            	Fix a permission error that prevented creating a new message if the
+            	HAPI id_file ever gets corrupted
+            </action>
             <action type="add">
             	Add HL7 v2 File Diff to Tools Menu: This feature allows two
             	files containg a series of HL7 messages to be compared for
