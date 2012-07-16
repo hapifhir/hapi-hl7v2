@@ -116,7 +116,7 @@
 						<version>2.8.1</version>
 						<executions>
 							<execution>
-								<phase>verify</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>jar</goal>
 								</goals>
@@ -129,7 +129,7 @@
 						<version>2.1.2</version>
 						<executions>
 							<execution>
-								<phase>verify</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>jar-no-fork</goal>
 								</goals>
