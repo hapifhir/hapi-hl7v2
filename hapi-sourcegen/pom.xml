@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.0</version>
+		<version>2.1-alpha1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -11,7 +11,7 @@
 	
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-sourcegen</artifactId>
-	<name>HAPI - 02 - Source Generator Plugin</name>
+	<name>HAPI - Java HL7 API - Source Generator Plugin</name>
 	
 	<packaging>maven-plugin</packaging>
 

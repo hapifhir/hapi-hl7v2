@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.interfacefactory</groupId>
 	<artifactId>hapi-osgi-tests</artifactId>
-	<name>hapi-osgi-tests</name>
+	<name>HAPI - Java HL7 API - OSGI Unit Tests</name>
 	<version>1.0.0</version>
 
 	<packaging>jar</packaging>
