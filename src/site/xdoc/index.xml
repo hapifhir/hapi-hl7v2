@@ -11,8 +11,9 @@
 		<!-- The body of the document contains a number of sections -->
 		<section name="Welcome">
 			<p>
-			    SOCIALPLUGINSHERE
-
+			    SOCIALPLUGINSHEREAPI
+			</p>
+			<p>
 				This is the home page for the HAPI project. 
 				HAPI (HL7 application
 				programming interface;

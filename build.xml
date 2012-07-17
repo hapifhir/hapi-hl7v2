@@ -125,15 +125,38 @@ The survey will run until the fall.
         </replace>
 		  <replace dir="target/site/" summary="true">
             <include name="**/*.html"></include>
-            <replacetoken><![CDATA[SOCIALPLUGINSHERE]]></replacetoken>
+            <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
             <replacevalue><![CDATA[
-<!-- Place this tag in your head or just before your close body tag -->
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+            	<!-- Place this tag where you want the +1 button to render. -->
+            	<div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div>
 
-<!-- Place this tag where you want the +1 button to render -->
-<div class="g-plusone" data-annotation="inline"></div>
-				]]></replacevalue>
+            	<!-- Place this tag after the last +1 button tag. -->
+            	<script type="text/javascript">
+            	  (function() {
+            	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            	    po.src = 'https://apis.google.com/js/plusone.js';
+            	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            	  })();
+            	</script>
+            ]]></replacevalue>
         </replace>
+		  <replace dir="target/site/" summary="true">
+          <include name="**/*.html"></include>
+          <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
+          <replacevalue><![CDATA[
+          	<!-- Place this tag where you want the +1 button to render. -->
+          	<div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div>
+
+          	<!-- Place this tag after the last +1 button tag. -->
+          	<script type="text/javascript">
+          	  (function() {
+          	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          	    po.src = 'https://apis.google.com/js/plusone.js';
+          	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          	  })();
+          	</script>
+          ]]></replacevalue>
+      </replace>
  
     </target>
 </project>
