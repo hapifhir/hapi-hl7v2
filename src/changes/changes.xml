@@ -5,7 +5,14 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-        <release version="2.0" date="TBD">
+        <release version="3.0" date="TBD">
+            <action type="add" dev="Christian Ohr" issue="3515832">
+            	Added a set of new message ID generators, to be centrally configured using the
+				ParserConfiguration class. Provides non-persistent generators and the
+				possibility to plug in custom ID generators.
+            </action>
+		</release>
+        <release version="2.0" date="2012/07/16">
         	<action type="fix">
 				<![CDATA[
         		<i>Regression in 2.0-beta1:</i> 

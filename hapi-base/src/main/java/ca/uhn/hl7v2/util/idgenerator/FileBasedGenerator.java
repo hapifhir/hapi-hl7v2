@@ -37,20 +37,17 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.util.Home;
 
 /**
- * Replacement for {@link ca.uhn.hl7v2.util.MessageIDGenerator}. You should not
- * use this class directly, however, but wrap it into a
- * {@link DelegatingHiLoGenerator} generator. Its primary improvement over
- * {@link ca.uhn.hl7v2.util.MessageIDGenerator} is that you can set path and
- * file name.
+ * Replacement for {@link ca.uhn.hl7v2.util.MessageIDGenerator}. You should not use this class
+ * directly, however, but wrap it into a {@link DelegatingHiLoGenerator} generator. Its primary
+ * improvement over {@link ca.uhn.hl7v2.util.MessageIDGenerator} is that you can set path and file
+ * name.
  * <p>
- * Reading and writing to the file is thread-safe, however, you should not use
- * the same file from different Java processes because no read/write locks are
- * being checked.
+ * Reading and writing to the file is thread-safe, however, you should not use the same file from
+ * different Java processes because no read/write locks are being checked.
  */
 public class FileBasedGenerator extends InMemoryIDGenerator {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(FileBasedGenerator.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(FileBasedGenerator.class.getName());
 
 	private String directory = Home.getHomeDirectory().getAbsolutePath();
 	private String fileName = "id_file";
@@ -71,12 +68,11 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		try {
 			lock.lock();
 			innerId = super.getID();
-			return new File(getFilePath()).createNewFile() ? increment(0)
-					: increment(Long.parseLong(innerId));
+			return new File(getFilePath()).createNewFile() ? increment(0) : increment(Long
+					.parseLong(innerId));
 		} catch (IOException e) {
 			if (neverFail) {
-				LOG.warn(
-						"Could not read ID from file {}, going to use internal ID generator. {}",
+				LOG.warn("Could not read ID from file {}, going to use internal ID generator. {}",
 						getFilePath(), e.getMessage());
 				return innerId;
 			}
@@ -121,6 +117,10 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	public void setNeverFail(boolean neverFail) {
+		this.neverFail = neverFail;
 	}
 
 	public void reset() {
