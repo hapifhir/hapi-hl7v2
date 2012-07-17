@@ -6,6 +6,8 @@ import java.util.Set;
 
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
+import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 
 public class ParserConfiguration {
 
@@ -13,6 +15,7 @@ public class ParserConfiguration {
 	private boolean myEncodeEmptyMandatorySegments = true;
 	private Set<String> myForcedEncode = new HashSet<String>();
 	private String myInvalidObx2Type;
+	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 
 	/**
 	 * <p>
@@ -289,5 +292,24 @@ public class ParserConfiguration {
 	public void setInvalidObx2Type(String theInvalidObx2Type) {
 		myInvalidObx2Type = theInvalidObx2Type;
 	}
+
+	/**
+	 * @return the ID Generator to be used for generating IDs for new messages
+	 */
+	public IDGenerator getIdGenerator() {
+		return idGenerator;
+	}
+
+	/**
+	 * @param idGenerator the {@link IDGenerator} to be used for generating IDs for new messages,
+	 * preferable initialized using the methods described in IDGeneratorFactory.
+	 * 
+	 * @see IDGeneratorFactory
+	 */
+	public void setIdGenerator(IDGenerator idGenerator) {
+		this.idGenerator = idGenerator;
+	}
+	
+	
 
 }

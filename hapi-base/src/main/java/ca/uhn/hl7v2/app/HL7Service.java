@@ -244,41 +244,51 @@ public abstract class HL7Service extends Service {
 	public void loadApplicationsFromFile(File f) throws IOException,
 			HL7Exception, ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		BufferedReader in = new BufferedReader(new FileReader(f));
-		String line = null;
-		while ((line = in.readLine()) != null) {
-			// parse application registration information
-			StringTokenizer tok = new StringTokenizer(line, "\t", false);
-			String type = null, event = null, className = null;
-
-			if (tok.hasMoreTokens()) { // skip blank lines
-				try {
-					type = tok.nextToken();
-					event = tok.nextToken();
-					className = tok.nextToken();
-				} catch (NoSuchElementException ne) {
-					throw new HL7Exception(
-							"Can't register applications from file "
-									+ f.getName()
-									+ ". The line '"
-									+ line
-									+ "' is not of the form: message_type [tab] trigger_event [tab] application_class.",
-							HL7Exception.APPLICATION_INTERNAL_ERROR);
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(f));
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				// parse application registration information
+				StringTokenizer tok = new StringTokenizer(line, "\t", false);
+				String type = null, event = null, className = null;
+	
+				if (tok.hasMoreTokens()) { // skip blank lines
+					try {
+						type = tok.nextToken();
+						event = tok.nextToken();
+						className = tok.nextToken();
+					} catch (NoSuchElementException ne) {
+						throw new HL7Exception(
+								"Can't register applications from file "
+										+ f.getName()
+										+ ". The line '"
+										+ line
+										+ "' is not of the form: message_type [tab] trigger_event [tab] application_class.",
+								HL7Exception.APPLICATION_INTERNAL_ERROR);
+					}
+	
+					try {
+						@SuppressWarnings("unchecked")
+						Class<? extends Application> appClass = (Class<? extends Application>) Class
+								.forName(className); // may throw
+														// ClassNotFoundException
+						Application app = appClass.newInstance();
+						registerApplication(type, event, app);
+					} catch (ClassCastException cce) {
+						throw new HL7Exception("The specified class, " + className
+								+ ", doesn't implement Application.",
+								HL7Exception.APPLICATION_INTERNAL_ERROR);
+					}
+	
 				}
-
+			}
+		} finally {
+			if (in != null) {
 				try {
-					@SuppressWarnings("unchecked")
-					Class<? extends Application> appClass = (Class<? extends Application>) Class
-							.forName(className); // may throw
-													// ClassNotFoundException
-					Application app = appClass.newInstance();
-					registerApplication(type, event, app);
-				} catch (ClassCastException cce) {
-					throw new HL7Exception("The specified class, " + className
-							+ ", doesn't implement Application.",
-							HL7Exception.APPLICATION_INTERNAL_ERROR);
+					in.close();
+				} catch (IOException e) {
 				}
-
 			}
 		}
 	}

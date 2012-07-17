@@ -49,7 +49,6 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -319,7 +318,7 @@ public class Responder {
 
 			// copy required data from incoming message ...
 			try {
-				t.set("/MSH-10", MessageIDGenerator.getInstance().getNewID());
+				t.set("/MSH-10", out.getParser().getParserConfiguration().getIdGenerator().getID());
 			} catch (IOException ioe) {
 				throw new HL7Exception("Problem creating error message ID: "
 						+ ioe.getMessage());
@@ -393,7 +392,7 @@ public class Responder {
 	/**
 	 * Test code.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "resource" })
 	public static void main(String args[]) {
 		if (args.length != 1) {
 			System.err.println("Usage: DefaultApplication message_file");

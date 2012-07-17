@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
 <!DOCTYPE HL7v2xConformanceProfile SYSTEM "http://hl7api.sourceforge.net/conf/message_profile.dtd">
+ -->
 <HL7v2xConformanceProfile HL7Version="2.4" ProfileType="HL7" Identifier="2.16.840.1.113883.9.1.1">
 	<MetaData Name="HL7 v2.4 ACK" OrgName="HL7" Version="2.4" Status="Published" Topics="confsig-HL7-2.4-profile-NE-NE-Immediate" />
 	<UseCase>

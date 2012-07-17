@@ -92,69 +92,51 @@ public class HL7ServerTestHelper {
     public int process( InputStream theMsgInputStream ) throws FileNotFoundException, IOException
     {
      
-        BufferedReader in =
-            new BufferedReader( 
-                new CommentFilterReader( new InputStreamReader( theMsgInputStream ) )
-            );
-        	
-        StringBuffer rawMsgBuffer = new StringBuffer();
-        
-        //String line = in.readLine();
-        int c = 0;
-		while( (c = in.read()) >= 0) {
-			rawMsgBuffer.append( (char) c);
-		}
-		
-		String[] messages = getHL7Messages(rawMsgBuffer.toString());
-        int retVal = 0;
-        
-        //start time
-        long startTime = new GregorianCalendar().getTimeInMillis(); 
-            
-            
-		for (int i = 0; i < messages.length; i++) {
-			sendMessage(messages[i]);	
-			readAck();	
-            retVal++;
-		}
-        
-        //end time
-        long endTime =  new GregorianCalendar().getTimeInMillis();
-        
-        //elapsed time
-        long elapsedTime = (endTime - startTime) / 1000;
-        
-        ourLog.info("{} messages sent.", retVal);
-        ourLog.info("Elapsed Time in seconds: {} ", elapsedTime);
-        return retVal;
+    	BufferedReader in = null;
+    	try {
+	        in = new BufferedReader( 
+	                new CommentFilterReader( new InputStreamReader( theMsgInputStream ) )
+	            );
+	        	
+	        StringBuffer rawMsgBuffer = new StringBuffer();
+	        
+	        //String line = in.readLine();
+	        int c = 0;
+			while( (c = in.read()) >= 0) {
+				rawMsgBuffer.append( (char) c);
+			}
 			
-            /*line = line.trim();
-            
-            if ( line.length()!=0 ) {
-                rawMsgBuffer.append( line );
-                rawMsgBuffer.append( HL7_SEGMENT_SEPARATOR );
-            }
-            else {
-                if (rawMsgBuffer.length()!=0) {
-                    String rawMsg = rawMsgBuffer.toString();
-                    sendMessage( rawMsg );
-                    //clear buffer 
-                    rawMsgBuffer = new StringBuffer(); 
-                    //do not wait for ACK, we just want to feed the Hl7Server
-                    
-                    //TODO look into this, the HL7Server should perform better. JMS integration should fix this.
-                    
-                    try {
-                        //wait a sec, give some time to the HL7Server
-                        Thread.sleep(1000); //1 seconds
-                    }
-                    catch (InterruptedException e) {
-                    }
-                }
-            }
-			            
-            line = in.readLine();    
-        }*/
+			String[] messages = getHL7Messages(rawMsgBuffer.toString());
+	        int retVal = 0;
+	        
+	        //start time
+	        long startTime = new GregorianCalendar().getTimeInMillis(); 
+	            
+	            
+			for (int i = 0; i < messages.length; i++) {
+				sendMessage(messages[i]);	
+				readAck();	
+	            retVal++;
+			}
+	        
+	        //end time
+	        long endTime =  new GregorianCalendar().getTimeInMillis();
+	        
+	        //elapsed time
+	        long elapsedTime = (endTime - startTime) / 1000;
+	        
+	        ourLog.info("{} messages sent.", retVal);
+	        ourLog.info("Elapsed Time in seconds: {} ", elapsedTime);
+	        return retVal;
+    	} finally {
+    		if (in != null) {
+    			try {
+					in.close();
+				} catch (IOException e) {
+				}
+    		}
+    	}
+			
         
     }
     
