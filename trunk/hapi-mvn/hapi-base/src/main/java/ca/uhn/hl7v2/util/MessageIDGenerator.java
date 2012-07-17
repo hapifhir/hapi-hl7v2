@@ -9,6 +9,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
+
 /**
  * <p>
  * Creates unique message IDs.  IDs are stored in a file called {@link Home#getHomeDirectory() hapi.home}/id_file for persistence
@@ -22,8 +24,12 @@ import org.slf4j.LoggerFactory;
  * a numeric sequence starting at zero. This behaviour can be overwritten using 
  * {@link #NEVER_FAIL_PROPERTY}
  * </p>
+ * Note: you should not use this class directory, but use the {@link IDGeneratorFactory} instead. 
+ * Also consider using {@link FileBasedHiLoGenerator} which provides better performance
+ * 
  * 
  * @author Neal Acharya
+ * @deprecated use one of the IDGenerator implementations
  */
 public class MessageIDGenerator {
     

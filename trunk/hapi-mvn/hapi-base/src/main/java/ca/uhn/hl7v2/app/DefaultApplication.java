@@ -40,7 +40,6 @@ import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -198,8 +197,7 @@ public class DefaultApplication implements Application {
 		GregorianCalendar now = new GregorianCalendar();
 		now.setTime(new Date());
 		Terser.set(outbound, 7, 0, 1, 1, CommonTS.toHl7TSFormat(now));
-		Terser.set(outbound, 10, 0, 1, 1, MessageIDGenerator.getInstance()
-				.getNewID());
+		Terser.set(outbound, 10, 0, 1, 1, inbound.getMessage().getParser().getParserConfiguration().getIdGenerator().getID());
 		Terser.set(outbound, 11, 0, 1, 1, procID);
 
 		// revert sender and receiver

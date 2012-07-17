@@ -42,8 +42,9 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.util.MessageIDGenerator;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
+import ca.uhn.hl7v2.util.idgenerator.InMemoryIDGenerator;
 
 /**
  * <p>
@@ -181,15 +182,16 @@ public class Initiator {
 			final Initiator initiator = connection.getInitiator();
 			connection.activate();
 			final String outText = "MSH|^~\\&|||||||ACK^^ACK|||R|2.4|\rMSA|AA";
+			final IDGenerator generator = new InMemoryIDGenerator();
 
 			// get a bunch of threads to send messages
 			for (int i = 0; i < 1000; i++) {
 				Thread sender = new Thread(new Runnable() {
+					
 					public void run() {
 						try {
 							// get message ID
-							String ID = MessageIDGenerator.getInstance()
-									.getNewID();
+							String ID = generator.getID();
 							Message out = parser.parse(outText);
 							Terser tOut = new Terser(out);
 							tOut.set("/MSH-10", ID);
