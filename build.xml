@@ -127,9 +127,12 @@ The survey will run until the fall.
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
             <replacevalue><![CDATA[
-            	<!-- Place this tag where you want the +1 button to render. -->
-            	<div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div>
+            	<table cellpadding="0" cellspacing="0" border="0"><tr>
+            	<td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div></td>
+            	<td><div class="fb-like" data-href="http://hl7api.sourceforge.net/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+            	</tr></table>
 
+            	</p><p>
             	<!-- Place this tag after the last +1 button tag. -->
             	<script type="text/javascript">
             	  (function() {
@@ -138,15 +141,20 @@ The survey will run until the fall.
             	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
             	  })();
             	</script>
-            ]]></replacevalue>
+            	<div id="fb-root"></div>
+            	<script>(function(d, s, id) {
+            	  var js, fjs = d.getElementsByTagName(s)[0];
+            	  if (d.getElementById(id)) return;
+            	  js = d.createElement(s); js.id = id;
+            	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+            	  fjs.parentNode.insertBefore(js, fjs);
+            	}(document, 'script', 'facebook-jssdk'));</script>
+				]]></replacevalue>
         </replace>
 		  <replace dir="target/site/" summary="true">
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
           <replacevalue><![CDATA[
-          	<!-- Place this tag where you want the +1 button to render. -->
-          	<div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div>
-
           	<!-- Place this tag after the last +1 button tag. -->
           	<script type="text/javascript">
           	  (function() {
@@ -155,6 +163,30 @@ The survey will run until the fall.
           	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
           	  })();
           	</script>
+          	
+          	
+          	<table cellpadding="0" cellspacing="0" border="0"><tr>
+         	<td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
+         	<td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+         	</tr></table>
+
+         	<!-- Place this tag after the last +1 button tag. -->
+         	<script type="text/javascript">
+         	  (function() {
+         	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+         	    po.src = 'https://apis.google.com/js/plusone.js';
+         	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+         	  })();
+         	</script>
+         	<div id="fb-root"></div>
+         	<script>(function(d, s, id) {
+         	  var js, fjs = d.getElementsByTagName(s)[0];
+         	  if (d.getElementById(id)) return;
+         	  js = d.createElement(s); js.id = id;
+         	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+         	  fjs.parentNode.insertBefore(js, fjs);
+         	}(document, 'script', 'facebook-jssdk'));</script>
+          	
           ]]></replacevalue>
       </replace>
  
