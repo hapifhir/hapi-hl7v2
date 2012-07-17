@@ -1,1 +1,1 @@
-mvn -P DIST versions:set -DnewVersion=2.0
+mvn -P ALLMODULES versions:set -DnewVersion=2.1-alpha1

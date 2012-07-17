@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>hapi-testpanel</name>
   <comment>HAPI (HL7 application programming interface; pronounced &quot;happy&quot;) is an open-source, 
@@ -6,9 +7,7 @@
 		the HL7 organization; we are just writing some software that conforms to their 
 		specification.  The project was initiated by University Health Network 
 		(a large multi-site teaching hospital in Toronto, Canada). NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>jsyntaxpane</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
