@@ -36,14 +36,17 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import junit.framework.TestCase;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
 
@@ -131,6 +134,26 @@ public class CommonTSTest {
 	 * Test Cases
 	 ********************************************************** 
 	 */
+	
+	/**
+	 * See bug 3545328
+	 * 
+	 * This bug has not yet been evaluated, so the test will fail. 
+	 */
+	@Test
+	public void testOffsetProblem() throws HL7Exception
+	{
+		GregorianCalendar hapiTestCalendar = (GregorianCalendar)
+		GregorianCalendar.getInstance(TimeZone.getTimeZone("CET"));
+		hapiTestCalendar.set(2012, 1, 1);
+		hapiTestCalendar = (GregorianCalendar)DateUtils.truncate(hapiTestCalendar, Calendar.DATE);
+	
+		Assert.assertEquals("20120201000000+0100", CommonTS.toHl7TSFormat(hapiTestCalendar));
+		hapiTestCalendar.set(2012, 7, 1);
+		
+		Assert.assertEquals("20120801000000+0200", CommonTS.toHl7TSFormat(hapiTestCalendar));
+	}
+
 	
 	@Test
 	public void testGetCalendarRespectsDaylightSavings() throws DataTypeException, ParseException {
