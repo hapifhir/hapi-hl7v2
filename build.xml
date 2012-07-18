@@ -155,16 +155,6 @@ The survey will run until the fall.
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
           <replacevalue><![CDATA[
-          	<!-- Place this tag after the last +1 button tag. -->
-          	<script type="text/javascript">
-          	  (function() {
-          	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-          	    po.src = 'https://apis.google.com/js/plusone.js';
-          	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-          	  })();
-          	</script>
-          	
-          	
           	<table cellpadding="0" cellspacing="0" border="0"><tr>
          	<td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
          	<td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
