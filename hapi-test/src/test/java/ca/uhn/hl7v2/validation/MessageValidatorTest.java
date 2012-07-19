@@ -3,6 +3,13 @@
  */
 package ca.uhn.hl7v2.validation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
@@ -15,8 +22,6 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Unit tests for MessageValidator.
@@ -25,16 +30,13 @@ import junit.framework.TestCase;
  * @version $Revision: 1.2 $ updated on $Date: 2011-02-19 17:40:18 $ by $Author:
  *          jamesagnew $
  */
-public class MessageValidatorTest extends TestCase {
+public class MessageValidatorTest {
 
     private MessageValidator myFailingValidator;
     private MessageValidator myNonFailingValidator;
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         ValidationContextImpl context = new ValidationContextImpl();
         context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
         context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
@@ -45,18 +47,10 @@ public class MessageValidatorTest extends TestCase {
         myNonFailingValidator = new MessageValidator(context, false);
     }
 
-    /**
-     * Constructor for MessageValidatorTest.
-     * 
-     * @param arg0
-     */
-    public MessageValidatorTest(String arg0) {
-        super(arg0);
-    }
-
     /*
      * Class under test for void validate(Message)
      */
+    @Test
     public void testValidateMessage() throws HL7Exception {
         ACK m = new ACK();
         Terser t = new Terser(m);
@@ -73,6 +67,7 @@ public class MessageValidatorTest extends TestCase {
     /*
      * Class under test for void validate(String, boolean, String)
      */
+    @Test
     public void testValidateString() throws HL7Exception {
         String m = "a message";
         assertEquals(false, myNonFailingValidator.validate(m, false, "2.5"));
@@ -83,6 +78,7 @@ public class MessageValidatorTest extends TestCase {
         }
     }
 
+    @Test
     public void testWithdrawnDatatype() throws EncodingNotSupportedException, HL7Exception {
 
         String deviceObservationMessage = "MSH|^~\\&|AcmeInc^ACDE48234567ABCD^EUI-64||||20090713090030+0000||ORU^R01^ORU_R01|MSGID1234|P|2.6|||NE|AL|||||IHE PCD ORU-R01 2006^HL7^2.16.840.1.113883.9.n.m^HL7\r"

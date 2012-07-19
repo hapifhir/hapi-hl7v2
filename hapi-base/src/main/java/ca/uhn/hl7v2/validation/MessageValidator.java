@@ -23,7 +23,7 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 
 package ca.uhn.hl7v2.validation;
 
@@ -31,100 +31,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.util.Terser;
 
 /**
- * Validation utilities for parsed and encoded messages.  
- *  
+ * Validation utilities for parsed and encoded messages. The default
+ * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and throws a
+ * {@link HL7Exception} if {@link #throwOnError} has been set to <code>true</code>.
+ * 
  * @author Bryan Tripp
+ * @author Christian Ohr
  */
-public class MessageValidator {
+public class MessageValidator extends DefaultValidator {
 
-    private static final MessageRule[] EMPTY_MESSAGE_RULES_ARRAY = new MessageRule[0];
-    private static final EncodingRule[] EMPTY_ENCODING_RULES_ARRAY = new EncodingRule[0];
-	private static final Logger ourLog = LoggerFactory.getLogger(MessageValidator.class);
-    
-    private ValidationContext myContext;
-    private boolean failOnError;
+	private static final Logger LOG = LoggerFactory.getLogger(MessageValidator.class);
 
-    /**
-     * @param theContext context that determines which validation rules apply 
-     * @param theFailOnErrorFlag
-     */
-    public MessageValidator(ValidationContext theContext, boolean theFailOnErrorFlag) {
-        myContext = theContext;
-        failOnError = theFailOnErrorFlag;
-    }
-    
-    /**
-     * @param message a parsed message to validate (note that MSH-9-1 and MSH-9-2 must be valued)
-     * @return true if the message is OK
-     * @throws HL7Exception if there is at least one error and this validator is set to fail on errors
-     */
-    public boolean validate(Message message) throws HL7Exception {
-    	if (message == null) {
-    		throw new NullPointerException("Message may not be null");
-    	}
-    	
-        Terser t = new Terser(message);
-        
-        MessageRule[] rules = EMPTY_MESSAGE_RULES_ARRAY;
-        if (myContext != null) {
-        	rules = myContext.getMessageRules(message.getVersion(), t.get("MSH-9-1"), t.get("MSH-9-2"));
-        }
-        
-        ValidationException toThrow = null;
-        boolean result = true;
-        for (int i = 0; i < rules.length; i++) {
-            ValidationException[] ex = rules[i].test(message);
-            for (int j = 0; j < ex.length; j++) {
-                result = false;
-                ourLog.error("Invalid message", ex[j]);
-                if (failOnError && toThrow == null) {
-                    toThrow = ex[j];
-                }
-            }
-        }
-        
-        if (toThrow != null) {
-            throw new HL7Exception("Invalid message", toThrow);
-        }
-        
-        return result;
-    }
-    
-    /**
-     * @param message an ER7 or XML encoded message to validate 
-     * @param isXML true if XML, false if ER7
-     * @param version HL7 version (e.g. "2.2") to which the message belongs
-     * @return true if the message is OK
-     * @throws HL7Exception if there is at least one error and this validator is set to fail on errors
-     */
-    public boolean validate(String message, boolean isXML, String version) throws HL7Exception {
-        
-    	EncodingRule[] rules = EMPTY_ENCODING_RULES_ARRAY;
-        if (myContext != null) {
-        	rules = myContext.getEncodingRules(version, isXML ? "XML" : "ER7");
-        }
-    	
-        ValidationException toThrow = null;
-        boolean result = true;
-        for (int i = 0; i < rules.length; i++) {
-            ValidationException[] ex = rules[i].test(message);
-            for (int j = 0; j < ex.length; j++) {
-                result = false;
-                ourLog.error("Invalid message", ex[j]);
-                if (failOnError && toThrow == null) {
-                    toThrow = ex[j];
-                }
-            }
-        }
-        
-        if (toThrow != null) {
-            throw new HL7Exception("Invalid message", toThrow);
-        }
+	private boolean throwOnError;
 
-        return result;
-    }
+	/**
+	 * @param theContext context that determines which validation rules apply
+	 * @param theFailOnErrorFlag
+	 */
+	public MessageValidator(ValidationContext theContext, boolean theFailOnErrorFlag) {
+		super(theContext);
+		throwOnError = theFailOnErrorFlag;
+	}
+
+	@Override
+	protected ValidationExceptionHandler initializeHandler() {
+		return new FirstExceptionThrowingHandler();
+	}
+
+	private class FirstExceptionThrowingHandler implements ValidationExceptionHandler {
+
+		private ValidationException firstException;
+
+		public void onValidationExceptions(ValidationException[] exceptions) {
+			for (ValidationException ve : exceptions) {
+				LOG.error("Invalid message", ve);
+				if (firstException == null) {
+					firstException = ve;
+				}
+			}
+		}
+
+		public boolean validationPassed() throws HL7Exception {
+			if (failed() && throwOnError) {
+				throw new HL7Exception("Invalid message", firstException);
+			}
+			return !failed();
+		}
+
+		private boolean failed() {
+			return firstException != null;
+		}
+
+	}
 }
