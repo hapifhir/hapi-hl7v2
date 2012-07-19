@@ -45,8 +45,8 @@ import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
- * A MessageRule that checks conformance to message profiles. Messges can either be tested 
- * agaist the profiles they declare, or against a pre-defined profile. If you want both, 
+ * A MessageRule that checks conformance to message profiles. Messages can either be tested 
+ * against the profiles they declare, or against a pre-defined profile. If you want both, 
  * use two <code>ConformanceProfileRule</code>s.  
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
