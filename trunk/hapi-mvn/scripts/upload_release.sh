@@ -6,8 +6,8 @@ rm scripts/staging/*
 cp -vp hapi-dist/target/hapi-dist-$VERSION-all.zip scripts/staging
 cp -vp hapi-dist/target/hapi-dist-$VERSION-all.tar.bz2 scripts/staging
 cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.zip scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.zip scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.tar.bz2 scripts/staging
+cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.tar.bz2 scripts/staging
+cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.zip scripts/staging
 cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.tar.bz2 scripts/staging
 
 echo Using RSync to upload...
