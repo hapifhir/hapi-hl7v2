@@ -5,12 +5,16 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-        <release version="3.0" date="TBD">
+        <release version="2.1" date="TBD">
             <action type="add" dev="Christian Ohr" issue="3515832">
             	Added a set of new message ID generators, to be centrally configured using the
 				ParserConfiguration class. Provides non-persistent generators and the
 				possibility to plug in custom ID generators.
             </action>
+            <action type="add" dev="Christian Ohr" issue="3494927">
+            	Make Message Validation more versatile by adding a ValidationExceptionHandler
+				that is called on every violation of a validation rule.
+            </action>			
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
