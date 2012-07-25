@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="HL7 over HTTP">
+
+			<script type="text/javascript" src="http://diagramly.appspot.com/embed.js"></script>
+
+			<p>
+			    SOCIALPLUGINSHEREHOH
+			</p>
+			 
+			<p>
+				This is the homepage for the HL7 over HTTP initiative. Welcome!
+			</p>
+
+			<p>
+				HL7 over HTTP is a new transport mechanism aimed at replacing the 
+				traditional HL7 v2 Mininal Lower Layer Protocol (MLLP) transport
+				with a modern, standards-based approach. 
+			</p>
+			
+			<p>
+				This site has two useful sections:
+			</p>
+			<ul>
+				<li>
+					The <a href="specification.html"><b>Specification</b></a> itself.
+					We are soliciting opinions and comments on this specification, so 
+					please get in touch.
+				</li>
+				<li>
+					A <a href="javaapi.html"><b>Java based API</b></a> for implementing
+					HL7 over HTTP in your application. The Java based API can be
+					embedded in applications that use HAPI, and in applications that
+					don't.
+				</li>
+			</ul>
+
+			<div style="float:right;">
+				<div class="mxgraph" style="position:relative;overflow:hidden;width:712px;height:312px;"><div style="width:1px;height:1px;overflow:hidden;">&lt;mxGraphModel dx="800" dy="800" grid="1" guides="1" tooltips="1" connect="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" style="default-style2" x0="9" y0="9" pan="1" zoom="1" resize="1" fit="0" border="0"&gt;&lt;root&gt;&lt;mxCell id="0"/&gt;&lt;mxCell id="1" parent="0"/&gt;&lt;mxCell id="2" value=":Object" parent="1" vertex="1"&gt;&lt;mxGeometry x="10" y="10" width="100" height="50" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="3" value="" style="shape=line;direction=north;dashed=1" parent="1" vertex="1"&gt;&lt;mxGeometry x="50" y="60" width="20" height="240" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="4" value="Sending&#xa;System" parent="1" vertex="1"&gt;&lt;mxGeometry x="10" y="10" width="100" height="50" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="5" value="" style="shape=line;direction=north;dashed=1" parent="1" vertex="1"&gt;&lt;mxGeometry x="50" y="60" width="20" height="260" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="8" value="Receiving&#xa;System" parent="1" vertex="1"&gt;&lt;mxGeometry x="120" y="10" width="100" height="50" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="9" value="" style="shape=line;direction=north;dashed=1" parent="1" vertex="1"&gt;&lt;mxGeometry x="160" y="60" width="20" height="260" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="10" value="" parent="1" vertex="1"&gt;&lt;mxGeometry x="160" y="90" width="20" height="160" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="11" value="HTTP POST" style="edgeStyle=elbowEdgeStyle;elbow=vertical;verticalAlign=bottom;endArrow=block;" parent="1" target="10" edge="1"&gt;&lt;mxGeometry x="60" y="90" as="geometry"&gt;&lt;mxPoint x="60" y="90" as="sourcePoint"/&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id="13" value="200 OK" style="edgeStyle=elbowEdgeStyle;elbow=vertical;verticalAlign=bottom;endArrow=none;startArrow=block;startFill=1;endFill=0" parent="1" edge="1"&gt;&lt;mxGeometry x="60" y="246.5" as="geometry"&gt;&lt;mxPoint x="60" y="246.5" as="sourcePoint"/&gt;&lt;mxPoint x="160" y="246.5" as="targetPoint"/&gt;&lt;/mxGeometry&gt;&lt;/mxCell&gt;&lt;mxCell id="15" value="POST /Lab_Info_System/RegADT HTTP/1.1&#xa;Content-Length: 374&#xa;Content-Type: application-hl7-v2; charset=utf-8&#xa;HL7-Signature: SHA-2 su87eg3ofg8g833r8fofieebieio==&#xa;Authorization: basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==&#xa;&#xa;MSH|^~\&amp;|Sender||||20111202162100-0500||ADT^A31^ADT_A28|123484|T|2.5&#xa;EVN|A01|201112021621&#xa;PID|1||123456^^^^MR||Test^Majaconversion^^^Mrs.^^L||19731230000000-0500|F&#xa;PD1|||UHN^D^^^^UHN^FI|13546^Generic^Physician^Moe^^Dr.^MD^^UHN^L^^^EI" style="shape=note;align=left;verticalAlign=top;fontSize=9" parent="1" vertex="1"&gt;&lt;mxGeometry x="240" y="27.5" width="480" height="145" as="geometry"/&gt;&lt;/mxCell&gt;&lt;mxCell id="17" value="HTTP/1.1 200 OK&#xa;Content-Type: application-hl7-v2; charset=utf-8&#xa;Content-Length: 65&#xa;HL7-Signature: SHA-2 f89g3fvf8fvve7we7we7eu7w777vv==&#xa;&#xa;MSH|^~\&amp;||Sender|||20111202162105-0500||ACK^A31|37364|T|2.5&#xa;MSA|AA|123484" style="shape=note;align=left;verticalAlign=top;fontSize=9" parent="1" vertex="1"&gt;&lt;mxGeometry x="240" y="192.5" width="480" height="120" as="geometry"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;</div></div>
+			</div>
+			
+		</section>
+
+	</body>
+
+</document>

@@ -47,6 +47,17 @@ h1, h2, h3, h4, h5 {
 	padding-left: 25px;
 }
 
+h4 {
+	padding: 0px;
+	margin-bottom: -15px;
+}
+
+dfn {
+	color: #008000;
+	background-color: #E0FFE0;
+	border-bottom: 1px dotted #40A040; 
+}
+
 a, a.externalLink, a:active, a:hover, a:link, a:visited {
 	color: #408840;
 }
