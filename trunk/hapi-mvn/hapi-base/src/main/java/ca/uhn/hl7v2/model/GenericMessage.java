@@ -10,7 +10,9 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 /**
  * A generic HL7 message, meant for parsing message with unrecognized structures
  * into a flat list of segments.
+ * 
  * @author Bryan Tripp
+ * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public abstract class GenericMessage extends AbstractMessage {
@@ -38,45 +40,21 @@ public abstract class GenericMessage extends AbstractMessage {
      * This is needed so that version-specific segments can be added as the message
      * is parsed.  
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public static Class<? extends Message> getGenericMessageClass(String version) {
-        if (!Version.supportsVersion(version))
-            throw new IllegalArgumentException("The version " + version + " is not recognized");
-        
-        if ("2.1".equals(version)) {
-        	return V21.class;
-        }
-        
-        if ("2.2".equals(version)) {
-        	return V22.class;
-        }
-
-        if ("2.3".equals(version)) {
-        	return V23.class;
-        }
-
-        if ("2.3.1".equals(version)) {
-        	return V231.class;
-        }
-        
-        if ("2.4".equals(version)) {
-        	return V24.class;
-        }
-
-        if ("2.5.1".equals(version)) {
-        	return V25.class;
-        }
-
-        if ("2.5.1".equals(version)) {
-        	return V251.class;
-        }
-
-        if ("2.6".equals(version)) {
-        	return V26.class;
+		
+		Version v = Version.versionOf(version);
+        if (v != null) {       
+        	try {
+        		String className = GenericMessage.class.getName() + "$" + v.name();
+        		return (Class<? extends Message>)Class.forName(className);
+        	} catch (ClassNotFoundException e) {
+        		// should not happen as long Version corresponds with the static
+        		// subclasses of GenericMessage
+        	}
         }
 
         log.debug("Unknown version for generic type {}", version);
-        
         return UnknownVersion.class;
     }
 
@@ -98,7 +76,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V21(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.1"; }
+        public String getVersion() { return Version.V21.getVersion(); }
     }
     
     public static class V22 extends GenericMessage {
@@ -106,7 +84,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V22(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.2"; }
+        public String getVersion() { return Version.V22.getVersion(); }
     }
     
     public static class V23 extends GenericMessage {
@@ -114,7 +92,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V23(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.3"; }
+        public String getVersion() { return Version.V23.getVersion(); }
     }
     
     public static class V231 extends GenericMessage {
@@ -122,7 +100,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V231(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.3.1"; }
+        public String getVersion() { return Version.V231.getVersion(); }
     }
     
     public static class V24 extends GenericMessage {
@@ -130,7 +108,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V24(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.4"; }
+        public String getVersion() { return Version.V24.getVersion(); }
     }
     
     public static class V25 extends GenericMessage {
@@ -138,7 +116,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V25(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.5"; }
+        public String getVersion() { return Version.V25.getVersion(); }
     }
     
     public static class V251 extends GenericMessage {
@@ -146,7 +124,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V251(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.5.1"; }
+        public String getVersion() { return Version.V251.getVersion(); }
     }
 
     public static class V26 extends GenericMessage {
@@ -154,7 +132,7 @@ public abstract class GenericMessage extends AbstractMessage {
 		public V26(ModelClassFactory factory) {
             super(factory);
         }
-        public String getVersion() { return "2.6"; }
+        public String getVersion() { return Version.V26.getVersion(); }
     }
 
 }
