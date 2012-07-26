@@ -3,7 +3,7 @@
 
 	<bannerLeft>
 		<name>HAPI - HL7 over HTTP</name>
-		<src>images/hapi_testpanel_banner.png</src>
+		<src>images/hapi_hoh_banner.png</src>
 		<href>http://hl7api.sourceforge.net/hapi-hl7overhttp</href>
 	</bannerLeft>
 

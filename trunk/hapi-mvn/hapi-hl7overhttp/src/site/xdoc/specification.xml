@@ -54,10 +54,17 @@
 			
 				<p>
 					Every interaction consists of a <b>request message</b> and a <b>response message</b>.
-					In a normal message exchange, the request message consists of a standard HTTP
-					POST, with the following semantics:
+					In a normal message exchange, the receiving system opens a server socket. The
+					sending system then connects to that socket and uses the HTTP POST action to 
+					transmit a message. The receiving system then replies with an HTTP 200 OK,
+					and transmits the response message (typically an HL7 ACK) in the body of the
+					response.
 				</p>
 			
+				<p>
+				    Request and response messages use the following headers:
+				</p>
+				
 				<h4>Addressing</h4>
 				
 				<p>
@@ -90,7 +97,7 @@
 					bytes found within the HTTP headers and the two carriage returns which follow 
 					them, but includes any further whitespace which will be counted as a part of
 					the message body. Depending on the character set encoding, the content length 
-					may exceed the number of characters as some characters will be represented as
+					might exceed the number of characters as some characters will be represented as
 					multi-byte sequences (e.g. in UTF-8). An example follows, which indicates that the message contents
 					consist of 2553 bytes.<br/>
 					<code>&nbsp;&nbsp;&nbsp;&nbsp;Content-Length: 2553</code>  
@@ -136,10 +143,87 @@
 					<code>&nbsp;&nbsp;&nbsp;&nbsp;Content-Type: application/hl7-v2; charset=ISO-8859-4</code>  
 				</p>
 			
+				<h4>Authorization</h4>
+				
+				<p>
+				    <b>Request messages</b> SHOULD include an Authorization header which
+				    contains credentials which are shared between the sending and receiving
+				    system.
+				</p>
+				<p>
+				    The HL7 over HTTP specification allows only the use of HTTP Basic Authentication,
+				    as it has been shown that HTTP Digest Authentication does not add further security
+				    due to a reliance on insecure MD5 hashing and adds complexity to implementation.
+				</p>
+				<p>
+				    The following example shows an Authorization block containing the username
+				    "hello" and the password "world". As described in the HTTP 1.1 specification,
+				    the resulting string consists of the string "hello:world" with a Base64 encoding
+				    applied to it:<br/>
+				    <code>&nbsp;&nbsp;&nbsp;&nbsp;Authorization: Basic aGVsbG86d29ybGQ=</code> 
+				</p>
+				
+			</subsection>
+
+			<subsection name="Error Conditions">
+			    
+			    <p>
+			        Under normal conditions, a sending application will transmit a message
+			        and the receiving application will respond using an <code>HTTP 200 OK</code>
+			        response. If the underlying receiving application rejects the incoming message
+			        for some reason, it will typically generate an HL7 ACK response message
+			        containing a non-success status code. The following section outlines possible
+			        error responses. 
+			    </p>
+			    
+			    <h4>Application Reject (AR) and Commit Reject (CR)</h4>
+			    <br/>
+			    
+			    <p>
+			        If ther receiving application rejects the incoming message with an AR or CR
+			        status, the receiving application SHALL return a response of
+			        <code>HTTP 400 Bad Request</code>. The body of the response SHALL contain the
+			        actual HL7 message which was generated.  
+			    </p>
+			    
+			    <img src="images/HoH_AR.png"/>
+			    
 			</subsection>
 			
 		</section>
+			
+		<section name="Signature Profile"  style="clear: both;">
 
+		    <p>
+		        Signature Profile is an optional addition to the HL7 over HTTP specification
+		        which provides message non-repudiation. Put simply, when combined with a two
+		        certificate pairs, Signature Profile allows the server to strongly verify 
+		        the identity of the client, and vice-versa. 
+		    </p>			    
+			<p>
+			    <b>Request messages</b> and <b>response messages</b> MAY include an optional 
+			    custom HTTP header containing a cryptographic signature which is generated
+			    against a hash of the message payload (note that the payload
+			    excludes the HTTP headers). 
+			</p>
+			<p>
+			    The format of the signature header is as follows:<br/>
+			    <code>&nbsp;&nbsp;&nbsp;&nbsp;HL7-Signature: [Algorighm] [Signature]</code> 
+			</p>				    
+			<p>
+			    The algorithm MAY be substituted based on agreement between the sending
+			    and receiving system, but support for SHA512 digest with an RSA signature
+			    (with algorithm name "SHA512withRSA") is required for compliance with
+			    Signature Profile.
+			</p>
+			<p>
+			    The following example shows a Signature Profile header which has been truncated
+			    for readability:<br/>
+			    <code>&nbsp;&nbsp;&nbsp;&nbsp;HL7-Signature: SHA512withRSA bUOp4sm46qk0pdm9Xv2Br [...]</code> 
+			</p>
+		    
+		</section>
+						
 	</body>
 
 </document>
