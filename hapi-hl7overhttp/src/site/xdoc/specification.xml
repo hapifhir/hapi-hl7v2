@@ -15,6 +15,10 @@
 				transport mechanism to send HL7 v2 messages over a network
 				using the HTTP protocol.
 			</p>
+			<p>
+				Requirement levels (MUST, SHOULD, etc.) are used according to
+				RFC 2119 (http://www.ietf.org/rfc/rfc2119.txt).
+			</p>
 
 			<subsection name="Intent">
 				
@@ -57,8 +61,8 @@
 				<h4>Addressing</h4>
 				
 				<p>
-					The <b>request message</b> must include a universal resource identifier (URI), per the
-					HTTP specification. This URI should indicate
+					The <b>request message</b> SHALL include a universal resource identifier (URI), per the
+					HTTP specification. This URI SHOULD indicate
 					the appropriate "interface" for the message. This is analogous to the port number in 
 					a standard 
 					<dfn title="Minimal Lower Layer Protocol">MLLP</dfn> 
@@ -72,7 +76,7 @@
 					<code>&nbsp;&nbsp;&nbsp;&nbsp;POST /Lab_Info_System/ADT HTTP/1.1</code>
 				</p>
 				<p>
-					An implementing receiving system may also choose to use a separate port for each
+					An implementing receiving system MAY also choose to use a separate port for each
 					interface, as is the norm for MLLP interfaces. This is acceptable and will work,
 					but is not desirable as it is not common practise in HTTP applications. 
 				</p>
@@ -80,7 +84,7 @@
 				<h4>Content Length</h4>
 				
 				<p>
-					The <b>request message</b> and the <b>response message</b> should include a
+					The <b>request message</b> and the <b>response message</b> SHALL include a
 					<code>Content-Length</code> header, which indicates the number of bytes in
 					the HL7 message itself. Per the HTTP specification, this number excludes any
 					bytes found within the HTTP headers and the two carriage returns which follow 
@@ -95,33 +99,33 @@
 				<h4>Content Type and Character Set</h4>
 				
 				<p>
-					The <b>request message</b> and the <b>response message</b> must include a
+					The <b>request message</b> and the <b>response message</b> SHALL include a
 					<code>Content-Type</code> header, which indicates the type of data being 
 					transferred. The following MIME types apply:
 					<ul>
 						<li>
 							If the message is an ER7 (vertical bar) encoded message, the
-							content type should be:<br/>
+							content type SHALL be:<br/>
 							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
 						</li>
 						<li>
 							If the message is an XML encoded message, the
-							content type should be:<br/>
+							content type SHALL be:<br/>
 							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
 						</li>
 						<li>
 							If the <b>response message</b> content is not an HL7 message
 							(for instance because the server is malfunctioning and returning a 500 status or the URI being 
 							addressed is unknown and the server is returning a 404 status),
-							the content may be another type, such as<br/>
+							the content MAY be another type, such as<br/>
 							<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
 						</li>
 					</ul>
-					In addition, both the <b>request message</b> and the <b>response message</b> should
+					In addition, both the <b>request message</b> and the <b>response message</b> SHALL
 					include a charset definition which indicates which character encoding is being used
 					for the message body. Note that the HL7 specification allows the character set to be
-					specified in MSH-18. When a message is received using HL7 over HTTP, this value must
-					be ignored. When a message is sent using HL7 over HTTP, the sending application may 
+					specified in MSH-18. When a message is received using HL7 over HTTP, this value SHALL
+					be ignored. When a message is sent using HL7 over HTTP, the sending application MAY 
 					choose to use the value in MSH-18 to inform the choice of charset, but it is not
 					obligated to do so.
 				</p>
