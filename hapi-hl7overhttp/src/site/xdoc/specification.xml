@@ -17,8 +17,21 @@
 			</p>
 			<p>
 				Requirement levels (MUST, SHOULD, etc.) are used according to
-				RFC 2119 (http://www.ietf.org/rfc/rfc2119.txt).
+				RFC 2119 (<a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>).
 			</p>
+
+			<subsection name="Contents">
+				<macro name="toc">
+					<param name="section" value="2"/>
+					<param name="fromDepth" value="0"/>
+					<param name="toDepth" value="2"/>
+				</macro>
+				<macro name="toc">
+					<param name="section" value="3"/>
+					<param name="fromDepth" value="0"/>
+					<param name="toDepth" value="2"/>
+				</macro>
+			</subsection>
 
 			<subsection name="Intent">
 				
@@ -37,20 +50,32 @@
 						set encoding to be specified in a standardized way, without having to
 						embed this information in the message itself.
 					</li>
-					
+					<li>
+						Tool and hardware support for HTTP is widespread, with many specialized
+						software and hardware devices providing enhanced support for common
+						protocols such as HTTP. 
+					</li>
 				</ul>
-
 				<p>
-					HL7 over HTTP uses the standard HTTP 1.1 protocol as a mechanism to transfer
-					a raw HL7 message using either ER7 or XML encoding to a destination, and then
-					to receive a response to that message. A standard interaction is shown below.  
+					This document is intended to provide a standard implementable specification
+					which application developers may use as a reference in order to 
+					build interoperable software. 
 				</p>
-
-				<img src="images/HoH_Trace_Normal.png"/>
-				
+			
 			</subsection>
+			
+		</section>
+		<section name="1.0 - Basic Profile">
 
-			<subsection name="Transport Messages">
+			<p>
+				HL7 over HTTP uses the standard HTTP 1.1 protocol as a mechanism to transfer
+				a raw HL7 message using either ER7 or XML encoding to a destination, and then
+				to receive a response to that message. A standard interaction is shown below.  
+			</p>
+
+			<img src="images/HoH_Trace_Normal.png"/>
+				
+			<subsection name="1.1 Transport Messages">
 			
 				<p>
 					Every interaction consists of a <b>request message</b> and a <b>response message</b>.
@@ -59,7 +84,7 @@
 					transmit a message. The receiving system then replies with an HTTP 200 OK,
 					and transmits the response message (typically an HL7 ACK) in the body of the
 					response.
-				</p>
+				</p>		
 			
 				<p>
 				    Request and response messages use the following headers:
@@ -80,8 +105,9 @@
 					HTTP server on port 1234 which is capable of receiving several types of data. The 
 					sending system could then address ADT data to the receiving system's ADT queue using 
 					the following POST request<br/>
-					<code>&nbsp;&nbsp;&nbsp;&nbsp;POST /Lab_Info_System/ADT HTTP/1.1</code>
 				</p>
+				<source>POST /Lab_Info_System/ADT HTTP/1.1</source>
+				
 				<p>
 					An implementing receiving system MAY also choose to use a separate port for each
 					interface, as is the norm for MLLP interfaces. This is acceptable and will work,
@@ -100,8 +126,8 @@
 					might exceed the number of characters as some characters will be represented as
 					multi-byte sequences (e.g. in UTF-8). An example follows, which indicates that the message contents
 					consist of 2553 bytes.<br/>
-					<code>&nbsp;&nbsp;&nbsp;&nbsp;Content-Length: 2553</code>  
 				</p>
+				<source>Content-Length: 2553</source>  
 
 				<h4>Content Type and Character Set</h4>
 				
@@ -139,9 +165,8 @@
 				<p>
 					An example follows which shows an ER7 encoded message being
 					transmitted using a character encoding of ISO-8859-4.
-					<br/>
-					<code>&nbsp;&nbsp;&nbsp;&nbsp;Content-Type: application/hl7-v2; charset=ISO-8859-4</code>  
 				</p>
+				<source>Content-Type: application/hl7-v2; charset=ISO-8859-4</source>  
 			
 				<h4>Authorization</h4>
 				
@@ -154,22 +179,26 @@
 				    The HL7 over HTTP specification allows only the use of HTTP Basic Authentication,
 				    as it has been shown that HTTP Digest Authentication does not add further security
 				    due to a reliance on insecure MD5 hashing and adds complexity to implementation.
+				    Also note if it is being used, authorization MUST be transmitted in every 
+				    request message. <b>Sending applications</b> are not required to automatically retry
+				    a message on receipt of a response with status code <code>401 Not Authorized</code>.
 				</p>
 				<p>
 				    The following example shows an Authorization block containing the username
 				    "hello" and the password "world". As described in the HTTP 1.1 specification,
 				    the resulting string consists of the string "hello:world" with a Base64 encoding
-				    applied to it:<br/>
-				    <code>&nbsp;&nbsp;&nbsp;&nbsp;Authorization: Basic aGVsbG86d29ybGQ=</code> 
+				    applied to it:
 				</p>
+				<source>Authorization: Basic aGVsbG86d29ybGQ=</source> 
+				
 				
 			</subsection>
 
-			<subsection name="Error Conditions">
+			<subsection name="1.2 Error Conditions">
 			    
 			    <p>
 			        Under normal conditions, a sending application will transmit a message
-			        and the receiving application will respond using an <code>HTTP 200 OK</code>
+			        and the receiving application will respond using an <code>HTTP/1.1 200 OK</code>
 			        response. If the underlying receiving application rejects the incoming message
 			        for some reason, it will typically generate an HL7 ACK response message
 			        containing a non-success status code. The following section outlines possible
@@ -180,31 +209,138 @@
 			    <br/>
 			    
 			    <p>
-			        If ther receiving application rejects the incoming message with an AR or CR
+			        If the receiving application rejects the incoming message with an AR or CR
 			        status, the receiving application SHALL return a response of
-			        <code>HTTP 400 Bad Request</code>. The body of the response SHALL contain the
+			        <code>HTTP/1.1 400 Bad Request</code>. The body of the response SHALL contain the
 			        actual HL7 message which was generated.  
 			    </p>
 			    
 			    <img src="images/HoH_AR.png"/>
 			    
+			    <h4>Application Error (AE) and Commit Error (CE)</h4>
+			    <br/>
+			    
+			    <p>
+			        If the receiving application experiences an error during processing
+			        and returns a status of AE or CE,  
+			        the receiving application SHALL return a response of
+			        <code>HTTP/1.1 500 Internal Server Error</code>. The body of the response SHALL contain the
+			        actual HL7 message which was generated.  
+			    </p>
+			    
+			    <img src="images/HoH_AE.png"/>
+
+			    <h4>HTTP Errors</h4>
+			    <br/>
+			    
+			    <p>
+			        If the receiving application is unable to process the message it receives
+			        in a request (e.g. because it is addressed to an unknown URI, or it is 
+			        not a valid message) the HTTP/1.1 specification defines a number of 4xx response codes
+			        which may be returned. Receiving applications MAY return any valid 4xx response
+			        code, EXCEPT <code>HTTP/1.1 401 Not Authorized</code>.
+			    </p>
+			    <p>
+			        If the receiving application experiences an error outside of the core
+			        HL7 processing logic (e.g. because the HTTP server itself if not working
+			        correctly) the HTTP/1.1 specification defines a number of 5xx response codes
+			        which may be returned. Receiving applications MAY return any valid 5xx response
+			        code.
+			    </p>
+			    <p>
+					If no HL7 response message is generated and the <b>receiving application</b>
+					wishes to indicate an error,
+					the <b>receiving application</b> MAY use any content type to encode the response
+					message. Note that using a content type of <code>text/plain</code> may increase
+					readability within system logs.  
+			    </p>
+			    
+			    <img src="images/HoH_Error_500.png"/>
+
+			</subsection>
+
+			<subsection name="1.3 Encryption">
+			
+				<p>
+					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
+					SHOULD support the ability to communicate
+					using Transport Layer Security (TLS). Transport Layer Security provides end-to-end encryption,
+					and is the successor to Secure Socket Layer (SSL).
+				</p>
+				<p>
+					In many cases, it is appropriate to use a self-signed certificate for system-to-system HL7
+					communication. For this reason,
+					<b>receiving application</b> implementors are recommended to provide support and/or guidance 
+					for generating and using self-signed certificates, and  
+					<b>sending application</b> implementors are recommended 
+					to provide support for importing them.     
+				</p> 
+					
+			</subsection>
+
+			<subsection name="1.4 Compression">
+			
+				<p>
+					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
+					MAY support the ability to compress contents using the GZip algorithm, as defined in the
+					HTTP/1.1 specification.
+				</p>
+				<p>
+					Note that GZip should only be used if it is explicitly enabled, as its use can incur
+					a performance penalty.  
+				</p> 
+					
+			</subsection>
+			
+			<subsection name="1.5 Persistent Connection">
+			
+				<p>
+					<b>Sending applications</b> MAY use a persistent connection as defined in the 
+					HTTP/1.1 specification. When using a persistent connection, the sending application
+					MUST include a <code>Content-Length</code> header. Content Chunking MUST NOT be used. 
+				</p>
+				<p>
+					<b>Receiving applications</b> SHOULD allow the use of a persistent connection.
+				</p>
+					
+			</subsection>
+
+			<subsection name="1.6 Support for Other Parts of HTTP/1.1">
+				
+				<p>
+					Implementations are NOT REQUIRED to support any feature of the HTTP/1.1 specification
+					not explicitly referenced in this document. Implementations MUST NOT assume that 
+					any feature of the HTTP/1.1 specification
+					not explicitly referenced in this document is supported by a trading partner.
+				</p>
+			
 			</subsection>
 			
 		</section>
 			
-		<section name="Signature Profile"  style="clear: both;">
+		<section name="2.0 - Signature Profile"  style="clear: both;">
 
 		    <p>
 		        Signature Profile is an optional addition to the HL7 over HTTP specification
 		        which provides message non-repudiation. Put simply, when combined with a two
-		        certificate pairs, Signature Profile allows the server to strongly verify 
-		        the identity of the client, and vice-versa. 
+		        certificate pairs, Signature Profile allows the <b>receiving application</b>
+		        to strongly verify the identity of the 
+		        <b>sending application</b> 
+		        sending the message, and vice-versa. It also provides evidence that the message 
+		        has not been altered in any way during transit.
 		    </p>			    
 			<p>
-			    <b>Request messages</b> and <b>response messages</b> MAY include an optional 
-			    custom HTTP header containing a cryptographic signature which is generated
+			    Signature Profile includes all requirements of Basic Profile. 
+			    To implement Signature Profile, <b>Request messages</b> and <b>response messages</b> 
+			    SHALL include an 
+			    HTTP header containing a cryptographic signature which is generated
 			    against a hash of the message payload (note that the payload
-			    excludes the HTTP headers). 
+			    includes only the raw HL7 message and therefore excludes the HTTP headers
+			    and any other content which is part of the HTTP protocol itself). 
+			</p>
+			<p>
+				Note that if compression is applied to the message contents, the signature
+				must be generated against the uncompressed contents.
 			</p>
 			<p>
 			    The format of the signature header is as follows:<br/>

@@ -7,6 +7,9 @@ import java.security.KeyStore;
 
 import org.junit.Test;
 
+import ca.uhn.hl7v2.hoh.sign.MessageDoesNotVerifyException;
+import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
+
 public class StandardMessageSignerTest {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(StandardMessageSignerTest.class);
 

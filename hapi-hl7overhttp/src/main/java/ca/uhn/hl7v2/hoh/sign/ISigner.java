@@ -1,4 +1,5 @@
-package ca.uhn.hl7v2.hoh;
+package ca.uhn.hl7v2.hoh.sign;
+
 
 public interface ISigner {
 

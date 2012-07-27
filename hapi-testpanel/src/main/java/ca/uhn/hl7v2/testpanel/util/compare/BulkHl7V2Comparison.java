@@ -33,6 +33,7 @@ public class BulkHl7V2Comparison {
 	private int myTotalMessages = -1;
 	private String myExpectedDesc = EXPECTED_DESC;
 	private String myActualDesc = ACTUAL_DESC;
+	private boolean myHaveFailure;
 
 	public BulkHl7V2Comparison() {
 		myParser = PipeParser.getInstanceWithNoValidation();
@@ -61,7 +62,8 @@ public class BulkHl7V2Comparison {
 	}
 
 	public void compare() throws UnexpectedTestFailureException {
-		
+		myHaveFailure = false;
+
 		int actualIndex = 0;
 		int expectedIndex = 0;
 		
@@ -105,6 +107,7 @@ public class BulkHl7V2Comparison {
 			notyfyListeners(comparison);
 
 			if (!comparison.isSame()) {
+				myHaveFailure = true;
 				if (myStopOnFirstFailure) {
 					break;
 				}
@@ -117,6 +120,13 @@ public class BulkHl7V2Comparison {
 	}
 	
 	
+	/**
+     * @return the haveFailure
+     */
+    public boolean isHaveFailure() {
+    	return myHaveFailure;
+    }
+
 	/**
 	 * @return the stopOnFirstFailure
 	 */

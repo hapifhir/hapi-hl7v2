@@ -10,6 +10,14 @@
 	<artifactId>hapi-hl7overhttp</artifactId>
 	<url>http://maven.apache.org</url>
 	<name>HAPI - Java HL7 API - HL7 over HTTP</name>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
@@ -50,44 +58,12 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.6</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>1.46</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>1.46</version>
-			<optional>true</optional>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.46</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.46</version>
-			<classifier>sources</classifier>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk15</artifactId>
-			<version>1.46</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk15</artifactId>
-			<version>1.46</version>
-			<classifier>sources</classifier>
-			<optional>true</optional>
-		</dependency>-->
+		<!--<dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcprov-jdk15</artifactId> <version>1.46</version> <optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> 
+			<artifactId>bcprov-jdk15</artifactId> <version>1.46</version> <optional>true</optional> <classifier>sources</classifier> </dependency> <dependency> <groupId>org.bouncycastle</groupId> 
+			<artifactId>bcpkix-jdk15on</artifactId> <version>1.46</version> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcpkix-jdk15on</artifactId> <version>1.46</version> 
+			<classifier>sources</classifier> <optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcmail-jdk15</artifactId> <version>1.46</version> 
+			<optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcmail-jdk15</artifactId> <version>1.46</version> <classifier>sources</classifier> 
+			<optional>true</optional> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -95,9 +71,10 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<reporting>
 		<outputDirectory>${project.basedir}/../target/site/hapi-hl7overhttp</outputDirectory>
 	</reporting>
-	
+
+	<inceptionYear>2012</inceptionYear>
 </project>

@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.hoh;
+package ca.uhn.hl7v2.hoh.sign;
 
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -13,6 +13,7 @@ import java.security.UnrecoverableKeyException;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+
 
 public class StandardMessageSigner implements ISigner {
 
@@ -58,6 +59,8 @@ public class StandardMessageSigner implements ISigner {
 			ourLog.debug("The following signature algorithms are supported: {}", signatureAlgorithms);
 		}
 		
+		// TODO: handle exceptions with a checked exception and generate more helpful messages
+		
 		PrivateKey pk;
 		try {
 			pk = (PrivateKey) myKeyStore.getKey(myKeyAlias, myAliasPassword.toCharArray());
@@ -87,6 +90,8 @@ public class StandardMessageSigner implements ISigner {
 
 	public void verify(byte[] theBytes, String theSignature) throws MessageDoesNotVerifyException {
 
+		// TODO: handle exceptions with a checked exception and generate more helpful messages
+		
 		PublicKey pk;
 		try {
 			pk = (PublicKey) myKeyStore.getCertificate(myKeyAlias).getPublicKey();

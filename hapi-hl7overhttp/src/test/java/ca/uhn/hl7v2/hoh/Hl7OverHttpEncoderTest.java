@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
+
 public class Hl7OverHttpEncoderTest {
 
 	private static StandardMessageSigner mySigner;
