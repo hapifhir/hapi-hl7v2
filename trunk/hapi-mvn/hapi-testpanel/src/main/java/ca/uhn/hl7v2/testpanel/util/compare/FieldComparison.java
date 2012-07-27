@@ -25,8 +25,11 @@ import ca.uhn.hl7v2.model.Type;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FieldComparison {
-    //~ Instance fields ------------------------------------------------------------------------------------------------
+    private static final Logger ourLog = LoggerFactory.getLogger(FieldComparison.class);
 
     private Boolean mySame;
     private List<Type> myDiffFields1;
@@ -42,6 +45,12 @@ public class FieldComparison {
         mySameFields = theSameFields;
         myDiffFields1 = theDiffFields1;
         myDiffFields2 = theDiffFields2;
+        
+        if (ourLog.isInfoEnabled()) {
+        	if (!isSame()) {
+        		ourLog.debug("New field comparison found with difference");
+        	}
+        }
     }
 
     //~ Methods --------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.hoh;
+package ca.uhn.hl7v2.hoh.sign;
 
 
 public class MessageDoesNotVerifyException extends Exception {
