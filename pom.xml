@@ -323,7 +323,6 @@
 				<module>hapi-sourcegen</module>
 				<module>hapi-examples</module>
 				<module>hapi-test</module>
-				<module>hapi-network</module>
 				<module>hapi-testmindeps</module>
 			</modules>
 		</profile>
