@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
 
@@ -46,6 +47,10 @@ public class DefaultValidator implements Validator {
 
 	private ValidationContext context;
 
+	public DefaultValidator(HapiContext context) {
+		this.context = context.getDefaultValidationContext();
+	}
+	
 	public DefaultValidator(ValidationContext context) {
 		this.context = context;
 	}
@@ -122,6 +127,10 @@ public class DefaultValidator implements Validator {
 			}
 		}
 		return handler.validationPassed();
+	}
+	
+	public ValidationContext getValidationContext() {
+		return context;
 	}
 
 	/**

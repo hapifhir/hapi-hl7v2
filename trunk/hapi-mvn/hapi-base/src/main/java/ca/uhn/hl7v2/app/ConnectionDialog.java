@@ -150,7 +150,6 @@ public class ConnectionDialog extends JDialog {
         setVisible(true);
     }
     
-    @SuppressWarnings("deprecation")
 	private void connect() {
         try {
             if (onePort.isSelected()) {

@@ -13,7 +13,6 @@ public class Specification {
     private UseCase useCase;
     private Conformance conformance;
     private Encoding[] encodings;
-    private StaticDef messageProfile;
         
     /** Utility field used by bound properties. */
     private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);

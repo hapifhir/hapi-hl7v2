@@ -6,6 +6,25 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+            <action type="add" dev="Christian Ohr" issue="3515833">
+            	Introduced HapiContext, which aggregates most of the configuration and allows
+            	to instantiate correspondingly configured HAPI services 
+            	(parsers, validators, servers, ...).
+            </action>
+            <action type="add" dev="Christian Ohr" issue="3515828">
+            	All XML processing is based on DOM Level 3 and uses the standard libraries, 
+				which are included in JRE 5 and newer.
+				Therefore, no external XML-related libraries are required anymore.
+				<![CDATA[<br><br>]]>
+				The default XML implementation can be overridden this by setting the system property 
+				org.w3c.dom.DOMImplementationSourceList to the external DOM implementation and
+				org.xml.sax.driver to an external SAX implementation. 
+				<![CDATA[<br>]]>
+				When Xerces 2.11 is used as
+				external XML processor library, org.w3c.dom.DOMImplementationSourceList must be
+				set to org.apache.xerces.dom.DOMXSImplementationSourceImpl and org.xml.sax.driver must
+				be set to org.apache.xerces.parsers.SAXParser.
+            </action>
             <action type="add" dev="Christian Ohr" issue="3515832">
             	Added a set of new message ID generators, to be centrally configured using the
 				ParserConfiguration class. Provides non-persistent generators and the

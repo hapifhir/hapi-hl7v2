@@ -33,7 +33,9 @@ import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.HL7Exception;
 
 /**
- * Validates messages against message profiles.  
+ * Validates messages against message profiles. In general you use this by
+ * formulating a ConformanceProfileRule and validating a message using this rule.
+ *  
  * @author Bryan Tripp
  */
 public interface Validator {

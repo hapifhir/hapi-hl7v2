@@ -1,16 +1,17 @@
 package ca.uhn.hl7v2.util;
 
-import ca.uhn.hl7v2.parser.*;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.HL7Exception;
-import java.util.regex.*;
-import org.w3c.dom.*;
+import java.util.regex.Pattern;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.apache.xml.serialize.*;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.parsers.StandardParserConfiguration;
-import java.io.*;
+
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.GenericParser;
 
 /**
  * Tools for testing message strings for semantic equivalence without assuming the correctness
@@ -94,24 +95,14 @@ public class EncodedMessageComparator {
      * HL7 meaning of the message, and are removed in the standardized representation.    
      */
     public static String standardizeXML(String message) throws SAXException {
-        DOMParser parser = new DOMParser(new StandardParserConfiguration());
-        parser.setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
-        
-        Document doc = null;
-        StringWriter out = new StringWriter();
         try {
-            synchronized (parser) {
-                parser.parse(new InputSource(new StringReader(message)));
-                doc = parser.getDocument();
-            }
+        	Document doc = XMLUtils.parse(message);
             clean(doc.getDocumentElement());
-            OutputFormat outputFormat = new OutputFormat("", null, true);
-            XMLSerializer ser = new XMLSerializer(out, outputFormat);            
-            ser.serialize(doc);
-        } catch (IOException e) {
-            throw new RuntimeException("IOException doing IO to a string!!! " + e.getMessage());
+            return XMLUtils.serialize(doc);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while standardizing XML ", e);
         }
-        return out.toString();
+
     }
     
     /** Removes attributes, comments, and processing instructions. */
@@ -122,7 +113,7 @@ public class EncodedMessageComparator {
             if (child.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE 
                 || child.getNodeType() == Node.COMMENT_NODE)
             {
-                elem.removeChild(child);
+				elem.removeChild(child);
             } else if (child.getNodeType() == Node.ELEMENT_NODE) {
                 clean((Element) child);
             }
@@ -138,6 +129,7 @@ public class EncodedMessageComparator {
         for (int i = 0; i < names.length; i++) {
             attributes.removeNamedItem(names[i]);
         }
+
     }
     
     /**
@@ -173,7 +165,6 @@ public class EncodedMessageComparator {
         } catch (SAXException e) {
             throw new HL7Exception("Equivalence check failed due to SAXException: " + e.getMessage());
         }
-        
         return std1.equals(std2);
     }
     
@@ -191,12 +182,7 @@ public class EncodedMessageComparator {
         
         return parser.encode(m, "VB");        
     }
-    
-    /** 
-     * Compares messages in two files
-     */
-    public static void main(String args[]) {
-        
-    }
+   
+
     
 }

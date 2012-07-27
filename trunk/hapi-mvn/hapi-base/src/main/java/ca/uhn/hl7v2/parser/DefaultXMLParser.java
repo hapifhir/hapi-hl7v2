@@ -30,8 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -41,10 +39,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.util.XMLUtils;
 
 /**
  * <p>A default XMLParser.  This class assigns segment elements (in an XML-encoded message) 
@@ -73,12 +73,15 @@ public class DefaultXMLParser extends XMLParser {
     	ourForceGroupNames.add("DIET");
     }
     
-    /** Creates a new instance of DefaultXMLParser */
     public DefaultXMLParser() {
     	super();
     }
+    
+    public DefaultXMLParser(HapiContext context) {
+		super(context);
+	}
 
-    /** 
+	/** 
      * Creates a new instance of DefaultXMLParser 
      *  
      * @param theFactory custom factory to use for model class lookup 
@@ -98,35 +101,33 @@ public class DefaultXMLParser extends XMLParser {
     public Document encodeDocument(Message source) throws HL7Exception {
         String messageClassName = source.getClass().getName();
         String messageName = messageClassName.substring(messageClassName.lastIndexOf('.') + 1);
-        org.w3c.dom.Document doc = null;
         try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element root = doc.createElement(messageName);
-            doc.appendChild(root);
-        }
-        catch (Exception e) {
+            Document doc = XMLUtils.emptyDocument(messageName);
+            //Element root = doc.createElement(messageName);
+            //doc.appendChild(root);
+            encode(source, doc.getDocumentElement());
+            return doc;
+        } catch (Exception e) {
             throw new HL7Exception(
                 "Can't create XML document - " + e.getClass().getName(),
                 HL7Exception.APPLICATION_INTERNAL_ERROR,
                 e);
         }
-        encode(source, doc.getDocumentElement());
-        return doc;
     }
 
     /**
      * Copies data from a group object into the corresponding group element, creating any 
      * necessary child nodes.  
      */
-    private void encode(ca.uhn.hl7v2.model.Group groupObject, org.w3c.dom.Element groupElement) throws HL7Exception {
+    private void encode(Group groupObject, Element groupElement) throws HL7Exception {
         String[] childNames = groupObject.getNames();
         String messageName = groupObject.getMessage().getName();
         
         try {
-            for (int i = 0; i < childNames.length; i++) {
-                Structure[] reps = groupObject.getAll(childNames[i]);
-                for (int j = 0; j < reps.length; j++) {
-                    String elementName = makeGroupElementName(messageName, childNames[i]);
+        	for (String name : childNames) {
+                Structure[] reps = groupObject.getAll(name);
+                for (Structure rep : reps) {
+                    String elementName = makeGroupElementName(messageName, name);
 					Element childElement;
 					try {
 						childElement = groupElement.getOwnerDocument().createElement(elementName);
@@ -137,13 +138,13 @@ public class DefaultXMLParser extends XMLParser {
 			                e);
 			        }
                     groupElement.appendChild(childElement);
-                    if (reps[j] instanceof Group) {
-                        encode((Group) reps[j], childElement);
+                    if (rep instanceof Group) {
+                        encode((Group) rep, childElement);
                     }
-                    else if (reps[j] instanceof Segment) {
-                        encode((Segment) reps[j], childElement);
+                    else if (rep instanceof Segment) {
+                        encode((Segment) rep, childElement);
                     }
-                }
+				}
             }
         } catch (DOMException e) {
             throw new HL7Exception(

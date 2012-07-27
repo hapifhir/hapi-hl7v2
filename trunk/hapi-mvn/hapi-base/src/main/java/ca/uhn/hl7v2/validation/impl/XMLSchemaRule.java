@@ -22,344 +22,236 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 
 package ca.uhn.hl7v2.validation.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.xerces.util.XMLGrammarPoolImpl;
-import org.apache.xerces.xni.grammars.XMLGrammarPool;
-import org.apache.xpath.XPathAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.DOMError;
+import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.w3c.dom.NodeList;
 
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.util.XMLUtils;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
- * <p>Validate hl7 version 2 messages encoded according to the HL7 XML Encoding Syntax against xml schemas provided by hl7.org</p>
- * @author  Nico Vannieuwenhuyze
+ * Validates HL7 version 2 messages encoded according to the HL7 XML Encoding Syntax against XML
+ * schemas provided by hl7.org.
+ * <p>
+ * The XML schema to validate against is determined as follows:
+ * <ul>
+ * <li>if the XML document contains a schemaLocation that points to a valid file, this file is
+ * assumed to contain the schema definition
+ * <li>the location configured using {@link #setSchemaLocations(Map)}
+ * </ul>
+ * <p>
+ * The validation fails, if
+ * <ul>
+ * <li>no valid schema file could be found
+ * <li>the default namespace of the XML document is not <code>urn:hl7-org:v2xml</code>
+ * <li>the document does not validate against the XML schema file foudn as described above
+ * </ul>
+ * 
+ * @author Nico Vannieuwenhuyze
+ * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public class XMLSchemaRule implements EncodingRule {
 
-    private static final Logger log = LoggerFactory.getLogger(XMLSchemaRule.class);
-    private static final String parserName = "org.apache.xerces.parsers.SAXParser";
-    
-    private XMLGrammarPool myGrammarPool = new XMLGrammarPoolImpl();
-    private Element myNamespaceNode;
-    private DocumentBuilder myBuilder;
+	private static final String SECTION_REFERENCE = "http://www.hl7.org/Special/committees/xml/drafts/v2xml.html";
+	private static final String DESCRIPTION = "Checks that an encoded XML message validates against a declared or default schema "
+			+ "(it is recommended to use the standard HL7 schema, but this is not enforced here).";
+	private static final Logger log = LoggerFactory.getLogger(XMLSchemaRule.class);
+	private static final String DEFAULT_NS = "urn:hl7-org:v2xml";
 
-    private class SchemaEventHandler extends DefaultHandler
-    {
-        private List<ValidationException> validationErrors;
-        
-        public SchemaEventHandler(List<ValidationException> theValidationErrorList)
-        {
-            validationErrors = theValidationErrorList;
-        }
+	private Map<String, String> locations;
 
-        /** Warning. */
-        public void warning(SAXParseException ex) {
+	private class ErrorHandler implements DOMErrorHandler {
+		private List<ValidationException> validationErrors;
 
-            validationErrors.add(new ValidationException("[Warning] "+
-                           getLocationString(ex)+": "+
-                           ex.getMessage() + " "));
-        }
+		public ErrorHandler(List<ValidationException> validationErrors) {
+			super();
+			this.validationErrors = validationErrors;
+		}
 
-        /** Error. */
-        public void error(SAXParseException ex) {
+		public boolean handleError(DOMError error) {
+			validationErrors.add(new ValidationException(getSeverity(error) + error.getMessage()));
+			return true;
+		}
 
-            validationErrors.add(new ValidationException("[Error] "+
-                           getLocationString(ex)+": "+
-                           ex.getMessage() + " "));
-        }
+		private String getSeverity(DOMError error) {
+			switch (error.getSeverity()) {
+			case DOMError.SEVERITY_WARNING:
+				return "WARNING: ";
+			case DOMError.SEVERITY_ERROR:
+				return "ERROR: ";
+			default:
+				return "FATAL ERROR: ";
+			}
+		}
 
-        /** Fatal error. */
-        public void fatalError(SAXParseException ex) throws SAXException {
+	}
 
-            validationErrors.add(new ValidationException("[Fatal Error] "+
-                           getLocationString(ex)+": "+
-                           ex.getMessage() + " "));
-        }
-        
-        /** Returns a string of the location. */
-        private String getLocationString(SAXParseException ex) {
-            StringBuffer str = new StringBuffer();
+	/**
+	 * Test/validate a given xml document against a hl7 v2.xml schema.
+	 * <p>
+	 * Before the schema is applied, the namespace is verified because otherwise schema validation
+	 * fails anyway.
+	 * <p>
+	 * If a schema file is specified in the xml message and the file can be located on the disk this
+	 * one is used. If no schema has been specified, or the file can't be located, the locations
+	 * property is used.
+	 * 
+	 * @param msg the xml message (as string) to be validated.
+	 * @return ValidationException[] an array of validation exceptions, which is zero-sized when no
+	 *         validation errors occured.
+	 */
+	public ValidationException[] test(String msg) {
+		List<ValidationException> validationErrors = new ArrayList<ValidationException>();
+		try {
+			// parse the incoming string into a dom document - no schema validation yet
+			Document doc = XMLUtils.parse(msg);
+			if (hasCorrectNamespace(doc, validationErrors)) {
+				XMLUtils.validate(doc, getSchemaLocation(doc), new ErrorHandler(validationErrors));
+			}
+		} catch (Exception e) {
+			log.error("Unable to validate message: {}", e.getMessage(), e);
+			validationErrors.add(new ValidationException("Unable to validate message "
+					+ e.getMessage(), e));
+		}
 
-            String systemId = ex.getSystemId();
-            if (systemId != null) {
-                int index = systemId.lastIndexOf('/');
-                if (index != -1)
-                    systemId = systemId.substring(index + 1);
-                str.append(systemId);
-            }
-            str.append(':');
-            str.append(ex.getLineNumber());
-            str.append(':');
-            str.append(ex.getColumnNumber());
+		return validationErrors.toArray(new ValidationException[0]);
 
-            return str.toString();
+	}
 
-        } // getLocationString(SAXParseException):String
-        
-    }
-    
-    /** Creates a new instance of XMLSchemaValidator */
-    public XMLSchemaRule() {
-        myBuilder = createDocumentBuilder();
-        myNamespaceNode = createNamespaceNode(myBuilder);    
-    }
-    
-    /** 
-     * <P>Test/validate a given xml document against a hl7 v2.xml schema.</P>
-     * <P>Before the schema is applied, the namespace is verified because otherwise schema validation fails anyway.</P>
-     * <P>If a schema file is specified in the xml message and the file can be located on the disk this one is used.
-     * If no schema has been specified, or the file can't be located, a system property ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation. + version 
-     * can be used to assign a default schema location.</P>
-     *
-     * @param msg the xml message (as string) to be validated.   
-     * @return ValidationException[]
-     */
-    
-    public ValidationException[] test(String msg) {
-        List<ValidationException> validationErrors = new ArrayList<ValidationException>(20);
-        Document domDocumentToValidate = null;
-        
-        StringReader stringReaderForDom = new StringReader(msg);
-        try
-        {
-            // parse the icoming string into a dom document - no schema validation yet
-            domDocumentToValidate = myBuilder.parse(new InputSource(stringReaderForDom));
-            
-            // check if the xml document has the right default namespace
-            if (validateNamespace(domDocumentToValidate, validationErrors))
-            {
-                String schemaLocation = getSchemaLocation(domDocumentToValidate, validationErrors);
-                if (schemaLocation.length() > 0)
-                {
-                        // now parse the icoming string using a sax parser with schema validation
-                        XMLReader parser = XMLReaderFactory.createXMLReader(parserName);
-                        SchemaEventHandler eventHandler = new SchemaEventHandler(validationErrors);
-                        parser.setContentHandler(eventHandler);
-                        parser.setErrorHandler(eventHandler);
-                        parser.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", "urn:hl7-org:v2xml" + " " + schemaLocation);
-                        parser.setFeature("http://xml.org/sax/features/validation", true);
-                        parser.setFeature("http://apache.org/xml/features/validation/schema", true);
-                        parser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-                        parser.setProperty("http://apache.org/xml/properties/internal/grammar-pool",  myGrammarPool);
-                        StringReader stringReaderForSax =new StringReader(msg);
-                        parser.parse(new InputSource(stringReaderForSax));
-                }
-            }
-        }            
-        catch (SAXException se)
-        {
-            log.error("Unable to parse message - please verify that it's a valid xml document");
-            log.error(se.getMessage(), se);
-            validationErrors.add(new ValidationException("Unable to parse message - please verify that it's a valid xml document" + " [SAXException] " + se.getMessage()));
-            
-        }
-        catch (IOException e)
-        {
-            log.error("Unable to parse message - please verify that it's a valid xml document");
-            log.error(e.getMessage(), e);
-            validationErrors.add(new ValidationException("Unable to parse message - please verify that it's a valid xml document" + " [IOException] " + e.getMessage()));
-        }
- 
-        return validationErrors.toArray(new ValidationException[0]);
+	/**
+	 * 
+	 * Try to obtain the XML schema file (depending on message version), either as provided in
+	 * xsi:schemaLocation, or as provided in the locations property or in a subdirectory of the
+	 * current dir.
+	 * 
+	 * @param doc
+	 * @param validationErrors
+	 * @return
+	 * @throws IOException
+	 */
+	private String getSchemaLocation(Document doc) throws IOException {
+		String schemaFilename = extractSchemaLocation(doc);
+		if (schemaFilename == null) {
+			if ((schemaFilename = staticSchema(doc)) == null) {
+				throw new IOException(
+						"Unable to retrieve a valid schema to use for message validation");
+			}
+		}
+		return schemaFilename;
 
-    }
-    
-    private Element createNamespaceNode(DocumentBuilder theBuilder)
-    {
-        Element namespaceNode = null;
-        // set up a document purely to hold the namespace mappings prefix-uri
-        // prefix used is hl7v2xml
-        if (theBuilder != null)
-        {
-            DOMImplementation impl = theBuilder.getDOMImplementation();
-            Document namespaceHolder = impl.createDocument(
-                "http://namespaceuri.org", 
-                "f:namespaceMapping", null);
-            namespaceNode = namespaceHolder.getDocumentElement();
-            namespaceNode.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:hl7v2xml",
-                 "urn:hl7-org:v2xml");
-            namespaceNode.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        }
-        return namespaceNode;
-    }
-    
-    private DocumentBuilder createDocumentBuilder()
-    {
-        DocumentBuilder builder = null;
-        try
-        {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
+	}
 
-            try
-            {
-                builder = factory.newDocumentBuilder();
-            }
-            catch (ParserConfigurationException e)
-            {
-                log.error(e.getMessage());
-            }
-        }
-        catch (FactoryConfigurationError e)
-        {
-            log.error(e.getMessage());
-        }
-        
-        return builder;
-    }
-    
-     private String getSchemaLocation(Document domDocumentToValidate, List<ValidationException> validationErrors) {
-        boolean validSchemaInDocument = false;
-        String schemaLocation = new String();
-        String schemaFilename = new String();
+	private String extractSchemaLocation(Document doc) {
+		String schemaFileName = null;
+		log.debug("Trying to retrieve the schema defined in the xml document");
+		Element element = doc.getDocumentElement();
+		String schemaLocation = element.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
+				"schemaLocation");
+		if (schemaLocation.length() > 0) {
+			log.debug("Schema defined in document: {}", schemaLocation);
+			String schemaItems[] = schemaLocation.split(" ");
+			if (schemaItems.length == 2) {
+				File f = new File(schemaItems[1].toString());
+				if (f.exists()) {
+					schemaFileName = schemaItems[1].toString();
+					log.debug("Schema defined in document points to a valid file");
+				} else {
+					log.warn("Schema file defined in xml document not found on disk: {}",
+							schemaItems[1].toString());
+				}
+			}
+		} else {
+			log.debug("No schema location defined in the xml document");
+		}
 
-        // retrieve the schema specified in the document
-        try
-        {
-            log.debug("Trying to retrieve the schema defined in the xml document");
-            Node schemaNode = XPathAPI.selectSingleNode(domDocumentToValidate, "//@xsi:schemaLocation" , myNamespaceNode); 
-            if (schemaNode != null)
-            {
-                log.debug("Schema defined in document: {}", schemaNode.getNodeValue());
-                String schemaItems[] = schemaNode.getNodeValue().split(" ");
-                if (schemaItems.length == 2)
-                {
-                    File myFile = new File(schemaItems[1].toString());
-                    if (myFile.exists())
-                    {
-                        validSchemaInDocument = true;
-                        schemaFilename = schemaItems[1].toString();
-                        log.debug("Schema defined in document points to a valid file - use this one");
-                    }
-                    else
-                    {
-                        log.warn("Schema file defined in xml document not found on disk: {}", schemaItems[1].toString());
-                    }
-                }
-             }
-            else
-            {
-                log.debug("No schema defined in the xml document");
-            }
-            
-            // if no valid schema was found - use the default (version dependent) from property
-            if (!validSchemaInDocument)
-            {
-                log.debug("Lookup hl7 version in msh-12 to know which default schema to use");
-                Node versionNode = XPathAPI.selectSingleNode(domDocumentToValidate, "//hl7v2xml:MSH.12/hl7v2xml:VID.1/text()" , myNamespaceNode); 
-                if (versionNode != null)
-                {
-                    String schemaLocationProperty = new String("ca.uhn.hl7v2.validation.xmlschemavalidator.schemalocation.") + versionNode.getNodeValue();
-                    log.debug("Lookup schema location system property: {}", schemaLocationProperty);
-                    schemaLocation = System.getProperty(schemaLocationProperty);
-                    if (schemaLocation == null)
-                    {
-                        log.warn("System property for schema location path {} not defined", schemaLocationProperty);
-                        schemaLocation = System.getProperty("user.dir") + "\\v"+ versionNode.getNodeValue().replaceAll("\\.", "") + "\\xsd";
-                        log.info("Using default schema location path (current directory\\v2x\\xsd) {}", schemaLocation);
-                    }
+		return schemaFileName;
+	}
 
-                    // use the messagestructure as schema file name (root)
-                    schemaFilename = schemaLocation + "/" + domDocumentToValidate.getDocumentElement().getNodeName() + ".xsd";
-                    File myFile = new File(schemaFilename);
-                    if (myFile.exists())
-                    {
-                        validSchemaInDocument = true;
-                        log.debug("Valid schema file present: {}", schemaFilename);
-                    }
-                    else
-                    {
-                        log.warn("Schema file not found on disk: {}", schemaFilename);
-                    }
-                }
-                else
-                {
-                    log.error("HL7 version node MSH-12 not present - unable to determine default schema");
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            log.error(e.getMessage());
-        }
-        
-        if (validSchemaInDocument)
-        {
-            return schemaFilename;
-        }
-        else
-        {
-            ValidationException e = new ValidationException("Unable to retrieve a valid schema to use for message validation - please check logs");
-            validationErrors.add(e);
-            return "";
-        }
-    }
+	/**
+	 * @param doc
+	 * @return
+	 */
+	private String staticSchema(Document doc) {
+		String schemaFilename = null;
+		log.debug("Lookup HL7 version in MSH-12 to know which default schema to use");
+		NodeList nodeList = doc.getElementsByTagNameNS(DEFAULT_NS, "VID.1");
+		if (nodeList.getLength() == 1) {
+			Node versionNode = nodeList.item(0);
+			Version version = Version.versionOf(versionNode.getFirstChild().getNodeValue());
+			String schemaLocation = locations.get(version.getVersion());
 
-    private boolean validateNamespace(Document domDocumentToValidate, List<ValidationException> validationErrors) {
-        // start by verifying the default namespace if this isn't correct the rest will fail anyway
-        if (domDocumentToValidate.getDocumentElement().getNamespaceURI() == null)
-        {
-            ValidationException e = new ValidationException("The default namespace of the xml document is not specified - should be urn:hl7-org:v2xml");
-            validationErrors.add(e);
-            log.error("The default namespace of the xml document is not specified - should be urn:hl7-org:v2xml");
-        }
-        else
-        {
-            if (! domDocumentToValidate.getDocumentElement().getNamespaceURI().equals("urn:hl7-org:v2xml"))
-            {
-                ValidationException e = new ValidationException("The default namespace of the xml document (" + domDocumentToValidate.getDocumentElement().getNamespaceURI() + ") is incorrect - should be urn:hl7-org:v2xml");
-                validationErrors.add(e);
-                log.error("The default namespace of the xml document (" + domDocumentToValidate.getDocumentElement().getNamespaceURI() + ") is incorrect - should be urn:hl7-org:v2xml");
-             }
-             else
-             {
-                 return true;
-             }
-         }
-        return false;
-    }
+			// use the message structure as schema file name (root)
+			schemaFilename = schemaLocation + "/" + doc.getDocumentElement().getNodeName() + ".xsd";
+			File myFile = new File(schemaFilename);
+			if (myFile.exists()) {
+				log.debug("Valid schema file present: {}", schemaFilename);
+			} else {
+				log.warn("Schema file not found on disk: {}", schemaFilename);
+				schemaFilename = null;
+			}
+		} else {
+			log.error("HL7 version node MSH-12 not present - unable to determine default schema");
+		}
+		return schemaFilename;
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-     */
-    public String getDescription() {
-        return "Checks that an encoded XML message validates against a declared or default schema " +
-                "(it is recommended to use the standard HL7 schema, but this is not enforced here).";
-    }
+	/**
+	 * @return <code>true</code> if default namespace is set properly
+	 */
+	private boolean hasCorrectNamespace(Document domDocumentToValidate,
+			List<ValidationException> validationErrors) {
+		String nsUri = domDocumentToValidate.getDocumentElement().getNamespaceURI();
+		boolean ok = DEFAULT_NS.equals(nsUri);
+		if (!ok) {
+			ValidationException e = new ValidationException(
+					"The default namespace of the XML document is incorrect - should be "
+							+ DEFAULT_NS + " but was " + nsUri);
+			validationErrors.add(e);
+			log.error(e.getMessage());
+		}
+		return ok;
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-     */
-    public String getSectionReference() {
-        return "http://www.hl7.org/Special/committees/xml/drafts/v2xml.html";
-    }
-    
-     
+	public void setSchemaLocations(Map<String, String> locations) {
+		this.locations = locations;
+	}
+	
+	
+
+	Map<String, String> getSchemaLocations() {
+		return locations;
+	}
+
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
+	 */
+	public String getDescription() {
+		return DESCRIPTION;
+	}
+
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
+	 */
+	public String getSectionReference() {
+		return SECTION_REFERENCE;
+	}
+
 }

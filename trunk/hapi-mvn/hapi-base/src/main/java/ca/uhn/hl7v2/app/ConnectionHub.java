@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
@@ -95,11 +96,17 @@ public class ConnectionHub {
 		};
 	}
 
-	/** Returns the singleton instance of ConnectionHub */
+	/** 
+	 * Returns the singleton instance of ConnectionHub 
+	 * @deprecated use {@link HapiContext#getConnectionHub()}
+	 */
 	public static ConnectionHub getInstance() {
 		return getInstance(DefaultExecutorService.getDefaultService());
 	}
 
+	/**
+	 * @deprecated default executor service is shut down automatically
+	 */
 	public static void shutdown() {
 		ConnectionHub hub = getInstance();
 		if (DefaultExecutorService.isDefaultService(hub.executorService)) {

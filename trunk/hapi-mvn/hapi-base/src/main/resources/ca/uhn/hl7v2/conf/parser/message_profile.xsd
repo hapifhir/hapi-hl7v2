@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Jennifer Puyenbroek (HL7 Control Query TC) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:element name="HL7v2xConformanceProfile">
+		<xs:annotation>
+			<xs:documentation>An unambiguous specification of one or more standard HL7 messages that have been analyzed for a particular use case. It prescribes a set of precise constraints upon one or more standard HL7 messages.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="MetaData" type="MetaDataType">
+					<xs:annotation>
+						<xs:documentation>Provides descriptive information about the life-cycle of the HL7v2xConformanceProfile, as well as authorship and control information.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ImpNote" type="ImpNoteType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Implementation Notes provide a general description about how the profile is intended to be used, as well as hints on using or interpreting the profile.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="UseCase">
+					<xs:annotation>
+						<xs:documentation>A use case model documents the scope and requirements for an HL7 message profile or set of message profiles.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Purpose" type="NonEmptyStringType" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Identifies the reason and/or objectives for the usecase</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="Description" type="NonEmptyStringType" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Descriptive text for the use-case. In cases where the use-case is not broken down into component elements, this will include the complete details of the usecase. Otherwise, it will contain a basic overview.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:choice minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="Actor" type="UseCaseElementType">
+									<xs:annotation>
+										<xs:documentation>Identifies and defines the entities involved in the use-case. This includes the sending and receiving applications</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="PreCondition" type="UseCaseElementType">
+									<xs:annotation>
+										<xs:documentation>Identifies a circumstance that must hold true prior to the use-case being invoked.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="PostCondition" type="UseCaseElementType">
+									<xs:annotation>
+										<xs:documentation>Identifies a circumstance that will hold true after the successful completion of the use-case.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="EventFlow" type="UseCaseElementType">
+									<xs:annotation>
+										<xs:documentation>Identifies a step within the chain of occurrences that lead to the successful completion of the use-case. This includes the exchange of messages between applications.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="DerivedEvent" type="UseCaseElementType">
+									<xs:annotation>
+										<xs:documentation/>
+									</xs:annotation>
+								</xs:element>
+							</xs:choice>
+						</xs:sequence>
+					</xs:complexType>
+					<xs:key name="ActorNamesUniqueInUseCase">
+						<xs:selector xpath="Actor"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+					<xs:key name="PreConditionNamesUniqueInUseCase">
+						<xs:selector xpath="PreCondition"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+					<xs:key name="PostConditionNamesUniqueInUseCase">
+						<xs:selector xpath="PostCondition"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+					<xs:key name="EventFlowNamesUniqueInUseCase">
+						<xs:selector xpath="EventFlow"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+					<xs:key name="DerivedEventNamesUniqueInUseCase">
+						<xs:selector xpath="DerivedEvent"/>
+						<xs:field xpath="@Name"/>
+					</xs:key>
+				</xs:element>
+				<xs:element name="Encodings">
+					<xs:annotation>
+						<xs:documentation>Identifies all of the message encoding mechanisms supported by the profile. Non-traditional encoding mechanisms may be identified if desired.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Encoding" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Identifies one of the encoding mechanisms supported by the profile.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:union memberTypes="xs:NMTOKEN">
+										<xs:simpleType>
+											<xs:restriction base="xs:NMTOKEN">
+												<xs:enumeration value="ER7"/>
+												<xs:enumeration value="XML"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:union>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+					<xs:key name="EncodingUniqueInEncodings">
+						<xs:selector xpath="Encoding"/>
+						<xs:field xpath="."/>
+					</xs:key>
+				</xs:element>
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element name="DynamicDef">
+						<xs:annotation>
+							<xs:documentation>The dynamic definition is an interaction specification for a conversation between 2 or more systems.</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="AccAck" type="AcknowledgmentType" default="NE">
+								<xs:annotation>
+									<xs:documentation>Identifies when and if HL7 'Accept' acknowledgments are required. Allowed values are: AL (always), NE (never), SU (on success), ER (on error). Default is 'NE'.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="AppAck" type="AcknowledgmentType" default="AL">
+								<xs:annotation>
+									<xs:documentation>Identifies when and if HL7 'Application' acknowledgments are required. Allowed values are: AL (always), NE (never), SU (on success), ER (on error).  Default is 'AL'.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="MsgAckMode" default="Deferred">
+								<xs:annotation>
+									<xs:documentation>Identifies the type of acknowledgment expected by the sender of a message. Allowed values are: Immediate and Deferred. Default is Immediate.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="Immediate"/>
+										<xs:enumeration value="Deferred"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="QueryMessageType" default="NonQuery">
+								<xs:annotation>
+									<xs:documentation>Identifies whether the message is query-related, and if so, what type of query message it is. Allowed values are: NonQuery, Query, Response and Publish. Default is NonQuery.
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="NonQuery"/>
+										<xs:enumeration value="Query"/>
+										<xs:enumeration value="Response"/>
+										<xs:enumeration value="Publish"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="QueryMode" default="RealTime">
+								<xs:annotation>
+									<xs:documentation>Identifies the type of query being performed. Allowed values are: Batch, RealTime or Both.</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:NMTOKEN">
+										<xs:enumeration value="Batch"/>
+										<xs:enumeration value="RealTime"/>
+										<xs:enumeration value="Both"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element ref="HL7v2xStaticDef"/>
+						<xs:element name="HL7v2xStaticDefRef">
+							<xs:annotation>
+								<xs:documentation>Provides an identifier reference to the static definition for one of the messages used by the profile.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:attribute name="Identifier" type="IdentifierType" use="required">
+									<xs:annotation>
+										<xs:documentation>The identifier for the static definition being referenced.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:choice>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="HL7Version" use="required">
+				<xs:annotation>
+					<xs:documentation>Identifies the HL7 2.x version on which the profile is based and with which it is expected to comply.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="xs:NMTOKEN">
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:enumeration value="2.0"/>
+								<xs:enumeration value="2.0D"/>
+								<xs:enumeration value="2.1"/>
+								<xs:enumeration value="2.2"/>
+								<xs:enumeration value="2.3"/>
+								<xs:enumeration value="2.3.1"/>
+								<xs:enumeration value="2.4"/>
+								<xs:enumeration value="2.5"/>
+								<xs:enumeration value="2.6"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:union>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ProfileType" use="required">
+				<xs:annotation>
+					<xs:documentation>Categorizes the profile into one of 3 types: HL7 - represents a specific HL7 published standard (may only be submitted by the HL7 Organization); Constrainable - May contain "Optional" elements which must be further constrained in order to create implementation profiles; Implementation - Fully constrained with no optionality (reflects the behavior of a runtime system)</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="HL7"/>						
+						<xs:enumeration value="Implementation"/>
+						<xs:enumeration value="Constrainable"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Identifier" type="IdentifierType">
+				<xs:annotation>
+					<xs:documentation>A unique identifier for this specific version of this dynamic profile. If not specified, one will be assigned to the profile upon submission to a registry.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="HL7v2xStaticDef">
+		<xs:annotation>
+			<xs:documentation>This represents a detailed profile of a single message. It provides a detailed breakdown of exactly what the message may contain, including optionality and cardinality.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="MetaData" type="MetaDataType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Provides descriptive information about the life-cycle of the HL7 v2x Static Definition, as well as authorship and control information.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:group ref="MessageGroup"/>
+				<xs:element name="Segment" type="SegmentType">
+					<xs:annotation>
+						<xs:documentation>Documents the characteristics of a single HL7 segment within the context of a particular message or segment group.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:group ref="SegGroupOrSegmentGrouping" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="MsgType" type="MsgTypeType" use="required">
+				<xs:annotation>
+					<xs:documentation>The HL7 message type code, as identified in MSH-9.1 (see HL7 Table 0076 - Message type).</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="EventType" type="EventTypeType" use="required">
+				<xs:annotation>
+					<xs:documentation>The HL7 event type code, as identified in MSH-9.2 (see HL7 Table 0003 - Event type)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="MsgStructID" type="MsgStructIDType">
+				<xs:annotation>
+					<xs:documentation>The HL7 message structure code, as identified in MSH-9.3 (see HL7 Table 0354 - Message Structure Type). </xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="OrderControl" type="OrderControlType">
+				<xs:annotation>
+					<xs:documentation>The HL7 Order control code, as identified in ORC 1 (see HL7 Table 0119 - Order Control Codes).</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="EventDesc" type="NonEmptyStringType" use="required">
+				<xs:annotation>
+					<xs:documentation>A description of the event carried by this message.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Identifier" type="IdentifierType" use="optional">
+				<xs:annotation>
+					<xs:documentation>A unique identifier for this specific version of this static definition. If not specified, one will be assigned to the profile upon submission to a registry.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Role" default="Sender">
+				<xs:annotation>
+					<xs:documentation>Identifies whether the profile is constructed from the perspective of the message generator (Sender) or parser (Receiver). Default is 'Sender'.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="Sender"/>
+						<xs:enumeration value="Receiver"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="UseCaseElementType">
+		<xs:simpleContent>
+			<xs:extension base="NonEmptyStringType">
+				<xs:attribute name="Name" type="NonEmptyStringType" use="required">
+					<xs:annotation>
+						<xs:documentation>The unique name or number associated with a particular use-case element.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MetaDataType">
+		<xs:attribute name="Name" type="NonEmptyStringType" use="required">
+			<xs:annotation>
+				<xs:documentation>Provides a name that clearly and concisely defines the message exchange being profiled.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OrgName" type="NonEmptyStringType" use="required">
+			<xs:annotation>
+				<xs:documentation>Name of the organization that submitted the profile.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Version" type="NonEmptyStringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The version identifier assigned to this profile by the author. There is no prescribed version numbering scheme.  However 'higher' versions should generally be interpreted to be more resent.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Status" type="NonEmptyStringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Status of this profile, as assigned by the author. There is no prescribed status scheme at this time. Possible values might include: 'Draft', 'Active', 'Superceded', 'Withdrawn'</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Topics" type="NonEmptyStringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>This provides a list of key-words that relate to the profile and that may be useful in profile searches.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:group name="SegGroupOrSegmentGrouping">
+		<xs:choice>
+			<xs:element name="SegGroup">
+				<xs:annotation>
+					<xs:documentation>Documents the characteristics of a grouping of HL7 segments within the context of a particular message or segment group.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:group ref="MessageElementsGroup"/>
+						<xs:group ref="SegGroupOrSegmentGrouping" maxOccurs="unbounded"/>
+					</xs:sequence>
+					<xs:attribute name="Name" use="required">
+						<xs:annotation>
+							<xs:documentation>This is the short, formal name for the group. It appears in the tag name when using the XML Encoding syntax.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:pattern value="([A-Z]|_)+"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute ref="LongName" use="required"/>
+					<xs:attribute ref="Usage" use="required"/>
+					<xs:attributeGroup ref="RepeatableElementAttributes"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Segment" type="SegmentType">
+				<xs:annotation>
+					<xs:documentation>Documents the characteristics of a single HL7 segment within the context of a particular message or segment group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:group>
+	<xs:complexType name="SegmentType">
+		<xs:sequence>
+			<xs:group ref="MessageElementsGroup"/>
+			<xs:element name="Field" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Documents the characteristics of a single HL7 field within the context of a particular message segment.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:group ref="LeafMessageElementsGroup"/>
+						<xs:element name="Component" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Documents the characteristics of a single component within the context of a field.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:group ref="LeafMessageElementsGroup"/>
+									<xs:element name="SubComponent" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Documents the characteristics of a single sub-component within the context of a component.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:group ref="LeafMessageElementsGroup"/>
+											<xs:attributeGroup ref="LeafElementAttributes"/>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attributeGroup ref="LeafElementAttributes"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attributeGroup ref="RepeatableElementAttributes"/>
+					<xs:attributeGroup ref="LeafElementAttributes"/>
+					<xs:attribute name="ItemNo">
+						<xs:annotation>
+							<xs:documentation>The HL7-assigned item number corresponding with the semantic meaning of the field.</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:pattern value="\d{5}"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Name" type="SegmentNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>This is the short, formal name for the segment. It is used to identify the segment in both ER7 and XML encodings.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute ref="LongName"/>
+		<xs:attribute ref="Usage" use="required"/>
+		<xs:attributeGroup ref="RepeatableElementAttributes"/>
+	</xs:complexType>
+	<xs:attributeGroup name="LeafElementAttributes">
+		<xs:attribute name="Name" type="NonEmptyStringType" use="required">
+			<xs:annotation>
+				<xs:documentation>The descriptive name for the field/component/sub-component</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute ref="Usage" use="required"/>
+		<xs:attribute name="Datatype" type="DatatypeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Identifies the HL7 datatype associated with the element.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Length" type="xs:positiveInteger">
+			<xs:annotation>
+				<xs:documentation>Identifies the maximum allowed length for the content of the element.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Table" type="TableType">
+			<xs:annotation>
+				<xs:documentation>Identifies the name of the table associated with the content of this element.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ConstantValue" type="NonEmptyStringType">
+			<xs:annotation>
+				<xs:documentation>Identifies the fixed value associated with this element</xs:documentation>
+			</xs:annotation>
+			<!-- Can only have constant values for leaf elements -->
+		</xs:attribute>
+	</xs:attributeGroup>
+	<xs:attributeGroup name="RepeatableElementAttributes">
+		<xs:attribute name="Min" type="xs:nonNegativeInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>This identifies the minimum number of repetitions of the element that are permitted in a message instance. This attribute should only be specified if the minimum number of repetitions is greater than 1, as the minimum for other elements is always '0'.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Max" use="required">
+			<xs:annotation>
+				<xs:documentation>This identifies the maximum number of repetitions of the element that are permitted in a message instance. This attribute should only be specified if the maximum number of repetitions is greater than 1 and differs from the minimum attribute (i.e. the maximum number of repetitions is greater than the minimum number of repetitions). The special value '*' may be used to represent 'unlimited' repetitions.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:union>
+					<xs:simpleType>
+						<xs:restriction base="xs:positiveInteger">
+							<xs:minInclusive value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="*"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:union>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:attributeGroup>
+	<xs:simpleType name="ImpNoteType">
+		<xs:restriction base="NonEmptyStringType"/>
+	</xs:simpleType>
+	<xs:group name="MessageGroup">
+		<xs:sequence>
+			<xs:element name="ImpNote" type="ImpNoteType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Implementation Notes provide a general description about how the element is intended to be used, as well as hints on using or interpreting the it.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="NonEmptyStringType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Provides an explanation or definition of what the element represents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reference" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies external sources or other locations within the profile where additional information can be found about this item.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="NonEmptyStringType"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:group name="MessageElementsGroup">
+		<xs:sequence>
+			<xs:group ref="MessageGroup"/>
+			<xs:element name="Predicate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Identifies the conditionality rule for this element, if applicable</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="NonEmptyStringType"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:group name="LeafMessageElementsGroup">
+		<xs:sequence>
+			<xs:group ref="MessageElementsGroup"/>
+			<xs:element name="DataValues" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="ExValue" type="NonEmptyStringType">
+						<xs:annotation>
+							<xs:documentation>Identifies an individual example value.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:attribute name="Usage">
+		<xs:annotation>
+			<xs:documentation>Usage identifies the circumstances under which an element appears in a message. Possible values are: 
+				R - Required (must always be present); 
+				RE - Required or Empty (must be present if available); 
+				O - Optional (no guidance on when the element should appear); 
+				C - Conditional (the element is required or allowed to be present when the condition specified in the Predicate element is true);
+				CE - Conditional or Empty (the element is required or allowed to be present when the condition specified in the Predicate element is true and the information is available)
+				X - Not supported (the element will not be sent)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:NMTOKEN">
+				<xs:enumeration value="R"/>
+				<xs:enumeration value="RE"/>
+				<xs:enumeration value="O"/>
+				<xs:enumeration value="C"/>
+				<xs:enumeration value="CE"/>
+				<xs:enumeration value="X"/>
+				<xs:enumeration value="B"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+	<xs:attribute name="LongName" type="NonEmptyStringType">
+		<xs:annotation>
+			<xs:documentation>This is the descriptive name for the element. It does not appear in any encodings.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:simpleType name="NonEmptyStringType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AcknowledgmentType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="AL"/>
+			<xs:enumeration value="NE"/>
+			<xs:enumeration value="SU"/>
+			<xs:enumeration value="ER"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MsgTypeType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z0-9]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EventTypeType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z0-9]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MsgStructIDType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z0-9]{3}(_[A-Z0-9]{3})?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OrderControlType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DatatypeType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SegmentNameType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:pattern value="[A-Z][A-Z0-9]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TableType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

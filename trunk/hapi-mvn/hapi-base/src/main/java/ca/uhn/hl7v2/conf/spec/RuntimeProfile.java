@@ -39,8 +39,6 @@ public class RuntimeProfile {
     /** Holds value of property specVersion. */
     private String specVersion;
     
-    private StaticDef StaticDef;
-    
     /** Holds value of property status. */
     private String status;
     

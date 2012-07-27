@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.DoNotCacheStructure;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
@@ -76,14 +77,18 @@ public class PipeParser extends Parser {
 
     private Boolean myLegacyMode = null;
 
-    
-	/** Creates a new PipeParser */
     public PipeParser() {
-    	this(null);
+    	super();
     }
+    
+	/**
+	 * @param context the context containing all configuration items to be used
+	 */
+	public PipeParser(HapiContext context) {
+		super(context);
+	}
 
-
-    /**
+	/**
      * Creates a new PipeParser
      * 
      * @param theFactory
@@ -104,10 +109,7 @@ public class PipeParser extends Parser {
      * using any other encoding than the one returned.
      */
     public String getEncoding(String message) {
-        if (EncodingDetector.isEr7Encoded(message)) {
-            return "VB";
-        }
-        return null;
+        return EncodingDetector.isEr7Encoded(message) ? getDefaultEncoding() : null;
     }
 
 
@@ -117,19 +119,6 @@ public class PipeParser extends Parser {
     public String getDefaultEncoding() {
         return "VB";
     }
-
-
-    /**
-     * Returns true if and only if the given encoding is supported by this
-     * Parser.
-     */
-    public boolean supportsEncoding(String encoding) {
-        boolean supports = false;
-        if (encoding != null && encoding.equals("VB"))
-            supports = true;
-        return supports;
-    }
-
 
     /**
      * @deprecated this method should not be public

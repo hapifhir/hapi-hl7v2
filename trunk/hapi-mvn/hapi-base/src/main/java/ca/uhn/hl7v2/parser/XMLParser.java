@@ -27,21 +27,9 @@
 
 package ca.uhn.hl7v2.parser;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.parsers.StandardParserConfiguration;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -50,10 +38,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericComposite;
@@ -62,10 +49,10 @@ import ca.uhn.hl7v2.model.GenericPrimitive;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.XMLUtils;
 
 /**
  * Parses and encodes HL7 messages in XML form, according to HL7's normative XML encoding
@@ -81,12 +68,11 @@ public abstract class XMLParser extends Parser {
 
     private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
 
-    private DOMParser parser;
     private String textEncoding;
 
     /**
      * The nodes whose names match these strings will be kept as original, 
-     * meaning that no white space treaming will occur on them
+     * meaning that no white space trimming will occur on them
      */
     private String[] keepAsOriginalNodes;
 
@@ -97,23 +83,21 @@ public abstract class XMLParser extends Parser {
 
     /** Constructor */
     public XMLParser() {
-        this(null);
+        super();
     }
 
-    /** 
+    public XMLParser(HapiContext context) {
+		super(context);
+	}
+
+	/** 
      * Constructor
      *  
      * @param theFactory custom factory to use for model class lookup 
      */
     public XMLParser(ModelClassFactory theFactory) {
     	super(theFactory);
-        parser = new DOMParser(new StandardParserConfiguration());
-        try {
-            parser.setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
-        }
-        catch (Exception e) {
-            log.error("Can't exclude whitespace from XML DOM", e);
-        }
+
     }
     
     /**
@@ -127,24 +111,7 @@ public abstract class XMLParser extends Parser {
      * Returns null if the encoding is not recognized.
      */
     public String getEncoding(String message) {
-        if (EncodingDetector.isXmlEncoded(message)) {
-            return "XML";
-        }
-        return null;
-    }
-
-    
-    /**
-     * Returns true if and only if the given encoding is supported
-     * by this Parser.
-     */
-    public boolean supportsEncoding(String encoding) {
-        if (encoding.equals("XML")) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return EncodingDetector.isXmlEncoded(message) ? getDefaultEncoding() : null;
     }
 
     /**
@@ -226,19 +193,11 @@ public abstract class XMLParser extends Parser {
      * @throws HL7Exception 
      */
 	protected synchronized Document parseStringIntoDocument(String message) throws HL7Exception {
-		Document doc;
 		try {
-			parser.parse(new InputSource(new StringReader(message)));
-        }
-        catch (SAXException e) {
-            throw new HL7Exception("SAXException parsing XML", HL7Exception.APPLICATION_INTERNAL_ERROR, e);
-        }
-        catch (IOException e) {
-            throw new HL7Exception("IOException parsing XML", HL7Exception.APPLICATION_INTERNAL_ERROR, e);
-        }
-		
-		doc = parser.getDocument();
-		return doc;
+			return XMLUtils.parse(message);
+        } catch (Exception e) {
+            throw new HL7Exception("Exception parsing XML", HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+        } 
 	}
 
     /**
@@ -269,29 +228,16 @@ public abstract class XMLParser extends Parser {
         }
         
         Document doc = encodeDocument(source);
-        Element documentElement = doc.getDocumentElement();
-		documentElement.setAttribute("xmlns", "urn:hl7-org:v2xml");
-        
-        StringWriter out = new StringWriter();
-
-        OutputFormat outputFormat = new OutputFormat("", null, true);
-        outputFormat.setLineWidth(0);
-        
-        if (textEncoding != null) {
-        	outputFormat.setEncoding(textEncoding);
-        }
-        
-        XMLSerializer ser = new XMLSerializer(out, outputFormat); //default output format
-        try {
-            ser.serialize(doc);
-        }
-        catch (IOException e) {
+        //Element documentElement = doc.getDocumentElement();
+        //if (!documentElement.hasAttribute("xmlns"))
+        //	documentElement.setAttribute("xmlns", "urn:hl7-org:v2xml");
+		try {
+			return XMLUtils.serialize(doc);
+		} catch (Exception e) {
             throw new HL7Exception(
-                "IOException serializing XML document to string",
-                HL7Exception.APPLICATION_INTERNAL_ERROR,
-                e);
-        }
-        return out.toString();
+                "Exception serializing XML document to string",
+                HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+        } 
     }
 
     /**
@@ -311,13 +257,7 @@ public abstract class XMLParser extends Parser {
      */
     public void parse(Segment segmentObject, Element segmentElement) throws HL7Exception {
         Set<String> done = new HashSet<String>();
-        
-//        for (int i = 1; i <= segmentObject.numFields(); i++) {
-//            String elementName = makeElementName(segmentObject, i);
-//            done.add(elementName);
-//            parseReps(segmentObject, segmentElement, elementName, i);
-//        }
-        
+
         NodeList all = segmentElement.getChildNodes();
         for (int i = 0; i < all.getLength(); i++) {
             String elementName = all.item(i).getNodeName();
@@ -789,113 +729,6 @@ public abstract class XMLParser extends Parser {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-    /** Test harness */
-    public static void main(String args[]) {
-        if (args.length != 1) {
-            System.out.println("Usage: XMLParser pipe_encoded_file");
-            System.exit(1);
-        }
-
-        //read and parse message from file 
-        try {
-            PipeParser parser = new PipeParser();
-            File messageFile = new File(args[0]);
-            long fileLength = messageFile.length();
-            FileReader r = new FileReader(messageFile);
-            char[] cbuf = new char[(int) fileLength];
-            System.out.println("Reading message file ... " + r.read(cbuf) + " of " + fileLength + " chars");
-            r.close();
-            String messString = String.valueOf(cbuf);
-            Message mess = parser.parse(messString);
-            System.out.println("Got message of type " + mess.getClass().getName());
-
-            ca.uhn.hl7v2.parser.XMLParser xp = new XMLParser() {
-                public Message parseDocument(Document XMLMessage, String version) throws HL7Exception {
-                    return null;
-                }
-                public Document encodeDocument(Message source) throws HL7Exception {
-                    return null;
-                }
-                public String getVersion(String message) throws HL7Exception {
-                    return null;
-                }
-
-                @Override
-                public void parse(Message message, String string) throws HL7Exception {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void parse(Type type, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                @Override
-                public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) throws HL7Exception {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-				@Override
-				protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
-                    throw new UnsupportedOperationException("Not supported yet.");
-				}
-            };
-
-            //loop through segment children of message, encode, print to console
-            String[] structNames = mess.getNames();
-            for (int i = 0; i < structNames.length; i++) {
-                Structure[] reps = mess.getAll(structNames[i]);
-                for (int j = 0; j < reps.length; j++) {
-                    if (Segment.class.isAssignableFrom(reps[j].getClass())) { //ignore groups
-                        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                        Document doc = docBuilder.newDocument(); //new doc for each segment
-                        Element root = doc.createElement(reps[j].getClass().getName());
-                        doc.appendChild(root);
-                        xp.encode((Segment) reps[j], root);
-                        StringWriter out = new StringWriter();
-                        XMLSerializer ser = new XMLSerializer(out, null); //default output format
-                        ser.serialize(doc);
-                        System.out.println("Segment " + reps[j].getClass().getName() + ": \r\n" + out.toString());
-
-                        Class<?>[] segmentConstructTypes = { Message.class };
-                        Object[] segmentConstructArgs = { null };
-                        Segment s =
-                            (Segment) reps[j].getClass().getConstructor(segmentConstructTypes).newInstance(
-                                segmentConstructArgs);
-                        xp.parse(s, root);
-                        Document doc2 = docBuilder.newDocument();
-                        Element root2 = doc2.createElement(s.getClass().getName());
-                        doc2.appendChild(root2);
-                        xp.encode(s, root2);
-                        StringWriter out2 = new StringWriter();
-                        ser = new XMLSerializer(out2, null); //default output format
-                        ser.serialize(doc2);
-                        if (out2.toString().equals(out.toString())) {
-                            System.out.println("Re-encode OK");
-                        }
-                        else {
-                            System.out.println(
-                                "Warning: XML different after parse and re-encode: \r\n" + out2.toString());
-                        }
-                    }
-                }
-            }
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Returns the text encoding to be used in generating new messages. Note that this affects encoding to string only, not parsing.
