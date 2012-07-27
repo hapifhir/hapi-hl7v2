@@ -15,13 +15,5 @@ public class ProfileNotFollowedException extends ca.uhn.hl7v2.HL7Exception {
         super(msg);
     }
 
-    /**
-     * Constructs an instance of <code>ProfileNotFollowedException</code> with the specified detail message.
-     * @param msg the detail message.
-     * @param cause an underlying exception 
-     */
-    /*public ProfileNotFollowedException(String msg, Throwable cause) {
-        super(msg, cause);
-    }*/
 
 }

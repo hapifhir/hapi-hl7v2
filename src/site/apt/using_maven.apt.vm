@@ -22,17 +22,14 @@ Adding HAPI to your application
   Download area.
   
 *-----------------------------+----------------------------------------------------------------------------------+ 
-| log4j-1.29.jar              | HAPI uses {{{http://www.slf4j.org/}SLF4J}} for logging. SLF4J is a logging abstraction 
+| log4j-1.2.16.jar            | HAPI uses {{{http://www.slf4j.org/}SLF4J}} for logging. SLF4J is a logging abstraction 
 | slf4j-api-1.6.1.jar         | framework which generally uses an underlying logger to write the logs to disk. {{{http://logging.apache.org/log4j/}LOG4J}} and 
 | slf4j-log4j12-1.6.1.jar     | can be used, but others will work as well.
 |                             | 
 *-----------------------------+----------------------------------------------------------------------------------+
-| xercesImpl-2.4.0.jar        | These JARs are used for the various XML operations within HAPI, including generation of XML encoded messages, parsing conformance profiles.  If you are not using XML in your application, you may not need them.
-| xmlParserAPIs-2.6.2.jar     | 
-| xalan-2.7.0.jar             | 
-| jaxen-1.0-FCS-2.7.0.jar     | 
-| saxpath-1.0-FCS.jar         | 
-| jdom-1.1.jar                | 
+| xercesImpl-2.11.0.jar       | When HAPI runs on older Java versions (particularly Java 1.4.x) and XML-related functions are used (including parsing XML messages and working with conformance profiles), you have to add these libraries.
+| xml-apis-1.4.01.jar         | 
+| xml-resolver-1.2.jar        | 
 *-----------------------------+----------------------------------------------------------------------------------+
   
 * Maven Dependencies

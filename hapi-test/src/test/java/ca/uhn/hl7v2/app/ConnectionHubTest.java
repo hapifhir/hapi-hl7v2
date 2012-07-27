@@ -153,7 +153,7 @@ public class ConnectionHubTest {
 	@Test
 	public void testAttachConcurrently() throws Exception {
 
-		int n = 3;
+		int n = 5;
 		long now = System.currentTimeMillis();
 		final PipeParser pipeParser = new PipeParser();
 
@@ -162,7 +162,9 @@ public class ConnectionHubTest {
 				long time = 0;
 				try {
 					time = System.currentTimeMillis();
-					hub.attach("localhost", RandomServerPortProvider.findFreePort(), pipeParser,
+					int port = RandomServerPortProvider.findFreePort();
+					ourLog.info("Attaching to non-existent port {}.", port);
+					hub.attach("localhost", port, pipeParser,
 							MinLowerLayerProtocol.class);
 				} catch (HL7Exception e) {
 					time = System.currentTimeMillis() - time;
@@ -185,14 +187,12 @@ public class ConnectionHubTest {
 				});
 		long elapsed = System.currentTimeMillis() - now;
 		
-		ourLog.info("Elapsed was {}", elapsed);
+		// TODO find some portable way to check that the connection attempts happened concurrently 
+		ourLog.info("Elapsed test time was {} ms, the fastest connection time was {} ms.", elapsed, fastestResult.get());
 		for (Future<Long> next : results) {
-			ourLog.info("Result was {}", next.get());
+			ourLog.info("Elapsed thread connection time was {} ms.", next.get());
 		}
 		
-		// Due to synchronization, the threads are executed almost sequentially
-		long avg = fastestResult.get() * (n - 1);
-		assertTrue("Elapsed: " + elapsed + ", Avg: " + avg, elapsed <= avg);
 		assertEquals(0, hub.allConnections().size());
 	}
 	

@@ -27,6 +27,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.parser;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
@@ -50,10 +51,20 @@ public class GenericParser extends Parser {
 
     /** Creates a new instance of GenericParser */
     public GenericParser() {
-        this(null);
+        this((ModelClassFactory)null);
     }
 
-    /** 
+
+    public GenericParser(HapiContext context) {
+		super(context);
+        pipeParser = new PipeParser(context);
+        xmlParser = new DefaultXMLParser(context);
+        setPipeParserAsPrimary();		
+	}
+
+
+
+	/** 
      * Creates a new instance of GenericParser
      *  
      * @param theFactory custom factory to use for model class lookup 
@@ -218,10 +229,8 @@ public class GenericParser extends Parser {
      * by this Parser.
      */
     public boolean supportsEncoding(String encoding) {
-        boolean supported = false;
-        if ("VB".equalsIgnoreCase(encoding) || "XML".equalsIgnoreCase(encoding))
-            supported = true;
-        return supported;
+        return (primaryParser.getDefaultEncoding().equalsIgnoreCase(encoding) 
+        		|| secondaryParser.getDefaultEncoding().equalsIgnoreCase(encoding));
     }
 
     /**

@@ -828,7 +828,7 @@ public class NewPipeParserTest extends TestCase {
 				+ "PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r\n"
 				+ "PR1|1||1111^Mastoplastica|Protesi|20090224|02|";
 
-		Message parsed = parser.parse(message);
+		parser.parse(message);
 		// This caused a hang at one point in development
 
 	}
@@ -841,25 +841,25 @@ public class NewPipeParserTest extends TestCase {
 		parser.setValidationContext(context);
 
 		String text = "MSH|^~\\&|bar|foo|||||ORU^R01|1|D|2.4|12345\r";
-		Message m = parser.parse(text);
+		parser.parse(text);
 
 		try {
 			text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|12345\r";
-			m = parser.parse(text);
+			parser.parse(text);
 			fail("Shoud have failed message rule");
 		} catch (HL7Exception e) {
 		}
 
 		try {
 			text = "MSH|^~\\&|bar|fo|||||ORU^R01|1|D|2.4|12345\r";
-			m = parser.parse(text);
+			parser.parse(text);
 			fail("Shoud have failed encoding rule");
 		} catch (HL7Exception e) {
 		}
 
 		try {
 			text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|123456\r";
-			m = parser.parse(text);
+			parser.parse(text);
 			fail("Shoud have failed datatype rule on field 13");
 		} catch (HL7Exception e) {
 		}
@@ -912,7 +912,7 @@ public class NewPipeParserTest extends TestCase {
 				+ "OBR|1||13198751|^^^207252^CULTURE,SALMONELLA/SHIG^L|||200607280943|||||||20060729101650|STOOL-STOOL&STOOL-STOOL|^HERTZ, JOHN Q|^^^^^518^5551212||||||||F\r\n"
 				+ "ZLR|456 WASHINGTON BLVD^SUITE 100^ALBANY^NY^12345|HERTZ^JOHN^Q^^^MD|456 WASHINGTON BLVD^SUITE 100^ALBANY^NY^12345|^^^^^518^4567890\r\n"
 				+ "OBX|1|CE|^^^60101058^CULTURE,SALMONELLA/SHIGELLA,STOOL^L|1|^^^SASP^Salmonella sp., not typhi^L||||||F|||200608011318|33D0123456^Big Laboratory^CLIA";
-		Message message = parser.parse(msg);
+		parser.parse(msg);
 
 	}
 
@@ -988,7 +988,7 @@ public class NewPipeParserTest extends TestCase {
 				+ "EVN|A03|20071023160622\r\n"
 				+ "PID|1||00J8804997^^^1444^MR~165640^^^CANON^JHN^^^^^WT||Aalan^Angus^^^^^L||19620404|F|||101 Ames Ave^^Toronto^CA- ON^M2N7J6^CAN^H||^PRN^PH^^1^416^5551545|^PRN^PH^^1^416^2227788|| C||||||||||||||N\r\n"
 				+ "PV1";
-		Message message = parser.parse(msg);
+		parser.parse(msg);
 	}
 
 	@SuppressWarnings("serial")

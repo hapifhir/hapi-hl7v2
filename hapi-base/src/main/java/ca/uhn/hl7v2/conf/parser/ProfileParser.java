@@ -33,22 +33,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.parsers.StandardParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMError;
+import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.spec.MetaData;
@@ -63,16 +56,15 @@ import ca.uhn.hl7v2.conf.spec.message.Seg;
 import ca.uhn.hl7v2.conf.spec.message.SegGroup;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.conf.spec.message.SubComponent;
+import ca.uhn.hl7v2.util.XMLUtils;
 
 /**
  * <p>
- * Parses a Message Profile XML document into a RuntimeProfile object. A Message
- * Profile is a formal description of additional constraints on a message
- * (beyond what is specified in the HL7 specification), usually for a particular
- * system, region, etc. Message profiles are introduced in HL7 version 2.5
- * section 2.12. The RuntimeProfile object is simply an object representation of
- * the profile, which may be used for validating messages or editing the
- * profile.
+ * Parses a Message Profile XML document into a RuntimeProfile object. A Message Profile is a formal
+ * description of additional constraints on a message (beyond what is specified in the HL7
+ * specification), usually for a particular system, region, etc. Message profiles are introduced in
+ * HL7 version 2.5 section 2.12. The RuntimeProfile object is simply an object representation of the
+ * profile, which may be used for validating messages or editing the profile.
  * </p>
  * <p>
  * Example usage: <code><pre>
@@ -96,94 +88,53 @@ import ca.uhn.hl7v2.conf.spec.message.SubComponent;
  */
 public class ProfileParser {
 
+	private static final String PROFILE_DTD = "ca/uhn/hl7v2/conf/parser/message_profile.dtd";
+	private static final String PROFILE_XSD = "ca/uhn/hl7v2/conf/parser/message_profile.xsd";
+
 	private static final Logger log = LoggerFactory.getLogger(ProfileParser.class);
 
-	private DOMParser parser;
 	private boolean alwaysValidate;
+	private DOMErrorHandler errorHandler;
 
 	/**
 	 * Creates a new instance of ProfileParser
 	 * 
-	 * @param alwaysValidateAgainstDTD
-	 *            if true, validates all profiles against a local copy of the
-	 *            profile DTD; if false, validates against declared grammar (if
-	 *            any)
+	 * @param alwaysValidate if true, validates all profiles against a local copy of the
+	 *            profile XSD; if false, validates against declared grammar (if any)
 	 */
-	public ProfileParser(boolean alwaysValidateAgainstDTD) {
+	public ProfileParser(boolean alwaysValidate) {
 
-		this.alwaysValidate = alwaysValidateAgainstDTD;
+		this.alwaysValidate = alwaysValidate;
+		this.errorHandler = new DOMErrorHandler() {
 
-		parser = new DOMParser(new StandardParserConfiguration());
-		try {
-			parser.setFeature("http://apache.org/xml/features/dom/include-ignorable-whitespace", false);
-		} catch (Exception e) {
-			log.error("Can't exclude whitespace from XML DOM", e);
-		}
-		try {
-			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
-		} catch (Exception e) {
-			log.error("Can't validate profile against XML grammar", e);
-		}
-		parser.setErrorHandler(new ErrorHandler() {
-			public void error(SAXParseException e) throws SAXException {
-				throw e;
+			public boolean handleError(DOMError error) {
+				if (error.getSeverity() == DOMError.SEVERITY_WARNING) {
+					log.warn("Warning: {}", error.getMessage());
+				} else {
+					throw new RuntimeException((Exception) error.getRelatedException());
+				}
+				return true;
 			}
 
-			public void fatalError(SAXParseException e) throws SAXException {
-				throw e;
-			}
-
-			public void warning(SAXParseException e) throws SAXException {
-				System.err.println("Warning: " + e.getMessage());
-			}
-
-		});
-
-		if (alwaysValidateAgainstDTD) {
-			try {
-				final String grammar = loadGrammar();
-				parser.setEntityResolver(new EntityResolver() {
-					// returns the grammar we specify no matter what the
-					// document declares
-					public InputSource resolveEntity(String publicID, String systemID) throws SAXException, IOException {
-						return new InputSource(new StringReader(grammar));
-					}
-				});
-			} catch (IOException e) {
-				log.error("Can't validate profiles against XML grammar", e);
-			}
-		}
-
+		};
 	}
 
-	/** Loads the XML grammar from disk */
-	private String loadGrammar() throws IOException {
-		InputStream dtdStream = ProfileParser.class.getClassLoader().getResourceAsStream("ca/uhn/hl7v2/conf/parser/message_profile.dtd");
-		BufferedReader dtdReader = new BufferedReader(new InputStreamReader(dtdStream));
-		String line = null;
-		StringBuffer dtd = new StringBuffer();
-		while ((line = dtdReader.readLine()) != null) {
-			dtd.append(line);
-			dtd.append("\r\n");
-		}
-		return dtd.toString();
-	}
 
 	/**
 	 * Parses an XML profile string into a RuntimeProfile object.
 	 * 
-	 * Input is a path pointing to a textual file on the classpath. Note that
-	 * the file will be read using the thread context class loader.
+	 * Input is a path pointing to a textual file on the classpath. Note that the file will be read
+	 * using the thread context class loader.
 	 * 
-	 * For example, if you had a file called PROFILE.TXT in package
-	 * com.foo.stuff, you would pass in "com/foo/stuff/PROFILE.TXT"
+	 * For example, if you had a file called PROFILE.TXT in package com.foo.stuff, you would pass in
+	 * "com/foo/stuff/PROFILE.TXT"
 	 * 
-	 * @throws IOException
-	 *             If the resource can't be read
+	 * @throws IOException If the resource can't be read
 	 */
 	public RuntimeProfile parseClasspath(String classPath) throws ProfileException, IOException {
 
-		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(classPath);
+		InputStream stream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(classPath);
 		if (stream == null) {
 			throw new FileNotFoundException(classPath);
 		}
@@ -225,7 +176,7 @@ public class ProfileParser {
 			String name = metadata.getAttribute("Name");
 			profile.setName(name);
 		}
-		
+
 		// get static definition
 		NodeList nl = root.getElementsByTagName("HL7v2xStaticDef");
 		Element staticDef = (Element) nl.item(0);
@@ -263,10 +214,10 @@ public class ProfileParser {
 	}
 
 	/**
-	 * Parses children (i.e. segment groups, segments) of a segment group or
-	 * message profile
+	 * Parses children (i.e. segment groups, segments) of a segment group or message profile
 	 */
-	private void parseChildren(AbstractSegmentContainer parent, Element elem) throws ProfileException {
+	private void parseChildren(AbstractSegmentContainer parent, Element elem)
+			throws ProfileException {
 		int childIndex = 1;
 		NodeList children = elem.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -319,7 +270,8 @@ public class ProfileParser {
 	}
 
 	/** Parse common data in profile structure (eg SegGroup, Segment) */
-	private void parseProfileStuctureData(ProfileStructure struct, Element elem) throws ProfileException {
+	private void parseProfileStuctureData(ProfileStructure struct, Element elem)
+			throws ProfileException {
 		struct.setName(elem.getAttribute("Name"));
 		struct.setLongName(elem.getAttribute("LongName"));
 		struct.setUsage(elem.getAttribute("Usage"));
@@ -357,7 +309,8 @@ public class ProfileParser {
 				field.setItemNo(Short.parseShort(itemNo));
 			}
 		} catch (NumberFormatException e) {
-			throw new ProfileException("Invalid ItemNo: " + itemNo + "( for name " + elem.getAttribute("Name") + ")", e);
+			throw new ProfileException("Invalid ItemNo: " + itemNo + "( for name "
+					+ elem.getAttribute("Name") + ")", e);
 		} // try-catch
 
 		try {
@@ -390,7 +343,8 @@ public class ProfileParser {
 	}
 
 	/** Parses a component profile */
-	private AbstractComponent parseComponentProfile(Element elem, boolean isSubComponent) throws ProfileException {
+	private AbstractComponent parseComponentProfile(Element elem, boolean isSubComponent)
+			throws ProfileException {
 		AbstractComponent comp = null;
 		if (isSubComponent) {
 			log.debug("      Parsing subcomp profile: " + elem.getAttribute("Name"));
@@ -419,10 +373,10 @@ public class ProfileParser {
 	}
 
 	/**
-	 * Parses common features of AbstractComponents (ie field, component,
-	 * subcomponent)
+	 * Parses common features of AbstractComponents (ie field, component, subcomponent)
 	 */
-	private void parseAbstractComponentData(AbstractComponent comp, Element elem) throws ProfileException {
+	private void parseAbstractComponentData(AbstractComponent comp, Element elem)
+			throws ProfileException {
 		comp.setName(elem.getAttribute("Name"));
 		comp.setUsage(elem.getAttribute("Usage"));
 		comp.setDatatype(elem.getAttribute("Datatype"));
@@ -467,43 +421,19 @@ public class ProfileParser {
 
 	/** Parses profile string into DOM document */
 	private Document parseIntoDOM(String profileString) throws ProfileException {
-		if (this.alwaysValidate)
-			profileString = insertDoctype(profileString);
-		Document doc = null;
 		try {
-			synchronized (this) {
-				parser.parse(new InputSource(new StringReader(profileString)));
-				log.debug("DOM parse complete");
-				doc = parser.getDocument();
-			}
-		} catch (SAXException se) {
-			throw new ProfileException("SAXException parsing message profile: " + se.getMessage());
-		} catch (IOException ioe) {
-			throw new ProfileException("IOException parsing message profile: " + ioe.getMessage());
+			Document doc = XMLUtils.parse(profileString, true);
+			if (alwaysValidate)
+				XMLUtils.validate(doc, PROFILE_XSD, errorHandler);
+			return doc;
+		} catch (Exception e) {
+			throw new ProfileException("Exception parsing message profile: " + e.getMessage(), e);
 		}
-		return doc;
-	}
-
-	/** Inserts a DOCTYPE declaration in the string if there isn't one */
-	private String insertDoctype(String profileString) {
-		String result = profileString;
-		if (profileString.indexOf("<!DOCTYPE") < 0) {
-			StringBuffer buf = new StringBuffer();
-			int loc = profileString.indexOf("?>");
-			if (loc > 0) {
-				buf.append(profileString.substring(0, loc + 2));
-				buf.append("<!DOCTYPE HL7v2xConformanceProfile SYSTEM \"\">");
-				buf.append(profileString.substring(loc + 2));
-				result = buf.toString();
-			}
-		}
-		return result;
 	}
 
 	/**
-	 * Returns the first child element of the given parent that matches the
-	 * given tag name. Returns null if no instance of the expected element is
-	 * present.
+	 * Returns the first child element of the given parent that matches the given tag name. Returns
+	 * null if no instance of the expected element is present.
 	 */
 	private Element getFirstElementByTagName(String name, Element parent) {
 		NodeList nl = parent.getElementsByTagName(name);
@@ -515,8 +445,7 @@ public class ProfileParser {
 	}
 
 	/**
-	 * Gets the result of getFirstElementByTagName() and returns the value of
-	 * that element.
+	 * Gets the result of getFirstElementByTagName() and returns the value of that element.
 	 */
 	private String getValueOfFirstElement(String name, Element parent) throws ProfileException {
 		Element el = getFirstElementByTagName(name, parent);
@@ -545,6 +474,7 @@ public class ProfileParser {
 			// File f = new
 			// File("C:\\Documents and Settings\\bryan\\hapilocal\\hapi\\ca\\uhn\\hl7v2\\conf\\parser\\example_ack.xml");
 			File f = new File(args[0]);
+			@SuppressWarnings("resource")
 			BufferedReader in = new BufferedReader(new FileReader(f));
 			char[] cbuf = new char[(int) f.length()];
 			in.read(cbuf, 0, (int) f.length());

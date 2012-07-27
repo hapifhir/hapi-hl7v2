@@ -287,20 +287,6 @@ public class MessageNavigator {
     }
     
     /**
-     * Drills down recursively until a segment is reached.
-     */
-    private void findLeaf() throws HL7Exception {
-        if (this.currentChild == -1)
-            this.currentChild = 0;
-        
-        Class c = this.currentGroup.getClass(this.childNames[this.currentChild]);
-        if (Group.class.isAssignableFrom(c)) {
-            drillDown(this.currentChild, 0);
-            findLeaf();
-        }
-    }
-    
-    /**
      * A structure to hold current location information at
      * one level of the message tree.  A stack of these
      * identifies the current location completely.
