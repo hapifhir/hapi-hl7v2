@@ -51,7 +51,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 
 	private String directory = Home.getHomeDirectory().getAbsolutePath();
 	private String fileName = "id_file";
-	private boolean neverFail = true;
+	private boolean neverFail = false;
 
 	private final ReentrantLock lock = new ReentrantLock();
 

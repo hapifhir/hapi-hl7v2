@@ -21,7 +21,7 @@ import org.junit.Test;
 public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Ordered> {
 
 	private static final int THREADS = 10;
-	private static final int ITERATIONS = 1000;
+	private static final int ITERATIONS = 100;
 	
 	@Test
 	public void testGenerator() throws IOException {

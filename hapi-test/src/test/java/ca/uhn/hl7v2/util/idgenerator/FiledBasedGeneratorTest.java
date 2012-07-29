@@ -16,16 +16,16 @@ public class FiledBasedGeneratorTest extends AbstractContinuousGeneratorTest<Fil
 	@Test(expected=IOException.class)
 	public void testFailedFile() throws IOException {
 		FileBasedGenerator gen = getGenerator();
-		gen.setDirectory("YZ:?)§(%/ß46+++");
-		gen.setFileName("()/§$*'%:;+++");
+		gen.setDirectory("::::?::::");
+		gen.setFileName("::::?::::");
 		gen.getID();
 	}
 
 	@Test
 	public void testFailedFileIgnored() throws IOException {
 		FileBasedGenerator gen = getGenerator();
-		gen.setDirectory("YZ:?)§(%/ß46+++");
-		gen.setFileName("()/§$*'%:;+++");
+		gen.setDirectory("::::?::::");
+		gen.setFileName("::::?::::");
 		gen.setNeverFail(true);
 		assertEquals("0", gen.getID());
 		assertEquals("1", gen.getID());
