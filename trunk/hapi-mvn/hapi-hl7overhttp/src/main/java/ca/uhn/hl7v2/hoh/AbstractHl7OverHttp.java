@@ -13,21 +13,22 @@ abstract class AbstractHl7OverHttp {
 
 	protected static final Charset ourDefaultCharset;
 
-	private Charset myCharset;
-
-	private byte[] myData;
-	private LinkedHashMap<String, String> myHeaders = new LinkedHashMap<String, String>();
-	private String myMessage;
-	private MessageMode myMode;
-	private String myPassword;
-	private ISigner mySigner;
-	private boolean myUsed;
-	private String myUsername;
-
 	static {
 		ourDefaultCharset = Charset.forName("ISO-8859-1");
+		VersionLogger.init();
 	}
+	
+	private Charset myCharset;
+	private boolean myCharsetExplicitlySet;
+	private byte[] myData;
+	private LinkedHashMap<String, String> myHeaders;
+	private String myMessage;
+	private String myPassword;
+	private ISigner mySigner;
+	private String myUri;
+	private boolean myUsed;
 
+	private String myUsername;
 
 	/**
 	 * Constructor
@@ -36,14 +37,12 @@ abstract class AbstractHl7OverHttp {
 		myCharset = ourDefaultCharset;
 	}
 
-
 	/**
 	 * @return the charset
 	 */
 	public Charset getCharset() {
 		return myCharset;
 	}
-
 
 	/**
 	 * @return the data
@@ -52,14 +51,12 @@ abstract class AbstractHl7OverHttp {
 		return myData;
 	}
 
-
 	/**
 	 * @return the headers
 	 */
 	public Map<String, String> getHeaders() {
 		return myHeaders;
 	}
-
 
 	/**
 	 * @return the message
@@ -70,20 +67,11 @@ abstract class AbstractHl7OverHttp {
 
 
 	/**
-	 * @return the mode
-	 */
-	public MessageMode getMode() {
-		return myMode;
-	}
-
-
-	/**
 	 * @return the password
 	 */
 	public String getPassword() {
 		return myPassword;
 	}
-
 
 	/**
 	 * @return the signer
@@ -92,6 +80,12 @@ abstract class AbstractHl7OverHttp {
 		return mySigner;
 	}
 
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return myUri;
+	}
 
 	/**
 	 * @return the username
@@ -100,32 +94,25 @@ abstract class AbstractHl7OverHttp {
 		return myUsername;
 	}
 
-
-	protected boolean isXml() {
-		for (int i = 0; i < myMessage.length(); i++) {
-			char nextChar = myMessage.charAt(i);
-			if (Character.isLetter(nextChar)) {
-				return false;
-			}
-			if (Character.isWhitespace(nextChar)) {
-				continue;
-			}
-			if (nextChar == '<') {
-				return true;
-			}
-		}
-		return false;
+	/**
+	 * @return Returns <code>true</code> if the charset was explicitly set using
+	 *         {@link #setCharset(Charset)}
+	 */
+	public boolean isCharsetExplicitlySet() {
+		return myCharsetExplicitlySet;
 	}
-
 
 	/**
 	 * @param theCharset
-	 *            The encoding charset to use (default is UTF-8)
+	 *            The encoding charset to use (default is ISO-8859-1)
 	 */
 	public void setCharset(Charset theCharset) {
+		if (theCharset == null) {
+			throw new NullPointerException("Charset can not be null");
+		}
+		myCharsetExplicitlySet = true;
 		myCharset = theCharset;
 	}
-
 
 	/**
 	 * @param theData
@@ -135,7 +122,6 @@ abstract class AbstractHl7OverHttp {
 		myData = theData;
 	}
 
-
 	/**
 	 * @param theHeaders
 	 *            the headers to set
@@ -143,7 +129,6 @@ abstract class AbstractHl7OverHttp {
 	public void setHeaders(LinkedHashMap<String, String> theHeaders) {
 		myHeaders = theHeaders;
 	}
-
 
 	/**
 	 * @param theMessage
@@ -153,17 +138,6 @@ abstract class AbstractHl7OverHttp {
 		myMessage = theMessage;
 	}
 
-
-	/**
-	 * @param theMode
-	 *            Is this encoder being used to encode a request or a response
-	 *            to a request
-	 */
-	public void setMode(MessageMode theMode) {
-		myMode = theMode;
-	}
-
-
 	/**
 	 * @param thePassword
 	 *            The authorization password
@@ -171,7 +145,6 @@ abstract class AbstractHl7OverHttp {
 	public void setPassword(String thePassword) {
 		myPassword = thePassword;
 	}
-
 
 	/**
 	 * Optionally may be used to provide a signer implementation which signs HL7
@@ -184,6 +157,13 @@ abstract class AbstractHl7OverHttp {
 		mySigner = theSigner;
 	}
 
+	/**
+	 * @param theUri
+	 *            the uri to set
+	 */
+	public void setUri(String theUri) {
+		myUri = theUri;
+	}
 
 	/**
 	 * @param theUsername
@@ -198,12 +178,18 @@ abstract class AbstractHl7OverHttp {
 		myUsername = theUsername;
 	}
 
-
 	protected void verifyNotUsed() {
 		if (myUsed) {
 			throw new IllegalStateException(getClass().getSimpleName() + " may not be reused");
 		}
 		myUsed = true;
+	}
+
+	/**
+	 * @return Returns the ISO-8859-1 charset
+	 */
+	public static Charset getDefaultCharset() {
+		return ourDefaultCharset;
 	}
 
 }

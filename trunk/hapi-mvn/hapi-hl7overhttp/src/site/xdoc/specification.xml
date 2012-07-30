@@ -10,6 +10,15 @@
 
 		<section name="Specification">
 
+		    <p style="margin-left: 20px; margin-right: 20px; background: #FFC0C0; border: #C0A0A0 dashed 1px; padding: 20px;">
+		        This document is a DRAFT for comments. Please submit comments in
+		        one of the following ways:
+		        <br/>
+		        Post on the <a href="http://hl7api.sourceforge.net/mail-lists.html">HAPI Mailing List</a>
+		        <br/>		        
+		        Send an email to <a href="mailto:jamesagnew@users.sourceforge.net">jamesagnew@users.sourceforge.net</a>
+		    </p>
+		    
 			<p>
 				HL7 over HTTP is an initiative to provide a standardized
 				transport mechanism to send HL7 v2 messages over a network
@@ -68,7 +77,9 @@
 		<section name="1.0 - Basic Profile">
 
 			<p>
-				HL7 over HTTP uses the standard HTTP 1.1 protocol as a mechanism to transfer
+				HL7 over HTTP uses the standard HTTP/1.1 protocol 
+				(<a href="http://www.ietf.org/rfc/rfc2616.txt">RFC 2616</a>)
+				as a mechanism to transfer
 				a raw HL7 message using either ER7 or XML encoding to a destination, and then
 				to receive a response to that message. A standard interaction is shown below.  
 			</p>
@@ -129,7 +140,52 @@
 				</p>
 				<source>Content-Length: 2553</source>  
 
-				<h4>Content Type and Character Set</h4>
+				<h4>Authorization</h4>
+				
+				<p>
+				    <b>Request messages</b> SHOULD include an Authorization header which
+				    contains credentials which are shared between the sending and receiving
+				    system.
+				</p>
+				<p>
+				    The HL7 over HTTP specification allows only the use of HTTP Basic Authentication,
+				    as it has been shown that HTTP Digest Authentication does not add further security
+				    due to a reliance on insecure MD5 hashing and adds complexity to implementation.
+				    Also note if it is being used, authorization MUST be transmitted in every 
+				    request message. <b>Sending applications</b> are not required to automatically retry
+				    a message on receipt of a response with status code <code>401 Not Authorized</code>.
+				</p>
+				<p>
+				    The following example shows an Authorization block containing the username
+				    "hello" and the password "world". As described in the HTTP/1.1 specification,
+				    the resulting string consists of the string "hello:world" with a Base64 encoding
+				    applied to it:
+				</p>
+				<source>Authorization: Basic aGVsbG86d29ybGQ=</source> 
+				
+				<h4>Host</h4>
+				<p>
+				    As required by the HTTP/1.1 specification, <b>Request Messages</b>
+				    MUST include a Host header, which specifies the host name and
+				    port being identified.  
+				</p>
+				<source>Host: somehost.company.ca:19000</source> 
+								
+				<h4>Transfer-Encoding</h4>
+				<p>
+				    <b>Receiving applications</b> MUST be capable of decoding content which
+				    has been encoded with "chunked" transfer encoding. Although this style is
+				    not generally useful for transactional messages such as HL7, intermediate
+				    devices and third party libraries may introduce this style unexpectedly.      
+				</p>
+				<p>
+				    <b>Sending applications</b> MAY choose to send data using chunked encoding.
+				</p>
+				<source>Transfer-Encoding: chunked</source> 
+				
+			</subsection>
+
+			<subsection name="1.2 Content Type and Character Set">
 				
 				<p>
 					The <b>request message</b> and the <b>response message</b> SHALL include a
@@ -154,6 +210,11 @@
 							<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
 						</li>
 					</ul>
+				</p>
+				
+				<h4>Character Set</h4>
+				
+				<p>
 					In addition, both the <b>request message</b> and the <b>response message</b> SHALL
 					include a charset definition which indicates which character encoding is being used
 					for the message body. Note that the HL7 specification allows the character set to be
@@ -166,35 +227,29 @@
 					An example follows which shows an ER7 encoded message being
 					transmitted using a character encoding of ISO-8859-4.
 				</p>
-				<source>Content-Type: application/hl7-v2; charset=ISO-8859-4</source>  
-			
-				<h4>Authorization</h4>
+				<source>Content-Type: application/hl7-v2; charset=ISO-8859-4</source>
+				
+				<h4>Response Character Set</h4>
 				
 				<p>
-				    <b>Request messages</b> SHOULD include an Authorization header which
-				    contains credentials which are shared between the sending and receiving
-				    system.
+				    If the <b>request message</b> contains an explicit charset definition,
+				    the <b>Receiving Application</b> SHOULD attempt to use the same
+				    charset in the <b>response message</b>.
 				</p>
-				<p>
-				    The HL7 over HTTP specification allows only the use of HTTP Basic Authentication,
-				    as it has been shown that HTTP Digest Authentication does not add further security
-				    due to a reliance on insecure MD5 hashing and adds complexity to implementation.
-				    Also note if it is being used, authorization MUST be transmitted in every 
-				    request message. <b>Sending applications</b> are not required to automatically retry
-				    a message on receipt of a response with status code <code>401 Not Authorized</code>.
-				</p>
-				<p>
-				    The following example shows an Authorization block containing the username
-				    "hello" and the password "world". As described in the HTTP 1.1 specification,
-				    the resulting string consists of the string "hello:world" with a Base64 encoding
-				    applied to it:
-				</p>
-				<source>Authorization: Basic aGVsbG86d29ybGQ=</source> 
 				
+				<!--
+				Is this worth doing? Probably not, since the request message is
+				usually where most of the contents are....
+				 
+				<p>
+				    The <b>request message</b> MAY include the <code>Accept-Charset</code>
+				    header to indicate a preferred charset to be used by the response.
+				</p>
+				 -->
 				
 			</subsection>
-
-			<subsection name="1.2 Error Conditions">
+									
+			<subsection name="1.3 Error Conditions">
 			    
 			    <p>
 			        Under normal conditions, a sending application will transmit a message
@@ -259,7 +314,7 @@
 
 			</subsection>
 
-			<subsection name="1.3 Encryption">
+			<subsection name="1.4 Encryption">
 			
 				<p>
 					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
@@ -278,7 +333,7 @@
 					
 			</subsection>
 
-			<subsection name="1.4 Compression">
+			<subsection name="1.5 Compression">
 			
 				<p>
 					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
@@ -292,7 +347,7 @@
 					
 			</subsection>
 			
-			<subsection name="1.5 Persistent Connection">
+			<subsection name="1.6 Persistent Connection">
 			
 				<p>
 					<b>Sending applications</b> MAY use a persistent connection as defined in the 
@@ -305,7 +360,7 @@
 					
 			</subsection>
 
-			<subsection name="1.6 Support for Other Parts of HTTP/1.1">
+			<subsection name="1.7 Support for Other Parts of HTTP/1.1">
 				
 				<p>
 					Implementations are NOT REQUIRED to support any feature of the HTTP/1.1 specification
