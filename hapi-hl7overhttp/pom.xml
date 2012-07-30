@@ -25,6 +25,15 @@
 			<version>${hapi.version}</version>
 			<optional>true</optional>
 		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>${hapi.version}</version>
+			<classifier>sources</classifier>
+			<optional>true</optional>
+		</dependency>
+		-->
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v25</artifactId>
@@ -58,12 +67,12 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.6</version>
 		</dependency>
-		<!--<dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcprov-jdk15</artifactId> <version>1.46</version> <optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> 
-			<artifactId>bcprov-jdk15</artifactId> <version>1.46</version> <optional>true</optional> <classifier>sources</classifier> </dependency> <dependency> <groupId>org.bouncycastle</groupId> 
-			<artifactId>bcpkix-jdk15on</artifactId> <version>1.46</version> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcpkix-jdk15on</artifactId> <version>1.46</version> 
-			<classifier>sources</classifier> <optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcmail-jdk15</artifactId> <version>1.46</version> 
-			<optional>true</optional> </dependency> <dependency> <groupId>org.bouncycastle</groupId> <artifactId>bcmail-jdk15</artifactId> <version>1.46</version> <classifier>sources</classifier> 
-			<optional>true</optional> </dependency> -->
+		<dependency>
+		    <groupId>org.mortbay.jetty</groupId>
+		    <artifactId>jetty-embedded</artifactId>
+		    <version>6.1.26</version>
+		    <optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -76,5 +85,18 @@
 		<outputDirectory>${project.basedir}/../target/site/hapi-hl7overhttp</outputDirectory>
 	</reporting>
 
+	<build>
+	    <resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/binresources</directory>
+				<filtering>false</filtering>
+			</resource>
+	    </resources>
+	</build>
+	
 	<inceptionYear>2012</inceptionYear>
 </project>

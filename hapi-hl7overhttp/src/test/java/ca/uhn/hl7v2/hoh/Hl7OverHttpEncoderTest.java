@@ -24,11 +24,10 @@ public class Hl7OverHttpEncoderTest {
 		String message = "MSH|^~\\&|||||200803051508||ACK^A31|33|P|2.5\r"
 				+ "MSA|AR|2\r";
 
-		Hl7OverHttpEncoder enc = new Hl7OverHttpEncoder();
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setCharset(Charset.forName("ISO-8859-1"));
 		enc.setUsername("hello");
 		enc.setPassword("world");
-		enc.setMode(MessageMode.REQUEST);
 		enc.setSigner(mySigner);
 		enc.setMessage(message);
 		enc.encode();
@@ -47,11 +46,10 @@ public class Hl7OverHttpEncoderTest {
 				+ "EVN||200803051509\r"
 				+ "PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r";
 
-		Hl7OverHttpEncoder enc = new Hl7OverHttpEncoder();
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setCharset(Charset.forName("ISO-8859-1"));
 		enc.setUsername("hello");
 		enc.setPassword("world");
-		enc.setMode(MessageMode.REQUEST);
 		enc.setSigner(mySigner);
 		enc.setMessage(message);
 		enc.encode();
