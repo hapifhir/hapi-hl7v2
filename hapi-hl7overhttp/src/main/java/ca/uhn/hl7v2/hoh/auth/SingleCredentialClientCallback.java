@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.hoh.auth;
 
+import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
+
 
 /**
  * Authorization Callback which validates a single username and password

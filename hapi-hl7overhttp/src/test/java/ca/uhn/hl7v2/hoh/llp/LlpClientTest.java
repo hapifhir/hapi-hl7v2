@@ -18,11 +18,11 @@ import org.junit.Test;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.Initiator;
-import ca.uhn.hl7v2.hoh.AbstractHl7OverHttpDecoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpRequestDecoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpResponseEncoder;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
+import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpDecoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseEncoder;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 import ca.uhn.hl7v2.hoh.util.IOUtils;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
@@ -156,7 +156,7 @@ public class LlpClientTest {
 						byte[] bis = IOUtils.readInputStreamIntoByteArraWhileDataAvailable(is);
 						ourLog.info("Received input:\n" + new String(bis, HTTPUtils.DEFAULT_CHARSET));
 
-						AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
+						Hl7OverHttpRequestDecoder d = new Hl7OverHttpRequestDecoder();
 						d.setAuthorizationCallback(ourServerCallback);
 						d.readHeadersAndContentsFromInputStreamAndDecode(new ByteArrayInputStream(bis));
 						ourMessage = d.getMessage();

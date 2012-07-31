@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import ca.uhn.hl7v2.hoh.AbstractHl7OverHttpEncoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpRequestEncoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpResponseEncoder;
+import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpEncoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseEncoder;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
