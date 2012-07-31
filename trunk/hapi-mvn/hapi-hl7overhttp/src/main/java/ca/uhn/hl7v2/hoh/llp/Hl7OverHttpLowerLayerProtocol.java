@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import ca.uhn.hl7v2.app.TwoPortService;
-import ca.uhn.hl7v2.hoh.auth.IAuthorizationClientCallback;
-import ca.uhn.hl7v2.hoh.auth.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
+import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.HL7Writer;

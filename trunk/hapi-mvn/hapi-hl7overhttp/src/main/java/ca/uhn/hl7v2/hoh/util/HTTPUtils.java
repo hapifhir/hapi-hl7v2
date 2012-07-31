@@ -8,7 +8,6 @@ import javax.servlet.ServletOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 
-import ca.uhn.hl7v2.hoh.VersionLogger;
 
 public class HTTPUtils {
 

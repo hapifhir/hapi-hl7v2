@@ -3,12 +3,12 @@ package ca.uhn.hl7v2.hoh.llp;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ca.uhn.hl7v2.hoh.DecodeException;
-import ca.uhn.hl7v2.hoh.AbstractHl7OverHttpDecoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpRequestDecoder;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpResponseDecoder;
-import ca.uhn.hl7v2.hoh.NoMessageReceivedException;
-import ca.uhn.hl7v2.hoh.auth.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpDecoder;
+import ca.uhn.hl7v2.hoh.encoder.DecodeException;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseDecoder;
+import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.HL7Reader;

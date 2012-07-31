@@ -22,7 +22,7 @@ import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.hoh.Hl7OverHttpRequestEncoder;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.model.Message;
