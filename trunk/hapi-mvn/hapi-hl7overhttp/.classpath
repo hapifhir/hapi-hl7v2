@@ -24,13 +24,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar" sourcepath="M2_REPO/junit/junit/4.9/junit-4.9-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/junit/junit/4.9/junit-4.9-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty/6.1.26/jetty-6.1.26.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-embedded/6.1.26/jetty-embedded-6.1.26.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar"/>

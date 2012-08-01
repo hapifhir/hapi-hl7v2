@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 
 public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {

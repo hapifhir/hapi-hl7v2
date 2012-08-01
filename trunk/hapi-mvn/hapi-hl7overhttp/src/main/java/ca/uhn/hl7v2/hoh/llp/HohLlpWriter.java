@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpEncoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseEncoder;
@@ -81,7 +82,11 @@ class HohLlpWriter implements HL7Writer {
 
 		e.setUri(myProtocol.getUriPath());
 		DataOutputStream dos = new DataOutputStream(myOutputStream);
-		e.encodeToOutputStream(dos);
+		try {
+			e.encodeToOutputStream(dos);
+		} catch (EncodeException e1) {
+			throw new LLPException("Failed to encode message", e1);
+		}
 
 		dos.flush();
 

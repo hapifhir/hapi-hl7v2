@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.util.GZipUtils;
 
 public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {

@@ -10,11 +10,12 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang.StringUtils;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
+import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.api.MessageMetadataKeys;
-import ca.uhn.hl7v2.hoh.encoder.DecodeException;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseDecoder;
 import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;
@@ -100,8 +101,11 @@ public abstract class AbstractRawClient {
 	 *             are thrown as DecodeException
 	 * @throws IOException
 	 *             If the client is unable to connect to the remote host
+	 * @throws EncodeException
+	 *             If a failure occurs while encoding the message into a
+	 *             sendable HTTP request
 	 */
-	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException {
+	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
 
 		Socket socket = provideSocket();
 		try {
@@ -133,7 +137,7 @@ public abstract class AbstractRawClient {
 	 */
 	protected abstract void returnSocket(Socket theSocket);
 
-	private IReceivable<String> doSendAndReceive(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException {
+	private IReceivable<String> doSendAndReceive(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setUri(myUri);
 		enc.setHost(myHost);

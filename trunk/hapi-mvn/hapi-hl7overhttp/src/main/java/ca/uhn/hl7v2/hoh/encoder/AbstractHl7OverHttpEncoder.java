@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.ISendable;
+import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 
 
@@ -40,9 +42,10 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 
 
 	/**
+	 * @throws EncodeException 
 	 * 
 	 */
-	public void encode() {
+	public void encode() throws EncodeException {
 		verifyNotUsed();
 		
 		if (isBlank(getMessage())) {
@@ -72,7 +75,11 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		}
 
 		if (getSigner() != null) {
-			getHeaders().put("HL7-Signature", getSigner().sign(getData()));
+			try {
+				getHeaders().put("HL7-Signature", getSigner().sign(getData()));
+			} catch (SignatureFailureException e) {
+				throw new EncodeException(e);
+			}
 		}
 	}
 
@@ -107,7 +114,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 	}
 
 
-	public void encodeToOutputStream(OutputStream theOutputStream) throws IOException {
+	public void encodeToOutputStream(OutputStream theOutputStream) throws IOException, EncodeException {
 		encode();
 
 		ourLog.debug("Writing HTTP action: {}", getActionLine());
