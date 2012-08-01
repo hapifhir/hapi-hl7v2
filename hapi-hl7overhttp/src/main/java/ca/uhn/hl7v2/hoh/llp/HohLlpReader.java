@@ -3,9 +3,9 @@ package ca.uhn.hl7v2.hoh.llp;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpDecoder;
-import ca.uhn.hl7v2.hoh.encoder.DecodeException;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseDecoder;
 import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;

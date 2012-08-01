@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.api.IMessageHandler;
 import ca.uhn.hl7v2.hoh.api.IResponseSendable;
 import ca.uhn.hl7v2.hoh.api.MessageMetadataKeys;
 import ca.uhn.hl7v2.hoh.api.MessageProcessingException;
 import ca.uhn.hl7v2.hoh.encoder.AuthorizationFailureException;
-import ca.uhn.hl7v2.hoh.encoder.DecodeException;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
 import ca.uhn.hl7v2.hoh.raw.api.RawReceivable;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;

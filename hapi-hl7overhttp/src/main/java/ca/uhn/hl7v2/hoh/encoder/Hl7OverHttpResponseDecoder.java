@@ -5,6 +5,8 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
+
 public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 
 	@Override

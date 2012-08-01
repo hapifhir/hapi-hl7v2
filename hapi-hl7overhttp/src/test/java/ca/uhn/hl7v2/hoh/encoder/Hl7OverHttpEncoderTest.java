@@ -12,15 +12,17 @@ import java.util.Map.Entry;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
 import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
+import ca.uhn.hl7v2.hoh.sign.StandardMessageSignerTest;
 
 public class Hl7OverHttpEncoderTest {
 
 	private static StandardMessageSigner mySigner;
 	
 	@Test
-	public void testAck() {
+	public void testAck() throws EncodeException {
 		
 		String message = "MSH|^~\\&|||||200803051508||ACK^A31|33|P|2.5\r"
 				+ "MSA|AR|2\r";
@@ -41,7 +43,7 @@ public class Hl7OverHttpEncoderTest {
 
 	
 	@Test
-	public void testEncode() {
+	public void testEncode() throws EncodeException {
 		
 		String message = "MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r"
 				+ "EVN||200803051509\r"

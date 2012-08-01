@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.hoh.encoder;
+package ca.uhn.hl7v2.hoh.api;
 
 
 public class DecodeException extends Exception {

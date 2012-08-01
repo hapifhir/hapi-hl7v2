@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.hoh.encoder;
+package ca.uhn.hl7v2.hoh.sign;
 
 import static org.junit.Assert.*;
 
@@ -8,41 +8,50 @@ import java.security.KeyStore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.hoh.sign.MessageDoesNotVerifyException;
-import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
+import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
 
-public class StandardMessageSignerTest {
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(StandardMessageSignerTest.class);
+public class BouncyCastleCmsMessageSignerTest {
+	
+	private static final String HELLO_WORLD = "HELLO WORLD!!!!!aa";
+	
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BouncyCastleCmsMessageSignerTest.class);
 
 	@Test
 	public void testEncode() throws Exception {
 
 		KeyStore keyStore = KeyStore.getInstance("JKS");
-		InputStream ksStream = StandardMessageSignerTest.class.getResourceAsStream("/keystore.jks");
+		InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");
 		keyStore.load(ksStream, "changeit".toCharArray());
 
-		StandardMessageSigner signer = new StandardMessageSigner();
+		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
 		signer.setKeyStore(keyStore);
 		signer.setKeyAlias("testcert");
 		signer.setAliasPassword("changeit");
-		String signed = signer.sign("HELLO WORLD!".getBytes("US-ASCII"));
+		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
 
 		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
 
 		// Now verify
 
 		KeyStore trustStore = KeyStore.getInstance("JKS");
-		InputStream trustStream = StandardMessageSignerTest.class.getResourceAsStream("/truststore.jks");
+		InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");
 		trustStore.load(trustStream, "changeit".toCharArray());
 
-		signer = new StandardMessageSigner();
+		signer = new BouncyCastleCmsMessageSigner();
 		signer.setKeyStore(trustStore);
 		signer.setKeyAlias("testcert");
 		signer.setAliasPassword("changeit");
-		signer.verify("HELLO WORLD!".getBytes("US-ASCII"), signed);
+		signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
 
+		StandardMessageSigner signer2 = new StandardMessageSigner();
+		signer2.setKeyStore(trustStore);
+		signer2.setKeyAlias("testcert");
+		signer2.setAliasPassword("changeit");
+		signer2.verify(HELLO_WORLD.getBytes("US-ASCII"), "SHA512withRSA " + signed);
+		
 		// Now verify that non-matching fails
 
-		signer = new StandardMessageSigner();
+		signer = new BouncyCastleCmsMessageSigner();
 		signer.setKeyStore(trustStore);
 		signer.setKeyAlias("testcert");
 		signer.setAliasPassword("changeit");
@@ -54,7 +63,7 @@ public class StandardMessageSignerTest {
 
 		}
 
-		signer = new StandardMessageSigner();
+		signer = new BouncyCastleCmsMessageSigner();
 		signer.setKeyStore(trustStore);
 		signer.setKeyAlias("testcert");
 		signer.setAliasPassword("changeit");
@@ -69,9 +78,9 @@ public class StandardMessageSignerTest {
 			default:
 				signed = signed.substring(0, 20) + "q" + signed.substring(21, signed.length());
 			}
-			signer.verify("HELLO WORLD!".getBytes("US-ASCII"), signed);
+			signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
 			fail();
-		} catch (MessageDoesNotVerifyException e) {
+		} catch (SignatureFailureException e) {
 
 		}
 	}
