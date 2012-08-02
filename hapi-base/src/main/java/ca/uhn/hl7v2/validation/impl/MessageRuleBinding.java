@@ -31,9 +31,11 @@ import ca.uhn.hl7v2.validation.MessageRule;
 
 /**
  * A <code>RuleBinding</code> that applies to <code>MessageRule</code>s. 
- * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
+ * <p>
+ * In general there is no need to use this class directly. Instead use the
+ * Validation builder classes to generate rules and rule bindings.
+ *  
+ * @author Bryan Tripp<
  */
 @SuppressWarnings("serial")
 public class MessageRuleBinding extends RuleBinding<MessageRule> {

@@ -30,6 +30,9 @@ import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 /**
  * A <code>RuleBinding</code> that applies to <code>PrimitiveTypeRule</code>s.
  * You can as well just use <code>RuleBinding&lt;PrimitiveTypeRule&gt;</code>.
+ * <p>
+ * In general there is no need to use this class directly. Instead use the
+ * Validation builder classes to generate rules and rule bindings.
  * 
  * @author Christian Ohr
  * 

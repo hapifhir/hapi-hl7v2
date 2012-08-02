@@ -26,67 +26,25 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.impl.builder.support.DefaultValidationWithoutTNBuilder;
+import ca.uhn.hl7v2.validation.impl.builder.support.NoValidationBuilder;
 
 /**
  * A <code>ValidationContext</code> with a default set of rules initially
  * defined. This can be used as-is for a reasonable level of primitive type
  * validation.
+ * <p>
+ * Subclassing this class is discouraged. You should instead subclass
+ * {@link NoValidationBuilder} and use this to instantiate an instance of
+ * {@link ValidationContextImpl}.
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public class DefaultValidationWithoutTN extends ValidationContextImpl {
 
 	public DefaultValidationWithoutTN() {
-		super();
-
-		PrimitiveTypeRule trim = new TrimLeadingWhitespace();
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "FT", trim));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "ST", trim));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "TX", trim));
-
-		PrimitiveTypeRule size200 = new SizeRule(200);
-		PrimitiveTypeRule size32000 = new SizeRule(32000);
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "FT", size32000));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "ID", size200));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "IS", size200));
-
-		PrimitiveTypeRule nonNegativeInteger = new RegexPrimitiveRule("\\d*", "");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "SI", nonNegativeInteger));
-
-		PrimitiveTypeRule number = new RegexPrimitiveRule("(\\+|\\-)?\\d*\\.?\\d*", "");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NM", number));
-
-		String datePattern = "(\\d{4}([01]\\d(\\d{2})?)?)?"; // YYYY[MM[DD]]
-		PrimitiveTypeRule date = new RegexPrimitiveRule(datePattern, "Version 2.5 Section 2.A.21");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "DT", date));
-
-		String timePattern // HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]
-		= "([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
-		PrimitiveTypeRule time = new RegexPrimitiveRule(timePattern, "Version 2.5 Section 2.A.75");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "TM", time));
-
-		String datetimePattern // YYYY[MM[DD[HHMM[SS[.S[S[S[S]]]]]]]][+/-ZZZZ]
-		= "(\\d{4}([01]\\d(\\d{2}([012]\\d[0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
-		PrimitiveTypeRule datetime = new RegexPrimitiveRule(datetimePattern, "Version 2.4 Section 2.9.47");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.2", "TSComponentOne", datetime));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.3", "TSComponentOne", datetime));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.3.1", "TSComponentOne", datetime));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.4", "TSComponentOne", datetime));
-
-		String datetimePattern25 // YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ]
-		= "(\\d{4}([01]\\d(\\d{2}([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?";
-		PrimitiveTypeRule datetime25 = new RegexPrimitiveRule(datetimePattern25, "Version 2.5 Section 2.A.22");
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "TSComponentOne", datetime25));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "DTM", datetime25));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5.1", "TSComponentOne", datetime25));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5.1", "DTM", datetime25));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.6", "TSComponentOne", datetime25));
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.6", "DTM", datetime25));
-		
-		// NULLDT shouldn't have a value
-		getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NULLDT", new WithdrawnDatatypeRule()));
+		super(new DefaultValidationWithoutTNBuilder());
 	}
 }

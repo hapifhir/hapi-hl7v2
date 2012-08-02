@@ -22,29 +22,30 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
-
+import ca.uhn.hl7v2.validation.impl.builder.support.NoValidationBuilder;
 
 /**
- * A <code>ValidationContext</code> with no validation initially defined.  This 
- * can be used as-is for fast message processing.  Although no validation is 
- * performed per se, a <code>TrimLeadingWhitespace</code> rule is bound to types 
- * FT, ST, and TX.    
+ * A <code>ValidationContext</code> with no validation initially defined. This
+ * can be used as-is for fast message processing. Although no validation is
+ * performed per se, a <code>TrimLeadingWhitespace</code> rule is bound to types
+ * FT, ST, and TX.
+ * <p>
+ * Subclassing this class is discouraged. You should instead subclass
+ * {@link NoValidationBuilder} and use this to instantiate an instance of
+ * {@link ValidationContextImpl}.
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class NoValidation extends ValidationContextImpl {   
-	
-    public NoValidation() {
-    	PrimitiveTypeRule trim = new TrimLeadingWhitespace();
-    	getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "FT", trim));
-    	getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "ST", trim));
-    	getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "TX", trim));                 
-    }
+public class NoValidation extends ValidationContextImpl {
+
+	public NoValidation() {
+		super(new NoValidationBuilder());
+
+	}
 }

@@ -28,12 +28,15 @@ package ca.uhn.hl7v2.validation.impl;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.impl.builder.PrimitiveRuleBuilder;
 
 /**
  * Performs no validation but removes leading whitespace in the correct() method.
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr
+ *  
+ * @deprecated use {@link PrimitiveRuleBuilder#trimmedType()} methods instead
  */
 @SuppressWarnings("serial")
 public class TrimLeadingWhitespace implements PrimitiveTypeRule {

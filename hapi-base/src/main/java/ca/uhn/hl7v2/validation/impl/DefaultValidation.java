@@ -22,28 +22,28 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
-
+import ca.uhn.hl7v2.validation.impl.builder.support.DefaultValidationBuilder;
+import ca.uhn.hl7v2.validation.impl.builder.support.NoValidationBuilder;
 
 /**
- * A <code>ValidationContext</code> with a default set of rules initially defined.
- * This can be used as-is for a reasonable level of primitive type validation.   
- *  
+ * A <code>ValidationContext</code> with a default set of rules initially
+ * defined. This can be used as-is for a reasonable level of primitive type
+ * validation.
+ * <p>
+ * Subclassing this class is discouraged. You should instead subclass
+ * {@link NoValidationBuilder} and use this to instantiate an instance of
+ * {@link ValidationContextImpl}.
+ * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class DefaultValidation extends DefaultValidationWithoutTN {
-	
-    public DefaultValidation() {
-        super();
-        PrimitiveTypeRule telephoneNumber 
-            = new RegexPrimitiveRule("(\\d{1,2} )?(\\(\\d{3}\\))?\\d{3}-\\d{4}(X\\d{1,5})?(B\\d{1,5})?(C.*)?", 
-                "Version 2.4 Section 2.9.45");
-        getPrimitiveRuleBindings().add(new PrimitiveTypeRuleBinding("*", "TN", telephoneNumber)); 
-        
-    }
+public class DefaultValidation extends ValidationContextImpl {
+
+	public DefaultValidation() {
+		super(new DefaultValidationBuilder());
+	}
 }

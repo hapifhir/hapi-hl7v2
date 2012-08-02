@@ -25,6 +25,9 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum Version {
 
 	V21("2.1"),
@@ -79,5 +82,27 @@ public enum Version {
 		return versions[versions.length - 1];
 	}
 	
-	
+	public static Version[] asOf(Version v) {
+		List<Version> versions = new ArrayList<Version>();
+		for (Version version : Version.values()) {
+			if (version.compareTo(v) >= 0) versions.add(version);
+		}
+		return versions.toArray(new Version[versions.size()]);
+	}
+
+	public static Version[] except(Version v) {
+		List<Version> versions = new ArrayList<Version>();
+		for (Version version : Version.values()) {
+			if (version.compareTo(v) != 0) versions.add(version);
+		}
+		return versions.toArray(new Version[versions.size()]);
+	}	
+
+	public static Version[] before(Version v) {
+		List<Version> versions = new ArrayList<Version>();
+		for (Version version : Version.values()) {
+			if (version.compareTo(v) < 0) versions.add(version);
+		}
+		return versions.toArray(new Version[versions.size()]);
+	}	
 }
