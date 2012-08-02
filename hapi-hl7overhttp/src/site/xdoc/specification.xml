@@ -314,26 +314,7 @@
 
 			</subsection>
 
-			<subsection name="1.4 Encryption">
-			
-				<p>
-					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
-					SHOULD support the ability to communicate
-					using Transport Layer Security (TLS). Transport Layer Security provides end-to-end encryption,
-					and is the successor to Secure Socket Layer (SSL).
-				</p>
-				<p>
-					In many cases, it is appropriate to use a self-signed certificate for system-to-system HL7
-					communication. For this reason,
-					<b>receiving application</b> implementors are recommended to provide support and/or guidance 
-					for generating and using self-signed certificates, and  
-					<b>sending application</b> implementors are recommended 
-					to provide support for importing them.     
-				</p> 
-					
-			</subsection>
-
-			<subsection name="1.5 Compression">
+			<subsection name="1.4 Compression">
 			
 				<p>
 					<b>Sending applications</b> and <b>receiving applications</b> implementing this specification 
@@ -347,7 +328,7 @@
 					
 			</subsection>
 			
-			<subsection name="1.6 Persistent Connection">
+			<subsection name="1.5 Persistent Connection">
 			
 				<p>
 					<b>Sending applications</b> MAY use a persistent connection as defined in the 
@@ -360,7 +341,7 @@
 					
 			</subsection>
 
-			<subsection name="1.7 Support for Other Parts of HTTP/1.1">
+			<subsection name="1.6 Support for Other Parts of HTTP/1.1">
 				
 				<p>
 					Implementations are NOT REQUIRED to support any feature of the HTTP/1.1 specification
@@ -372,8 +353,61 @@
 			</subsection>
 			
 		</section>
+
+		
+		<section name="2.0 - Security Profile"  style="clear: both;">
+
+			<subsection name="2.1 Algorithms">
 			
-		<section name="2.0 - Signature Profile"  style="clear: both;">
+				<p>
+					<b>Sending applications</b> and <b>receiving applications</b> implementing this profile 
+					MUST additionally support the ability to communicate using HTTPS, i.e.
+					using Transport Layer Security (TLS), version 1.0 
+					(RFC 2246, <a href="http://www.ietf.org/rfc/rfc2246.txt">http://www.ietf.org/rfc/rfc2246.txt</a>) or later. 
+					Transport Layer Security provides the possibility for end-to-end encryption and mutual authentication.
+				</p>
+				<p>
+					Security Profile includes all requirements of Basic Profile, except that HTTP Basic Authentication
+					can be omitted when TLS Mutual Authentication is being used.
+				</p>
+				<p>
+					The certificates used SHALL be X.509 certificates based on RSA key with
+					a key length in the range between 1024 and 4096. Supported cipher suites SHALL include
+					TLS_RSA_WITH_AES_128_CBC_SHA, other ciphers MAY be chosen based on site-specific policies.
+				</p>
+				
+			</subsection>
+
+			<subsection name="2.2 Mutual authentication">
+			
+				<p>
+					Sending and receiving applications implementing this profile SHOULD support mutual
+					authentication as specified in the TLS specification. Here, the client additionally presents a
+					X.509 client certificate to the server in order to authenticate its access. In this case,
+					HTTP Basic Authentication SHOULD NOT be used.
+				</p>
+				
+			</subsection>
+			
+			<subsection name="2.3 Self-signed certificates">
+			
+				<p>
+					In many cases, it is appropriate to use a self-signed certificate for system-to-system HL7
+					communication. For this reason,
+					<b>receiving application</b> implementors are recommended to provide support and/or guidance 
+					for generating and using self-signed certificates, and  <b>sending application</b> implementors are 
+					recommended to provide support for importing them.     
+				</p>
+				<p>
+					All further details about governance of issuing or revoking certificates are
+					out of scope for this specification.
+				</p>
+				
+			</subsection>
+					
+		</section>
+			
+		<section name="3.0 - Signature Profile"  style="clear: both;">
 
 		    <p>
 		        Signature Profile is an optional addition to the HL7 over HTTP specification
@@ -385,7 +419,8 @@
 		        has not been altered in any way during transit.
 		    </p>			    
 			<p>
-			    Signature Profile includes all requirements of Basic Profile. 
+			    Signature Profile includes all requirements of Basic Profile, and does not depend
+				on the Security profile as specified in section 2.
 			    To implement Signature Profile, <b>Request messages</b> and <b>response messages</b> 
 			    SHALL include an 
 			    HTTP header containing a cryptographic signature which is generated
