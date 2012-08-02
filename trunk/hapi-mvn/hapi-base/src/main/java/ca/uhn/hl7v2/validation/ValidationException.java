@@ -27,7 +27,8 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation;
 
 /**
- * A failure to validate against a rule.  
+ * A failure to validate against a rule.
+ *  
  * @author Bryan Tripp
  */
 @SuppressWarnings("serial")

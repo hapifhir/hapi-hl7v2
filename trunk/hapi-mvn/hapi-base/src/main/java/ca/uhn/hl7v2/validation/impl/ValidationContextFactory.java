@@ -22,68 +22,105 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.impl.builder.support.DefaultValidationBuilder;
+import ca.uhn.hl7v2.validation.impl.builder.support.NoValidationBuilder;
 
 /**
- * <p>Source of <code>ValidationContext</code>.  </p>
+ * <p>
+ * The <code>ValidationContext</code> returned by <code>getContext()</code> is
+ * determined by the system property "ca.uhn.hl7v2.validation.context_class".
+ * This factory defines two inner classes that can be used: DefaultValidation
+ * and NoValidation. You can also create your own context, setting whatever
+ * rules you want in its constructor, and reference it instead (it must have a
+ * zero-arg constructor). If this property is not set, DefaultValidation is
+ * used.
+ * </p>
  * 
- * <p>The <code>ValidationContext</code> returned by <code>getContext()</code>
- * is determined by the system property "ca.uhn.hl7v2.validation.context_class".
- * This factory defines two inner classes that can be used: DefaultValidation 
- * and NoValidation.  You can also create your own context, setting whatever rules
- * you want in its constructor, and reference it instead (it must have a zero-arg
- * constructor).  If this property is not set, DefaultValidation is used. </p>
+ * <p>
+ * Also note that the contexts provided here use
+ * <code>ValidationContextImpl</code>, so rule bindings can be added or removed
+ * programmatically from the starting set.
+ * </p>
  * 
- * <p>Also note that the contexts provided here extend <code>ValidationContextImpl</code>, 
- * so rule bindings can be added or removed programmatically from the starting set. </p>  
+ * @author Bryan Tripp
+ * @author Christian Ohr
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
 public class ValidationContextFactory {
 
-    private static ValidationContext ourContext;
-    
-    public static final String CONTEXT_PROPERTY = "ca.uhn.hl7v2.validation.context_class";
-    
-    private static final ValidationContext NO_VALIDATION = new NoValidation();
-    private static final ValidationContext DEFAULT_VALIDATION = new DefaultValidation();
-    
-    /**
-     * Returns a singleton <code>ValidationContext</code>, creating it if necessary.
-     * 
-     * @return <code>ValidationContext</code> 
-     */
+	private static ValidationContext ourContext;
+
+	public static final String CONTEXT_PROPERTY = "ca.uhn.hl7v2.validation.context_class";
+
+	/**
+	 * Returns a singleton <code>ValidationContext</code>, creating it if
+	 * necessary.
+	 * 
+	 * @return <code>ValidationContext</code>
+	 */
 	public synchronized static ValidationContext getContext() throws ValidationException {
-        if (ourContext == null) {
-            String contextClassName = System.getProperty(CONTEXT_PROPERTY);            
-            ourContext = contextClassName == null ? 
-            		defaultValidation() : 
-            		customValidation(contextClassName);
-        }
-        return ourContext;
-    }
-    
-    public static ValidationContext noValidation() {
-    	return NO_VALIDATION;
-    }
-    
-    public static ValidationContext defaultValidation() {
-    	return DEFAULT_VALIDATION;
-    }
-    
-    @SuppressWarnings("unchecked")
-	public static ValidationContext customValidation(String contextClassName) throws ValidationException {
-        try {
-        	Class<? extends ValidationContext> c = (Class<? extends ValidationContext>) Class.forName(contextClassName);
-            return c.newInstance();
-        } catch (Exception e) {
-            throw new ValidationException(e);
-        }
-    }    
+		if (ourContext == null) {
+			String contextClassName = System.getProperty(CONTEXT_PROPERTY);
+			ourContext = contextClassName == null ? defaultValidation()
+					: customValidation(contextClassName);
+		}
+		return ourContext;
+	}
+
+	/**
+	 * @return an instance of a non-validating context
+	 */
+	public static ValidationContext noValidation() {
+		return new ValidationContextImpl(new NoValidationBuilder());
+	}
+
+	/**
+	 * @return an instance of a default validation context
+	 */
+	public static ValidationContext defaultValidation() {
+		return new ValidationContextImpl(new DefaultValidationBuilder());
+	}
+
+	/**
+	 * @param ruleBuilderClassName class name of a {@link ValidationRuleBuilder}
+	 *            subclass
+	 * @return a validation context constructed from the builder
+	 * @throws ValidationException
+	 */
+	@SuppressWarnings("unchecked")
+	public static ValidationContext fromBuilder(String ruleBuilderClassName)
+			throws ValidationException {
+		try {
+			Class<? extends ValidationRuleBuilder> c = (Class<? extends ValidationRuleBuilder>) Class
+					.forName(ruleBuilderClassName);
+			return new ValidationContextImpl(c.newInstance());
+		} catch (Exception e) {
+			throw new ValidationException(e);
+		}
+	}
+
+	/**
+	 * @param contextClassName  class name of a {@link ValidationContext}
+	 *            subclass
+	 * @return instance of the ValidationContext
+	 * @throws ValidationException
+	 */
+	@SuppressWarnings("unchecked")
+	public static ValidationContext customValidation(String contextClassName)
+			throws ValidationException {
+		try {
+			Class<? extends ValidationContext> c = (Class<? extends ValidationContext>) Class
+					.forName(contextClassName);
+			return c.newInstance();
+		} catch (Exception e) {
+			throw new ValidationException(e);
+		}
+	}
 
 }

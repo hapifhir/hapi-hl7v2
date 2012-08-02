@@ -22,7 +22,7 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import java.io.Serializable;
@@ -30,101 +30,120 @@ import java.io.Serializable;
 import ca.uhn.hl7v2.validation.Rule;
 
 /**
- * An association between a type of item to be validated (eg a datatype or 
- * message) and a validation <code>Rule</code>.  
+ * An association between a type of item to be validated (eg a datatype or
+ * message) and a validation <code>Rule</code>.
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.2 $ updated on $Date: 2010-04-25 16:22:52 $ by $Author: jamesagnew $
- */
+ * @author Bryan Tripp
+ * @author James Agnew
+ * @author Christian Ohr
+ * */
 public class RuleBinding<T extends Rule> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    
-    private boolean myActiveFlag;
-    private String myVersion;
-    private String myScope;
-    private T myRule;
-    
-    /**
-     * Active by default.  
-     * 
-     * @param theVersion see {@link #getVersion()}
-     * @param theScope see {@link #getScope()}
-     * @param theRule see {@link #getRule()}
-     */
-    public RuleBinding(String theVersion, String theScope, T theRule) {
-        myActiveFlag = true;
-        myVersion = theVersion;
-        myScope = theScope;
-        myRule = theRule;
-    }
-    
-    /**
-     * @return true if the binding is currently active
-     */
-    public boolean getActive() {
-        return myActiveFlag;
-    }
-    
-    /**
-     * @param isActive true if the binding is currently active
-     */
-    public void setActive(boolean isActive) {
-        myActiveFlag = isActive;
-    }
-    
-    /**
-     * @return the version to which the binding applies (* means all versions)
-     */
-    public String getVersion() {
-        return myVersion;
-    }
-    
-    /**
-     * @return the scope of item types to which the rule applies.  For <code>MessageRule</code>s
-     *      this is the message type and trigger event, separated by a ^ (either value may be *, meaning 
-     *      any).  For <code>PrimitiveTypeRule</code>s this is the datatype name (* means any).  For 
-     *      <code>EncodingRule</code>s this is the encoding name (again, * means any).   
-     */
-    public String getScope() {
-        return myScope;
-    }
-    
-    /**
-     * @return a <code>Rule</code> that applies to the associated version and scope
-     */
-    public T getRule() {
-        return myRule;
-    }
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * @param theVersion an HL7 version
-     * @return true if this binding applies to the given version (ie getVersion() matches or is *)  
-     */
-    public boolean appliesToVersion(String theVersion) {
-        return applies(getVersion(), theVersion);
-    }
-    
-    /**
-     * @param theType an item description to be checked against getScope()  
-     * @return true if the given type is within scope, ie if it matches getScope() or getScope() is * 
-     */
-    public boolean appliesToScope(String theType) {
-        return applies(getScope(), theType);
-    }
-    
-    /**
-     * An abstraction of appliesToVersion() and appliesToScope(). 
-     * 
-     * @param theBindingData
-     * @param theItemData
-     * @return
-     */
-    protected boolean applies(String theBindingData, String theItemData) {
-        boolean applies = false;
-        if (theBindingData.equals(theItemData) || theBindingData.equals("*")) {
-            applies = true;
-        }
-        return applies;        
-    }
+	private boolean myActiveFlag;
+	private String myVersion;
+	private String myScope;
+	private T myRule;
+
+	/**
+	 * Active by default.
+	 * 
+	 * @param theVersion
+	 *            see {@link #getVersion()}
+	 * @param theScope
+	 *            see {@link #getScope()}
+	 * @param theRule
+	 *            see {@link #getRule()}
+	 */
+	public RuleBinding(String theVersion, String theScope, T theRule) {
+		myActiveFlag = true;
+		myVersion = theVersion;
+		myScope = theScope;
+		myRule = theRule;
+	}
+
+	/**
+	 * @return true if the binding is currently active
+	 */
+	public boolean getActive() {
+		return myActiveFlag;
+	}
+
+	/**
+	 * @param isActive
+	 *            true if the binding is currently active
+	 */
+	public void setActive(boolean isActive) {
+		myActiveFlag = isActive;
+	}
+
+	/**
+	 * @return the version to which the binding applies (* means all versions)
+	 */
+	public String getVersion() {
+		return myVersion;
+	}
+
+	/**
+	 * @return the scope of item types to which the rule applies. For
+	 *         <code>MessageRule</code>s this is the message type and trigger
+	 *         event, separated by a ^ (either value may be *, meaning any). For
+	 *         <code>PrimitiveTypeRule</code>s this is the datatype name (*
+	 *         means any). For <code>EncodingRule</code>s this is the encoding
+	 *         name (again, * means any).
+	 */
+	public String getScope() {
+		return myScope;
+	}
+
+	/**
+	 * @return a <code>Rule</code> that applies to the associated version and
+	 *         scope
+	 */
+	public T getRule() {
+		return myRule;
+	}
+
+	/**
+	 * @param theVersion
+	 *            an HL7 version
+	 * @return true if this binding applies to the given version (ie
+	 *         getVersion() matches or is *)
+	 */
+	public boolean appliesToVersion(String theVersion) {
+		return applies(getVersion(), theVersion);
+	}
+
+	/**
+	 * @param theType
+	 *            an item description to be checked against getScope()
+	 * @return true if the given type is within scope, ie if it matches
+	 *         getScope() or getScope() is *
+	 */
+	public boolean appliesToScope(String theType) {
+		return applies(getScope(), theType);
+	}
+
+	/**
+	 * An abstraction of appliesToVersion() and appliesToScope().
+	 * 
+	 * @param theBindingData
+	 * @param theItemData
+	 * @return
+	 */
+	protected boolean applies(String theBindingData, String theItemData) {
+		boolean applies = false;
+		if (theBindingData.equals(theItemData) || theBindingData.equals("*")) {
+			applies = true;
+		}
+		return applies;
+	}
+
+	@Override
+	public String toString() {
+		return myRule.toString() + " for " + myScope + " in version " + myVersion;
+	}
+	
+	
 }

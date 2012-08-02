@@ -35,6 +35,7 @@ import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * A default implementation of <code>ValidationContext</code>.
@@ -54,6 +55,20 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 		myMessageRuleBindings = new ArrayList<RuleBinding<MessageRule>>();
 		myEncodingRuleBindings = new ArrayList<RuleBinding<EncodingRule>>();
 	}
+	
+	ValidationContextImpl(ValidationRuleBuilder builder) {
+		this();
+		builder.configure();
+		for (RuleBinding<? extends Rule> ruleBinding : builder.getRules()) {
+			if (ruleBinding instanceof MessageRuleBinding)
+				myMessageRuleBindings.add((MessageRuleBinding)ruleBinding);
+			else if (ruleBinding instanceof EncodingRuleBinding)
+				myEncodingRuleBindings.add((EncodingRuleBinding)ruleBinding);
+			else if (ruleBinding instanceof PrimitiveTypeRuleBinding)
+				myPrimitiveRuleBindings.add((PrimitiveTypeRuleBinding)ruleBinding);
+		}
+	}
+	
 
 	/**
 	 * @see ca.uhn.hl7v2.validation.ValidationContext#getDataTypeRules(java.lang.String,

@@ -5,6 +5,9 @@ package ca.uhn.hl7v2.validation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import java.util.Locale;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -98,7 +101,7 @@ public class MessageValidatorTest {
             parser.parse(deviceObservationMessage);
             fail();
         } catch (DataTypeException e) {
-            Assert.assertTrue(e.getMessage().contains("Withdrawn"));
+            Assert.assertTrue(e.getMessage().toLowerCase(Locale.ROOT).contains("withdrawn"));
         }
     }
 

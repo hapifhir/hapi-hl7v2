@@ -22,17 +22,20 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import ca.uhn.hl7v2.validation.EncodingRule;
 
 /**
- *  A <code>RuleBinding</code> that applies to <code>EncodingRule</code>s. You can as well
- *  just use <code>RuleBinding&lt;EncodingRule&gt;</code>.
- *  
+ * A <code>RuleBinding</code> that applies to <code>EncodingRule</code>s. You
+ * can as well just use <code>RuleBinding&lt;EncodingRule&gt;</code>.
+ * <p>
+ * In general there is no need to use this class directly. Instead use the
+ * Validation builder classes to generate rules and rule bindings.
+ * 
  * @author Christian Ohr
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class EncodingRuleBinding extends RuleBinding<EncodingRule> {
@@ -40,6 +43,5 @@ public class EncodingRuleBinding extends RuleBinding<EncodingRule> {
 	public EncodingRuleBinding(String theVersion, String theScope, EncodingRule theRule) {
 		super(theVersion, theScope, theRule);
 	}
-
 
 }
