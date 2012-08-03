@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.model.Message;
  * is parsed, or just before an outbound message is encoded.  
  * @author Bryan Tripp 
  */
-public interface MessageRule extends Rule {
+public interface MessageRule extends Rule<Message> {
     
     /**
      * Tests the given (fully populated) message against the criteria 

@@ -59,7 +59,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	ValidationContextImpl(ValidationRuleBuilder builder) {
 		this();
 		builder.configure();
-		for (RuleBinding<? extends Rule> ruleBinding : builder.getRules()) {
+		for (RuleBinding<? extends Rule<?>> ruleBinding : builder.getRules()) {
 			if (ruleBinding instanceof MessageRuleBinding)
 				myMessageRuleBindings.add((MessageRuleBinding)ruleBinding);
 			else if (ruleBinding instanceof EncodingRuleBinding)
@@ -119,7 +119,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 		return myEncodingRuleBindings;
 	}
 	
-	private <T extends Rule> T[] getRules(List<RuleBinding<T>> bindings, String version, String scope,
+	private <T extends Rule<?>> T[] getRules(List<RuleBinding<T>> bindings, String version, String scope,
 			Class<T> ruleClass) {
 		List<T> active = new ArrayList<T>(bindings.size());
 		for (RuleBinding<T> binding : bindings) {

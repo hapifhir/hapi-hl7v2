@@ -22,66 +22,44 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.builder.BuilderSupport;
 
 /**
- * Checks that Primitive values conform to a certain size limit.  
- *  
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * Checks that Primitive values conform to a certain size limit.
+ * 
+ * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
- *  
+ * 
  * @deprecated use {@link BuilderSupport#maxLength()} instead
  */
 @SuppressWarnings("serial")
-public class SizeRule implements PrimitiveTypeRule {
+public class SizeRule extends AbstractPrimitiveTypeRule {
 
-    private int myMaxChars;
-    
-    /**
-     * @param theMaxChars the maximum number of characters this rule allows in a 
-     *      primitive value
-     */
-    public SizeRule(int theMaxChars) {
-        myMaxChars = theMaxChars;
-    }
+	private int myMaxChars;
 
-    /** 
-     * Does nothing.  If what you wanted was to trim the value to the max size, you should
-     * make a separate rule for that.  
-     * 
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
-     */
-    public String correct(String value) {
-        return value;
-    }
+	/**
+	 * @param theMaxChars the maximum number of characters this rule allows in a primitive value
+	 */
+	public SizeRule(int theMaxChars) {
+		myMaxChars = theMaxChars;
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#test(java.lang.String)
-     */
-    public boolean test(String value) {
-        boolean ok = true;
-        if (value != null && value.length() > myMaxChars) {
-            ok = false;
-        }
-        return ok;
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#apply(java.lang.Object)
+	 */
+	public ValidationException[] apply(String value) {
+		return result(value == null || value.length() <= myMaxChars);
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-     */
-    public String getDescription() {
-        return "Maxumim size <= " + myMaxChars + " characters";
-    }
-
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-     */
-    public String getSectionReference() {
-        return null;
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
+	 */
+	public String getDescription() {
+		return "Maximum size <= " + myMaxChars + " characters";
+	}
 
 }

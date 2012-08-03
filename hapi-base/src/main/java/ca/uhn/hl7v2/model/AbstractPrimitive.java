@@ -33,6 +33,7 @@ import ca.uhn.hl7v2.parser.Escape;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
  * Base class for Primitives.  Performs validation in setValue().
@@ -85,8 +86,9 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
         
                 for (int i = 0; i < rules.length; i++) {
                     theValue = rules[i].correct(theValue);
-                    if (!rules[i].test(theValue)) {
-                        throw new DataTypeException("Failed validation rule for value \"" + theValue + "\": " + rules[i].getDescription());
+                    ValidationException[] ve = rules[i].apply(theValue);
+                    if (ve.length > 0) {
+                        throw new DataTypeException(ve[0]);
                     }
                 }
             }

@@ -22,56 +22,45 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import java.util.regex.Pattern;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.builder.PrimitiveRuleBuilder;
 
 /**
  * Performs no validation but removes leading whitespace in the correct() method.
- *   
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * 
+ * @author Bryan Tripp
  * @author Christian Ohr
- *  
- * @deprecated use {@link PrimitiveRuleBuilder#trimmedType()} methods instead
+ * 
+ * @deprecated use {@link PrimitiveRuleBuilder#trimmed()} instead
  */
 @SuppressWarnings("serial")
-public class TrimLeadingWhitespace implements PrimitiveTypeRule {
+public class TrimLeadingWhitespace extends AbstractPrimitiveTypeRule {
 
 	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
-	
-    /** 
-     * Removes leading whitespace. 
-     * 
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
-     */
-    public String correct(String value) {
-    	return value != null ? LEADING_WHITESPACE.matcher(value).replaceAll("") : null;
-    }
 
-    /** 
-     * Returns true. 
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#test(java.lang.String)
-     */
-    public boolean test(String value) {
-        return true;
-    }
+	/**
+	 * Removes leading whitespace.
+	 * 
+	 * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
+	 */
+	public String correct(String value) {
+		return value != null ? LEADING_WHITESPACE.matcher(value).replaceAll("") : null;
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-     */
-    public String getDescription() {
-        return "Leading whitespace removed";
-    }
+	public ValidationException[] apply(String value) {
+		return passed();
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-     */
-    public String getSectionReference() {
-        return null;
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
+	 */
+	public String getDescription() {
+		return "Leading whitespace removed";
+	}
 
 }

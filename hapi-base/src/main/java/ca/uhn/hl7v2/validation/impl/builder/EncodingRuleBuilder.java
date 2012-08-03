@@ -9,26 +9,20 @@ import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.impl.EncodingRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
+import ca.uhn.hl7v2.validation.impl.XMLSchemaRule;
 
 @SuppressWarnings("serial")
 public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 
 	private String encoding;
 
-	protected EncodingRuleBuilder(List<RuleBinding<? extends Rule>> rules, Version[] versions,
+	protected EncodingRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
 			String encoding) {
 		super(rules, versions);
 	}
 
 	public EncodingRuleBuilder xsd() {
-		// TODO add rule
-		addRuleBindings(null);
-		return this;
-	}
-
-	public EncodingRuleBuilder xsd(String schemaPath) {
-		// TODO add rule
-		addRuleBindings(null);
+		addRuleBindings(new XMLSchemaRule());
 		return this;
 	}
 

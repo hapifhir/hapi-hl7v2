@@ -12,13 +12,13 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
  * Defines the type of rule to be built.
  */
 @SuppressWarnings("serial")
-public class RuleTypeBuilder<T extends Rule> extends ValidationRuleBuilder {
+public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 
 	protected Version[] versions;
 	protected String description;
 	protected String sectionReference;
 
-	protected RuleTypeBuilder(List<RuleBinding<? extends Rule>> rules, Version... versions) {
+	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version... versions) {
 		super(rules);
 		if (versions.length == 0)
 			throw new IllegalArgumentException("Must specify a version");

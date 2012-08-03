@@ -1,13 +1,11 @@
 package ca.uhn.hl7v2.validation.impl.builder;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 @SuppressWarnings("serial")
-public abstract class PredicateMessageRule extends AbstractMessageRule implements PredicateRuleSupport {
-
-	static final ValidationException[] PASSED = new ValidationException[0];
+public abstract class PredicateMessageRule extends AbstractMessageRule implements PredicateRuleSupport<Message> {
 
 	private Predicate testPredicate;
 	private Expression testExpression;
@@ -17,14 +15,12 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 		this.testExpression = expression;
 	}
 
-	public ValidationException[] test(Message msg) {
+	public ValidationException[] apply(Message msg) {
 		try {
 			Object subject = testExpression.evaluate(msg);
-			return getPredicate().evaluate(subject) ? PASSED : defaultExceptions(getDescription());
-		} catch (HL7Exception e) {
-			return exceptions(new ValidationException(e));
-		} catch (ValidationException e) {
-			return exceptions(e);
+			return result(getPredicate().evaluate(subject));
+		} catch (Exception e) {
+			return failed(e);
 		}
 	}
 
@@ -32,12 +28,5 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 		return testPredicate;
 	}
 
-	private static ValidationException[] exceptions(ValidationException e) {
-		return new ValidationException[] { e };
-	}
-
-	ValidationException[] defaultExceptions(String reason) {
-		return exceptions(new ValidationException("Validation failed: " + reason));
-	}
 
 }

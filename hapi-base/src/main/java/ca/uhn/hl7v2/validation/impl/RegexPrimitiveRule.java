@@ -22,73 +22,62 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.validation.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.builder.BuilderSupport;
 
 /**
- * A <code>PrimitiveTypeRule</code> that validates primitive values 
- * using a regular expression.  
- *  
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * A <code>PrimitiveTypeRule</code> that validates primitive values using a regular expression.
+ * 
+ * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  * 
  * @deprecated use {@link BuilderSupport#matches(String)} instead
  */
 @SuppressWarnings("serial")
-public class RegexPrimitiveRule implements PrimitiveTypeRule {
+public class RegexPrimitiveRule extends AbstractPrimitiveTypeRule {
 
-    private final Pattern myPattern; 
-    private final String mySectionReference;
-    
-    /**
-     * @param theRegex a regular expression against which to validate primitive
-     *      values 
-     * @param theSectionReference to be returned by <code>getSectionReference()</code>
-     */
-    public RegexPrimitiveRule(String theRegex, String theSectionReference) {
-        myPattern = Pattern.compile(theRegex);
-        mySectionReference = theSectionReference;
-    }
+	private final Pattern myPattern;
+	private final String mySectionReference;
 
-    /** 
-     * Empty string, null, and the HL7 explicit null (two double-quotes) are passed.  
-     *  
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#test(java.lang.String)
-     */
-    public boolean test(String value) {
-        if (value == null || value.equals("\"\"") || value.equals("")) {
-            return true;
-        } else {
-            Matcher matcher = myPattern.matcher(value);
-            return matcher.matches();            
-        }
-    }
+	/**
+	 * @param theRegex a regular expression against which to validate primitive values
+	 * @param theSectionReference to be returned by <code>getSectionReference()</code>
+	 */
+	public RegexPrimitiveRule(String theRegex, String theSectionReference) {
+		myPattern = Pattern.compile(theRegex);
+		mySectionReference = theSectionReference;
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-     */
-    public String getDescription() {
-        return "Matches the regular expression " + myPattern.pattern();
-    }
+	/**
+	 * Empty string, null, and the HL7 explicit null (two double-quotes) are passed.
+	 */
+	public ValidationException[] apply(String value) {
+		if (value == null || value.equals("\"\"") || value.equals("")) {
+			return passed();
+		}
+		Matcher matcher = myPattern.matcher(value);
+		return result(matcher.matches());
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-     */
-    public String getSectionReference() {
-        return mySectionReference;
-    }
+	}
 
-    /** 
-     * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
-     */
-    public String correct(String value) {
-        return value;
-    }
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
+	 */
+	public String getDescription() {
+		return "Matches the regular expression " + myPattern.pattern();
+	}
+
+	/**
+	 * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
+	 */
+	public String getSectionReference() {
+		return mySectionReference;
+	}
 
 }

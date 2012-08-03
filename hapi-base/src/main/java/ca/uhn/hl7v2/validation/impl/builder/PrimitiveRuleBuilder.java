@@ -15,7 +15,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 
 	private String[] types;
 
-	protected PrimitiveRuleBuilder(List<RuleBinding<? extends Rule>> rules, Version[] versions,
+	protected PrimitiveRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
 			String... types) {
 		super(rules, versions);
 		this.types = types;

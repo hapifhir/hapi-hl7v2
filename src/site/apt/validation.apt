@@ -1,0 +1,23 @@
+Validation of HL7 messages
+
+* Introduction
+  
+  HL7 v2.x is a complex flat-file structure that, despite being considered a data standard, 
+  is also highly flexible. It is often expected of an HL7 library that non-standard compliant 
+  data be accepted and processed without notification to the receiving system of non-compliance.
+
+  However, to achieve real interoperability, the HL7 standard should be constrained to reduce the 
+  degree of freedom e.g. how to use certain fields or whether to populate optional fields or not. 
+  This happens either based on a written specification or in addition as machine-readble conformance profile. 
+  In order to check whether HL7 messages actually conform to the defined constraints, message validation is essential.
+
+  The HAPI library already offers support for validating HL7 messages by definition of rules 
+  that check against constraints on primitive type level, message level, and encoded message level. 
+  
+  In addition to the naked message rule implementations, HAPI has support for specifying validation rules 
+  in a way that is particularly easy to write and easy to understand and facilitates the definition 
+  of custom validation rules.
+  
+
+  
+  

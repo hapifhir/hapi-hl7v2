@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
@@ -31,7 +32,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	private String messageType;
 	private String triggerEvent;
 
-	protected MessageRuleBuilder(List<RuleBinding<? extends Rule>> rules, Version[] versions,
+	protected MessageRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
 			String messageType, String triggerEvent) {
 		super(rules, versions);
 		this.messageType = messageType;
@@ -106,7 +107,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 
 	private static class OnlyKnownSegmentsRule extends AbstractMessageRule {
 
-		public ValidationException[] test(Message msg) {
+		public ValidationException[] apply(Message msg) {
 			List<ValidationException> exceptions = new ArrayList<ValidationException>();
 			for (Iterator<Structure> iter = ReadOnlyMessageIterator
 					.createPopulatedSegmentIterator(msg); iter.hasNext();) {

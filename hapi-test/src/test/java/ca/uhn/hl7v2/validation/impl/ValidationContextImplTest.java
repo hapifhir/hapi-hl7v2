@@ -69,39 +69,26 @@ public class ValidationContextImplTest {
 
     
     @SuppressWarnings("serial")
-	private class MockMessageRule implements MessageRule {
+	private class MockMessageRule extends AbstractMessageRule {
 
         /**
          * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
          */
-        public ValidationException[] test(Message arg0) {
-            return null;
+        public ValidationException[] apply(Message arg0) {
+            return passed();
         }
 
-        /** 
-         * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-         */
-        public String getDescription() {
-            return null;
-        }
-
-        /** 
-         * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-         */
-        public String getSectionReference() {
-            return null;
-        }
         
     }
     
     @SuppressWarnings("serial")
-	private class MockEncodingRule implements EncodingRule {
+	private class MockEncodingRule extends AbstractEncodingRule {
 
         /** 
          * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
          */
-        public ValidationException[] test(String arg0) {
-            return null;
+        public ValidationException[] apply(String arg0) {
+            return passed();
         }
 
         /** 
@@ -111,12 +98,6 @@ public class ValidationContextImplTest {
             return null;
         }
 
-        /** 
-         * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-         */
-        public String getSectionReference() {
-            return null;
-        }
         
     }
 

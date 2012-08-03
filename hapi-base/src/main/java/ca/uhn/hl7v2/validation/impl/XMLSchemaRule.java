@@ -105,6 +105,15 @@ public class XMLSchemaRule implements EncodingRule {
 	}
 
 	/**
+	 * For backwards-compatibility reasons. Just calls apply.
+	 * 
+	 * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
+	 */
+	public ValidationException[] test(String msg) {
+		return apply(msg);
+	}
+
+	/**
 	 * Test/validate a given xml document against a hl7 v2.xml schema.
 	 * <p>
 	 * Before the schema is applied, the namespace is verified because otherwise schema validation
@@ -118,7 +127,7 @@ public class XMLSchemaRule implements EncodingRule {
 	 * @return ValidationException[] an array of validation exceptions, which is zero-sized when no
 	 *         validation errors occured.
 	 */
-	public ValidationException[] test(String msg) {
+	public ValidationException[] apply(String msg) {
 		List<ValidationException> validationErrors = new ArrayList<ValidationException>();
 		try {
 			// parse the incoming string into a dom document - no schema validation yet
@@ -233,8 +242,6 @@ public class XMLSchemaRule implements EncodingRule {
 	public void setSchemaLocations(Map<String, String> locations) {
 		this.locations = locations;
 	}
-	
-	
 
 	Map<String, String> getSchemaLocations() {
 		return locations;

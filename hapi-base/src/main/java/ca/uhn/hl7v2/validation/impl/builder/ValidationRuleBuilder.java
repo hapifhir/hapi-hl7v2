@@ -14,13 +14,13 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 @SuppressWarnings("serial")
 public class ValidationRuleBuilder extends BuilderSupport {
 
-	protected List<RuleBinding<? extends Rule>> rules = new ArrayList<RuleBinding<? extends Rule>>();
+	protected List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<RuleBinding<? extends Rule<?>>>();
 	
 	public ValidationRuleBuilder() {
 		super();
 	}
 	
-	protected ValidationRuleBuilder(List<RuleBinding<? extends Rule>> rules) {
+	protected ValidationRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules) {
 		this.rules = rules;
 	}
 
@@ -30,16 +30,16 @@ public class ValidationRuleBuilder extends BuilderSupport {
 	public void configure() {
 	}
 	
-	public List<RuleBinding<? extends Rule>> getRules() {
+	public List<RuleBinding<? extends Rule<?>>> getRules() {
 		return Collections.unmodifiableList(rules);
 	}
 
 
-	public <T extends Rule> RuleTypeBuilder<T> forVersion(Version... version) {
+	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(Version... version) {
 		return new RuleTypeBuilder<T>(rules, version);
 	}
 
-	public <T extends Rule> RuleTypeBuilder<T> forVersion(String... version) {
+	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(String... version) {
 		Version[] versions = new Version[version.length];
 		for (int i = 0; i < versions.length; i++) {
 			versions[i] = Version.valueOf(version[i]);
@@ -51,7 +51,7 @@ public class ValidationRuleBuilder extends BuilderSupport {
 		return new VersionExpressionBuilder();
 	}
 
-	public <T extends Rule> RuleTypeBuilder<T> forAllVersions() {
+	public <T extends Rule<?>> RuleTypeBuilder<T> forAllVersions() {
 		return new RuleTypeBuilder<T>(rules, Version.values());
 	}
 
@@ -61,27 +61,27 @@ public class ValidationRuleBuilder extends BuilderSupport {
 	 */
 	public class VersionExpressionBuilder {
 
-		public <T extends Rule> RuleTypeBuilder<T> asOf(String version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> asOf(String version) {
 			return asOf(Version.versionOf(version));
 		}
 
-		public <T extends Rule> RuleTypeBuilder<T> asOf(Version version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> asOf(Version version) {
 			return new RuleTypeBuilder<T>(rules, Version.asOf(version));
 		}
 
-		public <T extends Rule> RuleTypeBuilder<T> before(String version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> before(String version) {
 			return before(Version.versionOf(version));
 		}
 
-		public <T extends Rule> RuleTypeBuilder<T> before(Version version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> before(Version version) {
 			return new RuleTypeBuilder<T>(rules, Version.before(version));
 		}
 
-		public <T extends Rule> RuleTypeBuilder<T> except(String version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> except(String version) {
 			return except(Version.versionOf(version));
 		}
 
-		public <T extends Rule> RuleTypeBuilder<T> except(Version version) {
+		public <T extends Rule<?>> RuleTypeBuilder<T> except(Version version) {
 			return new RuleTypeBuilder<T>(rules, Version.except(version));
 		}
 
