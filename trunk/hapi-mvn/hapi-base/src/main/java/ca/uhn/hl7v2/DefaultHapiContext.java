@@ -44,12 +44,13 @@ import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Default implementation for {@link HapiContext}.
  * 
- * With this class you can configure HAPI and obtain all major HAPI business objects that
- * are initialized accordingly. All configuration objects already have reasonable defaults.
+ * With this class you can configure HAPI and obtain all major HAPI business objects that are
+ * initialized accordingly. All configuration objects already have reasonable defaults.
  * <p>
  * When using Spring Framework for initializing objects, you can use the factory methods like this:
  * 
@@ -71,6 +72,7 @@ public class DefaultHapiContext implements HapiContext {
 	private ExecutorService executorService;
 	private ParserConfiguration parserConfiguration;
 	private ValidationContext validationContext;
+	private ValidationRuleBuilder validationRuleBuilder;
 	private ModelClassFactory modelClassFactory;
 
 	public DefaultHapiContext() {
@@ -85,6 +87,14 @@ public class DefaultHapiContext implements HapiContext {
 		this.validationContext = validationContext;
 		this.modelClassFactory = modelClassFactory;
 	}
+	
+	public DefaultHapiContext(ParserConfiguration parserConfiguration,
+			ValidationRuleBuilder builder, ModelClassFactory modelClassFactory) {
+		VersionLogger.init();
+		this.parserConfiguration = parserConfiguration;
+		this.validationRuleBuilder = builder;
+		this.modelClassFactory = modelClassFactory;
+	}	
 
 	public synchronized ExecutorService getExecutorService() {
 		if (executorService == null) {
@@ -129,6 +139,22 @@ public class DefaultHapiContext implements HapiContext {
 	public void setDefaultValidationContext(String contextClassName) {
 		try {
 			this.validationContext = ValidationContextFactory.customValidation(contextClassName);
+		} catch (ValidationException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public ValidationRuleBuilder getDefaultValidationRuleBuilder() {
+		return validationRuleBuilder;
+	}
+
+	public void setDefaultValidationRuleBuilder(ValidationRuleBuilder validationRuleBuilder) {
+		this.validationRuleBuilder = validationRuleBuilder;
+	}
+
+	public void setDefaultValidationRuleBuilder(String builderClassName) {
+		try {
+			this.validationRuleBuilder = ValidationContextFactory.customBuilder(builderClassName);
 		} catch (ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}

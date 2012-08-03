@@ -51,6 +51,7 @@ import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Parses HL7 message Strings into HL7 Message objects and encodes HL7 Message
@@ -86,7 +87,10 @@ public abstract class Parser {
 		super();
 		this.myFactory = context.getDefaultModelClassFactory();
 		this.myParserConfiguration = context.getDefaultParserConfiguration();
-		setValidationContext(context.getDefaultValidationContext());
+		ValidationRuleBuilder builder = context.getDefaultValidationRuleBuilder();
+		setValidationContext(builder != null ? 
+				ValidationContextFactory.fromBuilder(builder) :
+				context.getDefaultValidationContext());
 	}
 
 	/**

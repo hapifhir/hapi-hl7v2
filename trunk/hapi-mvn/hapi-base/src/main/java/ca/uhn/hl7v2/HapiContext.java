@@ -37,6 +37,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Interface that provides a starting point for
@@ -46,13 +47,14 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  * <li>Obtaining correspondingly configured instances of HAPI core services
  * </ul>
  * 
- * HapiContext instances are not supposed to be singletons, i.e. if necessary,
- * it is possible to have several HapiContexts within one application.
+ * HapiContext instances are not supposed to be singletons, i.e. if necessary, it is possible to
+ * have several HapiContexts within one application.
  */
 public interface HapiContext extends Serializable {
 
 	// Singleton services
 	ExecutorService getExecutorService();
+
 	void setExecutorService(ExecutorService executorService);
 
 	ConnectionHub getConnectionHub();
@@ -79,10 +81,40 @@ public interface HapiContext extends Serializable {
 	void setDefaultValidationContext(ValidationContext context);
 
 	/**
+	 * Sets a default {@link ValidationContext}. Note that a default {@link ValidationRuleBuilder}
+	 * has precedence of this ValidationContext.
+	 * 
 	 * @param contextClassName class name of the {@link ValidationContext} to be used by all parsers
 	 *            obtained from this class.
 	 */
 	void setDefaultValidationContext(String contextClassName);
+
+	/**
+	 * @return the {@link ValidationRuleBuilder} to be used by all parsers obtained from this class.
+	 */
+	ValidationRuleBuilder getDefaultValidationRuleBuilder();
+
+	/**
+	 * Sets a default {@link ValidationRuleBuilder}. Note that this {@link ValidationRuleBuilder}
+	 * has precedence over a default {@link ValidationContext} set with
+	 * {@link #setDefaultValidationContext(ValidationContext)} or
+	 * {@link #setDefaultValidationContext(String)}
+	 * 
+	 * @param context {@link ValidationRuleBuilder} to be used by all parsers obtained from this
+	 *            class.
+	 */
+	void setDefaultValidationRuleBuilder(ValidationRuleBuilder ruleBuilder);
+
+	/**
+	 * Sets a new instance of {@link ValidationRuleBuilder} as default. Note that this
+	 * {@link ValidationRuleBuilder} has precedence over a default {@link ValidationContext} set
+	 * with {@link #setDefaultValidationContext(ValidationContext)} or
+	 * {@link #setDefaultValidationContext(String)}
+	 * 
+	 * @param builderClassName class name of the {@link ValidationRuleBuilder} to be used by all
+	 *            parsers obtained from this class.
+	 */
+	void setDefaultValidationRuleBuilder(String builderClassName);
 
 	/**
 	 * @return the {@link ModelClassFactory} to be used by all parsers obtained from this class.
