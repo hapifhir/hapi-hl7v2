@@ -10,6 +10,4 @@ public abstract class AbstractEncodingRule extends RuleSupport<String> implement
 		return apply(value);
 	}
 
-
-
 }

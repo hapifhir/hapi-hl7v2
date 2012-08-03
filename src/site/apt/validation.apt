@@ -49,25 +49,34 @@ Validation of HL7 messages
   
 * RuleBuilders
 
-  Until HAPI 2.0, custom validation rules have to be implemented by extending the appropriate
-  rule types, define their binding, and collect them in a subclass of ValidationContext. This
-  API can be very cumbersome, particularly when large sets of rules are defined.
-  This has been augmented by a new API that implements the Builder pattern and allows to define 
-  rules in a way that is particularly easy to write and to understand.
+  In HAPI 2.0 and before, custom validation rules had to be implemented by extending the appropriate
+  rule types, define their bindings, and collect them in a subclass of ValidationContext. This
+  API can be very cumbersome to use, particularly when large sets of rules need to be defined.
+  A new API implementing a Builder pattern allows to define rules in a way that is 
+  easy to write and to understand.
   
   As the default rule sets have been re-implemented as well, they serve as a
-  good example:
+  good example. The primary class is now <<<ValidationRuleBuilder>>> instead of
+  <<<ValidationContext>>>:
   
 +---------------------------------------+
   public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 
 	public void configure() {
 		forAllVersions()
+		
+			// you can trim the value before validation
 			.primitive("FT").trimmed(maxLength(32000))
 			.primitive("ST", "TX").trimmed()
+			
+			// you can apply the same rule to more than one type
 			.primitive("ID", "IS").is(maxLength(200))
+			
+			// you can also accept empty values
 			.primitive("SI").is(emptyOr(nonNegativeInteger()))
 			.primitive("NM").is(emptyOr(number()))
+			
+			// you can provide a reference to a section in the spec
 			.primitive("DT")
 				.refersToSection("Version 2.5 Section 2.A.21")
 				.is(emptyOr(date()))
@@ -92,17 +101,17 @@ Validation of HL7 messages
   To define a custom rule builder, you overwrite {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ValidationRuleBuilder.html}ValidationRuleBuilder}}
   or a subclass thereof, and implement the <<<configure>>> method.
    
-  This builder only defines PrimitiveTypeRules that are either valid for all HL7 v2 versions 
-  or for a subset thereof.
-  The rules require the primitive values to not exceed a maximum length, to be numeric, or to
+  <<<DefaultValidationWithoutTNBuilder>>> defines PrimitiveTypeRules that are either valid for all HL7 v2 versions 
+  or for a subset thereof. In this example, the defined rules require the primitive values 
+  to not exceed a maximum length, to be numeric, or to
   follow a certain time or date pattern. Empty values are usually allowed. Optionally you
   can add a reference to the HL7 specification for documentation.
   
   While the legacy API is still available (although partly deprecated) and used under
   the hood, the new API is far more expressive and the rule definitions in the example above 
-  only requires 25% about of the corresponding amount of legacy code.
+  only take about 25% of the corresponding amount of legacy code.
   
-  In order to add rules, you can subclass a ValidationRuleBuilder:
+  In order to add your own rules, you can subclass an existing <<<ValidationRuleBuilder>>>:
   
 +---------------------------------------+
   public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
@@ -121,7 +130,7 @@ Validation of HL7 messages
   
   Now let's add some fictive MessageRules that define expectations towards
   the existence of patient identifiers (PID-2, PID-3), and forbids all
-  messages of HL7 versions 2.4 and before with a custom explanation.
+  messages of HL7 versions 2.4 and before, providing a custom explanation:
   
 +---------------------------------------+
   public class MyCustomRuleBuilder extends DefaultValidationBuilder {
@@ -147,6 +156,22 @@ Validation of HL7 messages
 			.message("*", "*")
 				.description("Old HL7 version not supported!")
 				.alwaysFails()
+	}
+  }
++---------------------------------------+
+
+  Alternatively, if you prefer composition over inheritance, 
+  you can simply extend DelegatingValidationBuilder :
+
++---------------------------------------+
+  public class MyCustomRuleBuilder extends DelegatingValidationBuilder {
+
+	public MyCustomRuleBuilder() {
+		super(new DefaultValidationBuilder())
+	}
+	
+	public void configure() {
+		// ... same as above
 	}
   }
 +---------------------------------------+
