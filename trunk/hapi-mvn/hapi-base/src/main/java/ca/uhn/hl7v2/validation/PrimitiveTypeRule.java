@@ -30,7 +30,7 @@ package ca.uhn.hl7v2.validation;
  * A rule that applies to a primitive datatype. 
  * @author Bryan Tripp
  */
-public interface PrimitiveTypeRule extends Rule {
+public interface PrimitiveTypeRule extends Rule<String> {
  
     /**
      * Optionally performs an automatic correction on given data to make it 
@@ -44,7 +44,9 @@ public interface PrimitiveTypeRule extends Rule {
 
     /**
      * Tests the given string against the criteria defined by this 
-     * rule -- returns true if it passes the test, false otherwise.  
+     * rule -- returns true if it passes the test, false otherwise.
+     * 
+     * @deprecated use {@link #apply(String)}
      */
     public boolean test(String value);
     

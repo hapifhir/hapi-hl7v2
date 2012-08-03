@@ -20,7 +20,9 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v25.datatype.ED;
+import ca.uhn.hl7v2.model.v25.datatype.FT;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
@@ -703,6 +705,104 @@ public class XMLParserTest {
 		assertTrue(encoded, encoded.contains("<MSH.10>LABMI1199510101340007</MSH.10>"));
 		
     }
+    
+    @Test
+    public void testMessageParseMethodAndEncodeMethodWithEscapes() throws HL7Exception {
+    	
+        String message = "<ORU_R01 xmlns=\"urn:hl7-org:v2xml\">\r\n" + 
+                "    <MSH>\r\n" + 
+                "        <MSH.1>|</MSH.1>\r\n" + 
+                "        <MSH.2>^~\\&amp;</MSH.2>\r\n" + 
+                "        <MSH.3>LABMI1</MSH.3>\r\n" + 
+                "        <MSH.5>DMCRES</MSH.5>\r\n" + 
+                "        <MSH.7>\r\n" + 
+                "            <TS.1>19951010134000</TS.1>\r\n" + 
+                "        </MSH.7>\r\n" + 
+                "        <MSH.9>\r\n" + 
+                "            <CM_MSG.1>ORU</CM_MSG.1>\r\n" + 
+                "            <CM_MSG.2>R01</CM_MSG.2>\r\n" + 
+                "        </MSH.9>\r\n" + 
+                "        <MSH.10>LABMI119951<escape V=\".br\"/>0101340007</MSH.10>\r\n" + 
+                "        <MSH.11>D</MSH.11>\r\n" + 
+                "        <MSH.12>2.5</MSH.12>\r\n" + 
+                "        <MSH.15>AL</MSH.15>\r\n" + 
+                "    </MSH>\r\n" +
+                "   <ORU_R01.PATIENT_RESULT>\r\n" + 
+                "       <ORU_R01.PATIENT>\r\n" + 
+                "           <PID>\r\n" + 
+                "               <PID.2>\r\n" + 
+                "                   <CX.1>MODEL:xxx/SERIAL:xxx</CX.1>\r\n" + 
+                "                   <CX.4>\r\n" + 
+                "                       <HD.1>STJ</HD.1>\r\n" + 
+                "                   </CX.4>\r\n" + 
+                "                   <CX.5>U</CX.5>\r\n" + 
+                "               </PID.2>\r\n" + 
+                "               <PID.5>\r\n" + 
+                "                   <XPN.1>\r\n" + 
+                "                       <FN.1>Doe</FN.1>\r\n" + 
+                "                   </XPN.1>\r\n" + 
+                "                   <XPN.2>John</XPN.2>\r\n" + 
+                "                   <XPN.3>Adams</XPN.3>\r\n" + 
+                "               </PID.5>\r\n" + 
+                "               <PID.7>\r\n" + 
+                "                   <TS.1>197903110920</TS.1>\r\n" + 
+                "               </PID.7>\r\n" + 
+                "               <PID.8>M</PID.8>\r\n" + 
+                "               <PID.11>\r\n" + 
+                "                   <XAD.1>\r\n" + 
+                "                       <SAD.2>Street</SAD.2>\r\n" + 
+                "                   </XAD.1>\r\n" + 
+                "                   <XAD.3>City</XAD.3>\r\n" + 
+                "                   <XAD.5>06531</XAD.5>\r\n" + 
+                "                   <XAD.6>Country</XAD.6>\r\n" + 
+                "               </PID.11>\r\n" + 
+                "           </PID>\r\n" + 
+                "       </ORU_R01.PATIENT>\r\n" + 
+                "       <ORU_R01.ORDER_OBSERVATION>\r\n" + 
+                "           <OBR>\r\n" + 
+                "               <OBR.1>1</OBR.1>\r\n" + 
+                "               <OBR.3>\r\n" + 
+                "                   <EI.1>123456</EI.1>\r\n" + 
+                "               </OBR.3>\r\n" + 
+                "               <OBR.4>\r\n" + 
+                "                   <CE.1>Remote Follow-up</CE.1>\r\n" + 
+                "               </OBR.4>\r\n" + 
+                "               <OBR.7>\r\n" + 
+                "                   <TS.1>20040328134623</TS.1>\r\n" + 
+                "               </OBR.7>\r\n" + 
+                "               <OBR.8>\r\n" + 
+                "                   <TS.1>20040328134623</TS.1>\r\n" + 
+                "               </OBR.8>\r\n" + 
+                "               <OBR.22>\r\n" + 
+                "                   <TS.1>20040328134623</TS.1>\r\n" + 
+                "               </OBR.22>\r\n" + 
+                "               <OBR.25>F</OBR.25>\r\n" + 
+                "           </OBR>\r\n" + 
+                "           <ORU_R01.OBSERVATION>\r\n" + 
+                "               <OBX>\r\n" + 
+                "                   <OBX.1>1</OBX.1>\r\n" + 
+                "                   <OBX.2>FT</OBX.2>\r\n" +  
+                "                   <OBX.5>blorg<escape V=\".br\"/>gablorg </OBX.5>\r\n" + 
+                "               </OBX>\r\n" + 
+                "           </ORU_R01.OBSERVATION>\r\n" +
+                "       </ORU_R01.ORDER_OBSERVATION>\r\n" + 
+                "   </ORU_R01.PATIENT_RESULT>\r\n" + 
+                "</ORU_R01>";                
+        
+        ca.uhn.hl7v2.model.v25.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v25.message.ORU_R01();
+        DefaultXMLParser xmlParser = new DefaultXMLParser();
+        xmlParser.setValidationContext(new ValidationContextImpl());
+		msg.setParser(xmlParser);
+        
+		msg.parse(message);
+		assertEquals("LABMI1199510101340007", msg.getMSH().getMessageControlID().getValue());
+		Varies obx5 = msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx5_ObservationValue(0);
+		System.out.println(((FT)obx5.getData()).getValue());
+    	
+		String encoded = msg.encode();
+		assertTrue(encoded, encoded.contains("<MSH.10>LABMI1199510101340007</MSH.10>"));
+		
+    }    
     
     
 }

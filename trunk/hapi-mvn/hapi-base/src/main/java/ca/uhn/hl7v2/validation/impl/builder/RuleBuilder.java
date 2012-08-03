@@ -6,12 +6,12 @@ import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder.VersionExpress
 
 public interface RuleBuilder {
 
-	<T extends Rule> RuleTypeBuilder<T> forVersion(Version... version);
+	<T extends Rule<?>> RuleTypeBuilder<T> forVersion(Version... version);
 
-	<T extends Rule> RuleTypeBuilder<T> forVersion(String... version);
+	<T extends Rule<?>> RuleTypeBuilder<T> forVersion(String... version);
 
 	VersionExpressionBuilder forVersion();
 
-	<T extends Rule> RuleTypeBuilder<T> forAllVersions();
+	<T extends Rule<?>> RuleTypeBuilder<T> forAllVersions();
 
 }

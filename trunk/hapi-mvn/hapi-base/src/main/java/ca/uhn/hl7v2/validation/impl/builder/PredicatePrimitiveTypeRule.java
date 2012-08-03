@@ -2,11 +2,11 @@ package ca.uhn.hl7v2.validation.impl.builder;
 
 import java.util.regex.Pattern;
 
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.AbstractPrimitiveTypeRule;
 
 @SuppressWarnings("serial")
-public class PredicatePrimitiveTypeRule implements PredicateRuleSupport, PrimitiveTypeRule {
+public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implements PredicateRuleSupport<String> {
 
 	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
 
@@ -30,10 +30,6 @@ public class PredicatePrimitiveTypeRule implements PredicateRuleSupport, Primiti
 		return "primitive value requires to be " + predicate.getDescription();
 	}
 
-	public String getSectionReference() {
-		return null;
-	}
-
 	public String correct(String value) {
 		return trimLeadingWhitespace && value != null ? LEADING_WHITESPACE.matcher(value)
 				.replaceAll("") : value;
@@ -44,6 +40,14 @@ public class PredicatePrimitiveTypeRule implements PredicateRuleSupport, Primiti
 			return getPredicate().evaluate(value);
 		} catch (ValidationException e) {
 			return false;
+		}
+	}
+	
+	public ValidationException[] apply(String value) {
+		try {
+			return getPredicate().evaluate(value) ? passed() : failed();
+		} catch (ValidationException e) {
+			return failed();
 		}
 	}
 

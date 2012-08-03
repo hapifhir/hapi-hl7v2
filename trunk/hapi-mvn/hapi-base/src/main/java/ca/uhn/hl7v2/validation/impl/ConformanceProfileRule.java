@@ -41,7 +41,6 @@ import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
@@ -49,11 +48,11 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * against the profiles they declare, or against a pre-defined profile. If you want both, 
  * use two <code>ConformanceProfileRule</code>s.  
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
 @SuppressWarnings("serial")
-public class ConformanceProfileRule implements MessageRule {
+public class ConformanceProfileRule extends AbstractMessageRule {
 
     private static final Logger log = LoggerFactory.getLogger(ConformanceProfileRule.class);
 
@@ -64,6 +63,9 @@ public class ConformanceProfileRule implements MessageRule {
      * MSH-21. 
      */
     public ConformanceProfileRule() {
+    	super();
+    	description = "Checks conformance to declared or predefined message profiles";
+    	sectionReference = "HL7 2.5 section 2.12";
     }
     
     /**
@@ -71,6 +73,7 @@ public class ConformanceProfileRule implements MessageRule {
      *      (instead of the profiles they declare in MSH-21) 
      */
     public ConformanceProfileRule(String theProfileID) {
+    	this();
         myProfileID = theProfileID;
     }
     
@@ -78,7 +81,7 @@ public class ConformanceProfileRule implements MessageRule {
     /** 
      * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
      */
-    public ValidationException[] test(Message msg) {
+    public ValidationException[] apply(Message msg) {
         List<ValidationException> problems = new ArrayList<ValidationException>(20);
         String[] ids = {myProfileID};
         

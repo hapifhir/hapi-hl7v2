@@ -67,7 +67,7 @@ import java.io.Serializable;
  * 
  * @author Bryan Tripp
  */
-public interface Rule extends Serializable {
+public interface Rule<T> extends Serializable {
 
 	/**
 	 * Returns a text description of the rule. This description may be used as a
@@ -82,6 +82,14 @@ public interface Rule extends Serializable {
 	 * exception message or configuration UI.
 	 */
 	public String getSectionReference();
+	
+	/**
+	 * Applies to rule to an object to be checked
+	 * 
+	 * @param value object to be checked
+	 * @return an (potentially empty) array of ValidationExceptions
+	 */
+	public ValidationException[] apply(T value);
 		
 
 }

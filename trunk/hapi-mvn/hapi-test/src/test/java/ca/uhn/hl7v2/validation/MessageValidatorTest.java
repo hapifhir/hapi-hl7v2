@@ -21,6 +21,8 @@ import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
+import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
@@ -106,26 +108,19 @@ public class MessageValidatorTest {
     }
 
     @SuppressWarnings("serial")
-	private class MockMessageRule implements MessageRule {
+	private class MockMessageRule extends AbstractMessageRule {
 
-        public ValidationException[] test(Message msg) {
-            return new ValidationException[] { new ValidationException("testing validator") };
+        public ValidationException[] apply(Message msg) {
+            return failed("testing validator");
         }
 
-        public String getDescription() {
-            return null;
-        }
-
-        public String getSectionReference() {
-            return null;
-        }
     }
 
     @SuppressWarnings("serial")
-	private class MockEncodingRule implements EncodingRule {
+	private class MockEncodingRule extends AbstractEncodingRule {
 
-        public ValidationException[] test(String msg) {
-            return new ValidationException[] { new ValidationException("test validator") };
+        public ValidationException[] apply(String msg) {
+            return failed("testing validator");
         }
 
         public String getDescription() {

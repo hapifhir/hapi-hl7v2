@@ -45,6 +45,8 @@ import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
+import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 import ca.uhn.hl7v2.validation.impl.SizeRule;
@@ -992,11 +994,11 @@ public class NewPipeParserTest extends TestCase {
 	}
 
 	@SuppressWarnings("serial")
-	private static class FooEncodingRule implements EncodingRule {
+	private static class FooEncodingRule extends AbstractEncodingRule {
 		/**
 		 * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
 		 */
-		public ValidationException[] test(String arg0) {
+		public ValidationException[] apply(String arg0) {
 			if (arg0.indexOf("foo") < 0) {
 				return new ValidationException[] { new ValidationException("Not enough foo") };
 			} else {
@@ -1020,39 +1022,26 @@ public class NewPipeParserTest extends TestCase {
 	}
 
 	@SuppressWarnings("serial")
-	private static class BarMessageRule implements MessageRule {
+	private static class BarMessageRule extends AbstractMessageRule {
 
 		/**
 		 * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
 		 */
-		public ValidationException[] test(Message arg0) {
+		public ValidationException[] apply(Message arg0) {
 			Terser t = new Terser(arg0);
 			String msh3;
 			try {
 				msh3 = t.get("/MSH-3");
 			} catch (HL7Exception e) {
-				return new ValidationException[] { new ValidationException("Bad bar") };
+				return failed("Bad bar");
 			}
 			if (!msh3.equals("bar")) {
-				return new ValidationException[] { new ValidationException("Not enough bar") };
+				return failed("Not enough bar");
 			} else {
-				return new ValidationException[] {};
+				return passed();
 			}
 		}
 
-		/**
-		 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-		 */
-		public String getDescription() {
-			return null;
-		}
-
-		/**
-		 * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
-		 */
-		public String getSectionReference() {
-			return null;
-		}
 	}
 
 	/**

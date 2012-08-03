@@ -34,7 +34,7 @@ package ca.uhn.hl7v2.validation;
  * tags in an XML message".  
  * @author Bryan Tripp
  */
-public interface EncodingRule extends Rule {
+public interface EncodingRule extends Rule<String> {
     
     /**
      * Tests the given encoded message text against the criteria 

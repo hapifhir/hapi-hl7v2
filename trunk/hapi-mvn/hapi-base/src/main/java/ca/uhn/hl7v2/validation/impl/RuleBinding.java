@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.Rule;
  * @author James Agnew
  * @author Christian Ohr
  * */
-public class RuleBinding<T extends Rule> implements Serializable {
+public class RuleBinding<T extends Rule<?>> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
