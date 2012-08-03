@@ -31,7 +31,8 @@ Configuring HAPI
   {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ModelClassFactory.html}ModelClassFactory}}.
   The obtained PipeParser is then configured to use this ModelClassFactory.
   
-  Other configuration items include ValidationContext and ParserConfiguration (see below).
+  Other configuration items include ValidationRuleBuilder, ValidationContext and 
+  ParserConfiguration (see below).
   
 * HAPI Parser
 
