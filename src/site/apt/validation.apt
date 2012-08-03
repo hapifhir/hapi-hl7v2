@@ -10,14 +10,143 @@ Validation of HL7 messages
   degree of freedom e.g. how to use certain fields or whether to populate optional fields or not. 
   This happens either based on a written specification or in addition as machine-readble conformance profile. 
   In order to check whether HL7 messages actually conform to the defined constraints, message validation is essential.
+  
+  
+* Validation Rules and RuleBindings
 
-  The HAPI library already offers support for validating HL7 messages by definition of rules 
+  The HAPI library offers support for validating HL7 messages by definition of rules 
   that check against constraints on primitive type level, message level, and encoded message level. 
   
-  In addition to the naked message rule implementations, HAPI has support for specifying validation rules 
-  in a way that is particularly easy to write and easy to understand and facilitates the definition 
-  of custom validation rules.
+  [<<PrimitiveTypeRule>>] A validation rule that applies to primitive types like ID, IS, NM. PrimitiveTypeRules
+  are enforced every time a primitive value is set. 
+
+  [<<MessageRule>>] A validation rule that applies to a fully populated message object.  MessageRules 
+  are enforced (depending on runtime configuration) just after an inbound message
+  has been parsed, or just before an outbound message is encoded.  
+   
+  [<<EncodingRule>>] A validation rule that applies to encoded message strings.  EncodingRules are intended 
+  for criteria that are specific to the encoded form of a message, e.g. "no empty tags in an XML message". 
+  EncodingRules are enforced (depending on runtime configuration) before an inbound message
+  is parsed, or just after an outbound message has been encoded.  
+
+  Rules of all types described above are <bound> to a HL7 version and <scoped> depending on the rule type.
+  The scope of a PrimitiveTypeRule is a (you guessed it!) a primitive type. The scope of a
+  MessageRule is its event type and trigger event (e.g. ADT_A01). The scope of a EncodingRule is its
+  encoding - "XML" or "VB" (vertical bar).
   
+  Binding and scope determine which rules are applied to which parts of a certain message.
+  
+  There is a predefined set of default PrimitiveTypeRules that
+  conform to the HL7 specification for the corresponding types (DefaultValidation). 
+  This set is used when no other rules have been defined. Other predefined sets are
+  DefaultValidationWithoutTN and NoValidation.
+  
+* ValidationContext
+
+  A ValidationContext is the place where Rules and RuleBindings are collected. Parsers and
+  Message Validators can be configured with a ValidationContext to enforce validation during
+  parsing, encoding, or on demand. 
+  
+* RuleBuilders
+
+  Until HAPI 2.0, custom validation rules have to be implemented by extending the appropriate
+  rule types, define their binding, and collect them in a subclass of ValidationContext. This
+  API can be very cumbersome, particularly when large sets of rules are defined.
+  This has been augmented by a new API that implements the Builder pattern and allows to define 
+  rules in a way that is particularly easy to write and to understand.
+  
+  As the default rule sets have been re-implemented as well, they serve as a
+  good example:
+  
+  +---------------------------------------
+  public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
+
+	public void configure() {
+		forAllVersions()
+			.primitive("FT").trimmed(maxLength(32000))
+			.primitive("ST", "TX").trimmed()
+			.primitive("ID", "IS").is(maxLength(200))
+			.primitive("SI").is(emptyOr(nonNegativeInteger()))
+			.primitive("NM").is(emptyOr(number()))
+			.primitive("DT")
+				.refersToSection("Version 2.5 Section 2.A.21")
+				.is(emptyOr(date()))
+			.primitive("TM")
+				.refersToSection("Version 2.5 Section 2.A.75")
+				.is(emptyOr(time()))
+			.primitive("NULLDT").is(withdrawn());
+		
+		forVersion().before(Version.V25)
+			.primitive("TSComponentOne")
+				.refersToSection("Version 2.4 Section 2.9.47")
+				.is(emptyOr(dateTime()));
+		
+		forVersion().asOf(Version.V25)
+			.primitive("TSComponentOne", "DTM")
+				.refersToSection("Version 2.5 Section 2.A.22")
+				.is(emptyOr(dateTime25()));
+	}
+  }
+  +---------------------------------------
+  
+  To define a custom rule builder, you overwrite {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ValidationRuleBuilder.html}ValidationRuleBuilder}}
+  or a subclass thereof, and implement the <<<configure>>> method.
+   
+  This builder only defines PrimitiveTypeRules that are either valid for all HL7 v2 versions 
+  or for a subset thereof.
+  The rules require the primitive values to not exceed a maximum length, to be numeric, or to
+  follow a certain time or date pattern. Empty values are usually allowed. Optionally you
+  can add a reference to the HL7 specification for documentation.
+  
+  While the legacy API is still available (although partly deprecated) and used under
+  the hood, the new API is far more expressive and the rule definitions in the example above 
+  only requires 25% about of the corresponding amount of legacy code.
+  
+  In order to add rules, you can subclass a ValidationRuleBuilder:
+  
+  +---------------------------------------
+  public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
+
+	@Override
+	public void configure() {
+		super.configure(); // don't forget this!
+
+		forAllVersions()
+			.primitive("TN")
+				.refersToSection("Version 2.4 Section 2.9.45")
+				.is(emptyOr(usPhoneNumber()));
+	}
+  }
+  +---------------------------------------
+  
+  Now let's add some fictive MessageRules that define expectations towards
+  the existence of patient identifiers (PID-2, PID-3), and forbids all
+  messages of HL7 versions 2.4 and before with a custom explanation.
+  
+  +---------------------------------------
+  public class MyCustomRuleBuilder extends DefaultValidationBuilder {
+
+	public void configure() {
+		forVersion(Version.V25)
+			.message("ADT", "*")
+				.description("custom message rules")
+				.terser("PID-2", empty())
+				.terser("PID-3", allOf(maxLength(10), startsWith("A")))
+			.message("ORU", "R01")
+				.terser("MSH-9-1", isEqual("ORU"));
+		
+		forVersion(Version.V26)
+			.message("ADT", "*")
+				.terser("PID-2", empty())
+				.terser("PID-3", allOf(maxLength(10), startsWith("B")))
+		
+		forVersion().before(Version.V25)
+			.message("*", "*")
+				.description("Old HL7 version not supported!")
+				.alwaysFails()
+	}
+  }
+  +--------------------------------------- 
 
   
   

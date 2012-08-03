@@ -19,6 +19,7 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	protected EncodingRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
 			String encoding) {
 		super(rules, versions);
+		this.encoding = encoding;
 	}
 
 	public EncodingRuleBuilder xsd() {
