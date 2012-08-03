@@ -58,7 +58,7 @@ Validation of HL7 messages
   As the default rule sets have been re-implemented as well, they serve as a
   good example:
   
-  +---------------------------------------
++---------------------------------------+
   public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 
 	public void configure() {
@@ -87,7 +87,7 @@ Validation of HL7 messages
 				.is(emptyOr(dateTime25()));
 	}
   }
-  +---------------------------------------
++---------------------------------------+
   
   To define a custom rule builder, you overwrite {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ValidationRuleBuilder.html}ValidationRuleBuilder}}
   or a subclass thereof, and implement the <<<configure>>> method.
@@ -104,7 +104,7 @@ Validation of HL7 messages
   
   In order to add rules, you can subclass a ValidationRuleBuilder:
   
-  +---------------------------------------
++---------------------------------------+
   public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
 
 	@Override
@@ -117,16 +117,19 @@ Validation of HL7 messages
 				.is(emptyOr(usPhoneNumber()));
 	}
   }
-  +---------------------------------------
++---------------------------------------+
   
   Now let's add some fictive MessageRules that define expectations towards
   the existence of patient identifiers (PID-2, PID-3), and forbids all
   messages of HL7 versions 2.4 and before with a custom explanation.
   
-  +---------------------------------------
++---------------------------------------+
   public class MyCustomRuleBuilder extends DefaultValidationBuilder {
 
 	public void configure() {
+	
+		super.configure(); // don't forget this!
+		
 		forVersion(Version.V25)
 			.message("ADT", "*")
 				.description("custom message rules")
@@ -146,7 +149,7 @@ Validation of HL7 messages
 				.alwaysFails()
 	}
   }
-  +--------------------------------------- 
++---------------------------------------+
 
   
   
