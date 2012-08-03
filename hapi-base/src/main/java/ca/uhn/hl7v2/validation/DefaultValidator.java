@@ -32,6 +32,8 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Default implementation of a message validator. If uses a {@link ValidationContext} to validate
@@ -48,12 +50,19 @@ public class DefaultValidator implements Validator {
 	private ValidationContext context;
 
 	public DefaultValidator(HapiContext context) {
-		this.context = context.getDefaultValidationContext();
+		ValidationRuleBuilder builder = context.getDefaultValidationRuleBuilder();
+		this.context = (builder != null ? 
+				ValidationContextFactory.fromBuilder(builder) :
+				context.getDefaultValidationContext());
 	}
 	
 	public DefaultValidator(ValidationContext context) {
 		this.context = context;
 	}
+	
+	public DefaultValidator(ValidationRuleBuilder builder) {
+		this(ValidationContextFactory.fromBuilder(builder));
+	}	
 
 	/**
 	 * Calls {@link #initializeHandler()} to obtain a default instance of a

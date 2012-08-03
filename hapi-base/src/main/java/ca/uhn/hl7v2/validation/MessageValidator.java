@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Validation utilities for parsed and encoded messages. The default
@@ -44,16 +45,20 @@ import ca.uhn.hl7v2.HapiContext;
 public class MessageValidator extends DefaultValidator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MessageValidator.class);
-	private boolean throwOnError;
+	private boolean throwOnError = false;
 
 	
 	public MessageValidator(HapiContext context) {
-		this(context.getDefaultValidationContext(), false);
+		super(context);
 	}
 
 	public MessageValidator(ValidationContext context) {
-		this(context, false);
+		super(context);
 	}
+	
+	public MessageValidator(ValidationRuleBuilder builder) {
+		super(builder);
+	}	
 
 	/**
 	 * @param theContext context that determines which validation rules apply
