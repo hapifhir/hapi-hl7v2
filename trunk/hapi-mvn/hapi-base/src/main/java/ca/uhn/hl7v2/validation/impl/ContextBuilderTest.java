@@ -15,14 +15,14 @@ public class ContextBuilderTest {
 				forVersion(Version.V22)
 					.message("ADT", "*")
 						.description("blorg gedönds")
-						.terser("./PID-3", notEmpty())
-						.terser("PID-2", allOf(maxLength(10), matches("A.*")))
+						.terser("PID-2", allOf(maxLength(10), startsWith("A")))
+						.terser("PID-3", not(empty()))
 					.message("ORU", "R01")
 						.terser("MSH-9-1", isEqual("ORU"));
 				forVersion().asOf(Version.V23)
 					.message("ADT", "*")
-						.terser("./PID-3", notEmpty())
-						.terser("PID-2", allOf(maxLength(10), matches("B.*")));
+						.terser("PID-2", allOf(maxLength(10), startsWith("B")))
+						.terser("PID-3", not(empty()));
 			}
 
 		});

@@ -43,7 +43,6 @@ import org.w3c.dom.NodeList;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.util.XMLUtils;
-import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
@@ -68,7 +67,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class XMLSchemaRule implements EncodingRule {
+public class XMLSchemaRule extends AbstractEncodingRule {
 
 	private static final String SECTION_REFERENCE = "http://www.hl7.org/Special/committees/xml/drafts/v2xml.html";
 	private static final String DESCRIPTION = "Checks that an encoded XML message validates against a declared or default schema "
@@ -102,15 +101,6 @@ public class XMLSchemaRule implements EncodingRule {
 			}
 		}
 
-	}
-
-	/**
-	 * For backwards-compatibility reasons. Just calls apply.
-	 * 
-	 * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
-	 */
-	public ValidationException[] test(String msg) {
-		return apply(msg);
 	}
 
 	/**
