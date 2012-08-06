@@ -35,8 +35,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.parser.EncodingCharacters;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Iterator though existing Stuctures in a message.  No new repetitions or optional 
@@ -69,32 +67,24 @@ public class ReadOnlyMessageIterator implements Iterator<Structure> {
      *      segments  
      */
     public static Iterator<Structure> createPopulatedSegmentIterator(Group theRoot) {
+        return createPopulatedStructureIterator(theRoot, Segment.class);       
+    }
+    
+    public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, Class<? extends Structure> c) {
         Iterator<Structure> allIterator = new ReadOnlyMessageIterator(theRoot);
+        Iterator<Structure> structureIterator = new FilterIterator<Structure>(allIterator, new StructurePredicate(c));
         
-        FilterIterator.Predicate<Structure> segmentsOnly = new FilterIterator.Predicate<Structure>() {
-            public boolean evaluate(Structure obj) {
-                if (Segment.class.isAssignableFrom(obj.getClass())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        FilterIterator<Structure> segmentIterator = new FilterIterator<Structure>(allIterator, segmentsOnly);
-        
-        final EncodingCharacters ec = new EncodingCharacters('|', "^~\\&");
         FilterIterator.Predicate<Structure> populatedOnly = new FilterIterator.Predicate<Structure>() {
             public boolean evaluate(Structure obj) {
-                String encoded = PipeParser.encode((Segment) obj, ec);                
-                if (encoded.length() > 3) {
-                    return true;
-                } else {
-                    return false;
-                }
+                try {
+					return !obj.isEmpty();
+				} catch (HL7Exception e) {
+					return false; // no exception expected
+				}
             }
         };
-        return new FilterIterator<Structure>(segmentIterator, populatedOnly);        
-    }
+        return new FilterIterator<Structure>(structureIterator, populatedOnly);        
+    }    
     
     private void addChildren(Group theParent) {
         String[] names = theParent.getNames();

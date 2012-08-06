@@ -221,16 +221,7 @@ public class MessageNavigator {
         //the first rep of anything is traversed.
         Iterator<Structure> it = new MessageIterator(start, "doesn't exist", false);
         if (segmentsOnly) {
-            FilterIterator.Predicate<Structure> predicate = new FilterIterator.Predicate<Structure>() {
-                public boolean evaluate(Structure obj) {
-                    if (Segment.class.isAssignableFrom(obj.getClass())) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-            it = new FilterIterator<Structure>(it, predicate);
+            it = new FilterIterator<Structure>(it, new StructurePredicate(Segment.class));
         }
         
         if (it.hasNext()) {

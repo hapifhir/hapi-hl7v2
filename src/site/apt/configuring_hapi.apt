@@ -13,31 +13,32 @@ Configuring HAPI
   to track this task.
   
 * HAPI Context
-
   HAPI can be configured by using one or more instances of 
-  {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../HapiContext.html}HapiContext}}, particularly
-  its default implementation {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../DefaultHapiContext.html}DefaultHapiContext}}.
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html}HapiContext}}, particularly
+  its default implementation {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/DefaultHapiContext.html}DefaultHapiContext}}.
   The HAPI Context is the "single point of contact" for configuring HAPI parsers, validators, and
   server components. It furthermore provides factory methods that obtain parsers, validators etc. that
   are corresondingly configured:
   
-  +-------
+  +---------+
   HapiContext context = new DefaultHapiContext();
   context.setDefaultModelClassFactory(new MyOwnModelClassFactory());
   PipeParser parser = context.getPipeParser();
-  +-------
+  +---------+
   
   This code snippet modifies the default configuration by using a custom 
-  {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ModelClassFactory.html}ModelClassFactory}}.
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ModelClassFactory.html}ModelClassFactory}}.
   The obtained PipeParser is then configured to use this ModelClassFactory.
   
-  Other configuration items include ValidationRuleBuilder, ValidationContext and 
+  Other configuration items include 
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}, 
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html}ValidationContext} and 
   ParserConfiguration (see below).
   
 * HAPI Parser
 
   The HAPI Parser may be configured using a 
-  {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ParserConfiguration.html}ParserConfiguration}}
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html}ParserConfiguration}}
   object.
   
   The ParserConfiguration is a bean which sets and retrieves parser configuration 
