@@ -52,7 +52,11 @@ public class InMemoryIDGenerator extends IDGenerator.OrderedSupport {
 	}
 
 	public synchronized void reset() {
-		al.set(0l);
+		set(0l);
+	}
+	
+	protected void set(long l) {
+		al.set(l);
 	}
 
 }
