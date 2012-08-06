@@ -25,10 +25,13 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.util.idgenerator;
 
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
@@ -52,11 +55,11 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	private String directory = Home.getHomeDirectory().getAbsolutePath();
 	private String fileName = "id_file";
 	private boolean neverFail = false;
-
-	private final ReentrantLock lock = new ReentrantLock();
+	private boolean used = false;
+	private ReentrantLock lock = new ReentrantLock();
 
 	public FileBasedGenerator() {
-		super();
+		this(1);
 	}
 
 	FileBasedGenerator(int increment) {
@@ -64,41 +67,66 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	}
 
 	public String getID() throws IOException {
-		String innerId = null;
+		// If ID is 0, read initial value from file if possible
+		if (!used) {
+			set(readInitialValue(getFilePath()));
+			used = true;
+		}
 		try {
 			lock.lock();
-			innerId = super.getID();
-			return new File(getFilePath()).createNewFile() ? increment(0) : increment(Long
-					.parseLong(innerId));
-		} catch (IOException e) {
-			if (neverFail) {
-				LOG.warn("Could not read ID from file {}, going to use internal ID generator. {}",
-						getFilePath(), e.getMessage());
-				return innerId;
-			}
-			throw e;
+			String id = super.getID();
+			// The id held in the file is always <increment> larger so that
+			// the ID is still unique after a restart.
+			writeNextValue(Long.parseLong(id) + getIncrement());
+			return id;
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	private String increment(long next) throws IOException {
-		BufferedWriter bw = null;
-		String r = Long.toString(next);
-		String s = Long.toString(next + getIncrement());
+
+	private void writeNextValue(long id) throws IOException {
+		PrintWriter pw = null;
 		try {
-			bw = new BufferedWriter(new FileWriter(getFilePath(), false));
-			bw.write(s);
-			bw.flush();
-			return r;
+			pw = new PrintWriter(new FileOutputStream(getFilePath(), false));
+			pw.println(Long.toString(id));
+		} catch (IOException e) {
+			if (neverFail) {
+				LOG.warn("Could not write ID to file {}, going to use internal ID generator. {}",
+						getFilePath(), e.getMessage());
+				return;
+			}
+			throw e;
 		} finally {
-			if (bw != null)
-				bw.close();
+			if (pw != null)
+				pw.close();
+		}
+	}
+
+	private long readInitialValue(String path) {
+		BufferedReader br = null;
+		String id = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+			id = br.readLine();
+			return Long.parseLong(id);
+		} catch (IOException e) {
+			LOG.info("Could not read ID file {} ", path);
+			return 0;
+		} catch (NumberFormatException e) {
+			LOG.info("ID {} read from file is not a number", id);
+			return 0;
+		} finally {
+			if (br != null)
+				try {
+					br.close();
+				} catch (IOException e) {
+				}
 		}
 	}
 
 	private String getFilePath() {
-		return directory + "/" + fileName;
+		return new File(directory, fileName).getAbsolutePath();
 	}
 
 	public void setDirectory(String directory) {
@@ -127,7 +155,9 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		try {
 			lock.lock();
 			super.reset();
-			new File(getFilePath()).delete();
+			writeNextValue(0l);
+		} catch (IOException e) {
+			throw new IllegalStateException("Cannot initialize persistent ID generator", e);
 		} finally {
 			lock.unlock();
 		}
