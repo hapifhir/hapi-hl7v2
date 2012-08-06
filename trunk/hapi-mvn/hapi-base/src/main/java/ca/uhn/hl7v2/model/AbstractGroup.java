@@ -150,7 +150,15 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         return ret;
     }
     
-    protected <T extends Structure> T getTyped(String name, int rep, Class<T> type) {
+    
+    public boolean isEmpty() throws HL7Exception {
+        for (String name : getNames()) {
+        	if (!get(name).isEmpty()) return false;
+		}
+        return true;
+	}
+
+	protected <T extends Structure> T getTyped(String name, int rep, Class<T> type) {
         try {
            @SuppressWarnings("unchecked") T ret = (T)get(name, rep);
            return ret;

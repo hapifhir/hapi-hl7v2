@@ -34,9 +34,9 @@ import java.util.List;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.util.ReadOnlyMessageIterator;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -100,14 +100,14 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	 * referred to by the profileId parameter
 	 * 
 	 * @return this instance to build more rules
-	 */	
+	 */
 	public MessageRuleBuilder conformance(String profileId) {
 		return description("Unknown segments found in message").test(
 				new ConformanceProfileRule(profileId));
 	}
 
 	/**
-	 * Adds the specified rule to the set of rules. 
+	 * Adds the specified rule to the set of rules.
 	 * 
 	 * @param rule
 	 * @return this instance to build more rules
@@ -160,13 +160,11 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 
 		public ValidationException[] apply(Message msg) {
 			List<ValidationException> exceptions = new ArrayList<ValidationException>();
+
 			for (Iterator<Structure> iter = ReadOnlyMessageIterator
-					.createPopulatedSegmentIterator(msg); iter.hasNext();) {
-				Segment s = (Segment) iter.next();
-				if (s instanceof GenericSegment) {
-					exceptions
-							.add(new ValidationException("Found unknown segment; " + s.getName()));
-				}
+					.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
+				exceptions.add(new ValidationException("Found unknown segment; "
+						+ iter.next().getName()));
 			}
 			return exceptions.toArray(new ValidationException[exceptions.size()]);
 		}

@@ -29,22 +29,24 @@ Validation of HL7 messages
   EncodingRules are enforced (depending on runtime configuration) before an inbound message
   is parsed, or just after an outbound message has been encoded.  
 
+  []
+  
   Rules of all types described above are <bound> to a HL7 version and <scoped> depending on the rule type.
-  The scope of a PrimitiveTypeRule is a (you guessed it!) a primitive type. The scope of a
-  MessageRule is its event type and trigger event (e.g. ADT_A01). The scope of a EncodingRule is its
+  The scope of a <<<PrimitiveTypeRule>>> is (you guessed it!) a primitive type. The scope of a
+  <<<MessageRule>>> is its event type and trigger event (e.g. ADT_A01). The scope of a <<<EncodingRule>>> is its
   encoding - "XML" or "VB" (vertical bar).
   
   Binding and scope determine which rules are applied to which parts of a certain message.
   
   There is a predefined set of default PrimitiveTypeRules that
-  conform to the HL7 specification for the corresponding types (DefaultValidation). 
+  conform to the HL7 specification for the corresponding types (<<<DefaultValidation>>>). 
   This set is used when no other rules have been defined. Other predefined sets are
-  DefaultValidationWithoutTN and NoValidation.
+  <<<DefaultValidationWithoutTN>>> and <<<NoValidation>>>.
   
 * ValidationContext
 
-  A ValidationContext is the place where Rules and RuleBindings are collected. Parsers and
-  Message Validators can be configured with a ValidationContext to enforce validation during
+  A <<<ValidationContext>>> is the place where Rules and RuleBindings are collected. Parsers and
+  Message Validators can be configured with a <<<ValidationContext>>> to enforce validation during
   parsing, encoding, or on demand. 
   
 * RuleBuilders

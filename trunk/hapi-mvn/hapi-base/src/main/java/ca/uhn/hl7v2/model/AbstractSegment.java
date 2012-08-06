@@ -103,6 +103,16 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	}
 
 	/**
+	 * @see ca.uhn.hl7v2.model.Segment#isEmpty()
+	 */
+	public boolean isEmpty() throws HL7Exception {
+		for (int i = 1; i <= numFields(); i++) {
+			if (getField(i).length > 0) return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Returns an array of a specific type class
 	 */
 	protected <T extends Type> T[] getTypedField(int number, T[] array) {
@@ -182,14 +192,6 @@ public abstract class AbstractSegment extends AbstractStructure implements
 					+ " from field " + number + " - there are currently only "
 					+ arr.size() + " reps.",
 					HL7Exception.APPLICATION_INTERNAL_ERROR);
-
-		/*
-		 * if (this.getMaxCardinality(number) > 0 && rep >=
-		 * this.getMaxCardinality(number)) throw new HL7Exception(
-		 * "Can't get repetition " + rep + " from field " + number + " - only "
-		 * + this.getMaxCardinality(number) + " reps allowed.",
-		 * HL7Exception.APPLICATION_INTERNAL_ERROR);
-		 */
 
 		// add a rep if necessary ...
 		if (rep == arr.size()) {

@@ -29,10 +29,13 @@ package ca.uhn.hl7v2.model;
 
 import java.io.Serializable;
 
+import ca.uhn.hl7v2.HL7Exception;
+
 /**
  * Part of an HL7 message: either a segment or group.  There are certain methods (e.g. Group.get())
  * that will always return either a segment or a group.  This interface allows methods like this
- * to declare a return type of Structure instead of Object.  
+ * to declare a return type of Structure instead of Object. 
+ *  
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public interface Structure extends Serializable {
@@ -55,5 +58,10 @@ public interface Structure extends Serializable {
    * message group).  
    */
   public Group getParent();
+  
+  /**
+   * @return <code>true</code> if the structure is not populated
+   */
+  public boolean isEmpty() throws HL7Exception;
   
 }
