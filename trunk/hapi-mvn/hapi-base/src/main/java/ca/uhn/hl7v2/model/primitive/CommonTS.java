@@ -424,8 +424,9 @@ public class CommonTS implements Serializable {
         setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
         
         // 3410095: care for integer overflow and timezones not at the full hour, e.g. India
-        int hourOffset= theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60 * 60);   
-        int minuteOffset = (theCalendar.get(Calendar.ZONE_OFFSET) / (1000 * 60)) % 60;
+        int timeZoneOffset = theCalendar.get(Calendar.ZONE_OFFSET);
+        int hourOffset= timeZoneOffset / (1000 * 60 * 60);   
+        int minuteOffset = (timeZoneOffset / (1000 * 60)) % 60;
         int zoneOffset = hourOffset * 100 + minuteOffset;
         setOffset(zoneOffset);
     }
@@ -711,7 +712,7 @@ public class CommonTS implements Serializable {
             //the inputs seconds and milli seconds should be combined into a float type
             float fractSec = calMilli / 1000F;
             float calSecFloat = calSec + fractSec;
-            int calOffset = cal.get(GregorianCalendar.ZONE_OFFSET);
+            int calOffset = cal.get(GregorianCalendar.ZONE_OFFSET) + cal.get(GregorianCalendar.DST_OFFSET);
             //Note the input's Offset value is in milliseconds, we must convert it to
             //a 4 digit integer in the HL7 Offset format.
             int offSetSignInt;
