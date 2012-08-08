@@ -113,7 +113,7 @@ public class ConfGen {
 
       try {
          System.out.print("Checking for Xerces:");
-         Class.forName("org.apache.xerces.parsers.DOMParser");
+         Class.forName("com.sun.org.apache.xerces.internal.parsers.DOMParser");
          System.out.println("               PASS");
       } catch (ClassNotFoundException e) {
          System.out.println("               FAIL");
