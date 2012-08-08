@@ -9,6 +9,7 @@ import ca.uhn.hl7v2.hoh.encoder.AbstractHl7OverHttpDecoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseDecoder;
 import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;
+import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.HL7Reader;
@@ -41,9 +42,13 @@ class HohLlpReader implements HL7Reader {
 		if (myProtocol.getRole() == ServerRoleEnum.CLIENT) {
 			decoder = new Hl7OverHttpResponseDecoder();
 		} else {
-			decoder = new Hl7OverHttpRequestDecoder();
+			Hl7OverHttpRequestDecoder requestDecoder = new Hl7OverHttpRequestDecoder();
+			requestDecoder.setAuthorizationCallback(myProtocol.getAuthorizationServerCallback());
+			decoder = requestDecoder;
 		}
 
+		decoder.setSigner(myProtocol.getSigner());
+		
 		try {
 			decoder.readHeadersAndContentsFromInputStreamAndDecode(myInputStream);
 		} catch (DecodeException e) {
@@ -60,6 +65,8 @@ class HohLlpReader implements HL7Reader {
 			}
 		} catch (NoMessageReceivedException e) {
 			return null;
+		} catch (SignatureVerificationException e) {
+			throw new LLPException("Failed to verify message signature", e);
 		}
 
 		if (myProtocol.getRole() == ServerRoleEnum.SERVER) {

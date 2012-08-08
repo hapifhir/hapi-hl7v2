@@ -11,6 +11,8 @@ import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
 import ca.uhn.hl7v2.hoh.util.VersionLogger;
 
 abstract class AbstractHl7OverHttp {
+	public static final String HTTP_HEADER_HL7_SIGNATURE = "HL7-Signature";
+	public static final String HTTP_HEADER_HL7_SIGNATURE_LC = HTTP_HEADER_HL7_SIGNATURE.toLowerCase();
 
 	protected static final Charset ourDefaultCharset;
 

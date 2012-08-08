@@ -3,6 +3,11 @@ package ca.uhn.hl7v2.hoh.raw.client;
 import java.io.IOException;
 import java.net.Socket;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
+import ca.uhn.hl7v2.hoh.api.EncodeException;
+import ca.uhn.hl7v2.hoh.api.IReceivable;
+import ca.uhn.hl7v2.hoh.api.ISendable;
+
 /**
  * <p>
  * Simple raw message sender using the HL7 over HTTP specification.
@@ -16,6 +21,30 @@ public class HohRawClientSimple extends AbstractRawClient {
 
 	private boolean myAutoClose = true;
 	private Socket mySocket;
+
+	/**
+	 * Sends a message, waits for the response, and then returns the response if
+	 * any
+	 * 
+	 * @param theMessageToSend
+	 *            The message to send
+	 * @return The returned message, as well as associated metadata
+	 * @throws DecodeException
+	 *             If a problem occurs (read error, socket disconnect, etc.)
+	 *             during communication, or the response is invalid in some way.
+	 *             Note that IO errors in trying to connect to the remote host
+	 *             or sending the message are thrown directly (i.e. as
+	 *             {@link IOException}), but IO errors in reading the response
+	 *             are thrown as DecodeException
+	 * @throws IOException
+	 *             If the client is unable to connect to the remote host
+	 * @throws EncodeException
+	 *             If a failure occurs while encoding the message into a
+	 *             sendable HTTP request
+	 */
+	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
+		return super.doSendAndReceive(theMessageToSend);
+	}
 
 	/**
 	 * Constructor

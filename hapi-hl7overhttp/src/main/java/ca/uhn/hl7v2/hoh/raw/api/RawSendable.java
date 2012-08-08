@@ -11,12 +11,13 @@ public class RawSendable implements IResponseSendable<String> {
 
 	private final String myRawMessage;
 	private final EncodingStyle myEncodingStyle;
-	private final ResponseCode myResponseCode;
+	private ResponseCode myResponseCode;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param theRawMessage The message to return
+	 * @param theRawMessage
+	 *            The message to return
 	 */
 	public RawSendable(String theRawMessage) {
 		if (theRawMessage == null) {
@@ -24,20 +25,22 @@ public class RawSendable implements IResponseSendable<String> {
 		}
 		myRawMessage = theRawMessage;
 		myEncodingStyle = EncodingStyle.detect(myRawMessage);
-		myResponseCode = ResponseCode.detect(myRawMessage);
 	}
 
 	public void writeMessage(Writer theWriter) throws IOException {
 		theWriter.write(myRawMessage);
+		theWriter.flush();
 	}
 
 	public EncodingStyle getEncodingStyle() {
 		return myEncodingStyle;
 	}
-	
+
 	public ResponseCode getResponseCode() {
+		if (myResponseCode == null) {
+			myResponseCode = ResponseCode.detect(myRawMessage);
+		}
 		return myResponseCode;
 	}
 
-	
 }

@@ -21,6 +21,7 @@ import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseDecoder;
 import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;
 import ca.uhn.hl7v2.hoh.raw.api.RawReceivable;
 import ca.uhn.hl7v2.hoh.sign.ISigner;
+import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 
 public abstract class AbstractRawClient {
 	/**
@@ -105,17 +106,21 @@ public abstract class AbstractRawClient {
 	 *             If a failure occurs while encoding the message into a
 	 *             sendable HTTP request
 	 */
-	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
+	protected IReceivable<String> doSendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
 
 		Socket socket = provideSocket();
 		try {
-			return doSendAndReceive(theMessageToSend, socket);
+			return doSendAndReceiveInternal(theMessageToSend, socket);
 		} catch (DecodeException e) {
 			closeSocket(socket);
 			throw e;
 		} catch (IOException e) {
+			ourLog.debug("Caught IOException, going to close socket", e);
 			closeSocket(socket);
 			throw e;
+		} catch (SignatureVerificationException e) {
+			ourLog.debug("Failed to verify message signature", e);
+			throw new DecodeException("Failed to verify message signature", e);
 		} finally {
 			returnSocket(socket);
 		}
@@ -137,7 +142,7 @@ public abstract class AbstractRawClient {
 	 */
 	protected abstract void returnSocket(Socket theSocket);
 
-	private IReceivable<String> doSendAndReceive(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, EncodeException {
+	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, EncodeException, SignatureVerificationException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setUri(myUri);
 		enc.setHost(myHost);
@@ -236,7 +241,11 @@ public abstract class AbstractRawClient {
 
 	/**
 	 * @param theSigner
-	 *            the signer to set
+	 *            If provided, sets the Signature Profile signer implementation
+	 *            to use. See <a href=
+	 *            "http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.html#SIGNATURE_PROFILE"
+	 *            >http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.
+	 *            html#SIGNATURE_PROFILE</a>
 	 */
 	public void setSigner(ISigner theSigner) {
 		mySigner = theSigner;

@@ -88,7 +88,7 @@ public class StandardMessageSigner implements ISigner {
 
 	}
 
-	public void verify(byte[] theBytes, String theSignature) throws MessageDoesNotVerifyException {
+	public void verify(byte[] theBytes, String theSignature) throws SignatureVerificationException {
 
 		// TODO: handle exceptions with a checked exception and generate more helpful messages
 		
@@ -111,7 +111,7 @@ public class StandardMessageSigner implements ISigner {
 			if (ok) {
 				return;
 			} else {
-				throw new MessageDoesNotVerifyException();
+				throw new SignatureVerificationException();
 			}
 
 		} catch (SignatureException e) {
