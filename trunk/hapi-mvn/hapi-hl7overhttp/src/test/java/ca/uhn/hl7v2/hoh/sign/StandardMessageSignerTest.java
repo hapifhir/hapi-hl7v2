@@ -7,7 +7,7 @@ import java.security.KeyStore;
 
 import org.junit.Test;
 
-import ca.uhn.hl7v2.hoh.sign.MessageDoesNotVerifyException;
+import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
 
 public class StandardMessageSignerTest {
@@ -50,7 +50,7 @@ public class StandardMessageSignerTest {
 		try {
 			signer.verify("HELLO WORLD....".getBytes("US-ASCII"), signed);
 			fail();
-		} catch (MessageDoesNotVerifyException e) {
+		} catch (SignatureVerificationException e) {
 
 		}
 
@@ -71,7 +71,7 @@ public class StandardMessageSignerTest {
 			}
 			signer.verify("HELLO WORLD!".getBytes("US-ASCII"), signed);
 			fail();
-		} catch (MessageDoesNotVerifyException e) {
+		} catch (SignatureVerificationException e) {
 
 		}
 	}

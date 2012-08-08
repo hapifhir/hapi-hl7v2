@@ -18,6 +18,8 @@ import ca.uhn.hl7v2.hoh.api.MessageProcessingException;
 import ca.uhn.hl7v2.hoh.encoder.AuthorizationFailureException;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
 import ca.uhn.hl7v2.hoh.raw.api.RawReceivable;
+import ca.uhn.hl7v2.hoh.sign.ISigner;
+import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 
 public class HohRawServlet extends HttpServlet {
@@ -26,6 +28,7 @@ public class HohRawServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private IAuthorizationServerCallback myAuthorizationCallback;
 	private IMessageHandler<String> myMessageHandler;
+	private ISigner mySigner;
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -58,6 +61,8 @@ public class HohRawServlet extends HttpServlet {
 		
 		decoder.setUri(theReq.getRequestURI());
 		decoder.setAuthorizationCallback(myAuthorizationCallback);
+		decoder.setSigner(mySigner);
+		
 		try {
 			decoder.readContentsFromInputStreamAndDecode(theReq.getInputStream());
 		} catch (AuthorizationFailureException e) {
@@ -69,6 +74,11 @@ public class HohRawServlet extends HttpServlet {
 			ourLog.error("Request failure for " + theReq.getRequestURI(), e.getMessage(), e);
 			theResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			HTTPUtils.write400BadRequest(theResp.getOutputStream(), e.getMessage(), false);
+			return;
+		} catch (SignatureVerificationException e) {
+			ourLog.error("Signature verification failed on request for {}", theReq.getRequestURI());
+			theResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			HTTPUtils.write400SignatureVerificationFailed(theResp.getOutputStream(), false);
 			return;
 		}
 		

@@ -80,7 +80,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 
 		myServer.start();
 		
-		while (!myServer.isRunning()) {
+		while (myServer.isStarting()) {
 			ourLog.info("Waiting for server to start...");
 			Thread.sleep(100);
 		}

@@ -1,7 +1,10 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -22,7 +25,22 @@ public class Hl7OverHttpEncoderTest {
 	private static StandardMessageSigner mySigner;
 	
 	@Test
-	public void testAck() throws EncodeException {
+	public void testContentLengthCalculatedCorrectly() throws EncodeException, UnsupportedEncodingException {
+		
+		// Contains a multi-byte sequence
+		String message = "MSH|^~\\&|||||200803051508||ACK^A31|33|P|2.5\r"
+				+ "MSA|AR|I♥HAPI\r";
+
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName("UTF-8"));
+		enc.setMessage(message);
+		enc.encode();
+		
+		assertEquals("" + message.getBytes("UTF-8").length, enc.getHeaders().get("Content-Length"));
+	}
+
+	@Test
+	public void testContentLengthCalculation() throws EncodeException {
 		
 		String message = "MSH|^~\\&|||||200803051508||ACK^A31|33|P|2.5\r"
 				+ "MSA|AR|2\r";

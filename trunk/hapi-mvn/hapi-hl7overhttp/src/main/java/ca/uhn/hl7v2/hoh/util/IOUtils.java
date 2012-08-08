@@ -10,7 +10,7 @@ import java.io.OutputStream;
  */
 public class IOUtils {
 
-	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	/**
 	 * Non instantiable

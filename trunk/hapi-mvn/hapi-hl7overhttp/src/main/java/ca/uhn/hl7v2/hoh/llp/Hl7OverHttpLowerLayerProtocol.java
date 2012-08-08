@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.sign.ISigner;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.HL7Writer;
@@ -33,8 +34,9 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 	private HohLlpReader myNextReader;
 	private HohLlpWriter myNextWriter;
 	private ServerRoleEnum myRole;
+	private ISigner mySigner;
 	private String myUriPath = "/";
-
+	
 	public Hl7OverHttpLowerLayerProtocol(ServerRoleEnum theRole) {
 		myRole = theRole;
 
@@ -42,7 +44,6 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 			throw new NullPointerException("Role can not be null");
 		}
 	}
-
 	/**
 	 * @return the authorizationClientCallback
 	 */
@@ -80,6 +81,14 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 	 */
 	public ServerRoleEnum getRole() {
 		return myRole;
+	}
+
+	/**
+	 * @return The signature profile signer
+	 * @see #setSigner(ISigner)
+	 */
+	ISigner getSigner() {
+		return mySigner;
 	}
 
 	/**
@@ -136,6 +145,13 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 			throw new IllegalStateException("This LLP implementation is in CLIENT mode, so it can not use an authorization callback");
 		}
 		myAuthorizationServerCallback = theAuthorizationCallback;
+	}
+
+	/**
+	 * @param theSigner The signature profile signer
+	 */
+	public void setSigner(ISigner theSigner) {
+		mySigner = theSigner;
 	}
 
 	/**

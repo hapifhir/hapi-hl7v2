@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.hoh.encoder;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -22,6 +23,7 @@ import ca.uhn.hl7v2.hoh.util.HTTPUtils;
  * single use, so please create a new instance for each message.
  */
 public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
+
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractHl7OverHttpEncoder.class);
 
 	private String myActionLine;
@@ -48,21 +50,37 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 	public void encode() throws EncodeException {
 		verifyNotUsed();
 		
-		if (isBlank(getMessage())) {
-			throw new IllegalStateException("Message must be set");
+		if (isBlank(getMessage()) && mySendable == null) {
+			throw new IllegalStateException("Either Message or Sendable must be set");
 		}
-		
+		if (getMessage() != null) {
+			setData(getMessage().getBytes(getCharset()));
+		} else {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			OutputStreamWriter w = new OutputStreamWriter(bos, getCharset());
+			try {
+				mySendable.writeMessage(w);
+			} catch (IOException e) {
+				throw new EncodeException("Failed to convert message to sendable bytes");
+			}
+			setData(bos.toByteArray());
+		}
+
 		setActionLineAppropriately();
 
 		setHeaders(new LinkedHashMap<String, String>());
 		
 		StringBuilder ctBuilder = new StringBuilder();
-		ctBuilder.append(EncodingStyle.detect(getMessage()).getContentType());
+		if (mySendable != null) {
+			ctBuilder.append(mySendable.getEncodingStyle().getContentType());
+		} else {
+			ctBuilder.append(EncodingStyle.detect(getMessage()).getContentType());
+		}
 		ctBuilder.append("; charset=");
 		ctBuilder.append(getCharset().name());
 		getHeaders().put("Content-Type", ctBuilder.toString());
 
-		getHeaders().put("Content-Length", Integer.toString(getMessage().length()));
+		getHeaders().put("Content-Length", Integer.toString(getData().length));
 
 		addSpecificHeaders();
 
@@ -70,13 +88,9 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 			getHeaders().put("Date", ourRfc1123DateFormat.format(new Date()));
 		}
 		
-		if (getMessage() != null) {
-			setData(getMessage().getBytes(getCharset()));
-		}
-
 		if (getSigner() != null) {
 			try {
-				getHeaders().put("HL7-Signature", getSigner().sign(getData()));
+				getHeaders().put(HTTP_HEADER_HL7_SIGNATURE, getSigner().sign(getData()));
 			} catch (SignatureFailureException e) {
 				throw new EncodeException(e);
 			}

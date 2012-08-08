@@ -62,7 +62,7 @@ class HohLlpWriter implements HL7Writer {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeMessage(String theArg0) throws LLPException, IOException {
+	public void writeMessage(String theRawMessage) throws LLPException, IOException {
 
 		AbstractHl7OverHttpEncoder e;
 		if (myProtocol.getRole() == ServerRoleEnum.CLIENT) {
@@ -75,7 +75,9 @@ class HohLlpWriter implements HL7Writer {
 			e = new Hl7OverHttpResponseEncoder();
 		}
 
-		e.setMessage(theArg0);
+		e.setSigner(myProtocol.getSigner());
+		
+		e.setMessage(theRawMessage);
 		if (getPreferredCharset() != null) {
 			e.setCharset(getPreferredCharset());
 		}

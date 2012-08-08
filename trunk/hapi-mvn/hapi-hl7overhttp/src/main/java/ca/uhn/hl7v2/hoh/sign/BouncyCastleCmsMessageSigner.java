@@ -1,38 +1,111 @@
 package ca.uhn.hl7v2.hoh.sign;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
-import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignerDigestMismatchException;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
 
 public class BouncyCastleCmsMessageSigner implements ISigner {
 
-	private KeyStore myKeyStore;
+	static final String MSG_KEY_IS_NOT_A_PRIVATE_KEY = "Key is not a private key: ";
+	static final String MSG_KEY_IS_NOT_A_PUBLIC_KEY = "Key is not a public key: ";
+	static final String MSG_KEYSTORE_DOES_NOT_CONTAIN_KEY_WITH_ALIAS = "Keystore does not contain key with alias: ";
+
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BouncyCastleCmsMessageSigner.class);
+
+	private String myAliasPassword;
 	private String myKeyAlias;
+	private KeyStore myKeyStore;
+	private PrivateKey myPrivateKey;
+	private PublicKey myPublicKey;
+
+	private PrivateKey getPrivateKey() throws GeneralSecurityException, SignatureFailureException {
+		if (myKeyStore == null) {
+			throw new SignatureFailureException("Keystore is not set");
+		}
+		if (isBlank(myKeyAlias)) {
+			throw new SignatureFailureException("Key alias is not set");
+		}
+
+		if (this.myPrivateKey == null) {
+
+			myPrivateKey = (PrivateKey) myKeyStore.getKey(myKeyAlias, myAliasPassword.toCharArray());
+			if (myPrivateKey == null) {
+				if (myKeyStore.containsAlias(myKeyAlias)) {
+					if (myKeyStore.isCertificateEntry(myKeyAlias)) {
+						throw new SignatureFailureException(MSG_KEY_IS_NOT_A_PRIVATE_KEY + myKeyAlias);
+					}
+				} else {
+					throw new SignatureFailureException(MSG_KEYSTORE_DOES_NOT_CONTAIN_KEY_WITH_ALIAS + myKeyAlias);
+				}
+			}
+		}
+		return this.myPrivateKey;
+	}
+
+	private PublicKey getPublicKey() throws SignatureFailureException {
+		if (myKeyStore == null) {
+			throw new SignatureFailureException("Keystore is not set");
+		}
+		if (isBlank(myKeyAlias)) {
+			throw new SignatureFailureException("Key alias is not set");
+		}
+
+		if (myPublicKey == null) {
+			try {
+				Certificate pubCert = myKeyStore.getCertificate(myKeyAlias);
+				myPublicKey = pubCert != null ? pubCert.getPublicKey() : null;
+				if (myPublicKey == null) {
+					if (myKeyStore.containsAlias(myKeyAlias)) {
+						if (myKeyStore.isKeyEntry(myKeyAlias)) {
+							throw new SignatureFailureException(MSG_KEY_IS_NOT_A_PUBLIC_KEY + myKeyAlias);
+						}
+					} else {
+						throw new SignatureFailureException(MSG_KEYSTORE_DOES_NOT_CONTAIN_KEY_WITH_ALIAS + myKeyAlias);
+					}
+				}
+			} catch (KeyStoreException e) {
+				throw new SignatureFailureException("Failed to retrieve key with alias " + myKeyAlias + " from keystore", e);
+			}
+
+		}
+		return myPublicKey;
+	}
 
 	/**
-	 * @param theKeyStore
-	 *            the keyStore to set
+	 * @param theAliasPassword
+	 *            the aliasPassword to set
 	 */
-	public void setKeyStore(KeyStore theKeyStore) {
-		myKeyStore = theKeyStore;
+	public void setAliasPassword(String theAliasPassword) {
+		myAliasPassword = theAliasPassword;
 	}
 
 	/**
@@ -44,77 +117,84 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 	}
 
 	/**
-	 * @param theAliasPassword
-	 *            the aliasPassword to set
+	 * @param theKeyStore
+	 *            the keyStore to set
 	 */
-	public void setAliasPassword(String theAliasPassword) {
-		myAliasPassword = theAliasPassword;
+	public void setKeyStore(KeyStore theKeyStore) {
+		if (theKeyStore == null) {
+			throw new NullPointerException("Keystore can not be null");
+		}
+		myKeyStore = theKeyStore;
 	}
 
-	private String myAliasPassword;
-	private PrivateKey myPrivateKey;
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public String sign(byte[] theBytes) throws SignatureFailureException {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
-			CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
 
-			X509Certificate cert = (X509Certificate) myKeyStore.getCertificate(myKeyAlias);
-			generator.addSigner(getPrivateKey(), cert, CMSSignedDataGenerator.ENCRYPTION_RSA, CMSSignedDataGenerator.DIGEST_SHA1);
-			generator.addCertificatesAndCRLs(getCertStore());
-			CMSProcessable content = new CMSProcessableByteArray(theBytes);
+			List<X509Certificate> certList = new ArrayList<X509Certificate>();
+			CMSTypedData msg = new CMSProcessableByteArray(theBytes);
 
-			CMSSignedData signedData = generator.generate(content, false, "BC");
-			return Base64.encodeBase64String(signedData.getEncoded());
+			X509Certificate signCert = (X509Certificate) myKeyStore.getCertificate(myKeyAlias);
+			certList.add(signCert);
+
+			Store certs = new JcaCertStore(certList);
+
+			CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+			ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA512withRSA").setProvider("BC").build(getPrivateKey());
+
+			gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(sha1Signer, signCert));
+
+			gen.addCertificates(certs);
+
+			CMSSignedData sigData = gen.generate(msg, false);
+			return Base64.encodeBase64String(sigData.getEncoded());
 
 		} catch (Exception e) {
 			throw new SignatureFailureException(e);
 		}
 	}
 
-	private CertStore getCertStore() throws GeneralSecurityException {
-		ArrayList<Certificate> list = new ArrayList<Certificate>();
-		Certificate[] certificates = myKeyStore.getCertificateChain(this.myKeyAlias);
-		for (int i = 0, length = certificates == null ? 0 : certificates.length; i < length; i++) {
-			list.add(certificates[i]);
-		}
-		return CertStore.getInstance("Collection", new CollectionCertStoreParameters(list), "BC");
-	}
+	/**
+	 * {@inheritDoc}
+	 */
+	public void verify(byte[] theBytes, String theSignature) throws SignatureVerificationException, SignatureFailureException {
+		PublicKey pubKey = getPublicKey();
 
-	private PrivateKey getPrivateKey() throws GeneralSecurityException {
-		if (this.myPrivateKey == null) {
-			this.myPrivateKey = initalizePrivateKey();
-		}
-		return this.myPrivateKey;
-	}
-
-	private PrivateKey initalizePrivateKey() throws GeneralSecurityException {
-		return (PrivateKey) myKeyStore.getKey(myKeyAlias, myAliasPassword.toCharArray());
-	}
-
-	public void verify(byte[] theBytes, String theSignature) throws MessageDoesNotVerifyException, SignatureFailureException {
 		try {
+
 			CMSProcessable content = new CMSProcessableByteArray(theBytes);
 			CMSSignedData s = new CMSSignedData(content, Base64.decodeBase64(theSignature));
-			CertStore certs = s.getCertificatesAndCRLs("Collection", "BC");
+
+			ourLog.debug("Verifying message against public key with alias[{}]", myKeyAlias);
+
+			SignerInformationVerifier vib = new JcaSimpleSignerInfoVerifierBuilder().build(pubKey);
+
 			SignerInformationStore signers = s.getSignerInfos();
 			boolean verified = false;
 
-			for (Iterator i = signers.getSigners().iterator(); i.hasNext();) {
+			for (Iterator<?> i = signers.getSigners().iterator(); i.hasNext();) {
 				SignerInformation signer = (SignerInformation) i.next();
-				Collection<? extends Certificate> certCollection = certs.getCertificates(signer.getSID());
-				if (!certCollection.isEmpty()) {
-					X509Certificate cert = (X509Certificate) certCollection.iterator().next();
-					try {
-						if (signer.verify(cert.getPublicKey(), "BC")) {
-							verified = true;
-						}
-					} catch (CMSSignerDigestMismatchException e) {
-						throw new MessageDoesNotVerifyException(e);
+				try {
+
+					ourLog.debug("Signer: {}", signer.getSID());
+
+					if (signer.verify(vib)) {
+						verified = true;
 					}
+				} catch (CMSSignerDigestMismatchException e) {
+					throw new SignatureVerificationException(e);
 				}
+
 			}
-		} catch (MessageDoesNotVerifyException e) {
+
+			if (verified == false) {
+				throw new SignatureVerificationException();
+			}
+
+		} catch (SignatureVerificationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new SignatureFailureException(e);
