@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.validation.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
@@ -43,10 +44,10 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 @SuppressWarnings("serial")
 public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 
-	private String[] types;
+	private Set<String> types;
 
-	protected PrimitiveRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
-			String... types) {
+	protected PrimitiveRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
+			Set<String> types) {
 		super(rules, versions);
 		this.types = types;
 	}
@@ -128,4 +129,10 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 		return bindings;
 	}
 
+	// for tests only
+	Set<String> getTypes() {
+		return types;
+	}
+
+	
 }
