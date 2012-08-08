@@ -5,6 +5,16 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
+        <release version="2.0.1" date="TBA">
+            <action type="fix" dev="Thomas Robinson">
+            	Make highlights clear properly when switching to XML format, or moving
+            	around in XML documents.
+            </action>
+            <action type="fix">
+            	Show currently highlighted message in text editor component on Windows. For some reason,
+            	the Windows L&F was preventing this. 
+            </action>
+        </release>
         <release version="2.0" date="2012-07-16">
             <action type="fix">
             	Fix a permission error that prevented creating a new message if the
