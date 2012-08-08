@@ -66,8 +66,8 @@ Developing using HAPI - By Example
     {{{./xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
     to make sure they contain no invalid data.
   
-    * We can define our own
-    {{{./xref/ca/uhn/hl7v2/examples/CustomMessageValidation.html}validate rules}}
+  * We can define our own
+    {{{./xref/ca/uhn/hl7v2/examples/CustomMessageValidation.html}validation rules}}
     to adapt validation to site-specific requirements.
 	
   * To be even more advanced, we can
