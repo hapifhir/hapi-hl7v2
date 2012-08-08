@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.concurrent;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -51,6 +52,7 @@ public abstract class Service implements Runnable {
 	private final ExecutorService executorService;
 	private Future<?> thread;
 	private Throwable serviceExitedWithException;
+	private CountDownLatch startupLatch = new CountDownLatch(1);
 
 	public Service(String name, ExecutorService executorService) {
 		super();
@@ -87,7 +89,28 @@ public abstract class Service implements Runnable {
 	public void start() {
 		log.debug("Starting service {}", name);
 		keepRunning = true;
-		thread = getExecutorService().submit(this);
+		ExecutorService service = getExecutorService();
+		if (service.isShutdown()) {
+			throw new IllegalStateException("ExecutorService is shut down");
+		}
+		thread = service.submit(this);
+	}
+
+	/**
+	 * <p>
+	 * Starts the server listening for connections in a new thread. This
+	 * continues until <code>stop()</code> is called.
+	 * </p>
+	 * <p>
+	 * Unlike {@link #start()}, this method will not return until the processing
+	 * loop has completed at least once. This does not imply any kind of successful
+	 * processing, but should at least provide a guarantee that the service
+	 * has finished initializing itself.
+	 * </p>
+	 */
+	public void startAndWait() throws InterruptedException {
+		start();
+		startupLatch.await();
 	}
 
 	/**
@@ -177,6 +200,7 @@ public abstract class Service implements Runnable {
 			log.debug("Thread {} entering main loop", name);
 			while (isRunning()) {
 				handle();
+				startupLatch.countDown();
 			}
 			log.debug("Thread {} leaving main loop", name);
 		} catch (RuntimeException t) {
@@ -186,6 +210,7 @@ public abstract class Service implements Runnable {
 			serviceExitedWithException = t;
 			log.warn("Thread exiting main loop due to exception:", t);
 		} finally {
+			startupLatch.countDown();
 			afterTermination();
 		}
 
