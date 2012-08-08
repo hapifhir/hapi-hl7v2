@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
  * Abstract base class for message rules that are evaluates using predicates
- *
+ * 
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
@@ -49,7 +49,7 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 	public ValidationException[] apply(Message msg) {
 		try {
 			Object subject = testExpression.evaluate(msg);
-			return result(getPredicate().evaluate(subject));
+			return result(getPredicate().evaluate(subject), subject);
 		} catch (Exception e) {
 			return failed(e);
 		}
@@ -61,9 +61,8 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 
 	@Override
 	public String getDescription() {
-		return testExpression.getDescription() + " requires to be " + testPredicate.getDescription();
+		return testExpression.getDescription() + " '%s' requires to be "
+				+ testPredicate.getDescription();
 	}
-	
-	
 
 }

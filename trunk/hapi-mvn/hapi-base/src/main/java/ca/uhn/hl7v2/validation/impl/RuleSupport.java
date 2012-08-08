@@ -8,16 +8,16 @@ public abstract class RuleSupport<T> implements Rule<T> {
 
 	private static final ValidationException[] PASSED = new ValidationException[0];
 
-	protected ValidationException[] result(boolean result) {
-		return result ? passed() : failed();
+	protected ValidationException[] result(boolean result, Object value) {
+		return result ? passed() : failedWithValue(value);
 	}
 			
 	protected ValidationException[] passed() {
 		return PASSED;
 	}
 
-	protected ValidationException[] failed() {
-		return failed("Validation failed: " + getDescription());
+	protected ValidationException[] failedWithValue(Object value) {
+		return failed("Validation failed: " + String.format(getDescription(), value));
 	}
 
 	protected ValidationException[] failed(String msg) {
