@@ -375,7 +375,7 @@ public class Terser {
         Segment segment = getSegment(tok.nextToken());
         
         int[] ind = getIndices(spec);
-        log.debug("Setting {} seg: {} ind: {} {} {} {}", 
+        log.trace("Setting {} seg: {} ind: {} {} {} {}", 
         		new Object[] {spec, segment.getName(), ind[0], ind[1], ind[2], ind[3]});            
         set(segment, ind[0], ind[1], ind[2], ind[3], value);
     }

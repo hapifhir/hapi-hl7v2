@@ -89,7 +89,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      */
     public boolean hasNext() {
 
-        log.debug("hasNext() for direction {}", myDirection);
+        log.trace("hasNext() for direction {}", myDirection);
         if (myDirection == null) {
             throw new IllegalStateException("Direction not set");
         }
@@ -98,7 +98,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
 
             Position currentPosition = getCurrentPosition();
 
-            log.debug("hasNext() current position: {}", currentPosition);
+            log.trace("hasNext() current position: {}", currentPosition);
 
             IStructureDefinition structureDefinition = currentPosition.getStructureDefinition();
             if (structureDefinition.isSegment() && structureDefinition.getName().startsWith(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
