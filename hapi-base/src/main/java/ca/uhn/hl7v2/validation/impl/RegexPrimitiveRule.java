@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.impl.builder.BuilderSupport;
+import ca.uhn.hl7v2.validation.builder.BuilderSupport;
 
 /**
  * A <code>PrimitiveTypeRule</code> that validates primitive values using a regular expression.

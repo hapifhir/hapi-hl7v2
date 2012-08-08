@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 /**
  * Validation utilities for parsed and encoded messages. The default

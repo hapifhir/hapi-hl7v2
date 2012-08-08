@@ -38,7 +38,7 @@ public class VersionLogger {
 				try {
 					clazz.getMethod("createLSParser", short.class, String.class);
 				} catch (Exception e) {
-					LOG.warn("You apear to have a very old verion of Xerces on your classpath! Please be warned that XML parsing and encoding may fail.");
+					LOG.warn("You appear to have a very old version of Xerces on your classpath! Please be warned that XML parsing and encoding may fail.");
 				}
             } catch (Exception e) {
                 // ignore

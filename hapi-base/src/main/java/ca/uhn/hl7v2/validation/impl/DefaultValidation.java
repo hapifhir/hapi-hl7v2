@@ -25,8 +25,8 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.impl.builder.support.DefaultValidationBuilder;
-import ca.uhn.hl7v2.validation.impl.builder.support.NoValidationBuilder;
+import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
+import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 
 /**
  * A <code>ValidationContext</code> with a default set of rules initially

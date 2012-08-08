@@ -1,6 +1,6 @@
-package ca.uhn.hl7v2.validation.impl.builder.support;
+package ca.uhn.hl7v2.validation.builder.support;
 
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 
 @SuppressWarnings("serial")

@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.validation.impl.builder.support;
+package ca.uhn.hl7v2.validation.builder.support;
 
 
 @SuppressWarnings("serial")

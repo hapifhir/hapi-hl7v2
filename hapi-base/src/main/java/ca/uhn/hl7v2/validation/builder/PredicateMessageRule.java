@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "Predicate.java".  Description: 
-"Predicate used for validation rules" 
+The Original Code is "PredicateMessageRule.java".  Description: 
+"MessageRule that validates using predicates" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2012.  All Rights Reserved. 
@@ -23,21 +23,40 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-package ca.uhn.hl7v2.validation.impl.builder;
+package ca.uhn.hl7v2.validation.builder;
 
-import java.io.Serializable;
-
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
- * Predicate used for validation rules.
+ * Abstract base class for message rules that are evaluates using predicates
  *
  * @author Christian Ohr
  */
-public interface Predicate extends Serializable {
+@SuppressWarnings("serial")
+public abstract class PredicateMessageRule extends AbstractMessageRule implements
+		PredicateRuleSupport<Message> {
 
-	boolean evaluate(Object data) throws ValidationException;
-	
-	String getDescription();
+	private Predicate testPredicate;
+	private Expression<Message> testExpression;
+
+	PredicateMessageRule(Predicate predicate, Expression<Message> expression) {
+		this.testPredicate = predicate;
+		this.testExpression = expression;
+	}
+
+	public ValidationException[] apply(Message msg) {
+		try {
+			Object subject = testExpression.evaluate(msg);
+			return result(getPredicate().evaluate(subject));
+		} catch (Exception e) {
+			return failed(e);
+		}
+	}
+
+	public Predicate getPredicate() {
+		return testPredicate;
+	}
 
 }

@@ -23,7 +23,7 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-package ca.uhn.hl7v2.validation.impl.builder;
+package ca.uhn.hl7v2.validation.builder;
 
 import java.util.ArrayList;
 import java.util.Collections;

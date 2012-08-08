@@ -25,9 +25,9 @@ import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.validation.DefaultValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
-import ca.uhn.hl7v2.validation.impl.builder.support.DefaultValidationBuilder;
 
 public class DefaultHapiContextTest {
 

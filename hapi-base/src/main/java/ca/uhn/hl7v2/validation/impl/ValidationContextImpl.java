@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 /**
  * A default implementation of <code>ValidationContext</code>.

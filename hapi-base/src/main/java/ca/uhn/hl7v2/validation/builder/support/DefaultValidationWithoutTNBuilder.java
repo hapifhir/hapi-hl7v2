@@ -1,13 +1,13 @@
-package ca.uhn.hl7v2.validation.impl.builder.support;
+package ca.uhn.hl7v2.validation.builder.support;
 
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 @SuppressWarnings("serial")
 public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 
 	/**
-	 * @see ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder#configure()
+	 * @see ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder#configure()
 	 */
 	public void configure() {
 		forAllVersions()

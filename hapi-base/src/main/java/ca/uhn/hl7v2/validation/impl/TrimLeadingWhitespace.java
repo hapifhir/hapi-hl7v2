@@ -28,7 +28,7 @@ package ca.uhn.hl7v2.validation.impl;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.impl.builder.PrimitiveRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.PrimitiveRuleBuilder;
 
 /**
  * Performs no validation but removes leading whitespace in the correct() method.
