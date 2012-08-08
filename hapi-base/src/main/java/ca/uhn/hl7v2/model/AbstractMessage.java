@@ -214,7 +214,8 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      */
     public Message generateACK(String theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
         Message retVal = DefaultApplication.makeACK(this);
-
+        retVal.setParser(getParser());
+        
         if (theAcknowledgementCode == null) {
             theAcknowledgementCode = "AA";
         }
