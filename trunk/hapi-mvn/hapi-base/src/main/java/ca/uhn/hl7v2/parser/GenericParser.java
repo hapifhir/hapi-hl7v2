@@ -97,6 +97,13 @@ public class GenericParser extends Parser {
         secondaryParser = xmlParser;
     }
 
+    /**
+     * Returns true if the pipe parser is primary
+     */
+    public boolean isPipeParserPrimary() {
+    	return primaryParser == pipeParser;
+    }
+    
         /**
          * @param theContext the set of validation rules to be applied to messages parsed or
          *      encoded by this parser (defaults to ValidationContextFactory.DefaultValidation)
