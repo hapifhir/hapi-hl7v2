@@ -17,7 +17,9 @@ public abstract class RuleSupport<T> implements Rule<T> {
 	}
 
 	protected ValidationException[] failedWithValue(Object value) {
-		return failed("Validation failed: " + String.format(getDescription(), value));
+		String description = getDescription();
+		String msg = String.format(description, String.valueOf(value));
+		return failed("Validation failed: " + msg);
 	}
 
 	protected ValidationException[] failed(String msg) {

@@ -9,7 +9,7 @@ public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 	/**
 	 * @see ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder#configure()
 	 */
-	public void configure() {
+	protected void configure() {
 		forAllVersions()
 			.primitive("FT").trimmed(maxLength(32000))
 			.primitive("ST", "TX").trimmed()

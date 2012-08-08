@@ -5,7 +5,7 @@ package ca.uhn.hl7v2.validation.builder.support;
 public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
 
 	@Override
-	public void configure() {
+	protected void configure() {
 		super.configure();
 
 		forAllVersions()

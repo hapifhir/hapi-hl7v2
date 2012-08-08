@@ -11,7 +11,7 @@ public class ContextBuilderTest {
 		final ValidationContextImpl context = new ValidationContextImpl(
 			new ValidationRuleBuilder() {
 
-			public void configure() {
+			protected void configure() {
 				forVersion(Version.V22)
 					.message("ADT", "*")
 						.description("blorg gedönds")

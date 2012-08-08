@@ -835,7 +835,7 @@ public class NewPipeParserTest extends TestCase {
 		parser.setValidationRuleBuilder(new ValidationRuleBuilder() {
 
 			@Override
-			public void configure() {
+			protected void configure() {
 				forAllVersions()
 					.encoding("*").test(new FooEncodingRule())
 					.message("*", "*").test(new BarMessageRule())

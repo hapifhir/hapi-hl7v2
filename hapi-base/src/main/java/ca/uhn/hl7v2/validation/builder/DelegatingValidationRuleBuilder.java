@@ -6,7 +6,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "DelegatingValidationBuilder.java".  Description: 
+The Original Code is "DelegatingValidationRuleBuilder.java".  Description: 
 "Delegating Rule Builder that additionally allows to delegate rule building." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
@@ -32,16 +32,16 @@ package ca.uhn.hl7v2.validation.builder;
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class DelegatingValidationBuilder extends ValidationRuleBuilder {
+public class DelegatingValidationRuleBuilder extends ValidationRuleBuilder {
 
 	private ValidationRuleBuilder delegate;
 
-	public DelegatingValidationBuilder(ValidationRuleBuilder delegate) {
+	public DelegatingValidationRuleBuilder(ValidationRuleBuilder delegate) {
 		this.delegate = delegate;
 	}
 
 	@Override
-	public void configure() {
+	protected void configure() {
 		delegate.configure();
 	}
 

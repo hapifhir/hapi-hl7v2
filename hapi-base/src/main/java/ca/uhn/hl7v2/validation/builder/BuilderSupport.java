@@ -380,7 +380,7 @@ public abstract class BuilderSupport implements Serializable {
 		}
 
 		public String getDescription() {
-			return "not (" + predicate.getDescription() + ")";
+			return "not " + delegate.getDescription();
 		}
 
 	}

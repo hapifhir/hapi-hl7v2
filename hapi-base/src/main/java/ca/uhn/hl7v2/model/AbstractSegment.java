@@ -107,7 +107,10 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 */
 	public boolean isEmpty() throws HL7Exception {
 		for (int i = 1; i <= numFields(); i++) {
-			if (getField(i).length > 0) return false;
+			Type[] types = getField(i);
+			for (Type type : types) {
+				if (!type.isEmpty()) return false;
+			}
 		}
 		return true;
 	}
