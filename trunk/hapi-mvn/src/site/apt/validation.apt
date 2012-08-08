@@ -17,14 +17,17 @@ Validation of HL7 messages
   The HAPI library offers support for validating HL7 messages by definition of rules 
   that check against constraints on primitive type level, message level, and encoded message level. 
   
-  [<<PrimitiveTypeRule>>] A validation rule that applies to primitive types like ID, IS, NM. PrimitiveTypeRules
+  [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/PrimitiveTypeRule.html}PrimitiveTypeRule}}] 
+  A validation rule that applies to primitive types like ID, IS, NM. PrimitiveTypeRules
   are enforced every time a primitive value is set. 
 
-  [<<MessageRule>>] A validation rule that applies to a fully populated message object.  MessageRules 
+  [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/MessageRule.html}MessageRule}}] 
+  A validation rule that applies to a fully populated message object.  MessageRules 
   are enforced (depending on runtime configuration) just after an inbound message
   has been parsed, or just before an outbound message is encoded.  
    
-  [<<EncodingRule>>] A validation rule that applies to encoded message strings.  EncodingRules are intended 
+ [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/EncodingRule.html}EncodingRule}}] 
+  A validation rule that applies to encoded message strings.  EncodingRules are intended 
   for criteria that are specific to the encoded form of a message, e.g. "no empty tags in an XML message". 
   EncodingRules are enforced (depending on runtime configuration) before an inbound message
   is parsed, or just after an outbound message has been encoded.  
@@ -39,32 +42,34 @@ Validation of HL7 messages
   Binding and scope determine which rules are applied to which parts of a certain message.
   
   There is a predefined set of default PrimitiveTypeRules that
-  conform to the HL7 specification for the corresponding types (<<<DefaultValidation>>>). 
+  conform to the HL7 specification for the corresponding types ({{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html}DefaultValidation}}). 
   This set is used when no other rules have been defined. Other predefined sets are
-  <<<DefaultValidationWithoutTN>>> and <<<NoValidation>>>.
+  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html}DefaultValidationWithoutTN}} 
+  and {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/NoValidation.html}NoValidation}}.
   
 * ValidationContext
 
-  A <<<ValidationContext>>> is the place where Rules and RuleBindings are collected. Parsers and
+  A {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html}ValidationContext}} 
+  is the place where Rules and RuleBindings are collected. Parsers and
   Message Validators can be configured with a <<<ValidationContext>>> to enforce validation during
   parsing, encoding, or on demand. 
   
 * RuleBuilders
 
   In HAPI 2.0 and before, custom validation rules had to be implemented by extending the appropriate
-  rule types, define their bindings, and collect them in a subclass of ValidationContext. This
+  rule types, define their bindings, and collect them in a subclass of <<<ValidationContext>>>. This
   API can be very cumbersome to use, particularly when large sets of rules need to be defined.
   A new API implementing a Builder pattern allows to define rules in a way that is 
   easy to write and to understand.
   
   As the default rule sets have been re-implemented as well, they serve as a
-  good example. The primary class is now <<<ValidationRuleBuilder>>> instead of
+  good example. The validation class to be written now extends {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}} instead of
   <<<ValidationContext>>>:
   
 +---------------------------------------+
   public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 
-	public void configure() {
+	protected void configure() {
 		forAllVersions()
 		
 			// you can trim the value before validation
@@ -100,7 +105,7 @@ Validation of HL7 messages
   }
 +---------------------------------------+
   
-  To define a custom rule builder, you overwrite {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../ValidationRuleBuilder.html}ValidationRuleBuilder}}
+  To define a custom rule builder, you extend {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}}
   or a subclass thereof, and implement the <<<configure>>> method.
    
   <<<DefaultValidationWithoutTNBuilder>>> defines PrimitiveTypeRules that are either valid for all HL7 v2 versions 
@@ -119,7 +124,7 @@ Validation of HL7 messages
   public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
 
 	@Override
-	public void configure() {
+	protected void configure() {
 		super.configure(); // don't forget this!
 
 		forAllVersions()
@@ -137,7 +142,7 @@ Validation of HL7 messages
 +---------------------------------------+
   public class MyCustomRuleBuilder extends DefaultValidationBuilder {
 
-	public void configure() {
+	protected void configure() {
 	
 		super.configure(); // don't forget this!
 		
@@ -146,6 +151,9 @@ Validation of HL7 messages
 				.description("custom message rules")
 				.terser("PID-2", empty())
 				.terser("PID-3", allOf(maxLength(10), startsWith("A")))
+				
+				// you can reuse existing custom rules
+				.test(new MyExistingMessageRule()) 
 			.message("ORU", "R01")
 				.terser("MSH-9-1", isEqual("ORU"));
 		
@@ -163,16 +171,16 @@ Validation of HL7 messages
 +---------------------------------------+
 
   Alternatively, if you prefer composition over inheritance, 
-  you can simply extend DelegatingValidationBuilder :
+  you can simply extend {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/DelegatingValidationRuleBuilder.html}DelegatingValidationRuleBuilder}} :
 
 +---------------------------------------+
-  public class MyCustomRuleBuilder extends DelegatingValidationBuilder {
+  public class MyCustomRuleBuilder extends DelegatingValidationRuleBuilder {
 
 	public MyCustomRuleBuilder() {
 		super(new DefaultValidationBuilder())
 	}
 	
-	public void configure() {
+	protected void configure() {
 		// ... same as above
 	}
   }

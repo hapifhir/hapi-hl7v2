@@ -50,10 +50,14 @@ public class ValidationRuleBuilder extends BuilderSupport {
 		this.rules = rules;
 	}
 
+	public final void initialize() { 
+		if (rules.isEmpty()) configure();
+	}
+	
 	/**
-	 * Implement this method to add validation rules to the builder
+	 * Extend this method to add validation rules to the builder
 	 */
-	public void configure() {
+	protected void configure() {
 	}
 	
 	public List<RuleBinding<? extends Rule<?>>> getRules() {

@@ -30,11 +30,10 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
- * TODO: add!
+ * Message Validation using the provided ValidationContext implementations
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
  * @version $Revision: 1.3 $ updated on $Date: 2009-08-09 13:59:46 $ by $Author:
@@ -119,8 +118,7 @@ public class MessageValidation {
 		 * world, since sending systems don't always behave as nicely as
 		 * we might want.
 		 */
-		NoValidation noValidation = new NoValidation();
-		parser.setValidationContext(noValidation);
+		parser.setValidationContext(ValidationContextFactory.noValidation());
 		
 		try {
 			parser.parse(invalidMessage);

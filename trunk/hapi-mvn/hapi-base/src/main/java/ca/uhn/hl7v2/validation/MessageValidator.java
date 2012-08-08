@@ -53,11 +53,16 @@ public class MessageValidator extends DefaultValidator {
 	}
 
 	public MessageValidator(ValidationContext context) {
-		super(context);
+		this(context, false);
 	}
 	
 	public MessageValidator(ValidationRuleBuilder builder) {
 		super(builder);
+	}
+	
+	public MessageValidator(ValidationRuleBuilder builder, boolean theFailOnErrorFlag) {
+		this(builder);
+		throwOnError = theFailOnErrorFlag;
 	}	
 
 	/**
@@ -89,7 +94,7 @@ public class MessageValidator extends DefaultValidator {
 
 		public boolean validationPassed() throws HL7Exception {
 			if (failed() && throwOnError) {
-				throw new HL7Exception("Invalid message", firstException);
+				throw new HL7Exception(firstException.getMessage(), firstException);
 			}
 			return !failed();
 		}
