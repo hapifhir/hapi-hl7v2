@@ -74,6 +74,7 @@ public class DefaultHapiContext implements HapiContext {
 	private ValidationContext validationContext;
 	private ValidationRuleBuilder validationRuleBuilder;
 	private ModelClassFactory modelClassFactory;
+	private ConnectionHub connectionHub;
 
 	public DefaultHapiContext() {
 		this(new ParserConfiguration(), ValidationContextFactory.defaultValidation(),
@@ -116,7 +117,10 @@ public class DefaultHapiContext implements HapiContext {
 	}
 
 	public ConnectionHub getConnectionHub() {
-		return ConnectionHub.getInstance(getExecutorService());
+		if (this.connectionHub == null) {
+			this.connectionHub = ConnectionHub.getNewInstance(getExecutorService());
+		}
+		return this.connectionHub;		
 	}
 
 	public ParserConfiguration getDefaultParserConfiguration() {

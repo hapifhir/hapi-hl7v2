@@ -1,7 +1,11 @@
 package ca.uhn.hl7v2;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotSame;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -9,7 +13,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -108,4 +114,82 @@ public class DefaultHapiContextTest {
 		v = (DefaultValidator) context2.getMessageValidator();
 		assertNotSame(validation, v.getValidationContext());
 	}
+	
+	@Test
+	public void testConnectionHubUsesCorrectExecutorService() throws Exception {
+		int port = RandomServerPortProvider.findFreePort();
+		ReceiveAndCloseImmediatelyThread t = new ReceiveAndCloseImmediatelyThread(port);
+		t.start();
+
+		try {
+
+			ExecutorService executor = Executors.newCachedThreadPool();
+			DefaultHapiContext context = new DefaultHapiContext();
+			context.setExecutorService(executor);
+			ConnectionHub connectionHub = context.getConnectionHub();
+			PipeParser pipeParser = PipeParser.getInstanceWithNoValidation();
+			MinLowerLayerProtocol llp = new MinLowerLayerProtocol();
+			connectionHub.attach("localhost", port, pipeParser, llp, false);
+			executor.shutdown();
+
+			Thread.sleep(100);
+			
+			executor = Executors.newCachedThreadPool();
+			context = new DefaultHapiContext();
+			context.setExecutorService(executor);
+			connectionHub = context.getConnectionHub();
+
+			/*
+			 * This fails if a new connectionhub hasn't been created, or
+			 * if the old executor service is used by the new hub. 
+			 */
+			connectionHub.attach("localhost", port, pipeParser, llp, false);
+
+		} finally {
+			t.finish();
+		}
+	}
+
+	private class ReceiveAndCloseImmediatelyThread extends Thread {
+
+		private int myPort;
+		private boolean myDone;
+
+		public ReceiveAndCloseImmediatelyThread(int thePort) {
+			myPort = thePort;
+		}
+
+		public void finish() {
+			myDone = true;
+		}
+
+		@Override
+		public void run() {
+
+			ServerSocket ss;
+			try {
+				ss = new ServerSocket(myPort);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				fail(e1.getMessage());
+				return;
+			}
+
+			while (!myDone) {
+				try {
+					ss.setSoTimeout(500);
+					Socket s = ss.accept();
+					s.close();
+				} catch (SocketTimeoutException e) {
+					// ignore
+				} catch (IOException e) {
+					e.printStackTrace();
+					fail(e.getMessage());
+				}
+			}
+		}
+
+	}
+	
+	
 }

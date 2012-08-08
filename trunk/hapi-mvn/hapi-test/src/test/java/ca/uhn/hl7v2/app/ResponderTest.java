@@ -120,4 +120,34 @@ public class ResponderTest {
 
 	}
 
+	/**
+	 * Application which always throws an HL7 exception
+	 * 
+	 * @author <a href="mailto:james.agnew@uhn.on.ca">James Agnew</a>
+	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by
+	 *          $Author: jamesagnew $
+	 */
+	public static class DummySuccessApplication implements Application {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public boolean canProcess(Message theIn) {
+			return true;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public Message processMessage(Message theIn)
+				throws ApplicationException, HL7Exception {
+			try {
+				return theIn.generateACK();
+			} catch (IOException e) {
+				throw new HL7Exception(e);
+			}
+		}
+
+	}
+	
 }

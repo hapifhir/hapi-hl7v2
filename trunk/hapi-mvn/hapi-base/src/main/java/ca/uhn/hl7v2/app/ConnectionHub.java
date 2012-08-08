@@ -98,7 +98,7 @@ public class ConnectionHub {
 
 	/** 
 	 * Returns the singleton instance of ConnectionHub 
-	 * @deprecated use {@link HapiContext#getConnectionHub()}
+	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub. See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
 	 */
 	public static ConnectionHub getInstance() {
 		return getInstance(DefaultExecutorService.getDefaultService());
@@ -115,12 +115,29 @@ public class ConnectionHub {
 		}
 	}
 
-	/** Returns the singleton instance of ConnectionHub. If called */
+	/** 
+	 * Returns the singleton instance of ConnectionHub.
+	 * 
+	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub. See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
+	 */
 	public synchronized static ConnectionHub getInstance(ExecutorService service) {
 		if (instance == null || service.isShutdown()) {
 			instance = new ConnectionHub(service);
 		}
 		return instance;
+	}
+
+	/**
+	 * <p>
+	 * Returns a new (non-singleton) instance of the ConnectionHub which uses the
+	 * given executor service.
+	 * </p>
+	 * <p>
+	 * See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
+	 * </p>
+	 */
+	public synchronized static ConnectionHub getNewInstance(ExecutorService service) {
+		return new ConnectionHub(service);
 	}
 
 	/**
@@ -139,6 +156,12 @@ public class ConnectionHub {
 			Class<? extends LowerLayerProtocol> llpClass, boolean tls)
 			throws HL7Exception {
 		return attach(host, port, 0, parser, llpClass, tls);
+	}
+
+	public Connection attach(String host, int port, Parser parser,
+			LowerLayerProtocol llp)
+			throws HL7Exception {
+		return attach(host, port, 0, parser, llp, false);
 	}
 
 	public Connection attach(String host, int port, Parser parser,
@@ -186,6 +209,7 @@ public class ConnectionHub {
 			}
 			return conn;
 		} catch (Exception e) {
+			log.error("Failed to attach", e);
 			throw new HL7Exception("Cannot open connection to "
 					+ data.getHost() + ":" + data.getPort() + "/"
 					+ data.getPort2(), e);
