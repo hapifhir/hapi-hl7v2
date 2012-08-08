@@ -90,4 +90,6 @@ public interface Type extends Serializable {
 	 * Clears all data from this type
 	 */
 	void clear();
+	
+	boolean isEmpty();
 } 

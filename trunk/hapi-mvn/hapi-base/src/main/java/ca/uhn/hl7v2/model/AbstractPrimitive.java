@@ -175,4 +175,10 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
         myValue = null;
     }
 
+	@Override
+	public boolean isEmpty() {
+		return (myValue == null || myValue.length() == 0) && super.isEmpty();
+	}
+
+    
 }

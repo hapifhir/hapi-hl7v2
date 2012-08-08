@@ -359,7 +359,6 @@ public class Varies implements Type {
     	getMessage().getParser().parse(this, string, EncodingCharacters.getInstance(getMessage()));
     }
 
-
     /**
      * {@inheritDoc }
      */
@@ -367,15 +366,20 @@ public class Varies implements Type {
         return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
 
-
 	/**
 	 * {@inheritDoc }
 	 */
 	public void clear() {
 		data.clear();
 	}
-
 	
+	/**
+	 * {@inheritDoc }
+	 */		
+	public boolean isEmpty() {
+		return data.isEmpty();
+	}
+
 	/**
 	 * {@inheritDoc }
 	 */

@@ -88,7 +88,6 @@ public abstract class AbstractType implements Type {
         return getMessage().getParser().doEncode(this, EncodingCharacters.getInstance(getMessage()));
     }
 
-
 	/**
 	 * {@inheritDoc }
 	 */
@@ -96,7 +95,13 @@ public abstract class AbstractType implements Type {
 		extra.clear();
 	}
 
-	
+	/**
+	 * {@inheritDoc }
+	 */	
+	public boolean isEmpty() {
+		return extra.numComponents() > 0;
+	}
+
 	/**
 	 * Returns the datatype and attempts to pipe-encode it. For example, a string implementation
 	 * might return "ST[Value^Value2]". This is only intended for logging/debugging purposes.

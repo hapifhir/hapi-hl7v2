@@ -64,4 +64,14 @@ public abstract class AbstractComposite extends AbstractType implements
 		}
 	}
 
+	@Override
+	public boolean isEmpty() {
+		for (Type type : getComponents()) {
+			if (!type.isEmpty()) return false;
+		}
+		return super.isEmpty(); // for the ExtraComponents
+	}
+	
+	
+
 }
