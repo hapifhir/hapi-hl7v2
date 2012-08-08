@@ -36,7 +36,6 @@ package ca.uhn.hl7v2.llp;
 @SuppressWarnings("serial")
 public class LLPException extends Exception {
 
-    private Exception embeddedException; 
     /**
      * Constructs an <code>LLPException</code> with the specified detail message.
      * @param msg the detail message.
@@ -52,8 +51,12 @@ public class LLPException extends Exception {
      * @param e an embedded exception (should normally represent the cause of the LLPException)
      */
     public LLPException(String msg, Exception e) {
-        super(msg);
-        this.embeddedException = e;
+        /*
+         * Warning! Don't change the method signature to accept Throwable
+         * without being careful- getException(), which is historical now
+         * does a cast!
+         */
+    	super(msg, e);
     }
 
     /** 
@@ -62,10 +65,12 @@ public class LLPException extends Exception {
      * an UnsupportedEncodingException may be raised in a MinLowerLayerProtocol - if this  
      * happened the MinLowerLayerProtocol would throw an LLPException, wrapping the original 
      * UnsupportedEncodingException, and a call to <code>getException()</code> would return
-     * the UnsupportedEncodingException.  
+     * the UnsupportedEncodingException.
+     * 
+     * @deprecated Use {@link #getCause()}
      */
     public Exception getException() {
-        return this.embeddedException;
+        return (Exception) getCause();
     }
 }
 
