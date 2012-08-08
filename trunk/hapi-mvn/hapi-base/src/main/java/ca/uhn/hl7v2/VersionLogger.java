@@ -33,6 +33,13 @@ public class VersionLogger {
                 p.load(is);
                 ourVersion = p.getProperty("version");
 				LOG.info("HAPI version is: " + ourVersion);
+				
+				Class<?> clazz = Class.forName("org.w3c.dom.ls.DOMImplementationLS");
+				try {
+					clazz.getMethod("createLSParser", short.class, String.class);
+				} catch (Exception e) {
+					LOG.warn("You apear to have a very old verion of Xerces on your classpath! Please be warned that XML parsing and encoding may fail.");
+				}
             } catch (Exception e) {
                 // ignore
             }
