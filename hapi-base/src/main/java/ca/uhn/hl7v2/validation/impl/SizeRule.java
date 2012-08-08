@@ -52,14 +52,14 @@ public class SizeRule extends AbstractPrimitiveTypeRule {
 	 * @see ca.uhn.hl7v2.validation.Rule#apply(java.lang.Object)
 	 */
 	public ValidationException[] apply(String value) {
-		return result(value == null || value.length() <= myMaxChars);
+		return result(value == null || value.length() <= myMaxChars, value);
 	}
 
 	/**
 	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
 	 */
 	public String getDescription() {
-		return "Maximum size <= " + myMaxChars + " characters";
+		return "%s exceeds the maximum size of " + myMaxChars + " characters";
 	}
 
 }

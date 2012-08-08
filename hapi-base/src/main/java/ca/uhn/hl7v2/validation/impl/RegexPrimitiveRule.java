@@ -62,7 +62,7 @@ public class RegexPrimitiveRule extends AbstractPrimitiveTypeRule {
 			return passed();
 		}
 		Matcher matcher = myPattern.matcher(value);
-		return result(matcher.matches());
+		return result(matcher.matches(), value);
 
 	}
 
@@ -70,7 +70,7 @@ public class RegexPrimitiveRule extends AbstractPrimitiveTypeRule {
 	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
 	 */
 	public String getDescription() {
-		return "Matches the regular expression " + myPattern.pattern();
+		return "%s does not match the regular expression " + myPattern.pattern();
 	}
 
 	/**

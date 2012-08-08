@@ -58,7 +58,7 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 	}
 
 	public String getDescription() {
-		return "primitive value requires to be " + predicate.getDescription();
+		return "Primitive value '%s' requires to be " + predicate.getDescription();
 	}
 
 	public String correct(String value) {
@@ -76,9 +76,9 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 
 	public ValidationException[] apply(String value) {
 		try {
-			return result(getPredicate().evaluate(correct(value)));
+			return result(getPredicate().evaluate(correct(value)), value);
 		} catch (ValidationException e) {
-			return failed();
+			return failed(e);
 		}
 	}
 
