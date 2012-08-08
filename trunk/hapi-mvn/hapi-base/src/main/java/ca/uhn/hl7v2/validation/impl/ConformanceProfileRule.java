@@ -154,7 +154,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
      * @see ca.uhn.hl7v2.validation.Rule#getDescription()
      */
     public String getDescription() {
-        return "Checks conformance to declared or predefined message profiles";
+        return "expected conformance to declared or predefined message profiles";
     }
 
     /** 
@@ -163,5 +163,11 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     public String getSectionReference() {
         return "HL7 2.5 section 2.12";
     }
+
+	public String getProfileID() {
+		return myProfileID;
+	}
+    
+    
 
 }

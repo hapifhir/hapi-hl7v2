@@ -59,4 +59,11 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 		return testPredicate;
 	}
 
+	@Override
+	public String getDescription() {
+		return testExpression.getDescription() + " requires to be " + testPredicate.getDescription();
+	}
+	
+	
+
 }
