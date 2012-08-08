@@ -25,9 +25,12 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
@@ -42,15 +45,22 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 @SuppressWarnings("serial")
 public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 
-	protected Version[] versions;
+	protected Set<Version> versions;
 	protected String description;
 	protected String sectionReference;
+
+	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions) {
+		super(rules);
+		if (versions.size() == 0)
+			throw new IllegalArgumentException("Must specify a version");
+		this.versions = versions;
+	}
 
 	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version... versions) {
 		super(rules);
 		if (versions.length == 0)
 			throw new IllegalArgumentException("Must specify a version");
-		this.versions = versions;
+		this.versions = new HashSet<Version>(Arrays.asList(versions));
 	}
 
 	/**
@@ -60,7 +70,10 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	 * @return this instance to continue building rules
 	 */
 	public PrimitiveRuleBuilder primitive(String... type) {
-		return new PrimitiveRuleBuilder(rules, versions, type);
+		if (type.length == 0) {
+			throw new IllegalArgumentException("Must specify a type");
+		}
+		return new PrimitiveRuleBuilder(rules, versions, new HashSet<String>(Arrays.asList(type)));
 	}
 
 	/**
@@ -69,7 +82,7 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	 * @param eventType Event type, e.g. "ADT", or "*" for all types
 	 * @param triggerEvent, e.g. "A01" or "*" for all trigger events
 	 * @return this instance to continue building rules
-	 */	
+	 */
 	public MessageRuleBuilder message(String eventType, String triggerEvent) {
 		return new MessageRuleBuilder(rules, versions, eventType, triggerEvent);
 	}
@@ -79,7 +92,7 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	 * 
 	 * @param encoding "XML" or "VB"
 	 * @return this instance to continue building rules
-	 */		
+	 */
 	public EncodingRuleBuilder encoding(String encoding) {
 		return new EncodingRuleBuilder(rules, versions, encoding);
 	}

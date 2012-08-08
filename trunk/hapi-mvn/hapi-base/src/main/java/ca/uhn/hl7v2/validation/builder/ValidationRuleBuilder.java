@@ -79,7 +79,7 @@ public class ValidationRuleBuilder extends BuilderSupport {
 	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(String... version) {
 		Version[] versions = new Version[version.length];
 		for (int i = 0; i < versions.length; i++) {
-			versions[i] = Version.valueOf(version[i]);
+			versions[i] = Version.versionOf(version[i]);
 		}
 		return new RuleTypeBuilder<T>(rules, versions);
 	}

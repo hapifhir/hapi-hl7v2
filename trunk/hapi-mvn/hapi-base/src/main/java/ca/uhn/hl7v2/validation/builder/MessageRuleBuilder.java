@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericSegment;
@@ -56,7 +57,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	private String messageType;
 	private String triggerEvent;
 
-	protected MessageRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
+	protected MessageRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
 			String messageType, String triggerEvent) {
 		super(rules, versions);
 		this.messageType = messageType;
@@ -137,6 +138,17 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	public MessageRuleBuilder refersToSection(String sectionReference) {
 		this.sectionReference = sectionReference;
 		return this;
+	}
+	
+	
+	// for tests only
+	String getMessageType() {
+		return messageType;
+	}
+
+	// for tests only
+	String getTriggerEvent() {
+		return triggerEvent;
 	}
 
 	@Override

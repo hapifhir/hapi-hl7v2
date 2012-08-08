@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.validation.builder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.EncodingRule;
@@ -46,7 +47,7 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 
 	private String encoding;
 
-	protected EncodingRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version[] versions,
+	protected EncodingRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
 			String encoding) {
 		super(rules, versions);
 		this.encoding = encoding;
@@ -82,6 +83,11 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	public EncodingRuleBuilder refersToSection(String sectionReference) {
 		this.sectionReference = sectionReference;
 		return this;
+	}
+	
+	// for tests only
+	String getEncoding() {
+		return encoding;
 	}
 
 	@Override
