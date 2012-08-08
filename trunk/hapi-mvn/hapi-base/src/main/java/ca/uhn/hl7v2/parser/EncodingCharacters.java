@@ -218,7 +218,15 @@ public class EncodingCharacters extends Object implements Cloneable {
             * (int) this.getFieldSeparator()
             * (int) this.getRepetitionSeparator()
             * (int) this.getSubcomponentSeparator();
-    }        
+    }
+
+    /**
+     * Returns an instance of encoding characters with the standard ER7 encoding characters
+     * defined: |^~\&
+     */
+	public static EncodingCharacters defaultInstance() {
+		return new EncodingCharacters('|', null);
+	}        
     
     /**
      *

@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * An abstract Type that provides a default implementation of getName(). 
@@ -120,11 +121,7 @@ public abstract class AbstractType implements Type {
 		StringBuilder b = new StringBuilder();
 		b.append(theType.getClass().getSimpleName());
 		b.append("[");
-		try {
-			b.append(theType.encode());
-		} catch (HL7Exception e) {
-			b.append("Unable to encode");
-		}
+		b.append(PipeParser.encode(theType, EncodingCharacters.defaultInstance()));
 		b.append("]");
 		return b.toString();
 	}
