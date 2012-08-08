@@ -1,7 +1,9 @@
 package ca.uhn.hl7v2;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

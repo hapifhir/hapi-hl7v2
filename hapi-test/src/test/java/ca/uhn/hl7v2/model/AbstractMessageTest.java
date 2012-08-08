@@ -13,7 +13,7 @@ import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * JUnit test cases for AbstractMessage
@@ -80,7 +80,7 @@ public class AbstractMessageTest extends TestCase {
                 + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
         ModelClassFactory mcf = new CanonicalModelClassFactory("2.6");
         Parser p = new PipeParser(mcf);
-        p.setValidationContext(new NoValidation());
+        p.setValidationContext(ValidationContextFactory.noValidation());
         Message message = p.parse(string);
         Message ack = message.generateACK();
 

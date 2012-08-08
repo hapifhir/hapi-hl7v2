@@ -26,9 +26,6 @@
 
 package ca.uhn.hl7v2.model.primitive;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.Message;
 

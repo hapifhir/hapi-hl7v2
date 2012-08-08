@@ -44,10 +44,10 @@ import org.w3c.dom.ls.LSSerializer;
 public class XMLUtils {
 
 	@SuppressWarnings("unchecked")
-	private static <T> T getDOMImpl() {
+	public static <T> T getDOMImpl() {
 		try {
 			DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-			return (T) registry.getDOMImplementation("LS");
+			return (T) registry.getDOMImplementation("LS 3.0");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

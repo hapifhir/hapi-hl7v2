@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.parser;
 
- import static org.junit.Assert.*;
+ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.junit.Test;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
@@ -106,7 +106,7 @@ public class EscapeTest {
 
 		// ca.uhn.hl7v2.model.v24.message.ORU_R01 message = new ca.uhn.hl7v2.model.v24.message.ORU_R01();
 		Parser p = new PipeParser();
-		p.setValidationContext(new NoValidation());
+		p.setValidationContext(ValidationContextFactory.noValidation());
 
 		ca.uhn.hl7v2.model.v24.message.ORU_R01 message = (ca.uhn.hl7v2.model.v24.message.ORU_R01)p.parse(msg);
 		

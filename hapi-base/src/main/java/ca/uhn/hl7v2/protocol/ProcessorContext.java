@@ -62,6 +62,6 @@ public interface ProcessorContext {
      *  
      * @param theMetadataFields list of <code>Terser</code> paths of metadata fields 
      */
-    public List getMetadataFields();
+    public List<String> getMetadataFields();
     
 }

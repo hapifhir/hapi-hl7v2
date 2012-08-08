@@ -1,11 +1,11 @@
 package ca.uhn.hl7v2.sourcegen.conf;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import ca.uhn.hl7v2.model.v25.datatype.IS;
 import ca.uhn.hl7v2.sourcegen.SegmentElement;
-import junit.framework.TestCase;
-import static org.junit.Assert.*;
 
 
 public class ProfileSourceGeneratorTest {

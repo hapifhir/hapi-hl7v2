@@ -17,9 +17,11 @@ import org.junit.Test;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr 
  */
+@SuppressWarnings("deprecation")
 public class SizeRuleTest {
 
-    private SizeRule myRule;
+
+	private SizeRule myRule;
     
     @Before
     public void setUp() throws Exception {

@@ -3,9 +3,6 @@
  */
 package ca.uhn.hl7v2.preparser;
 
-import java.io.UnsupportedEncodingException;
-
-import ca.uhn.hl7v2.HL7Exception;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

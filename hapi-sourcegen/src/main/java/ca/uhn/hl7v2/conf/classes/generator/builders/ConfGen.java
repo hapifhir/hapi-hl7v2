@@ -31,6 +31,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
 import java.io.*;
+
 import ca.uhn.hl7v2.conf.classes.exceptions.*;
 
 /** This Class is used to Generate a Class
@@ -83,9 +84,10 @@ public class ConfGen {
     * @param cp the CommandParser which parses the command line argument of ConfGen 
     */
    public void generateConf(DeploymentManager dm, CommandParser cp) {
+	  BufferedReader in = null;
       try {
          File f = new File(cp.getSource());
-         BufferedReader in = new BufferedReader(new FileReader(f));
+         in = new BufferedReader(new FileReader(f));
          char[] cbuf = new char[(int) f.length()];
          in.read(cbuf, 0, (int) f.length());
          dm.generate(String.valueOf(cbuf));
@@ -97,6 +99,12 @@ public class ConfGen {
          System.out.println("ConformanceError:\n" + e.toString() + "\n");
       } catch (ConformanceException e) {
       	 System.out.println("ConformanceException:\n" + e.toString() + "\n");
+      } finally {
+    	  if (in != null)
+			try {
+				in.close();
+			} catch (IOException e) {
+			}
       }
    }
 

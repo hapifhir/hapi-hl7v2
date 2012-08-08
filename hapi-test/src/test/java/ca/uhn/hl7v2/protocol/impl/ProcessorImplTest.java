@@ -3,13 +3,12 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.protocol.MockApplicationRouter;
 import ca.uhn.hl7v2.protocol.MockTransport;
-import ca.uhn.hl7v2.protocol.Processor;
 import ca.uhn.hl7v2.protocol.ProcessorContext;
 import ca.uhn.hl7v2.protocol.Transportable;
-import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>

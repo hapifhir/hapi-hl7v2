@@ -52,9 +52,9 @@ public class MessageLibraryTest extends TestCase {
 	public void testMessageLibrary() {
 		String path = "ca/uhn/hl7v2/util/messages.txt";
 		MessageLibrary msgLib = new MessageLibrary(path, "VB");
-		Iterator msgs = msgLib.iterator();
+		Iterator<LibraryEntry> msgs = msgLib.iterator();
 		for (int i=0; i<msgLib.size(); i++) {
-			LibraryEntry entry = (LibraryEntry) msgs.next();
+			LibraryEntry entry = msgs.next();
 			System.out.println("Message: " + i);
 			System.out.println("As String:");
 			System.out.println(entry.messageString());

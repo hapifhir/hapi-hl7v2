@@ -133,6 +133,7 @@ public class CommonTMTest {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ssZ");
         Date date = format.parse("20100609 12:40:05-0400");
         Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("America/Toronto"));
         cal.setTime(date);
         
         commonTM = new CommonTM();
@@ -169,6 +170,13 @@ public class CommonTMTest {
         commonTM.setValue(cal);
         value = commonTM.getValue();
         assertEquals("124005.25+0530", value);
+        
+        commonTM = new CommonTM();
+        cal.set(Calendar.MILLISECOND, 250);
+        cal.set(Calendar.ZONE_OFFSET, 11 * 1000 * 60 * 60);
+        commonTM.setValue(cal);
+        value = commonTM.getValue();
+        assertEquals("124005.25+1100", value); // TODO fails       
         
         format = new SimpleDateFormat("HH:mm:ss");
         

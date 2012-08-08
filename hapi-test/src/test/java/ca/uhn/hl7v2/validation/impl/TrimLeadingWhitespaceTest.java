@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr 
  */
+@SuppressWarnings("deprecation")
 public class TrimLeadingWhitespaceTest {
 
     private PrimitiveTypeRule myRule;

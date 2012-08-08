@@ -23,7 +23,7 @@ public class MockApp implements ReceivingApplication {
      * Returns a default message.  
      * @see ca.uhn.hl7v2.app.Application#processMessage(ca.uhn.hl7v2.model.Message)
      */
-    public Message processMessage(Message in, Map theMetadata) throws ReceivingApplicationException, HL7Exception {
+    public Message processMessage(Message in, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
         Message response = null;
         try {
             response = DefaultApplication.makeACK((Segment) in.get("MSH"));

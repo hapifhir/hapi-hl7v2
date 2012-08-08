@@ -16,16 +16,18 @@ import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr 
  */
+@SuppressWarnings("deprecation")
 public class RegexPrimitiveRuleTest {
 
     private PrimitiveTypeRule myRule;
     
-    @Before
+   
+	@Before
     public void setUp() throws Exception {
         myRule = new RegexPrimitiveRule("\\d{4}", "2");
     }
 
-    @Test
+	@Test
     public void testTest() {
         assertTrue(myRule.test("5555"));
         assertFalse(myRule.test("55555"));

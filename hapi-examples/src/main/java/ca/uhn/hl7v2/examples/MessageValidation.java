@@ -30,8 +30,8 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * TODO: add!
@@ -76,8 +76,7 @@ public class MessageValidation {
 		 * defaults including maximum lengths on string types, formats for
 		 * telephone numbers and timestamps, etc.
 		 */
-		DefaultValidation defaultValidation = new DefaultValidation();
-		parser.setValidationContext(defaultValidation);
+		parser.setValidationContext(ValidationContextFactory.defaultValidation());
 
 		// Let's try parsing the valid message:
 		try {
