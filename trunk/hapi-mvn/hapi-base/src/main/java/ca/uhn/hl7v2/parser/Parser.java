@@ -141,6 +141,13 @@ public abstract class Parser {
 		myContext = theContext;
 		myValidator = new MessageValidator(theContext, true);
 	}
+	
+	/**
+	 * @param builder validation rule builder to generate the valication context from
+	 */
+	public void setValidationRuleBuilder(ValidationRuleBuilder builder) {
+		setValidationContext(ValidationContextFactory.fromBuilder(builder));
+	}	
 
 	/**
 	 * @return Returns the parser configuration. This is a bean which contains

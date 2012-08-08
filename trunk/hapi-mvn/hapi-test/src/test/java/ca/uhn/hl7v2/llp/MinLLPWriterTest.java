@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.llp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.uhn.hl7v2.util.LibraryEntry;
 import ca.uhn.hl7v2.util.MessageLibrary;
@@ -216,7 +217,7 @@ public class MinLLPWriterTest extends TestCase {
 			new TestSpec(message, START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER),
 		};
 		
-		ArrayList failedTests = new ArrayList();
+		List<TestSpec> failedTests = new ArrayList<TestSpec>();
 
 		for (int i = 0; i < tests.length ; i++) {
 			if ( ! tests[ i ].executeTest() ) 

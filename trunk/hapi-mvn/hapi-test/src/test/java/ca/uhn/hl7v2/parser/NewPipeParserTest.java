@@ -41,15 +41,10 @@ import ca.uhn.hl7v2.parser.testmodel.MessageWithGroupWithRequiredFinalSegment;
 import ca.uhn.hl7v2.parser.testmodel.MessageWithMandatorySegmentAfterSubgroup;
 import ca.uhn.hl7v2.parser.testmodel.MessageWithMandatorySegmentBeforeSubgroup;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.EncodingRule;
-import ca.uhn.hl7v2.validation.MessageRule;
-import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
-import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
-import ca.uhn.hl7v2.validation.impl.RuleBinding;
-import ca.uhn.hl7v2.validation.impl.SizeRule;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class NewPipeParserTest extends TestCase {
@@ -835,12 +830,19 @@ public class NewPipeParserTest extends TestCase {
 
 	}
 
+	@SuppressWarnings("serial")
 	public void testValidation() throws Exception {
-		ValidationContextImpl context = new ValidationContextImpl();
-		context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new FooEncodingRule()));
-		context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new BarMessageRule()));
-		context.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("*", "NM", new SizeRule(5)));
-		parser.setValidationContext(context);
+		parser.setValidationRuleBuilder(new ValidationRuleBuilder() {
+
+			@Override
+			public void configure() {
+				forAllVersions()
+					.encoding("*").test(new FooEncodingRule())
+					.message("*", "*").test(new BarMessageRule())
+					.primitive("NM").is(maxLength(5));
+			}
+			
+		});
 
 		String text = "MSH|^~\\&|bar|foo|||||ORU^R01|1|D|2.4|12345\r";
 		parser.parse(text);
@@ -848,21 +850,21 @@ public class NewPipeParserTest extends TestCase {
 		try {
 			text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|12345\r";
 			parser.parse(text);
-			fail("Shoud have failed message rule");
+			fail("Should have failed message rule");
 		} catch (HL7Exception e) {
 		}
 
 		try {
 			text = "MSH|^~\\&|bar|fo|||||ORU^R01|1|D|2.4|12345\r";
 			parser.parse(text);
-			fail("Shoud have failed encoding rule");
+			fail("Should have failed encoding rule");
 		} catch (HL7Exception e) {
 		}
 
 		try {
 			text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|123456\r";
 			parser.parse(text);
-			fail("Shoud have failed datatype rule on field 13");
+			fail("Should have failed datatype rule on field 13");
 		} catch (HL7Exception e) {
 		}
 	}

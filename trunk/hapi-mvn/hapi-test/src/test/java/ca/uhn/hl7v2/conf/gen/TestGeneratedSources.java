@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.test.nodt.conf.segment.DB1;
 import ca.uhn.hl7v2.test.singledt.conf.message.ADT_A01;
 import ca.uhn.hl7v2.test.singledt.conf.segment.OBX;
 import ca.uhn.hl7v2.test.tblnms.conf.message.ACK;
 import ca.uhn.hl7v2.test.tblnms.conf.segment.MSH;
-import junit.framework.TestCase;
 
 public class TestGeneratedSources extends TestCase {
 

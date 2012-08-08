@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -171,7 +172,7 @@ public class GroupGenerator extends java.lang.Object {
         // See bug 3373654 
         // !"RESPONSE".equals(((SegmentDef)structures[5]).getGroupName())
         if (null == (groupName) && "2.5".equals(version) && "ORL_O34".equals(message) && !structuresContainsSegmentWithGroupName(structures, "RESPONSE")) {
-        	java.util.ArrayList tmpStructures = new java.util.ArrayList<StructureDef>(java.util.Arrays.asList(structures));
+        	List<StructureDef> tmpStructures = new java.util.ArrayList<StructureDef>(java.util.Arrays.asList(structures));
         	tmpStructures.add(new SegmentDef("]", "RESPONSE", false, false, ""));
         	tmpStructures.add(5, new SegmentDef("[", "RESPONSE", false, false, ""));
         	structures = (StructureDef[]) tmpStructures.toArray(new StructureDef[structures.length]);

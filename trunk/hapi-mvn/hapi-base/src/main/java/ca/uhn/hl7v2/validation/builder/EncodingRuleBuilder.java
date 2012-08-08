@@ -59,9 +59,19 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	 * @return this instance to build more rules
 	 */
 	public EncodingRuleBuilder xsd() {
-		addRuleBindings(new XMLSchemaRule());
-		return this;
+		return test(new XMLSchemaRule());
 	}
+	
+	/**
+	 * Adds the specified rule to the set of rules.
+	 * 
+	 * @param rule
+	 * @return this instance to build more rules
+	 */
+	public EncodingRuleBuilder test(EncodingRule rule) {
+		addRuleBindings(rule);
+		return this;
+	}	
 
 	/**
 	 * Adds a description to the rule

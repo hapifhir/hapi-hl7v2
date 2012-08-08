@@ -5,8 +5,10 @@ package ca.uhn.hl7v2.app;
 
 import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.completionService;
 import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.getDefaultService;
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -17,9 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;

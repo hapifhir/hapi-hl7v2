@@ -241,9 +241,14 @@ public class DataTypeGenerator extends Object {
         //write to file ... 
         if (source != null) {
             String targetFile = targetDirectory.toString() + "/" + dataType + "." + theFileExt;
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING));
-            writer.write(source);
-            writer.flush();
+            BufferedWriter writer = null;
+            try {
+	            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING));
+	            writer.write(source);
+	            writer.flush();
+            } finally {
+            	if (writer != null) writer.close();
+            }
         }
     }
 

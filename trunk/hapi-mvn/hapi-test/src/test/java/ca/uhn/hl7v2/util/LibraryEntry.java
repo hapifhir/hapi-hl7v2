@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -26,7 +26,7 @@
  */
 package ca.uhn.hl7v2.util;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -43,7 +43,7 @@ import ca.uhn.hl7v2.model.Message;
 public class LibraryEntry {
 	private String messageString;
 	private Message message;
-	private HashMap segments;
+	private Map<String, String> segments;
 	
 	/**
 	 * Constructor
@@ -52,7 +52,7 @@ public class LibraryEntry {
 	 * @param segments		hashmap of message's segment's as strings
 	 * @param messsage		parsed message
 	 */
-	public LibraryEntry(String msgStr, HashMap segments, Message msg) {
+	public LibraryEntry(String msgStr, Map<String, String> segments, Message msg) {
 		this.messageString = msgStr;
 		this.message = msg;
 		this.segments = segments;
@@ -75,7 +75,7 @@ public class LibraryEntry {
 	/**
 	 * Returns hashmap of message segments.
 	 */
-	public HashMap segments() {
+	public Map<String, String> segments() {
 		return segments;
 	}
 }

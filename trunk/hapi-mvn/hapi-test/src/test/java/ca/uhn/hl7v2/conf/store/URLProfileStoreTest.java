@@ -7,9 +7,12 @@
 
 package ca.uhn.hl7v2.conf.store;
 
-import junit.framework.*;
-import java.net.*;
-import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * JUnit tests for URLProfileStore 
