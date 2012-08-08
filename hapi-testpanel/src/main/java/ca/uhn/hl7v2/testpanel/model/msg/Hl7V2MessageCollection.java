@@ -78,6 +78,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageCollection.class);
 	public static final String PARSED_MESSAGES_PROPERTY = Hl7V2MessageCollection.class.getName() + "PARSED_MESSAGES_PROPERTY";
 	public static final String PROP_DESCRIPTION = Hl7V2MessageCollection.class.getName() + "DESCRIPTION";
+	public static final String PROP_ENCODING = Hl7V2MessageCollection.class.getName() + "ENCODING";
 	public static final String PROP_HIGHLITED_PATH = Hl7V2MessageCollection.class.getName() + "HIGHLITED_PATH";
 	public static final String PROP_HIGHLITED_RANGE = Hl7V2MessageCollection.class.getName() + "HIGHLITED_RANGE";
 	public static final String PROP_SAVE_FILENAME = Hl7V2MessageCollection.class.getName() + "SAVE_FILENAME";
@@ -644,6 +645,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	public void setEncoding(Hl7V2EncodingTypeEnum theEncoding) {
 		Validate.notNull(theEncoding);
+		
+		Hl7V2EncodingTypeEnum oldEncodingValue = myEncoding;
 		if (myEncoding != theEncoding) {
 			myEncoding = theEncoding;
 
@@ -691,6 +694,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 				setSaved(false);
 			}
 
+			firePropertyChange(PROP_ENCODING, oldEncodingValue, myEncoding);
 		}
 	}
 

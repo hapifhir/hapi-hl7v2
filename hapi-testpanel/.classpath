@@ -19,7 +19,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-base/2.1-alpha1/hapi-base-2.1-alpha1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-base/2.0-beta1/hapi-base-2.0-beta1-javadoc.jar!/"/>
 		</attributes>

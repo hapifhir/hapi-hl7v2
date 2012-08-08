@@ -143,6 +143,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	private IWorkingListener myWorkingListener;
 
+	private PropertyChangeListener myMessageEncodingListener;
+
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
 		addKeyListener(new KeyAdapter() {
@@ -211,6 +213,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		};
 
+		myMessageEncodingListener = new PropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent theEvt) {
+				myUpdaterThread.scheduleUpdate();
+			}
+		};
+		
 		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		myUpdaterThread = new UpdaterThread();
@@ -776,7 +785,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private void removeMessageListeners() {
 		if (myMessages != null) {
 			myMessages.removePropertyChangeListener(Hl7V2MessageCollection.PROP_HIGHLITED_PATH, myHighlitedPathListener);
-			myMessages.addPropertyChangeListener(Hl7V2MessageCollection.PARSED_MESSAGES_PROPERTY, myParsedMessagesListener);
+			myMessages.removePropertyChangeListener(Hl7V2MessageCollection.PARSED_MESSAGES_PROPERTY, myParsedMessagesListener);
+			myMessages.removePropertyChangeListener(Hl7V2MessageCollection.PROP_VALIDATIONCONTEXT_OR_PROFILE, myValidationContextListener);
+			myMessages.removePropertyChangeListener(Hl7V2MessageCollection.PROP_ENCODING, myMessageEncodingListener);
 		}
 	}
 
@@ -817,6 +828,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		myMessages.addPropertyChangeListener(Hl7V2MessageCollection.PROP_HIGHLITED_PATH, myHighlitedPathListener);
 		myMessages.addPropertyChangeListener(Hl7V2MessageCollection.PARSED_MESSAGES_PROPERTY, myParsedMessagesListener);
 		myMessages.addPropertyChangeListener(Hl7V2MessageCollection.PROP_VALIDATIONCONTEXT_OR_PROFILE, myValidationContextListener);
+		myMessages.addPropertyChangeListener(Hl7V2MessageCollection.PROP_ENCODING, myMessageEncodingListener);
 
 		myTop = new TreeNodeRoot();
 		myTreeModel = new DefaultTreeModel(myTop, false);

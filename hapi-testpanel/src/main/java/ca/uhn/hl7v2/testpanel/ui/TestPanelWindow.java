@@ -142,6 +142,7 @@ public class TestPanelWindow implements IDestroyable {
 
 	}
 
+	
 	/**
 	 * @return the controller
 	 */

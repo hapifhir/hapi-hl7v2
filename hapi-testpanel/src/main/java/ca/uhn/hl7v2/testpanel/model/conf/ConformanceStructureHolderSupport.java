@@ -223,4 +223,9 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return segments.toArray(new Structure[segments.size()]);
 	}
 
+	@Override
+    public boolean isEmpty() throws HL7Exception {
+	    return myGroup.isEmpty();
+    }
+
 }

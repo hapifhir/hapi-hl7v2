@@ -13,28 +13,47 @@ import javax.swing.text.LayeredHighlighter;
 import javax.swing.text.Position;
 import javax.swing.text.View;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UnderlineHighlighter extends DefaultHighlighter {
 	protected static final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter();
-
+	
+	private static final Logger ourLog = LoggerFactory.getLogger(UnderlineHighlighter.class);
+	
 	public UnderlineHighlighter() {
+		setDrawsLayeredHighlights(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.text.DefaultHighlighter#addHighlight(int, int, javax.swing.text.Highlighter.HighlightPainter)
-	 */
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    public void paint(Graphics theG) {
+		ourLog.info("Repainting");
+	    super.paint(theG);
+    }
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    public void paintLayeredHighlights(Graphics theG, int theP0, int theP1, Shape theViewBounds, JTextComponent theEditor, View theView) {
+		ourLog.info("Paintlayeredhighlights");
+	    super.paintLayeredHighlights(theG, theP0, theP1, theViewBounds, theEditor, theView);
+    }
+
 	@Override
 	public Object addHighlight(int theP0, int theP1, HighlightPainter theP) throws BadLocationException {
+		ourLog.info("Adding highlight");
 		return addHighlight(theP0, theP1);
 	}
 
-	// Convenience method to add a highlight with
-	// the default painter.
 	public Object addHighlight(int p0, int p1) throws BadLocationException {
 		return super.addHighlight(p0, p1, sharedPainter);
 	}
 
 	public void setDrawsLayeredHighlights(boolean newValue) {
-		// Illegal if false - we only support layered highlights
 		if (newValue == false) {
 			throw new IllegalArgumentException("UnderlineHighlighter only draws layered highlights");
 		}
@@ -43,8 +62,6 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 
 	// Painter for underlined highlights
 	public static class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
-//		protected Color fillColour = new Color(0.8f, 0.8f, 1.0f);
-//		protected Color lineColour = new Color(0.6f, 0.6f, 1.0f);
 		protected Color lineColour = new Color(0.0f, 0.5f, 0.0f);
 		protected Color fillColour = new Color(0.6f, 1.0f, 0.6f);
 
@@ -56,6 +73,8 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 		}
 
 		public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds, JTextComponent c, View view) {
+			
+			ourLog.info("Repainting");
 			
 			Rectangle alloc = null;
 			if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
@@ -83,11 +102,14 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 			g.fillRect(alloc.x + 1, alloc.y + 1, alloc.width - 1, alloc.height - 1);
 
 			if (!c.hasFocus()) {
+				int y = alloc.y + alloc.height - 2;
+
+				ourLog.info("Repainting highlight at {}, {}", alloc.x, y);
+				
 				g.setColor(lineColour);
 	//			g.drawRect(alloc.x, alloc.y, alloc.width, alloc.height - 2);
 	//			g.drawRect(alloc.x, alloc.y, alloc.width - 1, alloc.height - 3);
 				
-				int y = alloc.y + alloc.height - 2;
 				g.drawLine(alloc.x, y, alloc.x + alloc.width, y);
 				y++;
 				g.drawLine(alloc.x, y, alloc.x + alloc.width, y);

@@ -175,6 +175,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private JButton collapseAllButton;
 	private JButton expandAllButton;
 
+
 	/**
 	 * Create the panel.
 	 */
@@ -214,6 +215,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessageEditor.setHighlighter(h);
 		// myMessageEditor.setFont(Prefs.getHl7EditorFont());
 
+		myMessageEditor.setCaret(new EditorCaret());
+		
 		myMessageScrollPane = new JScrollPane(myMessageEditor);
 		messageEditorContainerPanel.add(myMessageScrollPane);
 
@@ -265,6 +268,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				mySpinnerIconOn.setImageObserver(mySpinner);
 			}
 
+
 			public void finishedWorking(String theStatus) {
 				mySpinner.setText(theStatus);
 
@@ -296,7 +300,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myShowCombo.setPreferredSize(new Dimension(130, 27));
 		myShowCombo.setMinimumSize(new Dimension(130, 27));
 		myShowCombo.setMaximumSize(new Dimension(130, 32767));
-		
+
 		collapseAllButton = new JButton();
 		collapseAllButton.setBorderPainted(false);
 		collapseAllButton.addMouseListener(new HoverButtonMouseAdapter(collapseAllButton));
@@ -308,7 +312,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		collapseAllButton.setToolTipText("Collapse All");
 		collapseAllButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/collapse_all.png")));
 		mytoolBar_1.add(collapseAllButton);
-		
+
 		expandAllButton = new JButton();
 		expandAllButton.setBorderPainted(false);
 		expandAllButton.addMouseListener(new HoverButtonMouseAdapter(expandAllButton));
@@ -489,6 +493,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
+
 	public void destroy() {
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.SOURCE_MESSAGE_PROPERTY, myMessageListeneer);
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.PROP_HIGHLITED_RANGE, myRangeListener);
@@ -502,6 +507,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		unregisterProfileNamesListeners();
 	}
 
+
 	private void initLocal() {
 
 		myDocumentListener = new DocumentListener() {
@@ -511,26 +517,29 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				handleChange(theE);
 			}
 
+
 			private void handleChange(DocumentEvent theE) {
 				myDontRespondToSourceMessageChanges = true;
 				try {
-				long start = System.currentTimeMillis();
+					long start = System.currentTimeMillis();
 
-				String newSource = myMessageEditor.getText();
-				int changeStart = theE.getOffset();
-				int changeEnd = changeStart + theE.getLength();
-				myMessage.updateSourceMessage(newSource, changeStart, changeEnd);
+					String newSource = myMessageEditor.getText();
+					int changeStart = theE.getOffset();
+					int changeEnd = changeStart + theE.getLength();
+					myMessage.updateSourceMessage(newSource, changeStart, changeEnd);
 
-				ourLog.info("Handled document update in {} ms", System.currentTimeMillis() - start);
-				}finally {
+					ourLog.info("Handled document update in {} ms", System.currentTimeMillis() - start);
+				} finally {
 					myDontRespondToSourceMessageChanges = false;
 				}
 			}
+
 
 			public void insertUpdate(DocumentEvent theE) {
 				ourLog.info("Document insert: " + theE);
 				handleChange(theE);
 			}
+
 
 			public void removeUpdate(DocumentEvent theE) {
 				ourLog.info("Document removed: " + theE);
@@ -542,8 +551,10 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessageEditor.addCaretListener(new CaretListener() {
 
 			public void caretUpdate(CaretEvent theE) {
+				removeMostHighlights();
 				if (!myDisableCaretUpdateHandling) {
 					myMessage.setHighlitedPathBasedOnRange(new Range(theE.getDot(), theE.getMark()));
+					myTreePanel.repaint();
 				}
 			}
 		});
@@ -594,6 +605,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
+
 	private void registerProfileNamesListeners() {
 		unregisterProfileNamesListeners();
 		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
@@ -601,11 +613,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		}
 	}
 
+
 	private void unregisterProfileNamesListeners() {
 		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
 			next.removePropertyChangeListener(ProfileGroup.PROP_NAME, myProfilesNamesListener);
 		}
 	}
+
 
 	private void updateSendButton() {
 		String selected = (String) myOutboundInterfaceCombo.getSelectedItem();
@@ -621,6 +635,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 					myMessage.setLastSendToInterfaceId(theArg.getId());
 					myOutboundInterfaceCombo.setSelectedIndex(myOutboundInterfaceComboModel.getSize() - 2);
 				}
+
 
 				public void cancel(OutboundConnection theArg) {
 					myOutboundInterfaceCombo.setSelectedIndex(0);
@@ -638,6 +653,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		mySendButton.setEnabled(true);
 	}
+
 
 	/**
 	 * @param theMessage
@@ -663,11 +679,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		updateEncodingButtons();
 		myRdbtnEr7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
+				removeHighlights();
 				myMessage.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
 			}
 		});
 		myRdbtnXml.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
+				removeHighlights();
 				myMessage.setEncoding(Hl7V2EncodingTypeEnum.XML);
 			}
 		});
@@ -764,6 +782,27 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
+
+	private void removeHighlights() {
+		Highlighter hilite = myMessageEditor.getHighlighter();
+		Highlighter.Highlight[] hilites = hilite.getHighlights();
+		for (int i = 0; i < hilites.length; i++) {
+			hilite.removeHighlight(hilites[i]);
+		}
+	}
+
+
+	// Removes all but the 2 most recent highlights - the last tag pair
+	// selected.
+	private void removeMostHighlights() {
+		Highlighter hilite = myMessageEditor.getHighlighter();
+		Highlighter.Highlight[] hilites = hilite.getHighlights();
+		for (int i = 0; i < hilites.length - 2; i++) {
+			hilite.removeHighlight(hilites[i]);
+		}
+	}
+
+
 	private void updateWindowTitle() {
 		StringBuilder b = new StringBuilder();
 
@@ -783,17 +822,20 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		setWindowTitle(b.toString());
 	}
 
+
 	private void updateEncodingButtons() {
 		switch (myMessage.getEncoding()) {
-		case XML:
-			myRdbtnXml.setSelected(true);
-			myRdbtnEr7.setSelected(false);
-			break;
-		case ER_7:
-			myRdbtnXml.setSelected(false);
-			myRdbtnEr7.setSelected(true);
+			case XML:
+				myRdbtnXml.setSelected(true);
+				myRdbtnEr7.setSelected(false);
+				break;
+			case ER_7:
+				myRdbtnXml.setSelected(false);
+				myRdbtnEr7.setSelected(true);
 		}
 	}
+
+	
 
 	private void updateMessageEditor() {
 
@@ -825,6 +867,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		});
 
 	}
+
 
 	private void updateOutboundConnectionsBox() {
 		int currentSelection = myOutboundInterfaceCombo.getSelectedIndex();
@@ -864,6 +907,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		// private static final String APPLY_CONFORMANCE_PROFILE =
 		// "Apply Conformance Profile...";
 		private ArrayList<ProfileGroup> myProfileGroups;
+
 
 		public void update() {
 			myHandlingProfileComboboxChange = true;
@@ -918,6 +962,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		private static final String POPULATED = "Populated";
 		private static final String SUPPORTED = "Supported";
 
+
 		public ShowComboModel() {
 			addElement(POPULATED);
 			addElement(ALL);
@@ -925,22 +970,23 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			addElement(SUPPORTED);
 
 			switch (myMessage.getEditorShowMode()) {
-			case ALL:
-				setSelectedItem(ALL);
-				break;
-			case ERROR:
-				setSelectedItem(ERRORS);
-				break;
-			case POPULATED:
-				setSelectedItem(POPULATED);
-				break;
-			case SUPPORTED:
-				setSelectedItem(SUPPORTED);
-				break;
+				case ALL:
+					setSelectedItem(ALL);
+					break;
+				case ERROR:
+					setSelectedItem(ERRORS);
+					break;
+				case POPULATED:
+					setSelectedItem(POPULATED);
+					break;
+				case SUPPORTED:
+					setSelectedItem(SUPPORTED);
+					break;
 			}
 
 			myShowCombo.addActionListener(this);
 		}
+
 
 		public void actionPerformed(ActionEvent theE) {
 			String value = (String) myShowCombo.getSelectedItem();
@@ -957,6 +1003,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		}
 	}
+
 
 	private void activateSendingActivityTabForConnection(OutboundConnection theConnection) {
 		mySendingActivityTable.setConnection(theConnection, false);
