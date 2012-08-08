@@ -45,7 +45,8 @@ public class VersionLogger {
 					LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
 				}
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Error occured while trying to retrieve a DOMImplementation.", e);
+				LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
 			}
 			ourInitialized = true;
 		}
