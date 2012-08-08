@@ -332,7 +332,7 @@ public class PipeParser extends Parser {
 
             for (int j = 0; j < reps.length; j++) {
                 try {
-                	log.debug("Parsing field {} repetition {}", i + fieldOffset, j);
+                	log.trace("Parsing field {} repetition {}", i + fieldOffset, j);
                     Type field = destination.getField(i + fieldOffset, j);
                     if (isMSH2) {
                         Terser.getPrimitive(field, 1, 1).setValue(reps[j]);
@@ -915,7 +915,7 @@ public class PipeParser extends Parser {
                 ackID = message.substring(start, end);
             }
         }
-        log.debug("ACK ID: {}", ackID);
+        log.trace("ACK ID: {}", ackID);
         return ackID;
     }
 
@@ -1092,7 +1092,7 @@ public class PipeParser extends Parser {
                     }
                 }
 
-                log.debug("Parsing segment {}", name);
+                log.trace("Parsing segment {}", name);
 
                 if (name.equals(prevName)) {
                 	repNum++;
