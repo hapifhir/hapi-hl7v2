@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 /**
  * Interface that provides a starting point for

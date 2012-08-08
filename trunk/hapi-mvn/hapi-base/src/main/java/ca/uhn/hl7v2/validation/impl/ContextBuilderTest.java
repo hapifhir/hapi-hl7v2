@@ -1,7 +1,7 @@
 package ca.uhn.hl7v2.validation.impl;
 
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 public class ContextBuilderTest {
 

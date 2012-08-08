@@ -32,8 +32,8 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Default implementation of a message validator. If uses a {@link ValidationContext} to validate

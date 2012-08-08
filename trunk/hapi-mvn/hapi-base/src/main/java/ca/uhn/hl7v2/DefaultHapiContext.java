@@ -43,8 +43,8 @@ import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
-import ca.uhn.hl7v2.validation.impl.builder.ValidationRuleBuilder;
 
 /**
  * Default implementation for {@link HapiContext}.

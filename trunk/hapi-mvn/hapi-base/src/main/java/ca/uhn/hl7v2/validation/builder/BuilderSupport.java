@@ -22,8 +22,8 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
-package ca.uhn.hl7v2.validation.impl.builder;
+ */
+package ca.uhn.hl7v2.validation.builder;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -174,7 +174,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         pattern
 	 */
 	public Predicate uuid() {
-		return matches("\\p{XDigit}]{8}-\\p{XDigit}]{4}-\\p{XDigit}]{4}-\\p{XDigit}]{4}-\\p{XDigit}]{12}");
+		return matches("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
 	}
 
 	/**
@@ -249,7 +249,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         to <code>false</code>
 	 */
 	public Predicate not(Predicate delegate) {
-		return new NotPredicate(predicate);
+		return new NotPredicate(delegate);
 	}
 
 	/**
@@ -403,8 +403,8 @@ public abstract class BuilderSupport implements Serializable {
 		public boolean evaluate(Object data) throws ValidationException {
 			if (ignoresCase)
 				return (data == null && expected == null)
-						|| (data.toString().equalsIgnoreCase(expected.toString()));
-			return (data == null && expected == null) || (data.equals(expected));
+						|| (data != null && data.toString().equalsIgnoreCase(expected.toString()));
+			return (data == null && expected == null) || (data != null && data.equals(expected));
 		}
 
 		public String getDescription() {

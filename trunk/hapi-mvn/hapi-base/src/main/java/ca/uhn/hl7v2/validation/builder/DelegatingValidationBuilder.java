@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "PredicateRuleSupport.java".  Description: 
-"Interface for predicate-aware validation rules" 
+The Original Code is "DelegatingValidationBuilder.java".  Description: 
+"Delegating Rule Builder that additionally allows to delegate rule building." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2012.  All Rights Reserved. 
@@ -22,20 +22,27 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
- */
-package ca.uhn.hl7v2.validation.impl.builder;
-
-import ca.uhn.hl7v2.validation.Rule;
+*/
+package ca.uhn.hl7v2.validation.builder;
 
 /**
- * Interface for predicate-aware validation rules.
- * 
- * @author Christian Ohr
+ * Delegating Rule Builder that additionally allows to delegate
+ * rule building. 
  *
- * @param <T>
+ * @author Christian Ohr
  */
-public interface PredicateRuleSupport<T> extends Rule<T> {
+@SuppressWarnings("serial")
+public class DelegatingValidationBuilder extends ValidationRuleBuilder {
 
-	Predicate getPredicate();
-	
+	private ValidationRuleBuilder delegate;
+
+	public DelegatingValidationBuilder(ValidationRuleBuilder delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	public void configure() {
+		delegate.configure();
+	}
+
 }

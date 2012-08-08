@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.impl.builder.BuilderSupport;
+import ca.uhn.hl7v2.validation.builder.BuilderSupport;
 
 /**
  * <p>
