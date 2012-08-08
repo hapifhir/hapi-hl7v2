@@ -59,15 +59,27 @@ public class XMLUtils {
 
 	public static Document parse(String s, boolean validateIfSchema) {
 		DOMImplementationLS impl = getDOMImpl();
+		LSInput input = impl.createLSInput();
+		input.setStringData(s);
+		return parse(input, validateIfSchema);
+	}
+	
+	public static Document parse(InputStream s, boolean validateIfSchema) {
+		DOMImplementationLS impl = getDOMImpl();
+		LSInput input = impl.createLSInput();
+		input.setByteStream(s);
+		return parse(input, validateIfSchema);
+	}
+	
+	private static Document parse(LSInput input, boolean validateIfSchema) {
+		DOMImplementationLS impl = getDOMImpl();
 		LSParser parser = impl.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
 		DOMConfiguration config = parser.getDomConfig();
 		config.setParameter("element-content-whitespace", false);
 		config.setParameter("namespaces", true);
 		config.setParameter("validate-if-schema", validateIfSchema);
-		LSInput input = impl.createLSInput();
-		input.setStringData(s);
 		return parser.parse(input);
-	}
+	}	
 
 	public static void validate(Document d, String schema, DOMErrorHandler handler) {
 		DOMConfiguration config = d.getDomConfig();
