@@ -76,7 +76,7 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 
 	public ValidationException[] apply(String value) {
 		try {
-			return result(getPredicate().evaluate(value));
+			return result(getPredicate().evaluate(correct(value)));
 		} catch (ValidationException e) {
 			return failed();
 		}

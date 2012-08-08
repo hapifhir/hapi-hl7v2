@@ -175,7 +175,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 
 			for (Iterator<Structure> iter = ReadOnlyMessageIterator
 					.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
-				exceptions.add(new ValidationException("Found unknown segment; "
+				exceptions.add(new ValidationException("Found unknown segment: "
 						+ iter.next().getName()));
 			}
 			return exceptions.toArray(new ValidationException[exceptions.size()]);

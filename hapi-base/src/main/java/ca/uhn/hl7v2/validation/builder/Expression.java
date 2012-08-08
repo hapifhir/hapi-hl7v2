@@ -8,6 +8,8 @@ import ca.uhn.hl7v2.util.Terser;
 public interface Expression<T extends Structure> {
 
 	Object evaluate(T value) throws HL7Exception;
+	
+	String getDescription();
 
 }
 
@@ -23,6 +25,14 @@ class TerserExpression implements Expression<Message> {
 	public Object evaluate(Message msg) throws HL7Exception {
 		return new Terser(msg).get(expression);
 	}
+
+	public String getDescription() {
+		return "Content of " + expression;
+	}
+	
+	
+	
+	
 }
 
 

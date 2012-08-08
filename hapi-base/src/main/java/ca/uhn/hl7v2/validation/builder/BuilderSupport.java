@@ -408,7 +408,7 @@ public abstract class BuilderSupport implements Serializable {
 		}
 
 		public String getDescription() {
-			return "equals to " + String.valueOf(expected);
+			return "equal to " + String.valueOf(expected);
 		}
 
 	}
@@ -445,7 +445,7 @@ public abstract class BuilderSupport implements Serializable {
 		}
 
 		public String getDescription() {
-			return "matches with " + String.valueOf(p.pattern());
+			return "matching with " + String.valueOf(p.pattern());
 		}
 
 	}
