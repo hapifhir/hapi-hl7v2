@@ -40,40 +40,6 @@ public class BouncyCastleCmsMessageSignerTest {
 		signer.setAliasPassword("changeit");
 		signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
 
-		// Now verify that non-matching fails
-
-		signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
-
-		try {
-			signer.verify("HELLO WORLD....".getBytes("US-ASCII"), signed);
-			fail();
-		} catch (SignatureVerificationException e) {
-
-		}
-
-		signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
-
-		// Change one letter in the signature
-
-		try {
-			switch (signed.charAt(20)) {
-			case 'q':
-				signed = signed.substring(0, 20) + "r" + signed.substring(21, signed.length());
-				break;
-			default:
-				signed = signed.substring(0, 20) + "q" + signed.substring(21, signed.length());
-			}
-			signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
-			fail();
-		} catch (SignatureFailureException e) {
-
-		}
 	}
 
 	@Test
@@ -130,47 +96,4 @@ public class BouncyCastleCmsMessageSignerTest {
 
 	}
 
-	@Test
-	public void testSignAndVerifySignatureChanged() throws Exception {
-
-		KeyStore keyStore = KeyStore.getInstance("JKS");
-		InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");
-		keyStore.load(ksStream, "changeit".toCharArray());
-
-		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(keyStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
-		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
-
-		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
-
-		// Now verify
-
-		KeyStore trustStore = KeyStore.getInstance("JKS");
-		InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");
-		trustStore.load(trustStream, "changeit".toCharArray());
-
-		signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
-
-		// Change one letter in the signature
-
-		try {
-			switch (signed.charAt(20)) {
-			case 'q':
-				signed = signed.substring(0, 20) + "r" + signed.substring(21, signed.length());
-				break;
-			default:
-				signed = signed.substring(0, 20) + "q" + signed.substring(21, signed.length());
-			}
-			signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
-			fail();
-		} catch (SignatureFailureException e) {
-
-		}
-
-	}
 }

@@ -34,11 +34,19 @@
 			<item name="Specification" href="specification.html" />
 		</menu>
 
-		<menu name="Java API">
-			<item name="Documentation" href="documentation.html" />
+		<menu name="Documentation (Java)">
+		    <item name="For HAPI Users" href="doc_hapi.html" />
+			<item name="For Non-HAPI Users" href="doc_non_hapi.html" />
+			<item name="Encryption Profile" href="encryption.html" />
+			<item name="Signature Profile" href="signature.html" />
+		</menu>
+
+		<menu name="API">
+			<item name="JavaDocs" href="apidocs/index.html" />
+			<item name="Source Xref" href="xref/index.html" />
 			<item name="License" href="license.html" />
 		</menu>
-		 
+				 
 		<head>
 			<link rel="shortcut icon" href="http://hl7api.sourceforge.net/images/favicon.png" />
 			<link rel="stylesheet" type="text/css" href="../hapi.css" />

@@ -21,7 +21,9 @@ public class Hl7OverHttpDecoderTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		ourSampleMessage = "MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + "EVN||200803051509\r" + "PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r";
+		ourSampleMessage = "MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + 
+				"EVN||200803051509\r" + 
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r";
 
 		ourSampleMessageWithMultibyte = ourSampleMessage.replace("SSN", "I♥HAPI");
 	}

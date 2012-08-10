@@ -7,7 +7,7 @@ public interface IReceivable<T> {
 	/**
 	 * Returns the message itself
 	 */
-	T getRawMessage();
+	T getMessage();
 	
 	/**
 	 * Returns a map containing other metadata about the message.

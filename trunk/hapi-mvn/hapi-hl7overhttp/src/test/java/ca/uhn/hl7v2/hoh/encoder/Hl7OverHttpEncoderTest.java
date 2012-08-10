@@ -16,13 +16,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.hoh.api.EncodeException;
-import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
-import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
-import ca.uhn.hl7v2.hoh.sign.StandardMessageSignerTest;
+import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
 
 public class Hl7OverHttpEncoderTest {
 
-	private static StandardMessageSigner mySigner;
+	private static BouncyCastleCmsMessageSigner mySigner;
+	
+	// TODO: add a test to make sure that the date header matches the message timestamp
 	
 	@Test
 	public void testContentLengthCalculatedCorrectly() throws EncodeException, UnsupportedEncodingException {
@@ -84,10 +84,10 @@ public class Hl7OverHttpEncoderTest {
 	@BeforeClass
 	public static void beforeClass() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
 		KeyStore keyStore = KeyStore.getInstance("JKS");
-		InputStream ksStream = StandardMessageSignerTest.class.getResourceAsStream("/keystore.jks");
+		InputStream ksStream = BouncyCastleCmsMessageSigner.class.getResourceAsStream("/keystore.jks");
 		keyStore.load(ksStream, "changeit".toCharArray());
 
-		mySigner = new StandardMessageSigner();
+		mySigner = new BouncyCastleCmsMessageSigner();
 		mySigner.setKeyStore(keyStore);
 		mySigner.setKeyAlias("testcert");
 		mySigner.setAliasPassword("changeit");

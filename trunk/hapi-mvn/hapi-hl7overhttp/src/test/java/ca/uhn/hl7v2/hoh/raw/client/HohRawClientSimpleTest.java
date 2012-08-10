@@ -37,7 +37,7 @@ public class HohRawClientSimpleTest {
 		ourLog.info("Received response");
 
 		assertEquals(message, ourServerSocketThread.getMessage());
-		assertEquals(ourServerSocketThread.getReply().encode(), response.getRawMessage());
+		assertEquals(ourServerSocketThread.getReply().encode(), response.getMessage());
 
 	}
 

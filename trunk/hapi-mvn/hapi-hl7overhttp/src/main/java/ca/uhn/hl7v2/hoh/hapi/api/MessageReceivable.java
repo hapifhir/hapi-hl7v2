@@ -15,7 +15,7 @@ public class MessageReceivable extends AbstractReceivable<Message> implements IR
 	/**
 	 * {@inheritDoc}
 	 */
-	public Message getRawMessage() {
+	public Message getMessage() {
 		return myMessage;
 	}
 

@@ -22,14 +22,10 @@ import ca.uhn.hl7v2.hoh.encoder.NoMessageReceivedException;
 import ca.uhn.hl7v2.hoh.raw.api.RawReceivable;
 import ca.uhn.hl7v2.hoh.sign.ISigner;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
+import ca.uhn.hl7v2.hoh.sockets.ISocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
 
 public abstract class AbstractRawClient {
-	/**
-	 * The default number of milliseconds to wait before timing out waiting for
-	 * a response: 60000
-	 */
-	public static final int DEFAULT_RESPONSE_TIMEOUT = 60000;
-
 	/**
 	 * The default charset encoding (UTF-8)
 	 */
@@ -39,6 +35,12 @@ public abstract class AbstractRawClient {
 	 * The default connection timeout in milliseconds: 10000
 	 */
 	private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
+
+	/**
+	 * The default number of milliseconds to wait before timing out waiting for
+	 * a response: 60000
+	 */
+	public static final int DEFAULT_RESPONSE_TIMEOUT = 60000;
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientSimple.class);
 
@@ -51,6 +53,7 @@ public abstract class AbstractRawClient {
 	private int myPort;
 	private long myResponseTimeout = DEFAULT_RESPONSE_TIMEOUT;
 	private ISigner mySigner;
+	private ISocketFactory mySocketFactory = new StandardSocketFactory();
 	private String myUri;
 
 	/**
@@ -84,6 +87,27 @@ public abstract class AbstractRawClient {
 		if (thePort <= 0) {
 			throw new IllegalArgumentException("Port must be a positive integer");
 		}
+	}
+
+	protected void closeSocket(Socket theSocket) {
+		ourLog.debug("Closing socket");
+		try {
+			theSocket.close();
+		} catch (IOException e) {
+			ourLog.warn("Problem closing socket", e);
+		}
+	}
+
+	protected Socket connect() throws IOException {
+		ourLog.debug("Creating new connection to {}:{} for URI {}", new Object[] { myHost, myPort, myUri });
+
+		Socket socket = mySocketFactory.createClientSocket();
+		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
+		socket.setSoTimeout(500);
+		ourLog.trace("Connection established to {}:{}", myHost, myPort);
+		myOutputStream = new BufferedOutputStream(socket.getOutputStream());
+		myInputStream = new BufferedInputStream(socket.getInputStream());
+		return socket;
 	}
 
 	/**
@@ -127,22 +151,7 @@ public abstract class AbstractRawClient {
 
 	}
 
-	protected void closeSocket(Socket theSocket) {
-		ourLog.debug("Closing socket");
-		try {
-			theSocket.close();
-		} catch (IOException e) {
-			ourLog.warn("Problem closing socket", e);
-		}
-	}
-
-	/**
-	 * Returns the socket provided by {@link #provideSocket()}. This method will
-	 * always be called after the request is finished.
-	 */
-	protected abstract void returnSocket(Socket theSocket);
-
-	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, EncodeException, SignatureVerificationException {
+	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setUri(myUri);
 		enc.setHost(myHost);
@@ -184,21 +193,23 @@ public abstract class AbstractRawClient {
 		return response;
 	}
 
-	protected Socket connect() throws IOException {
-		ourLog.debug("Creating new connection to {}:{} for URI {}", new Object[] { myHost, myPort, myUri });
-		Socket socket = new Socket();
-		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
-		socket.setSoTimeout(500);
-		ourLog.trace("Connection established to {}:{}", myHost, myPort);
-		myOutputStream = new BufferedOutputStream(socket.getOutputStream());
-		myInputStream = new BufferedInputStream(socket.getInputStream());
-		return socket;
+	/**
+	 * Returns the socket factory used by this client
+	 */
+	public ISocketFactory getSocketFactory() {
+		return mySocketFactory;
 	}
 
 	/**
 	 * Subclasses must override to provide a connected socket
 	 */
 	protected abstract Socket provideSocket() throws IOException;
+
+	/**
+	 * Returns the socket provided by {@link #provideSocket()}. This method will
+	 * always be called after the request is finished.
+	 */
+	protected abstract void returnSocket(Socket theSocket);
 
 	/**
 	 * If set, provides a callback which will be used to se the username and
@@ -251,4 +262,15 @@ public abstract class AbstractRawClient {
 		mySigner = theSigner;
 	}
 
+	/**
+	 * Sets the socket factory used by this client. Default is {@link StandardSocketFactory}.
+	 * 
+	 * @see ISocketFactory
+	 */
+	public void setSocketFactory(ISocketFactory theSocketFactory) {
+		if (theSocketFactory == null) {
+			throw new NullPointerException("Socket factory can not be null");
+		}
+		mySocketFactory = theSocketFactory;
+	}
 }
