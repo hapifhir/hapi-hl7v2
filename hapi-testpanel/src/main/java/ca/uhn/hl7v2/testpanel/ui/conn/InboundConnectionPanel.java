@@ -152,6 +152,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		myHeaderPanel.destroy();
 		myValidationPanel.destroy();
 		myConnection.removePropertyChangeListener(AbstractConnection.STATUS_PROPERTY, myStatusPropertyChangeListener);
+		myConnection.removeVetoableChangeListener(AbstractConnection.NEW_MESSAGES_PROPERTY, myNewMessagesPropertyListener);
 	}
 
 	public void setConnection(InboundConnection theConnection) {

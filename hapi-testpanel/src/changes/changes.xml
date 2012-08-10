@@ -11,8 +11,12 @@
             	around in XML documents.
             </action>
             <action type="fix">
-            	Show currently highlighted message in text editor component on Windows. For some reason,
+            	Show currently highlighted message in text editor component on Windows platform. For some reason,
             	the Windows L&F was preventing this. 
+            </action>
+            <action type="fix">
+            	Incoming connections (on the left hand side) don't show new received message notification
+            	after they have been selected and then deselected. 
             </action>
         </release>
         <release version="2.0" date="2012-07-16">
