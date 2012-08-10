@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ca.uhn.hl7v2.hoh.llp.LlpClientTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.687 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.569 sec
