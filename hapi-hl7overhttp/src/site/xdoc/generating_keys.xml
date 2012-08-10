@@ -2,21 +2,142 @@
 <document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
 	<properties>
-		<title>HL7 over HTTP</title>
+		<title>HL7 over HTTP - Generating a Self-Signed Certificate</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
+			<!-- 
+		    keytool -genseckey -keyalg AES -keysize 256 -storetype jceks -keystore symmetrickey.jks -alias newkey -storepass thestorepass -keypass thekeypass
+		    -->
 
 	<body>
 
-		<section name="HL7 over HTTP">
+		<section name="Generating Self-signed Public/Private Keys">
 
-
-		    keytool -genseckey -keyalg AES -keysize 256 -storetype jceks -keystore symmetrickey.jks -alias newkey -storepass thestorepass -keypass thekeypass
+			<p>
+				Public and Private keys are cryptographic certificates which, when used 
+				together may be used to securely encrypt or sign data when transmitting it
+				from one system to another. A description of this process is found
+				<a href="http://en.wikipedia.org/wiki/Public-key_cryptography">here</a>.
+			</p>
+		   
+		   <p>
+		   	In Java, public and private keys are each placed in a special file called a
+		   	keystore. The private key in a keystore must be kept secure. It should be
+		   	very carefully guarded. The public key in a keystore (which is referred to 
+		   	as a "truststore") does not need to be kept secure. It may be emailed or
+		   	copied freely.
+		   </p>
 		    
-		    
-		    
-		    
-		    			
+		   <subsection name="Creating the key">
+		   
+		   	<p>
+		   		First, the private key is created using an application called keytool. 
+		   		Note that in the example below:
+		   		<ul>
+		   			<li>
+		   				You must choose a password for the keystore. It is possible to store more than one public or private
+		   				key in a single keystore, but the same keystore password must be used each time.
+		   			</li>
+		   			<li>
+		   				The certificate is set to expire after	5 years (1826 days), according to the 
+		   				validity argument. You may wish to adjust this appropriately.
+		   			</li>
+		   			<li>
+		   				Every private or public key in a keystore has an alias. This alias will be needed
+		   				by the HL7 over HTTP client or server modules 
+		   				to specify which key in the keystore should be used. It is required even if only
+		   				one key is located in the keystore. It is generally a good idea to use a descriptive
+		   				alias which specifies what the key is for (e.g. adt_messages_to_fictitiouslab).
+		   			</li>
+		   		</ul>
+		   	</p>
+		   	<div style="background: #E0E0E0; padding: 20px;">
+					&gt; keytool -genkey -alias my_app_alias -keyalg RSA -keysize 2048 -validity 1826 -keystore privatekeystore.jks -storetype JKS<br/><br/>
+					Enter keystore password:  <span style="color: #E06060;">thepassword</span><br/>
+					Re-enter keystore password:  <span style="color: #E06060;">thepassword</span><br/>
+					What is your first and last name?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					What is the name of your organizational unit?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					What is the name of your organization?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					What is the name of your City or Locality?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					What is the name of your State or Province?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					What is the two-letter country code for this unit?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
+					Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?<br/>&nbsp;&nbsp;[no]: <span style="color: #E06060;">yes</span><br/>
+					<br/>
+					Enter key password for &lt;my_app_alias&gt;<br/>&nbsp;&nbsp;(RETURN if same as keystore password): <span style="color: #E06060;">(hit enter)</span>
+ 				</div>
+		   	
+				<p>
+					When this is complete, you now have a keystore containing a private key. This keystore 
+					must be kept in a secure location and not copied unneccesarily!
+				</p>
+		   	
+		   </subsection>
+		   
+		   <subsection name="Exporting the public key">
+		   
+		   	<p>
+		   		Once you have a keystore containing a self-signed private key, your next step is
+		   		to export this key to create a truststore. First you must extract the key from the private
+		   		keystore.
+		   	</p>
+		   	
+		   	<div style="background: #E0E0E0; padding: 20px;">
+		   		keytool -export -alias my_app_alias -keystore privatekeystore.jks -rfc -file public.cert<br/>
+		   		Enter keystore password: <span style="color: #E06060;">thepassword</span><br/>
+		   		Certificate stored in file &lt;public.cert&gt;
+				</div>		   	
+		   	
+		   	<p>
+		   		The resulting file "public.cert" contains the public key in a format called
+		   		<a href="http://en.wikipedia.org/wiki/Privacy_Enhanced_Mail">PEM</a>. If you
+		   		are communicating with a remote party (i.e. at another organization) you
+		   		will want to provide a copy of this file to them. Public Key certificates
+		   		to not need to be kept secret, but you should be careful that they are
+		   		not tampered with if you send them externally.
+		   	</p>
+		   	
+		   	<p>
+		   		If you send your public key to an outside party, it is a good idea to separately
+		   		verify that they key hasn't been tampered with. One way to accomplish this
+		   		is to use OpenSSL to generate an MD5 hash of the certificate. If this
+		   		command is run by the sender, and also run by the receiver, and the
+		   		values match, you can be reasonably confident that the key has not
+		   		been tampered with.
+		   	</p>
+		   	<div style="background: #E0E0E0; padding: 20px;">
+					openssl x509 -in public.cert -noout -modulus | openssl md5<br/>
+					(stdin)= c587e8b28c735fc0773e37c4594ce937
+		   	</div>
+		   	
+		   </subsection>
+		   <subsection name="Importing the public key into a truststore">
+		   
+		   	
+		   	<p>
+		   		To import the Public Key into a truststore (a keystore containing a public key),
+		   		you will once again use the keytool command.
+		   	</p>
+		   	
+		   	<div style="background: #E0E0E0; padding: 20px;">
+					keytool -import -alias trust_app_alias -file public.cert -keystore truststore.jks -storetype JKS<br/>
+					Enter keystore password:  <span style="color: #E06060;">trustpassword</span><br/>
+					Re-enter new password: <span style="color: #E06060;">trustpassword</span><br/>
+					Owner: CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown<br/>
+					Issuer: CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown<br/>
+					Serial number: 50257625<br/>
+					Valid from: Fri Aug 10 16:59:17 EDT 2012 until: Thu Aug 10 16:59:17 EDT 2017<br/>
+					Certificate fingerprints:<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MD5:  B9:5B:43:34:CA:00:82:EE:1F:7B:24:14:B6:3E:56:09<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHA1: 98:56:ED:0B:E0:F2:A6:20:2D:DD:66:72:5F:DF:7D:CB:BC:98:C7:AE<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature algorithm name: SHA1withRSA<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version: 3<br/>
+					Trust this certificate? [no]:  <span style="color: #E06060;">yes</span><br/>
+					Certificate was added to keystore<br/>
+				</div>		   	
+		   	
+		   	
+		   </subsection>
+		   
 		</section>
 
 	</body>

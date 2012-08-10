@@ -9,13 +9,39 @@
 	<body>
 
 		<section name="Encryption Profile">
-			
-		    <p>
-		        TODO: Encryption profile documentation still to come  		        
-		    </p>
-		    
+
+			<p>
+				To use Encryption Profile, you have three options:
+			</p>
+			<ul>
+				<li>
+					You may use TLS Mutual Authentication with a symmetric secret key. (TODO: finish this description)
+				</li>
+				<li>
+					You may install a certificate which has been signed by a trusted 
+					<a href="http://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority (CA)</a>.
+					This approach generally has the advantage of requiring almost no 
+					configuration effort on the client/sending side, but there is generally
+					a cost associated with obtaining a certificate which has been signed by a CA. This
+					is a good approach if you have a single application (e.g. an interface engine or a
+					regional repository)	which will receive messages from many sources. 					
+				</li>
+				<li>
+					You may use a self-signed certificate. Self-signed certificates
+					provide excellent security at the expense of requiring extra
+					configuration on the client side.
+				</li>
+			</ul>
+
+			<subsection name="TLS Mutual Authentication Encryption">
+			</subsection>
+
+			<subsection name="TLS Public Key Encryption">
+			</subsection>
+
+
 		</section>
-								
+
 	</body>
 
 </document>
