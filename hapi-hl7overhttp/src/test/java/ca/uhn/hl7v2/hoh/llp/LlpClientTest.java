@@ -27,7 +27,7 @@ public class LlpClientTest {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(LlpClientTest.class);
 	private static int ourPort;
 	private static SingleCredentialServerCallback ourServerCallback;
-	private static TestServerSocketThread ourServerSocketThread;
+	private static ServerSocketThreadForTesting ourServerSocketThread;
 	private static ExecutorService ourExecutor;
 
 	@Test
@@ -75,7 +75,7 @@ public class LlpClientTest {
 		ourLlp.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		ourServerCallback = new SingleCredentialServerCallback("hello", "hapiworld");
 
-		ourServerSocketThread = new TestServerSocketThread(ourPort, ourServerCallback);
+		ourServerSocketThread = new ServerSocketThreadForTesting(ourPort, ourServerCallback);
 		ourServerSocketThread.start();
 		ourServerSocketThread.getLatch().await();
 		
