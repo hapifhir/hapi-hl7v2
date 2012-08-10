@@ -10,7 +10,7 @@ import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
-import ca.uhn.hl7v2.hoh.llp.TestServerSocketThread;
+import ca.uhn.hl7v2.hoh.llp.ServerSocketThreadForTesting;
 import ca.uhn.hl7v2.hoh.raw.api.RawSendable;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
@@ -20,7 +20,7 @@ public class HohRawClientSimpleTest {
 	private static int ourPort;
 	private static Hl7OverHttpLowerLayerProtocol ourLlp;
 	private static SingleCredentialServerCallback ourServerCallback;
-	private static TestServerSocketThread ourServerSocketThread;
+	private static ServerSocketThreadForTesting ourServerSocketThread;
 	
 	@Test
 	public void testSendMessageSimple() throws Exception {
@@ -55,7 +55,7 @@ public class HohRawClientSimpleTest {
 		ourLlp.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		ourServerCallback = new SingleCredentialServerCallback("hello", "hapiworld");
 
-		ourServerSocketThread = new TestServerSocketThread(ourPort, ourServerCallback);
+		ourServerSocketThread = new ServerSocketThreadForTesting(ourPort, ourServerCallback);
 		ourServerSocketThread.start();
 		ourServerSocketThread.getLatch().await();
 	}

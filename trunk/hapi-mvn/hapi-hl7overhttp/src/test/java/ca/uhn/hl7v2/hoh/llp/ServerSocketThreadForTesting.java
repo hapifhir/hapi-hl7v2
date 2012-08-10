@@ -19,8 +19,8 @@ import ca.uhn.hl7v2.hoh.util.IOUtils;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.PipeParser;
 
-public class TestServerSocketThread extends Thread {
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(TestServerSocketThread.class);
+public class ServerSocketThreadForTesting extends Thread {
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ServerSocketThreadForTesting.class);
 	
 	private boolean myDone;
 	private CountDownLatch myLatch = new CountDownLatch(1);
@@ -31,12 +31,12 @@ public class TestServerSocketThread extends Thread {
 
 	private int myPort;
 	
-	public TestServerSocketThread(int thePort, IAuthorizationServerCallback theServerAuthCallback) {
+	public ServerSocketThreadForTesting(int thePort, IAuthorizationServerCallback theServerAuthCallback) {
 		myPort = thePort;
 		myServerAuthCallback = theServerAuthCallback;
 	}
 	
-	public TestServerSocketThread(int thePort) {
+	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
 	}
 
