@@ -15,7 +15,12 @@
 			<name>The Apache Software License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
-			<comments>A business-friendly OSS license</comments>
+			<comments>
+				Unlike the main HAPI library, hapi-hl7overhttp is
+				licensed under the Apache Software License, version 2.0. 
+				We want to encourage the adoption
+				of HL7 over HTTP because we believe it is a better option.
+			</comments>
 		</license>
 	</licenses>
 	<dependencies>
@@ -96,6 +101,25 @@
 	</dependencies>
 
 	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<inherited>true</inherited>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<linksource>true</linksource>
+					<detectLinks>true</detectLinks>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>    	
+      	</plugins>
 		<outputDirectory>${project.basedir}/../target/site/hapi-hl7overhttp</outputDirectory>
 	</reporting>
 

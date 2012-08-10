@@ -41,6 +41,7 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BouncyCastleCmsMessageSigner.class);
 
+	private String myAlgorithm = "SHA512withRSA";
 	private String myAliasPassword;
 	private String myKeyAlias;
 	private KeyStore myKeyStore;
@@ -143,14 +144,15 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 			Store certs = new JcaCertStore(certList);
 
 			CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-			ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA512withRSA").setProvider("BC").build(getPrivateKey());
+			ContentSigner sha1Signer = new JcaContentSignerBuilder(myAlgorithm).setProvider("BC").build(getPrivateKey());
 
 			gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(sha1Signer, signCert));
 
 			gen.addCertificates(certs);
 
 			CMSSignedData sigData = gen.generate(msg, false);
-			return Base64.encodeBase64String(sigData.getEncoded());
+			return myAlgorithm + ' ' + Base64.encodeBase64String(sigData.getEncoded());
+//			return Base64.encodeBase64String(sigData.getEncoded());
 
 		} catch (Exception e) {
 			throw new SignatureFailureException(e);
@@ -164,6 +166,13 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 		PublicKey pubKey = getPublicKey();
 
 		try {
+
+			int spaceIndex = theSignature.indexOf(' ');
+			if (spaceIndex == -1) {
+				throw new SignatureVerificationException("No algorithm found in signature block: " + theSignature);
+			}
+
+			theSignature = theSignature.substring(spaceIndex + 1);
 
 			CMSProcessable content = new CMSProcessableByteArray(theBytes);
 			CMSSignedData s = new CMSSignedData(content, Base64.decodeBase64(theSignature));

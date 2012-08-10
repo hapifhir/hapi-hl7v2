@@ -63,7 +63,7 @@ public class HohClientSimple extends HohRawClientSimple {
 	 */
 	public IReceivable<Message> sendAndReceiveMessage(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException, EncodingNotSupportedException, HL7Exception {
 		IReceivable<String> response = super.doSendAndReceive(theMessageToSend);
-		return new MessageReceivable(myParser.parse(response.getRawMessage()));
+		return new MessageReceivable(myParser.parse(response.getMessage()));
 	}
 
 }

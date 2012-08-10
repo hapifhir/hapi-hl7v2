@@ -12,4 +12,8 @@ public class SignatureVerificationException extends Exception {
 		super(theE);
 	}
 
+	public SignatureVerificationException(String theMessage) {
+		super(theMessage);
+	}
+
 }

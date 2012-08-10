@@ -14,7 +14,7 @@ public class RawReceivable extends AbstractReceivable<String> implements IReceiv
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getRawMessage() {
+	public String getMessage() {
 		return myRawMessage;
 	}
 

@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import ca.uhn.hl7v2.hoh.sign.ISigner;
-import ca.uhn.hl7v2.hoh.sign.StandardMessageSigner;
 import ca.uhn.hl7v2.hoh.util.VersionLogger;
 
 abstract class AbstractHl7OverHttp {

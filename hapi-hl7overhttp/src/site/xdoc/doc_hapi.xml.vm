@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP - API for HAPI users</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Java API for HAPI Users">
+			
+		    <p>
+		        The HL7 over HTTP (HoH) library is a Java based library that provides
+		        an implementation of the 
+		        <a href="specification.html">HoH Specification</a>
+		        suitable for use in applications that are already based on the HAPI
+		        library. If your application does not otherwise use HAPI, you may
+		        wish to see the documentation
+		        <a href="doc_non_hapi.html">for non-HAPI users</a>.
+		    </p>
+		    
+		    <subsection name="Contents">
+				<macro name="toc">
+					<param name="section" value="2"/>
+					<param name="fromDepth" value="0"/>
+					<param name="toDepth" value="2"/>
+				</macro>
+				<macro name="toc">
+					<param name="section" value="3"/>
+					<param name="fromDepth" value="0"/>
+					<param name="toDepth" value="2"/>
+				</macro>
+				<macro name="toc">
+					<param name="section" value="4"/>
+					<param name="fromDepth" value="0"/>
+					<param name="toDepth" value="2"/>
+				</macro>
+			</subsection>
+		    
+		    <subsection name="Installing">
+		    
+		    	<p>
+		    		Maven users may simply add a reference to the library using
+		    		the following dependency (this is required on top of the other
+		    		HAPI dependencies, such as hapi-base and hapi-structures-vXX):
+		    	</p>
+		    	<source>&lt;dependency&gt;
+   &lt;groupId&gt;ca.uhn.hapi&lt;/groupId&gt;
+   &lt;artifactId&gt;hapi-hl7overhttp&lt;/artifactId&gt;
+   &lt;version&gt;${project.version}&lt;/version&gt;
+&lt;/dependency&gt;</source>
+		    	
+				<p>
+					Non-maven users may download a binary version of the library from
+					the
+					<a href="http://sourceforge.net/projects/hl7api/files/hapi-hl7overhttp/">downloads area</a>.
+				</p>
+				
+		    </subsection>
+		   
+		</section>
+				
+		<section name="Sending Messages">
+		    	
+	    	<p>
+	    		To send a raw HL7 message, you first need a HAPI Message object
+	    		to send.
+	    	</p>
+	    	<p>
+	    		Next, you need a client.
+	    		The basic implementation is 
+	    		<a href="apidocs/ca/uhn/hl7v2/hoh/hapi/client/HohClientSimple.html">HohClientSimple</a>,
+	    		which is a single threaded message sender, suitable for running embedded
+	    		in JEE containers, interface engines, ESBs, etc.
+	    	</p>
+	    	<p>
+	    		The following example shows how to use HohClientSimple to send messages.
+	    	</p>
+	    	<source><![CDATA[/*
+ * http://localhost:8080/AppContext
+ */
+String host = "localhost";
+int port = 8080;
+String uri = "/AppContext";
+
+// Create a parser
+Parser parser = PipeParser.getInstanceWithNoValidation();
+
+// Create a client
+HohClientSimple client = new HohClientSimple(host, port, uri, parser);
+
+// Set the socket factory to use TLS
+client.setSocketFactory(new TlsSocketFactory());
+
+// Optionally, if credentials should be sent, they 
+// can be provided using a credential callback
+IAuthorizationClientCallback authCalback = new SingleCredentialClientCallback("ausername", "somepassword");
+client.setAuthorizationCallback(authCalback);
+
+// The ISendable defines the object that provides the actual
+// message to send
+ADT_A01 adt = new ADT_A01();
+adt.initQuickstart("ADT", "A01", "T");
+// .. set other values on the message ..
+
+// The MessageSendable provides the message to send 
+ISendable sendable = new MessageSendable(adt);
+
+try {
+	// sendAndReceive actually sends the message
+	IReceivable<Message> receivable = client.sendAndReceiveMessage(sendable);
+	
+	// receivavle.getRawMessage() provides the response
+	Message message = receivable.getMessage();
+	System.out.println("Response was:\n" + message.encode());
+	
+	// IReceivable also stores metadata about the message
+	String remoteHostIp = (String) receivable.getMetadata().get(MessageMetadataKeys.REMOTE_HOST_ADDRESS);
+	System.out.println("From:\n" + remoteHostIp);
+	
+	/*
+	 * Note that the client may be reused as many times as you like,
+	 * by calling sendAndReceiveMessage repeatedly
+	 */
+	
+} catch (DecodeException e) {
+	// Thrown if the response can't be read
+	e.printStackTrace();
+} catch (IOException e) {
+	// Thrown if communication fails
+	e.printStackTrace();
+} catch (EncodeException e) {
+	// Thrown if the message can't be encoded (generally a programming bug)
+	e.printStackTrace();
+}]]></source>
+		    <subsection name="Encryption Profile">		
+				<p>
+					In order to support HL7 over HTTP Encryption profile, a 
+					<a href="apidocs/ca/uhn/hl7v2/hoh/sockets/ISocketFactory.html">socket factory</a>
+					must be provided, like this:
+				</p>
+				<source><![CDATA[// Create a client
+HohClientSimple client = new HohClientSimple(host, port, uri, parser);
+
+// Set the socket factory to use TLS
+client.setSocketFactory(new TlsSocketFactory());]]></source>
+				<p>
+					See the
+					<a href="encryption.html">Encryption Profile</a>
+					page for information on different ways to support encryption profile. 
+				</p>
+			
+			</subsection>
+
+		</section>
+		
+		<section name="Receiving Messages">
+		
+			<p>
+				HAPI HL7 over HTTP provides a
+				Servlet
+				implementation which can be used to receive HL7 
+				messages within a normal Servlet container (e.g. JBOSS, Tomcat, Websphere AS, etc.)
+			</p>
+		
+			<p>
+				The simplest way to take advantage of the HoH Servlet
+				functionality is to create your own Servlet which extends
+				<a href="apidocs/ca/uhn/hl7v2/hoh/hapi/server/HohServlet.html">HohServlet</a>.
+				Here is an example:
+			</p>
+			<source><![CDATA[/**
+ * Example servlet implementation which receives HL7 messages
+ * and uses HAPI to process them.
+ */
+public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
+
+	/**
+	 * Initialise the servlet
+	 */
+	@Override
+	public void init(ServletConfig theConfig) throws ServletException {
+		
+		/* Servlet should be initialized with an instance of
+		 * ReceivingApplication, which handles incoming messages 
+		 */
+		setApplication(new MyApplication());
+		
+	}
+
+	/**
+	 * The application does the actual processing
+	 */
+	private class MyApplication implements ReceivingApplication
+	{
+
+		/**
+		 * processMessage is fired each time a new message 
+		 * arrives. 
+		 * 
+		 * @param theMessage The message which was received
+		 * @param theMetadata A map containing additional information about
+		 *                    the message, where it came from, etc.  
+		 */
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+			System.out.println("Received message:\n" + theMessage.encode());
+
+			// .. process the message ..
+			
+			/*
+			 * Now reply to the message
+			 */
+			Message response;
+			try {
+				response = theMessage.generateACK();
+			} catch (IOException e) {
+				throw new ReceivingApplicationException(e);
+			}
+			
+			/*
+			 * If something goes horribly wrong, you can throw an 
+			 * exception and an HTTP 500 error will be generated.
+			 * However, it is preferable to return a normal HL7 ACK 
+			 * message with an "AE" response code to note an error. 
+			 */
+			boolean somethingFailed = false;
+			if (somethingFailed) {
+				throw new ReceivingApplicationException("");
+			}
+
+			/*
+			 * It is better to return an HL7 message with an AE response
+			 * code. This will still be returned by the transport with
+			 * an HTTP 500 status code, but an HL7 message will still 
+			 * be propagated up. 
+			 */
+			if (somethingFailed) {
+				try {
+					response = theMessage.generateACK("AE", new HL7Exception("There was a problem!!"));
+				} catch (IOException e) {
+					throw new ReceivingApplicationException(e);
+				}
+			}
+			
+			return response;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public boolean canProcess(Message theMessage) {
+			return true;
+		}
+		
+	}
+	
+}]]></source>
+
+			<p>
+				The servlet may then be placed in a servlet container using a 
+				normal web.xml file, such as this one:
+			</p>
+			<source><![CDATA[<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <servlet>
+        <servlet-name>hl7_listener</servlet-name>
+        <servlet-class>ca.uhn.hl7v2.examples.hoh.ExampleHl7OverHttpServletWithOneApplication</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>hl7_listener</servlet-name>
+        <url-pattern>/hl7list</url-pattern>
+    </servlet-mapping>
+</web-app>]]></source>
+
+			<subsection name="Embedding a Servlet Container">
+			
+				<p>
+					If your application does not already have a servlet
+					container, it may be appropriate to embed a simple one
+					in your application in order to receive messages. This
+					is generally not a good idea within a JEE container (since 
+					the JEE specification doesn't allow applications which 
+					manage their own threads), but may be appropriate within 
+					a standalone application. 
+				</p>
+				<p>
+					There are several great embeddable servlet containers which
+					may be used, but a commonly used one is
+					Jetty. The following example shows how to start a Jetty
+					server listening for HL7 messages and processing them using
+					a servlet like the one above. 
+				</p>
+				<macro name="snippet">
+				  <param name="id" value="server"/>
+				  <param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/JettyBasedRawServer.java"/>
+				</macro>
+			
+			<p>
+				Note that doing this requires that you have Jetty-Embedded
+				on your classpath. Maven users may do this using a single
+				dependency block:
+			</p>
+			<source><![CDATA[<dependency>
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>jetty-embedded</artifactId>
+    <version>6.1.26</version>
+    <optional>true</optional>
+</dependency>]]></source>
+			
+			</subsection>
+
+		</section>
+		
+		<section name="Drop-In LLP Replacement">
+		
+			<p>
+				HL7 over HTTP may also be very quickly installed in existing
+				HAPI based applications, via a ca.uhn.hl7v2.llp.LowerLayerProtocol
+				<a href="apidocs/ca/uhn/hl7v2/hoh/llp/Hl7OverHttpLowerLayerProtocol.html">drop in replacement</a>.
+			</p>
+			
+			<p>
+				The HoH LowerLayerProtocol implementation may be placed
+				in any application which already supported sending and 
+				receiving messages, and instantly converts that application
+				from using MLLP to using HoH for transporting messages. 
+			</p>
+		
+			<p>
+				Both client (sending) and server (receiving) modes are supported.
+				The following example shows how to use ConnectionHub to send
+				messages using HL7 over HTTP:
+			</p>
+			<macro name="snippet">
+			  <param name="id" value="client"/>
+			  <param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/HohLlpExample.java"/>
+			</macro>
+			
+			<p>
+				The following example shows how to use a HAPI server class
+				to receive messages using HL7 over HTTP:
+			</p>
+			<macro name="snippet">
+			  <param name="id" value="server"/>
+			  <param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/HohLlpExample.java"/>
+			</macro>
+
+		</section>
+		
+	</body>
+
+</document>

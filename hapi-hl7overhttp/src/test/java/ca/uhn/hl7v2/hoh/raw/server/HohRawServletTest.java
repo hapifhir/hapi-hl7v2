@@ -89,7 +89,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 
 	public IResponseSendable<String> messageReceived(IReceivable<String> theMessage) throws MessageProcessingException {
 		
-		myLastMessage = theMessage.getRawMessage();
+		myLastMessage = theMessage.getMessage();
 		try {
 			myLastResponse = PipeParser.getInstanceWithNoValidation().parse(myLastMessage).generateACK().encode();
 			return new RawSendable(myLastResponse);
@@ -126,6 +126,8 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		
 	}
 
+	// TODO: add a test to make sure that responses try to use the same charset as requests
+	
 	@AfterClass
 	public static void afterClass() throws InterruptedException {
 //		Thread.sleep(1000000);

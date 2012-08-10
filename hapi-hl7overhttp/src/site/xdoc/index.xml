@@ -23,7 +23,8 @@
 			<p>
 				HL7 over HTTP is a new transport mechanism aimed at replacing the 
 				traditional HL7 v2 Mininal Lower Layer Protocol (MLLP) transport
-				with a modern, standards-based approach. 
+				with a modern, standards-based approach. We believe that MLLP should
+				be retired completely, and we are working to make that a reality.
 			</p>
 			
 			<p>
@@ -36,10 +37,14 @@
 					please get in touch.
 				</li>
 				<li>
-					A <a href="javaapi.html"><b>Java based API</b></a> for implementing
+					A <b>Java based API</b> for implementing
 					HL7 over HTTP in your application. The Java based API can be
-					embedded in applications that use HAPI, and in applications that
-					don't.
+					embedded in applications that 
+					<a href="doc_hapi.html">do use HAPI</a>, 
+					and in applications that
+					<a href="doc_non_hapi.html">don't otherwise use HAPI</a>.
+					Our Java API is Apache licensed, so it is free for
+					use in all kinds of software, including commercial software!
 				</li>
 			</ul>
 
