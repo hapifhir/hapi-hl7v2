@@ -33,7 +33,7 @@ public class HohServlet extends HohRawServlet {
 	 */
 	public void setApplication(ReceivingApplication theApplication) {
 		myApplicationRouter = new ApplicationRouterImpl();
-		myApplicationRouter.bindApplication(AppRoutingDataImpl.withAll(), theApplication);
+		myApplicationRouter.bindApplication(new AppRoutingDataImpl("*", "*", "*", "*"), theApplication);
 	}
 
 	/**
