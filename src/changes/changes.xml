@@ -34,6 +34,34 @@
             	Make Message Validation more versatile by adding a ValidationExceptionHandler
 				that is called on every violation of a validation rule.
             </action>			
+        	<action type="add" dev="James Agnew">
+        		Minor API enhancements:
+        		<![CDATA[
+        		<ul>
+        			<li>
+        				ConnectionHub has a new factory method which accepts an LLP instance but
+        				does not require a boolean flag to indicate whether TLS is being
+        				used (added for consistency with other methods).
+        			</li>
+        			<li>
+        				A number of internal log statements which are only really useful
+        				if you are familiar with HAPI internals have been changed from
+        				DEBUG level to TRACE level, to make debug level logging easier 
+        				to understand.
+        			</li>
+        			<li>
+        				Service classes (such as SimpleServer) now have a startAndWait() method
+						which doesn't return until the service has successfully started
+        			</li>
+        		]]>
+        	</action>
+        	<action type="fix" dev="James Agnew">
+        		AbstractMessage#generateAck()
+        		now sets the Parser instance associated with the generated Ack message to 
+        		be the same instance as its own instance. This means for instance that if a
+        		message is parsed from an XML message, the same XML parser will be associated
+        		with the generated ACK. 
+        	</action>
             <action type="fix" dev="James Agnew">
             	Prevent UnsupportedOperationException when AbstractType#toString() is called on a message
             	that was parsed by an XML parser (for instance on an ST, or another datatype).
