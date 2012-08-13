@@ -19,6 +19,7 @@ public class FiledBasedGeneratorTest extends AbstractContinuousGeneratorTest<Fil
 	@Test(expected=IOException.class)
 	public void testFailedFile() throws IOException {
 		FileBasedGenerator gen = getGenerator();
+		gen.setNeverFail(false);
 		gen.setDirectory("::::?::::");
 		gen.setFileName("::::?::::");
 		gen.getID();
