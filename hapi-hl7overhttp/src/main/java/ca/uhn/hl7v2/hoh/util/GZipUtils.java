@@ -15,7 +15,7 @@ public class GZipUtils {
 	 * Non instantiable
 	 */
 	private GZipUtils() {
-		super();
+		// nothing
 	}
 	
 	/**

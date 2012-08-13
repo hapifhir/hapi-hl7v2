@@ -8,18 +8,16 @@
 
 	<body>
 
-		<section name="Encryption Profile">
+		<section name="Security Profile">
 
 			<p>
-				To use Encryption Profile, you have three options:
+				To use Security Profile, you have two options:
 			</p>
 			<ul>
 				<li>
-					You may use TLS Mutual Authentication with a symmetric secret key. (TODO: finish this description)
-				</li>
-				<li>
 					You may install a certificate which has been signed by a trusted 
-					<a href="http://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority (CA)</a>.
+					<a href="http://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority (CA)</a>
+					for mutual authentication.
 					This approach generally has the advantage of requiring almost no 
 					configuration effort on the client/sending side, but there is generally
 					a cost associated with obtaining a certificate which has been signed by a CA. This
@@ -32,14 +30,56 @@
 					configuration on the client side.
 				</li>
 			</ul>
-
-			<subsection name="TLS Mutual Authentication Encryption">
+			    
+		    <p>
+		        In either case, you 
+		        will first need a self signed private key in a keystore
+		        and a corresponding public key in a truststore. 			        
+		    </p>
+		    <p>
+		        <a href="generating_keys.html">See here</a> for information on
+		        creating these stores.
+		    </p>
+			    
+			<subsection name="Securing the client">
+			    
+				<p>
+					Once you have a truststore, it can be associated
+					with the client (the sending application) by creating
+					a 
+					<a href="apidocs/ca/uhn/hl7v2/hoh/sockets/CustomCertificateTlsSocketFactory.html">CustomCertificateTlsSocketFactory</a>.			        
+				</p>
+				<macro name="snippet">
+					<param name="id" value="client"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/CustomCertificateClient.java"/>
+				</macro>
+			    			    
 			</subsection>
 
-			<subsection name="TLS Public Key Encryption">
+			<subsection name="Securing the server">
+			    
+				<p>
+				    The server needs to be associated with a keystore
+				    containing a private key. If you are using an
+				    embedded Jetty instance, it will look like this:
+				</p>
+				<macro name="snippet">
+					<param name="id" value="server"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/CustomCertificateServer.java"/>
+				</macro>
+			    			    
+				<p>
+				    If the server is using a HAPI SimpleServer with the
+				    HL7 over HTTP LLP implementation, Encryption Profile
+				    can be used as follows:
+				</p>
+				<macro name="snippet">
+					<param name="id" value="llp"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/CustomCertificateServer.java"/>
+				</macro>
+				
 			</subsection>
-
-
+			
 		</section>
 
 	</body>

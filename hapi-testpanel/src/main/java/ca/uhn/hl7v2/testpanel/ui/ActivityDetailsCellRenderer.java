@@ -197,7 +197,7 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 					b.append("&nbsp;");
 				}
 				b.append("</nobr></td><td><nobr>");
-				b.append(bytesB.toString());
+				b.append(bytesB.toString().replace("<", "&lt;"));
 				b.append("</nobr></td></tr><tr>");
 				charsB.setLength(0);
 				bytesB.setLength(0);

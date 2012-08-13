@@ -4,9 +4,8 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.codec.binary.Base64;
-
 import ca.uhn.hl7v2.hoh.util.VersionLogger;
+import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 
 public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 

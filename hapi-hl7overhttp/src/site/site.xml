@@ -37,7 +37,7 @@
 		<menu name="Documentation (Java)">
 		    <item name="For HAPI Users" href="doc_hapi.html" />
 			<item name="For Non-HAPI Users" href="doc_non_hapi.html" />
-			<item name="Encryption Profile" href="encryption.html" />
+			<item name="Security Profile" href="encryption.html" />
 			<item name="Signature Profile" href="signature.html" />
 			<item name="Generating Keys" href="generating_keys.html"/>
 		</menu>
@@ -47,7 +47,13 @@
 			<item name="Source Xref" href="xref/index.html" />
 			<item name="License" href="license.html" />
 		</menu>
-				 
+
+		<menu name="Developer">
+			<item name="Cobertura" href="cobertura/index.html" />
+			<item name="Surefire" href="surefire-report.html" />
+			<item name="Tag List" href="taglist.html" />
+		</menu>
+						 
 		<head>
 			<link rel="shortcut icon" href="http://hl7api.sourceforge.net/images/favicon.png" />
 			<link rel="stylesheet" type="text/css" href="../hapi.css" />

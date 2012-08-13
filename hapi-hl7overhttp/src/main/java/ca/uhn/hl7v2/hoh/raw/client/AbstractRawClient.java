@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,7 +44,7 @@ public abstract class AbstractRawClient {
 	public static final int DEFAULT_RESPONSE_TIMEOUT = 60000;
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientSimple.class);
-
+	
 	private IAuthorizationClientCallback myAuthorizationCallback;
 	private Charset myCharset = DEFAULT_CHARSET;
 	private int myConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
@@ -55,7 +56,6 @@ public abstract class AbstractRawClient {
 	private ISigner mySigner;
 	private ISocketFactory mySocketFactory = new StandardSocketFactory();
 	private String myUri;
-
 	/**
 	 * Constructor
 	 * 
@@ -88,7 +88,15 @@ public abstract class AbstractRawClient {
 			throw new IllegalArgumentException("Port must be a positive integer");
 		}
 	}
-
+	/**
+	 * Constructor
+	 * 
+	 * @param theUrl
+	 *            The URL to connect to
+	 */
+	public AbstractRawClient(URL theUrl) {
+		this(extractHost(theUrl), extractPort(theUrl), extractUri(theUrl));
+	}
 	protected void closeSocket(Socket theSocket) {
 		ourLog.debug("Closing socket");
 		try {
@@ -110,6 +118,7 @@ public abstract class AbstractRawClient {
 		return socket;
 	}
 
+	
 	/**
 	 * Sends a message, waits for the response, and then returns the response if
 	 * any
@@ -150,6 +159,7 @@ public abstract class AbstractRawClient {
 		}
 
 	}
+
 
 	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
@@ -193,11 +203,34 @@ public abstract class AbstractRawClient {
 		return response;
 	}
 
+
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return myHost;
+	}
+
+
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return myPort;
+	}
+
 	/**
 	 * Returns the socket factory used by this client
 	 */
 	public ISocketFactory getSocketFactory() {
 		return mySocketFactory;
+	}
+
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return myUri;
 	}
 
 	/**
@@ -272,5 +305,17 @@ public abstract class AbstractRawClient {
 			throw new NullPointerException("Socket factory can not be null");
 		}
 		mySocketFactory = theSocketFactory;
+	}
+
+	private static String extractHost(URL theUrl) {
+		return theUrl.getHost();
+	}
+
+	private static int extractPort(URL theUrl) {
+		return theUrl.getPort() != -1 ? theUrl.getPort() : theUrl.getDefaultPort();
+	}
+
+	private static String extractUri(URL theUrl) {
+		return theUrl.getPath();
 	}
 }

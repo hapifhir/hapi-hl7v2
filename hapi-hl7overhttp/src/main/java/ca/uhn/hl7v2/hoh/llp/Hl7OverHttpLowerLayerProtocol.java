@@ -58,6 +58,9 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 		return myAuthorizationServerCallback;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HL7Reader getReader(InputStream theArg0) throws LLPException {
 		if (myNextReader == null && myNextWriter != null) {
@@ -99,6 +102,9 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 		return myUriPath;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HL7Writer getWriter(OutputStream theArg0) throws LLPException {
 		if (myNextReader != null && myNextWriter == null) {

@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.Validate;
 
+import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 
@@ -76,8 +77,14 @@ public class OutboundConnectionList extends AbstractModelClass {
 		return writer.toString();
 	}
 
-	public static OutboundConnectionList fromXml(String theXml) {
-		return JAXB.unmarshal(new StringReader(theXml), OutboundConnectionList.class);
+	public static OutboundConnectionList fromXml(Controller theController, String theXml) {
+		OutboundConnectionList retVal = JAXB.unmarshal(new StringReader(theXml), OutboundConnectionList.class);
+		
+		for (OutboundConnection next : retVal.getConnections()) {
+			next.setController(theController);
+		}
+		
+		return retVal;
 	}
 
 	/**

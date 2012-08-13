@@ -74,9 +74,11 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Hl7V2FileDiffController;
+import ca.uhn.hl7v2.testpanel.controller.Hl7V2FileSortController;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.MessagesList;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
@@ -109,6 +111,7 @@ public class TestPanelWindow implements IDestroyable {
 	private JButton myStartOneOutboundButton;
 	private JButton myStartAllOutboundButton;
 	private JButton myStopAllOutboundButton;
+	private Hl7V2FileSortController myHl7V2FileSort;
 
 	/**
 	 * Create the application.
@@ -416,6 +419,17 @@ public class TestPanelWindow implements IDestroyable {
 			}
 		});
 		mymenu_3.add(mnHl7V2FileDiff);
+		
+		mymenuItem_5 = new JMenuItem("HL7 v2 File Sort...");
+		mymenuItem_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (myHl7V2FileSort == null) {
+					myHl7V2FileSort = new Hl7V2FileSortController(myController);
+				}
+				myHl7V2FileSort.show();
+			}
+		});
+		mymenu_3.add(mymenuItem_5);
 		
 		mymenu_2 = new JMenu("Conformance");
 		menuBar.add(mymenu_2);
@@ -813,13 +827,6 @@ public class TestPanelWindow implements IDestroyable {
 
 	}
 
-	/**
-	 * @return the myframe
-	 */
-	public JFrame getMyframe() {
-		return myframe;
-	}
-
 	private void initializeLocal() {
 		myMessagesListModel = new MyMessagesListModel();
 		myMessagesList.setModel(myMessagesListModel);
@@ -1044,6 +1051,7 @@ public class TestPanelWindow implements IDestroyable {
 	private JMenu mymenu_3;
 	private JMenuItem mnHl7V2FileDiff;
 	private JMenuItem myRevertToSavedMenuItem;
+	private JMenuItem mymenuItem_5;
 
 	private final class MyMessageDescriptionListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent theEvt) {
@@ -1132,6 +1140,12 @@ public class TestPanelWindow implements IDestroyable {
 				html = true;
 			}
 			
+			if (obj.getStatus() == StatusEnum.FAILED) {
+				b.append(" <font color=\"red\" size=\"2\">(failed)</font> ");
+				html = true;
+			}
+			
+
 			if (html) {
 				setText("<html><nobr>" + b.toString()+"</nobr></html>");
 			}else {
@@ -1186,6 +1200,11 @@ public class TestPanelWindow implements IDestroyable {
 
 			if (obj.getNewMessages() > 0) {
 				b.append(" <font color=\"red\" size=\"2\">(").append(obj.getNewMessages()).append(" new)</font> ");
+				html = true;
+			}
+			
+			if (obj.getStatus() == StatusEnum.FAILED) {
+				b.append(" <font color=\"red\" size=\"2\">(failed)</font> ");
 				html = true;
 			}
 			

@@ -52,7 +52,7 @@
 		   		</ul>
 		   	</p>
 		   	<div style="background: #E0E0E0; padding: 20px;">
-					&gt; keytool -genkey -alias my_app_alias -keyalg RSA -keysize 2048 -validity 1826 -keystore privatekeystore.jks -storetype JKS<br/><br/>
+					$ <span style="color: #E06060;">keytool -genkey -alias my_app_alias -keyalg RSA -keysize 2048 -validity 1826 -keystore privatekeystore.jks -storetype JKS</span><br/><br/>
 					Enter keystore password:  <span style="color: #E06060;">thepassword</span><br/>
 					Re-enter keystore password:  <span style="color: #E06060;">thepassword</span><br/>
 					What is your first and last name?<br/>&nbsp;&nbsp;[Unknown]:  <span style="color: #E06060;"><i>(provide a sensible value)</i></span><br/>
@@ -82,7 +82,7 @@
 		   	</p>
 		   	
 		   	<div style="background: #E0E0E0; padding: 20px;">
-		   		keytool -export -alias my_app_alias -keystore privatekeystore.jks -rfc -file public.cert<br/>
+		   		$ <span style="color: #E06060;">keytool -export -alias my_app_alias -keystore privatekeystore.jks -rfc -file public.cert</span><br/>
 		   		Enter keystore password: <span style="color: #E06060;">thepassword</span><br/>
 		   		Certificate stored in file &lt;public.cert&gt;
 				</div>		   	
@@ -105,7 +105,7 @@
 		   		been tampered with.
 		   	</p>
 		   	<div style="background: #E0E0E0; padding: 20px;">
-					openssl x509 -in public.cert -noout -modulus | openssl md5<br/>
+					$ <span style="color: #E06060;">openssl x509 -in public.cert -noout -modulus | openssl md5</span><br/>
 					(stdin)= c587e8b28c735fc0773e37c4594ce937
 		   	</div>
 		   	
@@ -119,7 +119,7 @@
 		   	</p>
 		   	
 		   	<div style="background: #E0E0E0; padding: 20px;">
-					keytool -import -alias trust_app_alias -file public.cert -keystore truststore.jks -storetype JKS<br/>
+					$ <span style="color: #E06060;">keytool -import -alias trust_app_alias -file public.cert -keystore truststore.jks -storetype JKS</span><br/>
 					Enter keystore password:  <span style="color: #E06060;">trustpassword</span><br/>
 					Re-enter new password: <span style="color: #E06060;">trustpassword</span><br/>
 					Owner: CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown<br/>

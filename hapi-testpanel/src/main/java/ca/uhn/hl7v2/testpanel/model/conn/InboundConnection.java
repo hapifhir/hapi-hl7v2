@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.BindException;
+import java.net.ServerSocket;
+import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +56,10 @@ import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory;
+import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
@@ -78,18 +84,16 @@ public class InboundConnection extends AbstractConnection {
 	private transient Parser myParser;
 	private transient HL7Service myService;
 
-	@XmlAttribute(name="validateIncomingUsingProfileGroupId")
+	@XmlAttribute(name = "validateIncomingUsingProfileGroupId")
 	private String myValidateIncomingUsingProfileGroupId;
 
-	
 	@Override
 	public String exportConfigToXml() {
 		StringWriter writer = new StringWriter();
 		JAXB.marshal(this, writer);
 		return writer.toString();
 	}
-	
-	
+
 	/**
 	 * @return the connections
 	 */
@@ -97,16 +101,16 @@ public class InboundConnection extends AbstractConnection {
 		return myConnections;
 	}
 
-
 	/**
 	 * @return the validateIncomingUsingProfileGroupId
 	 */
 	public String getValidateIncomingUsingProfileGroupId() {
 		return myValidateIncomingUsingProfileGroupId;
 	}
-	
+
 	/**
-	 * @param theValidateIncomingUsingProfileGroupId the validateIncomingUsingProfileGroupId to set
+	 * @param theValidateIncomingUsingProfileGroupId
+	 *            the validateIncomingUsingProfileGroupId to set
 	 */
 	public void setValidateIncomingUsingProfileGroupId(String theValidateIncomingUsingProfileGroupId) {
 		String oldValue = myValidateIncomingUsingProfileGroupId;
@@ -117,17 +121,68 @@ public class InboundConnection extends AbstractConnection {
 	@Override
 	public void start() {
 		super.start();
-		
+
 		if (myService != null) {
 			return;
 		}
 
 		myParser = createParser();
-		
-		if (isDualPort()) {
-			myService = new TwoPortService(myParser, createLlp(), getIncomingOrSinglePort(), getOutgoingPort(), isTls());
-		} else {
-			myService = new SimpleServer(getIncomingOrSinglePort(), createLlp(), myParser, isTls());
+
+		switch (getTransport()) {
+		case DUAL_PORT_MLLP: {
+			try {
+				myService = new TwoPortService(myParser, createLlp(), getIncomingOrSinglePort(), getOutgoingPort(), isTls());
+			} catch (LLPException e) {
+				ourLog.error("Failed to create server socket", e);
+				setStatus(StatusEnum.FAILED);
+				setStatusLine("Failed to create server socket: " + e.getMessage());
+				return;
+			}
+			break;
+		}
+		case SINGLE_PORT_MLLP: {
+			try {
+				myService = new SimpleServer(getIncomingOrSinglePort(), createLlp(), myParser, isTls());
+			} catch (LLPException e) {
+				ourLog.error("Failed to create server socket", e);
+				setStatus(StatusEnum.FAILED);
+				setStatusLine("Failed to create server socket: " + e.getMessage());
+				return;
+			}
+			break;
+		}
+		case HL7_OVER_HTTP: {
+			ServerSocket serverSocket;
+			try {
+				if (!isTls()) {
+					serverSocket = new StandardSocketFactory().createServerSocket();
+				} else if (getTlsKeystore() == null) {
+					serverSocket = new TlsSocketFactory().createServerSocket();
+				} else {
+					serverSocket = new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()).createServerSocket();
+				}
+				
+				myService = new SimpleServer(serverSocket, getIncomingOrSinglePort(), createLlp(), myParser);
+				
+			} catch (IOException e) {
+				ourLog.error("Failed to create server socket", e);
+				setStatus(StatusEnum.FAILED);
+				setStatusLine("Failed to create server socket: " + e.getMessage());
+				return;
+			} catch (KeyStoreException e) {
+				ourLog.error("Failed to load keystore", e);
+				setStatus(StatusEnum.FAILED);
+				setStatusLine("Failed to load keystore: " + e.getMessage());
+				return;
+			} catch (LLPException e) {
+				ourLog.error("Failed to create server socket", e);
+				setStatus(StatusEnum.FAILED);
+				setStatusLine("Failed to create server socket: " + e.getMessage());
+				return;
+			}
+
+			break;
+		}
 		}
 
 		myService.registerApplication("*", "*", myHandler);
@@ -140,7 +195,7 @@ public class InboundConnection extends AbstractConnection {
 
 		updateStatus();
 	}
-	
+
 	@Override
 	public void stop() {
 		super.stop();
@@ -152,11 +207,11 @@ public class InboundConnection extends AbstractConnection {
 
 		MonitorThread monitorThread = myMonitorThread;
 		myMonitorThread = null;
-		
+
 		if (myMonitorThread != null) {
 			monitorThread.interrupt();
 		}
-		
+
 		setStatus(StatusEnum.STOPPED);
 		setStatusLine("Stopped");
 
@@ -214,9 +269,9 @@ public class InboundConnection extends AbstractConnection {
 		public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
 			try {
 				beforeProcessingNewMessageIn();
-				
+
 				addActivity(new ActivityIncomingMessage(new Date(), getEncoding(), myParser.encode(theIn), EncodingCharacters.getInstance(theIn)));
-				
+
 				final Message response = theIn.generateACK();
 
 				if (getValidateIncomingUsingProfileGroupId() != null) {
@@ -227,20 +282,19 @@ public class InboundConnection extends AbstractConnection {
 					try {
 						Entry profileEntry = profileGroup.getProfileForMessage(evtType, evtTrigger);
 						RuntimeProfile profile = profileEntry.getProfileProxy().getProfile();
-						
+
 						DefaultValidator validator = new DefaultValidator();
 						if (profileEntry.getTablesId() != null) {
 							validator.setCodeStore(getController().getTableFileList().getTableFile(profileEntry.getTablesId()));
 						}
 						HL7Exception[] problems = validator.validate(theIn, profile.getMessage());
 						addActivity(new ActivityValidationOutcome(new Date(), problems));
-						
+
 					} catch (ProfileException e) {
 						ourLog.error("Failed to load profile", e);
 					}
 				}
-				
-				
+
 				addActivity(new ActivityOutgoingMessage(new Date(), getEncoding(), myParser.encode(response), EncodingCharacters.getInstance(response)));
 
 				SwingUtilities.invokeLater(new Runnable() {
@@ -249,7 +303,7 @@ public class InboundConnection extends AbstractConnection {
 						addNewMessage();
 					}
 				});
-				
+
 				return response;
 			} catch (IOException e) {
 				throw new HL7Exception(e);
@@ -269,7 +323,6 @@ public class InboundConnection extends AbstractConnection {
 
 	}
 
-	
 	private class MonitorThread extends Thread {
 
 		@Override
@@ -281,7 +334,7 @@ public class InboundConnection extends AbstractConnection {
 				final Throwable exception = myService.getServiceExitedWithException();
 				if (exception != null) {
 					done = true;
-					
+
 					SwingUtilities.invokeLater(new Runnable() {
 
 						public void run() {

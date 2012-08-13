@@ -2,6 +2,9 @@ package ca.uhn.hl7v2.hoh.raw.client;
 
 import static org.junit.Assert.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +44,31 @@ public class HohRawClientSimpleTest {
 
 	}
 
+	@Test
+	public void testCreateUsingUrl() throws MalformedURLException {
+		
+		HohRawClientSimple c = new HohRawClientSimple(new URL("http://somehost/"));
+		assertEquals("somehost", c.getHost());
+		assertEquals("/", c.getUri());
+		assertEquals(80, c.getPort());
+
+		c = new HohRawClientSimple(new URL("http://somehost:8888/"));
+		assertEquals("somehost", c.getHost());
+		assertEquals("/", c.getUri());
+		assertEquals(8888, c.getPort());
+
+		c = new HohRawClientSimple(new URL("http://somehost:8888/someuri/path/test.jsp"));
+		assertEquals("somehost", c.getHost());
+		assertEquals("/someuri/path/test.jsp", c.getUri());
+		assertEquals(8888, c.getPort());
+
+		c = new HohRawClientSimple(new URL("https://somehost/someuri/path/test.jsp"));
+		assertEquals("somehost", c.getHost());
+		assertEquals("/someuri/path/test.jsp", c.getUri());
+		assertEquals(443, c.getPort());
+
+	}
+	
 	@AfterClass
 	public static void afterClass() throws InterruptedException {
 		ourLog.info("Marking done as true");

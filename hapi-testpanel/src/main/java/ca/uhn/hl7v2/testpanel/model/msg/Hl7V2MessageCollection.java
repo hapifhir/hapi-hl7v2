@@ -27,6 +27,7 @@ package ca.uhn.hl7v2.testpanel.model.msg;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.awt.EventQueue;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.StringReader;
@@ -102,27 +103,11 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	private String mySaveFileName;
 	private long mySaveFileTimestamp;
 	private LineEndingsEnum mySaveLineEndings;
+	private int mySendNumberOfTimes = 1;
+	private ShowEnum myShow;
 	private String mySourceMessage;
 	private boolean myStripSaveComments;
 	private ValidationContext myValidationContext = new DefaultValidation();
-	private ShowEnum myShow;
-
-	/**
-	 * @return the show
-	 */
-	public ShowEnum getEditorShowMode() {
-		if (myShow == null) {
-			myShow = ShowEnum.POPULATED;
-		}
-		return myShow;
-	}
-
-	/**
-	 * @param theShow the show to set
-	 */
-	public void setEditorShowMode(ShowEnum theShow) {
-		myShow = theShow;
-	}
 
 	/**
 	 * Constructor
@@ -134,7 +119,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myId = UUID.randomUUID().toString();
 	}
 
-	public void addComment(String theComment) {
+	public synchronized void addComment(String theComment) {
 		String oldValue = mySourceMessage;
 
 		ensureSourceMessage();
@@ -172,7 +157,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		firePropertyChange(PARSED_MESSAGES_PROPERTY, oldValue, mySourceMessage);
 	}
 
-	public void addMessage(AbstractMessage<?> theMessage) {
+	public synchronized void addMessage(AbstractMessage<?> theMessage) {
 		Validate.notNull(theMessage);
 
 		int newIndex = myMessages.size();
@@ -194,7 +179,17 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	}
 
-	private void doSetSourceMessageEr7(String message) {
+	public int countMessagesOfType(Class<Hl7V2MessageBase> theClass) {
+		int retVal = 0;
+		for (AbstractMessage<?> next : getMessages()) {
+			if (theClass.isAssignableFrom(next.getClass())) {
+				retVal++;
+			}
+		}
+		return retVal;
+	}
+
+	private synchronized void doSetSourceMessageEr7(String message) {
 		String[] lines = message.split("\\r");
 
 		StringBuilder buf = new StringBuilder();
@@ -345,7 +340,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		// addMessageIfAny(b, start, end);
 	}
 
-	private void doSetSourceMessageXml(String theMessage) {
+	private synchronized void doSetSourceMessageXml(String theMessage) {
 		int rangeStart = 0;
 		int rangeEnd = 0;
 
@@ -463,6 +458,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		xml.mySaveTimestamp = mySaveFileTimestamp;
 		xml.myLastSendToInterfaceId = myLastSendToInterfaceId;
 		xml.myEditorShowMode = getEditorShowMode();
+		xml.mySendNumberOfTimes = mySendNumberOfTimes;
 		return xml;
 	}
 
@@ -473,7 +469,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		return string;
 	}
 
-	private int findSegmentMsgIndex(Message message) {
+	private synchronized int findSegmentMsgIndex(Message message) {
 		int msgIndex = -1;
 		for (int i = 0; i < myMessages.size(); i++) {
 			Object nextParsed = myMessages.get(i).getParsedMessage();
@@ -529,6 +525,16 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 			return mySaveFileName;
 		}
 		return getMessageDescription();
+	}
+
+	/**
+	 * @return the show
+	 */
+	public ShowEnum getEditorShowMode() {
+		if (myShow == null) {
+			myShow = ShowEnum.POPULATED;
+		}
+		return myShow;
 	}
 
 	public Hl7V2EncodingTypeEnum getEncoding() {
@@ -606,6 +612,16 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		return mySaveLineEndings;
 	}
 
+	/**
+	 * @return the sendNumberOfTimes
+	 */
+	public int getSendNumberOfTimes() {
+		if (mySendNumberOfTimes <= 0) {
+			return 1;
+		}
+		return mySendNumberOfTimes;
+	}
+
 	public String getSourceMessage() {
 		return mySourceMessage;
 	}
@@ -641,6 +657,14 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	public boolean isValidating() {
 		return myValidationContext != null || myRuntimeProfile != null;
+	}
+
+	/**
+	 * @param theShow
+	 *            the show to set
+	 */
+	public void setEditorShowMode(ShowEnum theShow) {
+		myShow = theShow;
 	}
 
 	public void setEncoding(Hl7V2EncodingTypeEnum theEncoding) {
@@ -699,30 +723,34 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	}
 
 	public void setHighlitedPathBasedOnRange(Range theRange) {
-		String oldValue = myHighlitedPath;
+
+		final String oldValue = myHighlitedPath;
 
 		if (theRange == null) {
 			myHighlitedPath = null;
-			firePropertyChange(PROP_HIGHLITED_PATH, oldValue, myHighlitedPath);
-			return;
-		}
-
-		for (int i = 0; i < myMessageRanges.size(); i++) {
-			Range range = myMessageRanges.get(i);
-			if (range.contains(theRange.getStart())) {
-				AbstractMessage<?> am = myMessages.get(i);
-				if (am instanceof Hl7V2MessageBase) {
-					Hl7V2MessageBase messageImpl = (Hl7V2MessageBase) am;
-					messageImpl.setHighlitedPathBasedOnRange(theRange.add(-range.getStart()));
-					myHighlitedPath = i + messageImpl.getHighlitedPath();
+		} else {
+			for (int i = 0; i < myMessageRanges.size(); i++) {
+				Range range = myMessageRanges.get(i);
+				if (range.contains(theRange.getStart())) {
+					AbstractMessage<?> am = myMessages.get(i);
+					if (am instanceof Hl7V2MessageBase) {
+						Hl7V2MessageBase messageImpl = (Hl7V2MessageBase) am;
+						messageImpl.setHighlitedPathBasedOnRange(theRange.add(-range.getStart()));
+						myHighlitedPath = i + messageImpl.getHighlitedPath();
+					}
+					break;
 				}
-				break;
 			}
-		}
+		} // if-else
 
-		firePropertyChange(PROP_HIGHLITED_PATH, oldValue, myHighlitedPath);
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				firePropertyChange(PROP_HIGHLITED_PATH, oldValue, myHighlitedPath);
+				updateMessageDescription();
+			}
+		});
 
-		updateMessageDescription();
 	}
 
 	public void setHighlitedRangeBasedOnField(SegmentAndComponentPath thePath) {
@@ -860,6 +888,14 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		myStripSaveComments = theSaveComments;
 	}
 
+	/**
+	 * @param theSendNumberOfTimes
+	 *            the sendNumberOfTimes to set
+	 */
+	public void setSendNumberOfTimes(int theSendNumberOfTimes) {
+		mySendNumberOfTimes = theSendNumberOfTimes;
+	}
+
 	public void setSourceMessage(String theSourceMessage) {
 		ourLog.info("About to set source message for collection");
 
@@ -877,12 +913,12 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		String oldValue = mySourceMessage;
 		mySourceMessage = theSourceMessage;
-		
+
 		ourLog.info("Firing message change event");
 
 		firePropertyChange(PARSED_MESSAGES_PROPERTY, oldMessages, myMessages);
 		firePropertyChange(SOURCE_MESSAGE_PROPERTY, oldValue, mySourceMessage);
-		
+
 		if (StringUtils.equals(oldValue, mySourceMessage) == false) {
 			setSaved(false);
 		}
@@ -890,14 +926,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		updateMessageDescription();
 
 		ourLog.info("Done setting source message for collection");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return Hl7V2MessageCollection.class.getSimpleName() + "[" + getSaveFileName() + "]";
 	}
 
 	/**
@@ -925,6 +953,14 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		ValidationContext oldValue = myValidationContext;
 		myValidationContext = theValidationContext;
 		firePropertyChange(PROP_VALIDATIONCONTEXT_OR_PROFILE, oldValue, theValidationContext);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return Hl7V2MessageCollection.class.getSimpleName() + "[" + getSaveFileName() + "]";
 	}
 
 	private void updateMessageDescription() {
@@ -976,7 +1012,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		setSourceMessage(theNewSource);
 	}
 
-	private void updateSourceMessageBasedOnEncodedMessage(int theMessageIndex, String theEncodedMessage) {
+	private synchronized void updateSourceMessageBasedOnEncodedMessage(int theMessageIndex, String theEncodedMessage) {
 		setHighlitedPathBasedOnRange(null);
 
 		Range range = myMessageRanges.get(theMessageIndex);
@@ -1059,7 +1095,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		retVal.setId(xmlFormat.myId);
 		retVal.setLastSendToInterfaceId(xmlFormat.myLastSendToInterfaceId);
 		retVal.setEditorShowMode(xmlFormat.myEditorShowMode);
-		
+		retVal.setSendNumberOfTimes(xmlFormat.mySendNumberOfTimes);
+
 		try {
 			retVal.setSaveCharset(isNotEmpty(xmlFormat.mySaveCharsetName) ? Charset.forName(xmlFormat.mySaveCharsetName) : null);
 		} catch (IllegalCharsetNameException e) {
@@ -1115,7 +1152,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	@XmlRootElement(name = "Hl7V2MessageCollection", namespace = "urn:ca.uhn.hapi:testpanel")
 	private static class XmlFormat {
-		
+
 		@XmlAttribute(required = false, name = "editorShowMode")
 		public ShowEnum myEditorShowMode;
 
@@ -1148,6 +1185,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 		@XmlAttribute(required = true, name = "saveFileTimestamp")
 		private long mySaveTimestamp;
+
+		@XmlAttribute(required = false, name = "sendNumberOfTimes")
+		public int mySendNumberOfTimes;
 
 		@XmlElement(required = true, name = "sourceMessage")
 		public String mySourceMessage;

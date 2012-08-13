@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.hoh.raw.client;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URL;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -28,6 +29,78 @@ public class HohRawClientSimple extends AbstractRawClient {
 	private Socket mySocket;
 
 	/**
+	 * Constructor
+	 * 
+	 * @param theUrl
+	 *            The URL to connect to
+	 */
+	public HohRawClientSimple(URL theUrl) {
+		super(theUrl);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param theHost
+	 *            The HOST (name/address). E.g. "192.168.1.1"
+	 * @param thePort
+	 *            The PORT. E.g. "8080"
+	 * @param theUri
+	 *            The URI being requested (must either be blank or start with
+	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
+	 */
+	public HohRawClientSimple(String theHost, int thePort, String theUri) {
+		super(theHost, thePort, theUri);
+	}
+
+	/**
+	 * If a socket exists and it is connected, closes the socket. Only required
+	 * if {@link #isAutoClose() auto close} mode is false
+	 */
+	public void close() {
+		if (mySocket != null) {
+			closeSocket(mySocket);
+		}
+	}
+
+	/**
+	 * @return Should the socket auto-close
+	 * @see #setAutoClose(boolean)
+	 */
+	public boolean isAutoClose() {
+		return myAutoClose;
+	}
+
+	/**
+	 * @return Returns true if there is a socket, and it appears to be connected
+	 *         and not shut down
+	 */
+	public boolean isConnected() {
+		return mySocket != null && !mySocket.isClosed() && !mySocket.isInputShutdown() && !mySocket.isOutputShutdown();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Socket provideSocket() throws IOException {
+		if (mySocket == null || mySocket.isClosed() || mySocket.isInputShutdown() || mySocket.isOutputShutdown()) {
+			mySocket = connect();
+		}
+		return mySocket;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void returnSocket(Socket theSocket) {
+		if (isAutoClose()) {
+			close();
+		}
+	}
+
+	/**
 	 * Sends a message, waits for the response, and then returns the response if
 	 * any
 	 * 
@@ -52,47 +125,6 @@ public class HohRawClientSimple extends AbstractRawClient {
 	}
 
 	/**
-	 * Constructor
-	 * 
-	 * @param theHost
-	 *            The HOST (name/address). E.g. "192.168.1.1"
-	 * @param thePort
-	 *            The PORT. E.g. "8080"
-	 * @param theUri
-	 *            The URI being requested (must either be blank or start with
-	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
-	 */
-	public HohRawClientSimple(String theHost, int thePort, String theUri) {
-		super(theHost, thePort, theUri);
-	}
-
-	/**
-	 * @return Should the socket auto-close
-	 * @see #setAutoClose(boolean)
-	 */
-	public boolean isAutoClose() {
-		return myAutoClose;
-	}
-
-	/**
-	 * @return Returns true if there is a socket, and it appears to be connected
-	 *         and not shut down
-	 */
-	public boolean isConnected() {
-		return mySocket != null && !mySocket.isClosed() && !mySocket.isInputShutdown() && !mySocket.isOutputShutdown();
-	}
-
-	/**
-	 * If a socket exists and it is connected, closes the socket. Only required
-	 * if {@link #isAutoClose() auto close} mode is false
-	 */
-	public void close() {
-		if (mySocket != null) {
-			closeSocket(mySocket);
-		}
-	}
-
-	/**
 	 * <p>
 	 * Sets the auto-close property. If set to true (which is the default), the
 	 * client will close the socket between each request. If set to
@@ -107,27 +139,6 @@ public class HohRawClientSimple extends AbstractRawClient {
 	 */
 	public void setAutoClose(boolean theAutoClose) {
 		myAutoClose = theAutoClose;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Socket provideSocket() throws IOException {
-		if (mySocket == null || mySocket.isClosed() || mySocket.isInputShutdown() || mySocket.isOutputShutdown()) {
-			mySocket = connect();
-		}
-		return mySocket;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void returnSocket(Socket theSocket) {
-		if (isAutoClose()) {
-			close();
-		}
 	}
 
 	public static void main(String[] args) {

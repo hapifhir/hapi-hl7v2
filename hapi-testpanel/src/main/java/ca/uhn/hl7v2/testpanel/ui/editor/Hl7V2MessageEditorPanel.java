@@ -31,9 +31,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -44,6 +46,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +57,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -106,6 +110,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
 	private static final String NO_CONNECTIONS = "No Connections";
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageEditorPanel.class);
+	private SendOptionsPopupDialog mySendOptionsPopupDialog;
 
 	static {
 
@@ -121,6 +126,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	}
 
 	private boolean myDontRespondToSourceMessageChanges;
+	private Component myhorizontalStrut_4;
 	private JPanel bottomPanel;
 	private JPanel messageEditorContainerPanel;
 	private JComboBox myShowCombo;
@@ -161,7 +167,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private boolean myOutboundInterfaceComboModelIsUpdating;
 	private ArrayList<OutboundConnection> myOutboundInterfaceComboModelShadow;
 	private final JPopupMenu myTerserPathPopupMenu = new JPopupMenu();
-	private Component myhorizontalStrut_3;
 	private boolean myHandlingProfileComboboxChange;
 	private JLabel mylabel_4;
 	private JToolBar mytoolBar_1;
@@ -174,7 +179,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private ImageIcon mySpinnerIconOff;
 	private JButton collapseAllButton;
 	private JButton expandAllButton;
-
+	private Component myhorizontalStrut_2;
+	private JButton mySendOptionsButton;
 
 	/**
 	 * Create the panel.
@@ -365,16 +371,38 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				int selectedIndex = myOutboundInterfaceCombo.getSelectedIndex();
 				OutboundConnection connection = myController.getOutboundConnectionList().getConnections().get(selectedIndex);
 				activateSendingActivityTabForConnection(connection);
-				List<AbstractMessage<?>> messages = myMessage.getMessages();
-				myController.sendMessages(connection, messages);
+				myController.sendMessages(connection, myMessage, mySendingActivityTable.provideTransmissionCallback());
 			}
 		});
 
-		myhorizontalStrut_3 = Box.createHorizontalStrut(20);
-		myhorizontalStrut_3.setPreferredSize(new Dimension(2, 0));
-		myhorizontalStrut_3.setMinimumSize(new Dimension(2, 0));
-		myhorizontalStrut_3.setMaximumSize(new Dimension(2, 32767));
-		mytoolBar.add(myhorizontalStrut_3);
+		myhorizontalStrut_2 = Box.createHorizontalStrut(20);
+		myhorizontalStrut_2.setPreferredSize(new Dimension(2, 0));
+		myhorizontalStrut_2.setMinimumSize(new Dimension(2, 0));
+		myhorizontalStrut_2.setMaximumSize(new Dimension(2, 32767));
+		mytoolBar.add(myhorizontalStrut_2);
+
+		mySendOptionsButton = new JButton("Options");
+		mySendOptionsButton.setBorderPainted(false);
+		final HoverButtonMouseAdapter sendOptionsHoverAdaptor = new HoverButtonMouseAdapter(mySendOptionsButton);
+		mySendOptionsButton.addMouseListener(sendOptionsHoverAdaptor);
+		mySendOptionsButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/sendoptions.png")));
+		mytoolBar.add(mySendOptionsButton);
+		mySendOptionsButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent theE) {
+				if (mySendOptionsPopupDialog != null) {
+					mySendOptionsPopupDialog.doHide();
+					mySendOptionsPopupDialog = null;
+					return;
+				}
+				mySendOptionsPopupDialog = new SendOptionsPopupDialog(Hl7V2MessageEditorPanel.this, myMessage, mySendOptionsButton, sendOptionsHoverAdaptor);
+				Point los = mySendOptionsButton.getLocationOnScreen();
+				mySendOptionsPopupDialog.setLocation(los.x, los.y + mySendOptionsButton.getHeight());
+				mySendOptionsPopupDialog.setVisible(true);
+			}
+		});
+
 		mySendButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
 		mytoolBar.add(mySendButton);
 
@@ -429,6 +457,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		});
 		myProfileCombobox.setMaximumSize(new Dimension(300, 32767));
 		myProfileCombobox.setModel(myProfileComboboxModel);
+
+		myhorizontalStrut_4 = Box.createHorizontalStrut(20);
+		myhorizontalStrut_4.setPreferredSize(new Dimension(2, 0));
+		myhorizontalStrut_4.setMinimumSize(new Dimension(2, 0));
+		myhorizontalStrut_4.setMaximumSize(new Dimension(2, 32767));
+		mytoolBar.add(myhorizontalStrut_4);
 
 		// mySendingPanel = new JPanel();
 		// mySendingPanel.setBorder(null);
@@ -550,11 +584,15 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		myMessageEditor.addCaretListener(new CaretListener() {
 
-			public void caretUpdate(CaretEvent theE) {
+			public void caretUpdate(final CaretEvent theE) {
 				removeMostHighlights();
 				if (!myDisableCaretUpdateHandling) {
-					myMessage.setHighlitedPathBasedOnRange(new Range(theE.getDot(), theE.getMark()));
-					myTreePanel.repaint();
+					myController.invokeInBackground(new Runnable() {
+						@Override
+						public void run() {
+							myMessage.setHighlitedPathBasedOnRange(new Range(theE.getDot(), theE.getMark()));
+							myTreePanel.repaint();
+						}});
 				}
 			}
 		});
@@ -1008,6 +1046,10 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private void activateSendingActivityTabForConnection(OutboundConnection theConnection) {
 		mySendingActivityTable.setConnection(theConnection, false);
 		myTopTabBar.setSelectedComponent(mySendingActivityTable);
+	}
+
+	public Frame getWindow() {
+		return myController.getWindow();
 	}
 
 }

@@ -21,8 +21,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Socket Factory which creates a TLS/SSL socket using a custom
- * keystore and certificate.
+ * Socket Factory which creates a TLS/SSL socket using a custom keystore and
+ * certificate.
  */
 public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 
@@ -31,6 +31,39 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 	private String myKeystoreType = "JKS";
 	private SSLServerSocketFactory myServerSocketFactory;
 	private SSLSocketFactory mySocketFactory = null;
+	private KeyStore myKeystore;
+
+	/**
+	 * Constructor
+	 */
+	public CustomCertificateTlsSocketFactory() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 */
+	public CustomCertificateTlsSocketFactory(KeyStore theKeystore, String theKeystorePass) {
+		myKeystore = theKeystore;
+		myKeystorePassphrase = theKeystorePass;
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param theKeystoreType
+	 *            The keystore type, e.g. "JKS"
+	 * @param theKeystoreFilename
+	 *            The path to the keystore
+	 * @param theKeystorePassphrase
+	 *            The password for the keystore
+	 */
+	public CustomCertificateTlsSocketFactory(String theKeystoreType, String theKeystoreFilename, String theKeystorePassphrase) {
+		super();
+		myKeystoreType = theKeystoreType;
+		myKeystoreFilename = theKeystoreFilename;
+		myKeystorePassphrase = theKeystorePassphrase;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -49,27 +82,29 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 	}
 
 	private void initialize() throws IOException {
+		if (mySocketFactory != null) {
+			return;
+		}
+
 		try {
-			SSLContext ctx;
-			KeyManagerFactory kmf;
-			KeyStore ks;
-			TrustManagerFactory tmf;
-			char[] passphrase = myKeystorePassphrase.toCharArray();
+			char[] passphrase = myKeystorePassphrase != null ? myKeystorePassphrase.toCharArray() : null;
+			if (myKeystore == null) {
 
-			ctx = SSLContext.getInstance("TLS");
-			kmf = KeyManagerFactory.getInstance("SunX509");
-			tmf = TrustManagerFactory.getInstance("SunX509");
-			
-			ks = KeyStore.getInstance(myKeystoreType);
+				myKeystore = KeyStore.getInstance(myKeystoreType);
 
-			try {
-				ks.load(new FileInputStream(myKeystoreFilename), passphrase);
-			} catch (IOException e) {
-				throw new IOException("Failed to load keystore: " + myKeystoreFilename, e);
+				try {
+					myKeystore.load(new FileInputStream(myKeystoreFilename), passphrase);
+				} catch (IOException e) {
+					throw new IOException("Failed to load keystore: " + myKeystoreFilename, e);
+				}
 			}
 
-			kmf.init(ks, passphrase);
-			tmf.init(ks);
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+
+			kmf.init(myKeystore, passphrase);
+			tmf.init(myKeystore);
 			TrustManager[] trustManagers = tmf.getTrustManagers();
 			KeyManager[] keyManagers = kmf.getKeyManagers();
 			ctx.init(keyManagers, trustManagers, null);

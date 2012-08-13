@@ -16,13 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.binary.Base64;
-
 import ca.uhn.hl7v2.hoh.api.DecodeException;
-import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
+import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.GZipUtils;
 import ca.uhn.hl7v2.hoh.util.IOUtils;
+import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 
 public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 

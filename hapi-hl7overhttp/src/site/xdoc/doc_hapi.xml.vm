@@ -90,9 +90,6 @@ Parser parser = PipeParser.getInstanceWithNoValidation();
 // Create a client
 HohClientSimple client = new HohClientSimple(host, port, uri, parser);
 
-// Set the socket factory to use TLS
-client.setSocketFactory(new TlsSocketFactory());
-
 // Optionally, if credentials should be sent, they 
 // can be provided using a credential callback
 IAuthorizationClientCallback authCalback = new SingleCredentialClientCallback("ausername", "somepassword");
