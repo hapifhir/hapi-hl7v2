@@ -54,7 +54,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 
 	private String directory = Home.getHomeDirectory().getAbsolutePath();
 	private String fileName = "id_file";
-	private boolean neverFail = false;
+	private boolean neverFail = true;
 	private boolean used = false;
 	private ReentrantLock lock = new ReentrantLock();
 
@@ -103,7 +103,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		}
 	}
 
-	private long readInitialValue(String path) {
+	private long readInitialValue(String path) throws IOException {
 		BufferedReader br = null;
 		String id = null;
 		try {
@@ -112,6 +112,9 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 			return Long.parseLong(id);
 		} catch (IOException e) {
 			LOG.info("Could not read ID file {} ", path);
+			if (!neverFail) {
+				throw e;
+			}
 			return 0;
 		} catch (NumberFormatException e) {
 			LOG.info("ID {} read from file is not a number", id);
@@ -147,6 +150,13 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		}
 	}
 
+	/**
+	 * If set to <code>false</code> (default is <code>true</code>),
+	 * retrieving a new ID may fail if the ID file in the home
+	 * directory can not be written/read. If set to true, failures
+	 * will be ignored, which means that IDs may be repeated after
+	 * a JVM restart.
+	 */
 	public void setNeverFail(boolean neverFail) {
 		this.neverFail = neverFail;
 	}

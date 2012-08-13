@@ -34,8 +34,10 @@ package ca.uhn.hl7v2.util.idgenerator;
  */
 public class FileBasedHiLoGenerator extends DelegatingHiLoGenerator {
 
+	public static final int DEFAULT_MAXLO = 100;
+
 	public FileBasedHiLoGenerator() {
-		this(100);
+		this(DEFAULT_MAXLO);
 	}
 
 	public FileBasedHiLoGenerator(int maxLo) {
