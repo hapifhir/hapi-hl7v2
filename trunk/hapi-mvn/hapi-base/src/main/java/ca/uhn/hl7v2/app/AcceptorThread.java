@@ -26,6 +26,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -56,6 +57,13 @@ class AcceptorThread extends Service {
 	private ServerSocket ss;
 	private final BlockingQueue<AcceptedSocket> queue;
 
+	public AcceptorThread(ServerSocket serverSocket, int port, ExecutorService service,
+			BlockingQueue<AcceptedSocket> queue) throws IOException,
+			SocketException {
+		this(port, false, service, queue);
+		this.ss = serverSocket;
+	}
+
 	public AcceptorThread(int port, ExecutorService service,
 			BlockingQueue<AcceptedSocket> queue) throws IOException,
 			SocketException {
@@ -74,7 +82,11 @@ class AcceptorThread extends Service {
 	@Override
 	protected void afterStartup() {
 		try {
-			ss = createServerSocket(port);
+			if (ss == null) {
+				ss = createServerSocket(port);
+			} else {
+				ss.bind(new InetSocketAddress(port));
+			}
 			ss.setSoTimeout(TIMEOUT);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -27,6 +27,7 @@
 package ca.uhn.hl7v2.app;
 
 import java.io.File;
+import java.net.ServerSocket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -81,6 +82,7 @@ public class SimpleServer extends HL7Service {
 	private boolean tls;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
+	private ServerSocket ss;
 
 	/**
 	 * Creates a new instance of SimpleServer that listens on the given port,
@@ -126,6 +128,23 @@ public class SimpleServer extends HL7Service {
 	}
 
 	/**
+	 * Creates a new instance of SimpleServer that listens on a given server socket.
+	 * SimpleServer will bind the socket when it is started, so the server socket 
+	 * must not already be bound. 
+	 * 
+	 * @since 2.1
+	 * @throws IllegalStateException If serverSocket is already bound
+	 */
+	public SimpleServer(ServerSocket serverSocket, int port, LowerLayerProtocol llp, Parser parser) {
+		this(port, llp, parser, false);
+		this.ss = serverSocket;
+		
+		if (serverSocket.isBound()) {
+			throw new IllegalStateException("ServerSocket must not already be bound");
+		}
+	}
+
+	/**
 	 * Prepare server by initializing the server socket
 	 * 
 	 * @see ca.uhn.hl7v2.app.HL7Service#afterStartup()
@@ -135,7 +154,11 @@ public class SimpleServer extends HL7Service {
 		try {
 			super.afterStartup();
 			log.info("Starting SimpleServer running on port {}", port);
-			acceptor = new AcceptorThread(port, tls, getExecutorService(), queue);
+			if (ss != null) {
+				acceptor = new AcceptorThread(ss, port, getExecutorService(), queue);
+			} else {
+				acceptor = new AcceptorThread(port, tls, getExecutorService(), queue);
+			}
 			acceptor.start();
 		} catch (Exception e) {
 			log.error("Failed starting SimpleServer on port", port);
