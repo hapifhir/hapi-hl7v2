@@ -150,7 +150,9 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         return ret;
     }
     
-    
+    /**
+     * {@inheritDoc}
+     */
     public boolean isEmpty() throws HL7Exception {
         for (String name : getNames()) {
         	if (!get(name).isEmpty()) return false;
