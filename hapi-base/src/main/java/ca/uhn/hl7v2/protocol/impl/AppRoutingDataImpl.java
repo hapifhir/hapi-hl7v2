@@ -4,6 +4,7 @@
 package ca.uhn.hl7v2.protocol.impl;
 
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
+import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
 
 /**
  * A default implementation of <code>ApplicationRouter.AppRoutingData</code>. 
@@ -84,5 +85,13 @@ public class AppRoutingDataImpl implements ApplicationRouter.AppRoutingData {
             + getProcessingId().hashCode() 
             + getVersion().hashCode();
     }
+
+    /**
+     * Returns an instance of AppRoutingData which accepts all
+     * message types, versions, etc.
+     */
+	public static AppRoutingData withAll() {
+		return new AppRoutingDataImpl("*","*", "*", "*");
+	}
 
 }
