@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 
 import javax.servlet.ServletOutputStream;
 
-import org.apache.commons.codec.binary.Base64;
+import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 
 
 public class HTTPUtils {

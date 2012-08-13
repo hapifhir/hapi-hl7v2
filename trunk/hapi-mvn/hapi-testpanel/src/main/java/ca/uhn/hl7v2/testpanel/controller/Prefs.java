@@ -50,11 +50,16 @@ import ca.uhn.hl7v2.util.StringUtil;
 
 public class Prefs {
 
+	private static final String GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY = "getInterfaceHohSecurityKeystoreDirectory";
 	private static final String GET_HL7_EDITOR_SPLIT = "getHl7EditorSplit";
 	private static final String GET_HL7V2_DIFF_FILE1 = "getHl7V2DiffFile1";
 	private static final String GET_HL7V2_DIFF_FILE2 = "getHl7V2DiffFile2";
 	private static final String GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR = "getHl7V2DiffShowWholeMessageOnError";
 	private static final String GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR = "getHl7V2DiffStopOnFirstError";
+	private static final String GET_HL7V2_SORT_BY = "getHl7V2SortBy";
+	private static final String GET_HL7V2_SORT_INPUT = "getHl7V2SortInputFile";
+	private static final String GET_HL7V2_SORT_OUTPUT = "getHl7V2SortOutputFile";
+	private static final String GET_HL7V2_SORT_OVERWRITE_MODE = "getHl7V2SortOverwriteMode";
 	private static final String GET_INBOUND_CONNECTION_LIST = "getInboundConnectionList";
 	private static final String GET_OPEN_PATH_CONFORMANCE_PROFILE = "getOpenPathConformanceProfile";
 	private static final String GET_OPEN_PATH_MESSAGES = "getOpenPathMessages";
@@ -67,11 +72,11 @@ public class Prefs {
 	private static final String GET_SAVE_STRIP_COMMENTS = "getSaveStripComments";
 	private static final String GET_SHOW_LOG_CONSOLE = "getShowLogConsole";
 	private static final String GET_WINDOW_MAXIMIZED = "getWindowMaximized";
+
 	private static final String GET_WINDOW_POSITIONH = "getWindowPositionH";
 	private static final String GET_WINDOW_POSITIONW = "getWindowPositionW";
 	private static final String GET_WINDOW_POSITIONX = "getWindowPositionX";
 	private static final String GET_WINDOW_POSITIONY = "getWindowPositionY";
-
 	private static Font myHl7EditorFont;
 	private static final Logger ourLog = LoggerFactory.getLogger(Prefs.class);
 	private static final Preferences ourPrefs = Preferences.userNodeForPackage(ca.uhn.hl7v2.testpanel.controller.Prefs.class);
@@ -101,6 +106,10 @@ public class Prefs {
 			b.append(string.exportConfigToXmlWithoutContents().replaceAll("\\r|\\n", "")).append('\n');
 		}
 		ourPrefs.put(GET_RECENT_MESSAGE_FILES, b.toString());
+	}
+
+	public static void clearRecentMessageXmlFiles() {
+		ourPrefs.put(GET_RECENT_MESSAGE_FILES, "");
 	}
 
 	private static File createProfileGroupFileName(ProfileGroup profileGroup) {
@@ -164,6 +173,26 @@ public class Prefs {
 
 	public static boolean getHl7V2DiffStopOnFirstError() {
 		return ourPrefs.getBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, false);
+	}
+
+	public static Object getHl7V2SortBy() {
+		return ourPrefs.get(GET_HL7V2_SORT_BY, "");
+	}
+
+	public static String getHl7V2SortInputFile() {
+		return ourPrefs.get(GET_HL7V2_SORT_INPUT, "");
+	}
+
+	public static String getHl7V2SortOutputFile() {
+		return ourPrefs.get(GET_HL7V2_SORT_OUTPUT, "");
+	}
+
+	public static String getHl7V2SortOverwriteMode() {
+		return ourPrefs.get(GET_HL7V2_SORT_OVERWRITE_MODE, "");
+	}
+
+	public static void setHl7V2SortOverwriteMode(String theMode) {
+		ourPrefs.put(GET_HL7V2_SORT_OVERWRITE_MODE, theMode);
 	}
 
 	public static String getInboundConnectionList() {
@@ -352,8 +381,24 @@ public class Prefs {
 		ourPrefs.put(GET_HL7V2_DIFF_FILE2, theFile);
 	}
 
+	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
+		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
+	}
+
 	public static void setHl7V2DiffStopOnFirstError(boolean theValue) {
 		ourPrefs.putBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, theValue);
+	}
+
+	public static void setHl7V2SortBy(String theSelectedItem) {
+		ourPrefs.put(GET_HL7V2_SORT_BY, theSelectedItem);
+	}
+
+	public static void setHl7V2SortInputFile(String theText) {
+		ourPrefs.put(GET_HL7V2_SORT_INPUT, theText);
+	}
+
+	public static void setHl7V2SortOutputFile(String theText) {
+		ourPrefs.put(GET_HL7V2_SORT_OUTPUT, theText);
 	}
 
 	public static void setInboundConnectionList(String theValue) {
@@ -462,12 +507,11 @@ public class Prefs {
 		ourPrefs.putInt(GET_WINDOW_POSITIONY, thePosition.y);
 	}
 
-	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
-		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
+	public static String getInterfaceHohSecurityKeystoreDirectory() {
+		return ourPrefs.get(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, null);
 	}
 
-	public static void clearRecentMessageXmlFiles() {
-		ourPrefs.put(GET_RECENT_MESSAGE_FILES, "");
+	public static void setInterfaceHohSecurityKeystoreDirectory(String theValue) {
+		ourPrefs.put(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, theValue);
 	}
-
 }

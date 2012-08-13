@@ -27,6 +27,8 @@ package ca.uhn.hl7v2.testpanel.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -36,11 +38,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
@@ -65,6 +69,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
+import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
 
 public class ActivityTable extends JPanel implements IDestroyable {
 	
@@ -95,6 +100,11 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	private JScrollPane myScrollPane;
 	private JTable myTable;
 	private ActivityDetailsCellRenderer myDetailsCellRenderer;
+	private JProgressBar myProgressBar;
+	private Component myhorizontalGlue;
+	private JButton myStop;
+
+	protected boolean myTransmissionCancelled;
 	public ActivityTable() {
 		super(new BorderLayout());
 		setBorder(null);
@@ -141,6 +151,29 @@ public class ActivityTable extends JPanel implements IDestroyable {
 			}
 		});
 		toolBar.add(myEditButton);
+		
+		myhorizontalGlue = Box.createHorizontalGlue();
+		toolBar.add(myhorizontalGlue);
+		
+		myStop = new JButton();
+		myStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myTransmissionCancelled = true;
+				myStop.setEnabled(false);
+			}
+		});
+		myStop.setEnabled(false);
+		myStop.setBorderPainted(false);
+		myStop.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/stop.png")));
+		myStop.addMouseListener(new HoverButtonMouseAdapter(myStop));
+		toolBar.add(myStop);
+		
+		myProgressBar = new JProgressBar();
+		myProgressBar.setEnabled(false);
+		myProgressBar.setMaximumSize(new Dimension(150, 20));
+		myProgressBar.setMinimumSize(new Dimension(150, 20));
+		myProgressBar.setPreferredSize(new Dimension(150, 20));
+		toolBar.add(myProgressBar);
 		
 		myScrollPane = new JScrollPane();
 		myScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -192,6 +225,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 			}
 		});
 		updateUiBasedOnSelectedRow();
+		
+		setProgressIndicatorsEnabled(false);
 	}
 	
 	/**
@@ -448,4 +483,39 @@ public class ActivityTable extends JPanel implements IDestroyable {
 //
 //	}
 
+	public IProgressCallback provideTransmissionCallback() {
+		return new IProgressCallback() {
+			
+			@Override
+			public void activityStopped() {
+				setProgressIndicatorsEnabled(false);
+			}
+			
+			@Override
+			public void activityStarted() {
+				setProgressIndicatorsEnabled(true);
+				myTransmissionCancelled = false;
+			}
+			
+			@Override
+			public void progressUpdate(double theProgress) throws OperationCancelRequestedException {
+				setProgress(theProgress);
+				if (myTransmissionCancelled) {
+					throw new OperationCancelRequestedException();
+				}
+			}
+		};
+	}
+	
+	public void setProgressIndicatorsEnabled(boolean theEnabled) {
+		myStop.setEnabled(theEnabled);
+		myStop.setVisible(theEnabled);
+		myProgressBar.setEnabled(theEnabled);
+		myProgressBar.setVisible(theEnabled);
+	}
+	
+	public void setProgress(double theProgress) {
+		myProgressBar.setValue(Math.max(0, Math.min(100, (int)(theProgress * 100))));
+	}
+	
 }

@@ -80,6 +80,11 @@
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-hl7overhttp</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
@@ -146,6 +151,16 @@
 			<artifactId>jna</artifactId>
 			<version>3.0.9</version>
 			<scope>provided</scope> <!-- For now, since we aren't actually using it.. -->
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>${bouncycastle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcmail-jdk16</artifactId>
+			<version>${bouncycastle.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

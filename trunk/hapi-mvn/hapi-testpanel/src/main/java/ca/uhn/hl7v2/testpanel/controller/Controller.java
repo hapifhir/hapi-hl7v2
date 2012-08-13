@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.testpanel.controller;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Frame;
 import java.beans.PropertyVetoException;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,8 +44,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -69,7 +73,6 @@ import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
-import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Comment;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
@@ -88,6 +91,7 @@ import ca.uhn.hl7v2.testpanel.util.AllFileFilter;
 import ca.uhn.hl7v2.testpanel.util.ExtensionFilter;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
+import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.PortUtil;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
@@ -113,12 +117,13 @@ public class Controller {
 	private TableFileList myTableFileList;
 	private TestPanelWindow myView;
 	private FileChooserOpenAccessory myOpenMessagesFileChooserAccessory;
+	private ExecutorService myExecutor;
 
 	public Controller() {
 		myTableFileList = new TableFileList();
-		
+
 		myProfileFileList = new ProfileFileList();
-		
+
 		myMessagesList = new MessagesList(this);
 		try {
 			File workfilesDir = Prefs.getTempWorkfilesDirectory();
@@ -129,11 +134,11 @@ public class Controller {
 		} catch (IOException e1) {
 			ourLog.error("Failed to restore from work direrctory", e1);
 		}
-		
+
 		String savedOutboundList = Prefs.getOutboundConnectionList();
 		if (StringUtils.isNotBlank(savedOutboundList)) {
 			try {
-				myOutboundConnectionList = OutboundConnectionList.fromXml(savedOutboundList);
+				myOutboundConnectionList = OutboundConnectionList.fromXml(this, savedOutboundList);
 			} catch (Exception e) {
 				ourLog.error("Failed to load outbound connections from storage, going to create default value", e);
 				createDefaultOutboundConnectionList();
@@ -159,7 +164,7 @@ public class Controller {
 			ourLog.info("No saved inbound connection list found");
 			createDefaultInboundConnectionList();
 		}
-		
+
 	}
 
 	public void addInboundConnection() {
@@ -237,7 +242,7 @@ public class Controller {
 			}
 		};
 
-		CreateOutboundConnectionDialog dialog = new CreateOutboundConnectionDialog(connection, handler);
+		CreateOutboundConnectionDialog dialog = new CreateOutboundConnectionDialog(this, connection, handler);
 		dialog.setVisible(true);
 	}
 
@@ -250,7 +255,7 @@ public class Controller {
 			myConformanceProfileFileChooser.addChoosableFileFilter(type);
 		}
 
-		int value = myConformanceProfileFileChooser.showOpenDialog(myView.getMyframe());
+		int value = myConformanceProfileFileChooser.showOpenDialog(myView.getFrame());
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = myConformanceProfileFileChooser.getSelectedFile();
@@ -297,6 +302,7 @@ public class Controller {
 			ourLog.error("Failed to flush work directory!", e);
 		}
 
+		myExecutor.shutdown();
 		myView.destroy();
 
 		ourLog.info("TestPanel is exiting with status 0");
@@ -323,7 +329,7 @@ public class Controller {
 		}
 
 		updateRecentMessageFiles(theMsg);
-		
+
 		myMessagesList.removeMessage(theMsg);
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
@@ -430,7 +436,7 @@ public class Controller {
 
 	public String getAppVersionString() {
 		if (myAppVersionString == null) {
-			//FileUtils.loadResourceFromClasspath(thePath)
+			// FileUtils.loadResourceFromClasspath(thePath)
 			Properties prop = new Properties();
 			try {
 				prop.load(Controller.class.getClassLoader().getResourceAsStream("testpanelversion.properties"));
@@ -486,7 +492,7 @@ public class Controller {
 		try {
 			String profileString = FileUtils.readFile(file, theCharset);
 			Hl7V2MessageCollection col = new Hl7V2MessageCollection();
-			
+
 			col.setSourceMessage(profileString);
 			col.setSaveFileName(file.getAbsolutePath());
 			col.setSaved(true);
@@ -495,8 +501,8 @@ public class Controller {
 				showDialogError("No messages were found in the file");
 			} else {
 
-			setLeftSelectedItem(col);
-			myMessagesList.addMessage(col);
+				setLeftSelectedItem(col);
+				myMessagesList.addMessage(col);
 
 			}
 		} catch (IOException e) {
@@ -521,7 +527,7 @@ public class Controller {
 			myOpenMessagesFileChooser.addChoosableFileFilter(type);
 		}
 
-		int value = myOpenMessagesFileChooser.showOpenDialog(myView.getMyframe());
+		int value = myOpenMessagesFileChooser.showOpenDialog(myView.getFrame());
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = myOpenMessagesFileChooser.getSelectedFile();
@@ -539,12 +545,12 @@ public class Controller {
 				return;
 			}
 		}
-		
+
 		File file = new File(theFile.getSaveFileName());
 		if (file.exists() == false) {
 			ourLog.error("Can't find file: {}", theFile);
 		}
-		
+
 		openMessageFile(file, theFile.getSaveCharset());
 	}
 
@@ -552,11 +558,9 @@ public class Controller {
 		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
 		col.setValidationContext(new DefaultValidation());
 
-		String message = "MSH|^~\\&|NES|NINTENDO|TESTSYSTEM|TESTFACILITY|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r"
-				+ "EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r"
+		String message = "MSH|^~\\&|NES|NINTENDO|TESTSYSTEM|TESTFACILITY|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r" + "EVN|A04|20010101000000|||^KOOPA^BOWSER^^^^^^^CURRENT\r"
 				+ "PID|1||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\r"
-				+ "NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\r"
-				+ "NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\r"
+				+ "NK1|1|PEACH^PRINCESS^^^^|SO|ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-1234|(123)555-2345|NOK|||||||||||||\r" + "NK1|2|TOADSTOOL^PRINCESS^^^^|SO|YET ANOTHER CASTLE^^TOADSTOOL KINGDOM^NES^^JP|(123)555-3456|(123)555-4567|EMC|||||||||||||\r"
 				+ "PV1|1|O|ABCD^EFGH^|||^^|123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|^DOG^DUCKHUNT^^^^^^^CURRENT||CRD|||||||123456^DINO^YOSHI^^^^^^MSRM^CURRENT^^^NEIGHBOURHOOD DR NBR^|AO|0123456789|1|||||||||||||||||||MSH||A|||20010101000000\r"
 				+ "IN1|1|PAR^PARENT||||LUIGI\r" + "IN1|2|FRI^FRIEND||||PRINCESS";
 		col.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
@@ -642,7 +646,7 @@ public class Controller {
 		} else {
 			return doSave(theSelectedValue);
 		}
-		
+
 	}
 
 	/**
@@ -671,7 +675,7 @@ public class Controller {
 			mySaveMessagesFileChooser.setPreferredSize(new Dimension(700, 500));
 		}
 
-		int value = mySaveMessagesFileChooser.showSaveDialog(myView.getMyframe());
+		int value = mySaveMessagesFileChooser.showSaveDialog(myView.getFrame());
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = mySaveMessagesFileChooser.getSelectedFile();
@@ -706,7 +710,7 @@ public class Controller {
 			theSelectedValue.setSaveLineEndings(mySaveMessagesFileChooserAccessory.getSelectedLineEndings());
 
 			doSave(theSelectedValue);
-			
+
 			return true;
 
 		} else {
@@ -718,9 +722,11 @@ public class Controller {
 
 	/**
 	 * Send one or more messages out over an interface
+	 * 
+	 * @param theITransmissionCallback
 	 */
-	public void sendMessages(OutboundConnection theConnection, List<AbstractMessage<?>> theMessages) {
-		theConnection.sendMessages(theMessages);
+	public void sendMessages(OutboundConnection theConnection, Hl7V2MessageCollection theMessage, IProgressCallback theTransmissionCallback) {
+		theConnection.sendMessages(theMessage, theTransmissionCallback);
 	}
 
 	public void setLeftSelectedItem(Object theSelectedValue) {
@@ -733,7 +739,7 @@ public class Controller {
 			hl7v2MessageEditorPanel.setMessage((Hl7V2MessageCollection) myLeftSelectedItem);
 			myView.setMainPanel(hl7v2MessageEditorPanel);
 		} else if (myLeftSelectedItem instanceof OutboundConnection) {
-			OutboundConnectionPanel panel = new OutboundConnectionPanel();
+			OutboundConnectionPanel panel = new OutboundConnectionPanel(this);
 			panel.setController(this);
 			panel.setConnection((OutboundConnection) myLeftSelectedItem);
 			myView.setMainPanel(panel);
@@ -763,7 +769,7 @@ public class Controller {
 	}
 
 	private Component provideViewFrameIfItExists() {
-		return myView != null ? myView.getMyframe() : null;
+		return myView != null ? myView.getFrame() : null;
 	}
 
 	public void showDialogWarning(String message) {
@@ -782,7 +788,7 @@ public class Controller {
 	}
 
 	private int showPromptToSaveMessageBeforeClosingIt(Hl7V2MessageCollection theMsg, boolean theShowCancelButton) {
-		Component parentComponent = myView.getMyframe();
+		Component parentComponent = myView.getFrame();
 		Object message = "<html>The following file is unsaved, do you want to save before closing?<br>" + theMsg.getBestDescription() + "</html>";
 		String title = DIALOG_TITLE;
 		int optionType = theShowCancelButton ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION;
@@ -792,6 +798,12 @@ public class Controller {
 
 	public void start() {
 		ourLog.info("Starting TestPanel Controller...");
+
+		myExecutor = Executors.newSingleThreadExecutor();
+		for (Runnable next : myQueuedTasks) {
+			myExecutor.execute(next);
+		}
+		myQueuedTasks = null;
 		
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
@@ -801,7 +813,7 @@ public class Controller {
 		} else {
 			setLeftSelectedItem(myNothingSelectedMarker);
 		}
-		
+
 		new VersionChecker().start();
 	}
 
@@ -841,7 +853,6 @@ public class Controller {
 		}
 	}
 
-	
 	private void tryToSelectSomething() {
 		if (myMessagesList.getMessages().size() > 0) {
 			setLeftSelectedItem(myMessagesList.getMessages().get(0));
@@ -854,7 +865,6 @@ public class Controller {
 		}
 	}
 
-
 	private void updateRecentMessageFiles(Hl7V2MessageCollection theMessage) {
 		Prefs.addMessagesFileXmlToRecents(myProfileFileList, Arrays.asList(theMessage));
 		if (myView != null) {
@@ -862,7 +872,6 @@ public class Controller {
 		}
 	}
 
-	
 	public boolean validateNewValue(String theTerserPath, String theNewValue) {
 		String errorMsg = null;
 		if (theTerserPath.endsWith("MSH-1")) {
@@ -896,31 +905,32 @@ public class Controller {
 			if (version.contains("$")) {
 				version = "1.0";
 			}
-			
+
 			boolean isWebstart = true;
 			try {
 				Class.forName("javax.jnlp.ServiceManager");
 			} catch (Throwable t) {
 				isWebstart = false;
 			}
-			
+
 			try {
 				String javaVersion = System.getProperty("java.version");
 				String os = System.getProperty("os.name").replace(" ", "+");
-				
+
 				URL url = new URL("http://hl7api.sourceforge.net/cgi-bin/testpanelversion.cgi?version=" + version + "&java=" + javaVersion + "&os=" + os + "&webstart=" + isWebstart + "&end");
 				InputStream is = (InputStream) url.getContent();
 				Reader reader = new InputStreamReader(is, "US-ASCII");
 				String content = FileUtils.readFromReaderIntoString(reader);
 				if (content.contains("OK")) {
 					ourLog.info("HAPI TestPanel is up to date. Great!");
-				} else if (content.contains("ERRORNOE ")){
+				} else if (content.contains("ERRORNOE ")) {
 					final String message = content.replace("ERRORNOE ", "");
 					ourLog.warn(message);
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							showDialogWarning(message);
-						}});
+						}
+					});
 				} else {
 					ourLog.warn(content);
 				}
@@ -933,24 +943,23 @@ public class Controller {
 
 	}
 
-	
 	public void revertMessage(Hl7V2MessageCollection theMsg) {
 		if (StringUtils.isBlank(theMsg.getSaveFileName())) {
 			showDialogError("Message has not yet been saved");
 			return;
 		}
-		
-		File file= new File(theMsg.getSaveFileName());
+
+		File file = new File(theMsg.getSaveFileName());
 		if (file.exists() == false || file.isDirectory() || !file.canRead()) {
 			showDialogError("File \"" + theMsg.getSaveFileName() + "\" can not be read");
 			return;
 		}
-		
+
 		int revert = showDialogYesNo("Revert file to saved contents? You will lose all changes.");
 		if (revert == JOptionPane.NO_OPTION) {
 			return;
 		}
-		
+
 		Charset charSet = theMsg.getSaveCharset();
 		String contents;
 		try {
@@ -962,7 +971,20 @@ public class Controller {
 		}
 
 		theMsg.setSourceMessage(contents);
-		
+
+	}
+
+	public Frame getWindow() {
+		return myView.getFrame();
+	}
+
+	private LinkedList<Runnable> myQueuedTasks = new LinkedList<Runnable>();
+	public void invokeInBackground(Runnable theRunnable) {
+		if (myExecutor != null) {
+			myExecutor.execute(theRunnable);
+		} else {
+			myQueuedTasks.add(theRunnable);
+		}
 	}
 
 }

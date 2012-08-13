@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Contributing to HAPI TestPanel</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<!-- The body of the document contains a number of sections -->
+		<section name="Installing HAPI TestPanel">
+
+			<subsection name="Setting up Eclipse">
+
+				<p>
+					Building TestPanel should be possible under any environment, but
+					using Eclipse is recommended. First set up your	environment:
+				</p>
+
+				<ul>
+					<li>
+						Install 
+						<a href="http://maven.apache.org">Maven</a> 
+						(3.0 or newer) and ensure it works from the command	line.
+					</li>
+					<li>
+						Install the
+						<a href="http://www.eclipse.org/windowbuilder/download.php">Windowbuilder</a>
+						plugin into Eclipse.
+					</li>
+				</ul>
+
+			</subsection>
+			<subsection name="Check out the Project">
+	
+				<p>
+					Next, check out the HAPI
+					<a href="https://hl7api.svn.sourceforge.net/svnroot/hl7api/trunk/hapi-mvn/">root project</a>.
+				</p>
+				
+			</subsection>
+
+		</section>
+
+	</body>
+
+</document>

@@ -12,8 +12,10 @@ public class CharCountingReaderWrapper extends Reader {
 	public CharCountingReaderWrapper(Reader theWrap) {
 		myWrap = theWrap;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#close()
 	 */
 	@Override
@@ -28,7 +30,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return myCount;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#mark(int)
 	 */
 	@Override
@@ -36,7 +40,9 @@ public class CharCountingReaderWrapper extends Reader {
 		myWrap.mark(theReadAheadLimit);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#markSupported()
 	 */
 	@Override
@@ -44,7 +50,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return myWrap.markSupported();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#read()
 	 */
 	@Override
@@ -54,7 +62,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return read;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#read(char[])
 	 */
 	@Override
@@ -64,7 +74,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return read;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#read(char[], int, int)
 	 */
 	@Override
@@ -74,7 +86,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return read;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#read(java.nio.CharBuffer)
 	 */
 	@Override
@@ -84,7 +98,9 @@ public class CharCountingReaderWrapper extends Reader {
 		return read;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#ready()
 	 */
 	@Override
@@ -92,22 +108,27 @@ public class CharCountingReaderWrapper extends Reader {
 		return myWrap.ready();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#reset()
 	 */
 	@Override
 	public void reset() throws IOException {
+		myCount = 0;
 		myWrap.reset();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.Reader#skip(long)
 	 */
 	@Override
 	public long skip(long theN) throws IOException {
 		long skip = myWrap.skip(theN);
 		myCount += skip;
-return skip;
+		return skip;
 	}
-	
+
 }

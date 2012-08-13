@@ -37,6 +37,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
@@ -46,13 +47,16 @@ public class CreateOutboundConnectionDialog extends JDialog implements IDestroya
 	private Hl7ConnectionPanel myConnectionPanel;
 	private final JPanel mycontentPanel = new JPanel();
 	private boolean myDone;
+	private Controller myController;
 
 	/**
 	 * Create the dialog.
 	 * 
 	 * @param theHandler
 	 */
-	public CreateOutboundConnectionDialog(final OutboundConnection theConnection, final IOkCancelCallback<OutboundConnection> theHandler) {
+	public CreateOutboundConnectionDialog(Controller theController, final OutboundConnection theConnection, final IOkCancelCallback<OutboundConnection> theHandler) {
+		myController = theController;
+		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -99,7 +103,7 @@ public class CreateOutboundConnectionDialog extends JDialog implements IDestroya
 			}
 		}
 
-		myConnectionPanel = new Hl7ConnectionPanel();
+		myConnectionPanel = new Hl7ConnectionPanel(myController);
 		myConnectionPanel.setConnection(theConnection);
 //		myConnectionPanel.markDisableStartingAndStopping();
 //		myConnectionPanel.setLabelText("Create a new connection to send messages to");

@@ -5,7 +5,7 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-        <release version="2.0.1" date="TBA">
+x        <release version="2.0.1" date="TBD">
             <action type="fix" dev="Thomas Robinson">
             	Make highlights clear properly when switching to XML format, or moving
             	around in XML documents.
@@ -18,7 +18,11 @@
             	Incoming connections (on the left hand side) don't show new received message notification
             	after they have been selected and then deselected. 
             </action>
-        </release>
+            <action type="fix">
+            	Performance tweak to make navigating around the message editor (e.g. with arrow keys)
+            	much more responsive
+            </action>
+		</release>
         <release version="2.0" date="2012-07-16">
             <action type="fix">
             	Fix a permission error that prevented creating a new message if the

@@ -33,19 +33,28 @@ import javax.swing.JButton;
 public class HoverButtonMouseAdapter extends MouseAdapter {
 
 	private JButton myButton;
+	private boolean myEnabled = true;
 
 	public HoverButtonMouseAdapter(JButton theButton) {
 		myButton = theButton;
 	}
-	
+
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		myButton.setBorderPainted(true && myButton.isEnabled());
+		if (myEnabled) {
+			myButton.setBorderPainted(true && myButton.isEnabled());
+		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		myButton.setBorderPainted(false);
+		if (myEnabled) {
+			myButton.setBorderPainted(false);
+		}
+	}
+
+	public void setEnabled(boolean theB) {
+		myEnabled = theB;
 	}
 
 }

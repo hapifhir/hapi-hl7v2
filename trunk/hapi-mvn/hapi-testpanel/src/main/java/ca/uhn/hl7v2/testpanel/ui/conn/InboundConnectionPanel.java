@@ -107,7 +107,7 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 		gbc_TabbedPane.gridx = 0;
 		gbc_TabbedPane.gridy = 2;
 		add(myTabbedPane, gbc_TabbedPane);
-		mySettingPanelTab = new Hl7ConnectionPanel();
+		mySettingPanelTab = new Hl7ConnectionPanel(theController);
 		myTabbedPane.addTab("Settings", null, mySettingPanelTab, null);
 		mySettingPanelTab.setBorder(null);
 

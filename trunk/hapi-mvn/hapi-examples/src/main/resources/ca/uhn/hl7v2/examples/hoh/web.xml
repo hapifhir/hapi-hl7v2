@@ -1,0 +1,10 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <servlet>
+        <servlet-name>hl7_listener</servlet-name>
+        <servlet-class>ca.uhn.hl7v2.examples.hoh.ExampleRawHl7OverHttpServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>hl7_listener</servlet-name>
+        <url-pattern>/hl7list</url-pattern>
+    </servlet-mapping>
+</web-app>

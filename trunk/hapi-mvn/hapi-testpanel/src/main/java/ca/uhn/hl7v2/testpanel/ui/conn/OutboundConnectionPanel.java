@@ -54,11 +54,13 @@ public class OutboundConnectionPanel extends BaseMainPanel implements IDestroyab
 	private JPanel myActivityPanelTab;
 	private Hl7ConnectionPanelHeader myHeaderPanel;
 	private PropertyChangeListener myStatusPropertyChangeListener;
+	private Controller myController;
 
 	/**
 	 * Create the panel.
 	 */
-	public OutboundConnectionPanel() {
+	public OutboundConnectionPanel(Controller theController) {
+		myController =theController;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 593, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 313, 0 };
@@ -80,7 +82,7 @@ public class OutboundConnectionPanel extends BaseMainPanel implements IDestroyab
 		gbc_TabbedPane.gridx = 0;
 		gbc_TabbedPane.gridy = 1;
 		add(myTabbedPane, gbc_TabbedPane);
-		mySettingPanel = new Hl7ConnectionPanel();
+		mySettingPanel = new Hl7ConnectionPanel(myController);
 		myTabbedPane.addTab("Settings", null, mySettingPanel, null);
 		mySettingPanel.setBorder(null);
 		

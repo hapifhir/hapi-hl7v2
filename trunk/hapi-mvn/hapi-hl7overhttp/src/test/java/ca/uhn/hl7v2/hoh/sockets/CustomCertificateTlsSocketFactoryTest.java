@@ -62,16 +62,16 @@ public class CustomCertificateTlsSocketFactoryTest {
 	@Test
 	public void testConnectToTrustedSocket() throws IOException, InterruptedException {
 
-		CustomCertificateTlsSocketFactory badServer = new CustomCertificateTlsSocketFactory();
-		badServer.setKeystoreFilename("src/test/resources/keystore.jks");
-		badServer.setKeystorePassphrase("changeit");
-		Receiver receiver = new Receiver(badServer);
+		CustomCertificateTlsSocketFactory goodServer = new CustomCertificateTlsSocketFactory();
+		goodServer.setKeystoreFilename("src/test/resources/keystore.jks");
+		goodServer.setKeystorePassphrase("changeit");
+		Receiver receiver = new Receiver(goodServer);
 		receiver.start();
 		Thread.sleep(500);
 
 		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
 		goodClient.setKeystoreFilename("src/test/resources/truststore.jks");
-		goodClient.setKeystorePassphrase("changeit");
+//		goodClient.setKeystorePassphrase("changeit");
 		Socket client = goodClient.createClientSocket();
 		client.connect(new InetSocketAddress("localhost", myPort));
 
