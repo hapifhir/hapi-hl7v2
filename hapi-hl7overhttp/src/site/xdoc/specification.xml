@@ -73,6 +73,7 @@
 					which application developers may use as a reference in order to 
 					build interoperable software. 
 				</p>
+				<img src="images/HoH_Trace_Normal.png"/>
 			
 			</subsection>
 			
@@ -87,8 +88,6 @@
 				to receive a response to that message. A standard interaction is shown below.  
 			</p>
 
-			<img src="images/HoH_Trace_Normal.png"/>
-				
 			<subsection name="1.1 Transport Messages">
 			
 				<p>
@@ -490,7 +489,13 @@
 			    The following example shows a Signature Profile header which has been truncated
 			    for readability:<br/>
 			</p>
-		    <source>HL7-Signature: SHA512withRSA bUOp4sm46qk0pdm9Xv2Br [...]</source> 
+			<source>HL7-Signature: SHA512withRSA bUOp4sm46qk0pdm9Xv2Br [...]</source>
+			
+			<p>
+			A sample message exchange follows:
+			</p> 
+			<img src="images/HoH_Trace_Signature.png"/>
+				
 		    
 		</section>
 						

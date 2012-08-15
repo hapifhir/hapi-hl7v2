@@ -29,7 +29,12 @@ public class HohServlet extends HohRawServlet {
 	}
 
 	/**
+	 * <p>
 	 * Route all messages to a single application
+	 * </p>
+	 * <p>
+	 * This method should not be called if {@link #setApplicationRouter(ApplicationRouter)} has been called
+	 * </p>
 	 */
 	public void setApplication(ReceivingApplication theApplication) {
 		myApplicationRouter = new ApplicationRouterImpl();
@@ -42,7 +47,7 @@ public class HohServlet extends HohRawServlet {
 	 * types of messages to different applications
 	 * </p>
 	 * <p>
-	 * Does not need to be provided if {@link setApplication()} has been called.
+	 * Does not need to be provided if {@link #setApplication(ReceivingApplication)} has been called.
 	 * </p>
 	 */
 	public void setApplicationRouter(ApplicationRouter theApplicationRouter) {
