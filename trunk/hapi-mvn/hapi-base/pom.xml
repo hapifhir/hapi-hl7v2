@@ -45,7 +45,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
+				<version>${maven.javadoc.plugin.version}</version>
 				<inherited>true</inherited>
 				<configuration>
 					<minmemory>128m</minmemory>
@@ -158,7 +158,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.8.1</version>
+						<version>${maven.javadoc.plugin.version}</version>
 						<executions>
 							<execution>
 								<phase>package</phase>
@@ -181,37 +181,6 @@
 							</execution>
 						</executions>
 					</plugin>				
-					<!-- 
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sources</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>../src/assembly/source.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-							<execution>
-								<id>javadoc</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-								<configuration>
-									<descriptors>
-										<descriptor>../src/assembly/javadoc.xml</descriptor>
-									</descriptors>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					 -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>retrotranslator-maven-plugin</artifactId>
