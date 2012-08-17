@@ -55,6 +55,7 @@ public class NewPipeParserTest extends TestCase {
 		parser = new PipeParser();
 	}
 
+	
 	/**
 	 * Make sure the appropriate exception is thrown
 	 */

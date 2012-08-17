@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
+import ca.uhn.hl7v2.testpanel.util.CharsetUtils;
 import ca.uhn.hl7v2.testpanel.util.FontUtil;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.util.StringUtil;
@@ -73,19 +74,38 @@ public class Prefs {
 	private static final String GET_SAVE_STRIP_COMMENTS = "getSaveStripComments";
 	private static final String GET_SHOW_LOG_CONSOLE = "getShowLogConsole";
 	private static final String GET_WINDOW_MAXIMIZED = "getWindowMaximized";
-
 	private static final String GET_WINDOW_POSITIONH = "getWindowPositionH";
 	private static final String GET_WINDOW_POSITIONW = "getWindowPositionW";
 	private static final String GET_WINDOW_POSITIONX = "getWindowPositionX";
 	private static final String GET_WINDOW_POSITIONY = "getWindowPositionY";
+	private static final String GET_MOST_RECENT_CONNECTION_CHARSET = "getMostRecentConnectionCharset";
+
 	private static Font myHl7EditorFont;
 	private static final Logger ourLog = LoggerFactory.getLogger(Prefs.class);
 	private static final Preferences ourPrefs = Preferences.userNodeForPackage(ca.uhn.hl7v2.testpanel.controller.Prefs.class);
+
 
 	/** Non instantiable */
 	private Prefs() {
 
 	}
+
+
+	public static void setMostRecentConnectionCharset(String theCharSet) {
+		assert theCharSet != null;
+		ourPrefs.put(GET_MOST_RECENT_CONNECTION_CHARSET, theCharSet);
+	}
+
+
+	public static Charset getMostRecentConnectionCharset() {
+		String charset = ourPrefs.get(GET_MOST_RECENT_CONNECTION_CHARSET, CharsetUtils.DEFAULT_CONNECTION_CHARSET.displayName());
+		try {
+			return Charset.forName(charset);
+		} catch (Exception e) {
+			return CharsetUtils.DEFAULT_CONNECTION_CHARSET;
+		}
+	}
+
 
 	public static void addMessagesFileXmlToRecents(ProfileFileList theProfileFileList, List<Hl7V2MessageCollection> theMessageFiles) {
 		List<Hl7V2MessageCollection> current = getRecentMessageXmlFiles(theProfileFileList);
@@ -109,9 +129,11 @@ public class Prefs {
 		ourPrefs.put(GET_RECENT_MESSAGE_FILES, b.toString());
 	}
 
+
 	public static void clearRecentMessageXmlFiles() {
 		ourPrefs.put(GET_RECENT_MESSAGE_FILES, "");
 	}
+
 
 	private static File createProfileGroupFileName(ProfileGroup profileGroup) {
 		File dir = getProfileGroupFileDirectory();
@@ -119,11 +141,13 @@ public class Prefs {
 		return new File(dir, profileGroup.getId() + ".xml");
 	}
 
+
 	private static double enforceHl7EditorSplitLimits(double theRatio) {
 		theRatio = Math.min(0.8, theRatio);
 		theRatio = Math.max(0.2, theRatio);
 		return theRatio;
 	}
+
 
 	public static File getDefaultTableFileDirectory() {
 		File testPanelHome = getTestpanelHomeDirectory();
@@ -131,6 +155,7 @@ public class Prefs {
 		retVal.mkdirs();
 		return retVal;
 	}
+
 
 	public static Font getHl7EditorFont() {
 		if (myHl7EditorFont == null) {
@@ -155,51 +180,63 @@ public class Prefs {
 		return myHl7EditorFont;
 	}
 
+
 	public static double getHl7EditorSplit() {
 		double retVal = ourPrefs.getDouble(GET_HL7_EDITOR_SPLIT, 0.4);
 		return enforceHl7EditorSplitLimits(retVal);
 	}
 
+
 	public static String getHl7V2DiffFile1() {
 		return ourPrefs.get(GET_HL7V2_DIFF_FILE1, "");
 	}
+
 
 	public static String getHl7V2DiffFile2() {
 		return ourPrefs.get(GET_HL7V2_DIFF_FILE2, "");
 	}
 
+
 	public static boolean getHl7V2DiffShowWholeMessageOnError() {
 		return ourPrefs.getBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, false);
 	}
+
 
 	public static boolean getHl7V2DiffStopOnFirstError() {
 		return ourPrefs.getBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, false);
 	}
 
+
 	public static Object getHl7V2SortBy() {
 		return ourPrefs.get(GET_HL7V2_SORT_BY, "");
 	}
+
 
 	public static String getHl7V2SortInputFile() {
 		return ourPrefs.get(GET_HL7V2_SORT_INPUT, "");
 	}
 
+
 	public static String getHl7V2SortOutputFile() {
 		return ourPrefs.get(GET_HL7V2_SORT_OUTPUT, "");
 	}
+
 
 	public static String getHl7V2SortOverwriteMode() {
 		return ourPrefs.get(GET_HL7V2_SORT_OVERWRITE_MODE, "");
 	}
 
+
 	public static void setHl7V2SortOverwriteMode(String theMode) {
 		ourPrefs.put(GET_HL7V2_SORT_OVERWRITE_MODE, theMode);
 	}
+
 
 	public static String getInboundConnectionList() {
 		String retVal = ourPrefs.get(GET_INBOUND_CONNECTION_LIST, null);
 		return retVal;
 	}
+
 
 	public static Charset getOpenOrSaveCharset() {
 		String defaultVal = Charset.defaultCharset().name();
@@ -214,13 +251,16 @@ public class Prefs {
 		return retVal;
 	}
 
+
 	public static String getOpenPathConformanceProfile() {
 		return ourPrefs.get(GET_OPEN_PATH_CONFORMANCE_PROFILE, ".");
 	}
 
+
 	public static String getOpenPathMessages() {
 		return ourPrefs.get(GET_OPEN_PATH_MESSAGES, ".");
 	}
+
 
 	public static List<ProfileGroup> getOpenProfiles() {
 		ArrayList<ProfileGroup> retVal = new ArrayList<ProfileGroup>();
@@ -241,6 +281,7 @@ public class Prefs {
 		return retVal;
 	}
 
+
 	public static List<File> getOpenTableFiles() {
 		ArrayList<File> retVal = new ArrayList<File>();
 		String[] savedVals = ourPrefs.get(GET_OPEN_TABLE_FILES, "").split("\\n");
@@ -252,10 +293,12 @@ public class Prefs {
 		return retVal;
 	}
 
+
 	public static String getOutboundConnectionList() {
 		String retVal = ourPrefs.get(GET_OUTBOUND_CONNECTION_LIST, null);
 		return retVal;
 	}
+
 
 	public static File getProfileGroupFileDirectory() {
 		File testPanelHome = getTestpanelHomeDirectory();
@@ -263,6 +306,7 @@ public class Prefs {
 		retVal.mkdirs();
 		return retVal;
 	}
+
 
 	public static List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
 		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
@@ -283,6 +327,7 @@ public class Prefs {
 		return retVal;
 	}
 
+
 	public static LineEndingsEnum getSaveLineEndings() {
 		String savedVal = ourPrefs.get(GET_SAVE_LINE_ENDINGS, LineEndingsEnum.HL7.name());
 		LineEndingsEnum retVal;
@@ -294,19 +339,23 @@ public class Prefs {
 		return retVal;
 	}
 
+
 	public static String getSavePathMessages() {
 		return ourPrefs.get(GET_SAVE_PATH_MESSAGES, ".");
 	}
+
 
 	public static boolean getSaveStripComments() {
 		boolean retVal = ourPrefs.getBoolean(GET_SAVE_STRIP_COMMENTS, false);
 		return retVal;
 	}
 
+
 	public static boolean getShowLogConsole() {
 		boolean retVal = ourPrefs.getBoolean(GET_SHOW_LOG_CONSOLE, false);
 		return retVal;
 	}
+
 
 	public static File getTempWorkfilesDirectory() throws IOException {
 		File testPanelHome = getTestpanelHomeDirectory();
@@ -333,11 +382,13 @@ public class Prefs {
 		// return retVal;
 	}
 
+
 	public static File getTestpanelHomeDirectory() {
 		File userHome = new File(System.getProperty("user.home"));
 		File testPanelHome = new File(userHome, "HapiTestPanel");
 		return testPanelHome;
 	}
+
 
 	/**
 	 * Returns (0,0) if nothing was stored
@@ -348,9 +399,11 @@ public class Prefs {
 		return new Dimension(width, height);
 	}
 
+
 	public static boolean getWindowMaximized() {
 		return ourPrefs.getBoolean(GET_WINDOW_MAXIMIZED, false);
 	}
+
 
 	/**
 	 * Returns (-1,-1) if nothing was stored
@@ -361,6 +414,7 @@ public class Prefs {
 		return new Point(x, y);
 	}
 
+
 	public static void removeOpenProfile(ProfileGroup theGroup) {
 		File file = createProfileGroupFileName(theGroup);
 		if (file.exists()) {
@@ -369,48 +423,59 @@ public class Prefs {
 		}
 	}
 
+
 	public static void setHl7EditorSplit(double theRatio) {
 		theRatio = enforceHl7EditorSplitLimits(theRatio);
 		ourPrefs.putDouble(GET_HL7_EDITOR_SPLIT, theRatio);
 	}
 
+
 	public static void setHl7V2DiffFile1(String theFile) {
 		ourPrefs.put(GET_HL7V2_DIFF_FILE1, theFile);
 	}
+
 
 	public static void setHl7V2DiffFile2(String theFile) {
 		ourPrefs.put(GET_HL7V2_DIFF_FILE2, theFile);
 	}
 
+
 	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
 		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
 	}
+
 
 	public static void setHl7V2DiffStopOnFirstError(boolean theValue) {
 		ourPrefs.putBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, theValue);
 	}
 
+
 	public static void setHl7V2SortBy(String theSelectedItem) {
 		ourPrefs.put(GET_HL7V2_SORT_BY, theSelectedItem);
 	}
+
 
 	public static void setHl7V2SortInputFile(String theText) {
 		ourPrefs.put(GET_HL7V2_SORT_INPUT, theText);
 	}
 
+
 	public static void setHl7V2SortOutputFile(String theText) {
 		ourPrefs.put(GET_HL7V2_SORT_OUTPUT, theText);
 	}
+
 
 	public static void setInboundConnectionList(String theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.put(GET_INBOUND_CONNECTION_LIST, theValue);
 	}
 
+
 	public static void setOpenOrSaveCharset(Charset theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.put(GET_OPENSAVE_CHARSET, theValue.name());
 	}
+
 
 	public static void setOpenPathConformanceProfile(String theValue) {
 		StringUtil.validateNotEmpty(theValue);
@@ -422,6 +487,7 @@ public class Prefs {
 		ourPrefs.put(GET_OPEN_PATH_CONFORMANCE_PROFILE, theValue);
 	}
 
+
 	public static void setOpenPathMessages(String theValue) {
 		StringUtil.validateNotEmpty(theValue);
 
@@ -431,6 +497,7 @@ public class Prefs {
 
 		ourPrefs.put(GET_OPEN_PATH_MESSAGES, theValue);
 	}
+
 
 	public static void setOpenProfiles(List<ProfileGroup> theProfiles) {
 		for (ProfileGroup profileGroup : theProfiles) {
@@ -451,6 +518,7 @@ public class Prefs {
 		// ourPrefs.put(GET_OPEN_PROFILE_FILES, b.toString());
 	}
 
+
 	public static void setOpenTableFiles(List<File> theFiles) {
 		StringBuilder b = new StringBuilder();
 		for (File file : theFiles) {
@@ -460,15 +528,18 @@ public class Prefs {
 		ourPrefs.put(GET_OPEN_TABLE_FILES, b.toString());
 	}
 
+
 	public static void setOutboundConnectionList(String theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.put(GET_OUTBOUND_CONNECTION_LIST, theValue);
 	}
 
+
 	public static void setSaveLineEndings(LineEndingsEnum theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.put(GET_SAVE_LINE_ENDINGS, theValue.name());
 	}
+
 
 	public static void setSavePathMessages(String theValue) {
 		StringUtil.validateNotEmpty(theValue);
@@ -480,15 +551,18 @@ public class Prefs {
 		ourPrefs.put(GET_SAVE_PATH_MESSAGES, theValue);
 	}
 
+
 	public static void setSaveStripComments(boolean theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.putBoolean(GET_SAVE_STRIP_COMMENTS, theValue);
 	}
 
+
 	public static void setShowLogConsole(boolean theValue) {
 		Validate.notNull(theValue);
 		ourPrefs.putBoolean(GET_SHOW_LOG_CONSOLE, theValue);
 	}
+
 
 	public static void setWindowDimension(Dimension theDimension) {
 		assert theDimension != null;
@@ -497,9 +571,11 @@ public class Prefs {
 		ourPrefs.putInt(GET_WINDOW_POSITIONW, theDimension.width);
 	}
 
+
 	public static void setWindowMaximized(boolean theWindowMaximized) {
 		ourPrefs.putBoolean(GET_WINDOW_MAXIMIZED, theWindowMaximized);
 	}
+
 
 	public static void setWindowPosition(Point thePosition) {
 		assert thePosition != null;
@@ -508,9 +584,11 @@ public class Prefs {
 		ourPrefs.putInt(GET_WINDOW_POSITIONY, thePosition.y);
 	}
 
+
 	public static String getInterfaceHohSecurityKeystoreDirectory() {
 		return ourPrefs.get(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, null);
 	}
+
 
 	public static void setInterfaceHohSecurityKeystoreDirectory(String theValue) {
 		ourPrefs.put(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, theValue);
