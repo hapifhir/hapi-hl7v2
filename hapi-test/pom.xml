@@ -15,11 +15,13 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
+	    <!-- 
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
 			<version>${hapi.version}</version>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
@@ -121,16 +123,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.6</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>		
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.9</version>
@@ -140,11 +132,97 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.0</version>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>
+		
+		<!-- HAPI-BASE Deps -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jms_1.1_spec</artifactId>
+			<version>${geronimo.jms.spec.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>${commons-cli.version}</version>
+			<optional>true</optional>
+		</dependency>
+			
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+					    <id>copy_sources</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<target>
+							    <echo>Copying sources</echo>
+								<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
+									<fileset dir="${basedir}/../hapi-base/src/main/java">
+										<include name="**/*.*"/>
+									</fileset>
+								</copy>
+							    <echo>Copying resources</echo>
+								<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
+									<fileset dir="${basedir}/../hapi-base/src/main/resources">
+										<include name="**/*.*"/>
+									</fileset>
+								</copy>
+							    <echo>Done copying</echo>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>site</id>
+						<phase>post-site</phase>
+						<configuration>
+							<tasks>
+								<echo message="Copying site resources" />
+								<copy todir="${basedir}/../target/site/cobertura">
+									<fileset dir="${basedir}/target/site/cobertura">
+										<include name="**/*" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>		    
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven.site.plugin.version}</version>
+				<configuration>
+					<siteDirectory>${baseDir}/../src/site</siteDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>ca.uhn.hapi</groupId>
 				<artifactId>hapi-sourcegen</artifactId>
@@ -317,6 +395,11 @@
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>2.7.2</version>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>   	
 		</plugins>
 	</reporting>
 
