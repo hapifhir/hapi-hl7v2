@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.BindException;
-import java.net.ServerSocket;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +56,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
-import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.HapiSocketTlsFactoryWrapper;
 import ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
@@ -68,6 +67,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
+import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.Terser;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -152,23 +152,18 @@ public class InboundConnection extends AbstractConnection {
 			break;
 		}
 		case HL7_OVER_HTTP: {
-			ServerSocket serverSocket;
+			SocketFactory serverSocket;
 			try {
 				if (!isTls()) {
-					serverSocket = new StandardSocketFactory().createServerSocket();
+					serverSocket = new ca.uhn.hl7v2.util.StandardSocketFactory();
 				} else if (getTlsKeystore() == null) {
-					serverSocket = new TlsSocketFactory().createServerSocket();
+					serverSocket = new HapiSocketTlsFactoryWrapper(new TlsSocketFactory());
 				} else {
-					serverSocket = new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()).createServerSocket();
+					serverSocket = new HapiSocketTlsFactoryWrapper(new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()));
 				}
 				
 				myService = new SimpleServer(serverSocket, getIncomingOrSinglePort(), createLlp(), myParser);
 				
-			} catch (IOException e) {
-				ourLog.error("Failed to create server socket", e);
-				setStatus(StatusEnum.FAILED);
-				setStatusLine("Failed to create server socket: " + e.getMessage());
-				return;
 			} catch (KeyStoreException e) {
 				ourLog.error("Failed to load keystore", e);
 				setStatus(StatusEnum.FAILED);

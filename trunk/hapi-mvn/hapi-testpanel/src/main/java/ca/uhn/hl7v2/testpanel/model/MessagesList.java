@@ -51,12 +51,8 @@ public class MessagesList extends AbstractModelClass {
 	private static final Logger ourLog = LoggerFactory.getLogger(MessagesList.class);
 	public static final String PROP_LIST = MessagesList.class.getName() + "_LIST";
 
-	private List<Hl7V2MessageCollection> myMessages = new ArrayList<Hl7V2MessageCollection>();
 	private Controller myController;
-
-	public List<Hl7V2MessageCollection> getMessages() {
-		return Collections.unmodifiableList(myMessages);
-	}
+	private List<Hl7V2MessageCollection> myMessages = new ArrayList<Hl7V2MessageCollection>();
 
 	public MessagesList(Controller theController) {
 		myController = theController;
@@ -95,18 +91,8 @@ public class MessagesList extends AbstractModelClass {
 
 	}
 
-	@Override
-	public Object exportConfigToXml() {
-		return null;
-	}
-
 	public void addMessage(Hl7V2MessageCollection theMessageCollection) {
 		myMessages.add(theMessageCollection);
-		firePropertyChange(PROP_LIST, null, null);
-	}
-
-	public void removeMessage(Hl7V2MessageCollection theMsg) {
-		myMessages.remove(theMsg);
 		firePropertyChange(PROP_LIST, null, null);
 	}
 
@@ -133,6 +119,29 @@ public class MessagesList extends AbstractModelClass {
 			nextWriter.close();
 		}
 
+	}
+
+	@Override
+	public Object exportConfigToXml() {
+		return null;
+	}
+
+	public List<Hl7V2MessageCollection> getMessages() {
+		return Collections.unmodifiableList(myMessages);
+	}
+
+	public Hl7V2MessageCollection getWithId(String theId) {
+		for (Hl7V2MessageCollection next : myMessages) {
+			if (next.getId().equals(theId)) {
+				return next;
+			}
+		}
+		return null;
+	}
+
+	public void removeMessage(Hl7V2MessageCollection theMsg) {
+		myMessages.remove(theMsg);
+		firePropertyChange(PROP_LIST, null, null);
 	}
 
 	public void restoreFromWorkDirectory(File theWorkfilesDir) {

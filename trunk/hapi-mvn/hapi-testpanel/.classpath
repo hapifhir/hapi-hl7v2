@@ -7,6 +7,8 @@
 	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/jflex"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/textresources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hapi-hl7overhttp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hapi-mvn-svn"/>
 	<classpathentry kind="var" path="M2_REPO/com/apple/AppleJavaExtensions/1.5.4/applejavaextensions-1.5.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" sourcepath="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar">
 		<attributes>

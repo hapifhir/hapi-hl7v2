@@ -50,6 +50,7 @@ import ca.uhn.hl7v2.util.StringUtil;
 
 public class Prefs {
 
+	private static final String GET_MOST_RECENTLY_SELECTED_ITEM_ID = "getMostRecentlySelectedItemId";
 	private static final String GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY = "getInterfaceHohSecurityKeystoreDirectory";
 	private static final String GET_HL7_EDITOR_SPLIT = "getHl7EditorSplit";
 	private static final String GET_HL7V2_DIFF_FILE1 = "getHl7V2DiffFile1";
@@ -514,4 +515,14 @@ public class Prefs {
 	public static void setInterfaceHohSecurityKeystoreDirectory(String theValue) {
 		ourPrefs.put(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, theValue);
 	}
+
+	public static void setMostRecentlySelectedItemId(String theId) {
+		assert theId != null;
+		ourPrefs.put(GET_MOST_RECENTLY_SELECTED_ITEM_ID, theId);		
+	}
+
+	public static String getMostRecentlySelectedItemId() {
+		return ourPrefs.get(GET_MOST_RECENTLY_SELECTED_ITEM_ID, "");		
+	}
+
 }

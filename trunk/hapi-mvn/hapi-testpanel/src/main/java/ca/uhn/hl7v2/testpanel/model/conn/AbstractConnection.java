@@ -32,6 +32,8 @@ import java.beans.PropertyVetoException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -46,6 +48,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -59,6 +64,7 @@ import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
+import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
 import ca.uhn.hl7v2.hoh.util.KeystoreUtils;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
@@ -78,6 +84,7 @@ import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.CollectionUtils;
 import ca.uhn.hl7v2.testpanel.util.llp.ByteCapturingMinLowerLayerProtocolWrapper;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
+import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -197,6 +204,52 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 			myRecentActivity.remove(0);
 		}
 		firePropertyChange(RECENT_ACTIVITY_PROPERTY, null, null);
+	}
+
+	SocketFactory getSocketFactory() {
+		return new SocketFactory() {
+
+			@Override
+			public Socket createTlsSocket() throws IOException {
+				try {
+					if (getTransport() == TransportStyleEnum.HL7_OVER_HTTP && getTlsKeystore() != null) {
+						return createHohSocketFactory().createClientSocket();
+					}
+				} catch (KeyStoreException e) {
+					throw new IOException(e.getMessage(), e);
+				}
+				return SSLSocketFactory.getDefault().createSocket();
+			}
+
+			@Override
+			public ServerSocket createTlsServerSocket() throws IOException {
+				try {
+					if (getTransport() == TransportStyleEnum.HL7_OVER_HTTP && getHohSignatureKeystore_() != null) {
+						return createHohSocketFactory().createServerSocket();
+					}
+				} catch (KeyStoreException e) {
+					throw new IOException(e.getMessage(), e);
+				}
+				return SSLServerSocketFactory.getDefault().createServerSocket();
+			}
+
+			private CustomCertificateTlsSocketFactory createHohSocketFactory() throws KeyStoreException {
+				KeyStore keystore = getTlsKeystore();
+				String keystorePassword = getTlsKeystorePassword();
+				CustomCertificateTlsSocketFactory sf = new CustomCertificateTlsSocketFactory(keystore, keystorePassword);
+				return sf;
+			}
+
+			@Override
+			public Socket createSocket() throws IOException {
+				return javax.net.SocketFactory.getDefault().createSocket();
+			}
+
+			@Override
+			public ServerSocket createServerSocket() throws IOException {
+				return ServerSocketFactory.getDefault().createServerSocket();
+			}
+		};
 	}
 
 	public void addNewMessage() {
@@ -566,7 +619,7 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	public KeyStore getTlsKeystore() throws KeyStoreException {
-		if (isBlank(myTlsKeystoreLocation)) {
+		if (isBlank(myTlsKeystoreLocation) || isTls() == false) {
 			return null;
 		}
 		if (myTlsKeystore != null) {
@@ -1109,10 +1162,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 					setHohSignatureAvailableAliases(new ArrayList<String>());
 				} else {
 
-					if (isInbound()) {
-
-					}
-
 					List<String> aliases = CollectionUtils.enumerationToList(keystore.aliases());
 					if (aliases.size() > 0) {
 						if (isBlank(myHohSignatureKey)) {
@@ -1122,8 +1171,23 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 						setHohSignatureKeystoreStatus(new WorkingStatusBean("Keystore contains no suitable keys/aliases", WorkingStatusBean.StatusEnum.ERROR));
 						return;
 					}
-					
+
 					setHohSignatureAvailableAliases(aliases);
+
+					if (!isInbound()) {
+						if (isBlank(myHohSignatureKeyPassword)) {
+							setHohSignatureKeystoreStatus(new WorkingStatusBean("Key password not specified", WorkingStatusBean.StatusEnum.ERROR));
+							return;
+						}
+						if (!KeystoreUtils.canRecoverKey(getHohSignatureKeystore_(), getHohSignatureKey(), getHohSignatureKeyPassword())) {
+							setHohSignatureKeystoreStatus(new WorkingStatusBean("Key password is incorrect", WorkingStatusBean.StatusEnum.ERROR));
+							return;
+						}
+						if (!KeystoreUtils.validateKeyForSignatureSigning(getHohSignatureKeystore_(), getHohSignatureKey(), getHohSignatureKeyPassword())) {
+							setHohSignatureKeystoreStatus(new WorkingStatusBean("Key is not appropriate for signing", WorkingStatusBean.StatusEnum.ERROR));
+							return;
+						}
+					}
 
 					Certificate cert = keystore.getCertificate(myHohSignatureKey);
 					if (cert instanceof X509Certificate) {
@@ -1132,7 +1196,7 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 					} else {
 						setHohSignatureKeystoreStatus(new WorkingStatusBean("Keystore appears good", WorkingStatusBean.StatusEnum.OK));
 					}
-					
+
 					// TODO: verify that key alias is usable
 					// TODO: verify whether separate key password is needed
 

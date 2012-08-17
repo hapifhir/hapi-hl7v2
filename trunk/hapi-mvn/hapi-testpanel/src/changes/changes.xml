@@ -5,8 +5,12 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-x        <release version="2.0.1" date="TBD">
-            <action type="fix" dev="Thomas Robinson">
+		<release version="2.0.1" date="TBD">
+            <action type="fix" dev="Olaf Zevenboom">
+            	Add a mode to send a message or a group of messages more than once in a row
+            	(for load testing, stress testing, etc.)
+            </action>
+		    <action type="fix" dev="Thomas Robinson">
             	Make highlights clear properly when switching to XML format, or moving
             	around in XML documents.
             </action>
@@ -21,6 +25,10 @@ x        <release version="2.0.1" date="TBD">
             <action type="fix">
             	Performance tweak to make navigating around the message editor (e.g. with arrow keys)
             	much more responsive
+            </action>
+            <action type="add">
+                When TestPanel is restarted, the main window returns to the same message/connection that
+                was selected when TestPanel was last closed.
             </action>
 		</release>
         <release version="2.0" date="2012-07-16">
