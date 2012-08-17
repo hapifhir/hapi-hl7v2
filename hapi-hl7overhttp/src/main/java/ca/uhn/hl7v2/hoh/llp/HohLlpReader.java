@@ -45,9 +45,9 @@ class HohLlpReader implements HL7Reader {
 			Hl7OverHttpRequestDecoder requestDecoder = new Hl7OverHttpRequestDecoder();
 			requestDecoder.setAuthorizationCallback(myProtocol.getAuthorizationServerCallback());
 			decoder = requestDecoder;
+			decoder.setSigner(myProtocol.getSigner());
 		}
 
-		decoder.setSigner(myProtocol.getSigner());
 		
 		try {
 			decoder.readHeadersAndContentsFromInputStreamAndDecode(myInputStream);

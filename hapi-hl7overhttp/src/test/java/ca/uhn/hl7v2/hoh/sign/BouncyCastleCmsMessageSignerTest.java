@@ -2,8 +2,12 @@ package ca.uhn.hl7v2.hoh.sign;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import org.junit.Test;
 
@@ -16,42 +20,60 @@ public class BouncyCastleCmsMessageSignerTest {
 	@Test
 	public void testSignAndVerify() throws Exception {
 
-		KeyStore keyStore = KeyStore.getInstance("JKS");
-		InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");
-		keyStore.load(ksStream, "changeit".toCharArray());
-
-		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(keyStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
+		BouncyCastleCmsMessageSigner signer = createSigner();
 		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
 
 		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
 
 		// Now verify
-
-		KeyStore trustStore = KeyStore.getInstance("JKS");
-		InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");
-		trustStore.load(trustStream, "changeit".toCharArray());
-
-		signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
+		signer = createVerifier();
 		signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
 
 	}
 
-	@Test
-	public void testTryToSignWithPublicKey() throws Exception {
+	public static BouncyCastleCmsMessageSigner createVerifier() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		BouncyCastleCmsMessageSigner signer;
+		signer = new BouncyCastleCmsMessageSigner();
+		signer.setKeyStore(loadTrustStore());
+		signer.setKeyAlias(getKeystoreKeyAlias());
+		signer.setAliasPassword(getKeystoreKeyAliasPassword());
+		return signer;
+	}
+
+	public static BouncyCastleCmsMessageSigner createSigner() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
+		signer.setKeyStore(getKeystore());
+		signer.setKeyAlias(getKeystoreKeyAlias());
+		signer.setAliasPassword(getKeystoreKeyAliasPassword());
+		return signer;
+	}
+
+	private static KeyStore loadTrustStore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
 		KeyStore trustStore = KeyStore.getInstance("JKS");
 		InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");
-		trustStore.load(trustStream, "changeit".toCharArray());
+		trustStore.load(trustStream, getKeystoreKeyAliasPassword().toCharArray());
+		return trustStore;
+	}
 
-		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
+	private static String getKeystoreKeyAliasPassword() {
+		return "changeit";
+	}
+
+	private static String getKeystoreKeyAlias() {
+		return "testcert";
+	}
+
+	private static KeyStore getKeystore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");
+		keyStore.load(ksStream, getKeystoreKeyAliasPassword().toCharArray());
+		return keyStore;
+	}
+
+	@Test
+	public void testTryToSignWithPublicKey() throws Exception {
+		BouncyCastleCmsMessageSigner signer = createSigner();
+		signer.setKeyStore(loadTrustStore());
 
 		try {
 			signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
@@ -63,29 +85,13 @@ public class BouncyCastleCmsMessageSignerTest {
 
 	@Test
 	public void testSignAndVerifyStringChanged() throws Exception {
-
-		KeyStore keyStore = KeyStore.getInstance("JKS");
-		InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");
-		keyStore.load(ksStream, "changeit".toCharArray());
-
-		BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(keyStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
+		BouncyCastleCmsMessageSigner signer = createSigner();
 		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
 
 		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
 
-		KeyStore trustStore = KeyStore.getInstance("JKS");
-		InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");
-		trustStore.load(trustStream, "changeit".toCharArray());
-
 		// Now verify that non-matching fails
-
-		signer = new BouncyCastleCmsMessageSigner();
-		signer.setKeyStore(trustStore);
-		signer.setKeyAlias("testcert");
-		signer.setAliasPassword("changeit");
+		signer = createVerifier();
 
 		try {
 			signer.verify("HELLO WORLD....".getBytes("US-ASCII"), signed);

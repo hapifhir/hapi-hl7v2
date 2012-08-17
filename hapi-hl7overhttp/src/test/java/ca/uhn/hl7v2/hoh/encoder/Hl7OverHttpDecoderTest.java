@@ -28,6 +28,8 @@ public class Hl7OverHttpDecoderTest {
 		ourSampleMessageWithMultibyte = ourSampleMessage.replace("SSN", "I♥HAPI");
 	}
 
+	// TODO: add test to make sure that a request with chunked encoding can be decoded
+	
 	@Test
 	public void testDecodeFromStream() throws Exception {
 

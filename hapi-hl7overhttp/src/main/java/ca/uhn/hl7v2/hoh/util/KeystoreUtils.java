@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
@@ -105,6 +108,73 @@ public class KeystoreUtils {
 		}
 
 		return foundPublicKey;
+	}
+
+	public static boolean validateKeyForSignatureSigning(KeyStore theKeystore, String theKey, String theKeyPassword) {
+		if (theKeystore == null) {
+			throw new NullPointerException("Keystore can not be null");
+		}
+		if (theKey == null) {
+			throw new NullPointerException("Key can not be null");
+		}
+		if (theKeyPassword == null) {
+			throw new NullPointerException("Key password can not be null");
+		}
+
+		Key key;
+		try {
+			key = theKeystore.getKey(theKey, theKeyPassword.toCharArray());
+		} catch (UnrecoverableKeyException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		} catch (KeyStoreException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		} catch (NoSuchAlgorithmException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		}
+
+		if (key == null) {
+			ourLog.debug("Key is null");
+			return false;
+		} else if (!(key instanceof PrivateKey)) {
+			ourLog.debug("Key is of type: {}", key.getClass());
+			return false;
+		}
+
+		return true;
+	}
+
+	public static boolean canRecoverKey(KeyStore theKeystore, String theKey, String theKeyPassword) {
+		if (theKeystore == null) {
+			throw new NullPointerException("Keystore can not be null");
+		}
+		if (theKey == null) {
+			throw new NullPointerException("Key can not be null");
+		}
+		if (theKeyPassword == null) {
+			throw new NullPointerException("Key password can not be null");
+		}
+		
+		Key key;
+		try {
+			key = theKeystore.getKey(theKey, theKeyPassword.toCharArray());
+		} catch (UnrecoverableKeyException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		} catch (KeyStoreException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		} catch (NoSuchAlgorithmException e) {
+			ourLog.debug("Failed to recover key", e);
+			return false;
+		}
+
+		if (key != null) {
+			return true;
+		}
+		return false;
 	}
 
 }

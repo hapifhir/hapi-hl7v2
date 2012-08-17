@@ -48,6 +48,10 @@
 			<item name="License" href="license.html" />
 		</menu>
 
+		<menu name="Testing">
+			<item name="TestPanel" href="testpanel.html" />
+		</menu>
+		
 		<menu name="Developer">
 			<item name="Cobertura" href="cobertura/index.html" />
 			<item name="Surefire" href="surefire-report.html" />

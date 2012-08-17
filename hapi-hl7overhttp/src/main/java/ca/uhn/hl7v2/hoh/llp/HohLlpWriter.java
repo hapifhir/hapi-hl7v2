@@ -75,7 +75,9 @@ class HohLlpWriter implements HL7Writer {
 			e = new Hl7OverHttpResponseEncoder();
 		}
 
-		e.setSigner(myProtocol.getSigner());
+		if (myProtocol.getRole() == ServerRoleEnum.CLIENT) {
+			e.setSigner(myProtocol.getSigner());
+		}
 		
 		e.setMessage(theRawMessage);
 		if (getPreferredCharset() != null) {

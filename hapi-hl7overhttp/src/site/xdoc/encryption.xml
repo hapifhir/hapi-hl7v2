@@ -15,19 +15,21 @@
 			</p>
 			<ul>
 				<li>
-					You may install a certificate which has been signed by a trusted 
-					<a href="http://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority (CA)</a>
-					for mutual authentication.
-					This approach generally has the advantage of requiring almost no 
-					configuration effort on the client/sending side, but there is generally
-					a cost associated with obtaining a certificate which has been signed by a CA. This
-					is a good approach if you have a single application (e.g. an interface engine or a
-					regional repository)	which will receive messages from many sources. 					
-				</li>
-				<li>
 					You may use a self-signed certificate. Self-signed certificates
 					provide excellent security at the expense of requiring extra
-					configuration on the client side.
+					configuration on the client side. Self-signed certificates provide
+					strong encryption, and can be used to provide authentication as well
+					(in other words, proof that the sender is really who they claim to be).
+				</li>
+				<li>
+					You may install a certificate which has been signed by a trusted 
+					<a href="http://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority (CA)</a>
+					for mutual authentication. Mutual authentication requires more
+					effort to set up, but it brings additional benefit. On top of
+					providing encryption and authentication of the client to the server,
+					mutual authentiction provides authentication of the server to the
+					client, which is especially useful if you have an interface
+					that supports queries (i.e. may return protected data).  
 				</li>
 			</ul>
 			    

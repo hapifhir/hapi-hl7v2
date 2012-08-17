@@ -2,17 +2,20 @@
 <document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
 	<properties>
-		<title>HL7 over HTTP - Signature Profile</title>
+		<title>HL7 over HTTP - TestPanel</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
 	</properties>
 
 	<body>
 
-		<section name="Signature Profile">
+		<section name="TestPanel with HL7 over HTTP">
 			
 		    <p>
-		        TODO: Signature profile documentation still to come  		        
+		    	HAPI TestPanel may be used to send and receive messages via the
+		    	HL7 over HTTP transport.
 		    </p>
+		    
+		    <img src="images/TestPanel_Outgoing.png"/>
 		    
 		</section>
 								
