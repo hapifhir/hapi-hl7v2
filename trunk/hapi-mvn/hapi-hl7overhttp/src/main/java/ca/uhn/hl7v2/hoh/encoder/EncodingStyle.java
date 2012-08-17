@@ -1,5 +1,8 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum EncodingStyle {
 
 	/**
@@ -14,9 +17,23 @@ public enum EncodingStyle {
 	;
 	
 	private String myContentType;
+	private static final Map<String, EncodingStyle> ourContentTypes = new HashMap<String, EncodingStyle>();
 
+	static {
+		for (EncodingStyle next : values()) {
+			ourContentTypes.put(next.getContentType(), next);
+		}
+	}
+	
 	EncodingStyle(String theContentType){
 		myContentType = theContentType;
+	}
+	
+	/**
+	 * @throws NullPointerException if the name is null
+	 */
+	public static EncodingStyle withNameCaseInsensitive(String theName) {
+		return ourContentTypes.get(theName.toLowerCase());
 	}
 	
 	/**

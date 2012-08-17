@@ -49,12 +49,22 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 	private PrivateKey myPrivateKey;
 	private PublicKey myPublicKey;
 
+	/**
+	 * Constructor
+	 */
+	public BouncyCastleCmsMessageSigner() {
+		super();
+	}
+	
 	private PrivateKey getPrivateKey() throws GeneralSecurityException, SignatureFailureException {
 		if (myKeyStore == null) {
 			throw new SignatureFailureException("Keystore is not set");
 		}
 		if (isBlank(myKeyAlias)) {
 			throw new SignatureFailureException("Key alias is not set");
+		}
+		if (isBlank(myAliasPassword)) {
+			throw new SignatureFailureException("Key alias password is not set");
 		}
 
 		if (this.myPrivateKey == null) {

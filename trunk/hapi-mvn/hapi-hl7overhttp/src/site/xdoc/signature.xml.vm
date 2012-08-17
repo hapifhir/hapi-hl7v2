@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP - Signature Profile</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Signature Profile">
+			
+		    <p>
+		        Signature Profile provides an encrypted signature which allows a receiving
+		        application to strongly authenticate the sender, and optionally vice versa. 
+		    </p>
+
+		    <p>
+		        To use Signature Profile, you first require a private key and corresponding
+		        public key, each in a keystore. The private key is used on the sending end,
+		        and the public key must be provided to the receiving end. If responses are
+		        also being signed, a second pair of keys must be created, but will be kept 
+		        on the opposite ends (the private key lives on the receiving end, so that
+		        it can be used to sign responses).
+		    </p>
+		    		    
+		    <p>
+		        See <a href="generating_keys.html">generating keys</a> for information on
+		        creating self-signed keys.
+		    </p>
+		    
+		    <subsection name="Signer">
+		        
+		        <p>
+		            HL7 over HTTP uses the
+		            <a href="http://www.bouncycastle.org/">Bouncycastle</a>
+		            library to provide message signature. To use this feature,
+		            you must add the "bcprov" and "bcmail" JAR files to your
+		            classpath. Maven users may use the following dependencies:
+		        </p>
+		        <source><![CDATA[<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcprov-jdk16</artifactId>
+  <version>${bouncycastle.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcmail-jdk16</artifactId>
+  <version>${bouncycastle.version}</version>
+</dependency>]]></source>
+		        
+		    </subsection>		    
+		    
+		    <subsection name="Signing client messages">
+		        
+		        <p>
+		            To sign a message within an HL7 over HTTP client,
+		            follow the example below:
+				</p>
+				<macro name="snippet">
+					<param name="id" value="client"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
+				</macro>
+		        		        
+		        <p>
+		            Message signers may also be used with the
+		            HoH LLP implementation:
+				</p>
+				<macro name="snippet">
+					<param name="id" value="llp"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
+				</macro>
+
+		    </subsection>
+		   
+		    <subsection name="Signing server messages">
+		        
+		        <p>
+		            Message signers may also be used within
+		            an HoH Servlet.
+				</p>
+				<macro name="snippet">
+					<param name="id" value="servlet"/>
+					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureServlet.java"/>
+				</macro>
+		        		        
+		    </subsection>
+
+		</section>
+								
+	</body>
+
+</document>

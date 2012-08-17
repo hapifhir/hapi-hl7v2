@@ -42,8 +42,13 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 
 	/**
 	 * Constructor
+	 * 
+	 * @throws NullPointerException If theKeystore is null
 	 */
 	public CustomCertificateTlsSocketFactory(KeyStore theKeystore, String theKeystorePass) {
+		if (theKeystore == null) {
+			throw new NullPointerException("KeyStore can not be null");
+		}
 		myKeystore = theKeystore;
 		myKeystorePassphrase = theKeystorePass;
 	}

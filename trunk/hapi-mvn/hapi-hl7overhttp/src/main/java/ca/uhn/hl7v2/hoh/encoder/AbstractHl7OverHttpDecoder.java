@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
+import ca.uhn.hl7v2.hoh.api.NonHl7ResponseException;
 import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.GZipUtils;
@@ -49,6 +50,8 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private TransferEncoding myTransferEncoding;
 
 	private String mySignature;
+
+	private EncodingStyle myEncodingStyle;
 
 	private void addConformanceProblem(String theString) {
 		ourLog.debug("Conformance problem detected: {}", theString);
@@ -143,6 +146,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					myContentType = nextValue;
 				} else {
 					myContentType = nextValue.substring(0, colonIndex);
+					myEncodingStyle = EncodingStyle.withNameCaseInsensitive(myContentType);
 					String charsetDef = nextValue.substring(colonIndex + 1).trim();
 					if (charsetDef.startsWith("charset=")) {
 						String charsetName = charsetDef.substring(8);
@@ -192,15 +196,34 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 
 	}
 
+	/**
+	 * @return the encodingStyle
+	 */
+	public EncodingStyle getEncodingStyle() {
+		return myEncodingStyle;
+	}
+
 	private void doReadContentsFromInputStreamAndDecode(InputStream theInputStream) throws DecodeException, AuthorizationFailureException, IOException, SignatureVerificationException {
 		decodeHeaders();
 		authorize();
 		myBytes = readBytes(theInputStream);
 		decodeBody();
+		
+		if (getContentType() == null) {
+			throw new DecodeException("Content-Type not specified");
+		}
+		if (getEncodingStyle() == null) {
+			throw new NonHl7ResponseException("Invalid Content-Type: " + getContentType(), getContentType(), getMessage());
+		}
+		
 		verifySignature();
 	}
 
 	private void verifySignature() throws SignatureVerificationException, DecodeException {
+		if (getSigner() != null && isBlank(mySignature)) {
+			String mode = (this instanceof Hl7OverHttpRequestDecoder) ? "request" : "response";
+			throw new SignatureVerificationException("No HL7 Signature found in " + mode);
+		}
 		if (getSigner() != null) {
 			try {
 				getSigner().verify(myBytes, mySignature);
@@ -218,7 +241,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	}
 
 	/**
-	 * @return the contentType
+	 * @return Returns the content type associated with the message (e.g. application/hl7-v2)
 	 */
 	public String getContentType() {
 		return myContentType;

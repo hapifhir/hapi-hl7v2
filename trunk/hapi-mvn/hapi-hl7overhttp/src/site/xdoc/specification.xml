@@ -182,13 +182,15 @@
 								
 				<h4>Transfer-Encoding</h4>
 				<p>
-				    <b>Receiving applications</b> MUST be capable of decoding content which
+				    <b>Sending applications</b> and <b>Receiving applications</b> MUST be 
+				    capable of decoding content which
 				    has been encoded with "chunked" transfer encoding. Although this style is
 				    not generally useful for transactional messages such as HL7, intermediate
 				    devices and third party libraries may introduce this style unexpectedly.      
 				</p>
 				<p>
-				    <b>Sending applications</b> MAY choose to send data using chunked encoding.
+				    <b>Sending applications</b> and <b>Receiving applications</b> MAY 
+				    choose to send data using chunked encoding.
 				</p>
 				<source>Transfer-Encoding: chunked</source> 
 				

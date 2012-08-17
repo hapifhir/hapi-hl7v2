@@ -30,18 +30,18 @@ public class HohRawServlet extends HttpServlet {
 	private IMessageHandler<String> myMessageHandler;
 	private ISigner mySigner;
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void doGet(HttpServletRequest theReq, HttpServletResponse theResp) throws ServletException, IOException {
-		
+
 		theResp.setStatus(400);
 		theResp.setContentType("text/html");
-		
+
 		String message = "GET method is not supported by this server";
 		HTTPUtils.write400BadRequest(theResp.getOutputStream(), message, false);
-		
+
 	}
 
 	/**
@@ -49,20 +49,20 @@ public class HohRawServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest theReq, HttpServletResponse theResp) throws ServletException, IOException {
-		
+
 		Hl7OverHttpRequestDecoder decoder = new Hl7OverHttpRequestDecoder();
 		decoder.setHeaders(new LinkedHashMap<String, String>());
-		
+
 		Enumeration<?> headerNames = theReq.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
 			String nextName = (String) headerNames.nextElement();
 			decoder.getHeaders().put(nextName, theReq.getHeader(nextName));
 		}
-		
+
 		decoder.setUri(theReq.getRequestURI());
 		decoder.setAuthorizationCallback(myAuthorizationCallback);
 		decoder.setSigner(mySigner);
-		
+
 		try {
 			decoder.readContentsFromInputStreamAndDecode(theReq.getInputStream());
 		} catch (AuthorizationFailureException e) {
@@ -81,7 +81,7 @@ public class HohRawServlet extends HttpServlet {
 			HTTPUtils.write400SignatureVerificationFailed(theResp.getOutputStream(), false);
 			return;
 		}
-		
+
 		RawReceivable rawMessage = new RawReceivable(decoder.getMessage());
 		rawMessage.addMetadata(MessageMetadataKeys.REMOTE_HOST_ADDRESS.name(), theReq.getRemoteAddr());
 
@@ -94,29 +94,36 @@ public class HohRawServlet extends HttpServlet {
 			HTTPUtils.write500InternalServerError(theResp.getOutputStream(), e.getMessage(), false);
 			return;
 		}
-		
+
 		theResp.setContentType(response.getEncodingStyle().getContentType());
 		theResp.setStatus(response.getResponseCode().getCode());
-		
+
 		response.writeMessage(theResp.getWriter());
 		theResp.flushBuffer();
-		
+
 	}
 
 	/**
-	 * If set, provides a callback which will be used to validate incoming credentials
+	 * If set, provides a callback which will be used to validate incoming
+	 * credentials
 	 */
 	public void setAuthorizationCallback(IAuthorizationServerCallback theAuthorizationCallback) {
 		myAuthorizationCallback = theAuthorizationCallback;
 	}
 
 	/**
-	 * @param theMessageHandler the messageHandler to set
+	 * @param theMessageHandler
+	 *            the messageHandler to set
 	 */
 	public void setMessageHandler(IMessageHandler<String> theMessageHandler) {
 		myMessageHandler = theMessageHandler;
 	}
 
-	
-	
+	/**
+	 * Sets the message signer if signature profile is being used
+	 */
+	public void setSigner(ISigner theSigner) {
+		mySigner = theSigner;
+	}
+
 }
