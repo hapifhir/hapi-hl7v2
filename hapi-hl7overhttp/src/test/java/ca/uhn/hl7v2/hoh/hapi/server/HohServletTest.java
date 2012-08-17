@@ -49,6 +49,9 @@ public class HohServletTest {
 		myServer.stop();
 	}
 
+	// TODO: Add test to make sure that client encoding and charset get respected in response
+	
+
 	public IResponseSendable<String> messageReceived(IReceivable<String> theMessage) throws MessageProcessingException {
 		
 		myLastMessage = theMessage.getMessage();

@@ -39,8 +39,8 @@ public class LlpServerTest implements Application, ConnectionListener {
 	private int myPort;
 	private Message myResponse;
 
-	private SimpleServer myServer;
-
+	// TODO: Add test to make sure that client encoding and charset get respected in response
+	
 	@After
 	public void after() {
 		myServer.stopAndWait();

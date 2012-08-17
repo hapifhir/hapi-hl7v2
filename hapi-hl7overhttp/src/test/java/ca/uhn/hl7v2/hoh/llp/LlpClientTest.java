@@ -31,6 +31,8 @@ public class LlpClientTest {
 	private static ServerSocketThreadForTesting ourServerSocketThread;
 	private static ExecutorService ourExecutor;
 
+	// TODO: add test to ensure that XML encoding works
+
 	@Test
 	public void testSendMessageSimple() throws Exception {
 		setUpTest();
