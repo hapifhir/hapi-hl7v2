@@ -204,8 +204,12 @@ public abstract class Service implements Runnable {
 			}
 			log.debug("Thread {} leaving main loop", name);
 		} catch (RuntimeException t) {
-			serviceExitedWithException = t.getCause();
-			log.warn("Thread exiting main loop due to exception:", t.getCause());
+			if (t.getCause() != null) {
+				serviceExitedWithException = t.getCause();
+			} else {
+				serviceExitedWithException = t;
+			}
+			log.warn("Thread exiting main loop due to exception:", t);
 		} catch (Throwable t) {
 			serviceExitedWithException = t;
 			log.warn("Thread exiting main loop due to exception:", t);
