@@ -26,12 +26,9 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * Static Connection factory that creates client-side {@link Connection}s from
@@ -44,13 +41,13 @@ class ConnectionFactory {
 		Connection connection = null;
 		if (connectionData.getPort2() == 0) {
 			connection = new Connection(connectionData.getParser(),
-					connectionData.getProtocol(), createSocket(
+					connectionData.getProtocol(), createSocket(connectionData.getSocketFactory(),
 							connectionData.getHost(), connectionData.getPort(),
-							false), executorService);
+							connectionData.isTls()), executorService);
 		} else {
-			Socket outbound = createSocket(connectionData.getHost(),
+			Socket outbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
 					connectionData.getPort(), connectionData.isTls());
-			Socket inbound = createSocket(connectionData.getHost(),
+			Socket inbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
 					connectionData.getPort2(), connectionData.isTls());
 			connection = new Connection(connectionData.getParser(),
 					connectionData.getProtocol(), inbound, outbound,
@@ -60,17 +57,28 @@ class ConnectionFactory {
 		return connection;
 	}
 
-	private static Socket createSocket(String host, int port, boolean ssl)
-			throws UnknownHostException, IOException {
-		SocketFactory sf = ssl ? SSLSocketFactory.getDefault() : SocketFactory
-				.getDefault();
-		Socket socket = sf.createSocket(host, port);
-		socket.setKeepAlive(true); // enable TCP KeepAlive packets
-		// There are more socket parameters that could be set by configuration:
-		// socket.setReuseAddress(true);
-		// socket.setSoTimeout(...)
-		// socket.setTcpNoDelay(...)
+	private static Socket createSocket(ca.uhn.hl7v2.util.SocketFactory socketFactory, String host, int port, boolean tls) throws IOException {
+		Socket socket;
+		if (tls) {
+			socket = socketFactory.createTlsSocket();
+		} else {
+			socket = socketFactory.createSocket();
+		}
+		socket.connect(new InetSocketAddress(host, port));
 		return socket;
 	}
+
+//	private static Socket createSocket(String host, int port, boolean ssl)
+//			throws UnknownHostException, IOException {
+//		SocketFactory sf = ssl ? SSLSocketFactory.getDefault() : SocketFactory
+//				.getDefault();
+//		Socket socket = sf.createSocket(host, port);
+//		socket.setKeepAlive(true); // enable TCP KeepAlive packets
+//		// There are more socket parameters that could be set by configuration:
+//		// socket.setReuseAddress(true);
+//		// socket.setSoTimeout(...)
+//		// socket.setTcpNoDelay(...)
+//		return socket;
+//	}
 
 }

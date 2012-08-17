@@ -1,11 +1,8 @@
 package ca.uhn.hl7v2.app;
 
-import static ca.uhn.hl7v2.app.TestUtils.fill;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static ca.uhn.hl7v2.app.TestUtils.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -21,6 +18,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -30,6 +28,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
+import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
  * JUnit test harmess for ConnectionHub connecting to a SimpleServer
@@ -78,6 +77,37 @@ public class ConnectionHubTest {
 		ConnectionHub.shutdown();
 	}
 
+	@Test
+	public void testConnectWithTlsSocketFactory() throws HL7Exception, IOException {
+		ConnectionHub connHub = new DefaultHapiContext().getConnectionHub();
+		
+		SocketFactory socketFactory = mock(SocketFactory.class);
+		when(socketFactory.createTlsSocket()).thenReturn(javax.net.SocketFactory.getDefault().createSocket());
+		
+		Connection conn = connHub.attach("localhost", port1, PipeParser.getInstanceWithNoValidation(), new MinLowerLayerProtocol(), true, socketFactory);
+		conn.close();
+
+		verify(socketFactory, times(1)).createTlsSocket();
+		verifyNoMoreInteractions(socketFactory);
+
+	}
+	
+	@Test
+	public void testConnectWithSocketFactory() throws HL7Exception, IOException {
+		ConnectionHub connHub = new DefaultHapiContext().getConnectionHub();
+		
+		SocketFactory socketFactory = mock(SocketFactory.class);
+		when(socketFactory.createSocket()).thenReturn(javax.net.SocketFactory.getDefault().createSocket());
+		
+		Connection conn = connHub.attach("localhost", port1, PipeParser.getInstanceWithNoValidation(), new MinLowerLayerProtocol(), false, socketFactory);
+		conn.close();
+
+		verify(socketFactory, times(1)).createSocket();
+		verifyNoMoreInteractions(socketFactory);
+
+	}
+	
+	
 	/**
 	 * 
 	 * @throws Exception

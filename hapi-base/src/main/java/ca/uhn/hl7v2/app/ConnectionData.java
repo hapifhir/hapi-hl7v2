@@ -27,6 +27,8 @@ package ca.uhn.hl7v2.app;
 
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.util.SocketFactory;
+import ca.uhn.hl7v2.util.StandardSocketFactory;
 
 /**
  * Connection meta data class.
@@ -38,6 +40,7 @@ class ConnectionData {
 	private boolean tls;
 	private Parser parser;
 	private LowerLayerProtocol protocol;
+	private SocketFactory socketFactory;
 
 	public ConnectionData(String host, int port, Parser parser,
 			LowerLayerProtocol protocol) {
@@ -46,18 +49,26 @@ class ConnectionData {
 
 	public ConnectionData(String host, int port, Parser parser,
 			LowerLayerProtocol protocol, boolean tls) {
-		this(host, port, 0, parser, protocol, false);
+		this(host, port, 0, parser, protocol, tls);
 	}
 
 	public ConnectionData(String host, int outboundPort, int inboundPort,
 			Parser parser, LowerLayerProtocol protocol, boolean tls) {
-		super();
+		this(host, outboundPort, inboundPort, parser, protocol, tls, null);
+	}
+
+	public ConnectionData(String host, int outboundPort, int inboundPort,
+			Parser parser, LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory) {
 		this.host = host;
 		this.port = outboundPort;
 		this.port2 = inboundPort;
 		this.parser = parser;
 		this.protocol = protocol;
 		this.tls = tls;
+		this.socketFactory = socketFactory;
+		if (this.socketFactory == null) {
+			this.socketFactory = new StandardSocketFactory();
+		}
 	}
 
 	public String getHost() {
@@ -82,6 +93,14 @@ class ConnectionData {
 
 	public LowerLayerProtocol getProtocol() {
 		return protocol;
+	}
+
+	public SocketFactory getSocketFactory() {
+		return socketFactory;
+	}
+
+	public void setSocketFactory(SocketFactory theSocketFactory) {
+		socketFactory = theSocketFactory;
 	}
 
 	@Override

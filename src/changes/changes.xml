@@ -66,6 +66,16 @@
             	Prevent UnsupportedOperationException when AbstractType#toString() is called on a message
             	that was parsed by an XML parser (for instance on an ST, or another datatype).
             </action>			
+            <action type="fix" dev="James Agnew" issue="3558687">
+            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a>]]>
+            	and
+            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html">SimpleServer</a>]]>
+            	now each accept a custom
+            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/SocketFactory.html">socket factory</a>]]>
+            	instance, which can be used to allow custom configuration on sockets,
+            	or special TLS configurations. This checkin also corrects an issue where the
+            	"tls" parameter on ConnectionHub was not honoured.       	
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">

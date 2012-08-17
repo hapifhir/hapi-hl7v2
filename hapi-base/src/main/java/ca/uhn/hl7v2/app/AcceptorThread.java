@@ -34,13 +34,12 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocketFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.concurrent.Service;
+import ca.uhn.hl7v2.util.SocketFactory;
+import ca.uhn.hl7v2.util.StandardSocketFactory;
 
 /**
  * A Runnable that accepts connections on a ServerSocket and adds them to a
@@ -56,6 +55,7 @@ class AcceptorThread extends Service {
 	private boolean tls = false;
 	private ServerSocket ss;
 	private final BlockingQueue<AcceptedSocket> queue;
+	private final SocketFactory socketFactory;
 
 	public AcceptorThread(ServerSocket serverSocket, int port, ExecutorService service,
 			BlockingQueue<AcceptedSocket> queue) throws IOException,
@@ -73,20 +73,29 @@ class AcceptorThread extends Service {
 	public AcceptorThread(int port, boolean tls, ExecutorService service,
 			BlockingQueue<AcceptedSocket> queue) throws IOException,
 			SocketException {
+		this(port, tls, service, queue, null);
+	}
+
+	public AcceptorThread(int port, boolean tls, ExecutorService service, BlockingQueue<AcceptedSocket> queue, SocketFactory socketFactory) {
 		super("Socket Acceptor", service);
 		this.port = port;
 		this.queue = queue;
 		this.tls = tls;
+		if (socketFactory == null) {
+			socketFactory = new StandardSocketFactory();
+		}
+		this.socketFactory = socketFactory;
 	}
 
 	@Override
 	protected void afterStartup() {
 		try {
-			if (ss == null) {
-				ss = createServerSocket(port);
+			if (this.tls) {
+				ss = socketFactory.createTlsServerSocket();
 			} else {
-				ss.bind(new InetSocketAddress(port));
+				ss = socketFactory.createServerSocket();
 			}
+			ss.bind(new InetSocketAddress(port));
 			ss.setSoTimeout(TIMEOUT);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -118,12 +127,6 @@ class AcceptorThread extends Service {
 		} catch (IOException e) {
 			log.warn("Error during stopping the thread", e);
 		}
-	}
-
-	protected ServerSocket createServerSocket(int port) throws IOException {
-		ServerSocketFactory socketFactory = tls ? SSLServerSocketFactory
-				.getDefault() : ServerSocketFactory.getDefault();
-		return socketFactory.createServerSocket(port);
 	}
 
 	class AcceptedSocket {
