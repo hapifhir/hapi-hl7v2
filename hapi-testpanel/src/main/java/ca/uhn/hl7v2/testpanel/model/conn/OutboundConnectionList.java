@@ -111,5 +111,14 @@ public class OutboundConnectionList extends AbstractModelClass {
 		}
 	}
 
+	public OutboundConnection getWithId(String theId) {
+		for (OutboundConnection next : myConnections) {
+			if (next.getId().equals(theId)) {
+				return next;
+			}
+		}
+		return null;
+	}
+
 
 }

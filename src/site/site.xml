@@ -34,6 +34,7 @@
 
 		<menu name="Tools">
 			<item name="TestPanel" href="hapi-testpanel/index.html" />
+			<item name="HL7 over HTTP" href="hapi-hl7overhttp/index.html" />
 			<item name="Colouriser" href="colouriser.html" />
 		</menu>
 
@@ -85,6 +86,7 @@
 			<item name="HAPI Developers" href="team-list.html" />
 			<item name="Unit Test Report" href="surefire-report.html" />
 			<item name="Source Tag List" href="taglist.html" />
+			<item name="Cobertura" href="cobertura/index.html" />
 			<item name="License" href="license.html" />
 		</menu>
 

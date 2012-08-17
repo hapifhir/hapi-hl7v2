@@ -59,6 +59,7 @@ import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
 import ca.uhn.hl7v2.testpanel.util.IProgressCallback.OperationCancelRequestedException;
+import ca.uhn.hl7v2.util.SocketFactory;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutboundConnection")
@@ -143,10 +144,13 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 					ourLog.info("Attempting outbound connection to " + desc);
 
 					try {
+						
+						SocketFactory socketFactory = getSocketFactory();
+						
 						if (isDualPort()) {
-							connection = ConnectionHub.getInstance().attach(getHost(), getOutgoingPort(), getIncomingOrSinglePort(), myParser, llpClass, tls);
+							connection = ConnectionHub.getInstance().attach(getHost(), getOutgoingPort(), getIncomingOrSinglePort(), myParser, llpClass, tls, socketFactory);
 						} else {
-							connection = ConnectionHub.getInstance().attach(getHost(), getIncomingOrSinglePort(), myParser, llpClass, tls);
+							connection = ConnectionHub.getInstance().attach(getHost(), getIncomingOrSinglePort(), myParser, llpClass, tls, socketFactory);
 						}
 
 						myConnection = connection;

@@ -25,6 +25,8 @@
  */
 package ca.uhn.hl7v2.testpanel.controller;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -733,22 +735,35 @@ public class Controller {
 		if (myLeftSelectedItem == theSelectedValue) {
 			return;
 		}
+
+		String id = null;
+
 		myLeftSelectedItem = theSelectedValue;
 		if (myLeftSelectedItem instanceof Hl7V2MessageCollection) {
 			Hl7V2MessageEditorPanel hl7v2MessageEditorPanel = new Hl7V2MessageEditorPanel(this);
-			hl7v2MessageEditorPanel.setMessage((Hl7V2MessageCollection) myLeftSelectedItem);
+			Hl7V2MessageCollection collection = (Hl7V2MessageCollection) myLeftSelectedItem;
+			hl7v2MessageEditorPanel.setMessage(collection);
 			myView.setMainPanel(hl7v2MessageEditorPanel);
+			id = collection.getId();
 		} else if (myLeftSelectedItem instanceof OutboundConnection) {
 			OutboundConnectionPanel panel = new OutboundConnectionPanel(this);
 			panel.setController(this);
-			panel.setConnection((OutboundConnection) myLeftSelectedItem);
+			OutboundConnection connection = (OutboundConnection) myLeftSelectedItem;
+			panel.setConnection(connection);
+			id = connection.getId();
 			myView.setMainPanel(panel);
 		} else if (myLeftSelectedItem instanceof InboundConnection) {
 			InboundConnectionPanel panel = new InboundConnectionPanel(this);
-			panel.setConnection((InboundConnection) myLeftSelectedItem);
+			InboundConnection connection = (InboundConnection) myLeftSelectedItem;
+			panel.setConnection(connection);
 			myView.setMainPanel(panel);
+			id = connection.getId();
 		} else if (myLeftSelectedItem == myNothingSelectedMarker) {
 			myView.setMainPanel(new NothingSelectedPanel(this));
+		}
+
+		if (id != null) {
+			Prefs.setMostRecentlySelectedItemId(id);
 		}
 	}
 
@@ -804,14 +819,26 @@ public class Controller {
 			myExecutor.execute(next);
 		}
 		myQueuedTasks = null;
-		
+
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
 
-		if (myMessagesList.getMessages().size() > 0) {
-			setLeftSelectedItem(myMessagesList.getMessages().get(0));
-		} else {
-			setLeftSelectedItem(myNothingSelectedMarker);
+		String leftItemId = Prefs.getMostRecentlySelectedItemId();
+		if (isNotBlank(leftItemId)) {
+			Object leftItem = myMessagesList.getWithId(leftItemId);
+			leftItem = (leftItem != null) ? leftItem : myOutboundConnectionList.getWithId(leftItemId);
+			leftItem = (leftItem != null) ? leftItem : myInboundConnectionList.getWithId(leftItemId);
+			if (leftItem != null) {
+				setLeftSelectedItem(leftItem);
+			}
+		}
+
+		if (getLeftSelectedItem() == null) {
+			if (myMessagesList.getMessages().size() > 0) {
+				setLeftSelectedItem(myMessagesList.getMessages().get(0));
+			} else {
+				setLeftSelectedItem(myNothingSelectedMarker);
+			}
 		}
 
 		new VersionChecker().start();
@@ -979,6 +1006,7 @@ public class Controller {
 	}
 
 	private LinkedList<Runnable> myQueuedTasks = new LinkedList<Runnable>();
+
 	public void invokeInBackground(Runnable theRunnable) {
 		if (myExecutor != null) {
 			myExecutor.execute(theRunnable);
