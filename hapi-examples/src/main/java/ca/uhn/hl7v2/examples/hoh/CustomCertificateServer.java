@@ -1,7 +1,5 @@
 package ca.uhn.hl7v2.examples.hoh;
 
-import java.net.ServerSocket;
-
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.security.SslSelectChannelConnector;
 
@@ -9,6 +7,7 @@ import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.HapiSocketTlsFactoryWrapper;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
@@ -28,10 +27,15 @@ CustomCertificateTlsSocketFactory serverSocketFactory = new CustomCertificateTls
 serverSocketFactory.setKeystoreFilename("/path/to/keystore/keystore.jks");
 serverSocketFactory.setKeystorePassphrase("changeit");
 
-ServerSocket serverSocket = serverSocketFactory.createServerSocket();
+// The socket factory needs to be wrapped for use in HAPI
+HapiSocketTlsFactoryWrapper hapiSocketFactory = new HapiSocketTlsFactoryWrapper(serverSocketFactory);
+
+// Create an HoH LLP instance
 LowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.SERVER);
+
+// Start a server listening on port 443 with a pipe parseer
 Parser parser = PipeParser.getInstanceWithNoValidation();
-SimpleServer server = new SimpleServer(serverSocket, 443, llp, parser);
+SimpleServer server = new SimpleServer(hapiSocketFactory, 443, llp, parser);
 
 // ...Register applications...
 
