@@ -42,6 +42,7 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
  * <p>
@@ -82,7 +83,8 @@ public class SimpleServer extends HL7Service {
 	private boolean tls;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
-	private ServerSocket ss;
+
+	private SocketFactory socketFactory;
 
 	/**
 	 * Creates a new instance of SimpleServer that listens on the given port,
@@ -135,13 +137,9 @@ public class SimpleServer extends HL7Service {
 	 * @since 2.1
 	 * @throws IllegalStateException If serverSocket is already bound
 	 */
-	public SimpleServer(ServerSocket serverSocket, int port, LowerLayerProtocol llp, Parser parser) {
+	public SimpleServer(SocketFactory socketFactory, int port, LowerLayerProtocol llp, Parser parser) {
 		this(port, llp, parser, false);
-		this.ss = serverSocket;
-		
-		if (serverSocket.isBound()) {
-			throw new IllegalStateException("ServerSocket must not already be bound");
-		}
+		this.socketFactory = socketFactory;
 	}
 
 	/**
@@ -154,11 +152,7 @@ public class SimpleServer extends HL7Service {
 		try {
 			super.afterStartup();
 			log.info("Starting SimpleServer running on port {}", port);
-			if (ss != null) {
-				acceptor = new AcceptorThread(ss, port, getExecutorService(), queue);
-			} else {
-				acceptor = new AcceptorThread(port, tls, getExecutorService(), queue);
-			}
+			acceptor = new AcceptorThread(port, tls, getExecutorService(), queue, this.socketFactory);
 			acceptor.start();
 		} catch (Exception e) {
 			log.error("Failed starting SimpleServer on port", port);
