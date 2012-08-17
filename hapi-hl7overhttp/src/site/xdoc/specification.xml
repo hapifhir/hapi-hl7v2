@@ -73,7 +73,7 @@
 					which application developers may use as a reference in order to 
 					build interoperable software. 
 				</p>
-				<img src="images/HoH_Trace_Normal.png"/>
+				<img src="images/HoH_Trace_Normal.png" alt="Normal trace"/>
 			
 			</subsection>
 			
@@ -202,26 +202,26 @@
 					The <b>request message</b> and the <b>response message</b> SHALL include a
 					<code>Content-Type</code> header, which indicates the type of data being 
 					transferred. The following MIME types apply:
-					<ul>
-						<li>
-							If the message is an ER7 (vertical bar) encoded message, the
-							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
-						</li>
-						<li>
-							If the message is an XML encoded message, the
-							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
-						</li>
-						<li>
-							If the <b>response message</b> content is not an HL7 message
-							(for instance because the server is malfunctioning and returning a 500 status or the URI being 
-							addressed is unknown and the server is returning a 404 status),
-							the content MAY be another type, such as<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
-						</li>
-					</ul>
 				</p>
+				<ul>
+					<li>
+						If the message is an ER7 (vertical bar) encoded message, the
+						content type SHALL be:<br/>
+						<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
+					</li>
+					<li>
+						If the message is an XML encoded message, the
+						content type SHALL be:<br/>
+						<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
+					</li>
+					<li>
+						If the <b>response message</b> content is not an HL7 message
+						(for instance because the server is malfunctioning and returning a 500 status or the URI being 
+						addressed is unknown and the server is returning a 404 status),
+						the content MAY be another type, such as<br/>
+						<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
+					</li>
+				</ul>
 				
 				<h4>Character Set</h4>
 				
@@ -386,6 +386,25 @@
 					not explicitly referenced in this document is supported by a trading partner.
 				</p>
 			
+			</subsection>
+			
+			<subsection name="1.7 HL7 Query/Response Mode">
+				
+				<p>
+					HL7 defines a number of messages which are designed to be sent to a receiving system
+					in a query/response mode, where the <b>receiving system</b> receives the query message
+					and responds with a message containing data which fulfills the query.
+				</p>
+				
+				<p>
+					When a <b>receiving system</b> responds to a query, a normal <code>HTTP 200 OK</code>
+					response code MUST be used in all cases where the application response does not indicate a 
+					system error condition. In other words, if a query is successfully processed but does not 
+					return any data, the transport should still indicate that the response was successful
+					unless an application level error (e.g. MSA-1 = 'AE') has been generated.
+				</p>
+				<img src="images/HoH_Trace_Query.png" alt="Query message trace"/>
+				
 			</subsection>
 			
 		</section>

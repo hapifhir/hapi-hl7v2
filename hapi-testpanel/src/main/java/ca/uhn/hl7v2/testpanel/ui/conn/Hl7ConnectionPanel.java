@@ -1196,7 +1196,9 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 			myConnection.setDetectCharSetInMessage(true);
 		} else {
 			myConnection.setDetectCharSetInMessage(false);
-			myConnection.setCharSet((String) myCharsetCombo.getSelectedItem());
+			String charSet = (String) myCharsetCombo.getSelectedItem();
+			myConnection.setCharSet(charSet);
+			Prefs.setMostRecentConnectionCharset(charSet)
 		}
 	}
 
