@@ -32,6 +32,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
@@ -255,10 +256,26 @@ public class GenericParser extends Parser {
      *     is not supported by this parser.
      */
     protected Message doParse(String message, String version) throws HL7Exception, EncodingNotSupportedException {
-        return getAppropriateParser(message).doParse(message, version);
+        Parser parser = getAppropriateParser(message);
+		Message retVal = parser.doParse(message, version);
+		return retVal;
     }
 
+    
+    
     /**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Message parse(String theMessage) throws HL7Exception, EncodingNotSupportedException {
+		Message retVal = super.parse(theMessage);
+		Parser parser = getAppropriateParser(theMessage);
+		retVal.setParser(parser);
+		return retVal;
+	}
+
+
+	/**
      * Formats a Message object into an HL7 message string using this parser's
      * default encoding.
      * @throws HL7Exception if the data fields in the message do not permit encoding
@@ -326,5 +343,16 @@ public class GenericParser extends Parser {
 		System.out.println(msg.getClass().getName());
 			
 	}
+
+
+    /**
+     * Convenience factory method which returns an instance that has a 
+     * {@link NoValidation NoValidation validation context}. 
+     */
+    public static GenericParser getInstanceWithNoValidation() {
+        GenericParser retVal = new GenericParser();
+        retVal.setValidationContext(ValidationContextFactory.noValidation());
+        return retVal;
+    }
 
 }
