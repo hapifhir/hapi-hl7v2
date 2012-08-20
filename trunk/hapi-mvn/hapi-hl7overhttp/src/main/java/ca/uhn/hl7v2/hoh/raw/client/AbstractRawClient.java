@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import org.apache.commons.lang.StringUtils;
+import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -27,6 +27,12 @@ import ca.uhn.hl7v2.hoh.sockets.ISocketFactory;
 import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
 
 public abstract class AbstractRawClient {
+	
+	/**
+	 * Socket so_timeout value for newly created sockets
+	 */
+	static final int SO_TIMEOUT = 500;
+
 	/**
 	 * The default charset encoding (UTF-8)
 	 */
@@ -72,10 +78,10 @@ public abstract class AbstractRawClient {
 		myPort = thePort;
 		myUri = theUri;
 
-		if (StringUtils.isBlank(theHost)) {
+		if (isBlank(theHost)) {
 			throw new IllegalArgumentException("Host can not be blank/null");
 		}
-		if (StringUtils.isBlank(theUri)) {
+		if (isBlank(theUri)) {
 			myUri = "/";
 		}
 		if (!theUri.startsWith("/") || theUri.contains(" ")) {
@@ -111,7 +117,7 @@ public abstract class AbstractRawClient {
 
 		Socket socket = mySocketFactory.createClientSocket();
 		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
-		socket.setSoTimeout(500);
+		socket.setSoTimeout(SO_TIMEOUT);
 		ourLog.trace("Connection established to {}:{}", myHost, myPort);
 		myOutputStream = new BufferedOutputStream(socket.getOutputStream());
 		myInputStream = new BufferedInputStream(socket.getInputStream());
@@ -145,6 +151,7 @@ public abstract class AbstractRawClient {
 		try {
 			return doSendAndReceiveInternal(theMessageToSend, socket);
 		} catch (DecodeException e) {
+			ourLog.debug("Decode exception, going to close socket", e);
 			closeSocket(socket);
 			throw e;
 		} catch (IOException e) {
@@ -186,6 +193,7 @@ public abstract class AbstractRawClient {
 			try {
 				Hl7OverHttpResponseDecoder d = new Hl7OverHttpResponseDecoder();
 				d.setSigner(mySigner);
+				d.setReadTimeout(myResponseTimeout);
 				d.readHeadersAndContentsFromInputStreamAndDecode(myInputStream);
 
 				response = new RawReceivable(d.getMessage());

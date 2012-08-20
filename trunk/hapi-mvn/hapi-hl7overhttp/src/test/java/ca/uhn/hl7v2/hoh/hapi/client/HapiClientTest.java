@@ -2,25 +2,16 @@ package ca.uhn.hl7v2.hoh.hapi.client;
 
 import static org.junit.Assert.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
 import ca.uhn.hl7v2.hoh.hapi.api.MessageSendable;
-import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.llp.ServerSocketThreadForTesting;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
-import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A05;
 import ca.uhn.hl7v2.parser.PipeParser;

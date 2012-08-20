@@ -87,7 +87,6 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 	private class Receiver extends Thread {
 
-		private Throwable myException;
 		private ISocketFactory myFactory;
 		private ServerSocket myServer;
 		private String myString;
@@ -129,7 +128,7 @@ public class CustomCertificateTlsSocketFactoryTest {
 				myString = b.toString();
 			} catch (Throwable e) {
 				ourLog.error("Failed", e);
-				myException = e;
+				fail(e.getMessage());
 			} finally {
 				if (myServer != null) {
 					try {

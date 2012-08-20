@@ -110,20 +110,15 @@ public class KeystoreUtils {
 		return foundPublicKey;
 	}
 
-	public static boolean validateKeyForSignatureSigning(KeyStore theKeystore, String theKey, String theKeyPassword) {
-		if (theKeystore == null) {
-			throw new NullPointerException("Keystore can not be null");
-		}
-		if (theKey == null) {
-			throw new NullPointerException("Key can not be null");
-		}
-		if (theKeyPassword == null) {
-			throw new NullPointerException("Key password can not be null");
-		}
 
+	public static boolean validateKeyForSignatureSigning(KeyStore theKeystore, String theKeyAlias, String theKeyPassword) {
+		Validate.notNull(theKeystore, "Keystore");
+		Validate.notBlank(theKeyAlias, "Key Alias");
+		Validate.notNull(theKeyPassword, "Key Password");
+		
 		Key key;
 		try {
-			key = theKeystore.getKey(theKey, theKeyPassword.toCharArray());
+			key = theKeystore.getKey(theKeyAlias, theKeyPassword.toCharArray());
 		} catch (UnrecoverableKeyException e) {
 			ourLog.debug("Failed to recover key", e);
 			return false;
@@ -134,7 +129,7 @@ public class KeystoreUtils {
 			ourLog.debug("Failed to recover key", e);
 			return false;
 		}
-
+		
 		if (key == null) {
 			ourLog.debug("Key is null");
 			return false;
@@ -142,24 +137,21 @@ public class KeystoreUtils {
 			ourLog.debug("Key is of type: {}", key.getClass());
 			return false;
 		}
-
+		
 		return true;
 	}
 
-	public static boolean canRecoverKey(KeyStore theKeystore, String theKey, String theKeyPassword) {
-		if (theKeystore == null) {
-			throw new NullPointerException("Keystore can not be null");
-		}
-		if (theKey == null) {
-			throw new NullPointerException("Key can not be null");
-		}
-		if (theKeyPassword == null) {
-			throw new NullPointerException("Key password can not be null");
-		}
-		
-		Key key;
+	/**
+	 * Returns <code>true</code> if the key can be recovered using the given password
+	 */
+	public static boolean canRecoverKey(KeyStore theKeystore, String theKeyAlias, String theKeyPassword) {
+		Validate.notNull(theKeystore, "Keystore");
+		Validate.notBlank(theKeyAlias, "Key Alias");
+		Validate.notNull(theKeyPassword, "Key Password");
+
 		try {
-			key = theKeystore.getKey(theKey, theKeyPassword.toCharArray());
+			Key key = theKeystore.getKey(theKeyAlias, theKeyPassword.toCharArray());
+			return key != null;
 		} catch (UnrecoverableKeyException e) {
 			ourLog.debug("Failed to recover key", e);
 			return false;
@@ -170,11 +162,7 @@ public class KeystoreUtils {
 			ourLog.debug("Failed to recover key", e);
 			return false;
 		}
-
-		if (key != null) {
-			return true;
-		}
-		return false;
+		
 	}
 
 }

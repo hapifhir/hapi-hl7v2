@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +9,11 @@ import ca.uhn.hl7v2.hoh.api.DecodeException;
 
 public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 
+	private String myActionLine;
+
 	@Override
-	protected void readActionLine(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException {
-		if (getResponseStatus() == null) {
+	protected String readActionLineAndDecode(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException {
+		if (myActionLine == null) {
 			String firstLine = readFirstLine(theInputStream);
 			if (firstLine == null || isBlank(firstLine)) {
 				throw new NoMessageReceivedException();
@@ -35,7 +37,10 @@ public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 			}
 
 			setResponseName(statusPart.substring(spaceIdx).trim());
+			myActionLine = firstLine;
 		}
+		
+		return myActionLine;
 	}
 
 	@Override

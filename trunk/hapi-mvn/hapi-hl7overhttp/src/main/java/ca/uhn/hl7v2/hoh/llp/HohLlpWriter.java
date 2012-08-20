@@ -18,6 +18,7 @@ class HohLlpWriter implements HL7Writer {
 	private OutputStream myOutputStream;
 	private Charset myPreferredCharset;
 	private Hl7OverHttpLowerLayerProtocol myProtocol;
+	private Charset myCharsetForNextMessage;
 
 	/**
 	 * Constructor
@@ -80,7 +81,10 @@ class HohLlpWriter implements HL7Writer {
 		}
 		
 		e.setMessage(theRawMessage);
-		if (getPreferredCharset() != null) {
+		if (myCharsetForNextMessage != null) {
+			e.setCharset(myCharsetForNextMessage);
+			myCharsetForNextMessage = null;
+		} else if (getPreferredCharset() != null) {
 			e.setCharset(getPreferredCharset());
 		}
 
@@ -94,6 +98,10 @@ class HohLlpWriter implements HL7Writer {
 
 		dos.flush();
 
+	}
+
+	void setCharsetForNextMessage(Charset theCharset) {
+		myCharsetForNextMessage = theCharset;
 	}
 
 }

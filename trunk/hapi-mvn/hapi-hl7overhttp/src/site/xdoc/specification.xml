@@ -202,26 +202,40 @@
 					The <b>request message</b> and the <b>response message</b> SHALL include a
 					<code>Content-Type</code> header, which indicates the type of data being 
 					transferred. The following MIME types apply:
+					<ul>
+						<li>
+							If the message is an ER7 (vertical bar) encoded message, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
+						</li>
+						<li>
+							If the message is an XML encoded message, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
+						</li>
+						<li>
+							If the <b>response message</b> content is not an HL7 message
+							(for instance because the server is malfunctioning and returning a 500 status or the URI being 
+							addressed is unknown and the server is returning a 404 status),
+							the content MAY be another type, such as<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
+						</li>
+					</ul>
 				</p>
-				<ul>
-					<li>
-						If the message is an ER7 (vertical bar) encoded message, the
-						content type SHALL be:<br/>
-						<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
-					</li>
-					<li>
-						If the message is an XML encoded message, the
-						content type SHALL be:<br/>
-						<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
-					</li>
-					<li>
-						If the <b>response message</b> content is not an HL7 message
-						(for instance because the server is malfunctioning and returning a 500 status or the URI being 
-						addressed is unknown and the server is returning a 404 status),
-						the content MAY be another type, such as<br/>
-						<code>&nbsp;&nbsp;&nbsp;&nbsp;text/html</code> or <code>text/plain</code>
-					</li>
-				</ul>
+				<p>
+				    Unless explicitly configured otherwise, <b>Response messages</b> being 
+				    transmitted by a server MUST use the same
+				    content type as the corresponding <b>request message</b>, if the message
+				    payload is an HL7 v2 message. In other words, if a request message uses XML
+				    encoding instead of ER7, the corresponding response message MUST also
+				    use XML encoding unless the server has been configured to do otherwise.
+				</p>
+				<p>
+				    <b>Receiving applications</b> SHOULD attempt to use the same character set
+				    in <b>response messages</b> that was received in the corresponding 
+				    <b>request message</b>. 
+				</p>
+				<!-- TODO: allow/mention accept-encoding? -->
 				
 				<h4>Character Set</h4>
 				

@@ -1,12 +1,11 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import ca.uhn.hl7v2.hoh.sign.ISigner;
+import ca.uhn.hl7v2.hoh.util.StringUtils;
 import ca.uhn.hl7v2.hoh.util.VersionLogger;
 
 abstract class AbstractHl7OverHttp {
@@ -29,7 +28,6 @@ abstract class AbstractHl7OverHttp {
 	private ISigner mySigner;
 	private String myUri;
 	private boolean myUsed;
-
 	private String myUsername;
 
 	/**
@@ -40,7 +38,7 @@ abstract class AbstractHl7OverHttp {
 	}
 
 	/**
-	 * @return the charset
+	 * Returns the charset associated with this message. Will not return <code>null</code>.
 	 */
 	public Charset getCharset() {
 		return myCharset;
@@ -172,7 +170,7 @@ abstract class AbstractHl7OverHttp {
 	 *            The authorization username
 	 */
 	public void setUsername(String theUsername) {
-		if (isNotBlank(theUsername)) {
+		if (StringUtils.isNotBlank(theUsername)) {
 			if (theUsername.contains(":")) {
 				throw new IllegalArgumentException("Username contains illegal characters");
 			}

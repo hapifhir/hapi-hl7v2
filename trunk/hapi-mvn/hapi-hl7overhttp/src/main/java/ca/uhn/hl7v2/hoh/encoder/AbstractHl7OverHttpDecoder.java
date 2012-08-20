@@ -1,8 +1,5 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
-import static org.apache.commons.lang.StringUtils.*;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +7,6 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +18,7 @@ import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.GZipUtils;
 import ca.uhn.hl7v2.hoh.util.IOUtils;
+import ca.uhn.hl7v2.hoh.util.StringUtils;
 import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 
 public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
@@ -75,40 +72,6 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private void decodeBody() throws DecodeException {
 		byte[] bytes = myBytes;
 
-		if (myTransferEncoding == TransferEncoding.CHUNKED) {
-			ourLog.debug("Decoding message bytes using CHUNKED encoding style");
-			byte[] newBytes = new byte[bytes.length];
-			int nextOffset = 0;
-
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			while (bis.available() > 0) {
-				String nextSize;
-				try {
-					nextSize = readLine(bis);
-				} catch (IOException e) {
-					throw new DecodeException("Failed to decode CHUNKED encoding", e);
-				}
-
-				int nextSizeInt;
-				try {
-					nextSizeInt = Integer.parseInt(nextSize, 16);
-				} catch (NumberFormatException e) {
-					throw new DecodeException("Failed to decode CHUNKED encoding", e);
-				}
-
-				int bytesRead = bis.read(newBytes, nextOffset, nextSizeInt);
-				nextOffset += bytesRead;
-
-				int nextChar;
-				do {
-					nextChar = bis.read();
-				} while (nextChar != -1 && (nextChar == 13 || nextChar == 13));
-
-			}
-
-			bytes = Arrays.copyOfRange(newBytes, 0, nextOffset);
-		}
-
 		if (myGzipCoding) {
 			ourLog.debug("Decoding message contents using GZIP encoding style");
 			try {
@@ -118,11 +81,15 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			}
 		}
 
-		ourLog.debug("Message is {} bytes with charset {}", bytes.length, getCharset().name());
-		setMessage(new String(bytes, getCharset()));
+		Charset charset = getCharset();
+		ourLog.debug("Message is {} bytes with charset {}", bytes.length, charset.name());
+		String messageString = new String(bytes, charset);
+		setMessage(messageString);
 	}
 
 	private void decodeHeaders() throws DecodeException {
+
+		ourLog.trace("Headers are: {}", getHeaders());
 
 		for (Map.Entry<String, String> nextEntry : getHeaders().entrySet()) {
 			String nextHeader = nextEntry.getKey().toLowerCase();
@@ -160,6 +127,9 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 						setCharset(charset);
 					}
 				}
+
+				myContentType = myContentType.trim();
+
 			} else if ("authorization".equals(nextHeader)) {
 				int spaceIndex = nextValue.indexOf(' ');
 				if (spaceIndex == -1) {
@@ -181,7 +151,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					addConformanceProblem("Invalid authorization type. Only basic authorization is supported.");
 				}
 			} else if ("content-coding".equals(nextHeader)) {
-				if (isNotBlank(nextValue)) {
+				if (StringUtils.isNotBlank(nextValue)) {
 					if ("gzip".equals(nextValue)) {
 						myGzipCoding = true;
 					} else {
@@ -197,7 +167,13 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	}
 
 	/**
-	 * @return the encodingStyle
+	 * Returns the {@link EncodingStyle} associated with the incoming message,
+	 * or <code>null</code>. This will be set automatically based on the value
+	 * of the <code>Content-Type</code> header, and will be set to
+	 * <code>null</code> if the content type is not provided, or if the content
+	 * type does not correspond to an HL7 type.
+	 * 
+	 * @see {@link EncodingStyle} for a list of appropriate content types
 	 */
 	public EncodingStyle getEncodingStyle() {
 		return myEncodingStyle;
@@ -206,7 +182,12 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private void doReadContentsFromInputStreamAndDecode(InputStream theInputStream) throws DecodeException, AuthorizationFailureException, IOException, SignatureVerificationException {
 		decodeHeaders();
 		authorize();
-		myBytes = readBytes(theInputStream);
+		if (myTransferEncoding == TransferEncoding.CHUNKED) {
+			myBytes = readBytesChunked(theInputStream);
+		} else {
+			myBytes = readBytesNonChunked(theInputStream);
+		}
+
 		decodeBody();
 		
 		if (getContentType() == null) {
@@ -219,8 +200,102 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		verifySignature();
 	}
 
+	private byte[] readBytesChunked(InputStream theInputStream) throws DecodeException, IOException {
+		ourLog.debug("Decoding message bytes using CHUNKED encoding style");
+		byte[] byteBuffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(IOUtils.DEFAULT_BUFFER_SIZE);
+
+		while (true) {
+			String nextSize;
+			try {
+				nextSize = readLine(theInputStream);
+			} catch (IOException e) {
+				throw new DecodeException("Failed to decode CHUNKED encoding", e);
+			}
+
+			if (nextSize.length() == 0) {
+				break;
+			}
+
+			int nextSizeInt;
+			try {
+				nextSizeInt = Integer.parseInt(nextSize, 16);
+			} catch (NumberFormatException e) {
+				throw new DecodeException("Failed to decode CHUNKED encoding", e);
+			}
+
+			ourLog.debug("Next CHUNKED size: {}", nextSizeInt);
+
+			if (nextSizeInt < 0) {
+				throw new DecodeException("Received invalid octet count in chunked transfer encoding: " + nextSize);
+			}
+
+			if (nextSizeInt > 0) {
+				int totalRead = 0;
+				myLastStartedReading = System.currentTimeMillis();
+				do {
+					int nextRead = Math.min(nextSizeInt, byteBuffer.length);
+					int bytesRead = theInputStream.read(byteBuffer, 0, nextRead);
+					if (bytesRead == -1) {
+						throw new DecodeException("Reached EOF while reading in message chunk");
+					}
+					if (bytesRead == 0 && totalRead < nextSizeInt) {
+						pauseDuringTimedOutRead();
+					}
+					totalRead += bytesRead;
+
+					ourLog.debug("Read {} byte chunk", bytesRead);
+					bos.write(byteBuffer, 0, bytesRead);
+
+				} while (totalRead < nextSizeInt);
+			}
+
+			// Try to read a trailing CRLF
+			int nextChar;
+			boolean had13 = false;
+			boolean had10 = false;
+			boolean trailing = false;
+			while (true) {
+				try {
+					nextChar = theInputStream.read();
+				} catch (SocketTimeoutException e) {
+					break;
+				}
+
+				if (nextChar == -1) {
+					break;
+				} else if (nextChar == 13) {
+					if (had13) {
+						/* 
+						 * This is an attempt to be tolerant of people using the wrong
+						 * end of line sequence (it should be CRLF), as is the 
+						 * had10 below 
+						 */
+						trailing = true;
+					}
+					had13 = true;
+					continue;
+				} else if (nextChar == 10) {
+					if (had10) {
+						trailing = true;
+					}
+					continue;
+				} else {
+					break;
+				}
+			}
+			
+			if (trailing) {
+				break;
+			}
+
+		} // while
+
+		return bos.toByteArray();
+	}
+
 	private void verifySignature() throws SignatureVerificationException, DecodeException {
-		if (getSigner() != null && isBlank(mySignature)) {
+		if (getSigner() != null && StringUtils.isBlank(mySignature)) {
 			String mode = (this instanceof Hl7OverHttpRequestDecoder) ? "request" : "response";
 			throw new SignatureVerificationException("No HL7 Signature found in " + mode);
 		}
@@ -261,9 +336,9 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		return myResponseStatus;
 	}
 
-	protected abstract void readActionLine(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException;
+	protected abstract String readActionLineAndDecode(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException;
 
-	private byte[] readBytes(InputStream theInputStream) throws IOException {
+	private byte[] readBytesNonChunked(InputStream theInputStream) throws IOException {
 		int length = myContentLength > 0 ? myContentLength : IOUtils.DEFAULT_BUFFER_SIZE;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 
@@ -372,12 +447,14 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	public void readHeadersAndContentsFromInputStreamAndDecode(InputStream theInputStream) throws IOException, DecodeException, NoMessageReceivedException, SignatureVerificationException {
 		verifyNotUsed();
 
-		readActionLine(theInputStream);
+		String actionLine = readActionLineAndDecode(theInputStream);
+
+		ourLog.debug("Read action line: {}", actionLine);
 
 		if (getHeaders() == null) {
 			setHeaders(new LinkedHashMap<String, String>());
 
-			while (theInputStream.available() > 0) {
+			while (true) {
 				String nextLine = readLine(theInputStream);
 				if (nextLine.length() == 0) {
 					break;
@@ -420,15 +497,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				if (retVal.length() == 0 && theFirstLine) {
 					throw new NoMessageReceivedException();
 				}
-				long elapsed = System.currentTimeMillis() - myLastStartedReading;
-				if (elapsed > myReadTimeout) {
-					throw e;
-				}
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-					// ignore
-				}
+				pauseDuringTimedOutRead();
 				continue;
 			}
 
@@ -451,6 +520,18 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		}
 
 		return WHITESPACE_PATTERN.matcher(retVal.toString()).replaceAll(" ").trim();
+	}
+
+	private void pauseDuringTimedOutRead() throws SocketTimeoutException {
+		long elapsed = System.currentTimeMillis() - myLastStartedReading;
+		if (elapsed > myReadTimeout) {
+			throw new SocketTimeoutException();
+		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// ignore
+		}
 	}
 
 	/**
