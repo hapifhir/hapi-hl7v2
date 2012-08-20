@@ -45,6 +45,8 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.util.XMLUtils;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * <p>A default XMLParser.  This class assigns segment elements (in an XML-encoded message) 
@@ -204,7 +206,7 @@ public class DefaultXMLParser extends XMLParser {
             if (childNames[i].length() != 4) {   
             	parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
             } else {
-            	log.debug("Skipping rep segment: {}", childNames[i]);
+            	log.trace("Skipping rep segment: {}", childNames[i]);
             }
         }
         
@@ -220,7 +222,7 @@ public class DefaultXMLParser extends XMLParser {
             String messageName, String childName, String childIndexName) throws HL7Exception {
         
         List<Element> reps = getChildElementsByTagName(groupElement, makeGroupElementName(messageName, childName));
-        log.debug("# of elements matching {}: {}", 
+        log.trace("# of elements matching {}: {}", 
         		makeGroupElementName(messageName, childName), reps.size());
 
 		if (groupObject.isRepeating(childIndexName)) {
@@ -266,7 +268,7 @@ public class DefaultXMLParser extends XMLParser {
 		else if (theObj instanceof Segment) {
 			parse((Segment) theObj, theElem);
 		}                
-		log.debug("Parsed element: {}", theElem.getNodeName());    	
+		log.trace("Parsed element: {}", theElem.getNodeName());    	
     }
     
     //includes direct children only
@@ -374,5 +376,14 @@ public class DefaultXMLParser extends XMLParser {
         parse(theMessage, doc.getDocumentElement());
 	}
 
+    /**
+     * Convenience factory method which returns an instance that has a 
+     * {@link NoValidation NoValidation validation context}. 
+     */
+    public static DefaultXMLParser getInstanceWithNoValidation() {
+        DefaultXMLParser retVal = new DefaultXMLParser();
+        retVal.setValidationContext(ValidationContextFactory.noValidation());
+        return retVal;
+    }
 
 }

@@ -53,6 +53,14 @@
         				Service classes (such as SimpleServer) now have a startAndWait() method
 						which doesn't return until the service has successfully started
         			</li>
+        			<li>
+        				When GenericParser parses a message, the 
+						<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#getParser()">Parser</a>
+        				instance associated with the message is set appropriately to either the
+        				Pipe Parser or the XML Parser. This means that calls to
+        				generateAck().encode()
+        				will generate a message with the appropriate encoding. 
+        			</li>
         		]]>
         	</action>
         	<action type="fix" dev="James Agnew">
