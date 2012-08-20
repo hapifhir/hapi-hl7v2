@@ -184,7 +184,6 @@ public class ActivityTable extends JPanel implements IDestroyable {
 //		myTable.setCellSelectionEnabled(true);
 //		myTable.setRowSelectionAllowed(true);
 		myTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		myTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		myScrollPane.setViewportView(myTable);
 
 		myEditMenu = new JPopupMenu();

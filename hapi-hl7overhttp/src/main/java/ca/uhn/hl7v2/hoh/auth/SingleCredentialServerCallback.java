@@ -1,8 +1,7 @@
 package ca.uhn.hl7v2.hoh.auth;
 
-import org.apache.commons.lang.StringUtils;
-
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.util.StringUtils;
 
 /**
  * Authorization Callback which validates a single username and password

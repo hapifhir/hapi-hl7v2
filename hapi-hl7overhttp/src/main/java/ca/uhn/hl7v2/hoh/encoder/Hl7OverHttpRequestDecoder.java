@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,7 @@ import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 
 	private IAuthorizationServerCallback myAuthorizationCallback;
+	private String myActionLine;
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Hl7OverHttpRequestDecoder.class);
 
 	protected void authorize() throws AuthorizationFailureException {
@@ -26,8 +27,8 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 	}
 
 	@Override
-	protected void readActionLine(InputStream theInputStream) throws DecodeException, IOException, NoMessageReceivedException {
-		if (getUri() == null) {
+	protected String readActionLineAndDecode(InputStream theInputStream) throws DecodeException, IOException, NoMessageReceivedException {
+		if (myActionLine == null) {
 			String firstLine = readFirstLine(theInputStream);
 			if (firstLine == null || isBlank(firstLine)) {
 				throw new NoMessageReceivedException();
@@ -53,7 +54,10 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 				throw new DecodeException("HTTP request line message is not valid. HTTP version not supported. Request line was: " + firstLine);
 			}
 
+			myActionLine = firstLine;
 		}
+		
+		return myActionLine;
 	}
 
 	/**

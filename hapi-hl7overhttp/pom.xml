@@ -87,6 +87,15 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- 
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.2.1</version>
+			<scope>test</scope>
+		</dependency>
+		 -->
+		 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
@@ -113,7 +122,7 @@
 					<maxmemory>1g</maxmemory>
 					<linksource>true</linksource>
 					<detectLinks>true</detectLinks>
-					<verbose>true</verbose>
+					<verbose>false</verbose>
 					<links>
 						<link>http://docs.oracle.com/javase/6/docs/api/</link>
 						<link>http://hl7api.sourceforge.net/base/apidocs/</link>
@@ -204,13 +213,35 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.2</version>
+						<version>${maven.source.plugin.version}</version>
 						<executions>
 							<execution>
 								<phase>package</phase>
 								<goals>
 									<goal>jar-no-fork</goal>
 								</goals>
+								<configuration>
+								    <attach>true</attach>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2.1</version>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+								    <attach>false</attach>
+									<descriptors>
+										<descriptor>${project.basedir}/src/assembly/hapi-hl7overhttp.xml</descriptor>
+									</descriptors>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

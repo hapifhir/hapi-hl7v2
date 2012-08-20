@@ -5,25 +5,28 @@ import static org.junit.Assert.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
+import ca.uhn.hl7v2.hoh.encoder.EncodingStyle;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.llp.ServerSocketThreadForTesting;
 import ca.uhn.hl7v2.hoh.raw.api.RawSendable;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
+import ca.uhn.hl7v2.parser.DefaultXMLParser;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 public class HohRawClientSimpleTest {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientSimpleTest.class);
-	private static int ourPort;
-	private static Hl7OverHttpLowerLayerProtocol ourLlp;
+	private static int myPort;
+	private static Hl7OverHttpLowerLayerProtocol myLlp;
 	private static SingleCredentialServerCallback ourServerCallback;
-	private static ServerSocketThreadForTesting ourServerSocketThread;
+	private static ServerSocketThreadForTesting myServerSocketThread;
 	
 	@Test
 	public void testSendMessageSimple() throws Exception {
@@ -33,15 +36,74 @@ public class HohRawClientSimpleTest {
 				"EVN||200803051509\r" + // -
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
-		HohRawClientSimple client = new HohRawClientSimple("localhost", ourPort, "/theUri");
+		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
 		
 		ourLog.info("Received response");
 
-		assertEquals(message, ourServerSocketThread.getMessage());
-		assertEquals(ourServerSocketThread.getReply().encode(), response.getMessage());
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
 
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+
+	}
+
+	// TODO: add test with chunked encoding and additional trailing headers
+	
+	/**
+	 * Ensure that if chunked transfer encoding is used, and there is a pause
+	 * in the middle of transmission, the whole message is still read
+	 */
+	@Test
+	public void testSendMessageWithChunkedResponseAndPauseInMiddle() throws Exception {
+
+		myServerSocketThread.setSimulateOneSecondPauseInChunkedEncoding(true);
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
+		client.setResponseTimeout(2000);
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
+		
+		ourLog.info("Received response");
+
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+
+	}
+
+	
+	@Test
+	public void testSendMessageSimpleXml() throws Exception {
+
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+		message = new DefaultXMLParser().encode(PipeParser.getInstanceWithNoValidation().parse(message));
+
+		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
+		
+		ourLog.info("Received response");
+
+		assertEquals(message, myServerSocketThread.getMessage());
+		String responseMessage = response.getMessage();
+		assertTrue(responseMessage, responseMessage.contains("<MSH>"));
+		assertEquals(myServerSocketThread.getReply().encode(), responseMessage);
+
+		assertEquals(EncodingStyle.XML.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.XML, myServerSocketThread.getEncoding());
 	}
 
 	@Test
@@ -69,23 +131,23 @@ public class HohRawClientSimpleTest {
 
 	}
 	
-	@AfterClass
-	public static void afterClass() throws InterruptedException {
+	@After
+	public void after() throws InterruptedException {
 		ourLog.info("Marking done as true");
-		ourServerSocketThread.done();
+		myServerSocketThread.done();
 	}
 
-	@BeforeClass
-	public static void beforeClass() throws InterruptedException {
-		ourPort = RandomServerPortProvider.findFreePort();
+	@Before
+	public void before() throws InterruptedException {
+		myPort = RandomServerPortProvider.findFreePort();
 
-		ourLlp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		ourLlp.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+		myLlp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		myLlp.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		ourServerCallback = new SingleCredentialServerCallback("hello", "hapiworld");
 
-		ourServerSocketThread = new ServerSocketThreadForTesting(ourPort, ourServerCallback);
-		ourServerSocketThread.start();
-		ourServerSocketThread.getLatch().await();
+		myServerSocketThread = new ServerSocketThreadForTesting(myPort, ourServerCallback);
+		myServerSocketThread.start();
+		myServerSocketThread.getLatch().await();
 	}
 	
 }

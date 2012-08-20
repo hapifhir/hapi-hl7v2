@@ -63,6 +63,8 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
+import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
+import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
@@ -86,6 +88,15 @@ public class InboundConnection extends AbstractConnection {
 
 	@XmlAttribute(name = "validateIncomingUsingProfileGroupId")
 	private String myValidateIncomingUsingProfileGroupId;
+
+	private void addActivityInfoInSwingThread(final String msg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				addActivity(new ActivityInfo(new Date(), msg));
+			}
+		});
+	}
 
 	@Override
 	public String exportConfigToXml() {
@@ -244,7 +255,9 @@ public class InboundConnection extends AbstractConnection {
 		}
 
 		public void connectionDiscarded(Connection theC) {
-			ourLog.info("Connection lost from " + theC.getRemoteAddress().toString());
+			String msg = "Connection lost from " + theC.getRemoteAddress().toString();
+			ourLog.info(msg);
+			addActivityInfoInSwingThread(msg);
 
 			ArrayList<Connection> oldConnections = new ArrayList<Connection>(myConnections);
 			myConnections.remove(theC);
@@ -253,7 +266,9 @@ public class InboundConnection extends AbstractConnection {
 		}
 
 		public void connectionReceived(Connection theC) {
-			ourLog.info("New connection received from " + theC.getRemoteAddress().toString());
+			String msg = "New connection received from " + theC.getRemoteAddress().toString();
+			ourLog.info(msg);
+			addActivityInfoInSwingThread(msg);
 
 			ArrayList<Connection> oldConnections = new ArrayList<Connection>(myConnections);
 			myConnections.add(theC);
@@ -318,13 +333,20 @@ public class InboundConnection extends AbstractConnection {
 
 	}
 
+
 	private class MonitorThread extends Thread {
 
 		@Override
 		public void run() {
 
 			boolean done = false;
+			boolean notifiedOfStart = false;
 			while (myMonitorThread == this && !done) {
+
+				if (!notifiedOfStart && myService.isRunning()) {
+					addActivityInfoInSwingThread("Interface started");
+					notifiedOfStart = true;
+				}
 
 				final Throwable exception = myService.getServiceExitedWithException();
 				if (exception != null) {
@@ -333,6 +355,7 @@ public class InboundConnection extends AbstractConnection {
 					SwingUtilities.invokeLater(new Runnable() {
 
 						public void run() {
+							addActivity(new ActivityInfoError(new Date(), "Interface stopped with error: " + exception.getMessage()));
 							InboundConnection.this.stop();
 
 							if (exception instanceof BindException) {
@@ -355,5 +378,4 @@ public class InboundConnection extends AbstractConnection {
 		}
 
 	}
-
 }

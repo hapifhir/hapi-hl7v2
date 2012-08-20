@@ -332,11 +332,12 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			setText("<html>" + msg.getRawMessage().replace("\r", "<br>") + "</html>");
 		}
 
-		setBackground(Color.white);
+//		setBackground(Color.white);
 		setForeground(Color.black);
 		setFont(myFixedWidthFont);
 
 		updatePreferredHeight(theTable, theRow);
+		
 	}
 
 	private void updatePreferredHeight(final JTable theTable, final int theRow) {
@@ -345,6 +346,8 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					theTable.setRowHeight(theRow, newHeight);
+					ourLog.info("Column 3 width: {}", theTable.getColumnModel().getColumn(2).getWidth());
+					theTable.getColumnModel().getColumn(2).setWidth(5000);
 				}
 			});
 		}

@@ -1,10 +1,17 @@
 package ca.uhn.hl7v2.hoh.raw.server;
 
+import static org.junit.Assert.*;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Map.Entry;
 
-import junit.framework.Assert;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,32 +23,32 @@ import org.mortbay.jetty.servlet.ServletHolder;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.api.IMessageHandler;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.api.IResponseSendable;
 import ca.uhn.hl7v2.hoh.api.MessageProcessingException;
+import ca.uhn.hl7v2.hoh.encoder.EncodingStyle;
+import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestEncoder;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.raw.api.RawSendable;
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
-import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.hoh.util.StringUtils;
 import ca.uhn.hl7v2.model.v25.message.ADT_A05;
+import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.parser.GenericParser;
 
 public class HohRawServletTest implements IAuthorizationServerCallback, IMessageHandler<String> {
 
 	private static DefaultHapiContext ourHapiContext;
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawServletTest.class);
-	private static ConnectionHub ouronnectionHub;
 	private String myExpectedPassword;
 	private String myExpectedUri;
 	private String myExpectedUsername;
-	private String myLastMessage;
-	private String myLastResponse;
+	private String myMessage;
+	private String myResponse;
 	private int myPort;
 	private Server myServer;
 
@@ -85,14 +92,17 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 			Thread.sleep(100);
 		}
 
+		myResponse = null;
 	}
 
 	public IResponseSendable<String> messageReceived(IReceivable<String> theMessage) throws MessageProcessingException {
 		
-		myLastMessage = theMessage.getMessage();
+		myMessage = theMessage.getMessage();
 		try {
-			myLastResponse = PipeParser.getInstanceWithNoValidation().parse(myLastMessage).generateACK().encode();
-			return new RawSendable(myLastResponse);
+			if (myResponse == null) {
+				myResponse = GenericParser.getInstanceWithNoValidation().parse(myMessage).generateACK().encode();
+			}
+			return new RawSendable(myResponse);
 		} catch (EncodingNotSupportedException e) {
 			throw new MessageProcessingException(e);
 		} catch (HL7Exception e) {
@@ -105,7 +115,6 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 	
 	@Test
 	public void testServlet() throws Exception {
-
 		
 		String message = // -
 		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
@@ -115,18 +124,271 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		msg.parse(message);
 		
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		Connection conn = ouronnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp);
-		Message response = conn.getInitiator().sendAndReceive(msg);
+		String charsetName = "ISO-8859-2";
+		llp.setPreferredCharset(Charset.forName(charsetName));
 		
-		String responseStr = response.encode();
-		ourLog.info("Got response: {}", responseStr);
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName(charsetName));
+		enc.setUsername("hello");
+		enc.setPassword("world");
+		enc.setMessage(message);
+		enc.encode();
+
+		String urlString = "http://localhost:" + myPort + "/";
+		ourLog.info("URL: {}", urlString);
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
 		
-		Assert.assertEquals(myLastResponse, responseStr);
-		Assert.assertEquals(message, myLastMessage);
+		
+		for (Entry<String, String> next : enc.getHeaders().entrySet()) {
+			conn.setRequestProperty(next.getKey(), next.getValue());
+		}
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(enc.getData());
+		wr.flush();
+
+		// Get Response
+		InputStream is;
+		try {
+			is = conn.getInputStream();
+		} catch (IOException e) {
+			if (conn.getResponseCode() == 400 || conn.getResponseCode() == 500) {
+				is = conn.getErrorStream();
+			} else {
+				throw e;
+			}
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		String responseString = response.toString();
+		ourLog.info("Response:\n{}", responseString);
+
+		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
+		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals(200, conn.getResponseCode());
+		assertEquals(message, myMessage);
+		assertEquals(myResponse, responseString);
+		
+	}
+	
+	
+	@Test
+	public void testServletAR() throws Exception {
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+		ADT_A05 msg = new ADT_A05();
+		msg.parse(message);
+		
+		myResponse = msg.generateACK("AR", new HL7Exception("ewrerwe")).encode();
+		
+		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		String charsetName = "ISO-8859-2";
+		llp.setPreferredCharset(Charset.forName(charsetName));
+		
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName(charsetName));
+		enc.setUsername("hello");
+		enc.setPassword("world");
+		enc.setMessage(message);
+		enc.encode();
+
+		String urlString = "http://localhost:" + myPort + "/";
+		ourLog.info("URL: {}", urlString);
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		for (Entry<String, String> next : enc.getHeaders().entrySet()) {
+			conn.setRequestProperty(next.getKey(), next.getValue());
+		}
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(enc.getData());
+		wr.flush();
+
+		// Get Response
+		InputStream is;
+		try {
+			is = conn.getInputStream();
+		} catch (IOException e) {
+			if (conn.getResponseCode() == 400 || conn.getResponseCode() == 500) {
+				is = conn.getErrorStream();
+			} else {
+				throw e;
+			}
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		String responseString = response.toString();
+		ourLog.info("Response:\n{}", responseString);
+
+		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
+		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals(400, conn.getResponseCode());
+		assertEquals(message, myMessage);
+		assertEquals(myResponse, responseString);
 		
 	}
 
-	// TODO: add a test to make sure that responses try to use the same charset as requests
+	@Test
+	public void testServletAE() throws Exception {
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+		ADT_A05 msg = new ADT_A05();
+		msg.parse(message);
+		
+		myResponse = msg.generateACK("AE", new HL7Exception("ewrerwe")).encode();
+		
+		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		String charsetName = "ISO-8859-2";
+		llp.setPreferredCharset(Charset.forName(charsetName));
+		
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName(charsetName));
+		enc.setUsername("hello");
+		enc.setPassword("world");
+		enc.setMessage(message);
+		enc.encode();
+
+		String urlString = "http://localhost:" + myPort + "/";
+		ourLog.info("URL: {}", urlString);
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		for (Entry<String, String> next : enc.getHeaders().entrySet()) {
+			conn.setRequestProperty(next.getKey(), next.getValue());
+		}
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(enc.getData());
+		wr.flush();
+
+		// Get Response
+		InputStream is;
+		try {
+			is = conn.getInputStream();
+		} catch (IOException e) {
+			if (conn.getResponseCode() == 400 || conn.getResponseCode() == 500) {
+				is = conn.getErrorStream();
+			} else {
+				throw e;
+			}
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		String responseString = response.toString();
+		ourLog.info("Response:\n{}", responseString);
+
+		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
+		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals(500, conn.getResponseCode());
+		assertEquals(message, myMessage);
+		assertEquals(myResponse, responseString);
+		
+	}
+
+	@Test
+	public void testServletSimpleXml() throws Exception {
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+		ADT_A05 msg = new ADT_A05();
+		msg.parse(message);
+		
+		message = DefaultXMLParser.getInstanceWithNoValidation().encode(msg);
+		
+		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		String charsetName = "ISO-8859-2";
+		llp.setPreferredCharset(Charset.forName(charsetName));
+		
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName(charsetName));
+		enc.setUsername("hello");
+		enc.setPassword("world");
+		enc.setMessage(message);
+		enc.encode();
+
+		String urlString = "http://localhost:" + myPort + "/";
+		ourLog.info("URL: {}", urlString);
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		for (Entry<String, String> next : enc.getHeaders().entrySet()) {
+			conn.setRequestProperty(next.getKey(), next.getValue());
+		}
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(enc.getData());
+		wr.flush();
+
+		// Get Response
+		InputStream is;
+		try {
+			is = conn.getInputStream();
+		} catch (IOException e) {
+			if (conn.getResponseCode() == 400 || conn.getResponseCode() == 500) {
+				is = conn.getErrorStream();
+			} else {
+				throw e;
+			}
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		String responseString = response.toString();
+		ourLog.info("Response:\n{}", responseString);
+
+		assertEquals(EncodingStyle.XML.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
+		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals(200, conn.getResponseCode());
+		assertEquals(message, myMessage);
+		assertEquals(myResponse.replaceAll("(\\r|\\n)+", " "), responseString.replaceAll("(\\r|\\n)+", " "));
+		
+	}
 	
 	@AfterClass
 	public static void afterClass() throws InterruptedException {
@@ -139,7 +401,6 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		System.setProperty("DEBUG", "true");
 		
 		ourHapiContext = new DefaultHapiContext();
-		ouronnectionHub = ourHapiContext.getConnectionHub();
 	}
 
 }

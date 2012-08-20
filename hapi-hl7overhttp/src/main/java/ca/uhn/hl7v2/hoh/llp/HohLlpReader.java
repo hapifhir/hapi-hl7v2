@@ -2,6 +2,7 @@ package ca.uhn.hl7v2.hoh.llp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
@@ -68,8 +69,11 @@ class HohLlpReader implements HL7Reader {
 		} catch (SignatureVerificationException e) {
 			throw new LLPException("Failed to verify message signature", e);
 		}
-
+		
 		if (myProtocol.getRole() == ServerRoleEnum.SERVER) {
+			Charset charset = decoder.getCharset();
+			myWriter.setCharsetForNextMessage(charset);
+			
 			IAuthorizationServerCallback authorizationCallback = myProtocol.getAuthorizationServerCallback();
 			if (authorizationCallback != null) {
 				boolean auth = authorizationCallback.authorize(decoder.getUri(), decoder.getUsername(), decoder.getPassword());

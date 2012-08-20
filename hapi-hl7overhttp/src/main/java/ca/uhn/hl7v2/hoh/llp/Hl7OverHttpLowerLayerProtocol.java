@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.llp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
@@ -36,6 +37,7 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 	private ServerRoleEnum myRole;
 	private ISigner mySigner;
 	private String myUriPath = "/";
+	private Charset myPreferredCharset;
 	
 	public Hl7OverHttpLowerLayerProtocol(ServerRoleEnum theRole) {
 		myRole = theRole;
@@ -113,6 +115,7 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 		}
 		prepareReadersIfNeeded();
 		HohLlpWriter retVal = myNextWriter;
+		retVal.setPreferredCharset(myPreferredCharset);
 		try {
 			retVal.setOutputStream(theArg0);
 		} catch (IOException e) {
@@ -169,6 +172,18 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 	 */
 	public void setUriPath(String theUriPath) {
 		myUriPath = theUriPath;
+	}
+	
+	/**
+	 * Sets the charset which will be used for any initiated outgoing messages. What this
+	 * means is that if a message is sent as a response (e.g. an ACK) using this LLP,
+	 * the LLP will ignore the charset provided by this method and will attempt to use
+	 * the charset used in the original incoming message. On the other hand, if a new
+	 * outgoing message is transmitted using this LLP (i.e. not an ACK), the charset
+	 * specified here will be used. 
+	 */
+	public void setPreferredCharset(Charset thePreferredCharset) {
+		myPreferredCharset = thePreferredCharset;
 	}
 
 }

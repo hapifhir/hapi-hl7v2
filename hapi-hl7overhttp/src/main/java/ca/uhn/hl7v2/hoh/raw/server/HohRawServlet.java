@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.hoh.raw.server;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 
@@ -82,6 +83,9 @@ public class HohRawServlet extends HttpServlet {
 			return;
 		}
 
+		Charset charset = decoder.getCharset();
+		ourLog.debug("Message charset is {}", charset.displayName());
+
 		RawReceivable rawMessage = new RawReceivable(decoder.getMessage());
 		rawMessage.addMetadata(MessageMetadataKeys.REMOTE_HOST_ADDRESS.name(), theReq.getRemoteAddr());
 
@@ -95,9 +99,11 @@ public class HohRawServlet extends HttpServlet {
 			return;
 		}
 
+		theResp.setCharacterEncoding(charset.name());
 		theResp.setContentType(response.getEncodingStyle().getContentType());
 		theResp.setStatus(response.getResponseCode().getCode());
 
+		// n.b. don't ask for the writer until headers are set
 		response.writeMessage(theResp.getWriter());
 		theResp.flushBuffer();
 

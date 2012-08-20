@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
