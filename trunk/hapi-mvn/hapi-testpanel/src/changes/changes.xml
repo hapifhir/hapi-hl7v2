@@ -16,7 +16,7 @@
             </action>
             <action type="fix">
             	Show currently highlighted message in text editor component on Windows platform. For some reason,
-            	the Windows L&F was preventing this. 
+            	the Windows L&amp;F was preventing this. 
             </action>
             <action type="fix">
             	Incoming connections (on the left hand side) don't show new received message notification
@@ -29,6 +29,9 @@
             <action type="add">
                 When TestPanel is restarted, the main window returns to the same message/connection that
                 was selected when TestPanel was last closed.
+            </action>
+            <action type="add">
+                Message tree values now have a tooltip which shows the entire value.
             </action>
 		</release>
         <release version="2.0" date="2012-07-16">
