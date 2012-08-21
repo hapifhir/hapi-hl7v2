@@ -74,7 +74,6 @@ class ValueCellRenderer extends DefaultTableCellRenderer {
 				setText("<html><span style=\"color: #808080;\">(" + segs + " populated segments)</span></html>");
 				break;
 			}
-			return this;
 
 		} else if (theValue instanceof TreeNodeType || theValue instanceof TreeNodeSegment) {
 			String value = ((TreeNodeBase) theValue).getPipeEncodedValue();
@@ -85,22 +84,24 @@ class ValueCellRenderer extends DefaultTableCellRenderer {
 			} else if (theValue instanceof TreeNodeSegment) {
 				if (!((TreeNodeSegment)theValue).isHasContent()) {
 					setText("<html><span style=\"color: #808080;\">" + value + "</span></html>");
+					setToolTipText(getText());
 					return this;
 				}
 			}
 
 			String html = FormatUtil.formatEr7(value, isType);
 			setText(html);
-			return this;
 
 		} else {
 
 			TreeNodeBase base = (TreeNodeBase) theValue;
 			setText(base.getPipeEncodedValue());
-			return this;
 
 		}
 
+		setToolTipText(getText());
+		return this;
+		
 	}
 
 }

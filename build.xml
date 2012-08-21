@@ -49,7 +49,7 @@ The survey will run until the fall.
 	</target> 
 
 	<target name="urchin">
-        <echo>Adding Google analytics in target/site</echo>
+        <echo>Adding Google analytics in target/site for &lt;body&gt;</echo>
         <replace dir="target/site" summary="true">
             <include name="**/*.html"></include>
             <replacefilter token="#build#" value="${label}"/>
@@ -68,6 +68,7 @@ The survey will run until the fall.
                 </body >
                 ]]></replacevalue>
         </replace>
+			<echo>Adding Google analytics in target/site for &lt;BODY&gt;</echo>
         <replace dir="target/site" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</BODY>]]></replacetoken>
@@ -84,6 +85,7 @@ The survey will run until the fall.
                 </BODY >
                 ]]></replacevalue>
         </replace>
+      <echo>Adding Google analytics in target/site for &lt;FRAMESET&gt;</echo>
         <replace dir="target/site" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</HEAD>
@@ -101,6 +103,7 @@ The survey will run until the fall.
                 </HEAD >
                 <FRAMESET]]></replacevalue>
         </replace>
+      <echo>Adding Google analytics in target/site for &lt;frameset&gt;</echo>
         <replace dir="target/site" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</head>
@@ -118,16 +121,19 @@ The survey will run until the fall.
                 </head >
     <frameset]]></replacevalue>
         </replace>        
+      <echo>Customizing analytics token for testpanel</echo>
 		  <replace dir="target/site/hapi-testpanel" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
             <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
         </replace>
+      <echo>Customizing analytics token for hl7overhttp</echo>
 		  <replace dir="target/site/hapi-hl7overhttp" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
             <replacevalue><![CDATA[UA-1395874-4]]></replacevalue>
         </replace>
+      <echo>Adding social plugins for HAPI</echo>
 		  <replace dir="target/site/" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
@@ -156,6 +162,7 @@ The survey will run until the fall.
             	}(document, 'script', 'facebook-jssdk'));</script>
 				]]></replacevalue>
         </replace>
+      <echo>Adding social plugins for TestPanel</echo>
 		  <replace dir="target/site/" summary="true">
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
@@ -184,12 +191,13 @@ The survey will run until the fall.
           	
           ]]></replacevalue>
       </replace>
+      <echo>Adding social plugins for hl7overhttp</echo>
 		  <replace dir="target/site/" summary="true">
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
           <replacevalue><![CDATA[
           	<table cellpadding="0" cellspacing="0" border="0"><tr>
-         	<td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
+         	<td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html"></div></td>
          	<td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
          	</tr></table>
 
