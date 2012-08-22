@@ -93,7 +93,7 @@ import ca.uhn.hl7v2.testpanel.util.AllFileFilter;
 import ca.uhn.hl7v2.testpanel.util.ExtensionFilter;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
 import ca.uhn.hl7v2.testpanel.util.IOkCancelCallback;
-import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
+import ca.uhn.hl7v2.testpanel.util.ISendProgressCallback;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.testpanel.util.PortUtil;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
@@ -727,7 +727,7 @@ public class Controller {
 	 * 
 	 * @param theITransmissionCallback
 	 */
-	public void sendMessages(OutboundConnection theConnection, Hl7V2MessageCollection theMessage, IProgressCallback theTransmissionCallback) {
+	public void sendMessages(OutboundConnection theConnection, Hl7V2MessageCollection theMessage, ISendProgressCallback theTransmissionCallback) {
 		theConnection.sendMessages(theMessage, theTransmissionCallback);
 	}
 

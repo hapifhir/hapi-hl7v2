@@ -63,7 +63,6 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
-import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
 import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
@@ -89,14 +88,6 @@ public class InboundConnection extends AbstractConnection {
 	@XmlAttribute(name = "validateIncomingUsingProfileGroupId")
 	private String myValidateIncomingUsingProfileGroupId;
 
-	private void addActivityInfoInSwingThread(final String msg) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				addActivity(new ActivityInfo(new Date(), msg));
-			}
-		});
-	}
 
 	@Override
 	public String exportConfigToXml() {
@@ -173,7 +164,7 @@ public class InboundConnection extends AbstractConnection {
 					serverSocket = new HapiSocketTlsFactoryWrapper(new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()));
 				}
 				
-				myService = new SimpleServer(serverSocket, getIncomingOrSinglePort(), createLlp(), myParser);
+				myService = new SimpleServer(serverSocket, getIncomingOrSinglePort(), createLlp(), myParser, isTls());
 				
 			} catch (KeyStoreException e) {
 				ourLog.error("Failed to load keystore", e);
@@ -278,6 +269,9 @@ public class InboundConnection extends AbstractConnection {
 
 		public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
 			try {
+				String controlId = new Terser(theIn).get("/MSH-10");
+				ourLog.info("Received message with control ID: {}", controlId);
+
 				beforeProcessingNewMessageIn();
 
 				addActivity(new ActivityIncomingMessage(new Date(), getEncoding(), myParser.encode(theIn), EncodingCharacters.getInstance(theIn)));
@@ -313,7 +307,10 @@ public class InboundConnection extends AbstractConnection {
 						addNewMessage();
 					}
 				});
-
+				
+				String respControlId = new Terser(response).get("/MSH-10");
+				ourLog.info("Responding with control ID: {}", respControlId);
+				
 				return response;
 			} catch (IOException e) {
 				throw new HL7Exception(e);

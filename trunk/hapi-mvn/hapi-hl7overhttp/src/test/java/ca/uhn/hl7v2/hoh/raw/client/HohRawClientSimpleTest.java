@@ -28,6 +28,8 @@ public class HohRawClientSimpleTest {
 	private static SingleCredentialServerCallback ourServerCallback;
 	private static ServerSocketThreadForTesting myServerSocketThread;
 	
+	// TODO: Client should respect the "close" header in a response
+
 	@Test
 	public void testSendMessageSimple() throws Exception {
 

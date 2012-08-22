@@ -41,6 +41,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -70,6 +71,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
+import ca.uhn.hl7v2.testpanel.util.ISendProgressCallback;
 
 public class ActivityTable extends JPanel implements IDestroyable {
 	
@@ -105,6 +107,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	private JButton myStop;
 
 	protected boolean myTransmissionCancelled;
+
+	private JLabel mySendStatusLabel;
 	public ActivityTable() {
 		super(new BorderLayout());
 		setBorder(null);
@@ -154,6 +158,10 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		
 		myhorizontalGlue = Box.createHorizontalGlue();
 		toolBar.add(myhorizontalGlue);
+		
+		mySendStatusLabel = new JLabel();
+		toolBar.add(mySendStatusLabel);
+		
 		
 		myStop = new JButton();
 		myStop.addActionListener(new ActionListener() {
@@ -482,8 +490,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 //
 //	}
 
-	public IProgressCallback provideTransmissionCallback() {
-		return new IProgressCallback() {
+	public ISendProgressCallback provideTransmissionCallback() {
+		return new ISendProgressCallback() {
 			
 			@Override
 			public void activityStopped() {
@@ -503,6 +511,17 @@ public class ActivityTable extends JPanel implements IDestroyable {
 					throw new OperationCancelRequestedException();
 				}
 			}
+
+			@Override
+            public void updateAvgThroughputPerSecond(int theThroughput) {
+				mySendStatusLabel.setText("Throughput " + theThroughput + " msgs/sec");
+            }
+
+			@Override
+            public void updateAvgResponseTimeMillis(int theMillis) {
+	            // TODO Auto-generated method stub
+	            
+            }
 		};
 	}
 	

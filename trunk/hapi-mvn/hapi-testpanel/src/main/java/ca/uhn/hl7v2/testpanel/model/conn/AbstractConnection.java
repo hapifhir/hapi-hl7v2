@@ -51,6 +51,7 @@ import java.util.UUID;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -79,6 +80,7 @@ import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 import ca.uhn.hl7v2.testpanel.model.ActivityBase;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingBytes;
+import ca.uhn.hl7v2.testpanel.model.ActivityInfo;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.CollectionUtils;
@@ -288,6 +290,20 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 			}
 		}
 	}
+
+	protected void addActivityInfoInSwingThread(final String msg) {
+		final ActivityBase activity = new ActivityInfo(new Date(), msg);
+		addActivityInSwingThread(activity);
+	}
+
+	protected void addActivityInSwingThread(final ActivityBase theActivity) {
+	    SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				addActivity(theActivity);
+			}
+		});
+    }
 
 	private void checkOutboundCapture() {
 		synchronized (myWriterCapture) {
