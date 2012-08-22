@@ -27,7 +27,6 @@
 package ca.uhn.hl7v2.app;
 
 import java.io.File;
-import java.net.ServerSocket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -138,7 +137,19 @@ public class SimpleServer extends HL7Service {
 	 * @throws IllegalStateException If serverSocket is already bound
 	 */
 	public SimpleServer(SocketFactory socketFactory, int port, LowerLayerProtocol llp, Parser parser) {
-		this(port, llp, parser, false);
+		this(socketFactory, port, llp, parser, false);
+	}
+
+	/**
+	 * Creates a new instance of SimpleServer that listens on a given server socket.
+	 * SimpleServer will bind the socket when it is started, so the server socket 
+	 * must not already be bound. 
+	 * 
+	 * @since 2.1
+	 * @throws IllegalStateException If serverSocket is already bound
+	 */
+	public SimpleServer(SocketFactory socketFactory, int port, LowerLayerProtocol llp, Parser parser, boolean tls) {
+		this(port, llp, parser, tls);
 		this.socketFactory = socketFactory;
 	}
 
