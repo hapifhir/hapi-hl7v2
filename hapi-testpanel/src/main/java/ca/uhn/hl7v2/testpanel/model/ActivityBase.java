@@ -27,14 +27,19 @@ package ca.uhn.hl7v2.testpanel.model;
 
 import java.util.Date;
 
+import ca.uhn.hl7v2.hoh.util.Validate;
+
 public abstract class ActivityBase {
-	Date myTimestamp;
+	private final Date myTimestamp;
 
 	public ActivityBase(Date theTimestamp) {
+		Validate.notNull(theTimestamp, "theTimestamp");
+		
 		myTimestamp = theTimestamp;
 	}
 
 	public Date getTimestamp() {
 		return myTimestamp;
 	}
+	
 }

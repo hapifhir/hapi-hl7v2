@@ -32,6 +32,8 @@ public class LlpClientTest {
 	private static ServerSocketThreadForTesting ourServerSocketThread;
 	private static ExecutorService ourExecutor;
 
+	// TODO: LLP should respect the "close" header in a response
+	
 	@Test
 	public void testSendMessageSimpl() throws Exception {
 

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -57,8 +58,8 @@ import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageBase;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
-import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
 import ca.uhn.hl7v2.testpanel.util.IProgressCallback.OperationCancelRequestedException;
+import ca.uhn.hl7v2.testpanel.util.ISendProgressCallback;
 import ca.uhn.hl7v2.util.SocketFactory;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,8 +73,10 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 	private transient Parser myParser;
 	private transient MessageSenderThread myMessageSenderThread;
 
+
 	public OutboundConnection() {
 	}
+
 
 	@Override
 	public String exportConfigToXml() {
@@ -82,17 +85,20 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 		return writer.toString();
 	}
 
+
 	public static OutboundConnection fromXml(String theXml) {
 		return JAXB.unmarshal(new StringReader(theXml), OutboundConnection.class);
 	}
 
-	public synchronized void sendMessages(Hl7V2MessageCollection theMessages, IProgressCallback theTransmissionCallback) {
+
+	public synchronized void sendMessages(Hl7V2MessageCollection theMessages, ISendProgressCallback theTransmissionCallback) {
 		if (myMessageSenderThread != null) {
 			throw new IllegalStateException("Already sending messages");
 		}
 		myMessageSenderThread = new MessageSenderThread(theMessages, theTransmissionCallback);
 		myMessageSenderThread.start();
 	}
+
 
 	public void start() {
 		super.start();
@@ -109,6 +115,7 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 		setStatus(StatusEnum.TRYING_TO_START);
 		myConnectionMonitorThread.start();
 	}
+
 
 	public void stop() {
 		super.stop();
@@ -128,6 +135,7 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 
 		private CountDownLatch myStartupLatch = new CountDownLatch(1);
 
+
 		private void doRun() throws LLPException {
 			LowerLayerProtocol llpClass = null;
 			llpClass = createLlp();
@@ -141,12 +149,14 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			while (myConnectionMonitorThread == this) {
 
 				if (getStatus() == StatusEnum.TRYING_TO_START) {
-					ourLog.info("Attempting outbound connection to " + desc);
+					String msg = "Attempting outbound connection to " + desc;
+					ourLog.info(msg);
+					addActivityInfoInSwingThread(msg);
 
 					try {
-						
+
 						SocketFactory socketFactory = getSocketFactory();
-						
+
 						if (isDualPort()) {
 							connection = ConnectionHub.getInstance().attach(getHost(), getOutgoingPort(), getIncomingOrSinglePort(), myParser, llpClass, tls, socketFactory);
 						} else {
@@ -155,7 +165,10 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 
 						myConnection = connection;
 
-						ourLog.info("Successfully connected to " + createDescription());
+						msg = "Successfully connected to " + createDescription();
+						ourLog.info(msg);
+						addActivityInfoInSwingThread(msg);
+
 						myStartupLatch.countDown();
 
 					} catch (HL7Exception e) {
@@ -200,6 +213,7 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 
 		}
 
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -224,6 +238,7 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			}
 		}
 
+
 		/**
 		 * @return Returns true if we got a connection
 		 */
@@ -240,17 +255,21 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 	public class MessageSenderThread extends Thread {
 
 		private Hl7V2MessageCollection myMessages;
-		private IProgressCallback myTransmissionCallback;
+		private ISendProgressCallback myTransmissionCallback;
 		private boolean myCancelled;
 		private long myStartTime;
 		private StatusEnum myInitialStatus;
 		private int myTotalMessages;
 		private int mySentMessages;
+		private LinkedList<Integer> myResponseTimes = new LinkedList<Integer>();
+		private long myLastUpdate = 0;
 
-		public MessageSenderThread(Hl7V2MessageCollection theMessages, IProgressCallback theTransmissionCallback) {
+
+		public MessageSenderThread(Hl7V2MessageCollection theMessages, ISendProgressCallback theTransmissionCallback) {
 			myMessages = theMessages;
 			myTransmissionCallback = theTransmissionCallback;
 		}
+
 
 		@Override
 		public void run() {
@@ -263,23 +282,25 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			});
 
 			try {
-				
+
 				if (!doStart()) {
 					return;
 				}
-				
+
 				int sendNumberOfTimes = myMessages.getSendNumberOfTimes();
-				
+
 				myTotalMessages = myMessages.countMessagesOfType(Hl7V2MessageBase.class) * sendNumberOfTimes;
 				mySentMessages = 0;
-				
+
 				myStartTime = System.currentTimeMillis();
 				for (int curRep = 1; curRep <= sendNumberOfTimes; curRep++) {
 					doSend();
 				}
 
-				doStop();
+				sendUpdate(1.0);
 				
+				doStop();
+
 			} finally {
 				EventQueue.invokeLater(new Runnable() {
 					@Override
@@ -290,16 +311,17 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 				synchronized (OutboundConnection.this) {
 					myMessageSenderThread = null;
 				}
-				
+
 				ourLog.info("Transmission thread shutting down");
 			}
 
 		}
 
+
 		private void doStop() {
 			long delay = System.currentTimeMillis() - myStartTime;
 			int i = myTotalMessages;
-			
+
 			StringBuilder b = new StringBuilder();
 			b.append("Sent ");
 			b.append(i);
@@ -312,13 +334,14 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			b.append("Average: ");
 			b.append(delay / myTotalMessages);
 			b.append("ms / message");
-			
+
 			addActivity(new ActivityInfo(new Date(), b.toString()));
 
 			if (myInitialStatus != StatusEnum.STARTED) {
 				OutboundConnection.this.stop();
 			}
 		}
+
 
 		private boolean doStart() {
 			myInitialStatus = getStatus();
@@ -342,9 +365,10 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 					return false;
 				}
 			}
-			
+
 			return true;
 		}
+
 
 		private void doSend() {
 			int i = 0;
@@ -352,22 +376,14 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 				if (myCancelled) {
 					return;
 				}
-				
-				final double complete = (((double)mySentMessages) / myTotalMessages);
-				if (myTotalMessages < 100 || i % 10 == 0) {
-						EventQueue.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									myTransmissionCallback.progressUpdate(complete);
-								} catch (OperationCancelRequestedException e) {
-									ourLog.info("Detected that transmission cancel was requested");
-									myCancelled = true;
-								}
-							}
-						});
+
+				final double complete = (((double) mySentMessages) / myTotalMessages);
+				long now = System.currentTimeMillis();
+				long elapsedSinceLastUpdate = now - myLastUpdate;
+				if (elapsedSinceLastUpdate > 1000) {
+					sendUpdate(complete);
 				}
-				
+
 				i++;
 
 				if (abstractMessage instanceof Hl7V2MessageBase) {
@@ -380,7 +396,14 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 						beforeProcessingNewMessageOut();
 						addActivity(new ActivityOutgoingMessage(new Date(), getEncoding(), myParser.encode(msg), EncodingCharacters.getInstance(msg)));
 
+						long beforeSend = now;
 						Message response = myConnection.getInitiator().sendAndReceive(msg);
+
+						long sendTime = now - beforeSend;
+						myResponseTimes.add((int) sendTime);
+						while (myResponseTimes.size() > 100) {
+							myResponseTimes.pop();
+						}
 
 						beforeProcessingNewMessageIn();
 						addActivity(new ActivityIncomingMessage(new Date(), getEncoding(), myParser.encode(response), EncodingCharacters.getInstance(response)));
@@ -406,6 +429,45 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			}
 
 		}
+
+
+		private void sendUpdate(final double complete) {
+			long now = System.currentTimeMillis();
+	        long elapsed = now - myStartTime;
+	        if (elapsed == 0) {
+	        	elapsed = 1;
+	        }
+	        long throughputPerSecond = (mySentMessages * 1000) / elapsed;
+	        long avgSendTime = 0;
+	        if (myResponseTimes.size() > 0) {
+	        	long total = 0;
+	        	for (Integer next : myResponseTimes) {
+	        		total += next;
+	        	}
+	        	avgSendTime = total / myResponseTimes.size();
+	        }
+	        final int avgSendTimeF = (int) avgSendTime;
+	        final int throughputPerSecondF = (int) throughputPerSecond;
+	        EventQueue.invokeLater(new Runnable() {
+	        	@Override
+	        	public void run() {
+	        		myTransmissionCallback.updateAvgResponseTimeMillis(avgSendTimeF);
+	        		myTransmissionCallback.updateAvgThroughputPerSecond(throughputPerSecondF);
+	        	}
+	        });
+	        
+	        EventQueue.invokeLater(new Runnable() {
+	        	@Override
+	        	public void run() {
+	        		try {
+	        			myTransmissionCallback.progressUpdate(complete);
+	        		} catch (OperationCancelRequestedException e) {
+	        			ourLog.info("Detected that transmission cancel was requested");
+	        			myCancelled = true;
+	        		}
+	        	}
+	        });
+        }
 
 	}
 

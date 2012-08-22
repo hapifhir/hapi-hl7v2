@@ -30,7 +30,7 @@ public class UnderlineHighlighter extends DefaultHighlighter {
      */
     @Override
     public void paint(Graphics theG) {
-		ourLog.info("Repainting");
+		ourLog.debug("Repainting");
 	    super.paint(theG);
     }
 
@@ -39,13 +39,13 @@ public class UnderlineHighlighter extends DefaultHighlighter {
      */
     @Override
     public void paintLayeredHighlights(Graphics theG, int theP0, int theP1, Shape theViewBounds, JTextComponent theEditor, View theView) {
-		ourLog.info("Paintlayeredhighlights");
+		ourLog.debug("Paintlayeredhighlights");
 	    super.paintLayeredHighlights(theG, theP0, theP1, theViewBounds, theEditor, theView);
     }
 
 	@Override
 	public Object addHighlight(int theP0, int theP1, HighlightPainter theP) throws BadLocationException {
-		ourLog.info("Adding highlight");
+		ourLog.debug("Adding highlight");
 		return addHighlight(theP0, theP1);
 	}
 
@@ -74,7 +74,7 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 
 		public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds, JTextComponent c, View view) {
 			
-			ourLog.info("Repainting");
+			ourLog.debug("Repainting");
 			
 			Rectangle alloc = null;
 			if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
@@ -104,7 +104,7 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 			if (!c.hasFocus()) {
 				int y = alloc.y + alloc.height - 2;
 
-				ourLog.info("Repainting highlight at {}, {}", alloc.x, y);
+				ourLog.debug("Repainting highlight at {}, {}", alloc.x, y);
 				
 				g.setColor(lineColour);
 	//			g.drawRect(alloc.x, alloc.y, alloc.width, alloc.height - 2);

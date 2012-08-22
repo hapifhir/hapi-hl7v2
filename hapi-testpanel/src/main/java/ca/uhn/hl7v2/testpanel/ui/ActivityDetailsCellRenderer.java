@@ -346,8 +346,7 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					theTable.setRowHeight(theRow, newHeight);
-					ourLog.info("Column 3 width: {}", theTable.getColumnModel().getColumn(2).getWidth());
-					theTable.getColumnModel().getColumn(2).setWidth(5000);
+//					theTable.getColumnModel().getColumn(2).setWidth(5000);
 				}
 			});
 		}
