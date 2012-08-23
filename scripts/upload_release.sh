@@ -1,15 +1,22 @@
 
 VERSION="2.0"
 
+rm -fvR scripts/staging/*
 mkdir scripts/staging
-rm scripts/staging/*
-cp -vp hapi-dist/target/hapi-dist-$VERSION-all.zip scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-all.tar.bz2 scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.zip scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.tar.bz2 scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.zip scripts/staging
-cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.tar.bz2 scripts/staging
+mkdir scripts/staging/hl7api
+mkdir scripts/staging/hl7api/$VERSION
+mkdir scripts/staging/hl7api-hl7overhttp
+mkdir scripts/staging/hl7api-hl7overhttp/$VERSION
+
+cp -vp hapi-dist/target/hapi-dist-$VERSION-all.zip scripts/staging/hl7api/$VERSION
+cp -vp hapi-dist/target/hapi-dist-$VERSION-all.tar.bz2 scripts/staging/hl7api/$VERSION
+cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.zip scripts/staging/hl7api/$VERSION
+cp -vp hapi-dist/target/hapi-dist-$VERSION-javadoc.tar.bz2 scripts/staging/hl7api/$VERSION
+cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.zip scripts/staging/hl7api/$VERSION
+cp -vp hapi-dist/target/hapi-dist-$VERSION-sources.tar.bz2 scripts/staging/hl7api/$VERSION
+cp -vp hapi-hl7overhttp/target/*.tar.bz2 scripts/staging/hl7api-hl7overhttp/$VERSION
+cp -vp hapi-hl7overhttp/target/*.zip scripts/staging/hl7api-hl7overhttp/$VERSION
 
 echo Using RSync to upload...
-#rsync --progress --verbose hapi-$VERSION-*.zip jamesagnew,hl7api@shell.sourceforge.net:/home/frs/project/h/hl/hl7api/hl7api/$VERSION/
-rsync --progress --verbose scripts/staging/* jamesagnew,hl7api@shell.sourceforge.net:/home/frs/project/h/hl/hl7api/hl7api/$VERSION/
+cd scripts/staging
+rsync -r --progress --verbose * jamesagnew,hl7api@shell.sourceforge.net:/home/frs/project/h/hl/hl7api/

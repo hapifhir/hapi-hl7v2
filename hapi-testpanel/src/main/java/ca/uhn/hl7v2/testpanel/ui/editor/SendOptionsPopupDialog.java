@@ -7,6 +7,9 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.text.NumberFormat;
@@ -35,7 +38,7 @@ public class SendOptionsPopupDialog extends JDialog {
 	 */
 	public SendOptionsPopupDialog(Hl7V2MessageEditorPanel theParent, Hl7V2MessageCollection theMessage, JButton theSendOptionsButton, HoverButtonMouseAdapter theSendOptionsHoverAdaptor) {
 		super(theParent.getWindow());
-		
+
 		mySendOptionsButton = theSendOptionsButton;
 		mySendOptionsHoverAdaptor = theSendOptionsHoverAdaptor;
 		myMessage = theMessage;
@@ -91,6 +94,14 @@ public class SendOptionsPopupDialog extends JDialog {
 			gbc_mySendTimes.gridx = 1;
 			gbc_mySendTimes.gridy = 2;
 			mycontentPanel.add(sendTimes, gbc_mySendTimes);
+			sendTimes.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent theE) {
+					if (theE.getKeyCode() == KeyEvent.VK_ENTER || theE.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						doHide();
+					}
+				}
+			});
 			sendTimes.getDocument().addDocumentListener(new SimpleDocumentListener() {
 				@Override
 				public void update(DocumentEvent theE) {

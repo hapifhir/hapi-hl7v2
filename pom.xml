@@ -240,6 +240,7 @@
 		<!-- HAPI Versions -->
 		<hapi.version>2.1-alpha1</hapi.version>
 		<hapi.version.structures>2.0</hapi.version.structures>
+		<hapi.version.testpanel>2.0.1</hapi.version.testpanel>
 		
 		<!-- Dependency versions -->
 		<slf4j.version>1.6.6</slf4j.version>
@@ -253,6 +254,8 @@
 		<maven.site.plugin.version>3.1</maven.site.plugin.version>
 		<maven.source.plugin.version>2.2</maven.source.plugin.version>
 		<findbugs.maven.plugin.version>2.5.2</findbugs.maven.plugin.version>
+		<gpg.maven.plugin.version>1.4</gpg.maven.plugin.version>
+		<maven.assembly.plugin.version>2.3</maven.assembly.plugin.version>
 	</properties>
 
 	<reporting>
@@ -368,16 +371,6 @@
 			<build>
 				<plugins>
 					<plugin>
-					    <!-- 
-						<executions>
-							<execution>
-								<phase>compile</phase>
-								<goals>
-									<goal>javadoc</goal>
-								</goals>
-							</execution>
-						</executions>
-						 -->
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven.javadoc.plugin.version}</version>
 						<inherited>true</inherited>
@@ -385,15 +378,14 @@
 							<minmemory>128m</minmemory>
 							<maxmemory>1g</maxmemory>
 							<linksource>true</linksource>
-							<!-- <destDir>apidocs</destDir>  -->
-							<verbose>true</verbose>
-							<debug>true</debug>
-							<!-- <reportOutputDirectory>${project.reporting.outputDirectory}/apidocs</reportOutputDirectory>  -->
+							<verbose>false</verbose>
+							<debug>false</debug>
 						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${gpg.maven.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -418,6 +410,45 @@
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
 				<module>hapi-osgi-base</module>
+				<module>hapi-hl7overhttp</module>
+				<module>hapi-dist</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>MINIDIST</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>${maven.javadoc.plugin.version}</version>
+						<inherited>true</inherited>
+						<configuration>
+							<minmemory>128m</minmemory>
+							<maxmemory>1g</maxmemory>
+							<linksource>true</linksource>
+							<verbose>false</verbose>
+							<debug>false</debug>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${gpg.maven.plugin.version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>hapi-base</module>
+				<module>hapi-sourcegen</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-dist</module>
 			</modules>

@@ -71,6 +71,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -123,6 +124,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	private boolean myDontRespondToSourceMessageChanges;
@@ -220,6 +222,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		Highlighter h = new UnderlineHighlighter();
 		myMessageEditor.setHighlighter(h);
 		// myMessageEditor.setFont(Prefs.getHl7EditorFont());
+		myMessageEditor.setSelectedTextColor(Color.black);
 
 		myMessageEditor.setCaret(new EditorCaret());
 		

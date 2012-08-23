@@ -39,35 +39,181 @@ public class Hl7V2MessageImplTest {
 
 	@Test
 	public void testFindRange() throws HL7Exception {
-		
+
 		String message = "MSH|^~\\&|\r" // 10 chars
 				+ "PID|f1c1^f1c2&f1c2s2&f1c2s3|f2c1^f2c2&f2c2s2&f2c2s3\r";
-		
+
 		Range startRange = new Range(10, message.length());
 		ADT_A01 parsed = new ADT_A01();
 		parsed.parse(message);
 
-		ArrayList<Integer> path = new ArrayList<Integer>() {{ add(1); }};
-		Range range = Hl7V2MessageBase.findFieldRange(path, startRange, message, parsed);
+		ArrayList<Integer> path = new ArrayList<Integer>() {
+			{
+				add(1);
+			}
+		};
+		Range range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
 		Assert.assertEquals("f1c1^f1c2&f1c2s2&f1c2s3", range.applyTo(message));
-		
-		path = new ArrayList<Integer>() {{ add(1); add(1); }};
-		range = Hl7V2MessageBase.findFieldRange(path, startRange, message, parsed);
+
+		path = new ArrayList<Integer>() {
+			{
+				add(1);
+				add(1);
+			}
+		};
+		range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
 		Assert.assertEquals("f1c1", range.applyTo(message));
+
+		path = new ArrayList<Integer>() {
+			{
+				add(1);
+				add(2);
+			}
+		};
+		range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+
+		path = new ArrayList<Integer>() {
+			{
+				add(1);
+				add(2);
+			}
+		};
+		range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+
+		path = new ArrayList<Integer>() {
+			{
+				add(1);
+				add(2);
+			}
+		};
+		range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+
+	}
+
+	@Test
+	public void testFindSegmentRange() throws Exception {
+
+		String message = "MSH|^~\\&|||||||ADT^A04|||2.3\r" // 10 chars
+				+ "PID|f1r1~f1r2~\r";
 		
-		path = new ArrayList<Integer>() {{ add(1); add(2); }};
-		range = Hl7V2MessageBase.findFieldRange(path, startRange, message, parsed);
-		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+		Hl7V2MessageEr7 er7 = new Hl7V2MessageEr7();
+		er7.setSourceMessage(message);
+		
+		String range = er7.getSegmentRanges().get(0).applyTo(message);
+		Assert.assertEquals("MSH|^~\\&|||||||ADT^A04|||2.3", range);
 
-		path = new ArrayList<Integer>() {{ add(1); add(2); }};
-		range = Hl7V2MessageBase.findFieldRange(path, startRange, message, parsed);
-		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+		range = er7.getSegmentRanges().get(1).applyTo(message);
+		Assert.assertEquals("PID|f1r1~f1r2~", range);
+	}
 
-		path = new ArrayList<Integer>() {{ add(1); add(2); }};
-		range = Hl7V2MessageBase.findFieldRange(path, startRange, message, parsed);
-		Assert.assertEquals("f1c2&f1c2s2&f1c2s3", range.applyTo(message));
+	@Test
+	public void testFindSegmentRangeNoTrailing() throws Exception {
 
-	
+		String message = "MSH|^~\\&|||||||ADT^A04|||2.3\r" // 10 chars
+				+ "PID|f1r1~f1r2~";
+		
+		Hl7V2MessageEr7 er7 = new Hl7V2MessageEr7();
+		er7.setSourceMessage(message);
+		
+		String range = er7.getSegmentRanges().get(0).applyTo(message);
+		Assert.assertEquals("MSH|^~\\&|||||||ADT^A04|||2.3", range);
+
+		range = er7.getSegmentRanges().get(1).applyTo(message);
+		Assert.assertEquals("PID|f1r1~f1r2~", range);
 	}
 	
+	@Test
+	public void testFindRangeWithRep() throws Exception {
+
+		String message = "MSH|^~\\&|\r" // 10 chars
+				+ "PID|f1r1~f1r2~\r";
+
+		Range startRange = new Range(10, message.length()-1);
+		ADT_A01 parsed = new ADT_A01();
+		parsed.parse(message);
+
+		ArrayList<Integer> path = new ArrayList<Integer>() {
+			{
+				add(1);
+			}
+		};
+		
+		Range range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f1r1", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 2, startRange, message, parsed);
+		Assert.assertEquals("f1r2", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 3, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 4, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 5, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+	}
+
+	@Test
+	public void testFindRangeWithRepAndComponents() throws Exception {
+
+		String message = "MSH|^~\\&|\r" // 10 chars
+				+ "PID|f1r1^f1r1c2~f1r2^f1r2c2~|f2r1^f2r1c2~f2r2^f2r2c2~\r";
+
+		Range startRange = new Range(10, message.length()-1);
+		ADT_A01 parsed = new ADT_A01();
+		parsed.parse(message);
+
+		ArrayList<Integer> path = new ArrayList<Integer>() {
+			{
+				add(2);
+				add(2);
+			}
+		};
+		
+		Range range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f2r1c2", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 2, startRange, message, parsed);
+		Assert.assertEquals("f2r2c2", range.applyTo(message));
+
+	}
+	
+	@Test
+	public void testFindRangeWithRepAndNoTrailing() throws Exception {
+
+		String message = "MSH|^~\\&|\r" // 10 chars
+				+ "PID|f1r1~f1r2~";
+
+		Range startRange = new Range(10, message.length());
+		ADT_A01 parsed = new ADT_A01();
+		parsed.parse(message);
+
+		ArrayList<Integer> path = new ArrayList<Integer>() {
+			{
+				add(1);
+			}
+		};
+		
+		Range range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
+		Assert.assertEquals("f1r1", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 2, startRange, message, parsed);
+		Assert.assertEquals("f1r2", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 3, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 4, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+		range = Hl7V2MessageBase.findFieldRange(path, 5, startRange, message, parsed);
+		Assert.assertEquals("", range.applyTo(message));
+
+	}
+
 }

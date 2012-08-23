@@ -1,7 +1,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>G:\hapi-mvn-svn\hapi-testpanel\target\hapi-testpanel-2.0-jar-with-dependencies.jar</jar>
+  <jar>G:\hapi-mvn-svn\hapi-testpanel\target\hapi-testpanel-${project.version}-jar-with-dependencies.jar</jar>
   <outfile>G:\hapi-mvn-svn\hapi-testpanel\target\testpanel.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
