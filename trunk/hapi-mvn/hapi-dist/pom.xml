@@ -36,6 +36,11 @@
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-hl7overhttp</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-examples</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
@@ -80,12 +85,14 @@
 			<version>${hapi.version.structures}</version>
 		</dependency>
 
+<!--
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
 			<version>${hapi.version}</version>
 			<classifier>jdk14</classifier>
 		</dependency>
+-->
 
 		<dependency>
 			<groupId>log4j</groupId>
