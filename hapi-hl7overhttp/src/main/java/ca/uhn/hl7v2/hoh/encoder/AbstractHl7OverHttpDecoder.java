@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.encoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -509,7 +510,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				ourLog.info("Read -1 from input stream, closing it");
 				theInputStream.close();
 				if (retVal.length() == 0) {
-					throw new IOException("Received EOF from input stream");
+					throw new SocketException("Received EOF from input stream");
 				}
 				break;
 			} else if (b < ' ') {
