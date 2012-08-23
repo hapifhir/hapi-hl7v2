@@ -73,11 +73,34 @@
 						<h3>HAPI TestPanel</h3>
 						A rich testing application which can be used to edit HL7 messages,
 						transmit them, validate them, and more.
-						<img src="images/testpanel_screenshot.png"/>
+						<img src="images/testpanel_screenshot.png" alt="TestPanel Screenshot"/>
 					</td>
 				</tr>
 			</table>
 			
+		</section>
+
+		<section name="HL7 over HTTP Update - Aug 23, 2012">
+		
+			<p>
+				A number of suggestions, comments, and other feedback have
+				been worked into the draft
+				<a href="hapi-hl7overhttp/specification.html">specification</a>
+				which has now been posted.
+			</p>
+			
+			<p>
+				In addition, a completely functional Java based implementation
+				of the specification has been developed and is now available for
+				download (in alpha form) and testing. 
+			</p>
+		
+			<p>
+				<a href="hapi-hl7overhttp/index.html">See the HL7 over HTTP</a>
+				page for more information!
+			</p>
+			
+		
 		</section>
 
 		<section name="HAPI 2.0 and TestPanel 2.0 Released! Jul 17, 2012">

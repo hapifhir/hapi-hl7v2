@@ -21,11 +21,6 @@
 			</p>
 			
 			<p>
-				<b>Note that this specification is still being drafted! Documentation here refers
-				to a reference implementation which will be available shortly.</b>
-			</p>
-
-			<p>
 				HL7 over HTTP is a new transport mechanism aimed at replacing the 
 				traditional HL7 v2 Mininal Lower Layer Protocol (MLLP) transport
 				with a modern, standards-based approach. We believe that MLLP should
