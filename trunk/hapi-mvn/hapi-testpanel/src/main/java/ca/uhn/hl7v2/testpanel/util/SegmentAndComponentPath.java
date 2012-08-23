@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.model.Segment;
 public class SegmentAndComponentPath {
 
 	private List<Integer> myComponentPath;
-
+	private int myRepNum = 1;
 	private Segment mySegment;
 
 	public SegmentAndComponentPath(Segment theSegment, List<Integer> theComponentPath) {
@@ -46,6 +46,13 @@ public class SegmentAndComponentPath {
 		
 		mySegment = theSegment;
 		myComponentPath = theComponentPath;
+	}
+
+	public SegmentAndComponentPath(Segment theSegment, List<Integer> theComponentPath, int theRepNumber) {
+		this(theSegment, theComponentPath);
+		assert theRepNumber > 0;
+		
+		myRepNum = theRepNumber;
 	}
 
 	/**
@@ -67,6 +74,13 @@ public class SegmentAndComponentPath {
 	 */
 	public List<Integer> getComponentPath() {
 		return myComponentPath;
+	}
+
+	/**
+	 * @return the repNum
+	 */
+	public int getRepNum() {
+		return myRepNum;
 	}
 
 	/**

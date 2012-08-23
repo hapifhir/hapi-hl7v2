@@ -111,9 +111,9 @@ public class Hl7V2MessageTreeTest {
 				TreeNodeSegment zpiNode = (TreeNodeSegment) treeNodeMsg.getChildAt(1);
 				assertEquals("/ZPI", zpiNode.getTerserPath());
 				TreeNodeType zpi3 = (TreeNodeType)zpiNode.getChildAt(0);
-				assertEquals("/ZPI-3", zpi3.getTerserPath());
+				assertEquals("/ZPI-3(1)", zpi3.getTerserPath());
 				TreeNodeType zpi3_1 = (TreeNodeType)zpi3.getChildAt(0);
-				assertEquals("/ZPI-3-1", zpi3_1.getTerserPath()); 
+				assertEquals("/ZPI-3(1)-1", zpi3_1.getTerserPath()); 
 				zpi3 = (TreeNodeType)zpiNode.getChildAt(1); // Second rep
 				assertEquals("/ZPI-3(2)", zpi3.getTerserPath());
 				zpi3_1 = (TreeNodeType)zpi3.getChildAt(0);

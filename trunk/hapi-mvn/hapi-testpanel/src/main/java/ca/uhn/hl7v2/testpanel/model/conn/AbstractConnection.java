@@ -297,13 +297,13 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	protected void addActivityInSwingThread(final ActivityBase theActivity) {
-	    SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				addActivity(theActivity);
 			}
 		});
-    }
+	}
 
 	private void checkOutboundCapture() {
 		synchronized (myWriterCapture) {
@@ -787,7 +787,9 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 				setTlsKeystoreStatus(new WorkingStatusBean("Working...", WorkingStatusBean.StatusEnum.WORKING));
 			}
 			myHohSecurityKeystoreCheckIsScheduled = true;
-			myController.invokeInBackground(new CheckHohSecurityKeystoreRunnable());
+			if (myController != null) {
+				myController.invokeInBackground(new CheckHohSecurityKeystoreRunnable());
+			}
 		}
 	}
 
@@ -797,7 +799,9 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 				setHohSignatureKeystoreStatus(new WorkingStatusBean("Working...", WorkingStatusBean.StatusEnum.WORKING));
 			}
 			myHohSignatureKeystoreCheckIsScheduled = true;
-			myController.invokeInBackground(new CheckHohSignatureKeystoreRunnable());
+			if (myController != null) {
+				myController.invokeInBackground(new CheckHohSignatureKeystoreRunnable());
+			}
 		}
 	}
 

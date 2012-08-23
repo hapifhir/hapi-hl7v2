@@ -62,8 +62,8 @@ public class UnderlineHighlighter extends DefaultHighlighter {
 
 	// Painter for underlined highlights
 	public static class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
-		protected Color lineColour = new Color(0.0f, 0.5f, 0.0f);
-		protected Color fillColour = new Color(0.6f, 1.0f, 0.6f);
+		protected Color lineColour = new Color(0.2f, 0.6f, 0.2f);
+		protected Color fillColour = new Color(0.75f, 1.0f, 0.75f);
 
 		public UnderlineHighlightPainter() {
 		}

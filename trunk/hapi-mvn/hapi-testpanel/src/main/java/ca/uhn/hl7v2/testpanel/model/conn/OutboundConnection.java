@@ -382,6 +382,7 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 				long elapsedSinceLastUpdate = now - myLastUpdate;
 				if (elapsedSinceLastUpdate > 1000) {
 					sendUpdate(complete);
+					myLastUpdate = now;
 				}
 
 				i++;

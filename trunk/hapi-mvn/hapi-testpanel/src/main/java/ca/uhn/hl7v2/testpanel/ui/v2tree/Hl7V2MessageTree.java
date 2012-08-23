@@ -120,6 +120,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageTree.class);
 	private static final String TABLE_NAMESPACE_HL7 = "HL7";
 	private static final String TBL = " ";
+	private boolean myShowRep0 = true;
 	private Controller myController;
 	private boolean myCurrentlyEditing;
 	private PropertyChangeListener myHighlitedPathListener;
@@ -144,6 +145,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private IWorkingListener myWorkingListener;
 
 	private PropertyChangeListener myMessageEncodingListener;
+
+	private ShowEnum myUnitTestShowMode;
 
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
@@ -315,7 +318,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			try {
 				String nextName = childNames[i];
 
-				switch (myMessages.getEditorShowMode()) {
+				switch (getShowMode()) {
 				case ALL:
 				case ERROR:
 					// case POPULATED:
@@ -376,6 +379,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 	}
 
+	private ShowEnum getShowMode() {
+		if (myUnitTestShowMode != null) {
+			return myUnitTestShowMode;
+		}
+		ShowEnum showMode = myMessages != null ? myMessages.getEditorShowMode() : ShowEnum.POPULATED;
+		return showMode;
+	}
+
 	void addChildren(List<AbstractMessage<?>> theMessages, TreeNodeRoot theTop, String theTerserPath) throws InterruptedException, InvocationTargetException {
 		int index = 0;
 		for (AbstractMessage<?> abstractMessage : theMessages) {
@@ -434,7 +445,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				List<Integer> components = new ArrayList<Integer>();
 				components.add(Integer.valueOf(i));
 
-				switch (myMessages.getEditorShowMode()) {
+				switch (getShowMode()) {
 				case ALL:
 				case ERROR:
 					// case POPULATED:
@@ -464,7 +475,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					b.append(theTerserPath);
 					b.append("-");
 					b.append((i));
-					if (j > 0) {
+					if (repeating) {
 						b.append('(');
 						b.append(j + 1);
 						b.append(')');
@@ -808,9 +819,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 		super.setEditingRow(theARow);
 	}
+	
+	public void setUnitTestShowMode(ShowEnum theUnitTestShowMode) {
+		myUnitTestShowMode = theUnitTestShowMode;
+		myUpdaterThread.scheduleUpdateNow();
+	}
 
 	public void setEditorShowModeAndUpdateAccordingly(ShowEnum theValue) {
-		if (theValue != myMessages.getEditorShowMode()) {
+		if (myMessages != null && theValue != myMessages.getEditorShowMode()) {
 			myMessages.setEditorShowMode(theValue);
 			myUpdaterThread.scheduleUpdateNow();
 		}
@@ -1171,10 +1187,13 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			b.append(myName);
 			b.append("</font>");
 
-			if (myRepeating != null && myRepeating && getRepNum() > 0) {
+			if (myRepeating != null && myRepeating && (myShowRep0 || getRepNum() > 0)) {
 				b.append("<font color=\"" + COLOR_REPNUM + "\">");
-				b.append(" (rep ");
-				b.append(myRepNum + 1);
+				b.append(" (rep");
+				if (myRepNum > 0) {
+					b.append(' ');
+					b.append(myRepNum + 1);
+				}
 				b.append(")");
 				b.append("</font>");
 			}
@@ -1949,9 +1968,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			// b.append(" ");
 			// b.append(getName());
 
-			if (isRepeating() && getRepNum() > 0) {
+			if (isRepeating() && (myShowRep0 || getRepNum() > 0)) {
 				b.append("<font color=\"" + COLOR_REPNUM + "\">");
-				b.append(" (rep ").append(getRepNum() + 1).append(")");
+				b.append(" (rep");
+				if (getRepNum() > 0) {
+					b.append(' ');
+					b.append(getRepNum() + 1);
+				}
+				b.append(")");
 				b.append("</font>");
 			}
 
@@ -1990,7 +2014,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 		public SegmentAndComponentPath getSegmentAndComponentPath() {
-			return new SegmentAndComponentPath(mySegment, myComponentPath);
+			return new SegmentAndComponentPath(mySegment, myComponentPath, getRepNum()+1);
 		}
 
 		public Type getType() {

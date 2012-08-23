@@ -5,7 +5,7 @@
 		<version>2.1-alpha1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<version>2.1-alpha1</version>
+	<version>2.0.1</version>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi-testpanel</artifactId>
@@ -235,6 +235,10 @@
 				<directory>src/main/textresources</directory>
 				<filtering>true</filtering>
 			</resource>
+			<resource>
+				<directory>src/launch4j</directory>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 	</build>
 	<reporting>
@@ -386,7 +390,7 @@
 							<executable>C:\Program Files\Launch4j\launch4jc.exe</executable>
 							<workingDirectory>${project.basedir}\target</workingDirectory>
 							<arguments>
-								<argument>..\src\launch4j\launch4j.xml</argument>
+								<argument>..\target\classes\launch4j.xml</argument>
 							</arguments>
 						</configuration>
 					</plugin>

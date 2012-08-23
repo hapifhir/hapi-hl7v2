@@ -16,7 +16,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.2.0/maven-project-2.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-j2ee/4.0.2/jboss-j2ee-4.0.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0-sources.jar"/>
@@ -47,5 +46,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.9.0/mockito-all-1.9.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.6.6/jcl-over-slf4j-1.6.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

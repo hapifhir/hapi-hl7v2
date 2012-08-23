@@ -71,7 +71,6 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		initParser();
 	}
 
-
 	public Hl7V2MessageBase(String theId) {
 		super(theId);
 		initParser();
@@ -222,11 +221,11 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 			return;
 		}
 		myRuntimeProfile = theRuntimeProfile;
-		
+
 		if (mySourceMessage == null) {
 			return;
 		}
-		
+
 		// Force a refresh
 		String sourceMessage = mySourceMessage;
 		mySourceMessage = null;
@@ -253,12 +252,12 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 
 		Message parsedMessage;
 		try {
-			
+
 			ourLog.info("About to parse message");
-			
+
 			if (myRuntimeProfile != null) {
 				Entry profile = determineRuntimeProfile(text);
-				
+
 				if (profile != null) {
 					parsedMessage = ConformanceMessage.newInstanceFromStaticDef(profile.getProfileProxy().getProfile().getMessage(), profile.getTablesId());
 					parsedMessage.setParser(myParser);
@@ -294,7 +293,6 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		firePropertyChange(PARSED_MESSAGE_PROPERTY, original, text);
 	}
 
-
 	private Entry determineRuntimeProfile(String text) throws HL7Exception {
 		String[] fields = PreParser.getFields(text, "MSH-9-1", "MSH-9-2");
 		Entry profile = null;
@@ -310,7 +308,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 			ourLog.error("Failed to load profile", e);
 			profile = null;
 		}
-		
+
 		return profile;
 	}
 
@@ -386,7 +384,7 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		}
 	}
 
-	static Range findFieldRange(List<Integer> theField, Range theSegmentRange, String theSourceMessage, Message theParsedMessage) {
+	static Range findFieldRange(List<Integer> theField, int theRepNum, Range theSegmentRange, String theSourceMessage, Message theParsedMessage) {
 		EncodingCharacters enc;
 		try {
 			enc = EncodingCharacters.getInstance(theParsedMessage);
@@ -431,13 +429,47 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 				if (offset > 1) {
 					currentRange = new Range(nextSeparatorIndex + 1, currentRange.getEnd());
 				} else {
-					currentRange = new Range(currentRange.getStart(), nextSeparatorIndex);
+
+					if (componentPathIndex == 0) {
+						char repSep = enc.getRepetitionSeparator();
+						for (int i = 1; i <= theRepNum; i++) {
+							int repIndex = theSourceMessage.indexOf(repSep, currentRange.getStart());
+							if (repIndex == -1) {
+								if (i == theRepNum) {
+									currentRange = new Range(currentRange.getStart(), nextSeparatorIndex);
+								} else {
+									// rep is beyond what the message actually
+									// has.. this probably shouldn't happen
+									return new Range(currentRange.getEnd(), currentRange.getEnd());
+								}
+							} else if (i == theRepNum) {
+								currentRange = new Range(currentRange.getStart(), repIndex);
+							} else {
+								currentRange = new Range(repIndex + 1, currentRange.getEnd());
+							}
+						}
+					} else {
+						
+						currentRange = new Range(currentRange.getStart(), nextSeparatorIndex);
+						
+					}
 				}
 
 				offset--;
 
+				if (ourLog.isDebugEnabled()) {
+					String applyTo = currentRange.applyTo(theSourceMessage);
+					ourLog.debug("New range is " + applyTo + " (" + applyTo.length() + " chars)");
+				}
+				
 			}
 			componentPathIndex++;
+			
+			if (ourLog.isDebugEnabled()) {
+				String applyTo = currentRange.applyTo(theSourceMessage);
+				ourLog.debug("New range is " + applyTo + " (" + applyTo.length() + " chars)");
+			}
+
 		}
 		return currentRange;
 	}

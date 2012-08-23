@@ -36,12 +36,12 @@ import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -70,7 +70,7 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingBytes;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
-import ca.uhn.hl7v2.testpanel.util.IProgressCallback;
+import ca.uhn.hl7v2.testpanel.ui.conn.JGraph;
 import ca.uhn.hl7v2.testpanel.util.ISendProgressCallback;
 
 public class ActivityTable extends JPanel implements IDestroyable {
@@ -108,7 +108,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 
 	protected boolean myTransmissionCancelled;
 
-	private JLabel mySendStatusLabel;
+	private JGraph mySendThroughputGraph;
+	
 	public ActivityTable() {
 		super(new BorderLayout());
 		setBorder(null);
@@ -159,8 +160,11 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myhorizontalGlue = Box.createHorizontalGlue();
 		toolBar.add(myhorizontalGlue);
 		
-		mySendStatusLabel = new JLabel();
-		toolBar.add(mySendStatusLabel);
+		mySendThroughputGraph = new JGraph();
+		mySendThroughputGraph.setPreferredSize(new Dimension(200, 0));
+		mySendThroughputGraph.setMinimumSize(new Dimension(200, 0));
+		mySendThroughputGraph.setMaximumSize(new Dimension(200, 32767));
+		toolBar.add(mySendThroughputGraph);
 		
 		
 		myStop = new JButton();
@@ -493,6 +497,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	public ISendProgressCallback provideTransmissionCallback() {
 		return new ISendProgressCallback() {
 			
+			private LinkedList<Integer> myValues = new LinkedList<Integer>();
+			
 			@Override
 			public void activityStopped() {
 				setProgressIndicatorsEnabled(false);
@@ -514,7 +520,13 @@ public class ActivityTable extends JPanel implements IDestroyable {
 
 			@Override
             public void updateAvgThroughputPerSecond(int theThroughput) {
-				mySendStatusLabel.setText("Throughput " + theThroughput + " msgs/sec");
+				myValues.add(theThroughput);
+				while (myValues.size() > 100) {
+					myValues.pop();
+				}
+				ourLog.info("Throughput values: {}", myValues);
+				mySendThroughputGraph.setText(theThroughput + " msgs/sec");
+				mySendThroughputGraph.setValues(myValues);
             }
 
 			@Override
