@@ -5,7 +5,7 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-		<release version="2.0.1" date="2012-08-22">
+		<release version="2.0.1" date="TBD">
             <action type="fix" dev="Olaf Zevenboom">
             	Add a mode to send a message or a group of messages more than once in a row
             	(for load testing, stress testing, etc.)
@@ -32,6 +32,9 @@
             </action>
             <action type="add">
                 Message tree values now have a tooltip which shows the entire value.
+            </action>
+            <action type="add">
+                While sending messages, current throughput and send/receive time is shown
             </action>
 		</release>
         <release version="2.0" date="2012-07-16">
