@@ -1,7 +1,7 @@
 <ORU_R01 xmlns="urn:hl7-org:v2xml">
 	<MSH>
 		<MSH.1>|</MSH.1>
-		<MSH.2>^~\\&amp;</MSH.2>
+		<MSH.2>^~\&amp;</MSH.2>
 		<MSH.3>LABMI1</MSH.3>
 		<MSH.5>DMCRES</MSH.5>
 		<MSH.7>
