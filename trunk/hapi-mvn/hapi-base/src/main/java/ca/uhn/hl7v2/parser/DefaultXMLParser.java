@@ -171,7 +171,7 @@ public class DefaultXMLParser extends XMLParser {
      * @throws EncodingNotSupportedException if the message encoded
      *     is not supported by this parser.
      */
-    public Message parseDocument(org.w3c.dom.Document XMLMessage, String version) throws HL7Exception {
+    public Message parseDocument(Document XMLMessage, String version) throws HL7Exception {
         String messageName = XMLMessage.getDocumentElement().getTagName();
         Message message = instantiateMessage(messageName, version, true);
         parse(message, XMLMessage.getDocumentElement());
@@ -182,7 +182,7 @@ public class DefaultXMLParser extends XMLParser {
      * Populates the given group object with data from the given group element, ignoring 
      * any unrecognized nodes.  
      */
-    private void parse(ca.uhn.hl7v2.model.Group groupObject, org.w3c.dom.Element groupElement) throws HL7Exception {
+    private void parse(Group groupObject, Element groupElement) throws HL7Exception {
         String[] childNames = groupObject.getNames();
         String messageName = groupObject.getMessage().getName();
         
@@ -202,7 +202,7 @@ public class DefaultXMLParser extends XMLParser {
             
             // 4 char segment names are second occurrences of a segment within a single message
             // structure. e.g. the second PID segment in an A17 patient swap message is known
-            // to hapi's code represenation as PID2
+            // to hapi's code representation as PID2
             if (childNames[i].length() != 4) {   
             	parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
             } else {
@@ -221,9 +221,9 @@ public class DefaultXMLParser extends XMLParser {
     private void parseReps(Element groupElement, Group groupObject, 
             String messageName, String childName, String childIndexName) throws HL7Exception {
         
-        List<Element> reps = getChildElementsByTagName(groupElement, makeGroupElementName(messageName, childName));
-        log.trace("# of elements matching {}: {}", 
-        		makeGroupElementName(messageName, childName), reps.size());
+    	String groupName = makeGroupElementName(messageName, childName);
+        List<Element> reps = getChildElementsByTagName(groupElement, groupName);
+        log.trace("# of elements matching {}: {}", groupName, reps.size());
 
 		if (groupObject.isRepeating(childIndexName)) {
 			for (int i = 0; i < reps.size(); i++) {

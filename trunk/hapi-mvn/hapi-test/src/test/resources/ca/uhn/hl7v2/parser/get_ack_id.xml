@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE RSP_K22 SYSTEM "http://localhost/DTDs/Q22Response.dtd">
+<RSP_K22>
+	<MSH>
+		<MSH.1>|</MSH.1>
+		<MSH.2>^~/&amp;</MSH.2>
+		<MSH.3>
+			<HD.1>MPI</HD.1>
+			<HD.3>ISO</HD.3>
+		</MSH.3>
+		<MSH.4>
+			<HD.1>HealthLink</HD.1>
+			<HD.3>ISO</HD.3>
+		</MSH.4>
+		<MSH.5>
+			<HD.1>UHN Vista</HD.1>
+			<HD.3>ISO</HD.3>
+		</MSH.5>
+		<MSH.6>
+			<HD.1>UHN</HD.1>
+			<HD.3>ISO</HD.3>
+		</MSH.6>
+		<MSH.7>200204292049</MSH.7>
+		<MSH.9>
+			<CM_MSG_TYPE.1>RSP</CM_MSG_TYPE.1>
+			<CM_MSG_TYPE.2>K22</CM_MSG_TYPE.2>
+			<CM_MSG_TYPE.3>RSP_K22</CM_MSG_TYPE.3>
+		</MSH.9>
+		<MSH.10>200204292049100799</MSH.10>
+		<MSH.11>
+			<PT.1>P</PT.1>
+		</MSH.11>
+		<MSH.12>
+			<VID.1>2.4</VID.1>
+		</MSH.12>
+		<MSH.21>Q22</MSH.21>
+	</MSH>
+	<MSA>
+		<MSA.1>AA</MSA.1>
+		<MSA.2>876</MSA.2>
+	</MSA>
+	<QAK>
+		<QAK.2>OK</QAK.2>
+		<QAK.3>
+			<CE.1>Q22</CE.1>
+			<CE.2>

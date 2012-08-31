@@ -75,7 +75,7 @@ public class Escape {
 			for (int j = 0; j < 6; j++) {
                 if (text.charAt(i) == esc.characters[j]) {
 
-					// Formatting escape sequences such as /.br/ should be left alone
+					// Formatting escape sequences such as \.br\ should be left alone
 					if (j == 4) {
 						
 						if (i+1 < textLength) {
