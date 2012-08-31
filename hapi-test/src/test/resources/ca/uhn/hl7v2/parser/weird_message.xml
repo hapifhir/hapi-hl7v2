@@ -1,0 +1,52 @@
+<ConformanceMessage xmlns="urn:hl7-org:v2xml">
+	<MSH>
+		<MSH.1>|</MSH.1>
+		<MSH.2>^~\\&amp;</MSH.2>
+		<MSH.7>
+			<TS.1>2012010219dd2527.532-0500</TS.1>
+		</MSH.7>
+		<MSH.9>
+			<MSG.1>ADT</MSG.1>
+			<MSG.2>A11</MSG.2>
+			<MSG.3>ADT_A01</MSG.3>
+		</MSH.9>
+		<MSH.10>160022</MSH.10>
+		<MSH.11>
+			<PT.1>T</PT.1>
+		</MSH.11>
+		<MSH.12>
+			<VID.1>2.6</VID.1>
+		</MSH.12>
+	</MSH>
+	<SFT />
+	<EVN />
+	<PID>
+		<PID.1>fdsfdf</PID.1>
+	</PID>
+	<PD1 />
+	<ROL />
+	<NK1 />
+	<PV1 />
+	<PV2 />
+	<ROL />
+	<DB1 />
+	<OBX />
+	<AL1 />
+	<DG1 />
+	<DRG />
+	<ADT_A01.PROCEDURE>
+		<PR1 />
+		<ROL />
+	</ADT_A01.PROCEDURE>
+	<GT1 />
+	<ADT_A01.INSURANCE>
+		<IN1 />
+		<IN2 />
+		<IN3 />
+		<ROL />
+	</ADT_A01.INSURANCE>
+	<ACC />
+	<UB1 />
+	<UB2 />
+	<PDA />
+</ConformanceMessage>

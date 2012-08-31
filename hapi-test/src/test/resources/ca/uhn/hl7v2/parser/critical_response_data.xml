@@ -1,0 +1,19 @@
+<ORU_R01 xmlns="urn:hl7-org:v2xml">
+	<MSH>
+		<MSH.1>|</MSH.1>
+		<MSH.2>^~\&amp;</MSH.2>
+		<MSH.3>LABMI1</MSH.3>
+		<MSH.5>DMCRES</MSH.5>
+		<MSH.7>
+			<TS.1>19951010134000</TS.1>
+		</MSH.7>
+		<MSH.9>
+			<CM_MSG.1>ORU</CM_MSG.1>
+			<CM_MSG.2>R01</CM_MSG.2>
+		</MSH.9>
+		<MSH.10>LABMI1199510101340007</MSH.10>
+		<MSH.11>D</MSH.11>
+		<MSH.12>2.2</MSH.12>
+		<MSH.15>AL</MSH.15>
+	</MSH>
+</ORU_R01>

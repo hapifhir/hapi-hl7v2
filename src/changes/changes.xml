@@ -6,6 +6,11 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+            <action type="fix" dev="Christian Ohr" issue="3515725">
+            	XML Parser is now able to handle escape sequences that are relevant for
+            	XML encoding when parsing and rendering. Thanks to Alberto Saez Torres
+            	for reporting.
+            </action>
             <action type="add" dev="Christian Ohr" issue="3515833">
             	Introduced HapiContext, which aggregates most of the configuration and allows
             	to instantiate correspondingly configured HAPI services 

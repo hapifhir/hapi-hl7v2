@@ -1,0 +1,363 @@
+<ORU_R01 xmlns="urn:hl7-org:v2xml">
+	<MSH>
+		<MSH.1>|</MSH.1>
+		<MSH.2>^~\\&amp;</MSH.2>
+		<MSH.3>
+			<HD.1>APPNAME</HD.1>
+		</MSH.3>
+		<MSH.4>
+			<HD.1>VENDOR NAME</HD.1>
+		</MSH.4>
+		<MSH.5>
+			<HD.1>CLINIC APPLICATION</HD.1>
+		</MSH.5>
+		<MSH.6>
+			<HD.1>CLINIC ID</HD.1>
+		</MSH.6>
+		<MSH.7>
+			<TS.1>20100723170708</TS.1>
+		</MSH.7>
+		<MSH.9>
+			<MSG.1>ORU</MSG.1>
+			<MSG.2>R01</MSG.2>
+		</MSH.9>
+		<MSH.10>12345</MSH.10>
+		<MSH.11>
+			<PT.1>P</PT.1>
+		</MSH.11>
+		<MSH.12>
+			<VID.1>2.5</VID.1>
+		</MSH.12>
+	</MSH>
+	<ORU_R01.PATIENT_RESULT>
+		<ORU_R01.PATIENT>
+			<PID>
+				<PID.2>
+					<CX.1>MODEL:xxx/SERIAL:xxx</CX.1>
+					<CX.4>
+						<HD.1>STJ</HD.1>
+					</CX.4>
+					<CX.5>U</CX.5>
+				</PID.2>
+				<PID.5>
+					<XPN.1>
+						<FN.1>Doe</FN.1>
+					</XPN.1>
+					<XPN.2>John</XPN.2>
+					<XPN.3>Adams</XPN.3>
+				</PID.5>
+				<PID.7>
+					<TS.1>197903110920</TS.1>
+				</PID.7>
+				<PID.8>M</PID.8>
+				<PID.11>
+					<XAD.1>
+						<SAD.2>Street</SAD.2>
+					</XAD.1>
+					<XAD.3>City</XAD.3>
+					<XAD.5>06531</XAD.5>
+					<XAD.6>Country</XAD.6>
+				</PID.11>
+			</PID>
+			<ORU_R01.VISIT>
+				<PV1>
+					<PV1.1>1</PV1.1>
+					<PV1.2>R</PV1.2>
+					<PV1.7>
+						<XCN.1>DoctorID</XCN.1>
+					</PV1.7>
+					<PV1.19>
+						<CX.1>123456</CX.1>
+					</PV1.19>
+				</PV1>
+			</ORU_R01.VISIT>
+		</ORU_R01.PATIENT>
+		<ORU_R01.ORDER_OBSERVATION>
+			<OBR>
+				<OBR.1>1</OBR.1>
+				<OBR.3>
+					<EI.1>123456</EI.1>
+				</OBR.3>
+				<OBR.4>
+					<CE.1>Remote Follow-up</CE.1>
+				</OBR.4>
+				<OBR.7>
+					<TS.1>20040328134623</TS.1>
+				</OBR.7>
+				<OBR.8>
+					<TS.1>20040328134623</TS.1>
+				</OBR.8>
+				<OBR.22>
+					<TS.1>20040328134623</TS.1>
+				</OBR.22>
+				<OBR.25>F</OBR.25>
+			</OBR>
+			<NTE>
+				<NTE.1>1</NTE.1>
+				<NTE.2>L</NTE.2>
+				<NTE.3>Comment</NTE.3>
+			</NTE>
+			<ORU_R01.OBSERVATION>
+				<OBX>
+					<OBX.1>1</OBX.1>
+					<OBX.2>ST</OBX.2>
+					<OBX.3>
+						<CE.1>257</CE.1>
+						<CE.2>MDC-IDC_SYSTEM_STATUS</CE.2>
+						<CE.3>MDC_IDC</CE.3>
+					</OBX.3>
+					<OBX.4>1</OBX.4>
+					<OBX.6>
+						<CE.1>m</CE.1>
+					</OBX.6>
+					<OBX.8>L</OBX.8>
+					<OBX.11>F</OBX.11>
+					<OBX.14>
+						<TS.1>20070422170125</TS.1>
+					</OBX.14>
+					<OBX.17>
+						<CE.1>LastFU</CE.1>
+						<CE.2>Since Last Follow-up Aggregate</CE.2>
+					</OBX.17>
+				</OBX>
+			</ORU_R01.OBSERVATION>
+			<ORU_R01.OBSERVATION>
+				<OBX>
+					<OBX.1>2</OBX.1>
+					<OBX.2>ED</OBX.2>
+					<OBX.3>
+						<CE.1>18750-0</CE.1>
+						<CE.2>Cardiac Electrophysiology Report</CE.2>
+						<CE.3>LN</CE.3>
+					</OBX.3>
+					<OBX.5>
+						<ED.2>Application</ED.2>
+						<ED.3>PDF</ED.3>
+						<ED.4>Base64</ED.4>
+
+
+						<ED.5>JVBERi0xLjMKJeLjz9MKCjEgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cKL091dGxpbmVzID
+							IgMCBS
+
+							Ci9QYWdlcyAzIDAgUgovT3BlbkFjdGlvbiA4IDAgUiA+PgplbmRvYmoKMiAwIG9iago8PCAvVHlw
+
+							ZSAvT3V0bGluZXMgL0NvdW50IDAgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzCi9L
+
+							aWRzIFs2IDAgUgpdCi9Db3VudCAxCi9SZXNvdXJjZXMgPDwKL1Byb2NTZXQgNCAwIFIKL0ZvbnQg
+
+							PDwgCi9GMSAxMSAwIFIKL0YyIDEyIDAgUgovRjMgMTcgMCBSID4+Ci9YT2JqZWN0IDw8IAovSTEg
+
+							OSAwIFIgPj4KPj4KL01lZGlhQm94IFswLjAwMCAwLjAwMCA1OTUuMjgwIDg0MS44OTBdCiA+Pgpl
+
+							bmRvYmoKNCAwIG9iagpbL1BERiAvVGV4dCAvSW1hZ2VDIF0KZW5kb2JqCjUgMCBvYmoKPDwKL0Ny
+
+							ZWF0b3IgKERPTVBERiBDb252ZXJ0ZXIpCi9DcmVhdGlvbkRhdGUgKDIwMTAtMDItMTUpCj4+CmVu
+
+							ZG9iago2IDAgb2JqCjw8IC9UeXBlIC9QYWdlCi9QYXJlbnQgMyAwIFIKL0Fubm90cyBbIDEzIDAg
+
+							UiAxNSAwIFIgXQovQ29udGVudHMgNyAwIFIKPj4KZW5kb2JqCjcgMCBvYmoKPDwgL0ZpbHRlciAv
+
+							RmxhdGVEZWNvZGUKL0xlbmd0aCA5MTcgPj4Kc3RyZWFtCnicnVbZbttGFH3XV9y3xoA8nn1IFQgg
+
+							23HSBC1cS4Uf6jyMpZE5KReXS4wG+Zi+9i97SYuLRSl2AgMUfMR77pm7nNGEEUopDJ/53YTBA3B4
+
+							DxQ+wZ/wET/XE8abb2UgiA4ZKMMIDygIqQkLQ8gdbCZ/T0LdvFX/iYDImvQxzoSMyJDCKpmc/MLg
+
+							PJv8PqGP7w6emPt02YUYQxgPYLmGkwvWoLDcALy6rG5jX0RuDVkKR7D8BG+WdVwgiaFBE8cZfYzj
+
+							g7hfbVHYVVQVriwLmMdfIucTl/9UwLkvnC0cXDn8zFcRnLm0dPmAWwQBCbg8LApuXrWvD0/EBucS
+
+							WB2m9GGOqCzvZycniV3nK5LcRSSy+Webr4lbV4fJr94iqLBlFFvWtkuECstf51LESAYJKCWJYLRD
+
+							Ylgc7IBSgij9jRbcHD132LaJIiShoi1D2BK8yxLXU+yqZzhcqg4OSIiSExCaGCU64FvaRT2C4mBi
+
+							eF13fpPlVQI2XcPiev7bDJaRg8scu5+WDXpRlRWOdLaBxcoj6Dd+BdfuFs6yJKlSX3pX9PI1ryX0
+
+							z0MrJLYl4UToEJQOmxXaiq8XaO+ZxiB2vCuvaLiwvbiYNVuLxIjwLcK3yI6AGDBlR8RGROy7iHYF
+
+							vIxpjAw1tUw7IvcI2Keon0IdojUg3AyDAC7bafiuURjYQcurKbqaGfM+PzUDEgyTXLUkOz63sqVH
+
+							mzu3pZv9OwzGEwvFm2gh5XhFOaVmnEyhL+hW8fD1s9jmf8GyOfIHn2ZF5EuLA3zTEN0ckadrUzzY
+
+							dAYl1up+UKtNV6uiL8ADFmDVF4DsqaMyuJ+KjVWd5t5t4NRnPsXcybOOodCwtJY4MvV9I2QH1I6B
+
+							+UJc0EAezvczBDNgWhwzvN+GOhUJ0LmVwn7TPcV+erW8danLbQzvsuIeqxhP4dqmdzBPbqvYlln+
+
+							D5xZLNPjJQOLypcODGfnU8wDl9iHxKawKHPnyimcZkWZpdNh1TjHSxjNXeGCGLXHnp/KoZwxOYU/
+
+							FvMn88OIxvlRDC2e8THH0sXuPspSNwPNzLHh+liEgYGvcGFXhU98PPhGMsogy7v/jWHBMBlOnanr
+
+							TrF+Wo2T/QfvbVpZrAybAqdo8fM4hit/F6H++lbOP+N1/6OOK+u21z9aXui47W8dnKE6rHeyFul9
+
+							q6XuHKgHeiOTQbhLtEVeSrQr4GVMY2SgqWPaEblHwB5F/wMtHGbMCmVuZHN0cmVhbQplbmRvYmoK
+
+							CjggMCBvYmoKWzYgMCBSIC9GaXRdCmVuZG9iagoKOSAwIG9iago8PAovVHlwZSAvWE9iamVjdAov
+
+							U3VidHlwZSAvSW1hZ2UKL1dpZHRoIDIwMAovSGVpZ2h0IDgwCi9GaWx0ZXIgL0ZsYXRlRGVjb2Rl
+
+							Ci9EZWNvZGVQYXJtcyA8PCAvUHJlZGljdG9yIDE1IC9Db2xvcnMgMSAvQ29sdW1ucyAyMDAgL0Jp
+
+							dHNQZXJDb21wb25lbnQgOD4+Ci9Db2xvclNwYWNlICBbIC9JbmRleGVkIC9EZXZpY2VSR0IgMzIg
+
+							MTAgMCBSIF0KL0JpdHNQZXJDb21wb25lbnQgOAovTGVuZ3RoIDIwMzEgPj4Kc3RyZWFtCmje7Zlp
+
+							l6soEIZNOp2OccGoGBNc+P+/cqhiK1zSduaeM33u6Ic0IhT1SBXg25H8S65oB9lBdpAdZAf5/SB1
+
+							fXflZ133r1rW7xh9v48DqaPo0xSvUXQxxbsvSnk5RFF0OD/xwUmVo49M+j7e8/snPIw+YbBLFLkB
+
+							anIrT9FpYrSO3FVLX1YeBDehI0sg0U2/6oP3/qw62BafxtShRkB9WfijL8rMjZp9C0KNbgWhfZZB
+
+							Dr0ewYE8jTemwbmXz8vhhG3Ayu1kpwF9N2/opgxl2PJ7kMCournW+uohNmv1GuHPc3JD+yyDRGfr
+
+							kwG5RMdzdLRl3bYHf22Lu/PqfMTeODkHXX3Pvg2twGhNw5MOGd4EfZZzBAz1B/ir3VTl7G6tq/4+
+
+							wUggmc7Pq5nQzM1hOP4ayJ1a2Qhyf7FqgZVTdOw/lT8WJAPfTsZnSIvzrXf5crx6c2fllKK+6vJh
+
+							4oyOlusSSGDUh1b/CiToswyi0vwEKW9BjtEXvuEnyeFPfN39B5SPX0+bSjcgOJLViIxPUniW7NRo
+
+							TRuugwR9lkFgEYX3b0BqjeCC//l1BAvazwzXjsPNpJLGyX4MQo1uBQkdWQSB1ah3ICrSLur6MMGP
+
+							Jq7KxNXc3MzirILqBA0PaHoeWi/3EWJ0Y47MHVkAueNeokGe4S5krv5I3oSO+yx456+TPXOZerAT
+
+							7Yz+BGTiyAxE1tKBqFd7wuuIkdN/6Xn5gP7ZzW4ZNcTeUTfUvh3s8vu8zEGekfH/hryB0Y0gQZ9V
+
+							EOlA3NoFjzKMuutT9nh+gbVaodwx6m40pp/BhniegcB2+wVmDhiw1Gi4Ia6DBH02gFx8agB777L2
+
+							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
+
+							ZG9iagoKMTEgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKL1N1YnR5cGUgL1R5cGUxCi9OYW1lIC9GMQov
+
+							QmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+PgplbmRvYmoK
+
+							MTIgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKL1N1YnR5cGUgL1R5cGUxCi9OYW1lIC9GMgovQmFzZUZv
+
+							bnQgL0hlbHZldGljYS1Cb2xkT2JsaXF1ZQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+Pgpl
+
+							bmRvYmoKMTMgMCBvYmoKPDwgL1R5cGUgL0Fubm90Ci9TdWJ0eXBlIC9MaW5rCi9BIDE0IDAgUgov
+
+							Qm9yZGVyIFswIDAgMF0KL0ggL0kKL1JlY3QgWyAzOTYuMTU2MCA3NzcuMTI4NCA1NTMuNTYwMCA3
+
+							OTEuMDAwNCBdCj4+CmVuZG9iagoxNCAwIG9iago8PCAvVHlwZSAvQWN0aW9uCi9TIC9VUkkKL1VS
+
+							SSAoaHR0cDovL21hZHJjLm1naC5oYXJ2YXJkLmVkdSkKPj4KZW5kb2JqCjE1IDAgb2JqCjw8IC9U
+
+							eXBlIC9Bbm5vdAovU3VidHlwZSAvTGluawovQSAxNiAwIFIKL0JvcmRlciBbMCAwIDBdCi9IIC9J
+
+							Ci9SZWN0IFsgMTIuMDAwMCA3MzkuOTUwMCAzNi4wMDMwIDc1MC4zNTQwIF0KPj4KZW5kb2JqCjE2
+
+							IDAgb2JqCjw8IC9UeXBlIC9BY3Rpb24KL1MgL1VSSQovVVJJIChodHRwOi8vbWFkcmMubWdoLmhh
+
+							cnZhcmQuZWR1LykKPj4KZW5kb2JqCjE3IDAgb2JqCjw8IC9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9U
+
+							eXBlMQovTmFtZSAvRjMKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZAovRW5jb2RpbmcgL1dpbkFu
+
+							c2lFbmNvZGluZwo+PgplbmRvYmoKeHJlZgowIDE4CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAw
+
+							MDAxNSAwMDAwMCBuIAowMDAwMDAwMDk4IDAwMDAwIG4gCjAwMDAwMDAxNDQgMDAwMDAgbiAKMDAw
+
+							MDAwMDM0NyAwMDAwMCBuIAowMDAwMDAwMzg0IDAwMDAwIG4gCjAwMDAwMDA0NjAgMDAwMDAgbiAK
+
+							MDAwMDAwMDU0OSAwMDAwMCBuIAowMDAwMDAxNTM5IDAwMDAwIG4gCjAwMDAwMDE1NjggMDAwMDAg
+
+							biAKMDAwMDAwMzg2OCAwMDAwMCBuIAowMDAwMDA0MDUyIDAwMDAwIG4gCjAwMDAwMDQxNjAgMDAw
+
+							MDAgbiAKMDAwMDAwNDI4MCAwMDAwMCBuIAowMDAwMDA0NDA4IDAwMDAwIG4gCjAwMDAwMDQ0ODgg
+
+							MDAwMDAgbiAKMDAwMDAwNDYxNCAwMDAwMCBuIAowMDAwMDA0Njk1IDAwMDAwIG4gCnRyYWlsZXIK
+
+							PDwKL1NpemUgMTgKL1Jvb3QgMSAwIFIKL0luZm8gNSAwIFIKPj4Kc3RhcnR4cmVmCjQ4MDgKJSVF
+							T0YK
+						</ED.5>
+					</OBX.5>
+					<OBX.11>F</OBX.11>
+					<OBX.14>
+						<TS.1>20070422170125</TS.1>
+					</OBX.14>
+				</OBX>
+			</ORU_R01.OBSERVATION>
+			<ORU_R01.OBSERVATION>
+				<OBX>
+					<OBX.1>3</OBX.1>
+					<OBX.2>CE</OBX.2>
+					<OBX.3>
+						<CE.1>257</CE.1>
+						<CE.2>MDC-IDC_SYSTEM_STATUS</CE.2>
+						<CE.3>MDC_IDC</CE.3>
+					</OBX.3>
+					<OBX.4>1</OBX.4>
+					<OBX.5>
+						<CE.1>T57000</CE.1>
+						<CE.2>GALLBLADDER</CE.2>
+						<CE.3>SNM</CE.3>
+					</OBX.5>
+					<OBX.6>
+						<CE.1>m</CE.1>
+					</OBX.6>
+					<OBX.8>L</OBX.8>
+					<OBX.11>F</OBX.11>
+					<OBX.14>
+						<TS.1>20070422170125</TS.1>
+					</OBX.14>
+					<OBX.17>
+						<CE.1>LastFU</CE.1>
+						<CE.2>Since Last Follow-up Aggregate</CE.2>
+					</OBX.17>
+				</OBX>
+			</ORU_R01.OBSERVATION>
+		</ORU_R01.ORDER_OBSERVATION>
+	</ORU_R01.PATIENT_RESULT>
+</ORU_R01>
