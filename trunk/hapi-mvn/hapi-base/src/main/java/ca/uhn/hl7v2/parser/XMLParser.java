@@ -68,6 +68,7 @@ import ca.uhn.hl7v2.util.XMLUtils;
  */
 public abstract class XMLParser extends Parser {
 
+	private static final String ESCAPE_ATTRNAME = "V";
 	private static final String ESCAPE_NODENAME = "escape";
 	private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
 
@@ -384,7 +385,10 @@ public abstract class XMLParser extends Parser {
 		return hasElement;
 	}
 
-	/** Parses a primitive type by filling it with text child, if any */
+	/**
+	 * Parses a primitive type by filling it with text child, if any. If the datatype element
+	 * contains escape elements, resolve them properly.
+	 */
 	private void parsePrimitive(Primitive datatypeObject, Element datatypeElement)
 			throws DataTypeException {
 		NodeList children = datatypeElement.getChildNodes();
@@ -407,7 +411,7 @@ public abstract class XMLParser extends Parser {
 					EncodingCharacters ec = EncodingCharacters.getInstance(datatypeObject
 							.getMessage());
 					Element elem = (Element) child;
-					String attr = elem.getAttribute("V").trim();
+					String attr = elem.getAttribute(ESCAPE_ATTRNAME).trim();
 					if (attr != null && attr.length() > 0) {
 						builder.append(ec.getEscapeCharacter()).append(attr)
 								.append(ec.getEscapeCharacter());
@@ -436,7 +440,7 @@ public abstract class XMLParser extends Parser {
 	}
 
 	/**
-	 * Removes all unecessary whitespace from the given String (intended to be used with Primitive
+	 * Removes all unnecessary whitespace from the given String (intended to be used with Primitive
 	 * values). This includes leading and trailing whitespace, and repeated space characters.
 	 * Carriage returns, line feeds, and tabs are replaced with spaces.
 	 */
@@ -501,18 +505,6 @@ public abstract class XMLParser extends Parser {
 		}
 	}
 
-	/**
-	 * Returns the expected XML element name for the given child of a message constituent of the
-	 * given class (the class should be a Composite or Segment class).
-	 */
-	/*
-	 * private String makeElementName(Class c, int child) { String longClassName = c.getName();
-	 * String shortClassName = longClassName.substring(longClassName.lastIndexOf('.') + 1,
-	 * longClassName.length()); if (shortClassName.startsWith("Valid")) { shortClassName =
-	 * shortClassName.substring(5, shortClassName.length()); } return shortClassName + "." + child;
-	 * }
-	 */
-
 	/** Returns the expected XML element name for the given child of the given Segment */
 	private String makeElementName(Segment s, int child) {
 		return s.getName() + "." + child;
@@ -555,65 +547,67 @@ public abstract class XMLParser extends Parser {
 	}
 
 	/**
-	 * Encodes a Primitive in XML by adding it's value as a child of the given Element. Returns true
-	 * if the given Primitive contains a value.
+	 * Encodes a Primitive in XML by adding it's value as a child of the given Element. Detects
+	 * escape character and creates proper <escape> elements in the DOM tree. Returns true if the
+	 * given Primitive contains a value.
 	 */
 	private boolean encodePrimitive(Primitive datatypeObject, Element datatypeElement)
 			throws DataTypeException {
 		String value = datatypeObject.getValue();
-		// TODO handle \format\ sequences
 		boolean hasValue = (value != null && value.length() > 0);
 		if (hasValue) {
-			if ("MSH.2".equals(datatypeElement.getNodeName())) {
-				datatypeElement.appendChild(datatypeElement.getOwnerDocument()
-						.createTextNode(value));
-			} else {
-				try {
-					EncodingCharacters ec = EncodingCharacters.getInstance(datatypeObject
-							.getMessage());
-					int pos = 0;
-					int oldpos = 0;
-					boolean escaping = false;
-					while ((pos = value.indexOf(ec.getEscapeCharacter(), oldpos)) >= 0) {
-						String v = value.substring(oldpos, pos);
-						if (!escaping) {
-							if (v.length() > 0)
-								datatypeElement.appendChild(datatypeElement.getOwnerDocument()
-										.createTextNode(v));
-							escaping = true;
-						} else {
-							if (v.startsWith(".") || "H".equals(v) || "N".equals(v)) {
-								Element escape = datatypeElement.getOwnerDocument().createElement(
-										ESCAPE_NODENAME);
-								escape.setAttribute("V", v);
-								datatypeElement.appendChild(escape);
-								escaping = false;
-							} else {
-								// no proper escape sequence, assume literal
-								String ev = ec.getEscapeCharacter() + v;
-								datatypeElement.appendChild(datatypeElement.getOwnerDocument()
-										.createTextNode(ev));
-							}
-						}
-						oldpos = pos + 1;
-					}
-					// create text from the remainder
-					if (oldpos < value.length()) {
-					
-						StringBuilder sb = new StringBuilder();
-						// If we are in escaping mode, there appears no closing escape char
-						// so we treat the string as literal
-						if (escaping) sb.append(ec.getEscapeCharacter());
-						
-						sb.append(value.substring(oldpos));
-						datatypeElement.appendChild(datatypeElement.getOwnerDocument()
-								.createTextNode(sb.toString()));
-					}
+			try {
+				EncodingCharacters ec = EncodingCharacters.getInstance(datatypeObject.getMessage());
+				char esc = ec.getEscapeCharacter();
+				int pos = 0;
+				int oldpos = 0;
+				boolean escaping = false;
 
-				} catch (Exception e) {
-					throw new DataTypeException("Exception encoding Primitive: ", e);
+				// Find next escape character
+				while ((pos = value.indexOf(esc, oldpos)) >= 0) {
+
+					// string until next escape character
+					String v = value.substring(oldpos, pos);
+					if (!escaping) {
+						// currently in "text mode", so create textnode from it
+						if (v.length() > 0)
+							datatypeElement.appendChild(datatypeElement.getOwnerDocument()
+									.createTextNode(v));
+						escaping = true;
+					} else {
+						if (v.startsWith(".") || "H".equals(v) || "N".equals(v)) {
+							// currently in "escape mode", so create escape element from it
+							Element escape = datatypeElement.getOwnerDocument().createElement(
+									ESCAPE_NODENAME);
+							escape.setAttribute(ESCAPE_ATTRNAME, v);
+							datatypeElement.appendChild(escape);
+							escaping = false;
+						} else {
+							// no proper escape sequence, assume text
+							datatypeElement.appendChild(datatypeElement.getOwnerDocument()
+									.createTextNode(esc + v));
+						}
+					}
+					oldpos = pos + 1;
 				}
+				// create text from the remainder
+				if (oldpos < value.length()) {
+
+					StringBuilder sb = new StringBuilder();
+					// If we are in escaping mode, there appears no closing escape character,
+					// so we treat the string as text
+					if (escaping)
+						sb.append(esc);
+
+					sb.append(value.substring(oldpos));
+					datatypeElement.appendChild(datatypeElement.getOwnerDocument().createTextNode(
+							sb.toString()));
+				}
+
+			} catch (Exception e) {
+				throw new DataTypeException("Exception encoding Primitive: ", e);
 			}
+
 		}
 		return hasValue;
 	}

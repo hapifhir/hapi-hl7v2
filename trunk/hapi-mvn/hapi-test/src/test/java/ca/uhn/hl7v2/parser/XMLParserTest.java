@@ -16,8 +16,6 @@ import java.io.InputStreamReader;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -40,7 +38,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 public class XMLParserTest {
 
 	private XMLParser parser;
-	private static final Logger ourLog = LoggerFactory.getLogger(XMLParserTest.class);
 
 	@Before
 	public void setUp() throws Exception {

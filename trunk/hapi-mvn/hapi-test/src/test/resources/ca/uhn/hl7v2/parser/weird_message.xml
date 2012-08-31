@@ -1,7 +1,7 @@
 <ConformanceMessage xmlns="urn:hl7-org:v2xml">
 	<MSH>
 		<MSH.1>|</MSH.1>
-		<MSH.2>^~\\&amp;</MSH.2>
+		<MSH.2>^~\&amp;</MSH.2>
 		<MSH.7>
 			<TS.1>2012010219dd2527.532-0500</TS.1>
 		</MSH.7>
