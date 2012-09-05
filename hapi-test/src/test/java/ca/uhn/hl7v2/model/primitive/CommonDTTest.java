@@ -34,7 +34,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.v26.message.RDE_O11;
+import ca.uhn.hl7v2.model.v26.segment.PID;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.primitive.CommonDT
@@ -466,4 +471,38 @@ public class CommonDTTest extends TestCase {
 		commonDT = new CommonDT(dateString);
 		assertEquals("Should get day back", day, commonDT.getDay());
     }
+    
+    public void testGetDTAsDate() throws EncodingNotSupportedException, HL7Exception {
+    	
+    	String msgS = "MSH|^~\\&|IHE|EU-CAT2011|||20110307194153||RDE^O11|MSG00003|P|2.6||||||UTF-8\r" + 
+    			"PID|||A9283923889^^^^||Doe^John||19680306|M\r" + 
+    			"PV1||I|Cardiology^4^01^CATEUR_WARDS&&L||||||||||||||||V00001\r" + 
+    			"IN1|s|ID001^Full Insurance|XXXX|INSURANCE_Ltd.\r" + 
+    			"ORC|NW|PL001||P001|||||20110414153220|||00000999^Strangelove^Peter^^^Dr.|||||||P0343874^Jansen^Patricia||Connectathon Europe 2011^^^^^^^^^CATEUR2011|Casa della Cittˆ Leopolda, Piazza Guerrazzi, 56125 Pisa|0039 50 48587||P3;V3\r" + 
+    			"TQ1|1|2^Tab&Tablets&99FCS|TID\r" + 
+    			"RXO|S0002^Paracetamol^99SCS|500||mg^milligram^99UCS|Tab^Tablets^99FCS||||G|||||||||||J00.0^Cold^I10\r" + 
+    			"NTE|1||TAKE WITH WATER\r" + 
+    			"RXR|PO|MOUTH|\r" + 
+    			"RXC|B|N02BE01^Paracetamol^ATC|500|mg^milligram^ANS+\r" + 
+    			"RXE||054565^Dafalgan 500 mg tablets^99LCN|2|||Tab^Tablets^99FCS|01^Take with Water|||||||P0343874^Jansen^Patricia|P001\r" + 
+    			"NTE|1||Prescription Item OK|IA^Prescription item Advice notes\r" + 
+    			"NTE|2||Prescription OK|PA^Prescription-wide Advice notes\r" + 
+    			"TQ1|1|1^Tab&Tablets&99FCS||070000~150000~230000|||20110307\r" + 
+    			"RXR|PO|MOUTH|";
+    	
+    	PipeParser parser = PipeParser.getInstanceWithNoValidation();
+    	RDE_O11 msg = (RDE_O11) parser.parse( msgS );
+    	PID pid = msg.getPATIENT().getPID();
+    	Date dt = pid.getPid7_DateTimeOfBirth().getValueAsDate();
+    	
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(dt);
+    	
+    	assertEquals(1968, cal.get(Calendar.YEAR));
+    	assertEquals(2, cal.get(Calendar.MONTH));
+    	assertEquals(6, cal.get(Calendar.DAY_OF_MONTH));
+    	
+    	
+    }
+    
 }
