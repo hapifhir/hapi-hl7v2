@@ -22,25 +22,26 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public enum Version {
 
-	V21("2.1"),
-	V22("2.2"),
-	V23("2.3"),
-	V231("2.3.1"),
-	V24("2.4"),
-	V25("2.5"),
-	V251("2.5.1"),
+	V21("2.1"), 
+	V22("2.2"), 
+	V23("2.3"), 
+	V231("2.3.1"), 
+	V24("2.4"), 
+	V25("2.5"), 
+	V251("2.5.1"), 
 	V26("2.6");
-	
+
 	private String version;
-	
+
 	Version(String version) {
 		this.version = version;
 	}
@@ -48,15 +49,15 @@ public enum Version {
 	public String getVersion() {
 		return version;
 	}
-	
+
 	public String getPackageVersion() {
 		return "v" + version.replace(".", "");
 	}
-	
+
 	public static boolean supportsVersion(String version) {
 		return versionOf(version) != null;
 	}
-	
+
 	/**
 	 * @param version The version string, e.g. "2.1" or "2.6"
 	 */
@@ -67,25 +68,29 @@ public enum Version {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
+	public static boolean allVersions(Set<Version> someVersions) {
+		return someVersions != null && someVersions.size() == values().length;
+	}
+
 	/**
-	 * Returns true if this version is greater than the
-	 * specified version
+	 * Returns true if this version is greater than the specified version
 	 */
 	public boolean isGreaterThan(Version theVersion) {
 		return compareTo(theVersion) > 0;
 	}
-	
+
 	public static Version latestVersion() {
 		Version[] versions = Version.values();
 		return versions[versions.length - 1];
 	}
-	
+
 	public static Version[] asOf(Version v) {
 		List<Version> versions = new ArrayList<Version>();
 		for (Version version : Version.values()) {
-			if (version.compareTo(v) >= 0) versions.add(version);
+			if (version.compareTo(v) >= 0)
+				versions.add(version);
 		}
 		return versions.toArray(new Version[versions.size()]);
 	}
@@ -93,16 +98,18 @@ public enum Version {
 	public static Version[] except(Version v) {
 		List<Version> versions = new ArrayList<Version>();
 		for (Version version : Version.values()) {
-			if (version.compareTo(v) != 0) versions.add(version);
+			if (version.compareTo(v) != 0)
+				versions.add(version);
 		}
 		return versions.toArray(new Version[versions.size()]);
-	}	
+	}
 
 	public static Version[] before(Version v) {
 		List<Version> versions = new ArrayList<Version>();
 		for (Version version : Version.values()) {
-			if (version.compareTo(v) < 0) versions.add(version);
+			if (version.compareTo(v) < 0)
+				versions.add(version);
 		}
 		return versions.toArray(new Version[versions.size()]);
-	}	
+	}
 }

@@ -54,6 +54,17 @@ public class ValidationContextImplTest {
         assertEquals(1, rules.length);
         assertEquals(rule1, rules[0]);
     }
+    
+    @Test    
+    public void testGetWildcardMessageRules1() {
+        MessageRule rule1 = new MockMessageRule();
+        
+        myContext.getMessageRuleBindings().add(new MessageRuleBinding("2.5", "ADT", "*", rule1));
+        
+        MessageRule[] rules = myContext.getMessageRules("2.5", "ADT", "A01");
+        assertEquals(1, rules.length);
+        assertEquals(rule1, rules[0]);
+    }    
 
     @Test    
     public void testGetEncodingRules() {

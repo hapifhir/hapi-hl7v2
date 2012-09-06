@@ -50,6 +50,9 @@ public class ValidationRuleBuilder extends BuilderSupport {
 		this.rules = rules;
 	}
 
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#initialize()
+	 */
 	public final void initialize() { 
 		if (rules.isEmpty()) configure();
 	}
@@ -60,25 +63,22 @@ public class ValidationRuleBuilder extends BuilderSupport {
 	protected void configure() {
 	}
 	
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#getRules()
+	 */
 	public List<RuleBinding<? extends Rule<?>>> getRules() {
 		return Collections.unmodifiableList(rules);
 	}
 
-	/**
-	 * Binds the rules to a subset of HL7 versions
-	 * 
-	 * @param version HL7 versions to bind the rules to
-	 * @return RuleTypeBuilder instance to continue rule building
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion(ca.uhn.hl7v2.Version)
 	 */	
 	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(Version... version) {
 		return new RuleTypeBuilder<T>(rules, version);
 	}
 
-	/**
-	 * Binds the rules to a subset of HL7 versions
-	 * 
-	 * @param version HL7 versions to bind the rules to
-	 * @return RuleTypeBuilder instance to continue rule building
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion(java.lang.String)
 	 */
 	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(String... version) {
 		Version[] versions = new Version[version.length];
@@ -88,22 +88,18 @@ public class ValidationRuleBuilder extends BuilderSupport {
 		return new RuleTypeBuilder<T>(rules, versions);
 	}
 
-	/**
-	 * Binds the rules to a subset of HL7 versions
-	 * 
-	 * @return VersionExpressionBuilder instance to continue rule building
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion()
 	 */
 	public VersionExpressionBuilder forVersion() {
 		return new VersionExpressionBuilder();
 	}
 
-	/**
-	 * Binds the rules to all available HL7 versions
-	 * 
-	 * @return RuleTypeBuilder instance to continue rule building
+	/* (non-Javadoc)
+	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forAllVersions()
 	 */
 	public <T extends Rule<?>> RuleTypeBuilder<T> forAllVersions() {
-		return new RuleTypeBuilder<T>(rules, Version.values());
+		return forVersion().all();
 	}
 
 	/**
@@ -112,6 +108,10 @@ public class ValidationRuleBuilder extends BuilderSupport {
 	 */
 	public class VersionExpressionBuilder {
 
+		public <T extends Rule<?>> RuleTypeBuilder<T> all() {
+			return new RuleTypeBuilder<T>(rules, Version.values());
+		}
+		
 		public <T extends Rule<?>> RuleTypeBuilder<T> asOf(String version) {
 			return asOf(Version.versionOf(version));
 		}

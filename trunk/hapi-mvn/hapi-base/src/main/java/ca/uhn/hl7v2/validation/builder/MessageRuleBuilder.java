@@ -25,23 +25,19 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericSegment;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.util.ReadOnlyMessageIterator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
-import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
+import ca.uhn.hl7v2.validation.builder.support.OnlyKnownSegmentsRule;
+import ca.uhn.hl7v2.validation.builder.support.TerserMessageRule;
+import ca.uhn.hl7v2.validation.builder.support.WrongVersionRule;
 import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
@@ -83,7 +79,28 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder onlyKnownSegments() {
-		return test(ONLY_KNOWN_SEGMENTS);
+		return test(OnlyKnownSegmentsRule.ONLY_KNOWN_SEGMENTS);
+	}
+
+	/**
+	 * Builds a {@link MessageRule} that disallows the selected HL7 version(s). It is basically
+	 * equivalent with:
+	 * 
+	 * <pre>
+	 *    forAllVersions().message(....).terser("MSH-12", in(allowedVersions))
+	 * </pre>
+	 * 
+	 * However, when using this specific rule the builder expression and the resulting exception
+	 * message is more specific:
+	 * 
+	 * <pre>
+	 * 	  forVersion().except(allowedVersions).message(...).wrongVersion()
+	 * </pre>
+	 * 
+	 * @return this instance to build more rules
+	 */
+	public MessageRuleBuilder wrongVersion() {
+		return test(WrongVersionRule.WRONG_VERSION);
 	}
 
 	/**
@@ -139,8 +156,18 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 		this.sectionReference = sectionReference;
 		return this;
 	}
-	
-	
+
+	/**
+	 * Marks the rule as being active (default) or inactive
+	 * 
+	 * @param active
+	 * @return this instance to build more rules
+	 */
+	public MessageRuleBuilder active(boolean active) {
+		this.active = active;
+		return this;
+	}
+
 	// for tests only
 	String getMessageType() {
 		return messageType;
@@ -155,32 +182,8 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	protected Collection<RuleBinding<MessageRule>> getRuleBindings(MessageRule rule, String version) {
 		RuleBinding<MessageRule> binding = new MessageRuleBinding(version, messageType,
 				triggerEvent, rule);
+		binding.setActive(active);
 		return Collections.singletonList(binding);
-	}
-
-	private class TerserMessageRule extends PredicateMessageRule {
-
-		TerserMessageRule(String terserExpression, Predicate predicate) {
-			super(predicate, new TerserExpression(terserExpression));
-		}
-
-	}
-
-	private static final MessageRule ONLY_KNOWN_SEGMENTS = new OnlyKnownSegmentsRule();
-
-	private static class OnlyKnownSegmentsRule extends AbstractMessageRule {
-
-		public ValidationException[] apply(Message msg) {
-			List<ValidationException> exceptions = new ArrayList<ValidationException>();
-
-			for (Iterator<Structure> iter = ReadOnlyMessageIterator
-					.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
-				exceptions.add(new ValidationException("Found unknown segment: "
-						+ iter.next().getName()));
-			}
-			return exceptions.toArray(new ValidationException[exceptions.size()]);
-		}
-
 	}
 
 }

@@ -95,6 +95,17 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 		return this;
 	}
 	
+	/**
+	 * Marks the rule as being active (default) or inactive
+	 * 
+	 * @param active
+	 * @return this instance to build more rules
+	 */	
+	public EncodingRuleBuilder active(boolean active) {
+		this.active = active;
+		return this;
+	}	
+	
 	// for tests only
 	String getEncoding() {
 		return encoding;
@@ -104,6 +115,7 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	protected Collection<RuleBinding<EncodingRule>> getRuleBindings(EncodingRule rule,
 			String version) {
 		RuleBinding<EncodingRule> binding = new EncodingRuleBinding(version, encoding, rule);
+		binding.setActive(active);
 		return Collections.singletonList(binding);
 	}
 

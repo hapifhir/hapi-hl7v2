@@ -144,7 +144,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
         
         ValidationException[] result = new ValidationException[exceptions.length];
         for (int i = 0; i < exceptions.length; i++) {
-            result[i] = new ValidationException(exceptions[i].getMessage(), exceptions[i]);
+            result[i] = ValidationException.fromHL7Exception(exceptions[i]);
         }
         return result;
     }

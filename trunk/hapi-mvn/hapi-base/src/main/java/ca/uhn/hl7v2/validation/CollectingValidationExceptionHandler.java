@@ -6,11 +6,11 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "ValidationExceptionHandler.java".  Description: 
-"Interface for handling violations during the validation process." 
+The Original Code is "CollectingValidationExceptionHandler.java".  Description: 
+"ValidationExceptionHandler that collects exceptions" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
-2012.  All Rights Reserved. 
+2002.  All Rights Reserved. 
 
 Contributor(s): ______________________________________. 
 
@@ -25,34 +25,32 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
-import ca.uhn.hl7v2.HL7Exception;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Handler that is called for every violation during a message validation.
- * <p>
- * Instances of this class are NOT thread safe as they collect data during the
- * validation process.
+ * ValidationExceptionHandler that collects all {@link ValidationException}s in a list.
  * 
  * @author Christian Ohr
+ * 
  */
-public interface ValidationExceptionHandler {
+public class CollectingValidationExceptionHandler extends DefaultValidationExceptionHandler {
+
+	private List<ValidationException> exceptions = new ArrayList<ValidationException>();
+
+	@Override
+	public void onValidationExceptions(ValidationException[] exceptions) {
+		super.onValidationExceptions(exceptions);
+		this.exceptions.addAll(Arrays.asList(exceptions));
+	}
 
 	/**
-	 * If the validation process encounters a violation, this method is called.
-	 * 
-	 * @param exceptions a non-empty array of {@link ValidationException}s.
+	 * @return unmodifiable list of collected exceptions. If none have occurred, the list is empty.
 	 */
-	void onValidationExceptions(ValidationException[] exceptions);
+	public List<ValidationException> getExceptions() {
+		return Collections.unmodifiableList(exceptions);
+	}
 
-	/**
-	 * Called after the validation process. Should return an overall boolean validation result.
-	 * 
-	 * @return the overall assessment of the validation process. This method should usually return
-	 *         <code>false</code> if {@link #onValidationExceptions(ValidationException[])} has been
-	 *         called at least once.
-	 * @throws HL7Exception
-	 * 
-	 * @see {@link DefaultValidationExceptionHandler}
-	 */
-	boolean validationPassed() throws HL7Exception;
 }

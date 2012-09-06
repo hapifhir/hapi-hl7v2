@@ -48,6 +48,7 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	protected Set<Version> versions;
 	protected String description;
 	protected String sectionReference;
+	protected boolean active = true;
 
 	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions) {
 		super(rules);
@@ -86,6 +87,10 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	public MessageRuleBuilder message(String eventType, String triggerEvent) {
 		return new MessageRuleBuilder(rules, versions, eventType, triggerEvent);
 	}
+	
+	public MessageExpressionBuilder message() {
+		return new MessageExpressionBuilder();
+	}	
 
 	/**
 	 * Builds {@link MessageRule}s for the specified encoding
@@ -97,9 +102,19 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 		return new EncodingRuleBuilder(rules, versions, encoding);
 	}
 
+	/**
+	 * Add {@link RuleBinding}s for the rule that have been built
+	 * 
+	 * @param rule
+	 */
 	protected void addRuleBindings(T rule) {
-		for (Version version : versions) {
-			rules.addAll(getRuleBindings(rule, version.getVersion()));
+		if (Version.allVersions(versions)) {
+			// Save some bindings when all HL7 versions are affected
+			rules.addAll(getRuleBindings(rule, "*"));
+		} else {
+			for (Version version : versions) {
+				rules.addAll(getRuleBindings(rule, version.getVersion()));
+			}
 		}
 	}
 
@@ -115,5 +130,21 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	protected Collection<RuleBinding<T>> getRuleBindings(T rule, String version) {
 		return (Collection<RuleBinding<T>>) Collections.EMPTY_LIST;
 	}
+	
+	/**
+	 * Helper builder when the versions are not given explicitly but in form of
+	 * an expression.
+	 */
+	public class MessageExpressionBuilder {
+
+		public MessageRuleBuilder all() {
+			return new MessageRuleBuilder(rules, versions, "*", "*");
+		}
+		
+		public MessageRuleBuilder allOfEventType(String eventType) {
+			return new MessageRuleBuilder(rules, versions, eventType, "*");
+		}		
+
+	}	
 
 }

@@ -35,14 +35,14 @@ import ca.uhn.hl7v2.validation.MessageRule;
  * In general there is no need to use this class directly. Instead use the
  * Validation builder classes to generate rules and rule bindings.
  *  
- * @author Bryan Tripp<
+ * @author Bryan Tripp
  */
 @SuppressWarnings("serial")
 public class MessageRuleBinding extends RuleBinding<MessageRule> {
 
     private String myMessageType;
     private String myTriggerEvent;
-    private static final String delim = "^";
+    private static final String delim = "^"; 
     
     /**
      * @param theVersion see {@link RuleBinding#getVersion()}
@@ -70,7 +70,7 @@ public class MessageRuleBinding extends RuleBinding<MessageRule> {
         String itemType = tok.nextToken();
         String itemEvent = tok.nextToken();
         
-        return (applies(myMessageType, itemType) && applies(myTriggerEvent, itemEvent));
+        return applies(myMessageType, itemType) && applies(myTriggerEvent, itemEvent);
     }
 
 }

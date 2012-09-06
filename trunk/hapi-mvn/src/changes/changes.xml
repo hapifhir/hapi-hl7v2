@@ -6,6 +6,17 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+        	<action type="add" dev="Christian Ohr">
+        		ValidationContext can now be more conveniently configured using
+        		ValidationRuleBuilders. All predefined ValidationContext classes have
+        		been reimplemented to be defined by such builders.
+        	</action>
+            <action type="fix" dev="Christian Ohr" issue="3564428">
+            	HapiContext becomes the unique source of configuration. Changing a
+            	context object immediately changes the configuration of all connected
+            	parsers, servers etc. Message-specific ValidationContext has been
+            	deprecated and will be removed in the next version. 
+            </action>        
             <action type="fix" dev="Christian Ohr" issue="3515725">
             	XML Parser is now able to handle escape sequences that are relevant for
             	XML encoding when parsing and rendering. Thanks to Alberto Saez Torres
@@ -37,7 +48,9 @@
             </action>
             <action type="add" dev="Christian Ohr" issue="3494927">
             	Make Message Validation more versatile by adding a ValidationExceptionHandler
-				that is called on every violation of a validation rule.
+				that is called on every violation of a validation rule. A new implementation
+				of such a handler (RespondingValidationExceptionHandler) is capable of creating
+				response messages based on the validation result.
             </action>			
         	<action type="add" dev="James Agnew">
         		Minor API enhancements:
