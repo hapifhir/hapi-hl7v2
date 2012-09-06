@@ -27,43 +27,25 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 /**
- * Validation utilities for parsed and encoded messages. The default
+ * Validation utilities for parsed and encoded messages. The
  * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and throws a
  * {@link HL7Exception} if {@link #throwOnError} has been set to <code>true</code>.
+ * <p>
+ * This class is kept for backwards compatibility.
  * 
  * @author Bryan Tripp
  * @author Christian Ohr
  */
 public class MessageValidator extends DefaultValidator {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MessageValidator.class);
 	private boolean throwOnError = false;
-
-	
-	public MessageValidator(HapiContext context) {
-		super(context);
-	}
 
 	public MessageValidator(ValidationContext context) {
 		this(context, false);
 	}
-	
-	public MessageValidator(ValidationRuleBuilder builder) {
-		super(builder);
-	}
-	
-	public MessageValidator(ValidationRuleBuilder builder, boolean theFailOnErrorFlag) {
-		this(builder);
-		throwOnError = theFailOnErrorFlag;
-	}	
 
 	/**
 	 * @param theContext context that determines which validation rules apply
@@ -76,32 +58,6 @@ public class MessageValidator extends DefaultValidator {
 
 	@Override
 	protected ValidationExceptionHandler initializeHandler() {
-		return new FirstExceptionThrowingHandler();
-	}
-
-	private class FirstExceptionThrowingHandler implements ValidationExceptionHandler {
-
-		private ValidationException firstException;
-
-		public void onValidationExceptions(ValidationException[] exceptions) {
-			for (ValidationException ve : exceptions) {
-				LOG.error("Invalid message", ve);
-				if (firstException == null) {
-					firstException = ve;
-				}
-			}
-		}
-
-		public boolean validationPassed() throws HL7Exception {
-			if (failed() && throwOnError) {
-				throw new HL7Exception(firstException.getMessage(), firstException);
-			}
-			return !failed();
-		}
-
-		private boolean failed() {
-			return firstException != null;
-		}
-
+		return new ReportingValidationExceptionHandler(throwOnError);
 	}
 }

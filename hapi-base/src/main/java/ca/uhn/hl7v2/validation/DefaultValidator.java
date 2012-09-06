@@ -25,15 +25,25 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.HapiContextSupport;
+import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.Varies;
+import ca.uhn.hl7v2.util.ReadOnlyMessageIterator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
-import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * Default implementation of a message validator. If uses a {@link ValidationContext} to validate
@@ -41,28 +51,24 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * 
  * @author Christian Ohr
  */
-public class DefaultValidator implements Validator {
+public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultValidator.class);
 	private static final MessageRule[] EMPTY_MESSAGE_RULES_ARRAY = new MessageRule[0];
 	private static final EncodingRule[] EMPTY_ENCODING_RULES_ARRAY = new EncodingRule[0];
-
-	private ValidationContext context;
+	private static final PrimitiveTypeRule[] EMPTY_PRIMITIVE_RULES_ARRAY = new PrimitiveTypeRule[0];
 
 	public DefaultValidator(HapiContext context) {
-		ValidationRuleBuilder builder = context.getDefaultValidationRuleBuilder();
-		this.context = (builder != null ? 
-				ValidationContextFactory.fromBuilder(builder) :
-				context.getDefaultValidationContext());
+		super(context);
 	}
-	
-	public DefaultValidator(ValidationContext context) {
-		this.context = context;
+
+	public DefaultValidator(ValidationContext validationContext) {
+		this(new DefaultHapiContext(validationContext));
 	}
-	
+
 	public DefaultValidator(ValidationRuleBuilder builder) {
-		this(ValidationContextFactory.fromBuilder(builder));
-	}	
+		this(new DefaultHapiContext(builder));
+	}
 
 	/**
 	 * Calls {@link #initializeHandler()} to obtain a default instance of a
@@ -86,20 +92,102 @@ public class DefaultValidator implements Validator {
 		if (handler == null) {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
+		testPrimitiveRules(message, handler); // also test primitives?
+		testMessageRules(message, handler);
+		return handler.validationPassed();
+	}
+
+	private void testMessageRules(Message message, ValidationExceptionHandler handler)
+			throws HL7Exception {
 		Terser t = new Terser(message);
+		String messageType = t.get("MSH-9-1");
+		String triggerEvent = t.get("MSH-9-2");
 		MessageRule[] rules = EMPTY_MESSAGE_RULES_ARRAY;
-		if (context != null) {
-			rules = context.getMessageRules(message.getVersion(), t.get("MSH-9-1"),
-					t.get("MSH-9-2"));
+		if (getValidationContext() != null) {
+			rules = getValidationContext().getMessageRules(message.getVersion(), messageType,
+					triggerEvent);
 		}
 		LOG.debug("Validating message against {} message rules", rules.length);
 		for (MessageRule rule : rules) {
-			ValidationException[] ex = rule.test(message);
+			ValidationException[] ex = rule.apply(message);
 			if (ex != null && ex.length > 0) {
 				handler.onValidationExceptions(ex);
 			}
 		}
-		return handler.validationPassed();
+	}
+
+	private void testPrimitiveRules(Message message, ValidationExceptionHandler handler)
+			throws HL7Exception {
+		LOG.debug("Validating message against primitive type rules");
+		for (Iterator<Structure> iter = ReadOnlyMessageIterator
+				.createPopulatedSegmentIterator(message); iter.hasNext();) {
+			Segment s = (Segment) iter.next();
+			for (int field = 1; field <= s.numFields(); field++) {
+				Type[] t = s.getField(field);
+				for (int rep = 0; rep < t.length; rep++) {
+					Location location = new Location();
+					location.setSegmentName(s.getName());
+					location.setField(field);
+					location.setFieldRepetition(rep);
+					testType(t[rep], handler, location);
+				}
+			}
+		}
+	}
+
+	private void testType(Type type, ValidationExceptionHandler handler, Location l) {
+		if (type instanceof Composite) {
+			Type[] components = ((Composite) type).getComponents();
+			for (int comp = 0; comp < components.length; comp++) {
+				Location location = new Location(l);
+				location.setComponent(comp + 1);
+				testComponent(components[comp], handler, location);
+			}
+		} else if (type instanceof Varies) {
+			testType(((Varies) type).getData(), handler, l);
+		} else {
+			testPrimitive((Primitive) type, handler, l);
+		}
+	}
+
+	private void testComponent(Type type, ValidationExceptionHandler handler, Location l) {
+		if (type instanceof Composite) {
+			Type[] component = ((Composite) type).getComponents();
+			for (int sub = 0; sub < component.length; sub++) {
+				Location location = new Location(l);
+				location.setSubcomponent(sub + 1);
+				testSubComponent(component[sub], handler, location);
+			}
+		} else if (type instanceof Varies) {
+			testComponent(((Varies) type).getData(), handler, l);
+		} else {
+			testPrimitive((Primitive) type, handler, l);
+		}
+	}
+
+	private void testSubComponent(Type type, ValidationExceptionHandler handler, Location l) {
+		if (type instanceof Primitive) {
+			testPrimitive((Primitive) type, handler, l);
+		} else if (type instanceof Varies) {
+			testSubComponent(((Varies) type).getData(), handler, l);
+		}
+	}
+
+	private void testPrimitive(Primitive p, ValidationExceptionHandler handler, Location l) {
+		PrimitiveTypeRule[] rules = EMPTY_PRIMITIVE_RULES_ARRAY;
+		Message m = p.getMessage();
+		if (getValidationContext() != null) {
+			rules = getValidationContext().getPrimitiveRules(m.getVersion(), p.getName(), p);
+		}
+		for (PrimitiveTypeRule rule : rules) {
+			ValidationException[] ex = rule.apply(p.getValue());
+			for (int i = 0; i < ex.length; i++) {
+				ex[i].setLocation(l);
+			}
+			if (ex != null && ex.length > 0) {
+				handler.onValidationExceptions(ex);
+			}
+		}
 	}
 
 	/**
@@ -125,29 +213,31 @@ public class DefaultValidator implements Validator {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
 		EncodingRule[] rules = EMPTY_ENCODING_RULES_ARRAY;
-		if (context != null) {
-			rules = context.getEncodingRules(version, isXML ? "XML" : "ER7");
+		if (getValidationContext() != null) {
+			rules = getValidationContext().getEncodingRules(version, isXML ? "XML" : "ER7");
 		}
 		LOG.debug("Validating message against {} encoding rules", rules.length);
 		for (EncodingRule rule : rules) {
-			ValidationException[] ex = rule.test(message);
+			ValidationException[] ex = rule.apply(message);
 			if (ex != null && ex.length > 0) {
 				handler.onValidationExceptions(ex);
 			}
 		}
 		return handler.validationPassed();
 	}
-	
+
 	public ValidationContext getValidationContext() {
-		return context;
+		return getHapiContext().getValidationContext();
 	}
 
 	/**
-	 * @return a new instance of a default {@link ValidationExceptionHandler}. Only called when no
-	 *         explicit {@link ValidationExceptionHandler} has been provided for validation.
+	 * @return a new instance of a default {@link ValidationExceptionHandler} as specified in the
+	 *         {@link HapiContext}. Only called when no explicit {@link ValidationExceptionHandler}
+	 *         has been provided for validation using
+	 *         {@link #validate(Message, ValidationExceptionHandler)}.
 	 */
 	protected ValidationExceptionHandler initializeHandler() {
-		return new DefaultValidationExceptionHandler();
+		return getHapiContext().getValidationExceptionHandler();
 	}
 
 }

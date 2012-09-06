@@ -118,13 +118,26 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 		this.sectionReference = sectionReference;
 		return this;
 	}
+	
+	/**
+	 * Marks the rule as being active (default) or inactive
+	 * 
+	 * @param active
+	 * @return this instance to build more rules
+	 */	
+	public PrimitiveRuleBuilder active(boolean active) {
+		this.active = active;
+		return this;
+	}	
 
 	@Override
 	protected Collection<RuleBinding<PrimitiveTypeRule>> getRuleBindings(PrimitiveTypeRule rule,
 			String version) {
 		List<RuleBinding<PrimitiveTypeRule>> bindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
 		for (String type : types) {
-			bindings.add(new PrimitiveTypeRuleBinding(version, type, rule));
+			RuleBinding<PrimitiveTypeRule> binding = new PrimitiveTypeRuleBinding(version, type, rule);
+			binding.setActive(active);
+			bindings.add(binding);
 		}
 		return bindings;
 	}

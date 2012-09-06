@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "PredicateMessageRule.java".  Description: 
-"MessageRule that validates using predicates" 
+The Original Code is "OnlyKnownSegmentsRule.java".  Description: 
+"Validation rule for detecting unknown Segments in a message" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2012.  All Rights Reserved. 
@@ -23,47 +23,44 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-package ca.uhn.hl7v2.validation.builder;
+package ca.uhn.hl7v2.validation.builder.support;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.util.ReadOnlyMessageIterator;
+import ca.uhn.hl7v2.validation.Location;
+import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
- * Abstract base class for message rules that are evaluates using predicates
+ * Validation rule for detecting unknown Segments in a message
  * 
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public abstract class PredicateMessageRule extends AbstractMessageRule implements
-		PredicateRuleSupport<Message> {
+public class OnlyKnownSegmentsRule extends AbstractMessageRule {
 
-	private Predicate testPredicate;
-	private Expression<Message> testExpression;
-
-	public PredicateMessageRule(Predicate predicate, Expression<Message> expression) {
-		this.testPredicate = predicate;
-		this.testExpression = expression;
-	}
-
+	public static final MessageRule ONLY_KNOWN_SEGMENTS = new OnlyKnownSegmentsRule();
+	
 	public ValidationException[] apply(Message msg) {
-		try {
-			Object subject = testExpression.evaluate(msg);
-			boolean passed = getPredicate().evaluate(subject);
-			return passed ? passed() : failedWithValue(subject, testExpression.getLocation(msg));
-		} catch (Exception e) {
-			return failed(e);
+		List<ValidationException> exceptions = new ArrayList<ValidationException>();
+
+		for (Iterator<Structure> iter = ReadOnlyMessageIterator
+				.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
+			String segmentName = iter.next().getName();
+			ValidationException ve = new ValidationException("Found unknown segment");
+			Location location = new Location();
+			location.setSegmentName(segmentName);
+			ve.setLocation(location);
+			exceptions.add(ve);
 		}
-	}
-
-	public Predicate getPredicate() {
-		return testPredicate;
-	}
-
-	@Override
-	public String getDescription() {
-		return testExpression.getDescription() + " '%s' requires to be "
-				+ testPredicate.getDescription();
+		return exceptions.toArray(new ValidationException[exceptions.size()]);
 	}
 
 }

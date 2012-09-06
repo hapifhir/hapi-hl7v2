@@ -62,8 +62,9 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 	}
 
 	public String correct(String value) {
-		return trimLeadingWhitespace && value != null ? LEADING_WHITESPACE.matcher(value)
-				.replaceAll("") : value;
+		if (value == null || !trimLeadingWhitespace) return value;
+		String trimmed = LEADING_WHITESPACE.matcher(value).replaceAll("");
+		return trimmed;
 	}
 
 	public boolean test(String value) {
