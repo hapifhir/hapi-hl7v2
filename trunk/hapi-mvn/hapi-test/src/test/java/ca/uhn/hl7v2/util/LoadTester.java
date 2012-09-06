@@ -27,8 +27,6 @@ public class LoadTester extends Thread {
     }
     
     public void run() {
-        long start = System.currentTimeMillis();
-        long end = start + (1000*duration);
         int c = 0;
         
         while (c < 1000) { //System.currentTimeMillis() < end) {

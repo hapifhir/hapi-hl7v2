@@ -28,7 +28,6 @@ import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * JUnit test harness for XMLParser
@@ -254,8 +253,7 @@ public class XMLParserTest {
 	@Test
 	public void testWeirdMessage() throws EncodingNotSupportedException, HL7Exception, IOException {
 		String msg = loadFile("/ca/uhn/hl7v2/parser/weird_message.xml");
-		DefaultXMLParser p = new DefaultXMLParser();
-		p.setValidationContext(new ValidationContextImpl());
+		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		p.parse(msg);
 	}
 
@@ -264,9 +262,8 @@ public class XMLParserTest {
 
 		String message = loadFile("/ca/uhn/hl7v2/parser/parse_and_encode.xml");
 		ca.uhn.hl7v2.model.v26.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v26.message.ORU_R01();
-		DefaultXMLParser xmlParser = new DefaultXMLParser();
-		xmlParser.setValidationContext(new ValidationContextImpl());
-		msg.setParser(xmlParser);
+		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		msg.setParser(p);
 
 		msg.parse(message);
 		assertEquals("LABMI1199510101340007", msg.getMSH().getMessageControlID().getValue());

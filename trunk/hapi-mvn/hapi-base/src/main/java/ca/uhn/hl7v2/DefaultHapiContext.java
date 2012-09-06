@@ -28,10 +28,10 @@ package ca.uhn.hl7v2;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
@@ -40,9 +40,16 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
-import ca.uhn.hl7v2.validation.MessageValidator;
+import ca.uhn.hl7v2.util.SocketFactory;
+import ca.uhn.hl7v2.util.StandardSocketFactory;
+import ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.DefaultValidator;
+import ca.uhn.hl7v2.validation.ReportingValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.RespondingValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
@@ -66,6 +73,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * </pre>
  * 
  */
+
 @SuppressWarnings("serial")
 public class DefaultHapiContext implements HapiContext {
 
@@ -75,27 +83,60 @@ public class DefaultHapiContext implements HapiContext {
 	private ValidationRuleBuilder validationRuleBuilder;
 	private ModelClassFactory modelClassFactory;
 	private ConnectionHub connectionHub;
+	private LowerLayerProtocol llp;
+	private SocketFactory socketFactory;
+
+	private PipeParser pipeParser;
+	private XMLParser xmlParser;
+	private GenericParser genericParser;
+	private Validator validator;
 
 	public DefaultHapiContext() {
+		this(new DefaultModelClassFactory());
+	}
+
+	public DefaultHapiContext(ExecutorService executorService) {
+		this();
+		setExecutorService(executorService);
+	}
+
+	public DefaultHapiContext(ModelClassFactory modelClassFactory) {
 		this(new ParserConfiguration(), ValidationContextFactory.defaultValidation(),
-				new DefaultModelClassFactory());
+				modelClassFactory);
+	}
+
+	public DefaultHapiContext(ValidationContext validationContext) {
+		this(new ParserConfiguration(), validationContext, new DefaultModelClassFactory());
+	}
+
+	public DefaultHapiContext(ValidationRuleBuilder builder) {
+		this(new ParserConfiguration(), builder, new DefaultModelClassFactory());
 	}
 
 	public DefaultHapiContext(ParserConfiguration parserConfiguration,
 			ValidationContext validationContext, ModelClassFactory modelClassFactory) {
 		VersionLogger.init();
-		this.parserConfiguration = parserConfiguration;
-		this.validationContext = validationContext;
-		this.modelClassFactory = modelClassFactory;
+		setParserConfiguration(parserConfiguration);
+		setValidationContext(validationContext);
+		setModelClassFactory(modelClassFactory);
+		setLowerLayerProtocol(new MinLowerLayerProtocol());
+		setSocketFactory(new StandardSocketFactory());
 	}
-	
+
 	public DefaultHapiContext(ParserConfiguration parserConfiguration,
 			ValidationRuleBuilder builder, ModelClassFactory modelClassFactory) {
 		VersionLogger.init();
-		this.parserConfiguration = parserConfiguration;
-		this.validationRuleBuilder = builder;
-		this.modelClassFactory = modelClassFactory;
-	}	
+		setParserConfiguration(parserConfiguration);
+		setValidationRuleBuilder(builder);
+		setModelClassFactory(modelClassFactory);
+		setLowerLayerProtocol(new MinLowerLayerProtocol());
+		setSocketFactory(new StandardSocketFactory());
+	}
+
+	public DefaultHapiContext(HapiContext context) {
+		this(context.getParserConfiguration(), context.getValidationContext(), context
+				.getModelClassFactory());
+	}
 
 	public synchronized ExecutorService getExecutorService() {
 		if (executorService == null) {
@@ -118,29 +159,49 @@ public class DefaultHapiContext implements HapiContext {
 
 	public ConnectionHub getConnectionHub() {
 		if (this.connectionHub == null) {
-			this.connectionHub = ConnectionHub.getNewInstance(getExecutorService());
+			this.connectionHub = ConnectionHub.getNewInstance(this);
 		}
-		return this.connectionHub;		
+		return this.connectionHub;
 	}
 
-	public ParserConfiguration getDefaultParserConfiguration() {
+	public ParserConfiguration getParserConfiguration() {
 		return parserConfiguration;
 	}
 
-	public void setDefaultParserConfiguration(ParserConfiguration configuration) {
+	public void setParserConfiguration(ParserConfiguration configuration) {
+		if (configuration == null)
+			throw new IllegalArgumentException("ParserConfiguration must not be null");
 		this.parserConfiguration = configuration;
 	}
 
-	public ValidationContext getDefaultValidationContext() {
-		return validationContext == null ? ValidationContextFactory.defaultValidation()
-				: validationContext;
+	/**
+	 * Returns the ValidationContext. If none has been explicitly set, it tries
+	 * {@link #getValidationRuleBuilder()} to contruct a context. If this is also null, it tries the
+	 * ca.uhn.hl7v2.validation.context_class system property, otherwise it returns the
+	 * DefaultValidation context.
+	 */
+	public ValidationContext getValidationContext() {
+		if (validationContext == null) {
+
+			if (getValidationRuleBuilder() != null) {
+				setValidationContext(ValidationContextFactory
+						.fromBuilder(getValidationRuleBuilder()));
+			} else {
+				try {
+					setValidationContext(ValidationContextFactory.getContext());
+				} catch (ValidationException e) {
+					setValidationContext(ValidationContextFactory.defaultValidation());
+				}
+			}
+		}
+		return validationContext;
 	}
 
-	public void setDefaultValidationContext(ValidationContext context) {
+	public void setValidationContext(ValidationContext context) {
 		this.validationContext = context;
 	}
 
-	public void setDefaultValidationContext(String contextClassName) {
+	public void setValidationContext(String contextClassName) {
 		try {
 			this.validationContext = ValidationContextFactory.customValidation(contextClassName);
 		} catch (ValidationException e) {
@@ -148,53 +209,94 @@ public class DefaultHapiContext implements HapiContext {
 		}
 	}
 
-	public ValidationRuleBuilder getDefaultValidationRuleBuilder() {
+	public ValidationRuleBuilder getValidationRuleBuilder() {
 		return validationRuleBuilder;
 	}
 
-	public void setDefaultValidationRuleBuilder(ValidationRuleBuilder validationRuleBuilder) {
+	public void setValidationRuleBuilder(ValidationRuleBuilder validationRuleBuilder) {
 		this.validationRuleBuilder = validationRuleBuilder;
+		setValidationContext(ValidationContextFactory.fromBuilder(validationRuleBuilder));
 	}
 
-	public void setDefaultValidationRuleBuilder(String builderClassName) {
+	public void setValidationRuleBuilder(String builderClassName) {
 		try {
-			this.validationRuleBuilder = ValidationContextFactory.customBuilder(builderClassName);
+			setValidationRuleBuilder(ValidationContextFactory.customBuilder(builderClassName));
 		} catch (ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	public ModelClassFactory getDefaultModelClassFactory() {
-		return modelClassFactory;
+	public ModelClassFactory getModelClassFactory() {
+		return modelClassFactory == null ? new DefaultModelClassFactory() : modelClassFactory;
 	}
 
-	public void setDefaultModelClassFactory(ModelClassFactory modelClassFactory) {
+	public void setModelClassFactory(ModelClassFactory modelClassFactory) {
 		this.modelClassFactory = modelClassFactory;
 	}
 
-	public PipeParser getPipeParser() {
-		return new PipeParser(this);
+	public synchronized PipeParser getPipeParser() {
+		if (pipeParser == null) {
+			pipeParser = new PipeParser(this);
+		}
+		return pipeParser;
 	}
 
-	public XMLParser getXMLParser() {
-		return new DefaultXMLParser(this);
+	public synchronized XMLParser getXMLParser() {
+		if (xmlParser == null) {
+			xmlParser = new DefaultXMLParser(this);
+		}
+		return xmlParser;
 	}
 
-	public GenericParser getGenericParser() {
-		return new GenericParser(this);
+	public synchronized GenericParser getGenericParser() {
+		if (genericParser == null) {
+			genericParser = new GenericParser(this);
+		}
+		return genericParser;
 	}
 
-	public MessageValidator getMessageValidator() {
-		return new MessageValidator(this);
+	public synchronized Validator getMessageValidator() {
+		if (validator == null) {
+			validator = new DefaultValidator(this);
+		}
+		return validator;
 	}
 
-	public HL7Service getSimpleService(int port, boolean tls) {
-		return new SimpleServer(port, new MinLowerLayerProtocol(), getPipeParser(), tls,
+	/**
+	 * For backwards compatibility, this class returns a new instance of
+	 * {@link ReportingValidationExceptionHandler} throwing the first exception back to the caller.
+	 * There are other and more powerful implementations available, see below.
+	 * 
+	 * @see RespondingValidationExceptionHandler
+	 * @see CollectingValidationExceptionHandler
+	 */
+	public ValidationExceptionHandler getValidationExceptionHandler() {
+		return new ReportingValidationExceptionHandler(true);
+	}
+
+	public LowerLayerProtocol getLowerLayerProtocol() {
+		return llp;
+	}
+
+	public void setLowerLayerProtocol(LowerLayerProtocol llp) {
+		this.llp = llp;
+	}
+
+	public SocketFactory getSocketFactory() {
+		return socketFactory;
+	}
+
+	public void setSocketFactory(SocketFactory socketFactory) {
+		this.socketFactory = socketFactory;
+	}
+
+	public SimpleServer getSimpleService(int port, boolean tls) {
+		return new SimpleServer(port, getLowerLayerProtocol(), getPipeParser(), tls,
 				getExecutorService());
 	}
 
-	public HL7Service getTwoPortService(int port1, int port2, boolean tls) {
-		return new TwoPortService(getPipeParser(), new MinLowerLayerProtocol(), port1, port2, tls,
+	public TwoPortService getTwoPortService(int port1, int port2, boolean tls) {
+		return new TwoPortService(getPipeParser(), getLowerLayerProtocol(), port1, port2, tls,
 				getExecutorService());
 	}
 

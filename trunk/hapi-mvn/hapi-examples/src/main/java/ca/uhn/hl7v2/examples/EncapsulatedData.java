@@ -49,12 +49,11 @@ public class EncapsulatedData {
 		 */
 		
 		MDM_T02 mdmMessage = new MDM_T02();
-
+		
 		// A few basic MSH fields are populated. In a real situation, this would not be enough
         // to produce a valid message, but for demonstration purposes we'll skip a few
         // fields.
-        mdmMessage.getMSH().getEncodingCharacters().setValue("^~\\&");
-        mdmMessage.getMSH().getFieldSeparator().setValue("|");
+		mdmMessage.initQuickstart("MDM", "T02", "P");
 
         OBX obx = mdmMessage.getOBX();
 		

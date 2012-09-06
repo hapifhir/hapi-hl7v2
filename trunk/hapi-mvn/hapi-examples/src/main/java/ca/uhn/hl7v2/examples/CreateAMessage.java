@@ -26,13 +26,13 @@
  */
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
-import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Example transmitting a message
@@ -47,20 +47,15 @@ public class CreateAMessage
      * @param args
      * @throws HL7Exception 
      */
-    public static void main(String[] args) throws HL7Exception {
+    public static void main(String[] args) throws Exception {
         
         ADT_A01 adt = new ADT_A01();
+        adt.initQuickstart("ADT", "A01", "P");
         
         // Populate the MSH Segment
         MSH mshSegment = adt.getMSH();
-        mshSegment.getFieldSeparator().setValue("|");
-        mshSegment.getEncodingCharacters().setValue("^~\\&");
-        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue("200701011539");
         mshSegment.getSendingApplication().getNamespaceID().setValue("TestSendingSystem");
         mshSegment.getSequenceNumber().setValue("123");
-        mshSegment.getMessageType().getMessageType().setValue("ADT");
-        mshSegment.getMessageType().getTriggerEvent().setValue("A01");
-        mshSegment.getMessageType().getMessageStructure().setValue("ADT_A01");
         
         // Populate the PID Segment
         PID pid = adt.getPID(); 
@@ -71,9 +66,10 @@ public class CreateAMessage
         /*
          * In a real situation, of course, many more segments and fields would be populated
          */
-                
+        
         // Now, let's encode the message and look at the output
-        Parser parser = new PipeParser();
+        HapiContext context = new DefaultHapiContext();
+        Parser parser = context.getPipeParser();
         String encodedMessage = parser.encode(adt);
         System.out.println("Printing ER7 Encoded Message:");
         System.out.println(encodedMessage);
@@ -86,7 +82,7 @@ public class CreateAMessage
          */
 
         // Next, let's use the XML parser to encode as XML
-        parser = new DefaultXMLParser();
+        parser = context.getXMLParser();
         encodedMessage = parser.encode(adt);
         System.out.println("Printing XML Encoded Message:");
         System.out.println(encodedMessage);

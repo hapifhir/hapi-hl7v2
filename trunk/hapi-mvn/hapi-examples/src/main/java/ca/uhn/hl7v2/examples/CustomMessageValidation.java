@@ -26,13 +26,14 @@
  */
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
-import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
@@ -84,8 +85,10 @@ public class CustomMessageValidation {
 
 		};
 
-		PipeParser parser = new PipeParser();
-		parser.setValidationRuleBuilder(builder);
+		// Set up a parser using the validation rules
+		HapiContext context = new DefaultHapiContext();
+		context.setValidationRuleBuilder(builder);
+		PipeParser parser = context.getPipeParser();
 
 		// Let's try parsing the message:
 		try {
@@ -106,11 +109,13 @@ public class CustomMessageValidation {
 				+ "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||\r"
 				+ "Z04|bogus segment";
 
-		parser.setValidationContext(ValidationContextFactory.noValidation());
+		// Change validation context for all dependent parsers
+		context.setValidationContext(ValidationContextFactory.noValidation());
+
 		Message message = null;
 		try {
 			message = parser.parse(invalidMessage);
-			System.out.print("Parsing succeeded, but ... ");
+			System.out.println("Parsing succeeded, but ... ");
 		} catch (HL7Exception e) {
 			// This should not happen
 			System.out.println("Something went wrong!");
@@ -129,9 +134,10 @@ public class CustomMessageValidation {
 			}
 
 		};
+		context.setValidationRuleBuilder(builder2);
 
 		try {
-			new MessageValidator(builder2, true).validate(message);
+			context.getMessageValidator().validate(message);
 			// This should not happen
 			System.out.println("Something went wrong!");
 			System.exit(-1);
@@ -141,21 +147,21 @@ public class CustomMessageValidation {
 
 		/*
 		 * Instead of throwing an HL7 Exception, the MessageValidator can also be used in
-		 * conjunction with a custom ValidationExceptionHandler, which you would normally
-		 * define in its own class file.
+		 * conjunction with a custom ValidationExceptionHandler, which you would normally define in
+		 * its own class file.
 		 */
-		try {
-			ValidationExceptionHandler customHandler = new DefaultValidationExceptionHandler() {
+		ValidationExceptionHandler customHandler = new DefaultValidationExceptionHandler() {
 
-				public void onValidationExceptions(ValidationException[] exceptions) {
-					super.onValidationExceptions(exceptions);
-					for (ValidationException e : exceptions) {
-						System.out.println("Found Validation issues: " + e.getMessage());
-					}
+			public void onValidationExceptions(ValidationException[] exceptions) {
+				super.onValidationExceptions(exceptions);
+				for (ValidationException e : exceptions) {
+					System.out.println("Found Validation issues: " + e.getMessage());
 				}
-			};
-			
-			boolean result = new MessageValidator(builder2).validate(message, customHandler);
+			}
+		};
+
+		try {
+			boolean result = context.getMessageValidator().validate(message, customHandler);
 			System.out.println("The validator returned " + result);
 		} catch (HL7Exception e) {
 			// This should not happen

@@ -296,7 +296,7 @@ public abstract class XMLParser extends Parser {
 
 		// set data type of OBX-5
 		if (segmentObject.getClass().getName().indexOf("OBX") >= 0) {
-			Varies.fixOBX5(segmentObject, getFactory());
+			Varies.fixOBX5(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
 		}
 	}
 

@@ -15,7 +15,7 @@
  * Contributor(s): James Agnew
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  “GPL”), in which case the provisions of the GPL are
+ * GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.examples;
 
 import java.io.IOException;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -35,7 +36,6 @@ import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v22.message.ACK;
 import ca.uhn.hl7v2.model.v22.segment.MSH;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Application class for receiving ADT^A01 messages
@@ -56,7 +56,7 @@ public class ExampleReceiverApplication implements Application
      */
     public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
 
-        String encodedMessage = new PipeParser().encode(theIn);
+        String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theIn);
         System.out.println("Received message:\n" + encodedMessage + "\n\n");
 
         // Now we need to generate a message to return. This will generally be an ACK message.

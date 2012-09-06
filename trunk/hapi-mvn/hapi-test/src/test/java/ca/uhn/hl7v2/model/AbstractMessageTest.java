@@ -6,7 +6,9 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.model.v22.segment.MSA;
 import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
@@ -78,9 +80,12 @@ public class AbstractMessageTest extends TestCase {
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
                 + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
                 + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
+        
         ModelClassFactory mcf = new CanonicalModelClassFactory("2.6");
-        Parser p = new PipeParser(mcf);
-        p.setValidationContext(ValidationContextFactory.noValidation());
+        HapiContext hc = new DefaultHapiContext(mcf);
+        hc.setValidationContext(ValidationContextFactory.noValidation());
+        Parser p = hc.getPipeParser();
+
         Message message = p.parse(string);
         Message ack = message.generateACK();
 

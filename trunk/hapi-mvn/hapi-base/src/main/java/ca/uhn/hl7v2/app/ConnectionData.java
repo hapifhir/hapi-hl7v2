@@ -42,23 +42,22 @@ class ConnectionData {
 	private LowerLayerProtocol protocol;
 	private SocketFactory socketFactory;
 
-	public ConnectionData(String host, int port, Parser parser,
-			LowerLayerProtocol protocol) {
+	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol) {
 		this(host, port, parser, protocol, false);
 	}
 
-	public ConnectionData(String host, int port, Parser parser,
-			LowerLayerProtocol protocol, boolean tls) {
+	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol,
+			boolean tls) {
 		this(host, port, 0, parser, protocol, tls);
 	}
 
-	public ConnectionData(String host, int outboundPort, int inboundPort,
-			Parser parser, LowerLayerProtocol protocol, boolean tls) {
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
+			LowerLayerProtocol protocol, boolean tls) {
 		this(host, outboundPort, inboundPort, parser, protocol, tls, null);
 	}
 
-	public ConnectionData(String host, int outboundPort, int inboundPort,
-			Parser parser, LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory) {
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
+			LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory) {
 		this.host = host;
 		this.port = outboundPort;
 		this.port2 = inboundPort;
@@ -109,6 +108,7 @@ class ConnectionData {
 		int result = 1;
 		result = prime * result + ((host == null) ? 0 : host.hashCode());
 		result = prime * result + ((parser == null) ? 0 : parser.hashCode());
+		result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
 		result = prime * result + port;
 		result = prime * result + port2;
 		return result;
@@ -135,6 +135,15 @@ class ConnectionData {
 			if (other.parser == null)
 				return false;
 			else if (!parser.getClass().equals(other.parser.getClass()))
+				return false;
+		}
+		if (protocol == null) {
+			if (other.protocol != null)
+				return false;
+		} else {
+			if (other.protocol == null)
+				return false;
+			else if (!protocol.getClass().equals(other.protocol.getClass()))
 				return false;
 		}
 		if (port != other.port)

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -29,7 +30,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 /**
  * Test cases for various default validation rules.  
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @author Leslie Mann
  * @author Christian Ohr 
  */
@@ -42,7 +43,6 @@ public class DefaultValidationTest {
         myMessage = new GenericMessage.V25(new DefaultModelClassFactory());
         myMessage.setValidationContext(new DefaultValidation());
     }
-
     
     /**
      * https://sourceforge.net/tracker/?func=detail&aid=3471934&group_id=38899&atid=423835
@@ -738,8 +738,7 @@ public class DefaultValidationTest {
              + "EVN|A31|200903230934\r\n"
              + "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
         
-        PipeParser pipeParser = new PipeParser();
-        pipeParser.setValidationContext(new DefaultValidation());
+        PipeParser pipeParser = new DefaultHapiContext().getPipeParser();
         try {
             pipeParser.parse(validMessage);
             fail("Parsed successfully despite invalid date");

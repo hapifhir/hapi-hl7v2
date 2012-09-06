@@ -16,13 +16,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
-import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.Terser;
 
@@ -36,16 +36,17 @@ import ca.uhn.hl7v2.util.Terser;
 
 public class InitiatorTest {
 
-	private static SimpleServer ss;
+	private static HL7Service ss;
 	private static int port;
+	private static HapiContext context;
 	private static final String msgText = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		port = RandomServerPortProvider.findFreePort();
-		ss = new SimpleServer(port, LowerLayerProtocol.makeLLP(),
-				new PipeParser());
-		ss.start();
+		context = new DefaultHapiContext();
+		ss = context.getSimpleService(port, false);
+		ss.startAndWait();
 	}
 
 	@AfterClass
@@ -56,7 +57,7 @@ public class InitiatorTest {
 
 	@Test
 	public void testSendAndReceive() throws Exception {
-		Parser parser = new PipeParser();
+		Parser parser = context.getPipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
 		Socket socket = TestUtils.acquireClientSocket(port);
 		Connection conn = new Connection(parser, protocol, socket);
@@ -72,7 +73,7 @@ public class InitiatorTest {
 	@Test
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50; // TODO fails with 100
-		final Parser parser = new PipeParser();
+		final Parser parser = context.getPipeParser();
 		final Connection conn = new Connection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
 		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());

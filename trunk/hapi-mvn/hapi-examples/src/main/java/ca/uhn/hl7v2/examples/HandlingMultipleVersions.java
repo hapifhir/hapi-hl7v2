@@ -27,11 +27,12 @@
 
 package ca.uhn.hl7v2.examples;
 
-import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 
@@ -43,7 +44,7 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class HandlingMultipleVersions {
 
-	public static void main(String[] args) throws EncodingNotSupportedException, HL7Exception {
+	public static void main(String[] args) throws Exception {
 
 		/*
 		 * Often, you will need to handle multiple versions of HL7 from a sending system
@@ -77,12 +78,14 @@ public class HandlingMultipleVersions {
          * messages from previous versions.
          */
 		
+        HapiContext context = new DefaultHapiContext();
         // Create the MCF. We want all parsed messages to be for HL7 version 2.5,
         // despite what MSH-12 says.
         CanonicalModelClassFactory mcf = new CanonicalModelClassFactory("2.5");
+        context.setModelClassFactory(mcf);
 
         // Pass the MCF to the parser in its constructor
-        PipeParser parser = new PipeParser(mcf);
+        PipeParser parser = context.getPipeParser();
         
         // The parser parses the v2.3 message to a "v25" structure
         ca.uhn.hl7v2.model.v25.message.ORU_R01 msg = (ORU_R01) parser.parse(v23message);
@@ -93,7 +96,7 @@ public class HandlingMultipleVersions {
         // The parser also parses the v2.5 message to a "v25" structure
         msg = (ORU_R01) parser.parse(v25message);
         
-        // 20169838-v23
+        // 20169838-v25
         System.out.println(msg.getMSH().getMessageControlID().getValue());
         
         /*
@@ -105,7 +108,7 @@ public class HandlingMultipleVersions {
 
         // This time we just use a normal ModelClassFactory, which means we will be
         // using the standard version-specific model classes
-        parser = new PipeParser();
+        context.setModelClassFactory(new DefaultModelClassFactory());
 
         // 20169838-v23
         Message v23Message = parser.parse(v23message);

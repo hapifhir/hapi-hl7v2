@@ -29,56 +29,99 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.app.SimpleServer;
+import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
-import ca.uhn.hl7v2.validation.MessageValidator;
+import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
 /**
  * Interface that provides a starting point for
  * <ul>
  * <li>Configuring HAPI core services (e.g. parsing)
- * <li>Plugging in singleton services (e.g. executor service)
  * <li>Obtaining correspondingly configured instances of HAPI core services
  * </ul>
  * 
  * HapiContext instances are not supposed to be singletons, i.e. if necessary, it is possible to
  * have several HapiContexts within one application.
+ * <p>
+ * HapiContext objects maintains the following configuration information
+ * <ul>
+ * <li>{@link ExecutorService}: thread executors used for the HAPI networking features in
+ * ca.uhn.hl7v2.app
+ * <li>{@link LowerLayerProtocol}: MLLP protocol used for the HAPI networking features in
+ * ca.uhn.hl7v2.app
+ * <li>{@link SocketFactory}: Socket factory used for the HAPI networking features in
+ * ca.uhn.hl7v2.app
+ * <li>{@link ParserConfiguration}: detail configuration for all HL7 parsers
+ * <li>{@link ModelClassFactory}: lookup for message model classes during parsing or message
+ * creation
+ * <li>{@link ValidationContext}: validation rules used during parsing or during a dedcated
+ * validation step
+ * <li>{@link ValidationRuleBuilder}: alternative way of providing a ValidationContext
+ * <li>{@link ValidationExceptionHandler}: exception handler used during message validation
+ * </ul>
+ * <p>
+ * HapiContext serves as factory for HAPI objects that refer to this configuration. Changing the
+ * configuration automatically influence all HAPI objects that were created and will be created
+ * using the given factory instance:
+ * <ul>
+ * <li>{@link PipeParser}
+ * <li>{@link XMLParser}
+ * <li>{@link GenericParser}
+ * <li>{@link Validator}
+ * <li>{@link ConnectionHub}
+ * <li>{@link SimpleServer}
+ * <li>{@link TwoPortService}
+ * </ul>
+ * 
  */
 public interface HapiContext extends Serializable {
 
-	// Singleton services
+	/**
+	 * @return the {@link ExecutorService} to be used by all services that spawn threads
+	 */
 	ExecutorService getExecutorService();
 
+	/**
+	 * @param executorService the {@link ExecutorService} to be used by all services that spawn
+	 *            threads
+	 */
 	void setExecutorService(ExecutorService executorService);
 
+	/**
+	 * @return a new ConnectionHub instance
+	 */
 	ConnectionHub getConnectionHub();
 
 	/**
 	 * @return the {@link ParserConfiguration} to be used by all parsers obtained from this class.
 	 */
-	ParserConfiguration getDefaultParserConfiguration();
+	ParserConfiguration getParserConfiguration();
 
 	/**
 	 * @param configuration {@link ParserConfiguration} to be used by all parsers obtained from this
 	 *            class.
 	 */
-	void setDefaultParserConfiguration(ParserConfiguration configuration);
+	void setParserConfiguration(ParserConfiguration configuration);
 
 	/**
 	 * @return the {@link ValidationContext} to be used by all parsers obtained from this class.
 	 */
-	ValidationContext getDefaultValidationContext();
+	ValidationContext getValidationContext();
 
 	/**
 	 * @param context {@link ValidationContext} to be used by all parsers obtained from this class.
 	 */
-	void setDefaultValidationContext(ValidationContext context);
+	void setValidationContext(ValidationContext context);
 
 	/**
 	 * Sets a default {@link ValidationContext}. Note that a default {@link ValidationRuleBuilder}
@@ -87,77 +130,103 @@ public interface HapiContext extends Serializable {
 	 * @param contextClassName class name of the {@link ValidationContext} to be used by all parsers
 	 *            obtained from this class.
 	 */
-	void setDefaultValidationContext(String contextClassName);
+	void setValidationContext(String contextClassName);
 
 	/**
 	 * @return the {@link ValidationRuleBuilder} to be used by all parsers obtained from this class.
 	 */
-	ValidationRuleBuilder getDefaultValidationRuleBuilder();
+	ValidationRuleBuilder getValidationRuleBuilder();
 
 	/**
 	 * Sets a default {@link ValidationRuleBuilder}. Note that this {@link ValidationRuleBuilder}
 	 * has precedence over a default {@link ValidationContext} set with
-	 * {@link #setDefaultValidationContext(ValidationContext)} or
-	 * {@link #setDefaultValidationContext(String)}
+	 * {@link #setValidationContext(ValidationContext)} or {@link #setValidationContext(String)}
 	 * 
 	 * @param context {@link ValidationRuleBuilder} to be used by all parsers obtained from this
 	 *            class.
 	 */
-	void setDefaultValidationRuleBuilder(ValidationRuleBuilder ruleBuilder);
+	void setValidationRuleBuilder(ValidationRuleBuilder ruleBuilder);
 
 	/**
 	 * Sets a new instance of {@link ValidationRuleBuilder} as default. Note that this
 	 * {@link ValidationRuleBuilder} has precedence over a default {@link ValidationContext} set
-	 * with {@link #setDefaultValidationContext(ValidationContext)} or
-	 * {@link #setDefaultValidationContext(String)}
+	 * with {@link #setValidationContext(ValidationContext)} or
+	 * {@link #setValidationContext(String)}
 	 * 
 	 * @param builderClassName class name of the {@link ValidationRuleBuilder} to be used by all
 	 *            parsers obtained from this class.
 	 */
-	void setDefaultValidationRuleBuilder(String builderClassName);
+	void setValidationRuleBuilder(String builderClassName);
 
 	/**
 	 * @return the {@link ModelClassFactory} to be used by all parsers obtained from this class.
 	 */
-	ModelClassFactory getDefaultModelClassFactory();
+	ModelClassFactory getModelClassFactory();
 
 	/**
 	 * @param modelClassFactory the {@link ModelClassFactory} to be used by all parsers obtained
 	 *            from this class.
 	 */
-	void setDefaultModelClassFactory(ModelClassFactory modelClassFactory);
+	void setModelClassFactory(ModelClassFactory modelClassFactory);
 
 	// Default instances of business objects
 
 	/**
-	 * @return a PipeParser instance initialized as set with
-	 *         {@link #setDefaultModelClassFactory(ModelClassFactory)},
-	 *         {@link #setDefaultValidationContext(String)} and
-	 *         {@link #setDefaultParserConfiguration(ParserConfiguration)}.
+	 * @return a new PipeParser instance initialized as set with
+	 *         {@link #setModelClassFactory(ModelClassFactory)},
+	 *         {@link #setValidationContext(String)} and
+	 *         {@link #setParserConfiguration(ParserConfiguration)}.
 	 */
 	PipeParser getPipeParser();
 
 	/**
-	 * @return a XMLParser instance initialized as set with
-	 *         {@link #setDefaultModelClassFactory(ModelClassFactory)},
-	 *         {@link #setDefaultValidationContext(String)} and
-	 *         {@link #setDefaultParserConfiguration(ParserConfiguration)}.
+	 * @return a new XMLParser instance initialized as set with
+	 *         {@link #setModelClassFactory(ModelClassFactory)},
+	 *         {@link #setValidationContext(String)} and
+	 *         {@link #setParserConfiguration(ParserConfiguration)}.
 	 */
 	XMLParser getXMLParser();
 
 	/**
-	 * @return a GenericParser instance initialized as set with
-	 *         {@link #setDefaultModelClassFactory(ModelClassFactory)},
-	 *         {@link #setDefaultValidationContext(String)} and
-	 *         {@link #setDefaultParserConfiguration(ParserConfiguration)}.
+	 * @return a new GenericParser instance initialized as set with
+	 *         {@link #setModelClassFactory(ModelClassFactory)},
+	 *         {@link #setValidationContext(String)} and
+	 *         {@link #setParserConfiguration(ParserConfiguration)}.
 	 */
 	GenericParser getGenericParser();
 
 	/**
-	 * @return MessageValidator instance initialized with the {@link ValidationContext} as set using
-	 *         {@link #setDefaultValidationContext(ValidationContext)}.
+	 * @return a MessageValidator instance initialized with the {@link ValidationContext} as set
+	 *         using {@link #setValidationContext(ValidationContext)}. For each validation it will
+	 *         use a new instance of {@link ValidationExceptionHandler} as obtained by
+	 *         {@link #getValidationExceptionHandler()}.
 	 */
-	MessageValidator getMessageValidator();
+	Validator getMessageValidator();
+
+	/**
+	 * @return a new ValidationExceptionHandler instance
+	 */
+	ValidationExceptionHandler getValidationExceptionHandler();
+
+	/**
+	 * @return the {@link LowerLayerProtocol} instance used by all HL7 MLLP operations
+	 */
+	LowerLayerProtocol getLowerLayerProtocol();
+
+	/**
+	 * @param llp the {@link LowerLayerProtocol} instance used by all HL7 MLLP operations
+	 */
+	void setLowerLayerProtocol(LowerLayerProtocol llp);
+
+	/**
+	 * @return the {@link SocketFactory} instance used by HL7 networking operations
+	 */
+	SocketFactory getSocketFactory();
+
+	/**
+	 * @param socketFactory the {@link SocketFactory} instance used by HL7 networking operations
+	 */
+	void setSocketFactory(SocketFactory socketFactory);
 
 	/**
 	 * @param port
@@ -165,7 +234,7 @@ public interface HapiContext extends Serializable {
 	 * @return HL7 service running on the configured port using the default parser and executor
 	 *         service instances provided by this interface.
 	 */
-	HL7Service getSimpleService(int port, boolean tls);
+	SimpleServer getSimpleService(int port, boolean tls);
 
 	/**
 	 * @param port
@@ -173,5 +242,5 @@ public interface HapiContext extends Serializable {
 	 * @return HL7 service running on the configured ports using the default parser and executor
 	 *         service instances provided by this interface.
 	 */
-	HL7Service getTwoPortService(int inbound, int outbound, boolean tls);
+	TwoPortService getTwoPortService(int inbound, int outbound, boolean tls);
 }

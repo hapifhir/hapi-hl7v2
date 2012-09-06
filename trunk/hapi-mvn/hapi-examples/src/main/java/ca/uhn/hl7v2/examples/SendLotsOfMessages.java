@@ -4,13 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.llp.LLPException;
-import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
 
 public class SendLotsOfMessages {
@@ -33,12 +33,12 @@ public class SendLotsOfMessages {
 		// Create an iterator to iterate over all the messages
 		Hl7InputStreamMessageIterator iter = new Hl7InputStreamMessageIterator(reader);
 		
-		ConnectionHub connectionHub = ConnectionHub.getInstance();
+		HapiContext context = new DefaultHapiContext();
+		ConnectionHub connectionHub = context.getConnectionHub();
 		Connection conn = null;
 		
 		while (iter.hasNext()) {
 			
-			Message next = iter.next();
 			
 			/* If we don't already have a connection, create one.
 			 * Note that unless something goes wrong, it's very common
@@ -48,13 +48,14 @@ public class SendLotsOfMessages {
 			 * sent. This is good practice, as it is much faster than
 			 * creating a new connection each time. 
 			 */ 
-			if (conn == null) {
-				conn = connectionHub.attach("localhost", 8888, new PipeParser(), MinLowerLayerProtocol.class);
+			if (conn != null) {
+				conn = connectionHub.attach("localhost", 8888, false);
 			}
 			
-			Message response;
 			try {
-				response = conn.getInitiator().sendAndReceive(next);
+				Message next = iter.next();
+				Message response = conn.getInitiator().sendAndReceive(next);
+				System.out.println("Sent message. Response was " + response.encode());
 			} catch (IOException e) {
 				System.out.println("Didn't send out this message!");
 				e.printStackTrace();
@@ -66,7 +67,7 @@ public class SendLotsOfMessages {
 				continue;
 			}
 			
-			System.out.println("Sent message. Response was " + response.encode());
+			
 			
 		}
 		
@@ -75,7 +76,6 @@ public class SendLotsOfMessages {
 		if (conn != null) {
 			connectionHub.detach(conn);
 		}
-		ConnectionHub.shutdown();
 		
 	}
 

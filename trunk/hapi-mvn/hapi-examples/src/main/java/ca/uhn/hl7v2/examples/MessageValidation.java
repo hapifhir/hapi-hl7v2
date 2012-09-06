@@ -26,7 +26,9 @@
  */
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -67,17 +69,18 @@ public class MessageValidation {
 		 * default, a parser has certain validation settings, as defined by the
 		 * DefaultValidation class.
 		 */
-		PipeParser parser = new PipeParser();
-
+		HapiContext context = new DefaultHapiContext();
+		
 		/*
-		 * These two lines are actually redundant, since this is the default
+		 * This is actually redundant, since this is the default
 		 * validator. The default validation includes a number of sensible
 		 * defaults including maximum lengths on string types, formats for
 		 * telephone numbers and timestamps, etc.
 		 */
-		parser.setValidationContext(ValidationContextFactory.defaultValidation());
+		context.setValidationContext(ValidationContextFactory.defaultValidation());	
 
 		// Let's try parsing the valid message:
+		PipeParser parser = context.getPipeParser();
 		try {
 			parser.parse(validMessage);
 			System.out.println("Successfully parsed valid message");
@@ -101,7 +104,7 @@ public class MessageValidation {
 			System.out.println("Something went wrong!");
 			System.exit(-1);
 		} catch (HL7Exception e) {
-			// This time, we are expecing an exception, because the message
+			// This time, we are expecting an exception, because the message
 			// should fail validation.
 			System.out.println("As expected, the message did not validate: "
 					+ e.getMessage());
@@ -118,7 +121,7 @@ public class MessageValidation {
 		 * world, since sending systems don't always behave as nicely as
 		 * we might want.
 		 */
-		parser.setValidationContext(ValidationContextFactory.noValidation());
+		context.setValidationContext(ValidationContextFactory.noValidation());
 		
 		try {
 			parser.parse(invalidMessage);
@@ -143,8 +146,8 @@ public class MessageValidation {
 		try {
 			Message parsedMessage = parser.parse(invalidMessage);
 			
-			// Print the mesage back out
-			System.out.println(new PipeParser().encode(parsedMessage));
+			// Print the message back out
+			System.out.println(parser.encode(parsedMessage));
 			
 			/*
 			 * MSH|^~\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|CONTROLID|P^T|2.4
