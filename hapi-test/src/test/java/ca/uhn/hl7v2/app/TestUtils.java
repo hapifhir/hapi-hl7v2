@@ -4,9 +4,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
-import ca.uhn.hl7v2.parser.PipeParser;
-
 public class TestUtils {
 
 	private static final int SLEEP = 1000;
@@ -32,24 +29,27 @@ public class TestUtils {
 				Thread.sleep(SLEEP);
 			}
 		}
-		if (s == null) throw ex;
+		if (s == null)
+			throw ex;
 		return s;
 	}
-	
-	public static Connection acquireClientConnection(PipeParser parser, int port1, int port2) throws Exception {
+
+	public static Connection acquireClientConnection(ConnectionHub hub, int port1,
+			int port2) throws Exception {
 		Connection c = null;
 		Exception ex = null;
 		int i = 0;
 		while (c == null && i < RETRIES) {
 			try {
-				c = ConnectionHub.getInstance().attach("localhost", port1, port2, parser, MinLowerLayerProtocol.class);
+				c = hub.attach("localhost", port1, port2, false);
 			} catch (Exception e) {
 				ex = e;
 				Thread.sleep(SLEEP);
 			}
 		}
-		if (c == null) throw ex;
+		if (c == null)
+			throw ex;
 		return c;
-	}	
+	}
 
 }

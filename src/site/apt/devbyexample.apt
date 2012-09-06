@@ -66,17 +66,17 @@ Developing using HAPI - By Example
     {{{./xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
     to make sure they contain no invalid data.
   
-  * We can define our own
+  * We can define our own 
     {{{./xref/ca/uhn/hl7v2/examples/CustomMessageValidation.html}validation rules}}
     to adapt validation to site-specific requirements.
 	
-  * To be even more advanced, we can
+  * To be even more advanced, we can 
     {{{./xref/ca/uhn/hl7v2/examples/MessageValidationUsingConformanceProfile.html}validate messages}}
     using conformance profiles. Note that the conformance profile used in this
     example can be seen {{{./xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}. See the FAQ for 
     notes on using this in your own applications. 
 
-  * There are several ways to 
+  * There are several ways to  
     {{{./xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html}handle multiple versions}}
     of HL7 within a single application.
 

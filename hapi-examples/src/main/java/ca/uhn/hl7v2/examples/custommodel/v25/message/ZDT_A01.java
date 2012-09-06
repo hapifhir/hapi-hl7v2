@@ -5,11 +5,12 @@
 
 package ca.uhn.hl7v2.examples.custommodel.v25.message;
 
+import java.util.Arrays;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import java.util.Arrays;
 
 /**
  * Example custom model class. This is a ZDT^A01, which is an ADT^A01 with
@@ -18,6 +19,7 @@ import java.util.Arrays;
  * Since we're extending an existing HL7 message type, we just extend from the model class
  * representing that type
  */
+@SuppressWarnings("serial")
 public class ZDT_A01 extends ADT_A01 {
 
  	/**
@@ -45,7 +47,7 @@ public class ZDT_A01 extends ADT_A01 {
      * Add an accessor for the ZPI segment
      */
     public ZPI getZPI() throws HL7Exception {
-        return (ZPI) get("ZPI");
+        return getTyped("ZPI", ZPI.class);
     }
 
 }

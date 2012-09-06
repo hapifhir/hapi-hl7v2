@@ -36,50 +36,45 @@ import java.util.concurrent.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
  * <p>
- * Provides access to shared HL7 Connections. The ConnectionHub has at most one
- * connection to any given address at any time.
+ * Provides access to shared HL7 Connections. The ConnectionHub has at most one connection to any
+ * given address at any time.
  * </p>
  * <p>
- * <b>Synchronization Note:</b> This class should be safe to use in a
- * multithreaded environment. A synchronization mutex is maintained for any
- * given target host and port, so that if two threads are trying to connect to
- * two separate destinations neither will block, but if two threads are trying
- * to connect to the same destination, one will block until the other has
- * finished trying. Use caution if this class is to be used in an environment
- * where a very large (over 1000) number of target host/port destinations will
- * be accessed at the same time.
+ * <b>Synchronization Note:</b> This class should be safe to use in a multithreaded environment. A
+ * synchronization mutex is maintained for any given target host and port, so that if two threads
+ * are trying to connect to two separate destinations neither will block, but if two threads are
+ * trying to connect to the same destination, one will block until the other has finished trying.
+ * Use caution if this class is to be used in an environment where a very large (over 1000) number
+ * of target host/port destinations will be accessed at the same time.
  * </p>
  * 
  * @author Bryan Tripp
  */
-public class ConnectionHub {
+public class ConnectionHub extends HapiContextSupport {
 
 	private static ConnectionHub instance = null;
-	private static final Logger log = LoggerFactory
-			.getLogger(ConnectionHub.class);
+	private static final Logger log = LoggerFactory.getLogger(ConnectionHub.class);
 	/**
-	 * Set a system property with this key to a string containing an integer
-	 * larger than the default ("1000") if you need to connect to a very large
-	 * number of targets at the same time in a multithreaded environment.
+	 * Set a system property with this key to a string containing an integer larger than the default
+	 * ("1000") if you need to connect to a very large number of targets at the same time in a
+	 * multithreaded environment.
 	 */
-	public static final String MAX_CONCURRENT_TARGETS = ConnectionHub.class
-			.getName() + ".maxSize";
+	public static final String MAX_CONCURRENT_TARGETS = ConnectionHub.class.getName() + ".maxSize";
 	private final ConcurrentMap<String, String> connectionMutexes = new ConcurrentHashMap<String, String>();
 	private final CountingMap<ConnectionData, Connection> connections;
-	private final ExecutorService executorService;
-	
-	/** Creates a new instance of ConnectionHub */
-	private ConnectionHub(ExecutorService executorService) {
-		this.executorService = executorService;
+
+	private ConnectionHub(HapiContext context) {
+		super(context);
 		connections = new CountingMap<ConnectionData, Connection>() {
 
 			@Override
@@ -88,19 +83,26 @@ public class ConnectionHub {
 			}
 
 			@Override
-			protected Connection open(ConnectionData connectionData)
-					throws Exception {
-				return ConnectionFactory.open(connectionData,
-						ConnectionHub.this.executorService);
+			protected Connection open(ConnectionData connectionData) throws Exception {
+				return ConnectionFactory
+						.open(connectionData, getHapiContext().getExecutorService());
 			}
 
 		};
+	}
+
+	/** Creates a new instance of ConnectionHub */
+	private ConnectionHub(ExecutorService executorService) {
+		this(new DefaultHapiContext(executorService));
 	}
 
 	public Set<? extends ConnectionData> allConnections() {
 		return connections.keySet();
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public Connection attach(ConnectionData data) throws HL7Exception {
 		try {
 			Connection conn = null;
@@ -115,83 +117,102 @@ public class ConnectionHub {
 			return conn;
 		} catch (Exception e) {
 			log.error("Failed to attach", e);
-			throw new HL7Exception("Cannot open connection to "
-					+ data.getHost() + ":" + data.getPort() + "/"
-					+ data.getPort2(), e);
+			throw new HL7Exception("Cannot open connection to " + data.getHost() + ":"
+					+ data.getPort() + "/" + data.getPort2(), e);
 		}
 	}
 
-	public Connection attach(String host, int outboundPort, int inboundPort,
-			Parser parser, Class<? extends LowerLayerProtocol> llpClass)
-			throws HL7Exception {
+	/**
+	 * @since 2.1
+	 */
+	public Connection attach(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort, getHapiContext()
+				.getGenericParser(), getHapiContext().getLowerLayerProtocol(), tls,
+				getHapiContext().getSocketFactory()));
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser,
+			Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
 		return attach(host, outboundPort, inboundPort, parser, llpClass, false);
 	}
 
-	public Connection attach(String host, int outboundPort, int inboundPort,
-			Parser parser, Class<? extends LowerLayerProtocol> llpClass,
-			boolean tls) throws HL7Exception {
+	/**
+	 * @since 2.0
+	 */
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser,
+			Class<? extends LowerLayerProtocol> llpClass, boolean tls) throws HL7Exception {
 		try {
 			LowerLayerProtocol llp = llpClass.newInstance();
 			return attach(host, outboundPort, inboundPort, parser, llp, tls);
 		} catch (InstantiationException e) {
-			throw new HL7Exception("Cannot open connection to " + host + ":"
-					+ outboundPort, e);
+			throw new HL7Exception("Cannot open connection to " + host + ":" + outboundPort, e);
 		} catch (IllegalAccessException e) {
-			throw new HL7Exception("Cannot open connection to " + host + ":"
-					+ outboundPort, e);
+			throw new HL7Exception("Cannot open connection to " + host + ":" + outboundPort, e);
 		}
 	}
 
-	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp, boolean tls) throws HL7Exception {
-		return attach(host, outboundPort, inboundPort, parser, llp, tls, null);
-	}
-
-	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
-		return attach(new ConnectionData(host, outboundPort, inboundPort,
-				parser, llp, tls, socketFactory));
+	/**
+	 * @since 2.0
+	 */
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser,
+			LowerLayerProtocol llp, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, null));
 	}
 
 	/**
-	 * Returns a Connection to the given address, opening this Connection if
-	 * necessary. The given Parser will only be used if a new Connection is
-	 * opened, so there is no guarantee that the Connection returned will be
-	 * using the Parser you provide. If you need explicit access to the Parser
-	 * the Connection is using, call <code>Connection.getParser()</code>.
+	 * Returns a Connection to the given address, opening this Connection if necessary. The given
+	 * Parser will only be used if a new Connection is opened, so there is no guarantee that the
+	 * Connection returned will be using the Parser you provide. If you need explicit access to the
+	 * Parser the Connection is using, call <code>Connection.getParser()</code>.
+	 * 
+	 * @since 2.1
+	 */
+	public Connection attach(String host, int port, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, port, 0, getHapiContext().getGenericParser(),
+				getHapiContext().getLowerLayerProtocol(), tls, getHapiContext()
+						.getSocketFactory()));
+	}
+
+	/**
+	 * @since 1.2
 	 */
 	public Connection attach(String host, int port, Parser parser,
 			Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
 		return attach(host, port, parser, llpClass, false);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public Connection attach(String host, int port, Parser parser,
-			Class<? extends LowerLayerProtocol> llpClass, boolean tls)
-			throws HL7Exception {
+			Class<? extends LowerLayerProtocol> llpClass, boolean tls) throws HL7Exception {
 		return attach(host, port, 0, parser, llpClass, tls);
 	}
 
-	public Connection attach(String host, int port, Parser parser,
-			LowerLayerProtocol llp)
+	/**
+	 * @since 2.0
+	 */
+	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp)
 			throws HL7Exception {
 		return attach(host, port, 0, parser, llp, false);
 	}
 
-	public Connection attach(String host, int port, Parser parser,
-			LowerLayerProtocol llp, boolean tls)
-			throws HL7Exception {
+	/**
+	 * @since 2.0
+	 */
+	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp,
+			boolean tls) throws HL7Exception {
 		return attach(host, port, 0, parser, llp, tls);
 	}
 
-	public Connection attach(String host, int port, Parser parser,
-			LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory)
-			throws HL7Exception {
-		return attach(host, port, 0, parser, llp, tls, socketFactory);
-	}
 
 	/**
-	 * Informs the ConnectionHub that you are done with the given Connection -
-	 * if no other code is using it, it will be closed, so you should not
-	 * attempt to use a Connection after detaching from it. If the connection is
-	 * not enlisted, this method does nothing.
+	 * Informs the ConnectionHub that you are done with the given Connection - if no other code is
+	 * using it, it will be closed, so you should not attempt to use a Connection after detaching
+	 * from it. If the connection is not enlisted, this method does nothing.
 	 */
 	public void detach(Connection c) {
 		ConnectionData cd = connections.find(c);
@@ -199,12 +220,10 @@ public class ConnectionHub {
 			connections.remove(cd);
 	}
 
-	
 	/**
-	 * Closes and discards the given Connection so that it can not be returned
-	 * in subsequent calls to attach(). This method is to be used when there is
-	 * a problem with a Connection, e.g. socket connection closed by remote
-	 * host.
+	 * Closes and discards the given Connection so that it can not be returned in subsequent calls
+	 * to attach(). This method is to be used when there is a problem with a Connection, e.g. socket
+	 * connection closed by remote host.
 	 */
 	public void discard(Connection c) {
 		ConnectionData cd = connections.find(c);
@@ -220,8 +239,7 @@ public class ConnectionHub {
 
 	private void discardConnectionIfStale(Connection conn) {
 		if (conn != null && !conn.isOpen()) {
-			log.info(
-					"Discarding connection which appears to be closed. Remote addr: {}",
+			log.info("Discarding connection which appears to be closed. Remote addr: {}",
 					conn.getRemoteAddress());
 			discard(conn);
 			conn = null;
@@ -236,18 +254,25 @@ public class ConnectionHub {
 		return getKnownConnection(key).isOpen();
 	}
 
-	/** 
-	 * Returns the singleton instance of ConnectionHub 
-	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub. See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
+	/**
+	 * Returns the singleton instance of ConnectionHub
+	 * 
+	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub.
+	 *             See {@link http 
+	 *             ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html
+	 *             this example page} for an example of how to use ConnectionHub.
 	 */
 	public static ConnectionHub getInstance() {
 		return getInstance(DefaultExecutorService.getDefaultService());
 	}
 
-	/** 
+	/**
 	 * Returns the singleton instance of ConnectionHub.
 	 * 
-	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub. See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
+	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub.
+	 *             See {@link http 
+	 *             ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html
+	 *             this example page} for an example of how to use ConnectionHub.
 	 */
 	public synchronized static ConnectionHub getInstance(ExecutorService service) {
 		if (instance == null || service.isShutdown()) {
@@ -257,40 +282,49 @@ public class ConnectionHub {
 	}
 
 	/**
-	 * <p>
-	 * Returns a new (non-singleton) instance of the ConnectionHub which uses the
-	 * given executor service.
-	 * </p>
-	 * <p>
-	 * See {@link http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example page} for an example of how to use ConnectionHub.
-	 * </p>
+	 * Returns the singleton instance of ConnectionHub.
+	 * 
+	 * @param context
 	 */
-	public synchronized static ConnectionHub getNewInstance(ExecutorService service) {
-		return new ConnectionHub(service);
+	public static ConnectionHub getInstance(HapiContext context) {
+		if (instance == null || context.getExecutorService().isShutdown()) {
+			instance = new ConnectionHub(context);
+		}
+		return instance;
 	}
 
+	/**
+	 * <p>
+	 * Returns a new (non-singleton) instance of the ConnectionHub which uses the given executor
+	 * service.
+	 * </p>
+	 * <p>
+	 * See {@link http 
+	 * ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example
+	 * page} for an example of how to use ConnectionHub.
+	 * </p>
+	 */
+	public synchronized static ConnectionHub getNewInstance(HapiContext context) {
+		return new ConnectionHub(context);
+	}
 
 	/**
 	 * @deprecated default executor service is shut down automatically
 	 */
 	public static void shutdown() {
 		ConnectionHub hub = getInstance();
-		if (DefaultExecutorService.isDefaultService(hub.executorService)) {
-			hub.executorService.shutdown();
+		if (DefaultExecutorService.isDefaultService(hub.getHapiContext().getExecutorService())) {
+			hub.getHapiContext().getExecutorService().shutdown();
 			instance = null;
 		}
 	}
 
-
 	/**
-	 * Helper class that implements a map that increases/decreases a counter
-	 * when an entry is added/removed. It is furthermore intended that an
-	 * entry's value is derived from its key.
+	 * Helper class that implements a map that increases/decreases a counter when an entry is
+	 * added/removed. It is furthermore intended that an entry's value is derived from its key.
 	 * 
-	 * @param <K>
-	 *            key class
-	 * @param <D>
-	 *            managed value class
+	 * @param <K> key class
+	 * @param <D> managed value class
 	 */
 	private abstract class CountingMap<K, D> {
 		private Map<K, Count> content;
@@ -312,8 +346,7 @@ public class ConnectionHub {
 		}
 
 		public D get(K key) {
-			return content.containsKey(key) ? content.get(key).getValue()
-					: null;
+			return content.containsKey(key) ? content.get(key).getValue() : null;
 		}
 
 		public Set<K> keySet() {
@@ -323,8 +356,8 @@ public class ConnectionHub {
 		protected abstract D open(K key) throws Exception;
 
 		/**
-		 * If the key exists, the counter is increased. Otherwise, a value is
-		 * created, and the key/value pair is added to the map.
+		 * If the key exists, the counter is increased. Otherwise, a value is created, and the
+		 * key/value pair is added to the map.
 		 */
 		public D put(K key) throws Exception {
 			if (content.containsKey(key)) {
@@ -337,9 +370,8 @@ public class ConnectionHub {
 		}
 
 		/**
-		 * If the counter of the key/value is greater than one, the counter is
-		 * decreased. Otherwise, the entry is removed and the value is cleaned
-		 * up.
+		 * If the counter of the key/value is greater than one, the counter is decreased. Otherwise,
+		 * the entry is removed and the value is cleaned up.
 		 */
 		public D remove(K key) {
 			Count pair = content.get(key);

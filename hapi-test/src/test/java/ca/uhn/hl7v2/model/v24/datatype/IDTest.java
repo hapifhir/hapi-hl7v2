@@ -8,6 +8,7 @@ import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.v24.datatype.ID
@@ -153,7 +154,7 @@ public class IDTest extends TestCase {
 				this.outcome = outcome;
 
                 Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(new DefaultValidation());
+                message.setValidationContext(ValidationContextFactory.defaultValidation());
                 this.ID = new ID(message, 1);
                 this.ID.setValue("ID");
 			}

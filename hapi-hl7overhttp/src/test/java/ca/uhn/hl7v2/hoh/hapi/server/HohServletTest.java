@@ -36,7 +36,7 @@ public class HohServletTest {
 	private static DefaultHapiContext ourHapiContext;
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohServletTest.class);
-	private static ConnectionHub ouronnectionHub;
+	private static ConnectionHub ourConnectionHub;
 	private String myMessage;
 	private Message myResponse;
 	private int myPort;
@@ -84,7 +84,7 @@ public class HohServletTest {
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
-		Connection conn = ouronnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
+		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response;
 		try {
 			response = conn.getInitiator().sendAndReceive(msg);
@@ -114,7 +114,7 @@ public class HohServletTest {
 		myResponse = msg.generateACK("AE", new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
-		Connection conn = ouronnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
+		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
 		String responseStr = response.encode();
@@ -139,7 +139,7 @@ public class HohServletTest {
 		myResponse = msg.generateACK("AR", new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
-		Connection conn = ouronnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
+		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
 		String responseStr = response.encode();
@@ -163,7 +163,7 @@ public class HohServletTest {
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
-		Connection conn = ouronnectionHub.attach("localhost", myPort, DefaultXMLParser.getInstanceWithNoValidation(), llp, false);
+		Connection conn = ourConnectionHub.attach("localhost", myPort, DefaultXMLParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
 		String responseStr = response.encode();
@@ -185,8 +185,8 @@ public class HohServletTest {
 		System.setProperty("DEBUG", "true");
 
 		ourHapiContext = new DefaultHapiContext();
-		ourHapiContext.setDefaultValidationContext(ValidationContextFactory.noValidation());
-		ouronnectionHub = ourHapiContext.getConnectionHub();
+		ourHapiContext.setValidationContext(ValidationContextFactory.noValidation());
+		ourConnectionHub = ourHapiContext.getConnectionHub();
 	}
 
 	public class MyReceivingApp implements ReceivingApplication {

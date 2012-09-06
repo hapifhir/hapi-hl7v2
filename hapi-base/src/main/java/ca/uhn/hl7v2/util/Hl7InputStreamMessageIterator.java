@@ -9,7 +9,6 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageStringIterator.ParseFailureError;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * <p>
@@ -67,8 +66,7 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	}
 
 	private void init() {
-		myParser = new PipeParser();
-		myParser.setValidationContext(new ValidationContextImpl());
+		myParser = PipeParser.getInstanceWithNoValidation();
 	}
 
 	/**

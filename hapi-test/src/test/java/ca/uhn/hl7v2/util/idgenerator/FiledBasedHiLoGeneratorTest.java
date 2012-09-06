@@ -48,7 +48,7 @@ public class FiledBasedHiLoGeneratorTest extends AbstractContinuousGeneratorTest
 
 			generator = getGenerator();
 			id = generator.getID();
-			assertEquals("1", id);
+			assertEquals("101", id);
 			
 			file.setReadable(true);
 			file.setWritable(true);

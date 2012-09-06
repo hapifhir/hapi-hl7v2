@@ -174,6 +174,9 @@ public class DefaultXMLParser extends XMLParser {
     public Message parseDocument(Document XMLMessage, String version) throws HL7Exception {
         String messageName = XMLMessage.getDocumentElement().getTagName();
         Message message = instantiateMessage(messageName, version, true);
+    	// Note: this will change in future to reuse the Parser's/HapiContext's
+    	// ValidationContext.
+        message.setValidationContext(getValidationContext());
         parse(message, XMLMessage.getDocumentElement());
         return message;
     }

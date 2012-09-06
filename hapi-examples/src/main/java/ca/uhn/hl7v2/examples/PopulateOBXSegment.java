@@ -39,7 +39,6 @@ import ca.uhn.hl7v2.model.v25.group.ORU_R01_ORDER_OBSERVATION;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBR;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * Example code for populating an OBX segment
@@ -182,7 +181,7 @@ public class PopulateOBXSegment
         value.setData(tx);
 
         // Print the message (remember, the MSH segment was not fully or correctly populated)
-        System.out.append(new PipeParser().encode(message));
+        System.out.println(message.encode());
 
         /*
          * MSH|^~\&|||||20111102082111.435-0500||ORU^R01^ORU_R01|305|T|2.5

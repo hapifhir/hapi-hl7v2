@@ -1,6 +1,8 @@
 package ca.uhn.hl7v2.llp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,18 +31,29 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 public class ExtendedMinLowerLayerProtocolTest implements Application {
 
 	private int myMsgCount;
+	private PipeParser parser;
+	private XMLParser xmlParser;
+	
+	@Before
+	public void setup() {
+		parser = new PipeParser();
+		parser.setValidationContext(ValidationContextFactory.noValidation());
+		xmlParser = new DefaultXMLParser();
+		xmlParser.setValidationContext(ValidationContextFactory.noValidation());
+	}
 
 	@Test
 	public void testMinLowerLayerProtocolReaderAndWriter() throws HL7Exception, IOException, LLPException {
 		
 		ADT_A01 a01 = new ADT_A01();
-		a01.getParser().setValidationContext(new ValidationContextImpl());
+		a01.getParser().setValidationContext(ValidationContextFactory.noValidation());
 		a01.initQuickstart("ADT", "A01", "T");
 		a01.getPID().getSetIDPID().setValue("ÇØ§");
 		
@@ -69,7 +82,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 	private void verifyWriterForCodeSystem(ADT_A01 a01, String hl7Cs, String javaCs, String theString) throws HL7Exception, LLPException, IOException {
 		a01.getMSH().getMsh18_CharacterSet(0).setValue(hl7Cs);
 
-		a01.setParser(new PipeParser());
+		a01.setParser(parser);
 		String encodedString = a01.encode();
 		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
 
@@ -103,7 +116,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		 * Test using ER7 encoding
 		 */
 		
-		a01.setParser(new PipeParser());
+		a01.setParser(parser);
 		String encodedString = a01.encode();
 		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
 
@@ -146,7 +159,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		 * Test using XML encoding
 		 */
 		
-		a01.setParser(new DefaultXMLParser());
+		a01.setParser(xmlParser);
 		encodedString = a01.encode();
 //		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
 

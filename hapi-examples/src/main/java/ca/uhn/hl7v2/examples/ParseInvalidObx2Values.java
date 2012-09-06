@@ -1,8 +1,10 @@
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Varies;
-import ca.uhn.hl7v2.model.v26.message.ORU_R01;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.parser.Parser;
 
 /**
  * Example code which illustrates how to handle OBX segments
@@ -10,6 +12,7 @@ import ca.uhn.hl7v2.model.v26.message.ORU_R01;
  */
 public class ParseInvalidObx2Values {
 
+	
 	public static void main(String[] args) throws HL7Exception {
 
 		/*
@@ -21,10 +24,13 @@ public class ParseInvalidObx2Values {
 			+ "OBR|1\r"
 			+ "OBX|||||Sample Value\r";
 
-		ORU_R01 msg = new ORU_R01();
+		HapiContext context = new DefaultHapiContext();
+		Parser parser = context.getPipeParser();
+		
+		ORU_R01 msg;
 		try {
 			// This throws an exception
-			msg.parse(string);
+			msg = (ORU_R01) parser.parse(string);
 		} catch (Exception e) {
 			e.printStackTrace();
 			/*
@@ -39,16 +45,21 @@ public class ParseInvalidObx2Values {
 		}
 		
 		/* 
-		 * Setting the following system property allows you to specify a default
+		 * Setting the following property allows you to specify a default
 		 * value to assume if OBX-2 is missing. 
-		 */		
-		System.setProperty(Varies.DEFAULT_OBX2_TYPE_PROP, "ST");
+		 */
+		context.getParserConfiguration().setDefaultObx2Type("ST");
 
 		// Parsing now succeeds
-		msg = new ORU_R01();
-		msg.parse(string);
-
+		msg = (ORU_R01) parser.parse(string);
+		System.out.println(msg.encode());
 		
+		/* Prints:
+		 * MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3
+		 * PID|||7005728
+		 * OBR|1
+		 * OBX||ST|||Sample Value\r";
+		 */
 		
 		/*
 		 * The following message has an invalid value in OBX-2 
@@ -58,10 +69,9 @@ public class ParseInvalidObx2Values {
 			+ "OBR|1\r"
 			+ "OBX||BAD|||Sample Value\r";
 		
-		msg = new ORU_R01();
 		try {
 			// This throws an exception
-			msg.parse(string);
+			msg = (ORU_R01) parser.parse(string);
 		} catch (Exception e) {
 			e.printStackTrace();
 			/*
@@ -79,13 +89,11 @@ public class ParseInvalidObx2Values {
 		 * Setting the following system property allows you to specify a default
 		 * value to assume if OBX-2 is missing. 
 		 */		
-		System.setProperty(Varies.INVALID_OBX2_TYPE_PROP, "ST");
+		context.getParserConfiguration().setInvalidObx2Type("ST");
 
 		// Parsing now succeeds
-		msg = new ORU_R01();
-		msg.parse(string);
-		
-		
+		msg = (ORU_R01) parser.parse(string);
+
 	}
 
 }

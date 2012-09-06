@@ -10,7 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Message;
@@ -45,7 +47,6 @@ import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class NewPipeParserTest extends TestCase {
 	private Parser parser;
@@ -518,9 +519,8 @@ public class NewPipeParserTest extends TestCase {
 				+ "NK1|1|TEST^NKGuy^^^^|CHD^ Son|123 Fake Street^^Toronto^ON^M6J 3H2^Can^M|(416)123-4567|(416)123-4567|NK||||||\r"
 				+ "IN1|1||0012343001|  OHIP||||||||||||^^^^^|||^^^^^^M|||||||||||||||||||||||||^^^^^^M\r" + "IN2||||||2216\r" + "ZIN||||||||||||||||||";
 
-		parser.setValidationContext(new ValidationContextImpl());
+		Parser parser = PipeParser.getInstanceWithNoValidation();
 		parser.parse(messageText);
-
 	}
 
 	/**
@@ -833,7 +833,8 @@ public class NewPipeParserTest extends TestCase {
 
 	@SuppressWarnings("serial")
 	public void testValidation() throws Exception {
-		parser.setValidationRuleBuilder(new ValidationRuleBuilder() {
+		HapiContext hc = new DefaultHapiContext();
+		hc.setValidationRuleBuilder(new ValidationRuleBuilder() {
 
 			@Override
 			protected void configure() {
@@ -844,6 +845,7 @@ public class NewPipeParserTest extends TestCase {
 			}
 			
 		});
+		Parser parser = hc.getPipeParser();
 
 		String text = "MSH|^~\\&|bar|foo|||||ORU^R01|1|D|2.4|12345\r";
 		parser.parse(text);

@@ -14,7 +14,7 @@ The Initial Developer of the Original Code is University Health Network. Copyrig
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  “GPL”), in which case the provisions of the GPL are 
+GNU General Public License (the  ï¿½GPLï¿½), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -26,13 +26,14 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v22.datatype.PN;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.model.v22.segment.MSH;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 
 /**
@@ -58,11 +59,17 @@ public class ExampleParseMessages
                 + "IN1||022254P|4558PD|BLUE CROSS|STREET^OTHER STREET^CITY^ST^00990||(333)333-6666||221K|LENIX|||19980515|19990515|||PATIENT01 TEST D||||||||||||||||||02LL|022LP554";
 
         /*
+         * The HapiContext holds all configuration and provides factory methods for obtaining
+         * all sorts of HAPI objects, e.g. parsers. 
+         */
+        HapiContext context = new DefaultHapiContext();
+        
+        /*
          * A Parser is used to convert between string representations of messages and instances of
          * HAPI's "Message" object. In this case, we are using a "GenericParser", which is able to
          * handle both XML and ER7 (pipe & hat) encodings.
          */
-        Parser p = new GenericParser();
+        Parser p = context.getGenericParser();
 
         Message hapiMsg;
         try {

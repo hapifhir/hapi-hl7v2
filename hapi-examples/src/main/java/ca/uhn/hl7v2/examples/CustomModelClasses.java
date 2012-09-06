@@ -5,7 +5,9 @@
 
 package ca.uhn.hl7v2.examples;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.examples.custommodel.v25.message.ZDT_A01;
 import ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
 import ca.uhn.hl7v2.model.Segment;
@@ -13,7 +15,6 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 
 /**
@@ -42,7 +43,9 @@ public class CustomModelClasses {
 				+ "PR1|1||1111^Mastoplastica|Protesi|20090224|02|";
 
         // HAPI will still parse this message fine
-        ADT_A01 message = (ADT_A01) new PipeParser().parse(messageText);
+		HapiContext context = new DefaultHapiContext();
+		Parser parser = context.getPipeParser();
+        ADT_A01 message = (ADT_A01) parser.parse(messageText);
         
         // If we want to access the data in the ZPI segment, it's pretty easy
         Segment zpiGenericSegment = (Segment) message.get("ZPI");
@@ -67,11 +70,9 @@ public class CustomModelClasses {
         ZDT_A01 zdtA01;
 
         // These classes are both in the package ca.uhn.hl7v2.examples.custommodel.[version].[type]
-        // We can create a parser with a custom model class factory to use it
+        // We associated the HapiContext with a custom model class factory to use it
         ModelClassFactory cmf = new CustomModelClassFactory("ca.uhn.hl7v2.examples.custommodel");
-
-        // We then pass the model class factory to the parser
-        Parser parser = new PipeParser(cmf);
+        context.setModelClassFactory(cmf);
 
         // The resulting message will be an instance of our custom type (this time, MSH-9 says ZDT^A01)
 		messageText = "MSH|^~\\&|IRIS|SANTER|AMB_R|SANTER|200803051508||ZDT^A01|263206|P|2.5\r"

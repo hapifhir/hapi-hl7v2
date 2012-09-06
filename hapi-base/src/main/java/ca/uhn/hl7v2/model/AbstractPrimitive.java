@@ -71,6 +71,10 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
      * Sets the value of this Primitive, first performing validation as specified 
      * by <code>getMessage().getValidationContext()</code>.  No validation is performed 
      * if getMessage() returns null. 
+     * <p>
+     * Note: as of the next HAPI release, the ValidationContext will be retrieved
+     * from getParser().getValidationContext(), which ultimately is the ValidationContext
+     * of the active HapiContext.
      * 
      * @see ca.uhn.hl7v2.model.Primitive#setValue(String)
      */    
@@ -78,6 +82,8 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
         Message message = getMessage();
 
         if (message != null) {
+        	// Note: this will change in future to reuse the Parser's/HapiContext's
+        	// ValidationContext.
             ValidationContext context = message.getValidationContext();
             String version = message.getVersion();
 

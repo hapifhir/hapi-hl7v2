@@ -5,12 +5,11 @@
 package ca.uhn.hl7v2.examples.custommodel.v25.segment;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.AbstractSegment;
 import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.datatype.NM;
+import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 
 /**
@@ -25,35 +24,19 @@ public class ZPI extends AbstractSegment {
      */
     private static final long serialVersionUID = 1;
 
-    /**
-     * Custom segments need a constructor with exactly these arguments
-     */
-    public ZPI(Group parent, ModelClassFactory modelClassFactory) throws HL7Exception {
-        super(parent, modelClassFactory);
+    public ZPI(Group parent, ModelClassFactory factory) {
+        super(parent, factory);
+        init(factory);
+     }
 
-        Message message = getMessage();
-
-        // For each in the segment, call this.add()
-
-        // ZPI-1 - Pet Name(s)
-        Class<? extends Type> type = ST.class;
-        boolean required = true;
-        int maxReps = 0; // unlimited
-        int maxLength = 100;
-        Object[] constructorArgs = new Object[]{message};
-        String fieldName = "Pet Name(s)";
-        this.add(type, required, maxReps, maxLength, constructorArgs, fieldName);
-
-        // ZPI-2 - Shoe Size
-        type = NM.class;
-        required = false;
-        maxReps = 1; // only 1 rep
-        maxLength = 4;
-        constructorArgs = new Object[]{message};
-        fieldName = "Shoe Size";
-        this.add(type, required, maxReps, maxLength, constructorArgs, fieldName);
-
-    }
+     private void init(ModelClassFactory factory) {
+        try {
+        	add(ST.class, true, 0, 100, new Object[]{ getMessage() }, "Pet Name(s)");
+        	add(NM.class, false, 1, 4, new Object[]{ getMessage() }, "Shoe Size");
+        } catch (HL7Exception e) {
+            log.error("Unexpected error creating ZPI - this is probably a bug in the source code generator.", e);
+        }
+     }
 
     /**
      * This method must be overridden. The easiest way is just to return null.
@@ -63,19 +46,18 @@ public class ZPI extends AbstractSegment {
         return null;
     }
 
-
     /**
      * Create an accessor for each field
      */
     public ST[] getPetName() throws HL7Exception {
-        return (ST[]) super.getField(1); // 1 - field num( numbered from 1)
+    	return getTypedField(1, new ST[0]);
     }
 
     /**
      * Create an accessor for each field
      */
     public NM getShoeSize() throws HL7Exception {
-        return (NM) super.getField(1, 0); // 1=field num(numbered from 1) 0=repetition(numbered from 0)
+    	return getTypedField(2, 0);
     }
 
 }
