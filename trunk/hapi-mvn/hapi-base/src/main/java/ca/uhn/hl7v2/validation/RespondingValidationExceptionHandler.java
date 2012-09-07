@@ -49,14 +49,8 @@ import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
  */
 public class RespondingValidationExceptionHandler extends CollectingValidationExceptionHandler {
 
-	private Message request;
 	private String successAcknowledgementCode = "AA";
 	private String errorAcknowledgementCode = "AE";
-
-	public RespondingValidationExceptionHandler(Message request) {
-		super();
-		this.request = request;
-	}
 
 	/**
 	 * Returns the generated response message.
@@ -66,12 +60,16 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * @see {@link #generateResponseMessage()}
 	 * @see {@link #populateResponseMessage()}
 	 * 
-	 * @throws HL7Exception
+	 * @throws HL7Exception if no response could be generated
 	 * @throws IOException if the response message could not be created due to failures in the
-	 *             message id geneation strategy
+	 *             message id generation strategy
 	 */
 	public final Message getResponse() throws HL7Exception, IOException {
-		Message response = generateResponseMessage();
+		if (subject == null || !(subject instanceof Message)) {
+			throw new HL7Exception("Need valid " + Message.class.getName()
+					+ " instance in order to generate a response");
+		}
+		Message response = generateResponseMessage((Message)subject);
 		populateResponseMessage(response);
 		return response;
 	}
@@ -103,10 +101,6 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 		return errorAcknowledgementCode;
 	}
 
-	public Message getRequest() {
-		return request;
-	}
-
 	/**
 	 * Generates an empty response based on the {@link #getRequest() request} message. This class
 	 * generates an ACKnowledgement using the code returned by
@@ -116,8 +110,8 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * @throws HL7Exception
 	 * @throws IOException
 	 */
-	protected Message generateResponseMessage() throws HL7Exception, IOException {
-		return getRequest().generateACK(getSuccessAcknowledgementCode(), null);
+	protected Message generateResponseMessage(Message request) throws HL7Exception, IOException {
+		return request.generateACK(getSuccessAcknowledgementCode(), null);
 	}
 
 	/**

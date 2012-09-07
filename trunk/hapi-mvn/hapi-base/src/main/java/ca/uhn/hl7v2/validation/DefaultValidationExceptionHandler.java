@@ -36,6 +36,11 @@ import ca.uhn.hl7v2.HL7Exception;
 public class DefaultValidationExceptionHandler implements ValidationExceptionHandler {
 
 	private boolean result = true;
+	protected Object subject;
+
+	public void setValidationSubject(Object subject) {
+		this.subject = subject; 
+	}
 
 	public void onValidationExceptions(ValidationException[] exceptions) {
 		result = false;
