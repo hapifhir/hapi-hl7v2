@@ -92,6 +92,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		if (handler == null) {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
+		handler.setValidationSubject(message);
 		testPrimitiveRules(message, handler); // also test primitives?
 		testMessageRules(message, handler);
 		return handler.validationPassed();
@@ -212,6 +213,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		if (handler == null) {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
+		handler.setValidationSubject(message);
 		EncodingRule[] rules = EMPTY_ENCODING_RULES_ARRAY;
 		if (getValidationContext() != null) {
 			rules = getValidationContext().getEncodingRules(version, isXML ? "XML" : "ER7");

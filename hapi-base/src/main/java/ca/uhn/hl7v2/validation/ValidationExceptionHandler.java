@@ -36,7 +36,17 @@ import ca.uhn.hl7v2.HL7Exception;
  * @author Christian Ohr
  */
 public interface ValidationExceptionHandler {
-
+	
+	
+	/**
+	 * Should be called before validation starts. Some ValidationHandler implementations
+	 * may need this context information.
+	 * 
+	 * @param subject subject to be validated
+	 */
+	void setValidationSubject(Object subject);
+	
+	
 	/**
 	 * If the validation process encounters a violation, this method is called.
 	 * 
