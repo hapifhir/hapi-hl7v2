@@ -36,6 +36,7 @@ import ca.uhn.hl7v2.model.v25.segment.OBX;
  */
 public class XMLParserTest {
 
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(XMLParserTest.class);
 	private XMLParser parser;
 
 	@Before
@@ -176,6 +177,7 @@ public class XMLParserTest {
 		PipeParser pipeParser = new PipeParser();
 		OMD_O03 msg = (OMD_O03) pipeParser.parse(texto);
 		String textoXML = xmlParser.encode(msg);
+		ourLog.info("Message:\n{}", textoXML);
 		assertTrue(textoXML.contains("OMD_O03.DIET"));
 	}
 
@@ -271,6 +273,22 @@ public class XMLParserTest {
 		String encoded = msg.encode();
 		assertTrue(encoded, encoded.contains("<MSH.10>LABMI1199510101340007</MSH.10>"));
 
+	}
+
+	/**
+	 * See http://sourceforge.net/tracker/?func=detail&atid=423835&aid=3566636&group_id=38899
+	 */
+	@Test
+	public void testMessageParseOMD_O03() throws HL7Exception, IOException {
+
+		String message = loadFile("/ca/uhn/hl7v2/parser/OMD_O03.xml");
+		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		OMD_O03 msg = (OMD_O03) p.parse(message);
+
+		ourLog.info("Structure:\n{}", msg.printStructure());
+
+		assertEquals("S", msg.getORDER_DIET().getDIET().getODS().getOds1_Type().getValue());
+		
 	}
 
 	@Test
