@@ -7,7 +7,7 @@ import ca.uhn.hl7v2.hoh.encoder.ResponseCode;
  * Response message to be returned by a server application.
  * </p>
  */
-public interface IResponseSendable<T> extends ISendable {
+public interface IResponseSendable<T> extends ISendable<T> {
 
 	ResponseCode getResponseCode();
 	

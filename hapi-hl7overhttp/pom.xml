@@ -23,6 +23,15 @@
 			</comments>
 		</license>
 	</licenses>
+
+	<repositories>
+		<repository>
+			<id>springsource-repo</id>
+			<name>SpringSource Repository</name>
+			<url>http://repo.springsource.org/release</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
@@ -75,10 +84,10 @@
 		</dependency>
 		 -->
 		<dependency>
-		    <groupId>org.mortbay.jetty</groupId>
-		    <artifactId>jetty-embedded</artifactId>
-		    <version>6.1.26</version>
-		    <optional>true</optional>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-embedded</artifactId>
+			<version>6.1.26</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -95,7 +104,7 @@
 			<scope>test</scope>
 		</dependency>
 		 -->
-		 
+
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
@@ -106,9 +115,15 @@
 			<artifactId>bcmail-jdk16</artifactId>
 			<version>${bouncycastle.version}</version>
 		</dependency>
-                        		
-		
-		
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<optional>true</optional>
+		</dependency>
+
+
 	</dependencies>
 
 	<reporting>
@@ -127,18 +142,18 @@
 						<link>http://docs.oracle.com/javase/6/docs/api/</link>
 						<link>http://hl7api.sourceforge.net/base/apidocs/</link>
 					</links>
-          		</configuration>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
-			</plugin> 
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.5.1</version>
-			</plugin>   	
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -167,7 +182,7 @@
 						</tagClasses>
 					</tagListOptions>
 				</configuration>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -180,7 +195,77 @@
 	</reporting>
 
 	<build>
-	    <resources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<repositoryLayout>flat</repositoryLayout>
+					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+					<target>${project.build.directory}/appassembler</target>
+					<assembleDirectory>${project.build.directory}/appassembler/jsw/hl7overhttp-relay</assembleDirectory>
+					<daemons>
+						<daemon>
+							<id>hl7overhttp-relay</id>
+							<mainClass>ca.uhn.hl7v2.hoh.relay.Launcher</mainClass>
+							<commandLineArguments>
+										<!-- <commandLineArgument>start</commandLineArgument>  -->
+							</commandLineArguments>
+							<platforms>
+								<platform>jsw</platform>
+							</platforms>
+						</daemon>
+					</daemons>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-jsw-scripts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-daemons</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-repository</id>
+						<phase>package</phase>
+						<goals>
+							<goal>create-repository</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<echo>Assembling relay in ${project.build.directory}/appassembler/jsw/hl7overhttp-relay</echo>
+								<chmod perm="ugo+rx" type="file" verbose="true">
+									<fileset dir="${project.build.directory}/appassembler/jsw/hl7overhttp-relay/bin">
+										<include name="*" />
+										<include name="*.*" />
+									</fileset>
+								</chmod>
+								<mkdir dir="${project.build.directory}/appassembler/jsw/hl7overhttp-relay/logs" />
+								<copy todir="${project.build.directory}/appassembler/jsw/hl7overhttp-relay">
+									<fileset dir="${project.build.directory}/../src/main/relayresources">
+										<include name="**/*.*" />
+									</fileset>
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
@@ -189,9 +274,9 @@
 				<directory>src/main/binresources</directory>
 				<filtering>false</filtering>
 			</resource>
-	    </resources>
+		</resources>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>DIST</id>
@@ -221,7 +306,7 @@
 									<goal>jar-no-fork</goal>
 								</goals>
 								<configuration>
-								    <attach>true</attach>
+									<attach>true</attach>
 								</configuration>
 							</execution>
 						</executions>
@@ -237,7 +322,7 @@
 									<goal>single</goal>
 								</goals>
 								<configuration>
-								    <attach>false</attach>
+									<attach>false</attach>
 									<descriptors>
 										<descriptor>${project.basedir}/src/assembly/hapi-hl7overhttp.xml</descriptor>
 									</descriptors>
@@ -247,7 +332,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>				
+		</profile>
 		<profile>
 			<id>MINIDIST</id>
 			<build>
@@ -276,7 +361,7 @@
 									<goal>jar-no-fork</goal>
 								</goals>
 								<configuration>
-								    <attach>true</attach>
+									<attach>true</attach>
 								</configuration>
 							</execution>
 						</executions>
@@ -292,7 +377,7 @@
 									<goal>single</goal>
 								</goals>
 								<configuration>
-								    <attach>false</attach>
+									<attach>false</attach>
 									<descriptors>
 										<descriptor>${project.basedir}/src/assembly/hapi-hl7overhttp.xml</descriptor>
 									</descriptors>
@@ -302,8 +387,15 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>				
+		</profile>
+		<profile>
+			<id>RELAY</id>
+			<build>
+				<plugins>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
-	
+
 	<inceptionYear>2012</inceptionYear>
 </project>

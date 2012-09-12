@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -14,6 +15,7 @@ import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationClientCallback;
+import ca.uhn.hl7v2.hoh.api.IClient;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.api.MessageMetadataKeys;
@@ -25,13 +27,9 @@ import ca.uhn.hl7v2.hoh.sign.ISigner;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.sockets.ISocketFactory;
 import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory;
 
-public abstract class AbstractRawClient {
-	
-	/**
-	 * Socket so_timeout value for newly created sockets
-	 */
-	static final int SO_TIMEOUT = 500;
+public abstract class AbstractRawClient implements IClient {
 
 	/**
 	 * The default charset encoding (UTF-8)
@@ -49,19 +47,35 @@ public abstract class AbstractRawClient {
 	 */
 	public static final int DEFAULT_RESPONSE_TIMEOUT = 60000;
 
+	private static final StandardSocketFactory DEFAULT_SOCKET_FACTORY = new StandardSocketFactory();
+
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientSimple.class);
-	
+
+	/**
+	 * Socket so_timeout value for newly created sockets
+	 */
+	static final int SO_TIMEOUT = 500;
+
 	private IAuthorizationClientCallback myAuthorizationCallback;
 	private Charset myCharset = DEFAULT_CHARSET;
 	private int myConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 	private String myHost;
 	private BufferedInputStream myInputStream;
 	private OutputStream myOutputStream;
+	private String myPath;
 	private int myPort;
 	private long myResponseTimeout = DEFAULT_RESPONSE_TIMEOUT;
 	private ISigner mySigner;
-	private ISocketFactory mySocketFactory = new StandardSocketFactory();
-	private String myUri;
+	private ISocketFactory mySocketFactory = DEFAULT_SOCKET_FACTORY;
+	private URL myUrl;
+
+	/**
+	 * Constructor
+	 */
+	public AbstractRawClient() {
+		// nothing
+	}
+
 	/**
 	 * Constructor
 	 * 
@@ -74,35 +88,25 @@ public abstract class AbstractRawClient {
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 */
 	public AbstractRawClient(String theHost, int thePort, String theUri) {
-		myHost = theHost;
-		myPort = thePort;
-		myUri = theUri;
-
-		if (isBlank(theHost)) {
-			throw new IllegalArgumentException("Host can not be blank/null");
-		}
-		if (isBlank(theUri)) {
-			myUri = "/";
-		}
-		if (!theUri.startsWith("/") || theUri.contains(" ")) {
-			// TODO check for other reserved chars, maybe also add this
-			// validation
-			// to encoder classes
-			throw new IllegalArgumentException("Invalid URI");
-		}
-		if (thePort <= 0) {
-			throw new IllegalArgumentException("Port must be a positive integer");
-		}
+		setHost(theHost);
+		setPort(thePort);
+		setUri(theUri);
 	}
+
 	/**
 	 * Constructor
 	 * 
 	 * @param theUrl
-	 *            The URL to connect to
+	 *            The URL to connect to. Note that if the URL refers to the
+	 *            "https" protocol, a {@link #setSocketFactory(ISocketFactory)
+	 *            SocketFactory} which uses TLS will be set. If custom
+	 *            certificates are used, a different factory may need to be
+	 *            provided manually.
 	 */
 	public AbstractRawClient(URL theUrl) {
-		this(extractHost(theUrl), extractPort(theUrl), extractUri(theUrl));
+		setUrl(theUrl);
 	}
+
 	protected void closeSocket(Socket theSocket) {
 		ourLog.debug("Closing socket");
 		try {
@@ -113,7 +117,7 @@ public abstract class AbstractRawClient {
 	}
 
 	protected Socket connect() throws IOException {
-		ourLog.debug("Creating new connection to {}:{} for URI {}", new Object[] { myHost, myPort, myUri });
+		ourLog.debug("Creating new connection to {}:{} for URI {}", new Object[] { myHost, myPort, myPath });
 
 		Socket socket = mySocketFactory.createClientSocket();
 		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
@@ -124,59 +128,15 @@ public abstract class AbstractRawClient {
 		return socket;
 	}
 
-	
-	/**
-	 * Sends a message, waits for the response, and then returns the response if
-	 * any
-	 * 
-	 * @param theMessageToSend
-	 *            The message to send
-	 * @return The returned message, as well as associated metadata
-	 * @throws DecodeException
-	 *             If a problem occurs (read error, socket disconnect, etc.)
-	 *             during communication, or the response is invalid in some way.
-	 *             Note that IO errors in trying to connect to the remote host
-	 *             or sending the message are thrown directly (i.e. as
-	 *             {@link IOException}), but IO errors in reading the response
-	 *             are thrown as DecodeException
-	 * @throws IOException
-	 *             If the client is unable to connect to the remote host
-	 * @throws EncodeException
-	 *             If a failure occurs while encoding the message into a
-	 *             sendable HTTP request
-	 */
-	protected IReceivable<String> doSendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
-
-		Socket socket = provideSocket();
-		try {
-			return doSendAndReceiveInternal(theMessageToSend, socket);
-		} catch (DecodeException e) {
-			ourLog.debug("Decode exception, going to close socket", e);
-			closeSocket(socket);
-			throw e;
-		} catch (IOException e) {
-			ourLog.debug("Caught IOException, going to close socket", e);
-			closeSocket(socket);
-			throw e;
-		} catch (SignatureVerificationException e) {
-			ourLog.debug("Failed to verify message signature", e);
-			throw new DecodeException("Failed to verify message signature", e);
-		} finally {
-			returnSocket(socket);
-		}
-
-	}
-
-
 	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setUri(myUri);
+		enc.setUri(myPath);
 		enc.setHost(myHost);
 		enc.setPort(myPort);
 		enc.setCharset(myCharset);
 		if (myAuthorizationCallback != null) {
-			enc.setUsername(myAuthorizationCallback.provideUsername(myUri));
-			enc.setPassword(myAuthorizationCallback.providePassword(myUri));
+			enc.setUsername(myAuthorizationCallback.provideUsername(myPath));
+			enc.setPassword(myAuthorizationCallback.providePassword(myPath));
 		}
 		enc.setSigner(mySigner);
 		enc.setDataProvider(theMessageToSend);
@@ -211,34 +171,58 @@ public abstract class AbstractRawClient {
 		return response;
 	}
 
-
-	/**
-	 * @return the host
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ca.uhn.hl7v2.hoh.raw.client.IClient#getHost()
 	 */
 	public String getHost() {
 		return myHost;
 	}
 
-
-	/**
-	 * @return the port
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ca.uhn.hl7v2.hoh.raw.client.IClient#getPort()
 	 */
 	public int getPort() {
 		return myPort;
 	}
 
-	/**
-	 * Returns the socket factory used by this client
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ca.uhn.hl7v2.hoh.raw.client.IClient#getSocketFactory()
 	 */
 	public ISocketFactory getSocketFactory() {
 		return mySocketFactory;
 	}
 
-	/**
-	 * @return the uri
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ca.uhn.hl7v2.hoh.raw.client.IClient#getUri()
 	 */
 	public String getUri() {
-		return myUri;
+		return myPath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public URL getUrl() {
+		return myUrl;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getUrlString() {
+		return getUrl().toExternalForm();
+	}
+
+	boolean isSocketConnected(Socket socket) {
+		return socket != null && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown();
 	}
 
 	/**
@@ -253,21 +237,60 @@ public abstract class AbstractRawClient {
 	protected abstract void returnSocket(Socket theSocket);
 
 	/**
-	 * If set, provides a callback which will be used to se the username and
-	 * password associated with the request
+	 * Sends a message, waits for the response, and then returns the response if
+	 * any
+	 * 
+	 * @param theMessageToSend
+	 *            The message to send
+	 * @return The returned message, as well as associated metadata
+	 * @throws DecodeException
+	 *             If a problem occurs (read error, socket disconnect, etc.)
+	 *             during communication, or the response is invalid in some way.
+	 *             Note that IO errors in trying to connect to the remote host
+	 *             or sending the message are thrown directly (i.e. as
+	 *             {@link IOException}), but IO errors in reading the response
+	 *             are thrown as DecodeException
+	 * @throws IOException
+	 *             If the client is unable to connect to the remote host
+	 * @throws EncodeException
+	 *             If a failure occurs while encoding the message into a
+	 *             sendable HTTP request
+	 */
+	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
+
+		Socket socket = provideSocket();
+		try {
+			return doSendAndReceiveInternal(theMessageToSend, socket);
+		} catch (DecodeException e) {
+			ourLog.debug("Decode exception, going to close socket", e);
+			closeSocket(socket);
+			throw e;
+		} catch (IOException e) {
+			ourLog.debug("Caught IOException, going to close socket", e);
+			closeSocket(socket);
+			throw e;
+		} catch (SignatureVerificationException e) {
+			ourLog.debug("Failed to verify message signature", e);
+			throw new DecodeException("Failed to verify message signature", e);
+		} finally {
+			returnSocket(socket);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * ca.uhn.hl7v2.hoh.raw.client.IClient#setAuthorizationCallback(ca.uhn.hl7v2
+	 * .hoh.api.IAuthorizationClientCallback)
 	 */
 	public void setAuthorizationCallback(IAuthorizationClientCallback theAuthorizationCallback) {
 		myAuthorizationCallback = theAuthorizationCallback;
 	}
 
 	/**
-	 * <p>
-	 * Sets the charset to use for requests from this client. May be changed at
-	 * any time.
-	 * </p>
-	 * <p>
-	 * Default is UTF-8
-	 * </p>
+	 * {@inheritDoc}
 	 */
 	public void setCharset(Charset theCharset) {
 		if (theCharset == null) {
@@ -277,12 +300,34 @@ public abstract class AbstractRawClient {
 	}
 
 	/**
-	 * Sets the number of milliseconds before timing out. Default is
-	 * {@link #DEFAULT_RESPONSE_TIMEOUT}
-	 * 
-	 * @param theResponseTimeout
-	 *            The millis to wait before timeout.
-	 * @see #DEFAULT_RESPONSE_TIMEOUT
+	 * {@inheritDoc}
+	 */
+	public void setHost(String theHost) {
+		myHost = theHost;
+		if (isBlank(theHost)) {
+			throw new IllegalArgumentException("Host can not be blank/null");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPath(String thePath) {
+		myPath = thePath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPort(int thePort) {
+		myPort = thePort;
+		if (thePort <= 0) {
+			throw new IllegalArgumentException("Port must be a positive integer");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setResponseTimeout(long theResponseTimeout) {
 		if (theResponseTimeout <= 0) {
@@ -291,28 +336,75 @@ public abstract class AbstractRawClient {
 		myResponseTimeout = theResponseTimeout;
 	}
 
-	/**
-	 * @param theSigner
-	 *            If provided, sets the Signature Profile signer implementation
-	 *            to use. See <a href=
-	 *            "http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.html#SIGNATURE_PROFILE"
-	 *            >http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.
-	 *            html#SIGNATURE_PROFILE</a>
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * ca.uhn.hl7v2.hoh.raw.client.IClient#setSigner(ca.uhn.hl7v2.hoh.sign.ISigner
+	 * )
 	 */
 	public void setSigner(ISigner theSigner) {
 		mySigner = theSigner;
 	}
 
-	/**
-	 * Sets the socket factory used by this client. Default is {@link StandardSocketFactory}.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see ISocketFactory
+	 * @see
+	 * ca.uhn.hl7v2.hoh.raw.client.IClient#setSocketFactory(ca.uhn.hl7v2.hoh
+	 * .sockets.ISocketFactory)
 	 */
 	public void setSocketFactory(ISocketFactory theSocketFactory) {
 		if (theSocketFactory == null) {
 			throw new NullPointerException("Socket factory can not be null");
 		}
 		mySocketFactory = theSocketFactory;
+	}
+
+	private void setUri(String theUri) {
+		myPath = theUri;
+
+		if (isBlank(theUri)) {
+			myPath = "/";
+		}
+		if (!theUri.startsWith("/") || theUri.contains(" ")) {
+			// TODO check for other reserved chars, maybe also add this
+			// validation
+			// to encoder classes
+			throw new IllegalArgumentException("Invalid URI");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setUrl(URL theUrl) {
+		setHost(extractHost(theUrl));
+		setPort(extractPort(theUrl));
+		setUri(extractUri(theUrl));
+
+		myUrl = theUrl;
+
+		if (getSocketFactory() == DEFAULT_SOCKET_FACTORY && theUrl.getProtocol().toLowerCase().equals("https")) {
+			setSocketFactory(new TlsSocketFactory());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setUrlString(String theString) {
+		try {
+			URL url = new URL(theString);
+			setUrl(url);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("URL is not valid. Must be in the form http[s]:");
+		}
+		String protocol = myUrl.getProtocol().toLowerCase();
+		if (!protocol.equals("http") && !protocol.equals("https")) {
+			throw new IllegalStateException("URL protocol must be http or https");
+		}
+
 	}
 
 	private static String extractHost(URL theUrl) {

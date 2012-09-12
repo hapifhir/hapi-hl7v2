@@ -59,14 +59,12 @@ public enum ResponseCode {
 	/**
 	 * Detects the appropriate HTTP response code for a given message
 	 * 
-	 * @param theMessage
-	 * @return
 	 */
-	public static ResponseCode detect(String theMessage) {
-		switch (EncodingStyle.detect(theMessage)) {
+	public static ResponseCode detect(String theRawMessage) {
+		switch (EncodingStyle.detect(theRawMessage)) {
 		case ER7:
 		default:
-			StringTokenizer tok = new StringTokenizer(theMessage, "\r");
+			StringTokenizer tok = new StringTokenizer(theRawMessage, "\r");
 			while (tok.hasMoreTokens()) {
 				String nextSegment = tok.nextToken();
 				if (nextSegment.startsWith("MSA")) {
@@ -82,7 +80,7 @@ public enum ResponseCode {
 		case XML:
 
 			Pattern p = Pattern.compile("<MSA\\.1>(.*?)</MSA\\.1>");
-			Matcher m = p.matcher(theMessage);
+			Matcher m = p.matcher(theRawMessage);
 			if (m.find()) {
 				String code = m.group(1);
 				return forAcknowledgementCode(code);
