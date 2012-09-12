@@ -201,15 +201,16 @@ public class DefaultXMLParser extends XMLParser {
         
         //we're not too fussy about order here (all occurrences get parsed as repetitions) ... 
         for (int i = 0; i < childNames.length; i++) {
-            unparsedElementList.remove(childNames[i]);
+            String nextChildName = childNames[i];
+			unparsedElementList.remove(nextChildName);
             
             // 4 char segment names are second occurrences of a segment within a single message
             // structure. e.g. the second PID segment in an A17 patient swap message is known
-            // to hapi's code representation as PID2
-            if (childNames[i].length() != 4) {   
-            	parseReps(groupElement, groupObject, messageName, childNames[i], childNames[i]);
-            } else {
-            	log.trace("Skipping rep segment: {}", childNames[i]);
+            // to hapi's code represenation as PID2
+            if (nextChildName.length() == 4 && Character.isDigit(nextChildName.charAt(3))) {
+            	log.trace("Skipping rep segment: {}", nextChildName);
+            } else {   
+            	parseReps(groupElement, groupObject, messageName, nextChildName, nextChildName);
             }
         }
         
