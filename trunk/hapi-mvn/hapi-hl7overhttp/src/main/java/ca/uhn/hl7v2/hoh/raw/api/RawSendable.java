@@ -43,4 +43,8 @@ public class RawSendable implements IResponseSendable<String> {
 		return myResponseCode;
 	}
 
+	public String getMessage() {
+		return myRawMessage;
+	}
+
 }

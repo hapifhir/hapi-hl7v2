@@ -2,6 +2,8 @@ package ca.uhn.hl7v2.hoh.util;
 
 public class StringUtils {
 
+	public static final String LINE_SEP = System.getProperty("line.separator");
+	
 	/**
 	 * Null safe equals comparison
 	 */

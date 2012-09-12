@@ -27,14 +27,11 @@ public class ServerSocketThreadForTesting extends Thread {
 	private CountDownLatch myLatch = new CountDownLatch(1);
 	private String myMessage;
 	private int myPort;
-
 	private Message myReply;
-
 	private IAuthorizationServerCallback myServerAuthCallback;
-
 	private ServerSocket myServerSocket;
-
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
+	private int myConnectionCount = 0;
 
 	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
@@ -89,6 +86,8 @@ public class ServerSocketThreadForTesting extends Thread {
 
 		ourLog.info("Starting server on {}", myPort);
 
+		myConnectionCount = 0;
+		
 		Exception ex = null;
 		try {
 			myServerSocket = new ServerSocket(myPort);
@@ -96,14 +95,15 @@ public class ServerSocketThreadForTesting extends Thread {
 
 			while (!myDone) {
 				try {
-					ourLog.info("Going to accept()");
+					ourLog.trace("Going to accept()");
 					Socket newSocket = myServerSocket.accept();
+					myConnectionCount++;
 					newSocket.setSoTimeout(1000);
 					ourLog.info("New socket: {}", newSocket.getInetAddress().toString());
 					TestSocketThread t = new TestSocketThread(newSocket);
 					t.start();
 				} catch (SocketTimeoutException e) {
-					ourLog.info("No new connection");
+					ourLog.trace("No new connection");
 				}
 				myLatch.countDown();
 			}
@@ -125,6 +125,13 @@ public class ServerSocketThreadForTesting extends Thread {
 			fail(ex.getMessage());
 		}
 
+	}
+
+	/**
+	 * @return the connectionCount
+	 */
+	public int getConnectionCount() {
+		return myConnectionCount;
 	}
 
 	/**
@@ -231,7 +238,7 @@ public class ServerSocketThreadForTesting extends Thread {
 						}
 
 					} else {
-						ourLog.info("Socket reader has NO data");
+						ourLog.trace("Socket reader has NO data");
 						try {
 							Thread.sleep(100);
 						} catch (Exception e) {

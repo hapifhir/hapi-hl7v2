@@ -11,6 +11,7 @@ import java.io.OutputStream;
 public class IOUtils {
 
 	public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	public static final String FILE_PATH_SEP = System.getProperty("file.separator");
 
 	/**
 	 * Non instantiable

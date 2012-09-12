@@ -40,7 +40,7 @@ public class HohRawClientSimpleTest {
 
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
-		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
 		
 		ourLog.info("Received response");
 
@@ -71,7 +71,7 @@ public class HohRawClientSimpleTest {
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setResponseTimeout(2000);
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
-		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
 		
 		ourLog.info("Received response");
 
@@ -95,7 +95,7 @@ public class HohRawClientSimpleTest {
 
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
-		IReceivable<String> response = client.doSendAndReceive(new RawSendable(message));
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
 		
 		ourLog.info("Received response");
 

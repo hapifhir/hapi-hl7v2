@@ -14,6 +14,7 @@ import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.Terser;
 
 public class MessageSendable implements IResponseSendable<Message> {
+	
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(MessageSendable.class);
 
 	private final Message myMessage;
@@ -85,6 +86,10 @@ public class MessageSendable implements IResponseSendable<Message> {
 			}
 		}
 		return myResponseCode;
+	}
+
+	public Message getMessage() {
+		return myMessage;
 	}
 
 }
