@@ -102,6 +102,11 @@
             	or special TLS configurations. This checkin also corrects an issue where the
             	"tls" parameter on ConnectionHub was not honoured.       	
             </action>
+            <action type="fix" dev="mmartin (laguna27)" issue="3566636">
+            	Fix an issue parsing XML encoded messsages where any segment groups with a four letter
+            	name are ignored (e.g. the DIET group in an OMD_O01 message). Thanks to mmartin
+            	for providing a test case demonstrating the issue!
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
