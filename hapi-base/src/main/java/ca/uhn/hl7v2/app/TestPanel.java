@@ -634,7 +634,7 @@ public class TestPanel extends JPanel implements ConnectionListener {
 
 			try {
 				if (args.length > 0) {
-					LowerLayerProtocol llp = LowerLayerProtocol.makeLLP();
+					LowerLayerProtocol llp = new MinLowerLayerProtocol();
 
 					if ("tls".equals(args[i]) || "ssl".equals(args[i])) {
 						tls = true;

@@ -90,7 +90,7 @@ public class SimpleServer extends HL7Service {
 	 * using the {@link MinLowerLayerProtocol} and a standard {@link PipeParser}.
 	 */
 	public SimpleServer(int port) {
-		this(port, LowerLayerProtocol.makeLLP(), new PipeParser(), false);
+		this(port, new MinLowerLayerProtocol(), new PipeParser(), false);
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class SimpleServer extends HL7Service {
 	 * using the {@link MinLowerLayerProtocol} and a standard {@link PipeParser}.
 	 */
 	public SimpleServer(int port, boolean tls) {
-		this(port, LowerLayerProtocol.makeLLP(), new PipeParser(), tls);
+		this(port, new MinLowerLayerProtocol(), new PipeParser(), tls);
 	}	
 
 	/**

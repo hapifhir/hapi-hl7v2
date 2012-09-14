@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -176,7 +177,7 @@ public class Initiator {
 			int port = Integer.parseInt(args[1]);
 
 			final Parser parser = new PipeParser();
-			LowerLayerProtocol llp = LowerLayerProtocol.makeLLP();
+			LowerLayerProtocol llp = new MinLowerLayerProtocol();
 			Connection connection = new Connection(parser, llp, new Socket(
 					host, port));
 			final Initiator initiator = connection.getInitiator();
