@@ -6,7 +6,11 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
-        	<action type="add" dev="Christian Ohr">
+			<action type="fix" dev="Jens Villadsen, Christian Ohr" issue="3552470 ">
+            	Deprecated LowerLayerProtocol.makeLLP as there is now the choice
+            	between MinLowerLayerProtocol and ExtendedMinLowerLayerProtocol.
+            </action> 
+          	<action type="add" dev="Christian Ohr">
         		ValidationContext can now be more conveniently configured using
         		ValidationRuleBuilders. All predefined ValidationContext classes have
         		been reimplemented to be defined by such builders.

@@ -136,15 +136,6 @@ public class MinLowerLayerProtocolTest implements Application {
 		HL7Writer writer = minLowerLayerProtocol.getWriter(outputStream);
 		assertNotNull("Should have a valid HL7Writer object", writer);
 	}
-
-	/**
-	 * Testing subclass MakeLLP() method
-	 */
-	@Test
-	public void testMakeLLP() {
-		LowerLayerProtocol lowerLayerProtocol = MinLowerLayerProtocol.makeLLP();
-		assertNotNull("Should have a valid LowerLayerProtocol object", lowerLayerProtocol);
-	}
 	
 	@Test
 	public void testReceiveWithDelayInBetween() throws Exception {

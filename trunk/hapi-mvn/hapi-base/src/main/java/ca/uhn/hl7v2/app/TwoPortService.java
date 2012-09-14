@@ -44,6 +44,7 @@ import ca.uhn.hl7v2.app.AcceptorThread.AcceptedSocket;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -67,12 +68,12 @@ public class TwoPortService extends HL7Service {
 	private AcceptorThread inboundAcceptor, outboundAcceptor;
 
 	public TwoPortService(int inboundPort, int outboundPort) {
-		this(new PipeParser(), LowerLayerProtocol.makeLLP(), inboundPort,
+		this(new PipeParser(), new MinLowerLayerProtocol(), inboundPort,
 				outboundPort, false);
 	}
 
 	public TwoPortService(int inboundPort, int outboundPort, boolean tls) {
-		this(new PipeParser(), LowerLayerProtocol.makeLLP(), inboundPort,
+		this(new PipeParser(), new MinLowerLayerProtocol(), inboundPort,
 				outboundPort, tls);
 	}
 

@@ -60,9 +60,10 @@ public abstract class LowerLayerProtocol {
     }
     
     /** 
-     * Returns a particular implementation of LowerLayerProtocol.  Currently 
-     * MinLowerLayerProtocol is the default and there are no other options ... 
-     * the idea is that this will eventually be configurable.     
+     * Returns a particular implementation of LowerLayerProtocol.
+     * 
+     *  @deprecated as there is now the choice between {@link MinLowerLayerProtocol}
+     *  and {@link ExtendedMinLowerLayerProtocol}.
      */
     public static LowerLayerProtocol makeLLP() {
         return new MinLowerLayerProtocol();
