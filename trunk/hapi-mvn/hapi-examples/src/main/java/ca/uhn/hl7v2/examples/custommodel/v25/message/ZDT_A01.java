@@ -5,12 +5,11 @@
 
 package ca.uhn.hl7v2.examples.custommodel.v25.message;
 
-import java.util.Arrays;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
+import java.util.Arrays;
 
 /**
  * Example custom model class. This is a ZDT^A01, which is an ADT^A01 with
@@ -34,12 +33,14 @@ public class ZDT_A01 extends ADT_A01 {
        String[] segmentNames = getNames();
        int indexOfPid = Arrays.asList(segmentNames).indexOf("PID");
 
+       // Put the ZPI segment right after the PID segment
+       int index = indexOfPid + 1;
+
        Class<ZPI> type = ZPI.class;
        boolean required = true;
        boolean repeating = false;
-       int index = indexOfPid + 1;
 
-       this.add(type, required,repeating,index);
+       this.add(type, required, repeating, index);
 	}
 
 
