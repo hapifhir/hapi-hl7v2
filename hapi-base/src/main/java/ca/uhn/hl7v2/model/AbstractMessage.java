@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.model.primitive.ID;
@@ -78,7 +79,8 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * this.getClass().getName().  This should be overridden if you are putting
      * a custom message definition in your own package, or it will default.  
      * @see Message#getVersion()
-     * @returns 2.4 if not obvious from package name
+     * 
+     * @returns lowest available version if not obvious from package name
      */
     public String getVersion() {
     	if (myVersion != null) {
@@ -102,7 +104,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         }
         
         if (version == null) 
-            version = "2.4";
+            version = Version.lowestAvailableVersion();
         
         myVersion = version;
         return version;
@@ -285,7 +287,8 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         Terser.set(msh, 11, 0, 1, 1, processingId);
         Terser.set(msh, 12, 0, 1, 1, getVersion());
         
-        if (getVersion().compareTo("2.4") >= 0) {
+        // Add structure information if version is 2.4 or better
+        if (!Version.V24.isGreaterThan(Version.versionOf(getVersion()))) {
         	String className = getClass().getName();
         	int lastIndexOf = className.lastIndexOf('.');
 			className = className.substring(lastIndexOf + 1);

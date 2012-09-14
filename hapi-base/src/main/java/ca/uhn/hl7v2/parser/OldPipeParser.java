@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;
@@ -582,7 +583,7 @@ public class OldPipeParser extends Parser {
             String[] procIDComps = split(fields[10], String.valueOf(compSep));
             
             //fill MSH segment
-            String version = "2.4"; //default
+            String version = Version.lowestAvailableVersion(); //default
             try {
                 version = this.getVersion(message);
             }

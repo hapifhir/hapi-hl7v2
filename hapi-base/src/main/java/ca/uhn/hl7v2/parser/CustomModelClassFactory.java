@@ -159,10 +159,7 @@ public class CustomModelClassFactory implements ModelClassFactory {
      * Finds appropriate classes to be loaded for the given structure/type
      */
     protected Class<?> findClass(String subpackage, String name, String version) throws HL7Exception {
-        if (!Parser.validVersion(version)) {
-            throw new HL7Exception("HL7 version " + version + " is not supported",
-                    HL7Exception.UNSUPPORTED_VERSION_ID);
-        }
+        Parser.assertVersionExists(version);
         Class<?> classLoaded = null;
         if (customModelClasses != null) {
             if (customModelClasses.containsKey(version)) {

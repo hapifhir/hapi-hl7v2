@@ -31,14 +31,8 @@ import java.util.Set;
 
 public enum Version {
 
-	V21("2.1"), 
-	V22("2.2"), 
-	V23("2.3"), 
-	V231("2.3.1"), 
-	V24("2.4"), 
-	V25("2.5"), 
-	V251("2.5.1"), 
-	V26("2.6");
+	V21("2.1"), V22("2.2"), V23("2.3"), V231("2.3.1"), V24("2.4"), V25("2.5"), V251("2.5.1"), V26(
+			"2.6");
 
 	private String version;
 
@@ -70,6 +64,10 @@ public enum Version {
 		return null;
 	}
 
+	/**
+	 * @param someVersions
+	 * @return <code>true</code> if someVersions contain all supported HL7 versions
+	 */
 	public static boolean allVersions(Set<Version> someVersions) {
 		return someVersions != null && someVersions.size() == values().length;
 	}
@@ -111,5 +109,33 @@ public enum Version {
 				versions.add(version);
 		}
 		return versions.toArray(new Version[versions.size()]);
+	}
+
+	public String modelPackageName() {
+		return String
+				.format("%s.model.%s.", getClass().getPackage().getName(), getPackageVersion());
+	}
+
+	public boolean available() {
+		String className = modelPackageName() + "message.ACK";
+		try {
+			Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
+	public static Version[] availableVersions() {
+		List<Version> availableVersions = new ArrayList<Version>();
+		for (Version v : values()) {
+			if (v.available())
+				availableVersions.add(v);
+		}
+		return availableVersions.toArray(new Version[availableVersions.size()]);
+	}
+	
+	public static String lowestAvailableVersion() {
+		return availableVersions()[0].getVersion();
 	}
 }

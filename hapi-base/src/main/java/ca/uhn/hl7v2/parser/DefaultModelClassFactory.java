@@ -31,6 +31,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
     private static final Logger log = LoggerFactory.getLogger(DefaultModelClassFactory.class);
     
     static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
-    private static final HashMap<String, String[]> packages = new HashMap<String, String[]>();
+    private static final Map<String, String[]> packages = new HashMap<String, String[]>();
     private static List<String> ourVersions = null;
 
     static {
@@ -181,17 +182,12 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	 * under it. The path ends in with a slash.
 	 */
 	public static String getVersionPackagePath(String ver) throws HL7Exception {
-	    if (Parser.validVersion(ver) == false) { 
-	        throw new HL7Exception("The HL7 version " + ver + " is not recognized", HL7Exception.UNSUPPORTED_VERSION_ID);
+		Version v = Version.versionOf(ver);
+	    if (v == null) { 
+	        throw new HL7Exception("The HL7 version " + ver + " is unknown", HL7Exception.UNSUPPORTED_VERSION_ID);
 	    }
-	    StringBuffer path = new StringBuffer("ca/uhn/hl7v2/model/v");
-	    char[] versionChars = new char[ver.length()];
-	    ver.getChars(0, ver.length(), versionChars, 0);
-	    for (int i = 0; i < versionChars.length; i++) {
-	        if (versionChars[i] != '.') path.append(versionChars[i]);
-	    }
-	    path.append('/');
-	    return path.toString();
+	    String pkg = v.modelPackageName();
+	    return pkg.replace('.', '/');
 	}
 
 	/**
@@ -297,11 +293,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
      * @param type 'message', 'group', 'segment', or 'datatype'  
      */
     private static Class<?> findClass(String name, String version, String type) throws HL7Exception {
-        if (Parser.validVersion(version) == false) {
-            throw new HL7Exception(
-                "The HL7 version " + version + " is not recognized",
-                HL7Exception.UNSUPPORTED_VERSION_ID);
-        }
+        Parser.assertVersionExists(version);
 
         //get list of packages to search for the corresponding message class 
         String[] packageList = packageList(version);

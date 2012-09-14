@@ -177,10 +177,7 @@ public abstract class Parser extends HapiContextSupport {
 		}
 
 		String version = getVersion(message);
-		if (!validVersion(version)) {
-			throw new HL7Exception("Can't process message of version '" + version
-					+ "' - version not recognized", HL7Exception.UNSUPPORTED_VERSION_ID);
-		}
+		assertVersionExists(version);
 
 		Validator validator = getHapiContext().getMessageValidator();
 		validator.validate(message, encoding.equals("XML"), version);
@@ -365,10 +362,7 @@ public abstract class Parser extends HapiContextSupport {
 		}
 
 		String version = getVersion(message);
-		if (!validVersion(version)) {
-			throw new HL7Exception("Can't process message of version '" + version
-					+ "' - version not recognized", HL7Exception.UNSUPPORTED_VERSION_ID);
-		}
+		assertVersionExists(version);
 
 		Validator validator = getHapiContext().getMessageValidator();
 		validator.validate(message, encoding.equals("XML"), version);
@@ -469,9 +463,25 @@ public abstract class Parser extends HapiContextSupport {
 	/**
 	 * Returns true if the given string represents a valid 2.x version. Valid versions include
 	 * "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.6"
+	 *
+	 * @param version HL7 version string
+	 * @return <code>true</code> if version is known
 	 */
 	public static boolean validVersion(String version) {
 		return Version.supportsVersion(version);
+	}
+	
+	/**
+	 * Like {@link #validVersion(String)} but throws an HL7Exception instead
+	 * 
+	 * @param version
+	 * @throws HL7Exception
+	 */
+	public static void assertVersionExists(String version) throws HL7Exception {
+		if (!validVersion(version))
+            throw new HL7Exception(
+                    "The HL7 version " + version + " is not recognized",
+                    HL7Exception.UNSUPPORTED_VERSION_ID);
 	}
 
 	/**
@@ -485,30 +495,20 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	public static String getMessageStructureForEvent(String name, String version)
 			throws HL7Exception {
-		String structure = null;
-
-		if (!validVersion(version))
-			throw new HL7Exception("The version " + version + " is unknown");
-
-		Properties p = null;
+		assertVersionExists(version);
 		try {
-			p = (Properties) getMessageStructures().get(version);
-
+			Properties p = (Properties) getMessageStructures().get(version);
 			if (p == null)
 				throw new HL7Exception("No map found for version " + version
 						+ ". Only the following are available: " + getMessageStructures().keySet());
-
+			String structure = p.getProperty(name);
+			if (structure == null) {
+				structure = name;
+			}
+			return structure;
 		} catch (IOException ioe) {
 			throw new HL7Exception(ioe);
 		}
-
-		structure = p.getProperty(name);
-
-		if (structure == null) {
-			structure = name;
-		}
-
-		return structure;
 	}
 
 	/**
