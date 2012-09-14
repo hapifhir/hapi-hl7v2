@@ -92,7 +92,7 @@
 				<!-- make sure our code doesn't have 1.5+ dependencies except where we know it -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
-				<version>1.6</version>
+				<version>1.8</version>
 				<executions>
 					<execution>
 						<id>check-java-version</id>

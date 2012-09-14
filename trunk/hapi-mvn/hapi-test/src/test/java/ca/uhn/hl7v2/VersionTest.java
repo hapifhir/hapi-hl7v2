@@ -1,7 +1,11 @@
 package ca.uhn.hl7v2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class VersionTest {
 
@@ -28,4 +32,12 @@ public class VersionTest {
 		}
 		assertFalse(Version.supportsVersion("3.0"));
 	}	
+	
+	@Test public void testAvailableVersions() {
+		assertTrue(Version.availableVersions().length > 0);
+	}
+	
+	@Test public void testLowestAvailableVersion() {
+		assertNotNull(Version.lowestAvailableVersion());
+	}
 }

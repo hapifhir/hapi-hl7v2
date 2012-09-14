@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -30,25 +31,50 @@ public class VersionLogger {
 	 */
 	public static void init() {
 		if (!ourInitialized) {
-			try {
-				InputStream is = VersionLogger.class
-						.getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties");
-				Properties p = new Properties();
-				p.load(is);
-				ourVersion = p.getProperty("version");
-				LOG.info("HAPI version is: " + ourVersion);
+			printHapiVersion();
+			checkStructureLibraries();
+			checkDOMImplementation();
+			ourInitialized = true;
+		}
+	}
 
-				// Check if proper XML support
-				DOMImplementation impl = XMLUtils.getDOMImpl();
-				if (impl == null) {
-					LOG.warn("DOM Level 3 (Load and Save) is NOT supported by the XML library found first on your classpath!");
-					LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
-				}
-			} catch (Exception e) {
-				LOG.warn("Error occured while trying to retrieve a DOMImplementation.", e);
+	private static void checkDOMImplementation() {
+		try {
+			// Check if proper XML support is available
+			DOMImplementation impl = XMLUtils.getDOMImpl();
+			if (impl == null) {
+				LOG.warn("DOM Level 3 (Load and Save) is NOT supported by the XML library found first on your classpath!");
 				LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
 			}
-			ourInitialized = true;
+		} catch (Exception e) {
+			LOG.warn("Error occured while trying to retrieve a DOMImplementation.", e);
+			LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
+		}
+	}
+
+	private static void checkStructureLibraries() {
+		// Check if any structures are present
+		StringBuilder sb = new StringBuilder();
+		for (Version v : Version.availableVersions()) {
+			sb.append(v.getVersion()).append(' ');
+		}
+		if (sb.length() == 0) {
+			LOG.warn("No HL7 structure libraries found on the classpath!");
+		} else {
+			LOG.info("Default Structure libraries found for HL7 versions {}", sb.toString());
+		}
+	}
+
+	private static void printHapiVersion() {
+		try {
+			InputStream is = VersionLogger.class
+					.getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties");
+			Properties p = new Properties();
+			p.load(is);
+			ourVersion = p.getProperty("version");
+			LOG.info("HAPI version is: " + ourVersion);
+		} catch (IOException e) {
+			LOG.warn("Unable to determine HAPI version information", e);
 		}
 	}
 
