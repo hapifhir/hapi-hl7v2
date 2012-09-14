@@ -20,7 +20,7 @@ public class DatatypeDef {
             throw new IllegalArgumentException("Missing type");
         }
         if (StringUtils.isEmpty(theDescription)) {
-            throw new IllegalArgumentException("Missing name");
+            throw new IllegalArgumentException("Missing name in type:" + theType);
         }
     }
 
