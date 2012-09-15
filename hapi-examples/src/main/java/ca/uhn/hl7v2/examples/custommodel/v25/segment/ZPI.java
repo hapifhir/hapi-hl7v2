@@ -26,11 +26,22 @@ public class ZPI extends AbstractSegment {
 
     public ZPI(Group parent, ModelClassFactory factory) {
         super(parent, factory);
+        
+        // By convention, an init() method is created which adds
+        // the specific fields to this segment class
         init(factory);
      }
 
      private void init(ModelClassFactory factory) {
         try {
+        	/*
+        	 * For each field in the custom segment, the add() method is
+        	 * called once. In this example, there are two fields in
+        	 * the ZPI segment.
+        	 * 
+        	 * See here for information on the arguments to this method:
+        	 * http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractSegment.html#add%28java.lang.Class,%20boolean,%20int,%20int,%20java.lang.Object[],%20java.lang.String%29
+        	 */
         	add(ST.class, true, 0, 100, new Object[]{ getMessage() }, "Pet Name(s)");
         	add(NM.class, false, 1, 4, new Object[]{ getMessage() }, "Shoe Size");
         } catch (HL7Exception e) {
