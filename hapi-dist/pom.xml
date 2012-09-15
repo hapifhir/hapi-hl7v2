@@ -28,7 +28,6 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-	    
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
@@ -84,20 +83,10 @@
 			<artifactId>hapi-structures-v26</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
-
-<!--
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-base</artifactId>
-			<version>${hapi.version}</version>
-			<classifier>jdk14</classifier>
-		</dependency>
--->
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.9</version>
+			<version>${log4j.version}</version>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
