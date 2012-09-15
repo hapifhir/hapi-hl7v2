@@ -27,7 +27,6 @@ package ca.uhn.hl7v2.testpanel.model.conn;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +41,6 @@ import org.apache.commons.lang.Validate;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
-import ca.uhn.hl7v2.testpanel.util.CharsetUtils;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,7 +58,7 @@ public class InboundConnectionList extends AbstractModelClass {
 
 	public InboundConnection createDefaultConnection(int port) {
 		InboundConnection initialConnection = new InboundConnection();
-		initialConnection.setCharSet(Prefs.getMostRecentConnectionCharset().displayName());
+		initialConnection.setCharSet(Prefs.getInstance().getMostRecentConnectionCharset().displayName());
 		initialConnection.setDualPort(false);
 		initialConnection.setIncomingOrSinglePort(port);
 		initialConnection.setHost("localhost");

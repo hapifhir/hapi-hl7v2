@@ -21,13 +21,13 @@
  */
 package ca.uhn.hl7v2.testpanel.util.compare;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GroupComparison extends StructureComparison {
     //~ Instance fields ------------------------------------------------------------------------------------------------

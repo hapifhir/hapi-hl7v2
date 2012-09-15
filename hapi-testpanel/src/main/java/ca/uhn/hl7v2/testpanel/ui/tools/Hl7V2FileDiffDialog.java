@@ -110,7 +110,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 			}
 			{
 				myFile1Text = new JTextField();
-				myFile1Text.setText(Prefs.getHl7V2DiffFile1());
+				myFile1Text.setText(Prefs.getInstance().getHl7V2DiffFile1());
 				GridBagConstraints gbc_File1Text = new GridBagConstraints();
 				gbc_File1Text.insets = new Insets(0, 0, 0, 5);
 				gbc_File1Text.fill = GridBagConstraints.HORIZONTAL;
@@ -121,7 +121,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 				myFile1Text.getDocument().addDocumentListener(new SimpleDocumentListener() {
 					@Override
 					public void update(DocumentEvent theE) {
-						Prefs.setHl7V2DiffFile1(myFile1Text.getText());
+						Prefs.getInstance().setHl7V2DiffFile1(myFile1Text.getText());
 						updateButtonStates();
 					}
 				});
@@ -152,7 +152,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 			}
 			{
 				myFile2Text = new JTextField();
-				myFile2Text.setText(Prefs.getHl7V2DiffFile2());
+				myFile2Text.setText(Prefs.getInstance().getHl7V2DiffFile2());
 				GridBagConstraints gbc_File2TextField = new GridBagConstraints();
 				gbc_File2TextField.insets = new Insets(0, 0, 0, 5);
 				gbc_File2TextField.fill = GridBagConstraints.HORIZONTAL;
@@ -163,7 +163,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 				myFile2Text.getDocument().addDocumentListener(new SimpleDocumentListener() {
 					@Override
 					public void update(DocumentEvent theE) {
-						Prefs.setHl7V2DiffFile2(myFile2Text.getText());
+						Prefs.getInstance().setHl7V2DiffFile2(myFile2Text.getText());
 						updateButtonStates();
 					}
 				});
@@ -227,7 +227,7 @@ public class Hl7V2FileDiffDialog extends JDialog {
 				myStopOnFirstErrorCheck = new JCheckBox("Stop");
 				myStopOnFirstErrorCheck.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
-						Prefs.setHl7V2DiffStopOnFirstError(myStopButton.isSelected());
+						Prefs.getInstance().setHl7V2DiffStopOnFirstError(myStopButton.isSelected());
 					}
 				});
 				{
@@ -245,14 +245,14 @@ public class Hl7V2FileDiffDialog extends JDialog {
 					gbc_ShowWholeMessageOnErrorCheckbox.gridx = 4;
 					gbc_ShowWholeMessageOnErrorCheckbox.gridy = 0;
 					panel.add(myShowWholeMessageOnErrorCheckbox, gbc_ShowWholeMessageOnErrorCheckbox);
-					myShowWholeMessageOnErrorCheckbox.setSelected(Prefs.getHl7V2DiffShowWholeMessageOnError());
+					myShowWholeMessageOnErrorCheckbox.setSelected(Prefs.getInstance().getHl7V2DiffShowWholeMessageOnError());
 					myShowWholeMessageOnErrorCheckbox.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent theE) {
-							Prefs.setHl7V2DiffShowWholeMessageOnError(myShowWholeMessageOnErrorCheckbox.isSelected());
+							Prefs.getInstance().setHl7V2DiffShowWholeMessageOnError(myShowWholeMessageOnErrorCheckbox.isSelected());
 						}
 					});
 				}
-				myStopOnFirstErrorCheck.setSelected(Prefs.getHl7V2DiffStopOnFirstError());
+				myStopOnFirstErrorCheck.setSelected(Prefs.getInstance().getHl7V2DiffStopOnFirstError());
 				GridBagConstraints gbc_StopOnFirstErrorCheck = new GridBagConstraints();
 				gbc_StopOnFirstErrorCheck.gridx = 5;
 				gbc_StopOnFirstErrorCheck.gridy = 0;

@@ -21,12 +21,12 @@
  */
 package ca.uhn.hl7v2.testpanel.util.compare;
 
-import ca.uhn.hl7v2.model.Type;
-
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.uhn.hl7v2.model.Type;
 
 public class FieldComparison {
     private static final Logger ourLog = LoggerFactory.getLogger(FieldComparison.class);

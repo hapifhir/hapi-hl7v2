@@ -10,7 +10,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
-import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -68,16 +67,16 @@ public class Hl7V2FileSortController {
 			int messageType = JOptionPane.WARNING_MESSAGE;
 			Icon icon = null;
 			String[] selectionValues = { APPEND, OVERWRITE };
-			String initialSelectionValue = Prefs.getHl7V2SortOverwriteMode();
+			String initialSelectionValue = Prefs.getInstance().getHl7V2SortOverwriteMode();
 			String opt = (String) JOptionPane.showInputDialog(myView, message, title, messageType, icon, selectionValues, initialSelectionValue);
 			if (opt == APPEND) {
-				Prefs.setHl7V2SortOverwriteMode(opt);
+				Prefs.getInstance().setHl7V2SortOverwriteMode(opt);
 				append = true;
 			} else if (opt == OVERWRITE) {
-				Prefs.setHl7V2SortOverwriteMode(opt);
+				Prefs.getInstance().setHl7V2SortOverwriteMode(opt);
 				append = false;
 			} else if (opt == CANCEL) {
-				Prefs.setHl7V2SortOverwriteMode(opt);
+				Prefs.getInstance().setHl7V2SortOverwriteMode(opt);
 				return;
 			} else {
 				return;

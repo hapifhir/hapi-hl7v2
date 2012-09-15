@@ -18,11 +18,11 @@ public class TableFileList extends AbstractModelClass {
 	private static final Logger ourLog = org.slf4j.LoggerFactory.getLogger(TableFileList.class);
 	public static final String PROP_FILES = TableFileList.class.getName() + "_FILES";
 	
-	private List<TableFile> myTableFiles = new ArrayList<TableFile>();
 	private HashMap<String, TableFile> myIdToTableFiles;
+	private List<TableFile> myTableFiles = new ArrayList<TableFile>();
 
 	public TableFileList() {
-		List<File> files = Prefs.getOpenTableFiles();
+		List<File> files = Prefs.getInstance().getOpenTableFiles();
 		for (File file : files) {
 			ourLog.info("Loading table file {}", file.getAbsoluteFile());
 			try {
@@ -35,18 +35,6 @@ public class TableFileList extends AbstractModelClass {
 			}
 		}
 	}
-	
-	/**
-	 * @return the tableFiles
-	 */
-	public List<TableFile> getTableFiles() {
-		return myTableFiles;
-	}
-
-	@Override
-	public Object exportConfigToXml() {
-		return null;
-	} 
 	
 	public void addNewFile(File theFileName) {
 		TableFile file = new TableFile();
@@ -70,12 +58,33 @@ public class TableFileList extends AbstractModelClass {
 		updatePrefs();
 	}
 
-	private void updatePrefs() {
-		ArrayList<File> files = new ArrayList<File>();
-		for (TableFile next : myTableFiles) {
-			files.add(next.getFileName());
+	@Override
+	public Object exportConfigToXml() {
+		return null;
+	} 
+	
+	public TableFile getTableFile(String theTableFileId) {
+		if (myIdToTableFiles == null) {
+			myIdToTableFiles = new HashMap<String, TableFile>();
+			for (TableFile next : myTableFiles) {
+				myIdToTableFiles.put(next.getId(), next);
+			}
 		}
-		Prefs.setOpenTableFiles(files);
+		return myIdToTableFiles.get(theTableFileId);
+	}
+
+	/**
+	 * @return the tableFiles
+	 */
+	public List<TableFile> getTableFiles() {
+		return myTableFiles;
+	}
+
+	public void importFile(TableFile theFile) {
+		getTableFiles();
+		myTableFiles.add(theFile);
+		firePropertyChange(PROP_FILES, null, null);
+		updatePrefs();
 	}
 
 	public boolean openFile(File theChosenFile) {
@@ -102,14 +111,14 @@ public class TableFileList extends AbstractModelClass {
 		firePropertyChange(PROP_FILES, null, null);
 	}
 
-	public TableFile getTableFile(String theTableFileId) {
-		if (myIdToTableFiles == null) {
-			myIdToTableFiles = new HashMap<String, TableFile>();
-			for (TableFile next : myTableFiles) {
-				myIdToTableFiles.put(next.getId(), next);
+	private void updatePrefs() {
+		ArrayList<File> files = new ArrayList<File>();
+		for (TableFile next : myTableFiles) {
+			if (next.getFileName() != null) {
+				files.add(next.getFileName());
 			}
 		}
-		return myIdToTableFiles.get(theTableFileId);
+		Prefs.getInstance().setOpenTableFiles(files);
 	}
 	
 }

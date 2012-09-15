@@ -21,10 +21,10 @@
  */
 package ca.uhn.hl7v2.testpanel.util.compare;
 
-import ca.uhn.hl7v2.model.Segment;
-
 import java.util.Collections;
 import java.util.List;
+
+import ca.uhn.hl7v2.model.Segment;
 
 public class SegmentComparison extends StructureComparison {
     //~ Instance fields ------------------------------------------------------------------------------------------------

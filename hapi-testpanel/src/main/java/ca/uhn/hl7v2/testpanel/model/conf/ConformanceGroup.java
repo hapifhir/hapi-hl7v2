@@ -36,6 +36,7 @@ import ca.uhn.hl7v2.model.Structure;
 public class ConformanceGroup extends AbstractGroup implements ConformanceStructure<ConformanceGroup>, ConformanceStructureHolder {
 
 	private SegGroup myConfDefinition;
+	
 	private ConformanceStructureHolderSupport mySupport;
 
 	public ConformanceGroup(Group theParent, SegGroup theConfDefinition) {

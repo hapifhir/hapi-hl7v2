@@ -105,21 +105,22 @@ public class Controller {
 	private static final Logger ourLog = LoggerFactory.getLogger(Controller.class);
 	private String myAppVersionString;
 	private JFileChooser myConformanceProfileFileChooser;
+	private ExecutorService myExecutor;
 	private InboundConnectionList myInboundConnectionList;
 	private Object myLeftSelectedItem;
 	private boolean myMessageEditorInFollowMode = true;
 	private MessagesList myMessagesList;
 	private Object myNothingSelectedMarker = new Object();
 	private JFileChooser myOpenMessagesFileChooser;
+	private FileChooserOpenAccessory myOpenMessagesFileChooserAccessory;
 	private OutboundConnectionList myOutboundConnectionList;
 	private ProfileFileList myProfileFileList;
 	private ConformanceEditorController myProfilesAndTablesController;
+	private LinkedList<Runnable> myQueuedTasks = new LinkedList<Runnable>();
 	private JFileChooser mySaveMessagesFileChooser;
 	private FileChooserSaveAccessory mySaveMessagesFileChooserAccessory;
 	private TableFileList myTableFileList;
 	private TestPanelWindow myView;
-	private FileChooserOpenAccessory myOpenMessagesFileChooserAccessory;
-	private ExecutorService myExecutor;
 
 	public Controller() {
 		myTableFileList = new TableFileList();
@@ -137,7 +138,7 @@ public class Controller {
 			ourLog.error("Failed to restore from work direrctory", e1);
 		}
 
-		String savedOutboundList = Prefs.getOutboundConnectionList();
+		String savedOutboundList = Prefs.getInstance().getOutboundConnectionList();
 		if (StringUtils.isNotBlank(savedOutboundList)) {
 			try {
 				myOutboundConnectionList = OutboundConnectionList.fromXml(this, savedOutboundList);
@@ -152,7 +153,7 @@ public class Controller {
 			createDefaultOutboundConnectionList();
 		}
 
-		String savedInboundList = Prefs.getInboundConnectionList();
+		String savedInboundList = Prefs.getInstance().getInboundConnectionList();
 		if (StringUtils.isNotBlank(savedInboundList)) {
 			try {
 				myInboundConnectionList = InboundConnectionList.fromXml(this, savedInboundList);
@@ -250,7 +251,7 @@ public class Controller {
 
 	public void chooseAndLoadConformanceProfileForMessage(Hl7V2MessageCollection theMessage, IOkCancelCallback<Void> theCallback) {
 		if (myConformanceProfileFileChooser == null) {
-			myConformanceProfileFileChooser = new JFileChooser(Prefs.getOpenPathConformanceProfile());
+			myConformanceProfileFileChooser = new JFileChooser(Prefs.getInstance().getOpenPathConformanceProfile());
 			myConformanceProfileFileChooser.setDialogTitle("Choose an HL7 Conformance Profile");
 
 			ExtensionFilter type = new ExtensionFilter("XML Files", new String[] { ".xml" });
@@ -261,7 +262,7 @@ public class Controller {
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = myConformanceProfileFileChooser.getSelectedFile();
-			Prefs.setOpenPathConformanceProfile(file.getPath());
+			Prefs.getInstance().setOpenPathConformanceProfile(file.getPath());
 
 			try {
 				String profileString = FileUtils.readFile(file);
@@ -290,22 +291,30 @@ public class Controller {
 
 		myOutboundConnectionList.removeNonPersistantConnections();
 		ourLog.info("Saving {} outbound connection descriptors", myOutboundConnectionList.getConnections().size());
-		Prefs.setOutboundConnectionList(myOutboundConnectionList.exportConfigToXml());
+		Prefs.getInstance().setOutboundConnectionList(myOutboundConnectionList.exportConfigToXml());
 
 		myInboundConnectionList.removeNonPersistantConnections();
 		ourLog.info("Saving {} inbound connection descriptors", myInboundConnectionList.getConnections().size());
-		Prefs.setInboundConnectionList(myInboundConnectionList.exportConfigToXml());
+		Prefs.getInstance().setInboundConnectionList(myInboundConnectionList.exportConfigToXml());
 
-		File workfilesDir;
 		try {
-			workfilesDir = Prefs.getTempWorkfilesDirectory();
+			
+			ourLog.info("Flusing open messages to work directory");
+			File workfilesDir = Prefs.getTempWorkfilesDirectory();
 			myMessagesList.dumpToWorkDirectory(workfilesDir);
+			
+//			ourLog.info("Flushing imported profile group files");
+//			myProfileFileList.dumpImportedToWorkDirectory(Prefs.getTempImportedProfileGroupFiles());
+			
 		} catch (IOException e) {
 			ourLog.error("Failed to flush work directory!", e);
 		}
 
-		myExecutor.shutdown();
 		myView.destroy();
+
+		
+		// Do this last, since it destroys the executor service
+		myExecutor.shutdown();
 
 		ourLog.info("TestPanel is exiting with status 0");
 		System.exit(0);
@@ -481,9 +490,21 @@ public class Controller {
 		return myTableFileList;
 	}
 
+	public Frame getWindow() {
+		return myView.getFrame();
+	}
+
 	private void handleUnexpectedError(Exception theE) {
 		ourLog.error(theE.getMessage(), theE);
 		showDialogError(theE.getMessage());
+	}
+
+	public void invokeInBackground(Runnable theRunnable) {
+		if (myExecutor != null) {
+			myExecutor.execute(theRunnable);
+		} else {
+			myQueuedTasks.add(theRunnable);
+		}
 	}
 
 	public boolean isMessageEditorInFollowMode() {
@@ -514,7 +535,7 @@ public class Controller {
 
 	public void openMessages() {
 		if (myOpenMessagesFileChooser == null) {
-			myOpenMessagesFileChooser = new JFileChooser(Prefs.getOpenPathMessages());
+			myOpenMessagesFileChooser = new JFileChooser(Prefs.getInstance().getOpenPathMessages());
 			myOpenMessagesFileChooserAccessory = new FileChooserOpenAccessory();
 			myOpenMessagesFileChooser.setAccessory(myOpenMessagesFileChooserAccessory);
 			myOpenMessagesFileChooser.setDialogTitle("Choose a file containing HL7 messages");
@@ -533,7 +554,7 @@ public class Controller {
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = myOpenMessagesFileChooser.getSelectedFile();
-			Prefs.setOpenPathMessages(file.getPath());
+			Prefs.getInstance().setOpenPathMessages(file.getPath());
 
 			openMessageFile(file, myOpenMessagesFileChooserAccessory.getSelectedCharset());
 		}
@@ -597,6 +618,10 @@ public class Controller {
 		}
 	}
 
+	private Component provideViewFrameIfItExists() {
+		return myView != null ? myView.getFrame() : null;
+	}
+
 	public void removeInboundConnection(InboundConnection theConnection) {
 		myInboundConnectionList.removeConnecion(theConnection);
 		if (myInboundConnectionList.getConnections().size() > 0) {
@@ -613,6 +638,37 @@ public class Controller {
 		} else {
 			tryToSelectSomething();
 		}
+	}
+
+	public void revertMessage(Hl7V2MessageCollection theMsg) {
+		if (StringUtils.isBlank(theMsg.getSaveFileName())) {
+			showDialogError("Message has not yet been saved");
+			return;
+		}
+
+		File file = new File(theMsg.getSaveFileName());
+		if (file.exists() == false || file.isDirectory() || !file.canRead()) {
+			showDialogError("File \"" + theMsg.getSaveFileName() + "\" can not be read");
+			return;
+		}
+
+		int revert = showDialogYesNo("Revert file to saved contents? You will lose all changes.");
+		if (revert == JOptionPane.NO_OPTION) {
+			return;
+		}
+
+		Charset charSet = theMsg.getSaveCharset();
+		String contents;
+		try {
+			contents = FileUtils.readFile(file, charSet);
+		} catch (IOException e) {
+			ourLog.error("Failed to read from file " + file.getAbsolutePath(), e);
+			showDialogError("Failed to read from file: " + e.getMessage());
+			return;
+		}
+
+		theMsg.setSourceMessage(contents);
+
 	}
 
 	public boolean saveAllMessagesAndReturnFalseIfCancelIsPressed() {
@@ -660,7 +716,7 @@ public class Controller {
 		Validate.notNull(theSelectedValue);
 
 		if (mySaveMessagesFileChooser == null) {
-			mySaveMessagesFileChooser = new JFileChooser(Prefs.getSavePathMessages());
+			mySaveMessagesFileChooser = new JFileChooser(Prefs.getInstance().getSavePathMessages());
 			mySaveMessagesFileChooser.setDialogTitle("Choose a file to save the current message(s) to");
 			mySaveMessagesFileChooserAccessory = new FileChooserSaveAccessory();
 			mySaveMessagesFileChooser.setAccessory(mySaveMessagesFileChooserAccessory);
@@ -681,7 +737,7 @@ public class Controller {
 		if (value == JFileChooser.APPROVE_OPTION) {
 
 			File file = mySaveMessagesFileChooser.getSelectedFile();
-			Prefs.setSavePathMessages(file.getPath());
+			Prefs.getInstance().setSavePathMessages(file.getPath());
 
 			if (!file.getName().contains(".")) {
 				switch (theSelectedValue.getEncoding()) {
@@ -763,7 +819,7 @@ public class Controller {
 		}
 
 		if (id != null) {
-			Prefs.setMostRecentlySelectedItemId(id);
+			Prefs.getInstance().setMostRecentlySelectedItemId(id);
 		}
 	}
 
@@ -783,8 +839,8 @@ public class Controller {
 		JOptionPane.showMessageDialog(provideViewFrameIfItExists(), message, DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
 	}
 
-	private Component provideViewFrameIfItExists() {
-		return myView != null ? myView.getFrame() : null;
+	public void showDialogInfo(String message) {
+		JOptionPane.showMessageDialog(provideViewFrameIfItExists(), message, DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public void showDialogWarning(String message) {
@@ -823,7 +879,7 @@ public class Controller {
 		myView = new TestPanelWindow(this);
 		myView.getFrame().setVisible(true);
 
-		String leftItemId = Prefs.getMostRecentlySelectedItemId();
+		String leftItemId = Prefs.getInstance().getMostRecentlySelectedItemId();
 		if (isNotBlank(leftItemId)) {
 			Object leftItem = myMessagesList.getWithId(leftItemId);
 			leftItem = (leftItem != null) ? leftItem : myOutboundConnectionList.getWithId(leftItemId);
@@ -842,6 +898,9 @@ public class Controller {
 		}
 
 		new VersionChecker().start();
+		
+		Prefs.getInstance().setController(this);
+		
 	}
 
 	public void startAllInboundConnections() {
@@ -893,9 +952,9 @@ public class Controller {
 	}
 
 	private void updateRecentMessageFiles(Hl7V2MessageCollection theMessage) {
-		Prefs.addMessagesFileXmlToRecents(myProfileFileList, Arrays.asList(theMessage));
+		Prefs.getInstance().addMessagesFileXmlToRecents(myProfileFileList, Arrays.asList(theMessage));
 		if (myView != null) {
-			myView.setRecentMessageFiles(Prefs.getRecentMessageXmlFiles(myProfileFileList));
+			myView.setRecentMessageFiles(Prefs.getInstance().getRecentMessageXmlFiles(myProfileFileList));
 		}
 	}
 
@@ -968,51 +1027,6 @@ public class Controller {
 			}
 		}
 
-	}
-
-	public void revertMessage(Hl7V2MessageCollection theMsg) {
-		if (StringUtils.isBlank(theMsg.getSaveFileName())) {
-			showDialogError("Message has not yet been saved");
-			return;
-		}
-
-		File file = new File(theMsg.getSaveFileName());
-		if (file.exists() == false || file.isDirectory() || !file.canRead()) {
-			showDialogError("File \"" + theMsg.getSaveFileName() + "\" can not be read");
-			return;
-		}
-
-		int revert = showDialogYesNo("Revert file to saved contents? You will lose all changes.");
-		if (revert == JOptionPane.NO_OPTION) {
-			return;
-		}
-
-		Charset charSet = theMsg.getSaveCharset();
-		String contents;
-		try {
-			contents = FileUtils.readFile(file, charSet);
-		} catch (IOException e) {
-			ourLog.error("Failed to read from file " + file.getAbsolutePath(), e);
-			showDialogError("Failed to read from file: " + e.getMessage());
-			return;
-		}
-
-		theMsg.setSourceMessage(contents);
-
-	}
-
-	public Frame getWindow() {
-		return myView.getFrame();
-	}
-
-	private LinkedList<Runnable> myQueuedTasks = new LinkedList<Runnable>();
-
-	public void invokeInBackground(Runnable theRunnable) {
-		if (myExecutor != null) {
-			myExecutor.execute(theRunnable);
-		} else {
-			myQueuedTasks.add(theRunnable);
-		}
 	}
 
 }

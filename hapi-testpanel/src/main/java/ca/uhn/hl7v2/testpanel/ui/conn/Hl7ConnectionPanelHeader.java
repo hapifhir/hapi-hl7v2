@@ -40,17 +40,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.StringUtils;
 
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
+import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
 import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
-import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
-import javax.swing.border.TitledBorder;
 
 public class Hl7ConnectionPanelHeader extends JPanel implements IDestroyable {
 	private JTextField myNameBox;

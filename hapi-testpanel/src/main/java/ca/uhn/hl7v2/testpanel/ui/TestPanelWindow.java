@@ -99,7 +99,6 @@ public class TestPanelWindow implements IDestroyable {
 	private MyMessagesListModel myMessagesListModel;
 	private final PropertyChangeListener myMessageDescriptionListener;
 	private MyOutboundConnectionsListModel myOutboundConnectionsListModel;
-	private SwingLogAppender myLogAppender;
 	private MyInboundConnectionsListModel myInboundConnectionsListModel;
 	private JButton myMsgSaveButton;
 	private PropertyChangeListener myOutboundConnectionsListListener;
@@ -120,7 +119,7 @@ public class TestPanelWindow implements IDestroyable {
 		myController = theController;
 
 		myMessageDescriptionListener = new MyMessageDescriptionListener();
-		myLogAppender = new SwingLogAppender();
+		new SwingLogAppender();
 
 		initialize();
 		initializeLocal();
@@ -154,7 +153,7 @@ public class TestPanelWindow implements IDestroyable {
 	}
 
 	private void initWindowPosition() {
-		if (Prefs.getWindowMaximized()) {
+		if (Prefs.getInstance().getWindowMaximized()) {
 			myframe.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			return;
 		}
@@ -165,8 +164,8 @@ public class TestPanelWindow implements IDestroyable {
 		int width;
 		int height;
 
-		Point position = Prefs.getWindowPosition();
-		Dimension dimension = Prefs.getWindowDimension();
+		Point position = Prefs.getInstance().getWindowPosition();
+		Dimension dimension = Prefs.getInstance().getWindowDimension();
 		if (dimension.width > 600 && dimension.height > 500) {
 			if (position.x >= 0 && position.y >= 0) {
 				if (dimension.width + position.x < maxWidth) {
@@ -387,7 +386,7 @@ public class TestPanelWindow implements IDestroyable {
 		myShowLogConsoleMenuItem = new JMenuItem("Show Log Console");
 		myShowLogConsoleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Prefs.setShowLogConsole(!Prefs.getShowLogConsole());
+				Prefs.getInstance().setShowLogConsole(!Prefs.getInstance().getShowLogConsole());
 				updateLogScrollPaneVisibility();
 				myframe.validate();
 			}
@@ -815,7 +814,7 @@ public class TestPanelWindow implements IDestroyable {
 	}
 
 	private void updateLogScrollPaneVisibility() {
-		if (Prefs.getShowLogConsole()) {
+		if (Prefs.getInstance().getShowLogConsole()) {
 			myShowLogConsoleMenuItem.setSelected(true);
 			myLogScrollPane.setVisible(true);
 			myShowLogConsoleMenuItem.setIcon(new ImageIcon(TestPanelWindow.class.getResource("/ca/uhn/hl7v2/testpanel/images/menu_selected.png")));
@@ -1291,14 +1290,14 @@ public class TestPanelWindow implements IDestroyable {
 		// that it is even once it no longer is
 		int extState = myframe.getExtendedState();
 		if (extState == JFrame.MAXIMIZED_BOTH && !System.getProperty("os.name").contains("Mac")) { 
-			Prefs.setWindowMaximized(true);
+			Prefs.getInstance().setWindowMaximized(true);
 		} else {			
 			Point location = myframe.getLocation();
 			Dimension size = myframe.getSize();
 			ourLog.info("Saving window location of {} and size of {}", location, size);
-			Prefs.setWindowPosition(location);
-			Prefs.setWindowDimension(size);
-			Prefs.setWindowMaximized(false);
+			Prefs.getInstance().setWindowPosition(location);
+			Prefs.getInstance().setWindowDimension(size);
+			Prefs.getInstance().setWindowMaximized(false);
 		}
 	}
 

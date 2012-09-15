@@ -432,10 +432,10 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		return exportWrite(xml);
 	}
 
-	public String exportConfigToXmlWithoutContents() {
+	public XmlFormat exportConfigToXmlWithoutContents() {
 		XmlFormat xml = exportCreate();
 		xml.mySourceMessage = null;
-		return exportWrite(xml);
+		return xml;
 	}
 
 	private XmlFormat exportCreate() {
@@ -669,7 +669,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	public void setEncoding(Hl7V2EncodingTypeEnum theEncoding) {
 		Validate.notNull(theEncoding);
-		
+
 		Hl7V2EncodingTypeEnum oldEncodingValue = myEncoding;
 		if (myEncoding != theEncoding) {
 			myEncoding = theEncoding;
@@ -1087,54 +1087,58 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 	}
 
 	public static Hl7V2MessageCollection fromXml(ProfileFileList theProfileFileList, String theContents) {
-		XmlFormat xmlFormat = JAXB.unmarshal(new StringReader(theContents), XmlFormat.class);
+		XmlFormat xmlFormat = JAXB.unmarshal(new StringReader(theContents),XmlFormat.class);
+		return fromXml(theProfileFileList, xmlFormat);
+	}
+
+	public static Hl7V2MessageCollection fromXml(ProfileFileList theProfileFileList, XmlFormat theXmlFormat) {
 
 		Hl7V2MessageCollection retVal = new Hl7V2MessageCollection();
 
-		retVal.setSaveFileName(isNotBlank(xmlFormat.mySaveFileName) ? xmlFormat.mySaveFileName : null);
-		retVal.setId(xmlFormat.myId);
-		retVal.setLastSendToInterfaceId(xmlFormat.myLastSendToInterfaceId);
-		retVal.setEditorShowMode(xmlFormat.myEditorShowMode);
-		retVal.setSendNumberOfTimes(xmlFormat.mySendNumberOfTimes);
+		retVal.setSaveFileName(isNotBlank(theXmlFormat.mySaveFileName) ? theXmlFormat.mySaveFileName : null);
+		retVal.setId(theXmlFormat.myId);
+		retVal.setLastSendToInterfaceId(theXmlFormat.myLastSendToInterfaceId);
+		retVal.setEditorShowMode(theXmlFormat.myEditorShowMode);
+		retVal.setSendNumberOfTimes(theXmlFormat.mySendNumberOfTimes);
 
 		try {
-			retVal.setSaveCharset(isNotEmpty(xmlFormat.mySaveCharsetName) ? Charset.forName(xmlFormat.mySaveCharsetName) : null);
+			retVal.setSaveCharset(isNotEmpty(theXmlFormat.mySaveCharsetName) ? Charset.forName(theXmlFormat.mySaveCharsetName) : null);
 		} catch (IllegalCharsetNameException e) {
 			// ignore
 		}
 
-		if (isNotBlank(xmlFormat.myValidationContextClass)) {
-			retVal.setValidationContext(ClassUtils.instantiateOrReturnNull(xmlFormat.myValidationContextClass, ValidationContext.class));
+		if (isNotBlank(theXmlFormat.myValidationContextClass)) {
+			retVal.setValidationContext(ClassUtils.instantiateOrReturnNull(theXmlFormat.myValidationContextClass, ValidationContext.class));
 		}
 
-		if (isNotBlank(xmlFormat.myProfileId)) {
+		if (isNotBlank(theXmlFormat.myProfileId)) {
 			try {
-				retVal.setRuntimeProfile(theProfileFileList.getProfile(xmlFormat.myProfileId));
+				retVal.setRuntimeProfile(theProfileFileList.getProfile(theXmlFormat.myProfileId));
 			} catch (ProfileException e) {
-				ourLog.error("Failed to retrieve profile with id: " + xmlFormat.myProfileId, e);
+				ourLog.error("Failed to retrieve profile with id: " + theXmlFormat.myProfileId, e);
 			}
 		}
 
 		try {
-			retVal.setSaveLineEndings(LineEndingsEnum.valueOf(xmlFormat.mySaveLineEndings));
+			retVal.setSaveLineEndings(LineEndingsEnum.valueOf(theXmlFormat.mySaveLineEndings));
 		} catch (Exception e) {
 			retVal.setSaveLineEndings(LineEndingsEnum.HL7);
 		}
 
-		retVal.setSaveStripComments(Boolean.parseBoolean(xmlFormat.mySaveStripComments));
+		retVal.setSaveStripComments(Boolean.parseBoolean(theXmlFormat.mySaveStripComments));
 
-		retVal.setEncoding("XML".equals(xmlFormat.myEncodingType) ? Hl7V2EncodingTypeEnum.XML : Hl7V2EncodingTypeEnum.ER_7);
+		retVal.setEncoding("XML".equals(theXmlFormat.myEncodingType) ? Hl7V2EncodingTypeEnum.XML : Hl7V2EncodingTypeEnum.ER_7);
 
-		if (StringUtils.isNotBlank(xmlFormat.mySourceMessage)) {
-			retVal.setSourceMessage(xmlFormat.mySourceMessage);
+		if (StringUtils.isNotBlank(theXmlFormat.mySourceMessage)) {
+			retVal.setSourceMessage(theXmlFormat.mySourceMessage);
 		} else {
 			retVal.setSourceMessage("");
 		}
 
-		retVal.setSaveFileTimestamp(xmlFormat.mySaveTimestamp);
+		retVal.setSaveFileTimestamp(theXmlFormat.mySaveTimestamp);
 
 		// set this last!
-		retVal.setSaved(xmlFormat.mySaved);
+		retVal.setSaved(theXmlFormat.mySaved);
 
 		return retVal;
 	}
@@ -1151,7 +1155,7 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 	@XmlAccessorType(XmlAccessType.FIELD)
 	@XmlRootElement(name = "Hl7V2MessageCollection", namespace = "urn:ca.uhn.hapi:testpanel")
-	private static class XmlFormat {
+	public static class XmlFormat {
 
 		@XmlAttribute(required = false, name = "editorShowMode")
 		public ShowEnum myEditorShowMode;
