@@ -38,8 +38,8 @@ import javax.swing.JTabbedPane;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
 import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;

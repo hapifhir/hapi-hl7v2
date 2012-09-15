@@ -124,7 +124,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 			}
 			{
 				myInputFileText = new JTextField();
-				myInputFileText.setText(Prefs.getHl7V2SortInputFile());
+				myInputFileText.setText(Prefs.getInstance().getHl7V2SortInputFile());
 				GridBagConstraints gbc_File1Text = new GridBagConstraints();
 				gbc_File1Text.insets = new Insets(0, 0, 0, 5);
 				gbc_File1Text.fill = GridBagConstraints.HORIZONTAL;
@@ -135,7 +135,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 				myInputFileText.getDocument().addDocumentListener(new SimpleDocumentListener() {
 					@Override
 					public void update(DocumentEvent theE) {
-						Prefs.setHl7V2SortInputFile(myInputFileText.getText());
+						Prefs.getInstance().setHl7V2SortInputFile(myInputFileText.getText());
 						updateButtonStates();
 					}
 				});
@@ -166,7 +166,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 			}
 			{
 				myOutputFileText = new JTextField();
-				myOutputFileText.setText(Prefs.getHl7V2SortOutputFile());
+				myOutputFileText.setText(Prefs.getInstance().getHl7V2SortOutputFile());
 				GridBagConstraints gbc_File2TextField = new GridBagConstraints();
 				gbc_File2TextField.insets = new Insets(0, 0, 0, 5);
 				gbc_File2TextField.fill = GridBagConstraints.HORIZONTAL;
@@ -177,7 +177,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 				myOutputFileText.getDocument().addDocumentListener(new SimpleDocumentListener() {
 					@Override
 					public void update(DocumentEvent theE) {
-						Prefs.setHl7V2SortOutputFile(myOutputFileText.getText());
+						Prefs.getInstance().setHl7V2SortOutputFile(myOutputFileText.getText());
 						updateButtonStates();
 					}
 				});
@@ -213,7 +213,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 			myBeginButton = new JButton("Begin");
 			myBeginButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Prefs.setHl7V2SortBy(getSortBy());
+					Prefs.getInstance().setHl7V2SortBy(getSortBy());
 					myController.begin();
 				}
 			});
@@ -252,7 +252,7 @@ public class Hl7V2FileSortDialog extends JDialog {
 				mySortByComboBox = new JComboBox();
 				mySortByComboBoxModel = new SortByComboBoxModel();
 				mySortByComboBox.setModel(mySortByComboBoxModel);
-				mySortByComboBox.setSelectedItem(Prefs.getHl7V2SortBy());
+				mySortByComboBox.setSelectedItem(Prefs.getInstance().getHl7V2SortBy());
 				if (mySortByComboBox.getSelectedIndex() == -1) {
 					mySortByComboBox.setSelectedIndex(0);
 				}

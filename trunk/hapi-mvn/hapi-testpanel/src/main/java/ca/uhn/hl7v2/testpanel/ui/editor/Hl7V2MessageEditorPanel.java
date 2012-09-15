@@ -46,7 +46,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -71,7 +69,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -92,7 +89,6 @@ import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
-import ca.uhn.hl7v2.testpanel.model.msg.AbstractMessage;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
 import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
@@ -203,13 +199,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				double ratio = (double) mysplitPane.getDividerLocation() / mysplitPane.getHeight();
 				ourLog.debug("Resizing split to ratio: {}", ratio);
-				Prefs.setHl7EditorSplit(ratio);
+				Prefs.getInstance().setHl7EditorSplit(ratio);
 			}
 		});
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				mysplitPane.setDividerLocation(Prefs.getHl7EditorSplit());
+				mysplitPane.setDividerLocation(Prefs.getInstance().getHl7EditorSplit());
 			}
 		});
 

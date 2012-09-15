@@ -76,7 +76,7 @@ public class NothingSelectedPanel extends BaseMainPanel {
 		JLabel lblNewLabel = new JLabel("<html><center>" +
 				"Welcome to HAPI TestPanel!<br><br>" +
 				"This is free software, licensed under the Mozilla Public License. " +
-				"This software is an alpha release, please use with caution!<br><br>Get Started:" +
+				"<br><br>Get Started:" +
 				"</center></html>");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();

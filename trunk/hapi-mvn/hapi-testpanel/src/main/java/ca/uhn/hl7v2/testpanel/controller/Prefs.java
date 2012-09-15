@@ -25,34 +25,54 @@
  */
 package ca.uhn.hl7v2.testpanel.controller;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.hoh.util.IOUtils;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
+import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection.XmlFormat;
 import ca.uhn.hl7v2.testpanel.util.CharsetUtils;
 import ca.uhn.hl7v2.testpanel.util.FontUtil;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.util.StringUtil;
 
+@XmlRootElement(name = "TestPanelPrefs", namespace = "urn:ca.uhn.hapi:testpanel:prefs")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Prefs {
 
-	private static final String GET_MOST_RECENTLY_SELECTED_ITEM_ID = "getMostRecentlySelectedItemId";
-	private static final String GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY = "getInterfaceHohSecurityKeystoreDirectory";
+	private static final String GET_EXPORT_PROFILE_GROUP_DIRECTORY = "getExportProfileGroupDirectory";
 	private static final String GET_HL7_EDITOR_SPLIT = "getHl7EditorSplit";
 	private static final String GET_HL7V2_DIFF_FILE1 = "getHl7V2DiffFile1";
 	private static final String GET_HL7V2_DIFF_FILE2 = "getHl7V2DiffFile2";
@@ -63,6 +83,9 @@ public class Prefs {
 	private static final String GET_HL7V2_SORT_OUTPUT = "getHl7V2SortOutputFile";
 	private static final String GET_HL7V2_SORT_OVERWRITE_MODE = "getHl7V2SortOverwriteMode";
 	private static final String GET_INBOUND_CONNECTION_LIST = "getInboundConnectionList";
+	private static final String GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY = "getInterfaceHohSecurityKeystoreDirectory";
+	private static final String GET_MOST_RECENT_CONNECTION_CHARSET = "getMostRecentConnectionCharset";
+	private static final String GET_MOST_RECENTLY_SELECTED_ITEM_ID = "getMostRecentlySelectedItemId";
 	private static final String GET_OPEN_PATH_CONFORMANCE_PROFILE = "getOpenPathConformanceProfile";
 	private static final String GET_OPEN_PATH_MESSAGES = "getOpenPathMessages";
 	private static final String GET_OPEN_TABLE_FILES = "getOpenTableFiles";
@@ -78,36 +101,115 @@ public class Prefs {
 	private static final String GET_WINDOW_POSITIONW = "getWindowPositionW";
 	private static final String GET_WINDOW_POSITIONX = "getWindowPositionX";
 	private static final String GET_WINDOW_POSITIONY = "getWindowPositionY";
-	private static final String GET_MOST_RECENT_CONNECTION_CHARSET = "getMostRecentConnectionCharset";
 
-	private static Font myHl7EditorFont;
+	private static Prefs ourInstance;
+	private static JAXBContext ourJaxbContext;
 	private static final Logger ourLog = LoggerFactory.getLogger(Prefs.class);
 	private static final Preferences ourPrefs = Preferences.userNodeForPackage(ca.uhn.hl7v2.testpanel.controller.Prefs.class);
+	private transient Controller myController;
 
+	@XmlElement(name = "export_profile_group_directory")
+	private String myExportProfileGroupDirectory;
 
-	/** Non instantiable */
+	@XmlElement(name = "hl7v2_editor_split")
+	private Integer myHl7EditorSplit;
+
+	@XmlElement(name = "hl7v2_diff_file1")
+	private String myHl7V2DiffFile1;
+
+	@XmlElement(name = "hl7v2_diff_file2")
+	private String myHl7V2DiffFile2;
+
+	@XmlElement(name = "hl7v2_show_whole_message_on_error")
+	private boolean myHl7V2DiffShowWholeMessageOnError;
+
+	@XmlElement(name = "hl7v2_diff_stop_on_first_error")
+	private boolean myHl7V2DiffStopOnFirstError;
+
+	@XmlElement(name = "hl7v2_sort_by")
+	private String myHl7V2SortBy;
+
+	@XmlElement(name = "hl7v2_sort_input_file")
+	private String myHl7V2SortInputFile;
+
+	@XmlElement(name = "hl7v2_output_file")
+	private String myHl7V2SortOutputFile;
+
+	@XmlElement(name = "hl7v2_sort_override_mode")
+	private String myHl7V2SortOverwriteMode;
+
+	@XmlElement(name = "import_profile_group_directory")
+	private String myImportProfileGroupDirectory;
+
+	@XmlElement(name = "inbound_connection_list")
+	private String myInboundConnectionList;
+
+	@XmlElement(name = "interface_hoh_security_keystore_directory")
+	private String myInterfaceHohSecurityKeystoreDirectory;
+
+	private transient String myLastPrefsFileSaveValue;
+
+	@XmlElement(name = "most_recent_communication_charset")
+	private String myMostRecentConnectionCharset;
+
+	@XmlElement(name = "most_recently_selected_item_id")
+	private String myMostRecentlySelectedItemId;
+
+	// private List<OpenImportedProfileGroupFile>
+	// myOpenImportedProfileGroupFile;
+
+	@XmlElement(name = "open_or_save_charset")
+	private String myOpenOrSaveCharset;
+
+	@XmlElement(name = "open_path_conformance_profile")
+	private String myOpenPathConformanceProfile;
+
+	@XmlElement(name = "open_path_messages")
+	private String myOpenPathMessages;
+
+	@XmlElement(name = "open_table_files")
+	private ArrayList<String> myOpenTableFiles;
+
+	@XmlElement(name = "outbound_connection_list")
+	private String myOutboundConnectionList;
+
+	@XmlElement(name = "recent_message_xml_files")
+	private List<XmlFormat> myRecentMessageXmlFiles;
+
+	@XmlElement(name = "save_line_endings")
+	private String mySaveLineEndings;
+
+	@XmlElement(name = "save_path_messages")
+	private String mySavePathMessages;
+
+	@XmlElement(name = "save_strip_comments")
+	private boolean mySaveStripComments;
+
+	@XmlElement(name = "show_log_console")
+	private boolean myShowLogConsole;
+
+	@XmlElement(name = "window_maximized")
+	private boolean myWindowMaximized;
+
+	@XmlElement(name = "window_position_h")
+	private int myWindowPositionH;
+
+	@XmlElement(name = "window_position_w")
+	private int myWindowPositionW;
+
+	@XmlElement(name = "window_position_x")
+	private Integer myWindowPositionX;
+
+	@XmlElement(name = "window_position_y")
+	private Integer myWindowPositionY;
+
+	/**
+	 * Non instantiable
+	 */
 	private Prefs() {
-
 	}
 
-
-	public static void setMostRecentConnectionCharset(String theCharSet) {
-		assert theCharSet != null;
-		ourPrefs.put(GET_MOST_RECENT_CONNECTION_CHARSET, theCharSet);
-	}
-
-
-	public static Charset getMostRecentConnectionCharset() {
-		String charset = ourPrefs.get(GET_MOST_RECENT_CONNECTION_CHARSET, CharsetUtils.DEFAULT_CONNECTION_CHARSET.displayName());
-		try {
-			return Charset.forName(charset);
-		} catch (Exception e) {
-			return CharsetUtils.DEFAULT_CONNECTION_CHARSET;
-		}
-	}
-
-
-	public static void addMessagesFileXmlToRecents(ProfileFileList theProfileFileList, List<Hl7V2MessageCollection> theMessageFiles) {
+	public void addMessagesFileXmlToRecents(ProfileFileList theProfileFileList, List<Hl7V2MessageCollection> theMessageFiles) {
 		List<Hl7V2MessageCollection> current = getRecentMessageXmlFiles(theProfileFileList);
 		for (Hl7V2MessageCollection next : theMessageFiles) {
 			if (StringUtils.isBlank(next.getSaveFileName())) {
@@ -122,125 +224,126 @@ public class Prefs {
 			current = current.subList(0, 10);
 		}
 
-		StringBuilder b = new StringBuilder();
+		myRecentMessageXmlFiles = new ArrayList<Hl7V2MessageCollection.XmlFormat>();
 		for (Hl7V2MessageCollection string : current) {
-			b.append(string.exportConfigToXmlWithoutContents().replaceAll("\\r|\\n", "")).append('\n');
+			myRecentMessageXmlFiles.add(string.exportConfigToXmlWithoutContents());
 		}
-		ourPrefs.put(GET_RECENT_MESSAGE_FILES, b.toString());
+		sync();
 	}
 
+	// public void addOpenImportedProfileGroupFile(OpenImportedProfileGroupFile
+	// theFile) {
+	// getOpenImportedProfileGroupFile().add(theFile);
+	// sync();
+	// }
 
-	public static void clearRecentMessageXmlFiles() {
-		ourPrefs.put(GET_RECENT_MESSAGE_FILES, "");
+	public void clearRecentMessageXmlFiles() {
+		myRecentMessageXmlFiles = new ArrayList<Hl7V2MessageCollection.XmlFormat>();
+		sync();
 	}
 
-
-	private static File createProfileGroupFileName(ProfileGroup profileGroup) {
-		File dir = getProfileGroupFileDirectory();
-		dir.mkdirs();
-		return new File(dir, profileGroup.getId() + ".xml");
+	public String getExportProfileGroupDirectory() {
+		return defaultString(myExportProfileGroupDirectory);
 	}
 
+	public Font getHl7EditorFont() {
+		Font retVal;
 
-	private static double enforceHl7EditorSplitLimits(double theRatio) {
-		theRatio = Math.min(0.8, theRatio);
-		theRatio = Math.max(0.2, theRatio);
-		return theRatio;
-	}
+		List<String> fonts = FontUtil.getMonospacedFontNames();
+		if (fonts.contains("Monaco")) {
+			retVal = new Font("Monaco", Font.PLAIN, 12);
+		} else if (fonts.contains("Andale Mono")) {
+			retVal = new Font("Andale Mono", Font.PLAIN, 12);
+		} else if (fonts.contains("Lucida Console")) {
+			retVal = new Font("Lucida Console", Font.PLAIN, 12);
+		} else if (fonts.contains("Consolas")) {
+			retVal = new Font("Consolas", Font.PLAIN, 12);
+		} else if (fonts.contains("Lucida Sans Typewriter")) {
+			retVal = new Font("Lucida Sans Typewriter", Font.PLAIN, 12);
+		} else {
+			retVal = new Font("Monospace", Font.PLAIN, 12);
+		}
 
-
-	public static File getDefaultTableFileDirectory() {
-		File testPanelHome = getTestpanelHomeDirectory();
-		File retVal = new File(testPanelHome, "tables");
-		retVal.mkdirs();
+		ourLog.info("Got font for HL7 editor: {}", retVal);
 		return retVal;
 	}
 
+	public double getHl7EditorSplit() {
+		Double hl7EditorSplit = myHl7EditorSplit != null ? myHl7EditorSplit / 100.0 : 0.4;
+		return enforceHl7EditorSplitLimits(hl7EditorSplit);
+	}
 
-	public static Font getHl7EditorFont() {
-		if (myHl7EditorFont == null) {
-			List<String> fonts = FontUtil.getMonospacedFontNames();
-			if (fonts.contains("Monaco")) {
-				myHl7EditorFont = new Font("Monaco", Font.PLAIN, 12);
-			} else if (fonts.contains("Andale Mono")) {
-				myHl7EditorFont = new Font("Andale Mono", Font.PLAIN, 12);
-			} else if (fonts.contains("Lucida Console")) {
-				myHl7EditorFont = new Font("Lucida Console", Font.PLAIN, 12);
-			} else if (fonts.contains("Consolas")) {
-				myHl7EditorFont = new Font("Consolas", Font.PLAIN, 12);
-			} else if (fonts.contains("Lucida Sans Typewriter")) {
-				myHl7EditorFont = new Font("Lucida Sans Typewriter", Font.PLAIN, 12);
-			} else {
-				myHl7EditorFont = new Font("Monospace", Font.PLAIN, 12);
-			}
+	public String getHl7V2DiffFile1() {
+		return myHl7V2DiffFile1 == null ? "" : myHl7V2DiffFile1;
+	}
 
-			ourLog.info("Got font for HL7 editor: {}", myHl7EditorFont);
+	public String getHl7V2DiffFile2() {
+		return myHl7V2DiffFile2 == null ? "" : myHl7V2DiffFile2;
+	}
+
+	public boolean getHl7V2DiffShowWholeMessageOnError() {
+		return myHl7V2DiffShowWholeMessageOnError;
+	}
+
+	public boolean getHl7V2DiffStopOnFirstError() {
+		return myHl7V2DiffStopOnFirstError;
+	}
+
+	public String getHl7V2SortBy() {
+		return myHl7V2SortBy;
+	}
+
+	public String getHl7V2SortInputFile() {
+		return myHl7V2SortInputFile;
+	}
+
+	public String getHl7V2SortOutputFile() {
+		return myHl7V2SortOutputFile;
+	}
+
+	public String getHl7V2SortOverwriteMode() {
+		return myHl7V2SortOverwriteMode;
+	}
+
+	public File getImportProfileGroupDirectory() {
+		return new File(defaultString(myImportProfileGroupDirectory, "."));
+	}
+
+	public String getInboundConnectionList() {
+		return myInboundConnectionList;
+	}
+
+	public String getInterfaceHohSecurityKeystoreDirectory() {
+		return myInterfaceHohSecurityKeystoreDirectory;
+	}
+
+	public Charset getMostRecentConnectionCharset() {
+		String charset = isNotBlank(myMostRecentConnectionCharset) ? myMostRecentConnectionCharset : CharsetUtils.DEFAULT_CONNECTION_CHARSET.displayName();
+		try {
+			return Charset.forName(charset);
+		} catch (Exception e) {
+			return CharsetUtils.DEFAULT_CONNECTION_CHARSET;
 		}
-
-		return myHl7EditorFont;
 	}
 
-
-	public static double getHl7EditorSplit() {
-		double retVal = ourPrefs.getDouble(GET_HL7_EDITOR_SPLIT, 0.4);
-		return enforceHl7EditorSplitLimits(retVal);
+	public String getMostRecentlySelectedItemId() {
+		return myMostRecentlySelectedItemId;
 	}
 
+	// /**
+	// * @return the openImportedProfileGroupFile
+	// */
+	// public List<OpenImportedProfileGroupFile>
+	// getOpenImportedProfileGroupFile() {
+	// if (myOpenImportedProfileGroupFile == null) {
+	// myOpenImportedProfileGroupFile = new
+	// ArrayList<Prefs.OpenImportedProfileGroupFile>();
+	// }
+	// return myOpenImportedProfileGroupFile;
+	// }
 
-	public static String getHl7V2DiffFile1() {
-		return ourPrefs.get(GET_HL7V2_DIFF_FILE1, "");
-	}
-
-
-	public static String getHl7V2DiffFile2() {
-		return ourPrefs.get(GET_HL7V2_DIFF_FILE2, "");
-	}
-
-
-	public static boolean getHl7V2DiffShowWholeMessageOnError() {
-		return ourPrefs.getBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, false);
-	}
-
-
-	public static boolean getHl7V2DiffStopOnFirstError() {
-		return ourPrefs.getBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, false);
-	}
-
-
-	public static Object getHl7V2SortBy() {
-		return ourPrefs.get(GET_HL7V2_SORT_BY, "");
-	}
-
-
-	public static String getHl7V2SortInputFile() {
-		return ourPrefs.get(GET_HL7V2_SORT_INPUT, "");
-	}
-
-
-	public static String getHl7V2SortOutputFile() {
-		return ourPrefs.get(GET_HL7V2_SORT_OUTPUT, "");
-	}
-
-
-	public static String getHl7V2SortOverwriteMode() {
-		return ourPrefs.get(GET_HL7V2_SORT_OVERWRITE_MODE, "");
-	}
-
-
-	public static void setHl7V2SortOverwriteMode(String theMode) {
-		ourPrefs.put(GET_HL7V2_SORT_OVERWRITE_MODE, theMode);
-	}
-
-
-	public static String getInboundConnectionList() {
-		String retVal = ourPrefs.get(GET_INBOUND_CONNECTION_LIST, null);
-		return retVal;
-	}
-
-
-	public static Charset getOpenOrSaveCharset() {
-		String defaultVal = Charset.defaultCharset().name();
-		String savedVal = ourPrefs.get(GET_OPENSAVE_CHARSET, defaultVal);
+	public Charset getOpenOrSaveCharset() {
+		String savedVal = defaultString(myOpenOrSaveCharset, Charset.defaultCharset().name());
 
 		Charset retVal;
 		try {
@@ -251,16 +354,466 @@ public class Prefs {
 		return retVal;
 	}
 
-
-	public static String getOpenPathConformanceProfile() {
-		return ourPrefs.get(GET_OPEN_PATH_CONFORMANCE_PROFILE, ".");
+	public String getOpenPathConformanceProfile() {
+		return defaultString(myOpenPathConformanceProfile, ".");
 	}
 
-
-	public static String getOpenPathMessages() {
-		return ourPrefs.get(GET_OPEN_PATH_MESSAGES, ".");
+	public String getOpenPathMessages() {
+		return defaultString(myOpenPathMessages, ".");
 	}
 
+	public List<File> getOpenTableFiles() {
+		ArrayList<File> retVal = new ArrayList<File>();
+		if (myOpenTableFiles == null) {
+			myOpenTableFiles = new ArrayList<String>();
+		}
+		for (String next : myOpenTableFiles) {
+			retVal.add(new File(next));
+		}
+		return retVal;
+
+	}
+
+	public String getOutboundConnectionList() {
+		return myOutboundConnectionList;
+	}
+
+	public List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
+		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
+		List<XmlFormat> savedVals = myRecentMessageXmlFiles;
+		for (XmlFormat string : savedVals) {
+			try {
+				Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
+				assert nextMsg.getSourceMessage() == null;
+				if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
+					retVal.add(nextMsg);
+				}
+			} catch (Exception e) {
+				ourLog.error("Failed to restore profile", e);
+			}
+		}
+		return retVal;
+
+	}
+
+	public LineEndingsEnum getSaveLineEndings() {
+		String savedVal = defaultString(mySaveLineEndings, LineEndingsEnum.HL7.name());
+		LineEndingsEnum retVal;
+		try {
+			retVal = LineEndingsEnum.valueOf(savedVal);
+		} catch (Exception e) {
+			retVal = LineEndingsEnum.HL7;
+		}
+		return retVal;
+
+	}
+
+	public String getSavePathMessages() {
+		return defaultString(mySavePathMessages, ".");
+	}
+
+	public boolean getSaveStripComments() {
+		return mySaveStripComments;
+	}
+
+	public boolean getShowLogConsole() {
+		return myShowLogConsole;
+	}
+
+	/**
+	 * Returns (0,0) if nothing was stored
+	 */
+	public Dimension getWindowDimension() {
+		int width = myWindowPositionW;
+		int height = myWindowPositionH;
+		return new Dimension(width, height);
+	}
+
+	public boolean getWindowMaximized() {
+		return myWindowMaximized;
+	}
+
+	/**
+	 * Returns (-1,-1) if nothing was stored
+	 */
+	public Point getWindowPosition() {
+		int x = myWindowPositionX != null ? myWindowPositionX : -1;
+		int y = myWindowPositionY != null ? myWindowPositionY : -1;
+		return new Point(x, y);
+	}
+
+	private void initFromJavaPrefs() {
+		myOpenTableFiles = new ArrayList<String>();
+		String savedValsSplit = ourPrefs.get(GET_OPEN_TABLE_FILES, "");
+		String[] savedVals = defaultString(savedValsSplit).split("\\n");
+		for (String string : savedVals) {
+			if (StringUtils.isNotBlank(string)) {
+				myOpenTableFiles.add(string);
+			}
+		}
+
+		myOutboundConnectionList = ourPrefs.get(GET_OUTBOUND_CONNECTION_LIST, null);
+		myOpenPathConformanceProfile = ourPrefs.get(GET_OPEN_PATH_CONFORMANCE_PROFILE, ".");
+		myOpenPathMessages = ourPrefs.get(GET_OPEN_PATH_MESSAGES, ".");
+		myInterfaceHohSecurityKeystoreDirectory = ourPrefs.get(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, null);
+		myMostRecentlySelectedItemId = ourPrefs.get(GET_MOST_RECENTLY_SELECTED_ITEM_ID, "");
+		myOpenOrSaveCharset = ourPrefs.get(GET_OPENSAVE_CHARSET, Charset.defaultCharset().name());
+		myHl7V2SortInputFile = ourPrefs.get(GET_HL7V2_SORT_INPUT, "");
+		myHl7V2SortOverwriteMode = ourPrefs.get(GET_HL7V2_SORT_OVERWRITE_MODE, "");
+		myInboundConnectionList = ourPrefs.get(GET_INBOUND_CONNECTION_LIST, null);
+		myHl7V2SortOutputFile = ourPrefs.get(GET_HL7V2_SORT_OUTPUT, "");
+		myHl7V2DiffStopOnFirstError = ourPrefs.getBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, false);
+		myExportProfileGroupDirectory = ourPrefs.get(GET_EXPORT_PROFILE_GROUP_DIRECTORY, "");
+		myHl7V2DiffShowWholeMessageOnError = ourPrefs.getBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, false);
+		myHl7V2SortBy = ourPrefs.get(GET_HL7V2_SORT_BY, "");
+		myMostRecentConnectionCharset = ourPrefs.get(GET_MOST_RECENT_CONNECTION_CHARSET, CharsetUtils.DEFAULT_CONNECTION_CHARSET.displayName());
+		myHl7EditorSplit = (int) (ourPrefs.getDouble(GET_HL7_EDITOR_SPLIT, 0.4) * 100.0);
+		myHl7V2DiffFile1 = ourPrefs.get(GET_HL7V2_DIFF_FILE1, "");
+		myHl7V2DiffFile2 = ourPrefs.get(GET_HL7V2_DIFF_FILE2, "");
+		mySavePathMessages = ourPrefs.get(GET_SAVE_PATH_MESSAGES, ".");
+
+		String recentMessageXmlFiles = ourPrefs.get(GET_RECENT_MESSAGE_FILES, "");
+		ArrayList<String> recentMessageXmlFilesSplit = new ArrayList<String>(Arrays.asList(defaultString(recentMessageXmlFiles).split("\\n")));
+		myRecentMessageXmlFiles = new ArrayList<Hl7V2MessageCollection.XmlFormat>();
+		for (String string : recentMessageXmlFilesSplit) {
+			myRecentMessageXmlFiles.add(JAXB.unmarshal(new StringReader(string), Hl7V2MessageCollection.XmlFormat.class));
+		}
+
+		mySaveLineEndings = ourPrefs.get(GET_SAVE_LINE_ENDINGS, LineEndingsEnum.HL7.name());
+		mySaveStripComments = ourPrefs.getBoolean(GET_SAVE_STRIP_COMMENTS, false);
+		myWindowMaximized = ourPrefs.getBoolean(GET_WINDOW_MAXIMIZED, false);
+		myWindowPositionX = ourPrefs.getInt(GET_WINDOW_POSITIONX, -1);
+		myWindowPositionY = ourPrefs.getInt(GET_WINDOW_POSITIONY, -1);
+		myWindowPositionW = ourPrefs.getInt(GET_WINDOW_POSITIONW, 0);
+		myWindowPositionH = ourPrefs.getInt(GET_WINDOW_POSITIONH, 0);
+		myShowLogConsole = ourPrefs.getBoolean(GET_SHOW_LOG_CONSOLE, false);
+
+	}
+
+	// public void
+	// removeOpenImportedProfileGroupFile(OpenImportedProfileGroupFile theFile)
+	// {
+	// getOpenImportedProfileGroupFile().remove(theFile);
+	// sync();
+	// }
+
+	/**
+	 * @param theController
+	 *            the controller to set
+	 */
+	public void setController(Controller theController) {
+		myController = theController;
+	}
+
+	public void setExportProfileGroupDirectory(String theDirectory) {
+		myExportProfileGroupDirectory = theDirectory;
+		sync();
+	}
+
+	public void setHl7EditorSplit(double theRatio) {
+		theRatio = enforceHl7EditorSplitLimits(theRatio);
+		myHl7EditorSplit = (int) (theRatio * 100.0);
+		sync();
+	}
+
+	public void setHl7V2DiffFile1(String theFile) {
+		myHl7V2DiffFile1 = theFile;
+		sync();
+
+	}
+
+	public void setHl7V2DiffFile2(String theFile) {
+		myHl7V2DiffFile2 = theFile;
+		sync();
+	}
+
+	public void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
+		myHl7V2DiffShowWholeMessageOnError = theSelected;
+		sync();
+	}
+
+	public void setHl7V2DiffStopOnFirstError(boolean theValue) {
+		myHl7V2DiffStopOnFirstError = theValue;
+		sync();
+	}
+
+	public void setHl7V2SortBy(String theSelectedItem) {
+		myHl7V2SortBy = theSelectedItem;
+		sync();
+	}
+
+	public void setHl7V2SortInputFile(String theText) {
+		myHl7V2SortInputFile = theText;
+		sync();
+	}
+
+	public void setHl7V2SortOutputFile(String theText) {
+		myHl7V2SortOutputFile = theText;
+		sync();
+	}
+
+	public void setHl7V2SortOverwriteMode(String theMode) {
+		myHl7V2SortOverwriteMode = theMode;
+		sync();
+	}
+
+	/**
+	 * @param theImportProfileGroupDirectory
+	 *            the importProfileGroupDirectory to set
+	 */
+	public void setImportProfileGroupDirectory(File theImportProfileGroupDirectory) {
+		if (theImportProfileGroupDirectory.isDirectory()) {
+			myImportProfileGroupDirectory = theImportProfileGroupDirectory.getAbsolutePath();
+			sync();
+		}
+
+	}
+
+	public void setInboundConnectionList(String theValue) {
+		Validate.notNull(theValue);
+		myInboundConnectionList = theValue;
+		sync();
+	}
+
+	public void setInterfaceHohSecurityKeystoreDirectory(String theValue) {
+		myInterfaceHohSecurityKeystoreDirectory = theValue;
+		sync();
+	}
+
+	public void setMostRecentConnectionCharset(String theCharSet) {
+		assert theCharSet != null;
+		myMostRecentConnectionCharset = theCharSet;
+		sync();
+	}
+
+	public void setMostRecentlySelectedItemId(String theId) {
+		assert theId != null;
+		myMostRecentlySelectedItemId = theId;
+		sync();
+	}
+
+	public void setOpenOrSaveCharset(Charset theValue) {
+		Validate.notNull(theValue);
+		myOpenOrSaveCharset = theValue.name();
+		sync();
+	}
+
+	public void setOpenPathConformanceProfile(String theValue) {
+		StringUtil.validateNotEmpty(theValue);
+
+		if (theValue.lastIndexOf(File.separatorChar) > 0) {
+			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
+		}
+
+		myOpenPathConformanceProfile = theValue;
+		sync();
+	}
+
+	public void setOpenPathMessages(String theValue) {
+		StringUtil.validateNotEmpty(theValue);
+
+		if (theValue.lastIndexOf(File.separatorChar) > 0) {
+			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
+		}
+
+		myOpenPathMessages = theValue;
+		sync();
+	}
+
+	public void setOpenProfiles(List<ProfileGroup> theProfiles) {
+		int index = 0;
+		List<File> files = new ArrayList<File>();
+		try {
+
+			for (ProfileGroup profileGroup : theProfiles) {
+				index++;
+				String seq = StringUtils.leftPad(Integer.toString(index), 10, '0');
+				File fileName = createProfileGroupFileName(seq, profileGroup);
+				files.add(fileName);
+
+				if (isBlank(profileGroup.getSourceUrl())) {
+
+					profileGroup.dumpToFile(fileName);
+
+				} else {
+
+					Writer nextWriter;
+					nextWriter = new OutputStreamWriter(new FileOutputStream(fileName), Charset.forName("UTF-8"));
+					nextWriter.append(profileGroup.exportConfigToXml());
+					nextWriter.close();
+				}
+
+			}
+
+			IOUtils.deleteAllFromDirectoryExcept(getProfileGroupFileDirectory(), files);
+			
+		} catch (IOException e) {
+			ourLog.error("Failed to flush profile group file", e);
+		}
+	}
+
+	public void setOpenTableFiles(List<File> theFiles) {
+		myOpenTableFiles = new ArrayList<String>();
+		for (File file : theFiles) {
+			myOpenTableFiles.add(file.getAbsolutePath());
+		}
+		sync();
+	}
+
+	public void setOutboundConnectionList(String theValue) {
+		Validate.notNull(theValue);
+		myOutboundConnectionList = theValue;
+		sync();
+	}
+
+	public void setSaveLineEndings(LineEndingsEnum theValue) {
+		Validate.notNull(theValue);
+		mySaveLineEndings = theValue.name();
+		sync();
+	}
+
+	public void setSavePathMessages(String theValue) {
+		StringUtil.validateNotEmpty(theValue);
+
+		if (theValue.lastIndexOf(File.separatorChar) > 0) {
+			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
+		}
+
+		mySavePathMessages = theValue;
+		sync();
+	}
+
+	public void setSaveStripComments(boolean theValue) {
+		Validate.notNull(theValue);
+		mySaveStripComments = theValue;
+		sync();
+	}
+
+	public void setShowLogConsole(boolean theValue) {
+		Validate.notNull(theValue);
+
+		myShowLogConsole = theValue;
+		sync();
+	}
+
+	public void setWindowDimension(Dimension theDimension) {
+		assert theDimension != null;
+
+		myWindowPositionH = theDimension.height;
+		myWindowPositionY = theDimension.width;
+		sync();
+	}
+
+	public void setWindowMaximized(boolean theWindowMaximized) {
+		myWindowMaximized = theWindowMaximized;
+		sync();
+	}
+
+	public void setWindowPosition(Point thePosition) {
+		assert thePosition != null;
+
+		myWindowPositionX = thePosition.x;
+		myWindowPositionY = thePosition.y;
+		sync();
+	}
+
+	private void sync() {
+
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				StringWriter writer = new StringWriter();
+				try {
+					ourJaxbContext.createMarshaller().marshal(Prefs.this, writer);
+				} catch (JAXBException e) {
+					ourLog.error("Failed to marshall prefs! This shouldn't happen", e);
+				}
+
+				final String prefs = writer.toString();
+				if (StringUtils.equals(myLastPrefsFileSaveValue, prefs)) {
+					return;
+				}
+
+				ourLog.info("Syncing user preferences to disk");
+
+				try {
+					FileWriter w = new FileWriter(getPrefsFile(), false);
+					w.append(prefs);
+					w.close();
+
+					ourLog.info("Done synchronizing user prefs ({} chars)", prefs.length());
+					myLastPrefsFileSaveValue = prefs;
+
+					try {
+						ourPrefs.clear();
+					} catch (BackingStoreException e) {
+						// we can ignore this
+					}
+
+				} catch (IOException e) {
+					ourLog.error("Failed to write prefs file to disk", e);
+				}
+
+			}
+		};
+
+		if (myController != null) {
+			myController.invokeInBackground(r);
+		}
+
+	}
+
+	private static File createProfileGroupFileName(String theSeq, ProfileGroup profileGroup) {
+		File dir = getProfileGroupFileDirectory();
+		dir.mkdirs();
+		return new File(dir, theSeq + "-" + profileGroup.getId() + ".xml");
+	}
+
+	private static double enforceHl7EditorSplitLimits(double theRatio) {
+		theRatio = Math.min(0.8, theRatio);
+		theRatio = Math.max(0.2, theRatio);
+		return theRatio;
+	}
+
+	public static File getDefaultTableFileDirectory() {
+		File testPanelHome = getTestpanelHomeDirectory();
+		File retVal = new File(testPanelHome, "tables");
+		retVal.mkdirs();
+		return retVal;
+	}
+
+	public static Prefs getInstance() {
+		try {
+			ourJaxbContext = JAXBContext.newInstance(Prefs.class, XmlFormat.class);
+		} catch (JAXBException e) {
+			throw new Error(e);
+		}
+
+		if (ourInstance == null) {
+			File prefsFile = getPrefsFile();
+			if (prefsFile.exists() && prefsFile.isFile() && prefsFile.canRead()) {
+				try {
+					ourInstance = (Prefs) ourJaxbContext.createUnmarshaller().unmarshal(prefsFile);
+				} catch (Exception e) {
+					ourLog.error("Failed to load prefs- Using default!", e);
+					ourInstance = new Prefs();
+				}
+			} else {
+				ourInstance = new Prefs();
+				try {
+					if (ourPrefs.keys().length > 0) {
+						ourInstance.initFromJavaPrefs(); // hopefully we will do
+															// away
+															// with this
+															// eventually
+					}
+				} catch (BackingStoreException e) {
+					// we can ignore this
+				}
+			}
+		}
+		return ourInstance;
+	}
 
 	public static List<ProfileGroup> getOpenProfiles() {
 		ArrayList<ProfileGroup> retVal = new ArrayList<ProfileGroup>();
@@ -281,24 +834,9 @@ public class Prefs {
 		return retVal;
 	}
 
-
-	public static List<File> getOpenTableFiles() {
-		ArrayList<File> retVal = new ArrayList<File>();
-		String[] savedVals = ourPrefs.get(GET_OPEN_TABLE_FILES, "").split("\\n");
-		for (String string : savedVals) {
-			if (StringUtils.isNotBlank(string)) {
-				retVal.add(new File(string));
-			}
-		}
-		return retVal;
+	private static File getPrefsFile() {
+		return new File(getTestpanelHomeDirectory(), "prefs.xml");
 	}
-
-
-	public static String getOutboundConnectionList() {
-		String retVal = ourPrefs.get(GET_OUTBOUND_CONNECTION_LIST, null);
-		return retVal;
-	}
-
 
 	public static File getProfileGroupFileDirectory() {
 		File testPanelHome = getTestpanelHomeDirectory();
@@ -307,81 +845,12 @@ public class Prefs {
 		return retVal;
 	}
 
-
-	public static List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
-		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
-		ArrayList<String> savedVals = new ArrayList<String>(Arrays.asList(ourPrefs.get(GET_RECENT_MESSAGE_FILES, "").split("\\n")));
-		for (String string : savedVals) {
-			if (StringUtils.isNotBlank(string)) {
-				try {
-					Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
-					assert nextMsg.getSourceMessage() == null;
-					if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
-						retVal.add(nextMsg);
-					}
-				} catch (Exception e) {
-					ourLog.error("Failed to restore profile", e);
-				}
-			}
-		}
-		return retVal;
-	}
-
-
-	public static LineEndingsEnum getSaveLineEndings() {
-		String savedVal = ourPrefs.get(GET_SAVE_LINE_ENDINGS, LineEndingsEnum.HL7.name());
-		LineEndingsEnum retVal;
-		try {
-			retVal = LineEndingsEnum.valueOf(savedVal);
-		} catch (Exception e) {
-			retVal = LineEndingsEnum.HL7;
-		}
-		return retVal;
-	}
-
-
-	public static String getSavePathMessages() {
-		return ourPrefs.get(GET_SAVE_PATH_MESSAGES, ".");
-	}
-
-
-	public static boolean getSaveStripComments() {
-		boolean retVal = ourPrefs.getBoolean(GET_SAVE_STRIP_COMMENTS, false);
-		return retVal;
-	}
-
-
-	public static boolean getShowLogConsole() {
-		boolean retVal = ourPrefs.getBoolean(GET_SHOW_LOG_CONSOLE, false);
-		return retVal;
-	}
-
-
 	public static File getTempWorkfilesDirectory() throws IOException {
 		File testPanelHome = getTestpanelHomeDirectory();
 		File retVal = new File(testPanelHome, "workfiles");
 		retVal.mkdirs();
 		return retVal;
-
-		// String path = ourPrefs.get(GET_TEMP_WORKFILES_DIRECTORY, null);
-		// File retVal;
-		// if (path == null) {
-		// retVal = File.createTempFile("hapi_testpanel_work", "");
-		// retVal.delete();
-		// retVal.mkdirs();
-		// } else {
-		// retVal = new File(path);
-		// if (retVal.exists() == false || retVal.isDirectory() == false) {
-		// retVal.delete();
-		// retVal = File.createTempFile("hapi_testpanel_work", "");
-		// retVal.delete();
-		// retVal.mkdirs();
-		// }
-		// }
-		// ourPrefs.put(GET_TEMP_WORKFILES_DIRECTORY, retVal.getAbsolutePath());
-		// return retVal;
 	}
-
 
 	public static File getTestpanelHomeDirectory() {
 		File userHome = new File(System.getProperty("user.home"));
@@ -389,218 +858,93 @@ public class Prefs {
 		return testPanelHome;
 	}
 
-
-	/**
-	 * Returns (0,0) if nothing was stored
-	 */
-	public static Dimension getWindowDimension() {
-		int width = ourPrefs.getInt(GET_WINDOW_POSITIONW, 0);
-		int height = ourPrefs.getInt(GET_WINDOW_POSITIONH, 0);
-		return new Dimension(width, height);
-	}
-
-
-	public static boolean getWindowMaximized() {
-		return ourPrefs.getBoolean(GET_WINDOW_MAXIMIZED, false);
-	}
-
-
-	/**
-	 * Returns (-1,-1) if nothing was stored
-	 */
-	public static Point getWindowPosition() {
-		int x = ourPrefs.getInt(GET_WINDOW_POSITIONX, -1);
-		int y = ourPrefs.getInt(GET_WINDOW_POSITIONY, -1);
-		return new Point(x, y);
-	}
-
-
-	public static void removeOpenProfile(ProfileGroup theGroup) {
-		File file = createProfileGroupFileName(theGroup);
-		if (file.exists()) {
-			ourLog.info("Deleting file: " + file);
-			file.delete();
-		}
-	}
-
-
-	public static void setHl7EditorSplit(double theRatio) {
-		theRatio = enforceHl7EditorSplitLimits(theRatio);
-		ourPrefs.putDouble(GET_HL7_EDITOR_SPLIT, theRatio);
-	}
-
-
-	public static void setHl7V2DiffFile1(String theFile) {
-		ourPrefs.put(GET_HL7V2_DIFF_FILE1, theFile);
-	}
-
-
-	public static void setHl7V2DiffFile2(String theFile) {
-		ourPrefs.put(GET_HL7V2_DIFF_FILE2, theFile);
-	}
-
-
-	public static void setHl7V2DiffShowWholeMessageOnError(boolean theSelected) {
-		ourPrefs.putBoolean(GET_HL7V2_DIFF_SHOW_WHOLE_MESSAGE_ON_ERROR, theSelected);
-	}
-
-
-	public static void setHl7V2DiffStopOnFirstError(boolean theValue) {
-		ourPrefs.putBoolean(GET_HL7V2_DIFF_STOP_ON_FIRST_ERROR, theValue);
-	}
-
-
-	public static void setHl7V2SortBy(String theSelectedItem) {
-		ourPrefs.put(GET_HL7V2_SORT_BY, theSelectedItem);
-	}
-
-
-	public static void setHl7V2SortInputFile(String theText) {
-		ourPrefs.put(GET_HL7V2_SORT_INPUT, theText);
-	}
-
-
-	public static void setHl7V2SortOutputFile(String theText) {
-		ourPrefs.put(GET_HL7V2_SORT_OUTPUT, theText);
-	}
-
-
-	public static void setInboundConnectionList(String theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.put(GET_INBOUND_CONNECTION_LIST, theValue);
-	}
-
-
-	public static void setOpenOrSaveCharset(Charset theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.put(GET_OPENSAVE_CHARSET, theValue.name());
-	}
-
-
-	public static void setOpenPathConformanceProfile(String theValue) {
-		StringUtil.validateNotEmpty(theValue);
-
-		if (theValue.lastIndexOf(File.separatorChar) > 0) {
-			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
-		}
-
-		ourPrefs.put(GET_OPEN_PATH_CONFORMANCE_PROFILE, theValue);
-	}
-
-
-	public static void setOpenPathMessages(String theValue) {
-		StringUtil.validateNotEmpty(theValue);
-
-		if (theValue.lastIndexOf(File.separatorChar) > 0) {
-			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
-		}
-
-		ourPrefs.put(GET_OPEN_PATH_MESSAGES, theValue);
-	}
-
-
-	public static void setOpenProfiles(List<ProfileGroup> theProfiles) {
-		for (ProfileGroup profileGroup : theProfiles) {
-			try {
-				profileGroup.dumpToFile(createProfileGroupFileName(profileGroup));
-			} catch (IOException e) {
-				ourLog.error("Failed to flush profile group file", e);
-			}
-		}
-
-		// StringBuilder b = new StringBuilder();
-		// for (ProfileGroup profileProxy : theProfiles) {
-		// StringWriter w = new StringWriter();
-		// JAXB.marshal(profileProxy, w);
-		// b.append(w.toString());
-		// b.append("\n\n\n");
-		// }
-		// ourPrefs.put(GET_OPEN_PROFILE_FILES, b.toString());
-	}
-
-
-	public static void setOpenTableFiles(List<File> theFiles) {
-		StringBuilder b = new StringBuilder();
-		for (File file : theFiles) {
-			b.append(file.getAbsolutePath());
-			b.append("\n");
-		}
-		ourPrefs.put(GET_OPEN_TABLE_FILES, b.toString());
-	}
-
-
-	public static void setOutboundConnectionList(String theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.put(GET_OUTBOUND_CONNECTION_LIST, theValue);
-	}
-
-
-	public static void setSaveLineEndings(LineEndingsEnum theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.put(GET_SAVE_LINE_ENDINGS, theValue.name());
-	}
-
-
-	public static void setSavePathMessages(String theValue) {
-		StringUtil.validateNotEmpty(theValue);
-
-		if (theValue.lastIndexOf(File.separatorChar) > 0) {
-			theValue = theValue.substring(0, theValue.lastIndexOf(File.separatorChar));
-		}
-
-		ourPrefs.put(GET_SAVE_PATH_MESSAGES, theValue);
-	}
-
-
-	public static void setSaveStripComments(boolean theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.putBoolean(GET_SAVE_STRIP_COMMENTS, theValue);
-	}
-
-
-	public static void setShowLogConsole(boolean theValue) {
-		Validate.notNull(theValue);
-		ourPrefs.putBoolean(GET_SHOW_LOG_CONSOLE, theValue);
-	}
-
-
-	public static void setWindowDimension(Dimension theDimension) {
-		assert theDimension != null;
-
-		ourPrefs.putInt(GET_WINDOW_POSITIONH, theDimension.height);
-		ourPrefs.putInt(GET_WINDOW_POSITIONW, theDimension.width);
-	}
-
-
-	public static void setWindowMaximized(boolean theWindowMaximized) {
-		ourPrefs.putBoolean(GET_WINDOW_MAXIMIZED, theWindowMaximized);
-	}
-
-
-	public static void setWindowPosition(Point thePosition) {
-		assert thePosition != null;
-
-		ourPrefs.putInt(GET_WINDOW_POSITIONX, thePosition.x);
-		ourPrefs.putInt(GET_WINDOW_POSITIONY, thePosition.y);
-	}
-
-
-	public static String getInterfaceHohSecurityKeystoreDirectory() {
-		return ourPrefs.get(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, null);
-	}
-
-
-	public static void setInterfaceHohSecurityKeystoreDirectory(String theValue) {
-		ourPrefs.put(GET_INTERFACE_HOH_SECURITY_KEYSTORE_DIRECTORY, theValue);
-	}
-
-	public static void setMostRecentlySelectedItemId(String theId) {
-		assert theId != null;
-		ourPrefs.put(GET_MOST_RECENTLY_SELECTED_ITEM_ID, theId);		
-	}
-
-	public static String getMostRecentlySelectedItemId() {
-		return ourPrefs.get(GET_MOST_RECENTLY_SELECTED_ITEM_ID, "");		
-	}
+	// @XmlType()
+	// @XmlAccessorType(XmlAccessType.FIELD)
+	// public static class OpenImportedProfileGroupFile {
+	//
+	// private String myId;
+	// private String myUrl;
+	//
+	// public OpenImportedProfileGroupFile() {
+	// super();
+	// }
+	//
+	// public OpenImportedProfileGroupFile(String theUrl, String theId) {
+	// super();
+	// myUrl = theUrl;
+	// myId = theId;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.Object#equals(java.lang.Object)
+	// */
+	// @Override
+	// public boolean equals(Object obj) {
+	// if (this == obj) {
+	// return true;
+	// }
+	// if (obj == null) {
+	// return false;
+	// }
+	// if (!(obj instanceof OpenImportedProfileGroupFile)) {
+	// return false;
+	// }
+	// OpenImportedProfileGroupFile other = (OpenImportedProfileGroupFile) obj;
+	// if (myId == null) {
+	// if (other.myId != null) {
+	// return false;
+	// }
+	// } else if (!myId.equals(other.myId)) {
+	// return false;
+	// }
+	// return true;
+	// }
+	//
+	// /**
+	// * @return the id
+	// */
+	// public String getId() {
+	// return myId;
+	// }
+	//
+	// /**
+	// * @return the url
+	// */
+	// public String getUrl() {
+	// return myUrl;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.Object#hashCode()
+	// */
+	// @Override
+	// public int hashCode() {
+	// final int prime = 31;
+	// int result = 1;
+	// result = prime * result + ((myId == null) ? 0 : myId.hashCode());
+	// return result;
+	// }
+	//
+	// /**
+	// * @param theId
+	// * the id to set
+	// */
+	// public void setId(String theId) {
+	// myId = theId;
+	// }
+	//
+	// /**
+	// * @param theUrl
+	// * the url to set
+	// */
+	// public void setUrl(String theUrl) {
+	// myUrl = theUrl;
+	// }
+	//
+	// }
 
 }

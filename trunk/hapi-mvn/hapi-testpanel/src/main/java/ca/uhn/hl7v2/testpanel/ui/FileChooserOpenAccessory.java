@@ -80,7 +80,7 @@ public class FileChooserOpenAccessory extends JPanel {
 		Collections.sort(charSets);
 		ComboBoxModel charsetModel = new DefaultComboBoxModel(charSets.toArray(new String[0]));
 		myCharsetCombo.setModel(charsetModel);
-		Charset openOrSaveCharset = Prefs.getOpenOrSaveCharset();
+		Charset openOrSaveCharset = Prefs.getInstance().getOpenOrSaveCharset();
 		myCharsetCombo.setSelectedItem(openOrSaveCharset.name());
 
 	}
@@ -90,7 +90,7 @@ public class FileChooserOpenAccessory extends JPanel {
 	 */
 	public Charset getSelectedCharset() {
 		Charset retVal = Charset.forName((String) myCharsetCombo.getSelectedItem());
-		Prefs.setOpenOrSaveCharset(retVal);
+		Prefs.getInstance().setOpenOrSaveCharset(retVal);
 		return retVal;
 	}
 

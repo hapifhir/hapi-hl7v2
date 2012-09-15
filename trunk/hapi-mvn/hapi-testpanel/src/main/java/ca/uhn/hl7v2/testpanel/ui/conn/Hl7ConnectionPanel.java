@@ -1198,7 +1198,7 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 			myConnection.setDetectCharSetInMessage(false);
 			String charSet = (String) myCharsetCombo.getSelectedItem();
 			myConnection.setCharSet(charSet);
-			Prefs.setMostRecentConnectionCharset(charSet);
+			Prefs.getInstance().setMostRecentConnectionCharset(charSet);
 		}
 	}
 
@@ -1312,14 +1312,14 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 	}
 
 	private static void chooseKeystore(Component theParentController, JTextField theTextbox) {
-		String directory = Prefs.getInterfaceHohSecurityKeystoreDirectory();
+		String directory = Prefs.getInstance().getInterfaceHohSecurityKeystoreDirectory();
 		directory = StringUtils.defaultString(directory, ".");
 		JFileChooser chooser = new JFileChooser(directory);
 		chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		chooser.setDialogTitle("Select a Java Keystore");
 		int result = chooser.showOpenDialog(theParentController);
 		if (result == JFileChooser.APPROVE_OPTION) {
-			Prefs.setInterfaceHohSecurityKeystoreDirectory(chooser.getSelectedFile().getParent());
+			Prefs.getInstance().setInterfaceHohSecurityKeystoreDirectory(chooser.getSelectedFile().getParent());
 			theTextbox.setText(chooser.getSelectedFile().getAbsolutePath());
 		}
 	}

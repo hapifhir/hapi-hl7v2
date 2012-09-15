@@ -43,18 +43,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection;
-import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.AbstractConnection.StatusEnum;
+import ca.uhn.hl7v2.testpanel.model.conn.InboundConnection;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
 import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
 import ca.uhn.hl7v2.testpanel.ui.IDestroyable;
-import javax.swing.ScrollPaneConstants;
 
 public class InboundConnectionPanel extends BaseMainPanel implements IDestroyable {
 

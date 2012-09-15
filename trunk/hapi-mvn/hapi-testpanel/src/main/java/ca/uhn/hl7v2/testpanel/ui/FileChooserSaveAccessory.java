@@ -77,7 +77,7 @@ public class FileChooserSaveAccessory extends JPanel {
 		add(lblComments, gbc_lblComments);
 
 		mySaveCommentsCheckbox = new JCheckBox("Strip Comments");
-		mySaveCommentsCheckbox.setSelected(Prefs.getSaveStripComments());
+		mySaveCommentsCheckbox.setSelected(Prefs.getInstance().getSaveStripComments());
 		GridBagConstraints gbc_SaveCommentsCheckbox = new GridBagConstraints();
 		gbc_SaveCommentsCheckbox.insets = new Insets(0, 0, 5, 0);
 		gbc_SaveCommentsCheckbox.anchor = GridBagConstraints.WEST;
@@ -155,14 +155,14 @@ public class FileChooserSaveAccessory extends JPanel {
 		Collections.sort(charSets);
 		ComboBoxModel charsetModel = new DefaultComboBoxModel(charSets.toArray(new String[0]));
 		myCharsetCombo.setModel(charsetModel);
-		Charset openOrSaveCharset = Prefs.getOpenOrSaveCharset();
+		Charset openOrSaveCharset = Prefs.getInstance().getOpenOrSaveCharset();
 		myCharsetCombo.setSelectedItem(openOrSaveCharset.name());
 
 		initLocal();
 	}
 
 	private void initLocal() {
-		LineEndingsEnum lineEndings = Prefs.getSaveLineEndings();
+		LineEndingsEnum lineEndings = Prefs.getInstance().getSaveLineEndings();
 		switch (lineEndings) {
 		case HL7:
 			myHl7LineEndingsRadio.setSelected(true);
@@ -182,7 +182,7 @@ public class FileChooserSaveAccessory extends JPanel {
 	 */
 	public Charset getSelectedCharset() {
 		Charset retVal = Charset.forName((String) myCharsetCombo.getSelectedItem());
-		Prefs.setOpenOrSaveCharset(retVal);
+		Prefs.getInstance().setOpenOrSaveCharset(retVal);
 		return retVal;
 	}
 
@@ -196,7 +196,7 @@ public class FileChooserSaveAccessory extends JPanel {
 		} else if (myUnixLineEndingsRadio.isSelected()) {
 			retVal = LineEndingsEnum.UNIX;
 		}
-		Prefs.setSaveLineEndings(retVal);
+		Prefs.getInstance().setSaveLineEndings(retVal);
 		return retVal;
 	}
 
@@ -205,7 +205,7 @@ public class FileChooserSaveAccessory extends JPanel {
 	 */
 	public boolean isSelectedSaveStripComments() {
 		boolean retVal = mySaveCommentsCheckbox.isSelected();
-		Prefs.setSaveStripComments(retVal);
+		Prefs.getInstance().setSaveStripComments(retVal);
 		return retVal;
 	}
 

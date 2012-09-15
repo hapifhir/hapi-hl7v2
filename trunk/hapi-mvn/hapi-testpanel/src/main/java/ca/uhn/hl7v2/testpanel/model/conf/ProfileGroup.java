@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,47 +23,37 @@ import ca.uhn.hl7v2.testpanel.model.AbstractModelClass;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProfileGroup")
-public class ProfileGroup extends AbstractModelClass {
+public class ProfileGroup extends AbstractModelClass implements Cloneable {
+
+	public static final String PROP_NAME = ProfileGroup.class.getName() + "_NAME";
 
 	public static final String PROP_PROFILES = ProfileGroup.class.getName() + "_PROFILES";
 
-	public static final String PROP_NAME = ProfileGroup.class.getName() + "_NAME";
-	
 	@XmlElement(name = "entry")
 	private List<Entry> myEntries;
-
-	@XmlElement(name = "tableFile")
-	private List<TableFile> myTableFiles;
-
-	/**
-	 * @return the tableFiles
-	 */
-	public List<TableFile> getTableFiles() {
-		if (myTableFiles == null) {
-			myTableFiles = new ArrayList<TableFile>();
-		}
-		return myTableFiles;
-	}
-
+	
 	@XmlElement(name = "id")
 	private String myId;
 
 	@XmlElement(name = "name")
 	private String myName;
 
+	@XmlElement(name = "sourceUrl")
+	private String mySourceUrl;
+
 	public ProfileGroup() {
 		super();
 		
 		myId = UUID.randomUUID().toString();
 	}
-
+	
 	public ProfileGroup(ProfileProxy theFile) throws IOException, ProfileException {
 		this();
 		Entry e = new Entry();
 		e.setEventType("*");
 		e.setMessageType("*");
 		e.setProfileProxy(theFile);
-		e.myProfileGroup = this;
+		e.myParentProfileGroup = this;
 		getEntries().add(e);
 		
 		myName = theFile.getProfile().getName();
@@ -77,16 +68,31 @@ public class ProfileGroup extends AbstractModelClass {
 		Entry entry = new Entry();
 		entry.setMessageType(theProfile.getStructureMessageType());
 		entry.setEventType(theProfile.getStructureEventType());
-		entry.setProfileGroup(this);
+		entry.setParentProfileGroup(this);
 		entry.setProfileProxy(theProfile);
 		myEntries.add(entry);
 		firePropertyChange(PROP_PROFILES, null, entry);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
-	public Object exportConfigToXml() {
-		// TODO Auto-generated method stub
-		return null;
+	 public ProfileGroup clone() throws CloneNotSupportedException {
+		throw new UnsupportedOperationException();
+	}
+
+	public void dumpToFile(File theFile) throws IOException {
+		FileWriter w = new FileWriter(theFile, false);
+		JAXB.marshal(this, w);
+		w.close();
+	}
+
+	@Override
+	public String exportConfigToXml() {
+		StringWriter writer = new StringWriter();
+		JAXB.marshal(this, writer);
+		return writer.toString();
 	}
 
 	/**
@@ -113,6 +119,34 @@ public class ProfileGroup extends AbstractModelClass {
 		return myName;
 	}
 
+	public Entry getProfileForMessage(String theEventType, String theTrigger) throws IOException, ProfileException {
+		for (Entry next : myEntries) {
+			if (next.getMessageType().equals("*") || next.getMessageType().equals(theEventType)) {
+				if (theTrigger == null || StringUtils.isBlank(theTrigger) || next.getEventType().equals("*") || next.getEventType().equals(theTrigger)) {
+					return next;
+				}
+			}
+		}
+		return null;
+	}
+
+//	/**
+//	 * @return the tableFiles
+//	 */
+//	public List<TableFile> getTableFiles() {
+//		if (myTableFiles == null) {
+//			myTableFiles = new ArrayList<TableFile>();
+//		}
+//		return myTableFiles;
+//	}
+
+	/**
+	 * @return the sourceUrl
+	 */
+	public String getSourceUrl() {
+		return mySourceUrl;
+	}
+
 	public void removeEntry(Entry theSel) {
 		for (Iterator<Entry> iter = myEntries.iterator(); iter.hasNext(); ) {
 			if (iter.next() == theSel) {
@@ -135,6 +169,24 @@ public class ProfileGroup extends AbstractModelClass {
 		firePropertyChange(PROP_NAME, oldValue, theName);
 	}
 
+	public void setSourceUrl(String theSourceUrl) {
+		mySourceUrl =theSourceUrl;
+	}
+
+	public static ProfileGroup createFromRuntimeProfile(String theProfileString) throws IOException, ProfileException {
+		ProfileGroup retVal = new ProfileGroup(ProfileProxy.createFromProfileString(theProfileString));
+		return retVal;
+	}
+
+	public static ProfileGroup readFromFile(File theFile) throws IOException {
+		FileReader r = new FileReader(theFile);
+		ProfileGroup retVal = JAXB.unmarshal(r, ProfileGroup.class);
+		if (StringUtils.isBlank(retVal.getId())) {
+			throw new IOException("Invalid file, no ID tag found");
+		}
+		return retVal;
+	}
+
 	@XmlAccessorType(XmlAccessType.FIELD)
 	@XmlType(name = "ProfileGroupEntry")
 	public static class Entry extends AbstractModelClass {
@@ -147,7 +199,7 @@ public class ProfileGroup extends AbstractModelClass {
 		@XmlElement(name = "msgType")
 		private String myMessageType;
 
-		private transient ProfileGroup myProfileGroup;
+		private transient ProfileGroup myParentProfileGroup;
 
 		@XmlElement(name = "profile")
 		private ProfileProxy myProfileProxy;
@@ -178,8 +230,8 @@ public class ProfileGroup extends AbstractModelClass {
 		/**
 		 * @return the profileGroup
 		 */
-		public ProfileGroup getProfileGroup() {
-			return myProfileGroup;
+		public ProfileGroup getParentProfileGroup() {
+			return myParentProfileGroup;
 		}
 
 		/**
@@ -216,8 +268,8 @@ public class ProfileGroup extends AbstractModelClass {
 			firePropertyChange(PROP_DESC, oldValue, myMessageType);
 		}
 
-		public void setProfileGroup(ProfileGroup theGroup) {
-			myProfileGroup = theGroup;
+		public void setParentProfileGroup(ProfileGroup theGroup) {
+			myParentProfileGroup = theGroup;
 		}
 
 		/**
@@ -237,37 +289,6 @@ public class ProfileGroup extends AbstractModelClass {
 			myTablesId = theTablesId;
 			firePropertyChange(PROP_DESC, oldValue, myTablesId);
 		}
-	}
-
-	public static ProfileGroup createFromRuntimeProfile(String theProfileString) throws IOException, ProfileException {
-		ProfileGroup retVal = new ProfileGroup(ProfileProxy.createFromProfileString(theProfileString));
-		return retVal;
-	}
-
-	public Entry getProfileForMessage(String theEventType, String theTrigger) throws IOException, ProfileException {
-		for (Entry next : myEntries) {
-			if (next.getMessageType().equals("*") || next.getMessageType().equals(theEventType)) {
-				if (theTrigger == null || StringUtils.isBlank(theTrigger) || next.getEventType().equals("*") || next.getEventType().equals(theTrigger)) {
-					return next;
-				}
-			}
-		}
-		return null;
-	}
-
-	public void dumpToFile(File theFile) throws IOException {
-		FileWriter w = new FileWriter(theFile, false);
-		JAXB.marshal(this, w);
-		w.close();
-	}
-
-	public static ProfileGroup readFromFile(File theFile) throws IOException {
-		FileReader r = new FileReader(theFile);
-		ProfileGroup retVal = JAXB.unmarshal(r, ProfileGroup.class);
-		if (StringUtils.isBlank(retVal.getId())) {
-			throw new IOException("Invalid file, no ID tag found");
-		}
-		return retVal;
 	}
 	
 }

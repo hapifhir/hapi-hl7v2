@@ -834,14 +834,14 @@ public class Hl7ConnectionPanelBackup extends JPanel implements IDestroyable {
 		myHohSecurityKeystoreChooseBtn = new JButton("Choose");
 		myHohSecurityKeystoreChooseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String directory = Prefs.getInterfaceHohSecurityKeystoreDirectory();
+				String directory = Prefs.getInstance().getInterfaceHohSecurityKeystoreDirectory();
 				directory = StringUtils.defaultString(directory, ".");
 				JFileChooser chooser = new JFileChooser(directory);
 				chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 				chooser.setDialogTitle("Select a Java Keystore");
 				int result = chooser.showOpenDialog(Hl7ConnectionPanelBackup.this);
 				if (result == JFileChooser.APPROVE_OPTION) {
-					Prefs.setInterfaceHohSecurityKeystoreDirectory(chooser.getSelectedFile().getParent());
+					Prefs.getInstance().setInterfaceHohSecurityKeystoreDirectory(chooser.getSelectedFile().getParent());
 					myHohSecurityKeystoreTextbox.setText(chooser.getSelectedFile().getAbsolutePath());
 				}
 			}

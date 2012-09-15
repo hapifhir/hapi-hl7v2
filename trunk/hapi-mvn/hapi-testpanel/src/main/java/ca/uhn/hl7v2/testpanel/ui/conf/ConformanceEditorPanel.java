@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -68,7 +69,6 @@ import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.ui.HoverButtonMouseAdapter;
 import ca.uhn.hl7v2.testpanel.ui.ImageFactory;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
-import java.awt.Dimension;
 
 public class ConformanceEditorPanel {
 
@@ -112,6 +112,8 @@ public class ConformanceEditorPanel {
 	private JTextField myTableNameTextField;
 
 	private JButton myRenameButton;
+
+	private JButton myExportButton;
 
 	/**
 	 * Create the application.
@@ -293,6 +295,7 @@ public class ConformanceEditorPanel {
 		profilesToolbar.setFloatable(false);
 
 		myNewProfileGroupButton = new JButton("New Profile Group");
+		myNewProfileGroupButton.setToolTipText("Creates a new profile group (which may contain multiple conformance profiles associated with different message types and table mappings)");
 		myNewProfileGroupButton.setBorderPainted(false);
 		myNewProfileGroupButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/new_tree.png")));
 		myNewProfileGroupButton.addMouseListener(new HoverButtonMouseAdapter(myNewProfileGroupButton));
@@ -312,12 +315,13 @@ public class ConformanceEditorPanel {
 				if (sel instanceof ProfileGroup) {
 					myController.addProfile((ProfileGroup) sel);
 				} else if (sel instanceof ProfileGroup.Entry) {
-					myController.addProfile(((ProfileGroup.Entry) sel).getProfileGroup());
+					myController.addProfile(((ProfileGroup.Entry) sel).getParentProfileGroup());
 				}
 			}
 		});
 
-		myRemoveProfileGroupButton = new JButton("Remove Profile Group");
+		myRemoveProfileGroupButton = new JButton("Remove");
+		myRemoveProfileGroupButton.setToolTipText("Close the selected profile group");
 		myRemoveProfileGroupButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ProfileGroup sel = (ProfileGroup) getSelectedProfileGroupOrFile();
@@ -326,6 +330,7 @@ public class ConformanceEditorPanel {
 		});
 
 		myRenameButton = new JButton("Rename");
+		myRenameButton.setToolTipText("Rename the selected profile group");
 		myRenameButton.addMouseListener(new HoverButtonMouseAdapter(myRenameButton));
 		myRenameButton.setBorderPainted(false);
 		myRenameButton.addActionListener(new ActionListener() {
@@ -340,6 +345,31 @@ public class ConformanceEditorPanel {
 		myRemoveProfileGroupButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/delete.png")));
 		myRemoveProfileGroupButton.addMouseListener(new HoverButtonMouseAdapter(myRemoveProfileGroupButton));
 		profilesToolbar.add(myRemoveProfileGroupButton);
+		
+		myExportButton = new JButton("Export");
+		myExportButton.setToolTipText("Export the selected profile group to a single file that may be shared with other people");
+		myExportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myController.exportProfileGroup((ProfileGroup)getSelectedProfileGroupOrFile());
+			}
+		});
+		myExportButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/save_all.png")));
+		myExportButton.setBorderPainted(false);
+		myExportButton.addMouseListener(new HoverButtonMouseAdapter(myExportButton));
+		profilesToolbar.add(myExportButton);
+		
+		JButton btnImport = new JButton("Import");
+		btnImport.setToolTipText("Import a profile group");
+		btnImport.addMouseListener(new HoverButtonMouseAdapter(btnImport));
+		btnImport.setBorderPainted(false);
+		btnImport.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/open.png")));
+		btnImport.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent theE) {
+				myController.importProfileGroup();
+			}
+		});
+		profilesToolbar.add(btnImport);
 		myAddProfileButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/profile.png")));
 		profilesToolbar.add(myAddProfileButton);
 
@@ -347,7 +377,7 @@ public class ConformanceEditorPanel {
 		myRemoveProfileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ProfileGroup.Entry sel = (Entry) getSelectedProfileGroupOrFile();
-				sel.getProfileGroup().removeEntry(sel);
+				sel.getParentProfileGroup().removeEntry(sel);
 			}
 		});
 		myRemoveProfileButton.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/close.png")));
@@ -844,16 +874,19 @@ public class ConformanceEditorPanel {
 
 		Object sel = getSelectedProfileGroupOrFile();
 		if (sel instanceof ProfileGroup) {
+			myExportButton.setEnabled(true);
 			myRemoveProfileGroupButton.setEnabled(true);
 			myRemoveProfileButton.setEnabled(false);
 			myAddProfileButton.setEnabled(true);
 			myRenameButton.setEnabled(true);
 		} else if (sel instanceof ProfileGroup.Entry) {
+			myExportButton.setEnabled(false);
 			myRemoveProfileGroupButton.setEnabled(false);
 			myRemoveProfileButton.setEnabled(true);
 			myAddProfileButton.setEnabled(true);
 			myRenameButton.setEnabled(false);
 		} else {
+			myExportButton.setEnabled(false);
 			myRemoveProfileGroupButton.setEnabled(false);
 			myRemoveProfileButton.setEnabled(false);
 			myAddProfileButton.setEnabled(false);

@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.testpanel.model.conf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.UUID;
@@ -64,11 +65,14 @@ public class ProfileProxy {
 
 	public RuntimeProfile getProfile() throws IOException, ProfileException {
 		if (myProfile == null) {
-			String profileString;
-			profileString = FileUtils.readFile(getFile());
+			String profileString = getProfileAsString();
 			myProfile = new ProfileParser(false).parse(profileString);
 		}
 		return myProfile;
+	}
+
+	public String getProfileAsString() throws FileNotFoundException, IOException {
+		return FileUtils.readFile(getFile());
 	}
 
 	/**

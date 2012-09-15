@@ -42,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.hoh.util.IOUtils;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
@@ -102,10 +103,7 @@ public class MessagesList extends AbstractModelClass {
 	public void dumpToWorkDirectory(File theWorkfilesDir) throws IOException {
 		ourLog.info("Flushing work files to directory: " + theWorkfilesDir.getAbsolutePath());
 
-		for (File next : theWorkfilesDir.listFiles()) {
-			ourLog.info("Deleting existing file: " + next);
-			next.delete();
-		}
+		IOUtils.deleteAllFromDirectory(theWorkfilesDir);
 
 		int index = 0;
 		for (Hl7V2MessageCollection next : myMessages) {

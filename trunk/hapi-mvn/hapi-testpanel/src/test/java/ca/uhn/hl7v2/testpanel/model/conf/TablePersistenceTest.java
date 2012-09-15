@@ -1,10 +1,11 @@
 package ca.uhn.hl7v2.testpanel.model.conf;
 
+import static junit.framework.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-import static junit.framework.Assert.*;
 
 public class TablePersistenceTest {
 
