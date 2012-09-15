@@ -2,8 +2,6 @@ package ca.uhn.hl7v2.examples.hoh;
 
 import java.io.IOException;
 
-import org.xml.sax.helpers.ParserFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
