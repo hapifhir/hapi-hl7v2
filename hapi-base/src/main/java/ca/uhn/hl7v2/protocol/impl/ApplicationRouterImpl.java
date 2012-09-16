@@ -94,8 +94,8 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         Logger rawOutbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.outbound");
         Logger rawInbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.inbound");
         
-        log.info( "ApplicationRouterImpl got message: {}", incomingMessageString );
-        rawInbound.info(incomingMessageString);
+        log.debug( "ApplicationRouterImpl got message: {}", incomingMessageString );
+        rawInbound.debug(incomingMessageString);
         
         Message incomingMessageObject = null;
         String outgoingMessageString = null;
@@ -134,8 +134,8 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             }
         }
         
-        log.info( "ApplicationRouterImpl sending message: {}", outgoingMessageString );
-        rawOutbound.info(outgoingMessageString);
+        log.debug( "ApplicationRouterImpl sending message: {}", outgoingMessageString );
+        rawOutbound.debug(outgoingMessageString);
         
         return new String[] {outgoingMessageString, outgoingMessageCharset};
     }

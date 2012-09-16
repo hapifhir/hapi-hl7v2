@@ -23,7 +23,7 @@ public class ParserConfigurationTest extends TestCase {
 		p.getParserConfiguration().addForcedEncode("PATIENT_RESULT/PATIENT/PID-11-7");
 		
 		String encoded = p.encode(msg);
-		ourLog.info("Encoded:\n" + encoded.replace("\r", "\n"));
+		ourLog.debug("Encoded:\n" + encoded.replace("\r", "\n"));
 		assertTrue(encoded.contains("PID|||||||||||^^^^^^"));
 		
 	}
@@ -38,35 +38,35 @@ public class ParserConfigurationTest extends TestCase {
 			pc.addForcedEncode("A");
 			fail();
 		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
+			ourLog.debug(e.getMessage());
 		}
 
 		try {
 			pc.addForcedEncode("AA");
 			fail();
 		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
+			ourLog.debug(e.getMessage());
 		}
 
 		try {
 			pc.addForcedEncode("AAA/");
 			fail();
 		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
+			ourLog.debug(e.getMessage());
 		}
 
 		try {
 			pc.addForcedEncode("AAA-A");
 			fail();
 		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
+			ourLog.debug(e.getMessage());
 		}
 
 		try {
 			pc.addForcedEncode("AAA-123-");
 			fail();
 		} catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
+			ourLog.debug(e.getMessage());
 		}
 		
 	}

@@ -210,9 +210,9 @@ public class TerserTest extends TestCase {
         Terser t = new Terser(qryMsg);
         
         String value = t.get("/.PID-3-1");
-        System.out.println("\r\n\r\n" + value);
+        //System.out.println("\r\n\r\n" + value);
         value = t.get("/QUERY_RESPONSE(0)/.PID-3-1");
-        System.out.println(value);
+        //System.out.println(value);
     }
     
 }

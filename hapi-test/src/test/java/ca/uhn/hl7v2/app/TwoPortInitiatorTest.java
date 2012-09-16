@@ -63,7 +63,7 @@ public class TwoPortInitiatorTest implements Application {
 		tps.stopAndWait();
 		DefaultExecutorService.getDefaultService().shutdown();
 		
-		ourLog.info("Finished test");
+		ourLog.debug("Finished test");
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class TwoPortInitiatorTest implements Application {
 					String id = Long.toString(r.nextLong());
 					Message out = parser.parse(msgText);
 					Terser.set((Segment) out.get("MSH"), 10, 0, 1, 1, id);
-					ourLog.info("Sending message with ID: {}", id);
+					ourLog.debug("Sending message with ID: {}", id);
 					Message in = conn.getInitiator().sendAndReceive(out);
 					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1)
 							.equals(Terser.get((Segment) in.get("MSA"), 2, 0,
@@ -122,7 +122,7 @@ public class TwoPortInitiatorTest implements Application {
 				assertTrue("Got FALSE response, " + n + " threads left",
 						f.get());
 			} catch (ExecutionException e) {
-				ourLog.info("Failed", e);
+				ourLog.debug("Failed", e);
 				fail(e.getMessage() + " " + n + " threads left");
 			} finally {
 				n--;
@@ -134,7 +134,7 @@ public class TwoPortInitiatorTest implements Application {
 
 	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
 		
-		ourLog.info("Received message with ID {}", new Terser(theIn).get("/MSH-10"));
+		ourLog.debug("Received message with ID {}", new Terser(theIn).get("/MSH-10"));
 		
 		try {
 			return theIn.generateACK();

@@ -60,7 +60,7 @@ public class MessageStructuresTest extends TestCase {
                     continue;
                 }
                 
-                ourLog.info("Instantiating " + className);
+                ourLog.debug("Instantiating " + className);
                 Class<?> clazz = Class.forName(className);
 
                 try {

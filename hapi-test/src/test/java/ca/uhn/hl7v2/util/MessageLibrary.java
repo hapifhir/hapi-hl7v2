@@ -179,7 +179,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						msg = parser.parse(msgStr);
 					} catch (Exception e) {
 						++numParsingErrors;
-						ourLog.info("Parsing errors with message:\n" + msgStr, e);
+						ourLog.debug("Parsing errors with message:\n" + msgStr, e);
 					}
 					entries.add(new LibraryEntry(new String(msgStr), new HashMap<String, String>(segments), msg));
 					//reset for next message

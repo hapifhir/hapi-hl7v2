@@ -59,7 +59,7 @@ public class TsComponentOneTest {
 		
 		Date date = time.getValueAsDate();
 		String formatted = myFormat.format(date);
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2011-02-01T12:12:33.000-0500", formatted);
 		// Tue Feb 01 12:12:33 EST 2011
 
@@ -130,18 +130,17 @@ public class TsComponentOneTest {
 		cal.set(Calendar.ZONE_OFFSET, zoneOffset);
 		time.setValue(cal);
 		
-		System.out.println((zoneOffset*100) / (60 * 60 * 1000));
-		
-		System.out.println(cal.getTime());
+		// System.out.println((zoneOffset*100) / (60 * 60 * 1000));
+		// System.out.println(cal.getTime());
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("20100129125922.333-0500", encoded);
 		// 201001291259
 
 		cal = time.getValueAsCalendar();
 		String formatted = myFormat.format(cal.getTime());
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:22.333-0500", formatted);
 		
 		
@@ -162,13 +161,13 @@ public class TsComponentOneTest {
 		time.setValueToMinute(cal);
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("201001291259", encoded);
 		// 201001291259
 
 		cal = time.getValueAsCalendar();
 		String formatted = myFormat.format(cal.getTime());
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:00.000-0500", formatted);
 		
 		
@@ -190,13 +189,13 @@ public class TsComponentOneTest {
 		time.setValueToSecond(cal);
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("20100129125933", encoded);
 		// 201001291259
 
 		cal = time.getValueAsCalendar();
 		String formatted = myFormat.format(cal.getTime());
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:33.000-0500", formatted);
 		
 		
@@ -220,18 +219,18 @@ public class TsComponentOneTest {
 		cal.set(Calendar.ZONE_OFFSET, zoneOffset);
 		time.setValue(cal.getTime());
 		
-		System.out.println((zoneOffset*100) / (60 * 60 * 1000));
+		// System.out.println((zoneOffset*100) / (60 * 60 * 1000));
 		
-		System.out.println(cal.getTime());
+		// System.out.println(cal.getTime());
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("20100129125922.333-0500", encoded);
 		// 201001291259
 
 		Date date = time.getValueAsDate();
 		String formatted = myFormat.format(date);
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:22.333-0500", formatted);
 		
 		
@@ -252,13 +251,13 @@ public class TsComponentOneTest {
 		time.setValueToMinute(cal.getTime());
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("201001291259", encoded);
 		// 201001291259
 
 		Date date = time.getValueAsDate();
 		String formatted = myFormat.format(date);
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:00.000-0500", formatted);
 		
 		
@@ -280,13 +279,13 @@ public class TsComponentOneTest {
 		time.setValueToSecond(cal.getTime());
 		
 		String encoded = time.encode();
-		System.out.println(encoded);
+		// System.out.println(encoded);
 		assertEquals("20100129125933", encoded);
 		// 201001291259
 
 		Date date = time.getValueAsDate();
 		String formatted = myFormat.format(date);
-		System.out.println(formatted);
+		// System.out.println(formatted);
 		assertEquals("2010-01-29T12:59:33.000-0500", formatted);
 		
 		

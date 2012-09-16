@@ -7,10 +7,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -22,7 +23,7 @@ import ca.uhn.hl7v2.model.v251.message.ADT_A01;
 
 public class ModelInstantiationTest extends TestCase {
 
-	private static final Logger log = Logger.getLogger(ModelInstantiationTest.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(ModelInstantiationTest.class);
 
 	public void testDataTypes() throws IOException, ClassNotFoundException {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
@@ -37,7 +38,7 @@ public class ModelInstantiationTest extends TestCase {
 		for (BeanDefinition beanDefinition : components) {
 
 			String nextBeanClassName = beanDefinition.getBeanClassName();
-			log.info("Scanning class: " + nextBeanClassName);
+			log.debug("Scanning class: " + nextBeanClassName);
 			Class<?> clazz = Class.forName(nextBeanClassName);
 
 			try {
@@ -53,7 +54,7 @@ public class ModelInstantiationTest extends TestCase {
 
 		}
 
-		log.info("Done scanning");
+		log.debug("Done scanning");
 
 		if (failures.isEmpty() == false) {
 
@@ -86,14 +87,14 @@ public class ModelInstantiationTest extends TestCase {
 			
 //			nextBeanClassName = "ca.uhn.hl7v2.model.v251.message.ORL_O34";
 			
-			log.info("Scanning class: " + nextBeanClassName);
+			log.debug("Scanning class: " + nextBeanClassName);
 			Class<?> clazz = Class.forName(nextBeanClassName);
 			Constructor<?> constructor = clazz.getConstructor(new Class[] {});
 			Message instance = (Message) constructor.newInstance();
 			instantiateStructure(instance, new HashSet<String>());
 		}
 
-		log.info("Done scanning");
+		log.debug("Done scanning");
 
 	}
 
@@ -114,7 +115,7 @@ public class ModelInstantiationTest extends TestCase {
 					// This sometimes happened, e.g. in 2.5.1 ORL_O34 because the spec defines
 					// multiple groups in the same structure with the same name. It probably shouldn't
 					// do this.
-					log.info("ERROR: Recursive structure found in " + typeName + " - Trying to add " + child.getClass().getName());
+					log.debug("ERROR: Recursive structure found in " + typeName + " - Trying to add " + child.getClass().getName());
 					continue;
 				}
 				
