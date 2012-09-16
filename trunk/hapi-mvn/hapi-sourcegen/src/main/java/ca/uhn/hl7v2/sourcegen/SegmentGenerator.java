@@ -238,7 +238,7 @@ public class SegmentGenerator extends java.lang.Object {
 
 
 	public static void writeSegment(String fileName, String version, String segmentName, ArrayList<SegmentElement> elements, String description, String basePackage, String[] datatypePackages, String theTemplatePackage) throws Exception {
-		log.info("Writing segment: {}", fileName);
+		log.debug("Writing segment: {}", fileName);
 		
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 		

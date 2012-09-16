@@ -177,7 +177,7 @@ public class XMLParserTest {
 		PipeParser pipeParser = new PipeParser();
 		OMD_O03 msg = (OMD_O03) pipeParser.parse(texto);
 		String textoXML = xmlParser.encode(msg);
-		ourLog.info("Message:\n{}", textoXML);
+		ourLog.debug("Message:\n{}", textoXML);
 		assertTrue(textoXML.contains("OMD_O03.DIET"));
 	}
 
@@ -285,7 +285,7 @@ public class XMLParserTest {
 		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		OMD_O03 msg = (OMD_O03) p.parse(message);
 
-		ourLog.info("Structure:\n{}", msg.printStructure());
+		ourLog.debug("Structure:\n{}", msg.printStructure());
 
 		assertEquals("S", msg.getORDER_DIET().getDIET().getODS().getOds1_Type().getValue());
 		

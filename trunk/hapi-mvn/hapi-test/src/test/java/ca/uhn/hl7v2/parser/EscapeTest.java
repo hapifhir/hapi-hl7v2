@@ -87,7 +87,7 @@ public class EscapeTest {
 		message.parse(msg);
 
 		String encoded = message.encode();
-		System.out.println("Encoded message: \r\n" + encoded);
+		// System.out.println("Encoded message: \r\n" + encoded);
 
 		assertEquals(msg.trim(), encoded.trim());
 
@@ -114,7 +114,7 @@ public class EscapeTest {
 		}
 
 		String encoded = message.encode();
-		System.out.println("Encoded message: \r\n" + encoded);
+		// System.out.println("Encoded message: \r\n" + encoded);
 		assertEquals(msg.trim(), encoded.trim());
 	}	
 

@@ -59,7 +59,7 @@ public class VariesTest {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
@@ -89,7 +89,7 @@ public class VariesTest {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
@@ -117,7 +117,7 @@ public class VariesTest {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
@@ -149,7 +149,7 @@ public class VariesTest {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
@@ -182,7 +182,7 @@ public class VariesTest {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
@@ -191,7 +191,7 @@ public class VariesTest {
 		assertEquals("F1C1", actual);
 
 		actual = obx5.encode();
-		ourLog.info("Actual: " + actual);
+		ourLog.debug("Actual: " + actual);
 		assertEquals("F1C1^F1C2", actual);
 
 		String expected = "MSH|^~\\&\r" // -
@@ -199,7 +199,7 @@ public class VariesTest {
 				+ "OBX||ST|||F1C1^F1C2\r";
 
 		String trim = encode.trim();
-		ourLog.info("Encoded: " + trim.replace("\r", "\n"));
+		ourLog.debug("Encoded: " + trim.replace("\r", "\n"));
 
 		assertEquals(expected.trim(), trim);
 
@@ -322,7 +322,7 @@ public class VariesTest {
 		varies.parse("NF1^NF2");
 
 		String encode = msg.encode();
-		ourLog.info("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 		assertEquals("NF1^NF2", varies.encode());
 
@@ -344,7 +344,7 @@ public class VariesTest {
 		obx.parse(input);
 
 		String encoded = obx.encode();
-		ourLog.info("Encoded: \n{}", encoded);
+		ourLog.debug("Encoded: \n{}", encoded);
 
 	}
 

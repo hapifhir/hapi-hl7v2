@@ -60,7 +60,7 @@ public class AbstractSegmentTest {
 
 		String encode = a01.encode();
 		
-		System.out.println("Message is:\n" + encode.replace("\r", "\n"));
+		// System.out.println("Message is:\n" + encode.replace("\r", "\n"));
 		
 		assertEquals(string, encode);
 
@@ -116,7 +116,7 @@ public class AbstractSegmentTest {
 			msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");
 			fail();
 		} catch (HL7Exception e) {
-			ourLog.error("Caught exception, as we should", e);
+			ourLog.debug("Caught exception, as we should", e);
 		}
 		
 	}

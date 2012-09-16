@@ -207,7 +207,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.setParser(parser);
 		msg.parse(msgText);
 
-		ourLog.info(msg.printStructure());
+		ourLog.debug(msg.printStructure());
 		
 		assertEquals("RASH ON BACK AND RT LEG", msg.getDG1().getDg14_DiagnosisDescription().getValue());
 	}
@@ -248,7 +248,7 @@ public class NewPipeParserTest extends TestCase {
 		PV1 pv1 = (PV1) msg.get("PV1");
 		Assert.assertEquals("I", pv1.getPv12_PatientClass().encode());
 
-		ourLog.info("\r\n" + msg.toString());
+		ourLog.debug("\r\n" + msg.toString());
 
 	}
 
@@ -269,7 +269,7 @@ public class NewPipeParserTest extends TestCase {
 		String encoded = msg.encode();
 		Assert.assertEquals(message, encoded);
 
-		ourLog.info(msg.printStructure());
+		ourLog.debug(msg.printStructure());
 	}
 
 	public void testPreserveFormattingChars() throws HL7Exception {
@@ -312,7 +312,7 @@ public class NewPipeParserTest extends TestCase {
 		// java code for parsing,..
 		Parser p = new PipeParser();
 		final Message msg = p.parse(sn);
-		System.out.println(msg.getClass());
+		ourLog.debug(msg.getClass().getName());
 
 		Assert.assertEquals(msg.getClass(), ORM_O01.class);
 	}
@@ -330,7 +330,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.parse(msgString);
 
 		String encode = msg.encode();
-		System.out.println("\n\n" + encode);
+		ourLog.debug("\n\n" + encode);
 
 	}
 
@@ -424,7 +424,7 @@ public class NewPipeParserTest extends TestCase {
 
 		String encoded = message.encode();
 
-		ourLog.info("Structure is: " + message.printStructure());
+		ourLog.debug("Structure is: " + message.printStructure());
 
 		assertEquals(msgString.trim(), encoded.trim());
 
@@ -443,7 +443,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.setParser(parser);
 		msg.parse(messageText);
 
-		ourLog.info(msg.encode());
+		ourLog.debug(msg.encode());
 
 		Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
 
@@ -458,7 +458,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.setParser(parser);
 		msg.parse(messageText);
 
-		ourLog.info(msg.encode());
+		ourLog.debug(msg.encode());
 
 		Assert.assertEquals("2", msg.getPID2().getPid1_SetIDPID().encode());
 
@@ -481,7 +481,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.setParser(new PipeParser());
 		msg.parse(string);
 
-		ourLog.info(msg.encode());
+		ourLog.debug(msg.encode());
 
 	}
 
@@ -501,7 +501,7 @@ public class NewPipeParserTest extends TestCase {
 		System.setProperty(Varies.INVALID_OBX2_TYPE_PROP, "ST");
 		msg.parse(string);
 
-		ourLog.info(msg.encode());
+		ourLog.debug(msg.encode());
 
 		System.clearProperty(Varies.INVALID_OBX2_TYPE_PROP);
 		try {
@@ -560,8 +560,8 @@ public class NewPipeParserTest extends TestCase {
 
 		ca.uhn.hl7v2.model.v25.message.ADT_A03 message = (ADT_A03) parser.parse(er7Message);
 
-		System.out.println(message.getAL1Reps());
-		System.out.println(parser.encode(message));
+		ourLog.debug("{}", message.getAL1Reps());
+		ourLog.debug(parser.encode(message));
 	}
 
 	public void testGetVersion() throws Exception {
@@ -596,7 +596,7 @@ public class NewPipeParserTest extends TestCase {
 		ORU_R01 msg = (ORU_R01) parser.parse(message);
 		String val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION().getOBSERVATION(0).getNTE(0).getComment(0).getValue();
 
-		System.out.println(parser.encode(msg));
+		ourLog.debug(parser.encode(msg));
 		assertEquals("test", val);
 	}
 
@@ -612,7 +612,7 @@ public class NewPipeParserTest extends TestCase {
 		ca.uhn.hl7v2.model.v23.message.ORU_R01 message = (ca.uhn.hl7v2.model.v23.message.ORU_R01) parser.parse(string);
 
 		String reEncoded = parser.encode(message);
-		System.out.println(reEncoded);
+		ourLog.debug(reEncoded);
 		assertEquals(string, reEncoded);
 
 		String pidMrn = message.getRESPONSE().getPATIENT().getPID().getPid3_PatientIDInternalID(0).getCx1_ID().getValue();
@@ -631,7 +631,7 @@ public class NewPipeParserTest extends TestCase {
 		Message message = parser.parse(string);
 
 		String reEncoded = parser.encode(message);
-		System.out.println(reEncoded);
+		ourLog.debug(reEncoded);
 		assertEquals(string, reEncoded);
 
 	}
@@ -648,7 +648,7 @@ public class NewPipeParserTest extends TestCase {
 		Message message = parser.parse(string);
 
 		String reEncoded = parser.encode(message);
-		System.out.println(reEncoded);
+		ourLog.debug(reEncoded);
 		assertEquals(string, reEncoded);
 
 	}
@@ -682,7 +682,7 @@ public class NewPipeParserTest extends TestCase {
 				"NTE|||test|\r";
 		ORU_R01 msg = (ORU_R01) parser.parse(message);
 
-		System.out.println(parser.encode(msg));
+		ourLog.debug(parser.encode(msg));
 
 		String val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
 		assertEquals(null, val);
@@ -712,7 +712,7 @@ public class NewPipeParserTest extends TestCase {
 				"NTE|||test|\r";
 		ORU_R01 msg = (ORU_R01) parser.parse(message);
 
-		System.out.println(parser.encode(msg));
+		ourLog.debug(parser.encode(msg));
 
 		String val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
 		assertEquals(null, val);
@@ -886,9 +886,8 @@ public class NewPipeParserTest extends TestCase {
 				"PID|2\r";
 
 		ADT_A01 parsed = (ADT_A01) parser.parse(message);
-		System.out.println(parser.encode(parsed));
-
-		ourLog.info("\r\n" + parsed.toString());
+		ourLog.debug(parser.encode(parsed));
+		ourLog.debug("\r\n" + parsed.toString());
 
 		assertEquals("R01", parsed.getEVN().getEventTypeCode().getValue());
 
@@ -962,7 +961,7 @@ public class NewPipeParserTest extends TestCase {
 				"ORC|ORC2";
 
 		ORU_R01 parsed = (ORU_R01) parser.parse(message);
-		System.out.println(parser.encode(parsed));
+		ourLog.debug(parser.encode(parsed));
 
 		assertEquals("ORC1", parsed.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getORC().getOrderControl().getValue());
 		assertEquals("1", parsed.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION(0).getOBX().getSetIDOBX().getValue());
@@ -979,7 +978,7 @@ public class NewPipeParserTest extends TestCase {
 				"ZNT|ZNT1";
 
 		parsed = (ORU_R01) parser.parse(message);
-		System.out.println(parser.encode(parsed));
+		ourLog.debug(parser.encode(parsed));
 
 		assertEquals("ORC1", parsed.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getORC().getOrderControl().getValue());
 		assertEquals("1", parsed.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION(0).getOBX().getSetIDOBX().getValue());
@@ -1081,12 +1080,12 @@ public class NewPipeParserTest extends TestCase {
 
 		REF_I12 message = (REF_I12) parser.parse(messageString);
 
-		ourLog.info("Structure is: " + message.printStructure());
+		ourLog.debug("Structure is: " + message.printStructure());
 
-		ourLog.info("Going to parse/encode");
+		ourLog.debug("Going to parse/encode");
 		message.parse(message.encode());
 
-		ourLog.info("Structure is: " + message.printStructure());
+		ourLog.debug("Structure is: " + message.printStructure());
 
 	}
 
@@ -1101,7 +1100,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPV1().parse("PV1|1");
 
 		String actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		String expected = "MSH|^~\\&|||||||ADT^A01^ADT_A01||T|2.5\r" + // -
 				"PV1|1\r";
@@ -1110,7 +1109,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPID().parse("PID|1");
 
 		actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ADT^A01^ADT_A01||T|2.5\r" + // -
 				"PID|1\r" + // -
@@ -1120,7 +1119,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPID().parse("");
 
 		actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ADT^A01^ADT_A01||T|2.5\r" + // -
 				"PV1|1\r";
@@ -1157,7 +1156,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getCTD().parse("CTD|1");
 
 		String actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
 				"ORC|1\r" + // -
@@ -1169,7 +1168,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getORC().parse("");
 
 		actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
 				"OBR|1\r" + // -
@@ -1180,7 +1179,7 @@ public class NewPipeParserTest extends TestCase {
 		msg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBR().parse("");
 
 		actual = msg.encode();
-		ourLog.info("Message is: " + actual);
+		ourLog.debug("Message is: " + actual);
 
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.5\r" + // -
 				"OBR|\r" + // -
@@ -1302,8 +1301,8 @@ public class NewPipeParserTest extends TestCase {
 		String encoded = pOnOrc44_11.encode(msg);
 		String expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4\r" + //
 				"ORC||||||||||||||||||||||||||||||||||||||||||||^^^^^^^^^^\r";
-		ourLog.info("EXP: " + expected);
-		ourLog.info("ACT: " + encoded);
+		ourLog.debug("EXP: " + expected);
+		ourLog.debug("ACT: " + encoded);
 		Assert.assertEquals(expected, encoded);
 
 		encoded = pOff.encode(msg);
@@ -1364,28 +1363,28 @@ public class NewPipeParserTest extends TestCase {
 
 		encoded = pOnMSH19_2.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4|||||||^\r";
-		System.out.println(encoded.replace("\r", "\r\n"));
+		ourLog.debug(encoded.replace("\r", "\r\n"));
 		Assert.assertEquals(expected, encoded);
 
 		PipeParser pOnMSH999 = PipeParser.getInstanceWithNoValidation();
 		pOnMSH999.getParserConfiguration().addForcedEncode("MSH-99");
 		encoded = pOnMSH999.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4" + StringUtils.leftPad("", 99 - 12, '|') + "\r";
-		System.out.println(encoded.replace("\r", "\r\n"));
+		ourLog.debug(encoded.replace("\r", "\r\n"));
 		Assert.assertEquals(expected, encoded);
 
 		pOnMSH999 = PipeParser.getInstanceWithNoValidation();
 		pOnMSH999.getParserConfiguration().addForcedEncode("MSH-999");
 		encoded = pOnMSH999.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01||T|2.4" + StringUtils.leftPad("", 999 - 12, '|') + "\r";
-		System.out.println(encoded.replace("\r", "\r\n"));
+		ourLog.debug(encoded.replace("\r", "\r\n"));
 		Assert.assertEquals(expected, encoded);
 
 		PipeParser pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
 		pOnMSH9_99.getParserConfiguration().addForcedEncode("MSH-9-9");
 		encoded = pOnMSH9_99.encode(msg);
 		expected = "MSH|^~\\&|||||||ORU^R01^ORU_R01^^^^^^||T|2.4\r";
-		System.out.println(encoded.replace("\r", "\r\n"));
+		ourLog.debug(encoded.replace("\r", "\r\n"));
 		Assert.assertEquals(expected, encoded);
 
 		pOnMSH9_99 = PipeParser.getInstanceWithNoValidation();
@@ -1473,7 +1472,7 @@ public class NewPipeParserTest extends TestCase {
 		string = string.replace("ZPI|||7005728", "ZPI|||7005729");
 		initialMessage.parse(string);
 
-		ourLog.info(initialMessage.printStructure());
+		ourLog.debug(initialMessage.printStructure());
 
 		// Make sure the same generic segment name is reused
 		zpi = (GenericSegment) initialMessage.get("ZPI");

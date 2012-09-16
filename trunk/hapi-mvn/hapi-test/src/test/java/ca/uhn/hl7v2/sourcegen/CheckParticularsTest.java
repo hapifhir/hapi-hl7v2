@@ -189,7 +189,7 @@ public class CheckParticularsTest extends TestCase {
 						+ "OBR||36201|02000110170|020001^K-Hemogram^KC_PEK_LIS_PRE||||||||||||12345^TEST^DOCTOR||||||||O\r"
 						+ "SPM|25081299|36201^0310170||K^kri-EDTA|||||||||||||20110329142201.267+0200|||||||||1\r";
 				
-				ourLog.info("Testing ORL^O34 parse for version " + next.getVersion());
+				ourLog.debug("Testing ORL^O34 parse for version " + next.getVersion());
 				new PipeParser().parse(message);
 			}
 		}

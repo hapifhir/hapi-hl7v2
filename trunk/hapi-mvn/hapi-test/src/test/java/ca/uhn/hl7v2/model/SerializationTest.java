@@ -33,9 +33,9 @@ public class SerializationTest extends TestCase {
 
 		String actual = p.encode(deser);
 
-		System.out.println(message);
-		System.out.println();
-		System.out.println(actual);
+		//System.out.println(message);
+		//System.out.println();
+		//System.out.println(actual);
 		
 		assertEquals(message, actual);
 	}

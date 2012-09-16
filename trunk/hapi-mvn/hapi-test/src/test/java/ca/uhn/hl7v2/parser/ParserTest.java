@@ -141,7 +141,7 @@ public class ParserTest extends TestCase
                     + "NTE|||           Normal:              Negative\r"
                     + "NTE|||           Toxic Concentration: >80 mg/dL\r";
 
-            ourLog.info("Parsing generic for version " + version);
+            ourLog.debug("Parsing generic for version " + version);
             PipeParser p = new PipeParser();
             Message m;
             try {

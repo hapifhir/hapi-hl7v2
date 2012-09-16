@@ -129,7 +129,7 @@ public class ProfileSourceGenerator {
             String parent = myTargetDirectory + "message/";
             FileUtils.forceMkdir(new File(parent));
 			String fileName = parent + staticDef.getMsgStructID() + "." + myFileExt;
-            ourLog.info("Writing Message file: " + fileName);
+            ourLog.debug("Writing Message file: " + fileName);
             MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups, myTemplatePackage);
         }
 
@@ -137,7 +137,7 @@ public class ProfileSourceGenerator {
             String parent = myTargetDirectory + "group/";
             FileUtils.forceMkdir(new File(parent));
             String fileName = parent + next.getName() + "." + myFileExt;
-            ourLog.info("Writing Group file: " + fileName);
+            ourLog.debug("Writing Group file: " + fileName);
             GroupGenerator.writeGroup(next.getName(), fileName, next, version, myBasePackage, myTemplatePackage, next.getDescription());
         }
 
@@ -150,7 +150,7 @@ public class ProfileSourceGenerator {
             String parent = myTargetDirectory + "segment/";
             FileUtils.forceMkdir(new File(parent));
             String fileName = parent + next.getName() + "." + myFileExt;
-            ourLog.info("Writing Segment file: " + fileName);
+            ourLog.debug("Writing Segment file: " + fileName);
             String segmentName = next.getName();
             String description = next.getDescription();
             ArrayList<SegmentElement> elements = mySegmentNameToSegmentElements.get(segmentName);
@@ -174,7 +174,7 @@ public class ProfileSourceGenerator {
 
         if ("json".equals(myFileExt)) {
             String fileName = myTargetDirectory + "/structures." + myFileExt;
-            ourLog.info("Writing Structures file: " + fileName);
+            ourLog.debug("Writing Structures file: " + fileName);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
             String templatePackage = myTemplatePackage.replace(".", "/");
             Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/available_structures.vsm");

@@ -46,7 +46,7 @@ public class FileProfileStore implements ProfileStore {
                 + " bytes of file " + source.getAbsolutePath());
             profile = new String(buf);
         }
-        log.info("Got profile {}: \r\n {}", ID, profile);
+        log.debug("Got profile {}: \r\n {}", ID, profile);
         return profile;
     }
     

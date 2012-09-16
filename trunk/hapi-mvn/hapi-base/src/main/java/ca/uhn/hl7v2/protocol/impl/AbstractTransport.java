@@ -75,7 +75,7 @@ public abstract class AbstractTransport implements TransportLayer {
             message.getMetadata().putAll(myCommonMetadata);
         }
         
-        log.info("Received: {} ", (message == null ? null : message.getMessage()));
+        log.debug("Received: {} ", (message == null ? null : message.getMessage()));
              
         return message;
     }
@@ -100,7 +100,7 @@ public abstract class AbstractTransport implements TransportLayer {
         
         doSend(theMessage);
         
-        log.info("Sent: {}", (theMessage == null ? null : theMessage.getMessage()));
+        log.debug("Sent: {}", (theMessage == null ? null : theMessage.getMessage()));
     }
     
     /**

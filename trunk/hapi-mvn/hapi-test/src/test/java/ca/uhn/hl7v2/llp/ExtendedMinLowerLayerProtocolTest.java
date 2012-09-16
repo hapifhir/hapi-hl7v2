@@ -41,6 +41,8 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 	private PipeParser parser;
 	private XMLParser xmlParser;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(ExtendedMinLowerLayerProtocol.class);
+	
 	@Before
 	public void setup() {
 		parser = new PipeParser();
@@ -84,10 +86,10 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 
 		a01.setParser(parser);
 		String encodedString = a01.encode();
-		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
+		LOG.debug("Message is:\n" + encodedString.replace("\r", "\n"));
 
 		byte[] expectedBytes = encodedString.getBytes(javaCs);
-		System.out.println("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + expectedBytes.length + " bytes");
+		LOG.debug("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + expectedBytes.length + " bytes");
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ExtendedMinLLPWriter writer = new ExtendedMinLLPWriter(bos);
@@ -118,10 +120,10 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		
 		a01.setParser(parser);
 		String encodedString = a01.encode();
-		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
+		LOG.debug("Message is:\n" + encodedString.replace("\r", "\n"));
 
 		byte[] encodedBytes = encodedString.getBytes(javaCs);
-		System.out.println("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
+		LOG.debug("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
 		
 		byte[] llpWrappedBytes = new byte[encodedBytes.length + 3];
 		llpWrappedBytes[0] = MinLLPReaderTest.START_MESSAGE;
@@ -164,7 +166,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 //		System.out.println("Message is:\n" + encodedString.replace("\r", "\n"));
 
 		encodedBytes = encodedString.getBytes(javaCs);
-		System.out.println("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
+		LOG.debug("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
 		
 		llpWrappedBytes = new byte[encodedBytes.length + 3];
 		llpWrappedBytes[0] = MinLLPReaderTest.START_MESSAGE;
@@ -199,7 +201,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		msg.initQuickstart("ADT", "A01", "T");
 		w.writeMessage(msg.encode());
 		String resp = r.getMessage();
-		ourLog.info(resp.replace("\r", "\n"));
+		ourLog.debug(resp.replace("\r", "\n"));
 		
 		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
 		
@@ -207,7 +209,7 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		msg.initQuickstart("ADT", "A01", "T");
 		w.writeMessage(msg.encode());
 		resp = r.getMessage();
-		ourLog.info(resp.replace("\r", "\n"));
+		ourLog.debug(resp.replace("\r", "\n"));
 		
 		assertEquals(2, myMsgCount);
 

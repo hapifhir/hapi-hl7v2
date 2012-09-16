@@ -168,6 +168,7 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 			Terser.set(err, 3, 0, 2, 1, exception.getErrorCode().getMessage());
 			Terser.set(err, 3, 0, 3, 1, ErrorCode.errorCodeTable());
 			Terser.set(err, 3, 0, 9, 1, exception.getMessage());
+			Terser.set(err, 4, 0, 1, 1, "E");
 			repetition++;
 		}
 	}
