@@ -54,7 +54,7 @@ public interface ReceivingApplication {
      * 
      * @param theMessage an inbound HL7 message 
      * @param theMetadata message metadata (which may include information about where the message comes 
-     *      from, etc).  This is the same metadata as in Transportable.  
+     *      from, etc).  This is the same metadata as in {@link ca.uhn.hl7v2.protocol.Transportable#getMetadata()}.  
      * 
      * @return an appropriate application response (for example an application ACK or query response). 
      *      Appropriate responses to different types of incoming messages are defined by HL7. 

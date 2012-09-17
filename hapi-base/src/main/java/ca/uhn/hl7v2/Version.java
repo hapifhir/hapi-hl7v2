@@ -25,9 +25,14 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import ca.uhn.hl7v2.parser.Parser;
 
 public enum Version {
 
@@ -35,11 +40,16 @@ public enum Version {
 			"2.6");
 
 	private String version;
+	private static ArrayList<Version> ourVersionsOnClasspath;
+	private static final Map<Version, Boolean> ourIsOnClasspath = new HashMap<Version, Boolean>();
 
 	Version(String version) {
 		this.version = version;
 	}
 
+	/**
+	 * Returns a version string (e.g. "2.1", or "2.5.1")
+	 */
 	public String getVersion() {
 		return version;
 	}
@@ -116,26 +126,46 @@ public enum Version {
 				.format("%s.model.%s.", getClass().getPackage().getName(), getPackageVersion());
 	}
 
-	public boolean available() {
-		String className = modelPackageName() + "message.ACK";
-		try {
-			Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
+	/**
+	 * Returns <code>true</code> if the structure
+	 * classes for this particular version are available
+	 * on the classpath.
+	 */
+	public synchronized boolean available() {
+		Boolean retVal = ourIsOnClasspath.get(this);
+		if (retVal == null) {
+			String resource = "ca/uhn/hl7v2/parser/eventmap/" + getVersion() + ".properties";
+			InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
+			retVal = in != null;
+			ourIsOnClasspath.put(this, retVal);
 		}
-	}
-
-	public static Version[] availableVersions() {
-		List<Version> availableVersions = new ArrayList<Version>();
-		for (Version v : values()) {
-			if (v.available())
-				availableVersions.add(v);
-		}
-		return availableVersions.toArray(new Version[availableVersions.size()]);
+		return retVal;
 	}
 	
-	public static String lowestAvailableVersion() {
-		return availableVersions()[0].getVersion();
+	/**
+	 * Returns a list of all versions for which the structure JARs have been
+	 * found on the classpath.
+	 */
+	public static synchronized List<Version> availableVersions() {
+		if (ourVersionsOnClasspath == null) {
+			ourVersionsOnClasspath = new ArrayList<Version>();
+			for (Version next : values()) {
+				if (next.available()) {
+					ourVersionsOnClasspath.add(next);
+				}
+			}
+		}
+		return ourVersionsOnClasspath;
 	}
+	
+	/**
+	 * Returns the lowest version for which the structure classes are found
+	 * on the classes. For instance, if <code>hapi-structures-v24-[version].jar</code>
+	 * is the only structure JAR on the current JVM classpath, {@link Version#V24} will
+	 * be returned.
+	 */
+	public static Version lowestAvailableVersion() {
+		return availableVersions().get(0);
+	}
+	
 }

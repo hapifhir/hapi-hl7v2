@@ -389,23 +389,30 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * constructor in order to define fields in their segment.
 	 * 
 	 * @param c
-	 *            the class of the data for this field - this should inherit
-	 *            from Type
+	 *            the class of the datatype for the field - this should inherit
+	 *            from {@link Type}
 	 * @param required
-	 *            whether a value for this field is required in order for the
+	 *            whether a value for the field is required in order for the
 	 *            segment to be valid
 	 * @param maxReps
-	 *            the maximum number of repetitions - 0 implies that there is no
-	 *            limit
+	 *            The maximum number of repetitions for the field. Note that 0 implies that there is no
+	 *            limit, and 1 implies that the field may not repeat.
 	 * @param length
 	 *            the maximum length of each repetition of the field (in
 	 *            characters)
 	 * @param constructorArgs
-	 *            an array of objects that will be used as constructor arguments
+	 *            This parameter provides an array of objects that will be used 
+	 *            as constructor arguments
 	 *            if new instances of this class are created (use null for
-	 *            zero-arg constructor)
+	 *            zero-arg constructor). To determine the appropriate value for
+	 *            this parameter, consult the javadoc for the specific datatype class
+	 *            passed to the first argument of this method, and provide an array
+	 *            which satisfies the requirements of its constructor. For example, most
+	 *            datatypes take a single {@link Message} argument in their constructor. 
+	 *            In that case, the appropriate value for this argument is as follows:
+	 *            <code>new Object[]{ getMessage() }</code>
 	 * @param name
-	 *            the name of the field
+	 *            A textual description of the name of the field
 	 * @throws HL7Exception
 	 *             if the given class does not inherit from Type or if it can
 	 *             not be instantiated.

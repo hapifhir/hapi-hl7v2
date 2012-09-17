@@ -47,6 +47,12 @@ import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
+import ca.uhn.hl7v2.protocol.ApplicationWrapper;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
+import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
+import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 
 /**
  * <p>
@@ -65,12 +71,12 @@ public abstract class HL7Service extends Service {
 
 	private static final Logger log = LoggerFactory.getLogger(HL7Service.class);
 
-	private List<Connection> connections;
-	protected Parser parser;
-	protected LowerLayerProtocol llp;
-	private MessageTypeRouter router;
-	private List<ConnectionListener> listeners;
-	private ConnectionCleaner cleaner;
+	private final List<Connection> connections;
+	private final Parser parser;
+	private final LowerLayerProtocol llp;
+	private final List<ConnectionListener> listeners;
+	private final ConnectionCleaner cleaner;
+	private final ApplicationRouterImpl applicationRouter;
 
 	/** Creates a new instance of Server using a default thread pool */
 	public HL7Service(Parser parser, LowerLayerProtocol llp) {
@@ -85,7 +91,11 @@ public abstract class HL7Service extends Service {
 		listeners = new ArrayList<ConnectionListener>();
 		this.parser = parser;
 		this.llp = llp;
-		this.router = new MessageTypeRouter();
+		this.applicationRouter = new ApplicationRouterImpl(parser);
+		this.cleaner = new ConnectionCleaner(this);
+		
+		// 960101
+		assert this.cleaner.isRunning() == false;
 	}
 
 	/**
@@ -100,7 +110,6 @@ public abstract class HL7Service extends Service {
 	protected void afterStartup() {
 		// Fix for bug 960101: Don't start the cleaner thread until the
 		// server is started.
-		cleaner = new ConnectionCleaner(this);
 		cleaner.start();
 	}
 
@@ -129,12 +138,20 @@ public abstract class HL7Service extends Service {
 		return isRunning();
 	}
 
+	LowerLayerProtocol getLlp() {
+		return llp;
+	}
+	
+	Parser getParser() {
+		return parser;
+	}
+	
 	/**
 	 * Called by subclasses when a new Connection is made. Registers the
 	 * MessageTypeRouter with the given Connection and stores it.
 	 */
 	public synchronized void newConnection(Connection c) {
-		c.getResponder().registerApplication(router);
+		c.getResponder().setApplicationRouter(applicationRouter);
 		c.activate();
 		connections.add(c); // keep track of connections
 		notifyListeners(c);
@@ -205,9 +222,39 @@ public abstract class HL7Service extends Service {
 	 */
 	public synchronized void registerApplication(String messageType,
 			String triggerEvent, Application handler) {
-		router.registerApplication(messageType, triggerEvent, handler);
+		ReceivingApplication handlerWrapper = new ApplicationWrapper(handler);
+		applicationRouter.bindApplication(new AppRoutingDataImpl(messageType, triggerEvent, "*", "*"), handlerWrapper);
 	}
 
+	/**
+	 * Registers the given application to handle messages corresponding to ALL
+	 * message types and trigger events.
+	 */
+	public synchronized void registerApplication(AppRoutingData appRouting, ReceivingApplication application) {
+		if (appRouting == null) {
+			throw new NullPointerException("appRouting can not be null");
+		}
+		applicationRouter.bindApplication(appRouting, application);
+	}
+
+	/**
+	 * Registers the given application to handle messages corresponding to ALL
+	 * message types and trigger events.
+	 */
+	public synchronized void registerApplication(ReceivingApplication application) {
+		registerApplication(new AppRoutingDataImpl("*", "*", "*", "*"), application);
+	}
+	
+    /**
+     * Sets an exception handler which will be invoked in the event of a
+     * failure during parsing, processing, or encoding of an
+     * incoming message or its response.
+     */
+	public synchronized void setExceptionHandler(ReceivingApplicationExceptionHandler exHandler) {
+		applicationRouter.setExceptionHandler(exHandler);
+	}
+	
+	
 	/**
 	 * <p>
 	 * A convenience method for registering applications (using

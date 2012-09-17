@@ -3,6 +3,7 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,28 +14,25 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.DefaultApplication;
-import ca.uhn.hl7v2.app.Responder;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.Transportable;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
  * <p>A default implementation of <code>ApplicationRouter</code> </p>  
  * 
- * <p>Note that ParseChecker is used for each inbound message, iff the system
- * property ca.uhn.hl7v2.protocol.impl.check_parse = "TRUE".  </p>
- * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2009-09-01 00:22:23 $ by $Author: jamesagnew $
  */
 public class ApplicationRouterImpl implements ApplicationRouter {
 
-    private static final Logger log = LoggerFactory.getLogger(ApplicationRouterImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(ApplicationRouterImpl.class);
     
     /**
      * Key under which raw message text is stored in metadata Map sent to 
@@ -44,6 +42,8 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 
     private List<Binding> myBindings;
     private Parser myParser;
+
+	private ReceivingApplicationExceptionHandler myExceptionHandler;
     
 
     /**
@@ -75,7 +75,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         Transportable response = new TransportableImpl(result[0]);
         
         if (result[1] != null) {
-            response.getMetadata().put("MSH-18", result[1]);
+            response.getMetadata().put(METADATA_KEY_MESSAGE_CHARSET, result[1]);
         }
         
         return response;
@@ -94,6 +94,9 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         Logger rawOutbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.outbound");
         Logger rawInbound = LoggerFactory.getLogger("ca.uhn.hl7v2.raw.inbound");
         
+        // TODO: add a way to register an application handler and
+        // invoke it any time something goes wrong
+        
         log.debug( "ApplicationRouterImpl got message: {}", incomingMessageString );
         rawInbound.debug(incomingMessageString);
         
@@ -104,7 +107,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             incomingMessageObject = myParser.parse(incomingMessageString);
         }
         catch (HL7Exception e) {
-            outgoingMessageString = Responder.logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
+        	outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
+        	if (myExceptionHandler != null) {
+        		outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
+        	}
         }
         
         if (outgoingMessageString == null) {
@@ -127,10 +133,13 @@ public class ApplicationRouterImpl implements ApplicationRouter {
                 outgoingMessageString = myParser.encode(response, myParser.getEncoding(incomingMessageString));
                 
                 Terser t = new Terser(response);
-                outgoingMessageCharset = t.get("MSH-18"); 
+                outgoingMessageCharset = t.get(METADATA_KEY_MESSAGE_CHARSET); 
             }
             catch (Exception e) {
-                outgoingMessageString = Responder.logAndMakeErrorMessage(e, (Segment) incomingMessageObject.get("MSH"), myParser, myParser.getEncoding(incomingMessageString));
+                outgoingMessageString = logAndMakeErrorMessage(e, (Segment) incomingMessageObject.get("MSH"), myParser, myParser.getEncoding(incomingMessageString));
+            	if (myExceptionHandler != null) {
+            		outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
+            	}
             }
         }
         
@@ -146,7 +155,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      */
     public boolean hasActiveBinding(AppRoutingData theRoutingData) {
         boolean result = false;
-        ReceivingApplication app = findDestination(theRoutingData);
+        ReceivingApplication app = findDestination(null, theRoutingData);
         if (app != null) {
             result = true;
         }
@@ -157,12 +166,14 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * @param theRoutingData
      * @return the application from the binding with a WILDCARD match, if one exists
      */
-    private ReceivingApplication findDestination(AppRoutingData theRoutingData) {
+    private ReceivingApplication findDestination(Message theMessage, AppRoutingData theRoutingData) {
         ReceivingApplication result = null;
         for (int i = 0; i < myBindings.size() && result == null; i++) {
             Binding binding = (Binding) myBindings.get(i);
             if (matches(theRoutingData, binding.routingData) && binding.active) {
-                result = binding.application;
+            	if (theMessage == null || binding.application.canProcess(theMessage)) {
+            		result = binding.application;
+            	}
             }
         }
         return result;        
@@ -221,6 +232,13 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public void setExceptionHandler(ReceivingApplicationExceptionHandler theExceptionHandler) {
+    	this.myExceptionHandler = theExceptionHandler;
+    }
+
+    /**
      * @param theMessageData routing data related to a particular message
      * @param theReferenceData routing data related to a binding, which may include 
      *      wildcards 
@@ -266,7 +284,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         AppRoutingData msgData = 
             new AppRoutingDataImpl(t.get("/MSH-9-1"), t.get("/MSH-9-2"), t.get("/MSH-11-1"), t.get("/MSH-12"));
             
-        ReceivingApplication app = findDestination(msgData);
+        ReceivingApplication app = findDestination(theMessage, msgData);
         
         //have to send back an application reject if no apps available to process
         if (app == null)
@@ -288,5 +306,76 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             application = theApplication;
         }
     }
+    
+	/**
+	 * Logs the given exception and creates an error message to send to the
+	 * remote system.
+	 * 
+	 * @param encoding
+	 *            The encoding for the error message. If <code>null</code>, uses
+	 *            default encoding
+	 */
+	public static String logAndMakeErrorMessage(Exception e, Segment inHeader,
+			Parser p, String encoding) throws HL7Exception {
+
+		log.error("Attempting to send error message to remote system.", e);
+
+		// create error message ...
+		String errorMessage = null;
+		try {
+			Message out = DefaultApplication.makeACK(inHeader);
+			Terser t = new Terser(out);
+
+			// copy required data from incoming message ...
+			try {
+				t.set(METADATA_KEY_MESSAGE_CONTROL_ID, out.getParser().getParserConfiguration().getIdGenerator().getID());
+			} catch (IOException ioe) {
+				throw new HL7Exception("Problem creating error message ID: "
+						+ ioe.getMessage());
+			}
+
+			// populate MSA ...
+			t.set("/MSA-1", "AE"); // should this come from HL7Exception
+									// constructor?
+			t.set("/MSA-2", Terser.get(inHeader, 10, 0, 1, 1));
+			String excepMessage = e.getMessage();
+			if (excepMessage != null)
+				t.set("/MSA-3",
+						excepMessage.substring(0,
+								Math.min(80, excepMessage.length())));
+
+			/*
+			 * Some earlier ACKs don't have ERRs, but I think we'll change this
+			 * within HAPI so that there is a single ACK for each version (with
+			 * an ERR).
+			 */
+			// see if it's an HL7Exception (so we can get specific information)
+			// ...
+			if (e.getClass().equals(HL7Exception.class)) {
+//				Segment err = (Segment) out.get("ERR");
+				// ((HL7Exception) e).populate(err); // FIXME: this is broken,
+				// it relies on the database in a place where it's not available
+			} else {
+				t.set("/ERR-1-4-1", "207");
+				t.set("/ERR-1-4-2", "Application Internal Error");
+				t.set("/ERR-1-4-3", "HL70357");
+			}
+
+			if (encoding != null) {
+				errorMessage = p.encode(out, encoding);
+			} else {
+				errorMessage = p.encode(out);
+			}
+
+		} catch (IOException ioe) {
+			throw new HL7Exception(
+					"IOException creating error response message: "
+							+ ioe.getMessage(),
+					HL7Exception.APPLICATION_INTERNAL_ERROR);
+		}
+		return errorMessage;
+	}
+
+
     
 }

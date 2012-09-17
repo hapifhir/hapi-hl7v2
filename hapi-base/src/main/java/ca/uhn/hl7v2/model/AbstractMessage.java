@@ -104,7 +104,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         }
         
         if (version == null) 
-            version = Version.lowestAvailableVersion();
+            version = Version.lowestAvailableVersion().getVersion();
         
         myVersion = version;
         return version;

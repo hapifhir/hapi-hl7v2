@@ -33,7 +33,7 @@
 			<version>${hapi.version.structures}</version>
 			<classifier>sources</classifier>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v22</artifactId>
 			<version>${hapi.version.structures}</version>
@@ -77,7 +77,7 @@
 			<version>${hapi.version.structures}</version>
 			<classifier>sources</classifier>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v25</artifactId>
 			<version>${hapi.version.structures}</version>
@@ -104,7 +104,7 @@
 			<artifactId>hapi-structures-v26</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
-		 
+
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v26</artifactId>
@@ -126,7 +126,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.9</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
@@ -164,64 +164,17 @@
 			<version>${commons-cli.version}</version>
 			<optional>true</optional>
 		</dependency>
-			
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-					    <id>copy_sources</id>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-							    <echo>Copying sources</echo>
-								<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
-									<fileset dir="${basedir}/../hapi-base/src/main/java">
-										<include name="**/*.*"/>
-									</fileset>
-								</copy>
-							    <echo>Copying resources</echo>
-								<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
-									<fileset dir="${basedir}/../hapi-base/src/main/resources">
-										<include name="**/*.*"/>
-									</fileset>
-								</copy>
-							    <echo>Done copying</echo>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>site</id>
-						<phase>post-site</phase>
-						<configuration>
-							<tasks>
-								<echo message="Copying site resources" />
-								<copy todir="${basedir}/../target/site/cobertura">
-									<fileset dir="${basedir}/target/site/cobertura">
-										<include name="**/*" />
-									</fileset>
-								</copy>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>		    
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${maven.site.plugin.version}</version>
@@ -341,7 +294,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.10</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine> 
+					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
 					<forkMode>once</forkMode>
 					<!-- <parallel>classes</parallel>  -->
 					<!--<testFailureIgnore>true</testFailureIgnore>-->
@@ -353,37 +306,6 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<!-- 
-					<execution>
-						<id>sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/source.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/javadoc.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					 -->
-				</executions>
 			</plugin>
 		</plugins>
 		<resources>
@@ -405,8 +327,66 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.5.1</version>
-			</plugin>   	
+			</plugin>
 		</plugins>
 	</reporting>
+
+	<profiles>
+		<profile>
+			<id>SITE</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>copy_sources</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<echo>Copying sources</echo>
+										<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
+											<fileset dir="${basedir}/../hapi-base/src/main/java">
+												<include name="**/*.*" />
+											</fileset>
+										</copy>
+										<echo>Copying resources</echo>
+										<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
+											<fileset dir="${basedir}/../hapi-base/src/main/resources">
+												<include name="**/*.*" />
+											</fileset>
+										</copy>
+										<echo>Done copying</echo>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>site</id>
+								<phase>post-site</phase>
+								<configuration>
+									<tasks>
+										<echo message="Copying site resources" />
+										<copy todir="${basedir}/../target/site/cobertura">
+											<fileset dir="${basedir}/target/site/cobertura">
+												<include name="**/*" />
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 
 </project>

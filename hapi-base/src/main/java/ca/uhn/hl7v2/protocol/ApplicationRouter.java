@@ -4,16 +4,33 @@
 package ca.uhn.hl7v2.protocol;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.Parser;  
+import ca.uhn.hl7v2.parser.Parser;
 
 /**
  * Routes messages to the appropriate application.  
  * 
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
  */
 public interface ApplicationRouter {
+	/**
+	 * {@link Transportable#getMetadata() Metadata} key: 
+	 * Charset (MSH-18)
+	 */
+	String METADATA_KEY_MESSAGE_CHARSET = "MSH-18";
 
+	/**
+	 * {@link Transportable#getMetadata() Metadata} key: 
+	 * Message control ID (MSH-10)
+	 */
+    String METADATA_KEY_MESSAGE_CONTROL_ID = "/MSH-10";
+	
+    /**
+	 * {@link Transportable#getMetadata() Metadata} key: 
+	 * Provides the IP of the sending system for a given message
+	 */
+	String METADATA_KEY_SENDING_IP = "SENDING_IP";
+
+    
     /** 
      * Attempts to route the given message to the associated <code>Application</code>  
      * and obtain a response.  
@@ -66,7 +83,14 @@ public interface ApplicationRouter {
      * of this parser.     
      */
     public Parser getParser();
-        
+    
+    /**
+     * Sets an exception handler which will be invoked in the event of a
+     * failure during parsing, processing, or encoding of an
+     * incoming message or its response.
+     */
+    void setExceptionHandler(ReceivingApplicationExceptionHandler exceptionHandler);
+    
     /**
      * <p>Encapsulates the message fields used for routing of messages from the 
      * HL7 protocol to the appropriate <code>Application</code>. </p>   
@@ -76,7 +100,6 @@ public interface ApplicationRouter {
      * be a regular expression that is matched against the corresponding field.  </p>
      * 
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
-     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
      */
     public static interface AppRoutingData {
 

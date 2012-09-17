@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="hapi-base/src/main/java"/>
-	<classpathentry excluding="ca/uhn/hl7v2/DefaultHapiContext.java|ca/uhn/hl7v2/HL7Exception.java|ca/uhn/hl7v2/HapiContext.java|ca/uhn/hl7v2/LookupException.java|ca/uhn/hl7v2/UndefinedTableException.java|ca/uhn/hl7v2/UnknownValueException.java|ca/uhn/hl7v2/Version.java|ca/uhn/hl7v2/VersionLogger.java|ca/uhn/hl7v2/app/|ca/uhn/hl7v2/concurrent/|ca/uhn/hl7v2/conf/|ca/uhn/hl7v2/hapi-version.properties|ca/uhn/hl7v2/llp/|ca/uhn/hl7v2/model/|ca/uhn/hl7v2/parser/|ca/uhn/hl7v2/preparser/|ca/uhn/hl7v2/protocol/|ca/uhn/hl7v2/util/|ca/uhn/hl7v2/validation/|ca/uhn/hl7v2/view/|ca/uhn/log/" kind="src" path="hapi-test/target/generated-sources/confgen"/>
 	<classpathentry kind="src" path="hapi-base/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
 	<classpathentry kind="src" path="hapi-sourcegen/src/main/resources"/>
 	<classpathentry kind="src" path="hapi-examples/src/main/java"/>
 	<classpathentry kind="src" path="hapi-examples/src/main/resources"/>
-	<classpathentry kind="src" path="hapi-test/src/test/java"/>
-	<classpathentry kind="src" path="hapi-test/src/test/resources"/>
-	<classpathentry kind="src" path="hapi-testmindeps/src/test/java"/>
 	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-utils/1.5.1/plexus-utils-1.5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.2.0/maven-settings-2.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.2.0/maven-core-2.2.0.jar"/>
