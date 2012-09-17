@@ -859,7 +859,7 @@ public class PipeParser extends Parser {
 			String[] procIDComps = split(fields[10], String.valueOf(compSep));
 
 			// fill MSH segment
-			String version = Version.lowestAvailableVersion(); // default
+			String version = Version.lowestAvailableVersion().getVersion(); // default
 			try {
 				version = this.getVersion(message);
 			} catch (Exception e) { /* use the default */

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -42,6 +43,7 @@ import ca.uhn.hl7v2.util.Terser;
  * messages by calling the method <code>registerApplication(...)</code>.
  * 
  * @author Bryan Tripp
+ * @deprecated Replaced with {@link ApplicationRouter}
  */
 public class MessageTypeRouter implements Application,
 		ApplicationExceptionHandler {

@@ -67,4 +67,8 @@ public class MockApplicationRouter implements ApplicationRouter {
         return null;
     }
 
+	public void setExceptionHandler(ReceivingApplicationExceptionHandler theExceptionHandler) {
+		throw new UnsupportedOperationException();
+	}
+
 }

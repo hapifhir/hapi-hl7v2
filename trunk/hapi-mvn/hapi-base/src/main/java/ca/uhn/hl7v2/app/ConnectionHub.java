@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
  * <p>
@@ -73,6 +74,11 @@ public class ConnectionHub extends HapiContextSupport {
 	private final ConcurrentMap<String, String> connectionMutexes = new ConcurrentHashMap<String, String>();
 	private final CountingMap<ConnectionData, Connection> connections;
 
+	/** Creates a new instance of ConnectionHub */
+	private ConnectionHub(ExecutorService executorService) {
+		this(new DefaultHapiContext(executorService));
+	}
+
 	private ConnectionHub(HapiContext context) {
 		super(context);
 		connections = new CountingMap<ConnectionData, Connection>() {
@@ -89,11 +95,6 @@ public class ConnectionHub extends HapiContextSupport {
 			}
 
 		};
-	}
-
-	/** Creates a new instance of ConnectionHub */
-	private ConnectionHub(ExecutorService executorService) {
-		this(new DefaultHapiContext(executorService));
 	}
 
 	public Set<? extends ConnectionData> allConnections() {
@@ -120,6 +121,20 @@ public class ConnectionHub extends HapiContextSupport {
 			throw new HL7Exception("Cannot open connection to " + data.getHost() + ":"
 					+ data.getPort() + "/" + data.getPort2(), e);
 		}
+	}
+
+	/**
+	 * Returns a Connection to the given address, opening this Connection if necessary. The given
+	 * Parser will only be used if a new Connection is opened, so there is no guarantee that the
+	 * Connection returned will be using the Parser you provide. If you need explicit access to the
+	 * Parser the Connection is using, call <code>Connection.getParser()</code>.
+	 * 
+	 * @since 2.1
+	 */
+	public Connection attach(String host, int port, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, port, 0, getHapiContext().getGenericParser(),
+				getHapiContext().getLowerLayerProtocol(), tls, getHapiContext()
+						.getSocketFactory()));
 	}
 
 	/**
@@ -163,19 +178,19 @@ public class ConnectionHub extends HapiContextSupport {
 	}
 
 	/**
-	 * Returns a Connection to the given address, opening this Connection if necessary. The given
-	 * Parser will only be used if a new Connection is opened, so there is no guarantee that the
-	 * Connection returned will be using the Parser you provide. If you need explicit access to the
-	 * Parser the Connection is using, call <code>Connection.getParser()</code>.
-	 * 
 	 * @since 2.1
 	 */
-	public Connection attach(String host, int port, boolean tls) throws HL7Exception {
-		return attach(new ConnectionData(host, port, 0, getHapiContext().getGenericParser(),
-				getHapiContext().getLowerLayerProtocol(), tls, getHapiContext()
-						.getSocketFactory()));
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, socketFactory));
 	}
 
+	/**
+	 * @since 2.1
+	 */
+	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
+		return attach(new ConnectionData(host, port, 0, parser, llp, tls, socketFactory));
+	}
+	
 	/**
 	 * @since 1.2
 	 */
@@ -200,6 +215,7 @@ public class ConnectionHub extends HapiContextSupport {
 		return attach(host, port, 0, parser, llp, false);
 	}
 
+
 	/**
 	 * @since 2.0
 	 */
@@ -207,7 +223,6 @@ public class ConnectionHub extends HapiContextSupport {
 			boolean tls) throws HL7Exception {
 		return attach(host, port, 0, parser, llp, tls);
 	}
-
 
 	/**
 	 * Informs the ConnectionHub that you are done with the given Connection - if no other code is

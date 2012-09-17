@@ -83,7 +83,7 @@ public class Connection {
 	public Connection(Parser parser, LowerLayerProtocol llp,
 			Socket bidirectional, ExecutorService executorService)
 			throws LLPException, IOException {
-		init(parser, executorService);
+		init(parser, executorService, bidirectional);
 		ackWriter = llp.getWriter(bidirectional.getOutputStream());
 		sendWriter = ackWriter;
 		this.executorService = executorService;
@@ -110,7 +110,7 @@ public class Connection {
 	public Connection(Parser parser, LowerLayerProtocol llp, Socket inbound,
 			Socket outbound, ExecutorService executorService)
 			throws LLPException, IOException {
-		init(parser, executorService);
+		init(parser, executorService, inbound);
 		ackWriter = llp.getWriter(inbound.getOutputStream());
 		sendWriter = llp.getWriter(outbound.getOutputStream());
 		sockets.add(outbound); // always add outbound first ... see getRemoteAddress()
@@ -124,14 +124,14 @@ public class Connection {
 	}
 
 	/** Common initialization tasks */
-	private void init(Parser parser, ExecutorService executorService)
+	private void init(Parser parser, ExecutorService executorService, Socket inboundSocket)
 			throws LLPException {
 		this.parser = parser;
 		this.executorService = executorService;
 		sockets = new ArrayList<Socket>();
 		responses = new BlockingHashMap<String, String>(executorService);
 		receivers = new ArrayList<Receiver>(2);
-		responder = new Responder(parser);
+		responder = new Responder(parser, inboundSocket);
 	}
 
 	/**

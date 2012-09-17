@@ -76,13 +76,12 @@ public class SimpleServer extends HL7Service {
 	 */
 	public static final int SO_TIMEOUT = AcceptorThread.TIMEOUT;
 
-	private static final Logger log = LoggerFactory
-			.getLogger(SimpleServer.class);
+	private static final Logger log = LoggerFactory.getLogger(SimpleServer.class);
+	
 	private int port;
 	private boolean tls;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
-
 	private SocketFactory socketFactory;
 
 	/**
@@ -186,7 +185,7 @@ public class SimpleServer extends HL7Service {
 			AcceptedSocket newSocket = queue.poll(AcceptorThread.TIMEOUT, TimeUnit.MILLISECONDS);
 			if (newSocket != null) {
 				log.info("Accepted connection from {} on port {}", newSocket.socket.getInetAddress().getHostAddress(), port);
-				Connection c = new Connection(parser, llp, newSocket.socket,
+				Connection c = new Connection(getParser(), getLlp(), newSocket.socket,
 						getExecutorService());
 				newConnection(c);
 			}

@@ -32,7 +32,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
@@ -149,10 +151,19 @@ public class DefaultApplication implements Application {
 			Parser p = inbound.getParser();
 			ModelClassFactory mcf = p != null ? p.getFactory() : new DefaultModelClassFactory();
 			String version = inbound.getVersion();
-			if (version == null)
-				version = "2.4"; // TODO: This should be set dynamically based on available HL7 version
-			clazz = mcf.getMessageClass("ACK", version, false);
-			Message out = clazz.newInstance();
+			Message out = null;
+			Version versionEnum = Version.versionOf(version);
+			if (version != null && versionEnum != null && versionEnum.available()) {
+				clazz = mcf.getMessageClass("ACK", version, false);
+				if (clazz != null) {
+					out = clazz.newInstance();
+				}
+			}
+			if (out == null) {
+				out = new GenericMessage.UnknownVersion(mcf);
+				out.addNonstandardSegment("MSA");
+				out.addNonstandardSegment("ERR");
+			}
 			Terser terser = new Terser(out);
 
 			// populate outbound MSH using data from inbound message ...

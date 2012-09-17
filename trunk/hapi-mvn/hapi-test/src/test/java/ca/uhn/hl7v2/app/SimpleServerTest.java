@@ -55,7 +55,7 @@ public class SimpleServerTest implements ConnectionListener {
 		int port = RandomServerPortProvider.findFreePort();
 		SimpleTestServer ss = new SimpleTestServer(port);
 		ss.registerConnectionListener(this);
-		ss.start();
+		ss.startAndWait();
 		assertTrue("Server did not start up", ss.waitUntilRunning());
 		LOG.info("Received notification by server");
 		

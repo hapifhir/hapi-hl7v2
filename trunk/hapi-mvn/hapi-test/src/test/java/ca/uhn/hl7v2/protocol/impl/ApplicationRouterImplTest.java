@@ -3,16 +3,18 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
+import java.io.IOException;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.Transportable;
-import junit.framework.TestCase;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * Unit tests for <code>ApplicationRouterImpl</code>.
@@ -22,7 +24,7 @@ import junit.framework.TestCase;
  */
 public class ApplicationRouterImplTest extends TestCase {
 
-    private ApplicationRouter myRouter;
+    private ApplicationRouterImpl myRouter;
     
     /**
      * Constructor for ApplicationRouterImplTest.
@@ -163,6 +165,28 @@ public class ApplicationRouterImplTest extends TestCase {
         assertEquals(false, ApplicationRouterImpl.matches(w4, one));        
     }
 
+    public void testCanProcess() throws Exception {
+    	
+        AppRoutingDataImpl rd = new AppRoutingDataImpl("*", "*", "*", "*");
+        
+        ADT_A01 adt = new ADT_A01();
+        adt.initQuickstart("ADT", "A01", "P");
+        adt.getMSH().getMessageControlID().setValue(MockOccasionalApplication.REJECT_CONTROL_ID);
+
+        MockOccasionalApplication occApp = new MockOccasionalApplication();
+        myRouter.bindApplication(rd, occApp);
+        
+        MockAlwaysApplication allApp = new MockAlwaysApplication();
+        myRouter.bindApplication(rd, allApp);
+
+        myRouter.processMessage(new TransportableImpl(adt.encode()));
+        
+        assertEquals(0, occApp.myCount);
+        assertEquals(1, allApp.myCount);
+        
+    	
+    }
+    
     /**
      * Mock Application for testing purposes.  Use getId() as a handy 
      * way to check which application the router is routing to.  
@@ -185,6 +209,52 @@ public class ApplicationRouterImplTest extends TestCase {
         public void setNextResponse(Message theResponse) {
             myNextResponse = theResponse;
         }
+    }
+
+    private class MockOccasionalApplication implements ReceivingApplication {
+
+    	public static final String REJECT_CONTROL_ID = "012234";
+    	int myCount = 0;
+    	
+        public Message processMessage(Message arg0, Map<String, Object> arg1) throws ReceivingApplicationException, HL7Exception {
+        	myCount++;
+            try {
+				return arg0.generateACK();
+			} catch (IOException e) {
+				throw new HL7Exception(e);
+			}
+        }
+
+        public boolean canProcess(Message arg0) {
+        	try {
+				String controlId = new Terser(arg0).get("/MSH-10");
+				if (controlId.equals(REJECT_CONTROL_ID)) {
+					return false;
+				}
+			} catch (HL7Exception e) {
+				fail(e.getMessage());
+			}
+            return true;
+        }
+        
+    }
+
+    private class MockAlwaysApplication implements ReceivingApplication {
+    	int myCount = 0;
+
+        public Message processMessage(Message arg0, Map<String, Object> arg1) throws ReceivingApplicationException, HL7Exception {
+        	myCount++;
+            try {
+				return arg0.generateACK();
+			} catch (IOException e) {
+				throw new HL7Exception(e);
+			}
+        }
+
+        public boolean canProcess(Message arg0) {
+            return true;
+        }
+        
     }
 
 }

@@ -44,6 +44,7 @@ import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -434,9 +435,16 @@ public abstract class Parser extends HapiContextSupport {
 	public abstract void parse(Message message, String string) throws HL7Exception;
 
 	/**
-	 * Creates a version-specific MSH object and returns it as a version-independent MSH interface.
-	 * throws HL7Exception if there is a problem, e.g. invalid version, code not available for given
-	 * version.
+	 * <p>
+	 * Creates a version-specific MSH object and returns it as a
+	 * version-independent MSH interface. 
+	 * </p>
+	 * <p>
+	 * Since HAPI 2.1, if a version specific MSH
+	 * segment can't be found (for example because the specific
+	 * structure JAR is not found on the classpath), an instance of
+	 * {@link GenericSegment} is returned.
+	 * </p>
 	 */
 	public static Segment makeControlMSH(String version, ModelClassFactory factory)
 			throws HL7Exception {
@@ -447,11 +455,22 @@ public abstract class Parser extends HapiContextSupport {
 					.getConstructor(new Class[] { ModelClassFactory.class })
 					.newInstance(new Object[] { factory });
 
-			Class<?>[] constructorParamTypes = { Group.class, ModelClassFactory.class };
-			Object[] constructorParamArgs = { dummy, factory };
 			Class<? extends Segment> c = factory.getSegmentClass("MSH", version);
-			Constructor<? extends Segment> constructor = c.getConstructor(constructorParamTypes);
-			msh = constructor.newInstance(constructorParamArgs);
+			if (c != null) {
+				if (GenericSegment.class.isAssignableFrom(c)) {
+					Class<?>[] constructorParamTypes = { Group.class, String.class };
+					Object[] constructorParamArgs = { dummy, "MSH" };
+					Constructor<? extends Segment> constructor = c.getConstructor(constructorParamTypes);
+					msh = constructor.newInstance(constructorParamArgs);
+				} else {
+					Class<?>[] constructorParamTypes = { Group.class, ModelClassFactory.class };
+					Object[] constructorParamArgs = { dummy, factory };
+					Constructor<? extends Segment> constructor = c.getConstructor(constructorParamTypes);
+					msh = constructor.newInstance(constructorParamArgs);
+				}
+			} else {
+				msh = new GenericSegment(dummy, "MSH");
+			}
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create MSH for version " + version
 					+ " (does your classpath include this version?) ... ",

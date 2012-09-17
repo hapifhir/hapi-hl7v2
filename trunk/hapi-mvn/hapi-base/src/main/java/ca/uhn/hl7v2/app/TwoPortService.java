@@ -169,7 +169,7 @@ public class TwoPortService extends HL7Service {
 						newSocket.socket);
 				Socket in = getInboundSocket(newSocket, otherSocket);
 				Socket out = getOutboundSocket(newSocket, otherSocket);
-				conn = new Connection(parser, llp, in, out,
+				conn = new Connection(getParser(), getLlp(), in, out,
 						getExecutorService());
 			} else {
 				log.debug(
