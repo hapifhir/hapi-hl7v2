@@ -6,8 +6,12 @@
 
 package ca.uhn.hl7v2.parser;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +27,11 @@ import ca.uhn.hl7v2.util.Terser;
  * 
  * @author Bryan Tripp
  */
-public class ParserTest extends TestCase
+public class ParserTest
 {
     private static final Logger ourLog = LoggerFactory.getLogger(ParserTest.class);
 
-
-    /** Creates a new instance of ParserTest */
-    public ParserTest(String arg) {
-        super(arg);
-    }
-
-
+    @Test
     public void testMakeControlMSH() throws HL7Exception {
         ModelClassFactory factory = new DefaultModelClassFactory();
         Segment msh = Parser.makeControlMSH("2.4", factory);
@@ -47,7 +45,7 @@ public class ParserTest extends TestCase
         }
     }
 
-
+    @Test
     public void testEventMap() throws Exception {
         String message = "MSH|^~\\&|||||||ADT^A04|1|D|2.4\r";
         PipeParser p = new PipeParser();
@@ -67,7 +65,7 @@ public class ParserTest extends TestCase
         assertEquals("ADT_A01", m.getName());
     }
 
-
+    @Test
     public void testGenericMessage() throws Exception {
         // a valid ORU_R01 message in which MSH-9 has been changed
         String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ZZZ^ZZZ|LABGL1199510021852632|P|2.2\r"
@@ -99,6 +97,7 @@ public class ParserTest extends TestCase
      * Disabled- This might be nice to handle gracefully, but we don't, we never did,
      * and the spec doesn't say we need to.
      */
+    @Ignore
     public void __tstUnknownVersionMessage() throws Exception {
         // a valid ORU_R01 message in which MSH-9 has been changed
         String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ORU^R01|LABGL1199510021852632|P|2.999\r"
@@ -120,7 +119,7 @@ public class ParserTest extends TestCase
         assertEquals("NM", t.get("/OBX-2"));
     }
 
-
+    @Test
     public void testGenericMessageAllVersions() throws Exception {
         for (Version versionEnum : Version.values()) {
 
@@ -156,6 +155,21 @@ public class ParserTest extends TestCase
             assertEquals("NM", t.get("/OBX-2"));
 
         }
+    }
+    
+    @Test
+    public void test1714219() throws Exception {
+
+    	String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||ORM^O01||P|2.2\r" +
+    			"PID|||12345678||Lastname^^INI^^PREFIX||19340207|F|||Street 15^^S GRAVENHAGE^^2551HL^NEDERLAND|||||||||||||||NL\r" +
+    			"ORC|NW|8100088345^ORDERNR||LN1||C|^^^20070504080000||20070504141816|||0^Doctor\r" +
+    			"OBR|1|8100088345^ORDERNR||ADR^Something||||||||||||0^Doctor\r" +
+    			"OBX|1|ST|ADR^Something||item1^item2^item3^^item5||||||F\r";
+    	
+    	Parser p = new PipeParser();
+    	Message m = p.parse(message);
+    	String test = p.encode(m);
+    	assertEquals(message, test);
     }
 
 }
