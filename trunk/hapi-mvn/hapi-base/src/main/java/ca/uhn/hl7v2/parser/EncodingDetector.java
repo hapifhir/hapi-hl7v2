@@ -90,7 +90,7 @@ public class EncodingDetector {
 	 */
 	public static boolean isXmlEncoded(String theMessage) {
         //check for a number of expected strings 
-        String[] expected = { "<MSH.1", "<MSH.2", "</MSH>" };
+        String[] expected = { "MSH.1>", "MSH.2>" };
         for (int i = 0; i < expected.length; i++) {
             if (theMessage.indexOf(expected[i]) < 0) {
                 return false;
