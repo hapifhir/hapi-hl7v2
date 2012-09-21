@@ -34,7 +34,7 @@ public class VersionTest {
 	}	
 	
 	@Test public void testAvailableVersions() {
-		assertTrue(Version.availableVersions().length > 0);
+		assertTrue(Version.availableVersions().size() > 0);
 	}
 	
 	@Test public void testLowestAvailableVersion() {

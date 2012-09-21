@@ -70,5 +70,14 @@ public class StringUtil {
 		buf.append(theString.substring(start));
 		return buf.toString();
 	}
+	
+	public static String[] concatenate(String[] array1, String[] array2) {
+		if (array1 == null) return array2;
+		if (array2 == null) return array1;
+        String[] result = new String[array1.length + array2.length];
+        System.arraycopy(array1, 0, result, 0, array1.length);
+        System.arraycopy(array2, 0, result, array1.length, array2.length);
+        return result;
+	}
 
 }
