@@ -6,7 +6,13 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
-			<action type="fix" dev="Christian Ohr" issue="1834598">
+          	<action type="add" dev="Christian Ohr" issue="3570493">
+        		ModelClassFactory define their own event map location, where the
+        		mapping between event and message structure is defined.
+        		Compatibility notice: Parser.getMessageStructureForEvent is not static anymore
+        		and was deprecated.
+        	</action>
+        	<action type="fix" dev="Christian Ohr" issue="1834598">
             	Fixed bug in DefaultXMLParser. Thanks to Leo Marcov for reporting.
             </action> 
 			<action type="fix" dev="Jens Villadsen, Christian Ohr" issue="3552470">

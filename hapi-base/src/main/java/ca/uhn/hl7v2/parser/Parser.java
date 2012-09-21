@@ -23,17 +23,11 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-
- */
+*/
 
 package ca.uhn.hl7v2.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +51,11 @@ import ca.uhn.hl7v2.validation.Validator;
  * message Strings.
  * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
+ * @author Christian Ohr
  */
 public abstract class Parser extends HapiContextSupport {
 
 	private static final Logger log = LoggerFactory.getLogger(Parser.class);
-	private static Map<String, Properties> messageStructures = null;
 	
 	/**
 	 * Uses DefaultModelClassFactory for model class lookup.
@@ -388,8 +382,6 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	protected Message instantiateMessageInASpecificPackage(String theName, String theVersion,
 			boolean isExplicit, String packageName) throws HL7Exception {
-		Message result = null;
-
 		try {
 			ModelClassFactory factory = getHapiContext().getModelClassFactory();
 			Class<? extends Message> messageClass = factory.getMessageClassInASpecificPackage(
@@ -398,17 +390,11 @@ public abstract class Parser extends HapiContextSupport {
 				throw new ClassNotFoundException(
 						"Can't find message class in current package list: " + theName);
 			}
-
-			log.debug("Instantiating msg of class {}", messageClass.getName());
-			Constructor<? extends Message> constructor = messageClass
-					.getConstructor(new Class[] { ModelClassFactory.class });
-			result = (Message) constructor.newInstance(new Object[] { factory });
+			return instantiate(messageClass);
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create Message object of type " + theName,
 					HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);
 		}
-
-		return result;
 	}
 
 	/**
@@ -511,65 +497,14 @@ public abstract class Parser extends HapiContextSupport {
 	 * 
 	 * @throws HL7Exception if there is an error retrieving the map, or if the given version is
 	 *             invalid
+	 *             
+	 * @deprecated use {@link ModelClassFactory#getMessageStructureForEvent(String, Version)}
 	 */
-	public static String getMessageStructureForEvent(String name, String version)
+	public String getMessageStructureForEvent(String name, String version)
 			throws HL7Exception {
 		assertVersionExists(version);
-		try {
-			Properties p = (Properties) getMessageStructures().get(version);
-			if (p == null)
-				throw new HL7Exception("No map found for version " + version
-						+ ". Only the following are available: " + getMessageStructures().keySet());
-			String structure = p.getProperty(name);
-			if (structure == null) {
-				structure = name;
-			}
-			return structure;
-		} catch (IOException ioe) {
-			throw new HL7Exception(ioe);
-		}
-	}
-
-	/**
-	 * Returns a copy of the message structure map for a specific version. Each key is a message
-	 * type (e.g. ADT_A04) and each value is the corresponding structure (e.g. ADT_A01).
-	 * 
-	 * @throws IOException If the event map can't be loaded
-	 */
-	public static Properties getMessageStructures(String version) throws IOException {
-		Map<String, Properties> msgStructures = getMessageStructures();
-		if (!msgStructures.containsKey(version)) {
-			return null;
-		}
-
-		return (Properties) msgStructures.get(version).clone();
-	}
-
-	/**
-	 * Returns version->event->structure maps.
-	 */
-	private synchronized static Map<String, Properties> getMessageStructures() throws IOException {
-		if (messageStructures == null) {
-			messageStructures = loadMessageStructures();
-		}
-		return messageStructures;
-	}
-
-	private static Map<String, Properties> loadMessageStructures() throws IOException {
-		Map<String, Properties> map = new HashMap<String, Properties>();
-		for (Version v : Version.values()) {
-			String resource = "ca/uhn/hl7v2/parser/eventmap/" + v.getVersion() + ".properties";
-			InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
-
-			Properties structures = null;
-			if (in != null) {
-				structures = new Properties();
-				structures.load(in);
-				map.put(v.getVersion(), structures);
-			}
-
-		}
-		return map;
+		return getHapiContext().getModelClassFactory().
+				getMessageStructureForEvent(name, Version.versionOf(version));
 	}
 
 	/**
@@ -588,8 +523,6 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	protected Message instantiateMessage(String theName, String theVersion, boolean isExplicit)
 			throws HL7Exception {
-		Message result = null;
-
 		try {
 			ModelClassFactory factory = getHapiContext().getModelClassFactory();
 			Class<? extends Message> messageClass = factory.getMessageClass(theName, theVersion,
@@ -597,16 +530,18 @@ public abstract class Parser extends HapiContextSupport {
 			if (messageClass == null)
 				throw new ClassNotFoundException(
 						"Can't find message class in current package list: " + theName);
-			log.debug("Instantiating msg of class {}", messageClass.getName());
-			Constructor<? extends Message> constructor = messageClass
-					.getConstructor(new Class[] { ModelClassFactory.class });
-			result = constructor.newInstance(new Object[] { factory });
+			return instantiate(messageClass);
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create Message object of type " + theName,
 					HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);
 		}
-
-		return result;
+	}
+	
+	private Message instantiate(Class<? extends Message> messageClass) throws Exception {
+		log.debug("Instantiating msg of class {}", messageClass.getName());
+		Constructor<? extends Message> constructor = messageClass
+				.getConstructor(new Class[] { ModelClassFactory.class });
+		return constructor.newInstance(getHapiContext().getModelClassFactory());
 	}
 
 }

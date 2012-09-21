@@ -39,10 +39,10 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
-import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Type;
 
 /**
  * Default implementation of ModelClassFactory.  See packageList() for configuration instructions. 
@@ -50,7 +50,7 @@ import ca.uhn.hl7v2.model.Group;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.9 $ updated on $Date: 2010-08-05 17:51:16 $ by $Author: jamesagnew $
  */
-public class DefaultModelClassFactory implements ModelClassFactory {
+public class DefaultModelClassFactory extends AbstractModelClassFactory {
 
     private static final long serialVersionUID = 1;
 
@@ -94,7 +94,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
         Class<? extends Message> mc = null;
         if (!isExplicit) {
-            theName = Parser.getMessageStructureForEvent(theName, theVersion);
+        	theName = getMessageStructureForEvent(theName, Version.versionOf(theVersion));
         } 
         mc = (Class<? extends Message>) findClass(theName, theVersion, "message");
         if (mc == null) 
@@ -141,7 +141,7 @@ public class DefaultModelClassFactory implements ModelClassFactory {
         Class<? extends Message> mc = null;
 	    
         if (!isExplicit) { 
-            theName = Parser.getMessageStructureForEvent(theName, theVersion); 
+        	theName = getMessageStructureForEvent(theName, Version.versionOf(theVersion));
         } 
         
         mc = (Class<? extends Message>) findClassInASpecificPackage(theName, theVersion, "message", packageName); 
@@ -371,6 +371,17 @@ public class DefaultModelClassFactory implements ModelClassFactory {
 	        return null;
 	    }
 	    return ourVersions.get(ourVersions.size() - 1);
+	}
+	
+	/**
+	 * Returns the event structure. If nothing could be found, the event name is returned
+	 * 
+	 * @see ca.uhn.hl7v2.parser.AbstractModelClassFactory#getMessageStructureForEvent(java.lang.String, ca.uhn.hl7v2.Version)
+	 */
+	@Override
+	public String getMessageStructureForEvent(String name, Version version) throws HL7Exception {
+		String structure = super.getMessageStructureForEvent(name, version);
+		return structure != null ? structure : name;
 	}
 
 

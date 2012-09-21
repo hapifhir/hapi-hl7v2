@@ -97,7 +97,7 @@ public class XMLParserTest {
 	@Test
 	public void testGetEncoding() throws Exception {
 		String test1 = "<MSH>\r<MSH.1>|</MSH.1>\r<MSH.2>^~\\&amp;</MSH.2>\r</MSH>";
-		String test2 = "<MSH>\r<MSH.1>|</MSH.1>\r<MSH.2>^~\\&amp;</MSH.2>\r"; // bad: no </MSH>
+		String test2 = "blorg gablorg"; // bad: no <MSH>
 		assertEquals("XML", parser.getEncoding(test1));
 		assertEquals(null, parser.getEncoding(test2));
 	}

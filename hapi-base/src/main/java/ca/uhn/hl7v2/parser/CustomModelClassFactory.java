@@ -25,6 +25,7 @@ package ca.uhn.hl7v2.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,22 +36,28 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.util.StringUtil;
 
 /**
  * ModelClassFactory which allows custom packages to search to be specified.
  * These packages will be searched first, and if nothing is found for a particular
- * structure, DefaultModelClassFactory is used.
+ * structure, a delegate ModelClassFactory (by default DefaultModelClassFactory) is used. 
+ * <p>
+ * Also, a custom event map location is supported (by setting {@link #setEventMapDirectory(String)}
+ * in a way that only new or modified structures needs to be defined there. If no structure was
+ * found, the event map of the delegate ModelClassFactory serves as fallback.
  *
- * @author Based on implementation by Christian Ohr
+ * @author Christian Ohr
  * @author James Agnew
  * @since 1.0
  */
-public class CustomModelClassFactory implements ModelClassFactory {
+public class CustomModelClassFactory extends AbstractModelClassFactory {
 
     private static final long serialVersionUID = 1;
-    private final ModelClassFactory defaultFactory;
-    private Map<String, String[]> customModelClasses;
     private static Logger LOG = LoggerFactory.getLogger(CustomModelClassFactory.class);
+
+    private final ModelClassFactory delegate;
+    private Map<String, String[]> customModelClasses;
 
     /**
      * Constructor which just delegated to {@link DefaultModelClassFactory}
@@ -72,15 +79,13 @@ public class CustomModelClassFactory implements ModelClassFactory {
      * </p>
      */
     public CustomModelClassFactory(String packageName) {
-        defaultFactory = new DefaultModelClassFactory();
-        customModelClasses = new HashMap<String, String[]>();
+        this();
 
         if (!packageName.endsWith(".")) {
             packageName += ".";
         }
-
         for (Version v : Version.values()) {
-            customModelClasses.put(v.getVersion(), new String[] {packageName + v.getPackageVersion()});
+        	addModel(v.getVersion(), new String[] {packageName + v.getPackageVersion()});
         }
     }
 
@@ -99,22 +104,29 @@ public class CustomModelClassFactory implements ModelClassFactory {
      * </p>
      */
     public CustomModelClassFactory(Map<String, String[]> map) {
-        defaultFactory = new DefaultModelClassFactory();
-        customModelClasses = map;
+        this(new DefaultModelClassFactory(), map);
     }
-
+    
+    /**
+     * Set an explicit {@link ModelClassFactory} is underlying delegate
+     * @param defaultFactory
+     * @param map
+     */
+    public CustomModelClassFactory(ModelClassFactory defaultFactory, Map<String, String[]> map) {
+        this.delegate = defaultFactory;
+        customModelClasses = map;
+    }    
 
     /**
      * {@inheritDoc }
      */
-    @SuppressWarnings("unchecked")
 	public Class<? extends Message> getMessageClass(String name, String version, boolean isExplicit) throws HL7Exception {
         if (!isExplicit) {
-            name = Parser.getMessageStructureForEvent(name, version);
+            name = getMessageStructureForEvent(name, Version.versionOf(version));
         }
-        Class<? extends Message> retVal = (Class<? extends Message>) findClass("message", name, version);
+        Class<? extends Message> retVal = findClass("message", name, version);
         if (retVal == null) {
-            retVal = defaultFactory.getMessageClass(name, version, isExplicit);
+            retVal = delegate.getMessageClass(name, version, isExplicit);
         }
         return retVal;
     }
@@ -122,11 +134,10 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    @SuppressWarnings("unchecked")
 	public Class<? extends Group> getGroupClass(String name, String version) throws HL7Exception {
-        Class<? extends Group> retVal = (Class<? extends Group>) findClass("group", name, version);
+        Class<? extends Group> retVal = findClass("group", name, version);
         if (retVal == null) {
-            retVal = defaultFactory.getGroupClass(name, version);
+            retVal = delegate.getGroupClass(name, version);
         }
         return retVal;
     }
@@ -134,11 +145,10 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    @SuppressWarnings("unchecked")
 	public Class<? extends Segment> getSegmentClass(String name, String version) throws HL7Exception {
-        Class<? extends Segment> retVal = (Class<? extends Segment>) findClass("segment", name, version);
+        Class<? extends Segment> retVal = findClass("segment", name, version);
         if (retVal == null) {
-            retVal = defaultFactory.getSegmentClass(name, version);
+            retVal = delegate.getSegmentClass(name, version);
         }
         return retVal;
     }
@@ -146,11 +156,10 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * {@inheritDoc }
      */
-    @SuppressWarnings("unchecked")
 	public Class<? extends Type> getTypeClass(String name, String version) throws HL7Exception {
-        Class<? extends Type> retVal = (Class<? extends Type>) findClass("datatype", name, version);
+        Class<? extends Type> retVal = findClass("datatype", name, version);
         if (retVal == null) {
-            retVal = defaultFactory.getTypeClass(name, version);
+            retVal = delegate.getTypeClass(name, version);
         }
         return retVal;
     }
@@ -158,9 +167,10 @@ public class CustomModelClassFactory implements ModelClassFactory {
     /**
      * Finds appropriate classes to be loaded for the given structure/type
      */
-    protected Class<?> findClass(String subpackage, String name, String version) throws HL7Exception {
+    @SuppressWarnings("unchecked")
+	protected <T> Class<T> findClass(String subpackage, String name, String version) throws HL7Exception {
         Parser.assertVersionExists(version);
-        Class<?> classLoaded = null;
+        Class<T> classLoaded = null;
         if (customModelClasses != null) {
             if (customModelClasses.containsKey(version)) {
                 for (String next : customModelClasses.get(version)) {
@@ -169,7 +179,7 @@ public class CustomModelClassFactory implements ModelClassFactory {
                     }
                     String fullyQualifiedName = next + subpackage + '.' + name;
                     try {
-                        classLoaded = Class.forName(fullyQualifiedName);
+                        classLoaded = (Class<T>) Class.forName(fullyQualifiedName);
                         LOG.debug("Found " + fullyQualifiedName + " in custom HL7 model");
                     } catch (ClassNotFoundException e) {
                         // ignore
@@ -184,6 +194,57 @@ public class CustomModelClassFactory implements ModelClassFactory {
      * Delegates calls to {@link DefaultModelClassFactory#getMessageClassInASpecificPackage(String, String, boolean, String)}
      */
 	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
-		return defaultFactory.getMessageClassInASpecificPackage(theName, theVersion, theIsExplicit, thePackageName);
+		return delegate.getMessageClassInASpecificPackage(theName, theVersion, theIsExplicit, thePackageName);
 	}
+	
+    public Map<String, String[]> getCustomModelClasses() {
+		return customModelClasses;
+	}
+
+	/**
+	 * Add model class packages after the object has been instantiated
+	 * 
+	 * @param addedModelClasses map with version number as key and package names has value
+	 */
+	public void addModels(Map<String, String[]> addedModelClasses) {
+        if (customModelClasses == null) {
+        	customModelClasses = new HashMap<String, String[]>();
+        }
+        for (Entry<String, String[]> entry : addedModelClasses.entrySet()) {
+        	addModel(entry.getKey(), entry.getValue());
+        }
+    }
+	
+	private void addModel(String version, String[] newPackageNames) {
+        if (customModelClasses.containsKey(version)) {
+            // the new packages must be added after the existing ones.
+            String[] existingPackageNames = customModelClasses.get(version);
+            customModelClasses.put(version, StringUtil.concatenate(existingPackageNames, newPackageNames));
+        } else {
+        	customModelClasses.put(version, newPackageNames);
+        }		
+	}
+
+
+	/**
+	 * Looks up its own event map. If no structure was found, the call is delegated to
+	 * the default ModelClassFactory. If nothing can be found, the eventName is returned
+	 * as structure.
+	 * 
+	 * @see ca.uhn.hl7v2.parser.AbstractModelClassFactory#getMessageStructureForEvent(java.lang.String, ca.uhn.hl7v2.Version)
+	 */
+	@Override
+	public String getMessageStructureForEvent(String eventName, Version version) throws HL7Exception {
+		String structure = super.getMessageStructureForEvent(eventName, version);
+		if (structure == null) {
+			structure = delegate.getMessageStructureForEvent(eventName, version);
+		}
+		if (structure != null) {
+			structure = eventName;
+		}
+		return structure;
+	}
+	
+	
+	
 }
