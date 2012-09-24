@@ -48,7 +48,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
+public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, MessageRule> {
 
 	private String messageType;
 	private String triggerEvent;
@@ -59,7 +59,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 		this.messageType = messageType;
 		this.triggerEvent = triggerEvent;
 	}
-
+	
 	/**
 	 * Builds a {@link MessageRule} that extracts a primitive value using a {@link Terser}
 	 * expression and evaluates the specified {@link Predicate}.
@@ -124,50 +124,6 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 				new ConformanceProfileRule(profileId));
 	}
 
-	/**
-	 * Adds the specified rule to the set of rules.
-	 * 
-	 * @param rule
-	 * @return this instance to build more rules
-	 */
-	public MessageRuleBuilder test(MessageRule rule) {
-		addRuleBindings(rule);
-		return this;
-	}
-
-	/**
-	 * Adds a description to the rule
-	 * 
-	 * @param description
-	 * @return this instance to build more rules
-	 */
-	public MessageRuleBuilder description(String description) {
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Adds a HL7 section reference to a rule
-	 * 
-	 * @param sectionReference
-	 * @return this instance to build more rules
-	 */
-	public MessageRuleBuilder refersToSection(String sectionReference) {
-		this.sectionReference = sectionReference;
-		return this;
-	}
-
-	/**
-	 * Marks the rule as being active (default) or inactive
-	 * 
-	 * @param active
-	 * @return this instance to build more rules
-	 */
-	public MessageRuleBuilder active(boolean active) {
-		this.active = active;
-		return this;
-	}
-
 	// for tests only
 	String getMessageType() {
 		return messageType;
@@ -182,8 +138,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRule> {
 	protected Collection<RuleBinding<MessageRule>> getRuleBindings(MessageRule rule, String version) {
 		RuleBinding<MessageRule> binding = new MessageRuleBinding(version, messageType,
 				triggerEvent, rule);
-		binding.setActive(active);
-		return Collections.singletonList(binding);
+		return activate(Collections.singletonList(binding));
 	}
 
 }

@@ -2,9 +2,6 @@ package ca.uhn.hl7v2.validation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import java.util.Locale;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -100,7 +97,7 @@ public class MessageValidatorTest {
             parser.parse(deviceObservationMessage);
             fail();
         } catch (Exception e) {
-            Assert.assertTrue(e.getMessage().toLowerCase(Locale.ROOT).contains("withdrawn"));
+            Assert.assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
         }
     }
     
@@ -125,7 +122,7 @@ public class MessageValidatorTest {
         	v.validate(m);
         	fail();
         } catch (HL7Exception e) {
-        	Assert.assertTrue(e.getMessage().toLowerCase(Locale.ROOT).contains("withdrawn"));
+        	Assert.assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
         	Assert.assertTrue(e.getCause().getMessage().contains("PID-13(0)-1"));
         }
     }    

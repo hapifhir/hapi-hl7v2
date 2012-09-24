@@ -37,12 +37,12 @@ import ca.uhn.hl7v2.validation.impl.PrimitiveTypeRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
 /**
- * rule builder for {@link PrimitiveTypeRule}s
+ * Rule builder for {@link PrimitiveTypeRule}s
  * 
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
+public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, PrimitiveTypeRule>  {
 
 	private Set<String> types;
 
@@ -84,50 +84,6 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 	 */
 	public PrimitiveRuleBuilder trimmed() {
 		return trimmed(always(true));
-	}
-
-	/**
-	 * Adds a {@link PrimitiveTypeRule} to the set of rules.
-	 * 
-	 * @param rule
-	 * @return this instance to build more rules
-	 */
-	public PrimitiveRuleBuilder test(PrimitiveTypeRule rule) {
-		addRuleBindings(rule);
-		return this;
-	}
-
-	/**
-	 * Adds a description to the rule
-	 * 
-	 * @param description
-	 * @return this instance to build more rules
-	 */
-	public PrimitiveRuleBuilder description(String description) {
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Adds a HL7 section reference to a rule
-	 * 
-	 * @param sectionReference
-	 * @return this instance to build more rules
-	 */
-	public PrimitiveRuleBuilder refersToSection(String sectionReference) {
-		this.sectionReference = sectionReference;
-		return this;
-	}
-	
-	/**
-	 * Marks the rule as being active (default) or inactive
-	 * 
-	 * @param active
-	 * @return this instance to build more rules
-	 */	
-	public PrimitiveRuleBuilder active(boolean active) {
-		this.active = active;
-		return this;
 	}	
 
 	@Override
@@ -135,11 +91,9 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveTypeRule> {
 			String version) {
 		List<RuleBinding<PrimitiveTypeRule>> bindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
 		for (String type : types) {
-			RuleBinding<PrimitiveTypeRule> binding = new PrimitiveTypeRuleBinding(version, type, rule);
-			binding.setActive(active);
-			bindings.add(binding);
+			bindings.add(new PrimitiveTypeRuleBinding(version, type, rule));
 		}
-		return bindings;
+		return activate(bindings);
 	}
 
 	// for tests only

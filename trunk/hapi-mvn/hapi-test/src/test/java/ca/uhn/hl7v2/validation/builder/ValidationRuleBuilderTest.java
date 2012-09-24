@@ -28,23 +28,23 @@ public class ValidationRuleBuilderTest {
 
 	@Test
 	public void testForVersionVersion() {
-		assertTrue(b.forVersion(V22).versions.contains(V22));
-		assertTrue(b.forVersion(V22, V25).versions.contains(V25));
-		assertFalse(b.forVersion(V22, V25).versions.contains(V24));
-		assertEquals(1, b.forVersion(V22, V22).versions.size());
+		assertTrue(b.forVersion(V22).getVersions().contains(V22));
+		assertTrue(b.forVersion(V22, V25).getVersions().contains(V25));
+		assertFalse(b.forVersion(V22, V25).getVersions().contains(V24));
+		assertEquals(1, b.forVersion(V22, V22).getVersions().size());
 	}
 
 	@Test
 	public void testForVersionString() {
-		assertTrue(b.forVersion("2.2").versions.contains(V22));
-		assertTrue(b.forVersion("2.2", "2.5").versions.contains(V25));
-		assertFalse(b.forVersion("2.2", "2.5").versions.contains(V24));
-		assertEquals(1, b.forVersion("2.2", "2.2").versions.size());
+		assertTrue(b.forVersion("2.2").getVersions().contains(V22));
+		assertTrue(b.forVersion("2.2", "2.5").getVersions().contains(V25));
+		assertFalse(b.forVersion("2.2", "2.5").getVersions().contains(V24));
+		assertEquals(1, b.forVersion("2.2", "2.2").getVersions().size());
 	}
 
 	@Test
 	public void testForAllVersions() {
-		Set<Version> v = b.forAllVersions().versions;
+		Set<Version> v = b.forAllVersions().getVersions();
 		for (Version version : v) {
 			assertTrue(Arrays.asList(Version.values()).contains(version));
 		}
@@ -52,37 +52,37 @@ public class ValidationRuleBuilderTest {
 	
 	@Test
 	public void testForVersionAsOf() {
-		assertTrue(b.forVersion().asOf(V25).versions.contains(V25));
-		assertTrue(b.forVersion().asOf(V25).versions.contains(V26));
-		assertFalse(b.forVersion().asOf(V25).versions.contains(V231));
+		assertTrue(b.forVersion().asOf(V25).getVersions().contains(V25));
+		assertTrue(b.forVersion().asOf(V25).getVersions().contains(V26));
+		assertFalse(b.forVersion().asOf(V25).getVersions().contains(V231));
 	}
 	
 	@Test
 	public void testForVersionBeforeVersion() {
-		assertFalse(b.forVersion().before(V25).versions.contains(V25));
-		assertTrue(b.forVersion().before(V25).versions.contains(V231));
-		assertFalse(b.forVersion().before(V25).versions.contains(V26));
+		assertFalse(b.forVersion().before(V25).getVersions().contains(V25));
+		assertTrue(b.forVersion().before(V25).getVersions().contains(V231));
+		assertFalse(b.forVersion().before(V25).getVersions().contains(V26));
 	}
 	
 	@Test
 	public void testForVersionBeforeString() {
-		assertFalse(b.forVersion().before("2.5").versions.contains(V25));
-		assertTrue(b.forVersion().before("2.5").versions.contains(V231));
-		assertFalse(b.forVersion().before("2.5").versions.contains(V26));
+		assertFalse(b.forVersion().before("2.5").getVersions().contains(V25));
+		assertTrue(b.forVersion().before("2.5").getVersions().contains(V231));
+		assertFalse(b.forVersion().before("2.5").getVersions().contains(V26));
 	}
 
 	@Test
 	public void testForVersionExceptionVersion() {
-		assertFalse(b.forVersion().except(V25).versions.contains(V25));
-		assertTrue(b.forVersion().except(V25).versions.contains(V231));
-		assertTrue(b.forVersion().except(V25).versions.contains(V26));
+		assertFalse(b.forVersion().except(V25).getVersions().contains(V25));
+		assertTrue(b.forVersion().except(V25).getVersions().contains(V231));
+		assertTrue(b.forVersion().except(V25).getVersions().contains(V26));
 	}
 	
 	@Test
 	public void testForVersionExceptString() {
-		assertFalse(b.forVersion().except("2.5").versions.contains(V25));
-		assertTrue(b.forVersion().except("2.5").versions.contains(V231));
-		assertTrue(b.forVersion().except("2.5").versions.contains(V26));
+		assertFalse(b.forVersion().except("2.5").getVersions().contains(V25));
+		assertTrue(b.forVersion().except("2.5").getVersions().contains(V231));
+		assertTrue(b.forVersion().except("2.5").getVersions().contains(V26));
 	}	
 
 }

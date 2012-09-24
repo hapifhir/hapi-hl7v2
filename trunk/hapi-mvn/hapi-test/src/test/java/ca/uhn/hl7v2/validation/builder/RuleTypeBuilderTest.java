@@ -13,7 +13,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
 public class RuleTypeBuilderTest {
 
-	private RuleTypeBuilder<Rule<?>> b;
+	private ValidationRuleBuilder b;
 
 	@Before
 	public void setUp() throws Exception {
@@ -43,12 +43,12 @@ public class RuleTypeBuilderTest {
 		assertTrue(b.getRuleBindings(new DummyRule(), "2.5").isEmpty());
 	}
 
-	public void testaddRuleBinding() {
+	public void testAddRuleBinding() {
 		DummyRule rule = new DummyRule();
 		b.addRuleBindings(rule);
 		assertEquals(1, b.rules.size());
 		RuleBinding<?> binding = b.rules.iterator().next();
-		assertEquals(binding.getVersion(), b.versions.iterator().next().getVersion());
+		assertEquals(binding.getVersion(), b.getVersions().iterator().next().getVersion());
 		assertSame(binding.getRule(), rule);
 	}
 

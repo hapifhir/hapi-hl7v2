@@ -33,23 +33,32 @@ import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
 /**
  * Defines the type of rule to be built.
+ * <p>
+ * The recursive type parameter allows the builder methods common to all subclasses (e.g.
+ * {@link #refersToSection}, {@link #active}, {@link #test}) to return their specific builder type.
  * 
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
+public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>> extends
+		BuilderSupport {
 
-	protected Set<Version> versions;
-	protected String description;
-	protected String sectionReference;
-	protected boolean active = true;
+	private Set<Version> versions;
+	private String description;
+	private String sectionReference;
+	private boolean active = true;
 
+	protected RuleTypeBuilder() {
+		super();
+	}
+	
 	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions) {
 		super(rules);
 		if (versions.size() == 0)
@@ -62,6 +71,55 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 		if (versions.length == 0)
 			throw new IllegalArgumentException("Must specify a version");
 		this.versions = new HashSet<Version>(Arrays.asList(versions));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected S instance() {
+		return (S) this;
+	}
+
+	/**
+	 * Adds a description to the rule
+	 * 
+	 * @param description
+	 * @return this instance to build more rules
+	 */
+	public S description(String description) {
+		this.description = description;
+		return instance();
+	}
+
+	/**
+	 * Adds a HL7 section reference to a rule
+	 * 
+	 * @param sectionReference
+	 * @return this instance to build more rules
+	 */
+	public S refersToSection(String sectionReference) {
+		this.sectionReference = sectionReference;
+		return instance();
+	}
+
+	/**
+	 * Marks the rule as being active (default) or inactive
+	 * 
+	 * @param active
+	 * @return this instance to build more rules
+	 */
+	public S active(boolean active) {
+		this.active = active;
+		return instance();
+	}
+
+	/**
+	 * Adds the specified rule to the set of rules.
+	 * 
+	 * @param rule
+	 * @return this instance to build more rules
+	 */
+	public S test(T rule) {
+		addRuleBindings(rule);
+		return instance();
 	}
 
 	/**
@@ -87,10 +145,10 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	public MessageRuleBuilder message(String eventType, String triggerEvent) {
 		return new MessageRuleBuilder(rules, versions, eventType, triggerEvent);
 	}
-	
+
 	public MessageExpressionBuilder message() {
 		return new MessageExpressionBuilder();
-	}	
+	}
 
 	/**
 	 * Builds {@link MessageRule}s for the specified encoding
@@ -100,6 +158,14 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	 */
 	public EncodingRuleBuilder encoding(String encoding) {
 		return new EncodingRuleBuilder(rules, versions, encoding);
+	}
+
+	public String getRuleDescription() {
+		return description;
+	}
+
+	public String getSectionReference() {
+		return sectionReference;
 	}
 
 	/**
@@ -130,21 +196,32 @@ public class RuleTypeBuilder<T extends Rule<?>> extends ValidationRuleBuilder {
 	protected Collection<RuleBinding<T>> getRuleBindings(T rule, String version) {
 		return (Collection<RuleBinding<T>>) Collections.EMPTY_LIST;
 	}
-	
+
+	protected Collection<RuleBinding<T>> activate(Collection<RuleBinding<T>> bindings) {
+		for (RuleBinding<T> ruleBinding : bindings) {
+			ruleBinding.setActive(active);
+		}
+		return bindings;
+	}
+
+	// for tests only
+	Set<Version> getVersions() {
+		return versions;
+	}
+
 	/**
-	 * Helper builder when the versions are not given explicitly but in form of
-	 * an expression.
+	 * Helper builder when the versions are not given explicitly but in form of an expression.
 	 */
 	public class MessageExpressionBuilder {
 
 		public MessageRuleBuilder all() {
 			return new MessageRuleBuilder(rules, versions, "*", "*");
 		}
-		
+
 		public MessageRuleBuilder allOfEventType(String eventType) {
 			return new MessageRuleBuilder(rules, versions, eventType, "*");
-		}		
+		}
 
-	}	
+	}
 
 }

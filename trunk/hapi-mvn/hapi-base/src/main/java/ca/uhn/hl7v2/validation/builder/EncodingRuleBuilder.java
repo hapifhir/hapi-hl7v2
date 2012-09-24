@@ -43,7 +43,7 @@ import ca.uhn.hl7v2.validation.impl.XMLSchemaRule;
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
+public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRuleBuilder, EncodingRule> {
 
 	private String encoding;
 
@@ -60,50 +60,6 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	 */
 	public EncodingRuleBuilder xsd() {
 		return test(new XMLSchemaRule());
-	}
-	
-	/**
-	 * Adds the specified rule to the set of rules.
-	 * 
-	 * @param rule
-	 * @return this instance to build more rules
-	 */
-	public EncodingRuleBuilder test(EncodingRule rule) {
-		addRuleBindings(rule);
-		return this;
-	}	
-
-	/**
-	 * Adds a description to the rule
-	 * 
-	 * @param description
-	 * @return this instance to build more rules
-	 */
-	public EncodingRuleBuilder description(String description) {
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Adds a HL7 section reference to a rule
-	 * 
-	 * @param sectionReference
-	 * @return this instance to build more rules
-	 */
-	public EncodingRuleBuilder refersToSection(String sectionReference) {
-		this.sectionReference = sectionReference;
-		return this;
-	}
-	
-	/**
-	 * Marks the rule as being active (default) or inactive
-	 * 
-	 * @param active
-	 * @return this instance to build more rules
-	 */	
-	public EncodingRuleBuilder active(boolean active) {
-		this.active = active;
-		return this;
 	}	
 	
 	// for tests only
@@ -115,8 +71,7 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRule> {
 	protected Collection<RuleBinding<EncodingRule>> getRuleBindings(EncodingRule rule,
 			String version) {
 		RuleBinding<EncodingRule> binding = new EncodingRuleBinding(version, encoding, rule);
-		binding.setActive(active);
-		return Collections.singletonList(binding);
+		return activate(Collections.singletonList(binding));
 	}
 
 }
