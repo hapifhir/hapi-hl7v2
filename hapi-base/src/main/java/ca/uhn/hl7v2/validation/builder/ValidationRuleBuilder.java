@@ -25,8 +25,6 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ca.uhn.hl7v2.Version;
@@ -40,100 +38,85 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
-public class ValidationRuleBuilder extends BuilderSupport {
+public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder, Rule<?>> {
 
-	protected List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<RuleBinding<? extends Rule<?>>>();
-	
-	public ValidationRuleBuilder() {}
-	
-	protected ValidationRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules) {
-		this.rules = rules;
+	protected ValidationRuleBuilder() {
+		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#initialize()
-	 */
-	public final void initialize() { 
+	private ValidationRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version... versions) {
+		super(rules, versions);
+	}
+
+	public final void initialize() {
 		if (rules.isEmpty()) configure();
 	}
-	
+
 	/**
 	 * Extend this method to add validation rules to the builder
 	 */
 	protected void configure() {
 	}
-	
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#getRules()
-	 */
-	public List<RuleBinding<? extends Rule<?>>> getRules() {
-		return Collections.unmodifiableList(rules);
+
+	public ValidationRuleBuilder forVersion(
+			Version... version) {
+		return new ValidationRuleBuilder(rules, version);
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion(ca.uhn.hl7v2.Version)
-	 */	
-	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(Version... version) {
-		return new RuleTypeBuilder<T>(rules, version);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion(java.lang.String)
-	 */
-	public <T extends Rule<?>> RuleTypeBuilder<T> forVersion(String... version) {
+	public ValidationRuleBuilder forVersion(
+			String... version) {
 		Version[] versions = new Version[version.length];
 		for (int i = 0; i < versions.length; i++) {
 			versions[i] = Version.versionOf(version[i]);
 		}
-		return new RuleTypeBuilder<T>(rules, versions);
+		return new ValidationRuleBuilder(rules, versions);
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forVersion()
-	 */
 	public VersionExpressionBuilder forVersion() {
 		return new VersionExpressionBuilder();
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uhn.hl7v2.validation.builder.IValidationRuleBuilder#forAllVersions()
-	 */
-	public <T extends Rule<?>> RuleTypeBuilder<T> forAllVersions() {
+	public ValidationRuleBuilder forAllVersions() {
 		return forVersion().all();
 	}
 
 	/**
-	 * Helper builder when the versions are not given explicitly but in form of
-	 * an expression.
+	 * Helper builder when the versions are not given explicitly but in form of an expression.
 	 */
 	public class VersionExpressionBuilder {
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> all() {
-			return new RuleTypeBuilder<T>(rules, Version.values());
+		public ValidationRuleBuilder all() {
+			return new ValidationRuleBuilder(rules, Version.values());
 		}
-		
-		public <T extends Rule<?>> RuleTypeBuilder<T> asOf(String version) {
+
+		public ValidationRuleBuilder asOf(
+				String version) {
 			return asOf(Version.versionOf(version));
 		}
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> asOf(Version version) {
-			return new RuleTypeBuilder<T>(rules, Version.asOf(version));
+		public ValidationRuleBuilder asOf(
+				Version version) {
+			return new ValidationRuleBuilder(rules, Version.asOf(version));
 		}
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> before(String version) {
+		public ValidationRuleBuilder before(
+				String version) {
 			return before(Version.versionOf(version));
 		}
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> before(Version version) {
-			return new RuleTypeBuilder<T>(rules, Version.before(version));
+		public ValidationRuleBuilder before(
+				Version version) {
+			return new ValidationRuleBuilder(rules, Version.before(version));
 		}
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> except(String version) {
+		public ValidationRuleBuilder except(
+				String version) {
 			return except(Version.versionOf(version));
 		}
 
-		public <T extends Rule<?>> RuleTypeBuilder<T> except(Version version) {
-			return new RuleTypeBuilder<T>(rules, Version.except(version));
+		public ValidationRuleBuilder except(
+				Version version) {
+			return new ValidationRuleBuilder(rules, Version.except(version));
 		}
 
 	}

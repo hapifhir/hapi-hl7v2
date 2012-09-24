@@ -26,11 +26,16 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.builder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
 /**
  * 
@@ -43,12 +48,21 @@ import ca.uhn.hl7v2.validation.ValidationException;
 public abstract class BuilderSupport implements Serializable {
 
 	private Predicate predicate;
+	protected List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<RuleBinding<? extends Rule<?>>>();
 
-	protected BuilderSupport() {
+	protected BuilderSupport() {	
+	}
+	
+	protected BuilderSupport(List<RuleBinding<? extends Rule<?>>> rules) {
+		this.rules = rules;
 	}
 
 	protected Predicate getPredicate() {
 		return predicate;
+	}
+	
+	public List<RuleBinding<? extends Rule<?>>> getRules() {
+		return Collections.unmodifiableList(rules);
 	}
 
 	/**
