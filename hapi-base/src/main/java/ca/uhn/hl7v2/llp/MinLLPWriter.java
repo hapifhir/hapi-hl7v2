@@ -126,7 +126,6 @@ public class MinLLPWriter implements HL7Writer
     }
     
     private OutputStreamWriter getWriter(OutputStream theStream) throws IOException {
-        
         if (charset != null) {
             return new OutputStreamWriter(theStream, charset);
         } else {
