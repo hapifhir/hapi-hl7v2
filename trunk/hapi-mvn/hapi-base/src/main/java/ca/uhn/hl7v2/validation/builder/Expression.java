@@ -30,11 +30,23 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.validation.Location;
 
+/**
+ * Expression used to obtain values from a message structure
+ *
+ * @param <T>
+ */
 public interface Expression<T extends Structure> {
 
-	Object evaluate(T value) throws HL7Exception;
+	/**
+	 * Applies this expression on the structure
+	 * 
+	 * @param structure
+	 * @return the result value
+	 * @throws HL7Exception
+	 */
+	Object evaluate(T structure) throws HL7Exception;
 
 	String getDescription();
 
-	Location getLocation(T value) throws HL7Exception;
+	Location getLocation(T structure) throws HL7Exception;
 }

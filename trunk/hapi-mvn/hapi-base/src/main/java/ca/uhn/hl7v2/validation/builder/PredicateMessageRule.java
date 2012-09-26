@@ -30,7 +30,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
- * Abstract base class for message rules that are evaluates using predicates
+ * Abstract base class for message rules that are evaluated using predicates
  * 
  * @author Christian Ohr
  */

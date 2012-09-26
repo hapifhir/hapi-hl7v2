@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
+import java.util.Collections;
 import java.util.List;
 
 import ca.uhn.hl7v2.Version;
@@ -48,8 +49,9 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 		super(rules, versions);
 	}
 
-	public final void initialize() {
-		if (rules.isEmpty()) configure();
+	public final List<RuleBinding<? extends Rule<?>>> initialize() {
+		if (getRules().isEmpty()) configure();
+		return Collections.unmodifiableList(getRules());
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 
 	public ValidationRuleBuilder forVersion(
 			Version... version) {
-		return new ValidationRuleBuilder(rules, version);
+		return new ValidationRuleBuilder(getRules(), version);
 	}
 
 	public ValidationRuleBuilder forVersion(
@@ -69,7 +71,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 		for (int i = 0; i < versions.length; i++) {
 			versions[i] = Version.versionOf(version[i]);
 		}
-		return new ValidationRuleBuilder(rules, versions);
+		return new ValidationRuleBuilder(getRules(), versions);
 	}
 
 	public VersionExpressionBuilder forVersion() {
@@ -86,7 +88,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 	public class VersionExpressionBuilder {
 
 		public ValidationRuleBuilder all() {
-			return new ValidationRuleBuilder(rules, Version.values());
+			return new ValidationRuleBuilder(getRules(), Version.values());
 		}
 
 		public ValidationRuleBuilder asOf(
@@ -96,7 +98,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 
 		public ValidationRuleBuilder asOf(
 				Version version) {
-			return new ValidationRuleBuilder(rules, Version.asOf(version));
+			return new ValidationRuleBuilder(getRules(), Version.asOf(version));
 		}
 
 		public ValidationRuleBuilder before(
@@ -106,7 +108,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 
 		public ValidationRuleBuilder before(
 				Version version) {
-			return new ValidationRuleBuilder(rules, Version.before(version));
+			return new ValidationRuleBuilder(getRules(), Version.before(version));
 		}
 
 		public ValidationRuleBuilder except(
@@ -116,7 +118,7 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 
 		public ValidationRuleBuilder except(
 				Version version) {
-			return new ValidationRuleBuilder(rules, Version.except(version));
+			return new ValidationRuleBuilder(getRules(), Version.except(version));
 		}
 
 	}

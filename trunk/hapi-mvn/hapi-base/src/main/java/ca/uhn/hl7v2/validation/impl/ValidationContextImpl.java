@@ -58,8 +58,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	
 	ValidationContextImpl(ValidationRuleBuilder builder) {
 		this();
-		builder.initialize();
-		for (RuleBinding<? extends Rule<?>> ruleBinding : builder.getRules()) {
+		for (RuleBinding<? extends Rule<?>> ruleBinding : builder.initialize()) {
 			if (ruleBinding instanceof MessageRuleBinding)
 				myMessageRuleBindings.add((MessageRuleBinding)ruleBinding);
 			else if (ruleBinding instanceof EncodingRuleBinding)
