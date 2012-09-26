@@ -36,6 +36,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
 import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
@@ -65,7 +66,7 @@ public class CustomMessageValidation {
 		 * |P^T|2.4 EVN|A31|200903230934
 		 * PID|1||29^^CAISI_1-2^PI~""||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||
 		 */
-		String validMessage = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r"
+		String message1 = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r"
 				+ "EVN|A31|200903230934\r"
 				+ "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
 
@@ -80,7 +81,9 @@ public class CustomMessageValidation {
 			@Override
 			protected void configure() {
 				super.configure();
-				forVersion(Version.V24).message("ADT", "*").terser("PID-2", not(empty()));
+				forVersion(Version.V24)
+				    .message("ADT", "*")
+				    .terser("PID-2", not(empty()));
 			}
 
 		};
@@ -92,7 +95,7 @@ public class CustomMessageValidation {
 
 		// Let's try parsing the message:
 		try {
-			parser.parse(validMessage);
+			parser.parse(message1);
 			// This should not happen
 			System.out.println("Something went wrong!");
 			System.exit(-1);
@@ -104,7 +107,7 @@ public class CustomMessageValidation {
 		 * In the next example, we reject a message with "unknown" segments, but this time not
 		 * during parsing but in a separate step.
 		 */
-		String invalidMessage = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r"
+		String message2 = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r"
 				+ "EVN|A31|200903230934\r"
 				+ "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||\r"
 				+ "Z04|bogus segment";
@@ -114,7 +117,7 @@ public class CustomMessageValidation {
 
 		Message message = null;
 		try {
-			message = parser.parse(invalidMessage);
+			message = parser.parse(message2);
 			System.out.println("Parsing succeeded, but ... ");
 		} catch (HL7Exception e) {
 			// This should not happen
@@ -130,7 +133,9 @@ public class CustomMessageValidation {
 			@Override
 			protected void configure() {
 				super.configure();
-				forVersion(Version.V24).message("ADT", "*").onlyKnownSegments();
+				forVersion(Version.V24)
+				    .message("ADT", "*")
+				    .onlyKnownSegments();
 			}
 
 		};
@@ -146,14 +151,15 @@ public class CustomMessageValidation {
 		}
 
 		/*
-		 * Instead of throwing an HL7 Exception, the MessageValidator can also be used in
-		 * conjunction with a custom ValidationExceptionHandler, which you would normally define in
+		 * Instead of throwing an HL7 Exception, the Validator can also be used in
+		 * conjunction with a custom ValidationExceptionHandler, which would normally be defined in
 		 * its own class file.
 		 */
-		ValidationExceptionHandler customHandler = new DefaultValidationExceptionHandler() {
+		ValidationExceptionHandler<Boolean> customHandler = new DefaultValidationExceptionHandler() {
 
-			public void onValidationExceptions(ValidationException[] exceptions) {
-				super.onValidationExceptions(exceptions);
+		    @Override
+			public void onExceptions(ValidationException... exceptions) {
+				super.onExceptions(exceptions);
 				for (ValidationException e : exceptions) {
 					System.out.println("Found Validation issues: " + e.getMessage());
 				}
@@ -161,7 +167,8 @@ public class CustomMessageValidation {
 		};
 
 		try {
-			boolean result = context.getMessageValidator().validate(message, customHandler);
+		    Validator<Boolean> validator = context.getMessageValidator();
+			boolean result = validator.validate(message, customHandler);
 			System.out.println("The validator returned " + result);
 		} catch (HL7Exception e) {
 			// This should not happen
