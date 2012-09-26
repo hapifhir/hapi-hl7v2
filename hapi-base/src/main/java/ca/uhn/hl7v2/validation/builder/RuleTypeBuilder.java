@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>> extends
 		BuilderSupport {
 
+	private List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<RuleBinding<? extends Rule<?>>>();
 	private Set<Version> versions;
 	private String description;
 	private String sectionReference;
@@ -60,16 +62,18 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	}
 	
 	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions) {
-		super(rules);
+		super();
 		if (versions.size() == 0)
 			throw new IllegalArgumentException("Must specify a version");
+		this.rules = rules;
 		this.versions = versions;
 	}
 
 	protected RuleTypeBuilder(List<RuleBinding<? extends Rule<?>>> rules, Version... versions) {
-		super(rules);
+		super();
 		if (versions.length == 0)
 			throw new IllegalArgumentException("Must specify a version");
+		this.rules = rules;
 		this.versions = new HashSet<Version>(Arrays.asList(versions));
 	}
 
@@ -77,6 +81,10 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	protected S instance() {
 		return (S) this;
 	}
+	
+	protected List<RuleBinding<? extends Rule<?>>> getRules() {
+		return rules;
+	}	
 
 	/**
 	 * Adds a description to the rule
