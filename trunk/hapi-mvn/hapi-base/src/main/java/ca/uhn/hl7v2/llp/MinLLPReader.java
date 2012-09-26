@@ -215,11 +215,10 @@ public class MinLLPReader implements HL7Reader
     /** Test driver for the program. Bounces a message off of an echo socket,
      *  and ascertaines whether or not this class works.
      */
-    public static void main(String args[])
-    {
-        try
-        {
-            Socket s = new Socket("142.224.51.2", 7);
+    public static void main(String args[]) {
+    	Socket s = null;
+        try {
+            s = new Socket("142.224.51.2", 7);
 
             HL7Reader in = new MinLLPReader(s.getInputStream());
             HL7Writer out = new MinLLPWriter(s.getOutputStream());
@@ -230,10 +229,15 @@ public class MinLLPReader implements HL7Reader
             System.out.println("read");
 
             System.out.println(str);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
+        } finally {
+        	if (s != null) {
+        		try {
+					s.close();
+				} catch (IOException e) {
+				}
+        	}
         }
     }
 

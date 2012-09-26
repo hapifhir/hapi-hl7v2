@@ -46,18 +46,6 @@ import org.slf4j.LoggerFactory;
 public abstract class LowerLayerProtocol {
 
     private static final Logger log = LoggerFactory.getLogger(LowerLayerProtocol.class);
-    private static boolean logChars = false;
-    
-    /** 
-     * Creates a new LowerLayerProtocol.  
-     */
-    protected LowerLayerProtocol() {
-        String logCharsProp = System.getProperty("ca.uhn.hl7v2.llp.logBytesRead");
-        if (logCharsProp != null && logCharsProp.equalsIgnoreCase("TRUE")) {
-            log.info("Setting ca.uhn.hl7v2.llp.logBytesRead to TRUE");
-            logChars = true;
-        }
-    }
     
     /** 
      * Returns a particular implementation of LowerLayerProtocol.
@@ -94,9 +82,7 @@ public abstract class LowerLayerProtocol {
      * </p>
      */
     public static void logCharacterReceived(int c) {
-        if (logChars) {
-            log.info("Char received: " + c + " (" + (char) c + ")");
-        }
+        log.trace("Char received: {} ({})", c, (char) c);
     }
     
 }
