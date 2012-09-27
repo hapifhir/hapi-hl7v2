@@ -322,7 +322,7 @@ public class Terser {
             try {
                 ps.rep = Integer.parseInt(repString);
             } catch (NumberFormatException e) {
-                throw new HL7Exception(repString + " is not a valid rep #", HL7Exception.APPLICATION_INTERNAL_ERROR);
+                throw new HL7Exception(repString + " is not a valid rep #");
             }
         } else {
             ps.rep = 0;
@@ -338,7 +338,7 @@ public class Terser {
         StringTokenizer tok = new StringTokenizer(spec, "-", false);
         tok.nextToken();  //skip over segment
         if (!tok.hasMoreTokens())
-            throw new HL7Exception("Must specify field in spec " + spec, HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Must specify field in spec " + spec);
         
         int[] ret = null;
         try {
@@ -361,7 +361,7 @@ public class Terser {
             int[] result = {fieldNum, fieldRep, component, subcomponent};
             ret = result;
         } catch (NumberFormatException e) {
-            throw new HL7Exception("Invalid integer in spec " + spec, HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Invalid integer in spec " + spec);
         }
         
         return ret;

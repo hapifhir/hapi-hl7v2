@@ -27,6 +27,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.AbstractHL7Exception;
 
 /**
  * A failure to validate against a rule.
@@ -34,15 +35,13 @@ import ca.uhn.hl7v2.HL7Exception;
  * @author Bryan Tripp
  */
 @SuppressWarnings("serial")
-public class ValidationException extends java.lang.Exception {
-
-	private Location location;
-	private ErrorCode errorCode = ErrorCode.APPLICATION_INTERNAL_ERROR;
+public class ValidationException extends AbstractHL7Exception {
 	
 	/**
 	 * Creates a new instance of <code>ValidationException</code> without detail message.
 	 */
 	public ValidationException() {
+		super();
 	}
 
 	/**
@@ -71,90 +70,9 @@ public class ValidationException extends java.lang.Exception {
 	
 	public static ValidationException fromHL7Exception(HL7Exception e) {
 		ValidationException ve = new ValidationException(e.getMessage(), e);
-		ve.setErrorCode(ErrorCode.errorCodeFor(e.getErrorCode()));
-		ve.setLocation(new Location(e));
+		ve.setErrorCode(e.getErrorCode());
+		ve.setLocation(e.getLocation());
 		return ve;
 	}
 
-	public ErrorCode getErrorCode() {
-		return errorCode;
-	}
-
-	public void setErrorCode(ErrorCode errorCode) {
-		this.errorCode = errorCode;
-	}	
-	
-	// More details about the validation error
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
-	}
-	
-
-	@Override
-	public String getMessage() {
-		String message = super.getMessage();
-		if (location != null) {
-			String l = location.toString();
-			if (l.length() > 0) {
-				message += " at " + l;
-			}
-		}
-		return message;
-	}
-
-
-
-	/**
-	 * Error code table
-	 *
-	 */
-	public enum ErrorCode {
-		MESSAGE_ACCEPTED(0, "Message accepted"), 
-		SEGMENT_SEQUENCE_ERROR(100, "Segment sequence error"), 
-		REQUIRED_FIELD_MISSING(101, "Required field missing"), 
-		DATA_TYPE_ERROR(102, "Data type error"), 
-		TABLE_VALUE_NOT_FOUND(103, "Table value not found"),
-		UNSUPPORTED_MESSAGE_TYPE(200, "Unsupported message type"),
-		UNSUPPORTED_EVENT_CODE(201, "Unsupported event code"),
-		UNSUPPORTED_PROCESSING_ID(202, "Unsupported processing id"),
-		UNSUPPORTED_VERSION_ID(203, "Unsupported version id"),
-		UNKNOWN_KEY_IDENTIFIER(204, "Unknown key identifier"),
-		DUPLICATE_KEY_IDENTIFIER(205, "Duplicate key identifier"),
-		APPLICATION_RECORD_LOCKED(206, "Application record locked"),
-		APPLICATION_INTERNAL_ERROR(207, "Application internal error");
-
-		private final int code;
-		private final String message;
-
-		ErrorCode(int errCode, String message) {
-			this.code = errCode;
-			this.message = message;
-		}
-
-		public int getCode() {
-			return code;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public static ErrorCode errorCodeFor(int errCode) {
-			for (ErrorCode err : ErrorCode.values()) {
-				if (err.code == errCode) {
-					return err;
-				}
-			}
-			return null;
-		}
-		
-		public static String errorCodeTable() {
-			return "HL70357";
-		}
-	}
 }

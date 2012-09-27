@@ -134,8 +134,7 @@ public class GenericParser extends Parser {
 		} else if (encoding.equalsIgnoreCase("XML")) {
 			appropriateParser = xmlParser;
 		} else {
-			throw new HL7Exception("Can't find appropriate parser - encoding not recognized",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+			throw new HL7Exception("Can't find appropriate parser - encoding not recognized");
 		}
 		return appropriateParser;
 	}

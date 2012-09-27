@@ -311,8 +311,7 @@ public abstract class HL7Service extends Service {
 										+ f.getName()
 										+ ". The line '"
 										+ line
-										+ "' is not of the form: message_type [tab] trigger_event [tab] application_class.",
-								HL7Exception.APPLICATION_INTERNAL_ERROR);
+										+ "' is not of the form: message_type [tab] trigger_event [tab] application_class.");
 					}
 	
 					try {
@@ -324,8 +323,7 @@ public abstract class HL7Service extends Service {
 						registerApplication(type, event, app);
 					} catch (ClassCastException cce) {
 						throw new HL7Exception("The specified class, " + className
-								+ ", doesn't implement Application.",
-								HL7Exception.APPLICATION_INTERNAL_ERROR);
+								+ ", doesn't implement Application.");
 					}
 	
 				}

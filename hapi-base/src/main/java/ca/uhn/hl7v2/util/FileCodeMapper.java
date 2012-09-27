@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 
 /**
@@ -153,9 +154,7 @@ public class FileCodeMapper extends CodeMapper {
         }
         catch (IOException e) {
             throw new HL7Exception(
-                "Can't read interface code maps from disk",
-                HL7Exception.APPLICATION_INTERNAL_ERROR,
-                e);
+                "Can't read interface code maps from disk", e);
         }
     }
 
@@ -179,7 +178,7 @@ public class FileCodeMapper extends CodeMapper {
                         + " for the interface '"
                         + interfaceName
                         + "'",
-                    HL7Exception.TABLE_VALUE_NOT_FOUND);
+                    ErrorCode.TABLE_VALUE_NOT_FOUND);
         }
         return localCode;
     }
@@ -227,7 +226,7 @@ public class FileCodeMapper extends CodeMapper {
                         + " for the interface '"
                         + interfaceName
                         + "'",
-                    HL7Exception.TABLE_VALUE_NOT_FOUND);
+                    ErrorCode.TABLE_VALUE_NOT_FOUND);
         }
         return interfaceCode;
     }

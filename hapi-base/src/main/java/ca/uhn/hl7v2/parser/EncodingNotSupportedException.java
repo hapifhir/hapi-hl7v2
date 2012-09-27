@@ -42,6 +42,6 @@ public class EncodingNotSupportedException extends HL7Exception {
      * @param msg the detail message.
      */
     public EncodingNotSupportedException(String msg) {
-        super(msg, HL7Exception.APPLICATION_INTERNAL_ERROR);
+        super(msg);
     }
 }

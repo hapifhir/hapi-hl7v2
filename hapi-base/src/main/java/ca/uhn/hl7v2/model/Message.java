@@ -27,6 +27,7 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.parser.Parser;
@@ -163,10 +164,35 @@ public interface Message extends Group {
 	 * @param theException The exceptions used to populate the ERR segment (if any)
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
+	 * 
+	 * @deprecated use {@link #generateACK(AcknowledgementCode, HL7Exception)}
 	 */
 	public Message generateACK(String theAcknowldegementCode, HL7Exception theException)
 			throws HL7Exception, IOException;
 
+	/**
+	 * <p>
+	 * Generates and returns an ACK message which would be used to acknowledge this message
+	 * successfully. The ACK generated will be of the same version as the value of MSH-12 in this
+	 * message (as opposed to the version of the message class instance, if they are different)
+	 * </p>
+	 * 
+	 * <p>
+	 * Note that this method will fail if it is not possible to generate an ACK for any reason, such
+	 * as
+	 * <ul>
+	 * <li>Message version is invalid</li>
+	 * <li>First segment is not an MSH</li>
+	 * </p>
+	 * 
+	 * @param theAcknowldegementCode If null, defaults to
+	 *            AcknowledgementCode.AA. To generate a typical NAK, use AcknowledgementCode.AE
+	 * @param theException The exceptions used to populate the ERR segment (if any)
+	 * @throws HL7Exception If the message can not be constructed
+	 * @throws IOException If a failure occurs in generating a control ID for the message
+	 */	
+	public Message generateACK(AcknowledgementCode theAcknowldegementCode, HL7Exception theException)
+			throws HL7Exception, IOException;	
 	/**
 	 * <p>
 	 * Prints a summary of the contents and structure of this message. This is useful for debugging

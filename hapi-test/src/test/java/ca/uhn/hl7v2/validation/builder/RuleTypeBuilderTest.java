@@ -46,8 +46,8 @@ public class RuleTypeBuilderTest {
 	public void testAddRuleBinding() {
 		DummyRule rule = new DummyRule();
 		b.addRuleBindings(rule);
-		assertEquals(1, b.rules.size());
-		RuleBinding<?> binding = b.rules.iterator().next();
+		assertEquals(1, b.getRules().size());
+		RuleBinding<?> binding = b.getRules().iterator().next();
 		assertEquals(binding.getVersion(), b.getVersions().iterator().next().getVersion());
 		assertSame(binding.getRule(), rule);
 	}

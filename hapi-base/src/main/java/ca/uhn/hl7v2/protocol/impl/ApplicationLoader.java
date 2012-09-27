@@ -100,8 +100,7 @@ public class ApplicationLoader {
                             + line
                             + "' is not of the form: message_type [tab] trigger_event " 
                             + "[tab] processing ID [tab] version ID [tab] application_class. "
-                            + "*** NOTE TWO NEW FIELDS AS OF HAPI 0.5 ****. ",
-                        HL7Exception.APPLICATION_INTERNAL_ERROR);
+                            + "*** NOTE TWO NEW FIELDS AS OF HAPI 0.5 ****. ");
                 }
 
                 Class<?> appClass = Class.forName(className); //may throw ClassNotFoundException 
@@ -114,8 +113,7 @@ public class ApplicationLoader {
                 } else {
                     throw new HL7Exception(
                             "The specified class, " + appClass.getName() + 
-                            ", doesn't implement Application or ReceivingApplication.",
-                            HL7Exception.APPLICATION_INTERNAL_ERROR);   
+                            ", doesn't implement Application or ReceivingApplication.");   
                 }
 
                 ApplicationRouter.AppRoutingData rd  

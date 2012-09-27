@@ -34,6 +34,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Primitive;

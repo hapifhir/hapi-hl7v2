@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
@@ -73,7 +75,7 @@ public class DefaultApplicationTest {
         Terser t = new Terser(ack);
         assertEquals("2.4", t.get("/MSH-12"));
         assertEquals(ack.getClass(), ca.uhn.hl7v2.model.v24.message.ACK.class);
-        assertEquals("AA", t.get("/MSA-1"));
+        assertEquals(AcknowledgementCode.AA.name(), t.get("/MSA-1"));
         assertEquals("boo", t.get("/MSA-2"));
     }
     
@@ -81,9 +83,7 @@ public class DefaultApplicationTest {
     public void testProcessMessage() throws Exception {
         Message out = app.processMessage(in);
         Terser t = new Terser(out);
-        assertEquals("AR", t.get("/MSA-1"));
+        assertEquals(AcknowledgementCode.AR.name(), t.get("/MSA-1"));
         assertEquals("207", t.get("/ERR-1(0)-4-1"));
-        //Parser parser = new PipeParser();
-        //System.out.println(parser.encode(out));
     }
 }

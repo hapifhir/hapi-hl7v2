@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -175,7 +176,7 @@ public class LlpServerTest implements Application, ConnectionListener {
 				"EVN||200803051509\r" + // -
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
-		myResponse = PipeParser.getInstanceWithNoValidation().parse(message).generateACK("AE", new HL7Exception("blah"));
+		myResponse = PipeParser.getInstanceWithNoValidation().parse(message).generateACK(AcknowledgementCode.AE, new HL7Exception("blah"));
 		
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		String charsetName = "ISO-8859-2";
@@ -240,7 +241,8 @@ public class LlpServerTest implements Application, ConnectionListener {
 				"EVN||200803051509\r" + // -
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
-		myResponse = PipeParser.getInstanceWithNoValidation().parse(message).generateACK("AR", new HL7Exception("blah"));
+		myResponse = PipeParser.getInstanceWithNoValidation().parse(message)
+				.generateACK(AcknowledgementCode.AR, new HL7Exception("blah"));
 		
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		String charsetName = "ISO-8859-2";

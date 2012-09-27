@@ -28,10 +28,10 @@ package ca.uhn.hl7v2.validation.builder.support;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.Location;
 import ca.uhn.hl7v2.validation.builder.Expression;
 import ca.uhn.hl7v2.validation.builder.Predicate;
 import ca.uhn.hl7v2.validation.builder.PredicateMessageRule;

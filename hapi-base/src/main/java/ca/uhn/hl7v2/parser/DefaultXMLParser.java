@@ -111,9 +111,7 @@ public class DefaultXMLParser extends XMLParser {
             return doc;
         } catch (Exception e) {
             throw new HL7Exception(
-                "Can't create XML document - " + e.getClass().getName(),
-                HL7Exception.APPLICATION_INTERNAL_ERROR,
-                e);
+                "Can't create XML document - " + e.getClass().getName(), e);
         }
     }
 
@@ -135,9 +133,7 @@ public class DefaultXMLParser extends XMLParser {
 						childElement = groupElement.getOwnerDocument().createElement(elementName);
 			        } catch (DOMException e) {
 			            throw new HL7Exception(
-			                "Can't encode element " + elementName + " in group " + groupObject.getClass().getName(),
-			                HL7Exception.APPLICATION_INTERNAL_ERROR,
-			                e);
+			                "Can't encode element " + elementName + " in group " + groupObject.getClass().getName(), e);
 			        }
                     groupElement.appendChild(childElement);
                     if (rep instanceof Group) {
@@ -150,9 +146,7 @@ public class DefaultXMLParser extends XMLParser {
             }
         } catch (DOMException e) {
             throw new HL7Exception(
-                "Can't encode group " + groupObject.getClass().getName(),
-                HL7Exception.APPLICATION_INTERNAL_ERROR,
-                e);
+                "Can't encode group " + groupObject.getClass().getName(), e);
         }
     }
 

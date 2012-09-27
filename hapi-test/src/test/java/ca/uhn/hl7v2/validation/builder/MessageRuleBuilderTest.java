@@ -7,13 +7,13 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
 import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
 
 public class MessageRuleBuilderTest {
@@ -60,7 +60,7 @@ public class MessageRuleBuilderTest {
 		ValidationException[] ve = r.apply(a01);
 		assertEquals(1, ve.length);
 		assertTrue(ve[0].getLocation().toString().contains("MSH-12"));
-		assertEquals(ErrorCode.UNSUPPORTED_VERSION_ID, ve[0].getErrorCode());
+		assertEquals(ErrorCode.UNSUPPORTED_VERSION_ID, ve[0].getError());
 	}	
 
 	@Test

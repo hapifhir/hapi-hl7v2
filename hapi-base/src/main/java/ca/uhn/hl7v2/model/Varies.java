@@ -31,6 +31,7 @@ package ca.uhn.hl7v2.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -211,7 +212,7 @@ public class Varies implements Type {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
                             throw new HL7Exception(
                                 "OBX-5 is valued, but OBX-2 is not.  A datatype for OBX-5 must be specified using OBX-2. See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
-                                HL7Exception.REQUIRED_FIELD_MISSING);
+                                ErrorCode.REQUIRED_FIELD_MISSING);
                         }
                     }
                 }
@@ -239,7 +240,7 @@ public class Varies implements Type {
                         		obx2.getValue() + "\' in record " +
                         		obx1.getValue() + " is invalid for version " + version + 
                         		". See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
-                        		HL7Exception.DATA_TYPE_ERROR);
+                        		ErrorCode.DATA_TYPE_ERROR);
                         	h.setSegmentName("OBX");
                         	h.setFieldPosition(2);
                         	throw h;
@@ -286,9 +287,7 @@ public class Varies implements Type {
         }
         catch (Exception e) {
             throw new HL7Exception(
-                e.getClass().getName() + " trying to set data type of OBX-5",
-                HL7Exception.APPLICATION_INTERNAL_ERROR,
-                e);
+                e.getClass().getName() + " trying to set data type of OBX-5", e);
         }
 	}
 

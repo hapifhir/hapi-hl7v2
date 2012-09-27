@@ -258,7 +258,7 @@ public class GroupGenerator extends java.lang.Object {
                 currShortListPos++;
             }
         } catch (IllegalArgumentException e) {
-            throw new HL7Exception("Problem creating nested group: " + e.getClass().getName() + ": " + e.getMessage(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Problem creating nested group: " + e.getClass().getName() + ": " + e.getMessage());
         }
 
         if (rep_opt) {
@@ -426,7 +426,7 @@ public class GroupGenerator extends java.lang.Object {
                 }
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new HL7Exception("Couldn't find end of group index " + groupStart + " for msg " + message, HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Couldn't find end of group index " + groupStart + " for msg " + message);
         }
         if (!endMarker.equals(segName)) {
             StringBuffer buf = new StringBuffer();
@@ -434,7 +434,7 @@ public class GroupGenerator extends java.lang.Object {
                 buf.append("\r\n").append(i).append(" - ").append(structures[i].toString());
             }
             String msg = "Group markers for group indexes " + groupStart + "-" + (groupStart + offset) + " are not nested properly for message " + message + ": " + buf.toString();
-            throw new HL7Exception(msg, HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception(msg);
         }
         return groupStart + offset;
     }

@@ -6,6 +6,10 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+        	<action type="fix" dev="Christian Ohr" issue="3571839">
+            	Fixed incorrect generation of ACK messages for HL7 versions newer
+            	than 2.4. Thanks to Anne-Gaelle for reporting.
+            </action> 
           	<action type="add" dev="Christian Ohr" issue="3570493">
         		ModelClassFactory define their own event map location, where the
         		mapping between event and message structure is defined.
@@ -116,7 +120,7 @@
             	"tls" parameter on ConnectionHub was not honoured.       	
             </action>
             <action type="fix" dev="mmartin (laguna27)" issue="3566636">
-            	Fix an issue parsing XML encoded messsages where any segment groups with a four letter
+            	Fix an issue parsing XML encoded messages where any segment groups with a four letter
             	name are ignored (e.g. the DIET group in an OMD_O01 message). Thanks to mmartin
             	for providing a test case demonstrating the issue!
             </action>

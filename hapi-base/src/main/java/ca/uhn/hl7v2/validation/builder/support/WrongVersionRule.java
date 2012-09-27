@@ -28,11 +28,11 @@ package ca.uhn.hl7v2.validation.builder.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.hl7v2.ErrorCode;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.validation.Location;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
@@ -53,7 +53,7 @@ public class WrongVersionRule extends AbstractMessageRule {
 		location.setSegmentName("MSH");
 		location.setField(12);
 		ve.setLocation(location);
-		ve.setErrorCode(ErrorCode.UNSUPPORTED_VERSION_ID);
+		ve.setError(ErrorCode.UNSUPPORTED_VERSION_ID);
 		exceptions.add(ve);
 
 		return exceptions.toArray(new ValidationException[exceptions.size()]);

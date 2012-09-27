@@ -36,6 +36,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -184,7 +185,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 	public static String getVersionPackagePath(String ver) throws HL7Exception {
 		Version v = Version.versionOf(ver);
 	    if (v == null) { 
-	        throw new HL7Exception("The HL7 version " + ver + " is unknown", HL7Exception.UNSUPPORTED_VERSION_ID);
+	        throw new HL7Exception("The HL7 version " + ver + " is unknown", ErrorCode.UNSUPPORTED_VERSION_ID);
 	    }
 	    String pkg = v.modelPackageName();
 	    return pkg.replace('.', '/');

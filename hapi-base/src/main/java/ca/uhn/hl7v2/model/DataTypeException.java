@@ -28,6 +28,7 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 
 /**
@@ -43,18 +44,28 @@ public class DataTypeException extends HL7Exception {
      * @param message
      * @param errorCondition
      * @param cause
+     * @deprecated
      */
     public DataTypeException(String message, int errorCondition, Throwable cause) {
         super(message, errorCondition, cause);
     }
+    
+    public DataTypeException(String message, ErrorCode error, Throwable cause) {
+		super(message, error, cause);
+	}
 
-    /**
+	/**
      * @param message
      * @param errorCondition
+     * @deprecated
      */
     public DataTypeException(String message, int errorCondition) {
         super(message, errorCondition);
     }
+
+	public DataTypeException(String message, ErrorCode error) {
+		super(message, error);
+	}    
 
     /**
      * @param message

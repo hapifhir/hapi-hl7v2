@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
@@ -25,7 +26,7 @@ public class RespondingValidationExceptionHandlerTest {
 		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
 				.getResponse();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
-		assertEquals("AA", ack.getMSA().getAcknowledgmentCode().getValue());
+		assertEquals(AcknowledgementCode.AA.name(), ack.getMSA().getAcknowledgmentCode().getValue());
 	}
 
 	@Test
@@ -40,21 +41,21 @@ public class RespondingValidationExceptionHandlerTest {
 		String messageId = a01.getMSH().getMessageControlID().getValue();
 		HapiContext context = new DefaultHapiContext();
 		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler();
-		handler.setErrorAcknowledgementCode("AR");
+		handler.setErrorAcknowledgementCode(AcknowledgementCode.AR);
 
 		Validator validator = context.getMessageValidator();
 		assertFalse(validator.validate(a01, handler));
 		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
 				.getResponse();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
-		assertEquals("AR", ack.getMSA().getAcknowledgmentCode().getValue());
+		assertEquals(AcknowledgementCode.AR.name(), ack.getMSA().getAcknowledgmentCode().getValue());
 		assertEquals("PID", ack.getERR(0).getErrorLocation(0).getSegmentID().getValue());
 		assertEquals("1", ack.getERR(0).getErrorLocation(0).getFieldPosition().getValue());
 		assertEquals("207", ack.getERR(0).getHL7ErrorCode().getIdentifier().getValue());
 		assertEquals("PV1", ack.getERR(1).getErrorLocation(0).getSegmentID().getValue());
 		assertEquals("44", ack.getERR(1).getErrorLocation(0).getFieldPosition().getValue());
 		assertEquals("207", ack.getERR(1).getHL7ErrorCode().getIdentifier().getValue());
-		System.out.println(ack.encode());
+		// System.out.println(ack.encode());
 	}
 
 	@Test
@@ -74,7 +75,7 @@ public class RespondingValidationExceptionHandlerTest {
 		ca.uhn.hl7v2.model.v23.message.ACK ack = (ca.uhn.hl7v2.model.v23.message.ACK) handler
 				.getResponse();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
-		assertEquals("AE", ack.getMSA().getAcknowledgementCode().getValue());
+		assertEquals(AcknowledgementCode.AE.name(), ack.getMSA().getAcknowledgementCode().getValue());
 		assertEquals("PID", ack.getERR().getErrorCodeAndLocation(0).getSegmentID().getValue());
 		assertEquals("1", ack.getERR().getErrorCodeAndLocation(0).getFieldPosition().getValue());
 		assertEquals("207", ack.getERR().getErrorCodeAndLocation(0).getCodeIdentifyingError()
@@ -83,7 +84,7 @@ public class RespondingValidationExceptionHandlerTest {
 		assertEquals("44", ack.getERR().getErrorCodeAndLocation(1).getFieldPosition().getValue());
 		assertEquals("207", ack.getERR().getErrorCodeAndLocation(1).getCodeIdentifyingError()
 				.getIdentifier().getValue());
-		System.out.println(ack.encode());
+		// System.out.println(ack.encode());
 	}
 
 }

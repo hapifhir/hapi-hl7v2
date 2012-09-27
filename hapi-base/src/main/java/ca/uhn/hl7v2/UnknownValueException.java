@@ -36,6 +36,6 @@ package ca.uhn.hl7v2;
 public class UnknownValueException extends HL7Exception {
 
   public UnknownValueException(String message) {
-    super(message, HL7Exception.TABLE_VALUE_NOT_FOUND);
+    super(message, ErrorCode.TABLE_VALUE_NOT_FOUND);
   }
 } 

@@ -370,8 +370,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 		} catch (IOException ioe) {
 			throw new HL7Exception(
 					"IOException creating error response message: "
-							+ ioe.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+							+ ioe.getMessage());
 		}
 		return errorMessage;
 	}

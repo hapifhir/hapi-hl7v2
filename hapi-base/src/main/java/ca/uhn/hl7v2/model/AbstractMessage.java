@@ -32,11 +32,11 @@ import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
-import ca.uhn.hl7v2.model.primitive.ID;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -207,7 +207,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */
     public Message generateACK() throws HL7Exception, IOException {
-        return generateACK(null, null);
+        return generateACK(AcknowledgementCode.AA, null);
     }
 
 
@@ -215,24 +215,25 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */
     public Message generateACK(String theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
+        if (theAcknowledgementCode == null) {
+            theAcknowledgementCode = AcknowledgementCode.AA.name();
+        }
+        return generateACK(AcknowledgementCode.valueOf(theAcknowledgementCode), theException);
+    }
+    
+    public Message generateACK(AcknowledgementCode theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
         Message retVal = DefaultApplication.makeACK(this);
         retVal.setParser(getParser());
         
         if (theAcknowledgementCode == null) {
-            theAcknowledgementCode = "AA";
+            theAcknowledgementCode = AcknowledgementCode.AA;
         }
-
-        Segment msa = (Segment)retVal.get("MSA");
-        ID ackCode = (ID) msa.getField(1, 0);
-        ackCode.setValue(theAcknowledgementCode);
-
         if (theException != null) {
-            Segment err = (Segment) retVal.get("ERR");
-            theException.populate(err, null);
+            theException.populateResponse(retVal, theAcknowledgementCode, 0);
         }
-
         return retVal;
-    }
+    }    
+    
 
     /**
      * Provides an overview of the type and structure of this message
