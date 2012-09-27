@@ -65,7 +65,7 @@ public class DefaultValidationTest {
 		} catch (EncodingNotSupportedException e) {
 			fail(e.getMessage());
 		} catch (HL7Exception e) {
-			if (e.getMessage().contains("rep")) {
+			if (!e.getMessage().contains("(919)379-1212")) {
 				fail(e.getMessage());
 			}
 		}
@@ -83,7 +83,7 @@ public class DefaultValidationTest {
 		} catch (EncodingNotSupportedException e) {
 			fail(e.getMessage());
 		} catch (HL7Exception e) {
-			if (!e.getMessage().contains("rep")) {
+			if (!e.getMessage().contains("(919)379-1212")) {
 				fail(e.getMessage());
 			}
 		}

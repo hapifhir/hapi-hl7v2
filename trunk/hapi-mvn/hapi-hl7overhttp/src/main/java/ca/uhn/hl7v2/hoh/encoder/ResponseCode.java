@@ -6,6 +6,10 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
+
+import static ca.uhn.hl7v2.AcknowledgementCode.*;
+
 public enum ResponseCode {
 
 	HTTP_200_OK(200, "OK"),
@@ -16,16 +20,16 @@ public enum ResponseCode {
 
 	private int myCode;
 	private String myMessage;
-	private static final Map<String, ResponseCode> ourAckCodesToResponseCodes = new HashMap<String, ResponseCode>();
+	private static final Map<AcknowledgementCode, ResponseCode> ourAckCodesToResponseCodes = new HashMap<AcknowledgementCode, ResponseCode>();
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ResponseCode.class);
 
 	static {
-		ourAckCodesToResponseCodes.put("AA", HTTP_200_OK);
-		ourAckCodesToResponseCodes.put("CA", HTTP_200_OK);
-		ourAckCodesToResponseCodes.put("AR", HTTP_400_BAD_REQUEST);
-		ourAckCodesToResponseCodes.put("CR", HTTP_400_BAD_REQUEST);
-		ourAckCodesToResponseCodes.put("AE", HTTP_500_INTERNAL_SERVER_ERROR);
-		ourAckCodesToResponseCodes.put("CE", HTTP_500_INTERNAL_SERVER_ERROR);
+		ourAckCodesToResponseCodes.put(AA, HTTP_200_OK);
+		ourAckCodesToResponseCodes.put(CA, HTTP_200_OK);
+		ourAckCodesToResponseCodes.put(AR, HTTP_400_BAD_REQUEST);
+		ourAckCodesToResponseCodes.put(CR, HTTP_400_BAD_REQUEST);
+		ourAckCodesToResponseCodes.put(AE, HTTP_500_INTERNAL_SERVER_ERROR);
+		ourAckCodesToResponseCodes.put(CE, HTTP_500_INTERNAL_SERVER_ERROR);
 	}
 
 	ResponseCode(int theCode, String theMessage) {
@@ -44,7 +48,7 @@ public enum ResponseCode {
 	public static ResponseCode forAcknowledgementCode(String theAcknowledgementCode) {
 		ResponseCode retVal = null;
 		if (theAcknowledgementCode != null) {
-			retVal = ourAckCodesToResponseCodes.get(theAcknowledgementCode);
+			retVal = ourAckCodesToResponseCodes.get(AcknowledgementCode.valueOf(theAcknowledgementCode));
 		} else {
 			ourLog.warn("No HTTP response code defined for acknowledgement code: " + theAcknowledgementCode);
 			retVal = ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR;

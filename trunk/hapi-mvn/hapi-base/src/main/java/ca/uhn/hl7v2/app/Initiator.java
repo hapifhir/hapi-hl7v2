@@ -36,6 +36,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -110,7 +111,7 @@ public class Initiator {
 			LLPException, IOException {
 		if (out == null) {
 			throw new HL7Exception("Can't encode null message",
-					HL7Exception.REQUIRED_FIELD_MISSING);
+					ErrorCode.REQUIRED_FIELD_MISSING);
 		}
 
 		// register message with response Receiver(s) (by message ID)
@@ -120,7 +121,7 @@ public class Initiator {
 		if (messID == null || messID.length() == 0) {
 			throw new HL7Exception(
 					"MSH segment missing required field Control ID (MSH-10)",
-					HL7Exception.REQUIRED_FIELD_MISSING);
+					ErrorCode.REQUIRED_FIELD_MISSING);
 		}
 
 		// log and send message

@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
@@ -47,7 +48,7 @@ public class AcceptAcknowledger {
             AcceptValidator.AcceptRuling vr = validators[i].check(theMessage);            
             if (!vr.isAcceptable()) {
                 String description = (vr.getReasons().length > 0) ? vr.getReasons()[0] : null;
-                Transportable ack = makeAcceptAck(theMessage, vr.getAckCode(), vr.getErrorCode(), description);
+                Transportable ack = makeAcceptAck(theMessage, vr.getAckCode(), ErrorCode.errorCodeFor(vr.getErrorCode()), description);
                 ruling = new AcceptACK(false, ack);
             }
         }
@@ -55,12 +56,11 @@ public class AcceptAcknowledger {
         if (ruling == null) {
             try {
                 theContext.getSafeStorage().store(theMessage);
-                Transportable ack = makeAcceptAck(theMessage, Processor.CA, HL7Exception.MESSAGE_ACCEPTED, "");
+                Transportable ack = makeAcceptAck(theMessage, Processor.CA, ErrorCode.MESSAGE_ACCEPTED, "");
                 ruling = new AcceptACK(true, ack);
             } catch (HL7Exception e) {
                 log.error(e.getMessage(), e);
-                int code = HL7Exception.APPLICATION_INTERNAL_ERROR;
-                Transportable ack = makeAcceptAck(theMessage, Processor.CR, code, e.getMessage());
+                Transportable ack = makeAcceptAck(theMessage, Processor.CR, ErrorCode.APPLICATION_INTERNAL_ERROR, e.getMessage());
                 ruling = new AcceptACK(false, ack);
             }
         }        
@@ -69,7 +69,7 @@ public class AcceptAcknowledger {
     }
 
 
-    private static Transportable makeAcceptAck(Transportable theMessage, String theAckCode, int theErrorCode, String theDescription) throws HL7Exception {
+    private static Transportable makeAcceptAck(Transportable theMessage, String theAckCode, ErrorCode theErrorCode, String theDescription) throws HL7Exception {
         
         Segment header = ourParser.getCriticalResponseData(theMessage.getMessage());
         Message out;
@@ -83,7 +83,7 @@ public class AcceptAcknowledger {
         t.set("/MSA-1", theAckCode);
 
         //TODO: when 2.5 is available, use 2.5 fields for remaining problems 
-        if (theErrorCode != HL7Exception.MESSAGE_ACCEPTED) {
+        if (theErrorCode != ErrorCode.MESSAGE_ACCEPTED) {
             t.set("/MSA-3", theDescription.substring(0, Math.min(80, theDescription.length())));            
             t.set("/ERR-1-4-1", String.valueOf(theErrorCode));
             t.set("/ERR-1-4-3", "HL70357");

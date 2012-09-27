@@ -127,7 +127,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public Structure get(String name, int rep) throws HL7Exception {
         List<Structure> list = structures.get(name);
         if (list == null)
-            throw new HL7Exception(name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception(name + " does not exist in the group " + this.getClass().getName());
 
         Structure ret;
         if (rep < list.size()) {
@@ -137,15 +137,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             // verify that Structure is repeating ...
             Boolean repeats = this.repeating.get(name);
             if (!repeats.booleanValue() && list.size() > 0)
-                throw new HL7Exception("Can't create repetition #" + rep + " of Structure " + name + " - this Structure is non-repeating", HL7Exception.APPLICATION_INTERNAL_ERROR);
+                throw new HL7Exception("Can't create repetition #" + rep + " of Structure " + name + " - this Structure is non-repeating");
 
             // create a new Structure, add it to the list, and return it
             Class<? extends Structure> c = classes.get(name); // get class
             ret = tryToInstantiateStructure(c, name);
             list.add(ret);
         } else {
-            throw new HL7Exception("Can't return repetition #" + rep + " of " + name + " - there are only " + list.size() + " repetitions.",
-                    HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Can't return repetition #" + rep + " of " + name + " - there are only " + list.size() + " repetitions.");
         }
         return ret;
     }
@@ -336,14 +335,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                     o = c.newInstance();
                 }
                 if (!(o instanceof Structure))
-                    throw new HL7Exception("Class " + c.getName() + " does not implement " + "ca.on.uhn.hl7.message.Structure", HL7Exception.APPLICATION_INTERNAL_ERROR);
+                    throw new HL7Exception("Class " + c.getName() + " does not implement " + "ca.on.uhn.hl7.message.Structure");
                 s = (Structure) o;
             }
         } catch (Exception e) {
             if (e instanceof HL7Exception) {
                 throw (HL7Exception) e;
             } else {
-                throw new HL7Exception("Can't instantiate class " + c.getName(), HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+                throw new HL7Exception("Can't instantiate class " + c.getName(), e);
             }
         }
         return s;
@@ -355,7 +354,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public boolean isGroup(String name) throws HL7Exception {
         Class<? extends Structure> clazz = classes.get(name);
         if (clazz == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         return Group.class.isAssignableFrom(clazz);
     }
 
@@ -365,7 +364,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public boolean isRequired(String name) throws HL7Exception {
         Object o = required.get(name);
         if (o == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         Boolean req = (Boolean) o;
         return req.booleanValue();
     }
@@ -376,7 +375,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public boolean isRepeating(String name) throws HL7Exception {
         Object o = repeating.get(name);
         if (o == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         Boolean rep = (Boolean) o;
         return rep.booleanValue();
     }
@@ -387,7 +386,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public int currentReps(String name) throws HL7Exception {
         List<Structure> list = structures.get(name);
         if (list == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         return list.size();
     }
 
@@ -404,7 +403,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public Structure[] getAll(String name) throws HL7Exception {
         List<Structure> list = structures.get(name);
         if (list == null) {
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         }
         return list.toArray(new Structure[list.size()]);
     }
@@ -444,13 +443,13 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public Structure removeRepetition(String name, int index) throws HL7Exception {
         List<Structure> list = structures.get(name);
         if (list == null) {
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         }
         if (list.size() == 0) {
-            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " has no repetitions", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " has no repetitions");
         }
         if (list.size() <= index) {
-            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " must be between 0 and " + (list.size() - 1), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " must be between 0 and " + (list.size() - 1));
         }
 
         return list.remove(index);
@@ -473,16 +472,16 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
 
         if (structure.getMessage() != this.getMessage()) {
-            throw new HL7Exception("Structure does not belong to this message", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Structure does not belong to this message");
         }
 
         List<Structure> list = structures.get(name);
 
         if (list == null) {
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
         }
         if (list.size() < index) {
-            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " must be between 0 and " + (list.size()), HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Invalid index: " + index + ", structure " + name + " must be between 0 and " + (list.size()));
         }
 
         list.add(index, structure);
@@ -507,8 +506,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
         Class<? extends Structure> structureClass = this.classes.get(name);
         if (structureClass == null) {
-            throw new HL7Exception("Group " + this.getClass().getName() + " has no structure named " + name + ": Valid names: " + this.classes.keySet(),
-                    HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Group " + this.getClass().getName() + " has no structure named " + name + ": Valid names: " + this.classes.keySet());
         }
 
         Structure rep = tryToInstantiateStructure(structureClass, name);

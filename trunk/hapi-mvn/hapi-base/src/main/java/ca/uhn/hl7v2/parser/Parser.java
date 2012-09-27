@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
@@ -393,7 +394,7 @@ public abstract class Parser extends HapiContextSupport {
 			return instantiate(messageClass);
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create Message object of type " + theName,
-					HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);
+					ErrorCode.UNSUPPORTED_MESSAGE_TYPE, e);
 		}
 	}
 
@@ -459,8 +460,7 @@ public abstract class Parser extends HapiContextSupport {
 			}
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create MSH for version " + version
-					+ " (does your classpath include this version?) ... ",
-					HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+					+ " (does your classpath include this version?) ... ", e);
 		}
 		return msh;
 	}
@@ -486,7 +486,7 @@ public abstract class Parser extends HapiContextSupport {
 		if (!validVersion(version))
             throw new HL7Exception(
                     "The HL7 version " + version + " is not recognized",
-                    HL7Exception.UNSUPPORTED_VERSION_ID);
+                    ErrorCode.UNSUPPORTED_VERSION_ID);
 	}
 
 	/**
@@ -533,7 +533,7 @@ public abstract class Parser extends HapiContextSupport {
 			return instantiate(messageClass);
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create Message object of type " + theName,
-					HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);
+					ErrorCode.UNSUPPORTED_MESSAGE_TYPE, e);
 		}
 	}
 	

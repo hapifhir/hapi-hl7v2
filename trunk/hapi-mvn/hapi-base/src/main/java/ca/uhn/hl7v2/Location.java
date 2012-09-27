@@ -23,12 +23,12 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-package ca.uhn.hl7v2.validation;
+package ca.uhn.hl7v2;
 
-import ca.uhn.hl7v2.HL7Exception;
+
 
 /**
- * Location class to determine the location of an element that failed to validate
+ * Location class to determine the location of an element that caused an exception
  * 
  * @author Christian Ohr
  */
@@ -53,12 +53,6 @@ public class Location {
 		this.fieldRepetition = l.fieldRepetition;
 		this.component = l.component;
 		this.subcomponent = l.subcomponent;
-	}
-
-	public Location(HL7Exception e) {
-		this.segmentName = e.getSegmentName();
-		this.segmentRepetition = e.getSegmentRepetition();
-		this.field = e.getFieldPosition();
 	}
 
 	public String getSegmentName() {

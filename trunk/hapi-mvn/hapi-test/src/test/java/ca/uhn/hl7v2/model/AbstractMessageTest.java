@@ -6,6 +6,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -65,7 +66,7 @@ public class AbstractMessageTest extends TestCase {
         // MSH|^~\&|||||20090926173004.067-0500||ACK|225|P|2.2
         // MSA|AA|LABGL1199510021852632
 
-        Message nak = message.generateACK("AR", new HL7Exception("Error Message", HL7Exception.ACK_AE));
+        Message nak = message.generateACK(AcknowledgementCode.AR, new HL7Exception("Error Message"));
         msa = (MSA)nak.get("MSA");
         assertEquals("LABGL1199510021852632", msa.getMsa2_MessageControlID().encode());
 

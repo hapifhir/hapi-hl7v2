@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Group;
@@ -192,13 +193,13 @@ public class OldPipeParser extends Parser {
                     buf.append(comps.length);
                     buf.append(" of 3 components present");
                 }
-                throw new HL7Exception(buf.toString(), HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+                throw new HL7Exception(buf.toString(), ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
             }            
         }
         catch (IndexOutOfBoundsException e) {
             throw new HL7Exception(
             "Can't find message structure (MSH-9-3): " + e.getMessage(),
-            HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+            ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
         }
         
         return new MessageStructure(messageStructure, explicityDefined);
@@ -452,7 +453,7 @@ public class OldPipeParser extends Parser {
         if (encCharString.length() != 4)
             throw new HL7Exception(
             "Encoding characters '" + encCharString + "' invalid -- must be 4 characters",
-            HL7Exception.DATA_TYPE_ERROR);
+            ErrorCode.DATA_TYPE_ERROR);
         EncodingCharacters en = new EncodingCharacters(fieldSep, encCharString);
         
         //pass down to group encoding method which will operate recursively on children ...
@@ -562,7 +563,7 @@ public class OldPipeParser extends Parser {
         if (locStartMSH < 0)
             throw new HL7Exception(
             "Couldn't find MSH segment in message: " + message,
-            HL7Exception.SEGMENT_SEQUENCE_ERROR);
+            ErrorCode.SEGMENT_SEQUENCE_ERROR);
         int locEndMSH = message.indexOf('\r', locStartMSH + 1);
         if (locEndMSH < 0)
             locEndMSH = message.length();
@@ -606,7 +607,7 @@ public class OldPipeParser extends Parser {
             + e.getMessage()
             + "): "
             + mshString,
-            HL7Exception.REQUIRED_FIELD_MISSING, e);
+            ErrorCode.REQUIRED_FIELD_MISSING, e);
         }
         
         return msh;
@@ -667,7 +668,7 @@ public class OldPipeParser extends Parser {
             fieldSep = String.valueOf(msh.charAt(3));
         }
         else {
-            throw new HL7Exception("Can't find field separator in MSH: " + msh, HL7Exception.UNSUPPORTED_VERSION_ID);
+            throw new HL7Exception("Can't find field separator in MSH: " + msh, ErrorCode.UNSUPPORTED_VERSION_ID);
         }
         
         String[] fields = split(msh, fieldSep);
@@ -678,7 +679,7 @@ public class OldPipeParser extends Parser {
         } 
         else {
             throw new HL7Exception("Invalid or incomplete encoding characters - MSH-2 is " + fields[1],  
-                    HL7Exception.REQUIRED_FIELD_MISSING);
+                    ErrorCode.REQUIRED_FIELD_MISSING);
         }
         
         String version = null;
@@ -688,13 +689,13 @@ public class OldPipeParser extends Parser {
         		version = comp[0];
         	} else {
         		throw new HL7Exception("Can't find version ID - MSH.12 is " + fields[11],
-        				HL7Exception.REQUIRED_FIELD_MISSING);
+        				ErrorCode.REQUIRED_FIELD_MISSING);
         	}
         }
         else {
             throw new HL7Exception(
-            "Can't find version ID - MSH has only " + fields.length + " fields.",
-            HL7Exception.REQUIRED_FIELD_MISSING);
+            		"Can't find version ID - MSH has only " + fields.length + " fields.",
+            		ErrorCode.REQUIRED_FIELD_MISSING);
         }
         return version;
     }

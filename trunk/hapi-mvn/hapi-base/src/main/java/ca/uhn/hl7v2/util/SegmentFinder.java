@@ -103,7 +103,7 @@ public class SegmentFinder extends MessageNavigator {
     public Segment getSegment(String namePattern, int rep) throws HL7Exception {
         Structure s = getStructure(namePattern, rep);
         if (!Segment.class.isAssignableFrom(s.getClass())) {
-            throw new HL7Exception(s.getName() + " is not a segment", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception(s.getName() + " is not a segment");
         }
         return (Segment) s;
     }
@@ -114,7 +114,7 @@ public class SegmentFinder extends MessageNavigator {
     public Group getGroup(String namePattern, int rep) throws HL7Exception {
         Structure s = getStructure(namePattern, rep);
         if (!Group.class.isAssignableFrom(s.getClass())) {
-            throw new HL7Exception(s.getName() + " is not a group", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception(s.getName() + " is not a group");
         }
         return (Group) s;
     }
@@ -134,7 +134,7 @@ public class SegmentFinder extends MessageNavigator {
         }
         
         if (s == null)
-            throw new HL7Exception("Can't find " + namePattern + " as a direct child", HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Can't find " + namePattern + " as a direct child");
         
         return s;
     }

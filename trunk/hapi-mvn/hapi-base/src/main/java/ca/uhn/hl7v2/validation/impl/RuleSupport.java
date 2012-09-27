@@ -25,10 +25,10 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.Location;
+import ca.uhn.hl7v2.ErrorCode;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
 
 @SuppressWarnings("serial")
 public abstract class RuleSupport<T> implements Rule<T> {
@@ -60,7 +60,7 @@ public abstract class RuleSupport<T> implements Rule<T> {
 	
 	protected ValidationException[] failed(String msg, Location location) {
 		ValidationException ve = new ValidationException(msg);
-		ve.setErrorCode(getErrorCode());
+		ve.setError(getErrorCode());
 		ve.setLocation(location);
 		return new ValidationException[] { ve };
 	}
@@ -73,7 +73,7 @@ public abstract class RuleSupport<T> implements Rule<T> {
 		if (e instanceof ValidationException)
 			return new ValidationException[] { (ValidationException) e };
 		ValidationException ve = new ValidationException(e.getMessage(), e);
-		ve.setErrorCode(getErrorCode());
+		ve.setError(getErrorCode());
 		ve.setLocation(location);
 		return new ValidationException[] { ve };
 	}

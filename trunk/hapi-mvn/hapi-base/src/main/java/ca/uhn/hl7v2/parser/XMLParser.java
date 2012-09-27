@@ -38,6 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Composite;
@@ -207,8 +208,7 @@ public abstract class XMLParser extends Parser {
 		try {
 			return XMLUtils.parse(message);
 		} catch (Exception e) {
-			throw new HL7Exception("Exception parsing XML",
-					HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+			throw new HL7Exception("Exception parsing XML", e);
 		}
 	}
 
@@ -248,8 +248,7 @@ public abstract class XMLParser extends Parser {
 		try {
 			return XMLUtils.serialize(doc);
 		} catch (Exception e) {
-			throw new HL7Exception("Exception serializing XML document to string",
-					HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+			throw new HL7Exception("Exception serializing XML document to string", e);
 		}
 	}
 
@@ -327,8 +326,7 @@ public abstract class XMLParser extends Parser {
 					try {
 						segmentElement.appendChild(newNode);
 					} catch (DOMException e) {
-						throw new HL7Exception("DOMException encoding Segment: ",
-								HL7Exception.APPLICATION_INTERNAL_ERROR, e);
+						throw new HL7Exception("DOMException encoding Segment: ", e);
 					}
 					hasValue = true;
 				}
@@ -722,7 +720,7 @@ public abstract class XMLParser extends Parser {
 		} else {
 			throw new HL7Exception("Couldn't find " + tagName + " in message beginning: "
 					+ message.substring(0, Math.min(150, message.length())),
-					HL7Exception.REQUIRED_FIELD_MISSING);
+					ErrorCode.REQUIRED_FIELD_MISSING);
 		}
 
 		// Escape codes, as defined at http://hdf.ncsa.uiuc.edu/HDF5/XML/xml_escape_chars.htm

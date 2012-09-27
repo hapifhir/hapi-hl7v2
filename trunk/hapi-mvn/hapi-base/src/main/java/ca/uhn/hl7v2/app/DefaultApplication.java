@@ -31,13 +31,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -72,47 +72,12 @@ public class DefaultApplication implements Application {
 		try {
 			// get default ACK
 			Message out = makeACK(in);
-			fillDetails(out);
+			new HL7Exception("No appropriate destination could be found to which this message could be routed.")
+				.populateResponse(out, AcknowledgementCode.AR, 0);
 			return out;
 		} catch (Exception e) {
 			throw new ApplicationException("Couldn't create response message: "
 					+ e.getMessage());
-		}
-
-	}
-
-	/**
-	 * Fills in the details of an Application Reject message, including response
-	 * and error codes, and a text error message. This is the method to override
-	 * if you want to respond differently.
-	 */
-	public void fillDetails(Message ack) throws ApplicationException {
-		try {
-			// populate MSA and ERR with generic error ...
-			Segment msa = (Segment) ack.get("MSA");
-			Terser.set(msa, 1, 0, 1, 1, "AR");
-			Terser.set(
-					msa,
-					3,
-					0,
-					1,
-					1,
-					"No appropriate destination could be found to which this message could be routed.");
-			// this is max length
-
-			// populate ERR segment if it exists (may not depending on version)
-			Structure s = ack.get("ERR");
-			if (s != null) {
-				Segment err = (Segment) s;
-				Terser.set(err, 1, 0, 4, 1, "207");
-				Terser.set(err, 1, 0, 4, 2, "Application Internal Error");
-				Terser.set(err, 1, 0, 4, 3, "HL70357");
-			}
-
-		} catch (Exception e) {
-			throw new ApplicationException(
-					"Error trying to create Application Reject message: "
-							+ e.getMessage());
 		}
 	}
 
@@ -132,11 +97,16 @@ public class DefaultApplication implements Application {
 	 *             if there is a problem reading or writing the message ID file
 	 * @throws DataTypeException
 	 *             if there is a problem setting ACK values
+	 * 
+	 * TODO this should be refactored as instance method in AbstractMessage. This
+	 * method can forward and become deprecated
 	 */
 	public static Message makeACK(Message message) throws HL7Exception, IOException {
 		return makeACK((Segment)message.get("MSH"));
 	}
 	
+	// TODO this should be refactored as instance method in AbstractMessage
+	// This method can forward and become deprecated
 	public static Message makeACK(Segment inboundHeader) throws HL7Exception,
 			IOException {
 		if (!inboundHeader.getName().equals("MSH"))
@@ -172,8 +142,11 @@ public class DefaultApplication implements Application {
 
 			terser.set("/MSH-9-1", "ACK");
 			terser.set("/MSH-9-2", Terser.get(inboundHeader, 9, 0, 2, 1));
+			if (!Version.V25.isGreaterThan(versionEnum)) {
+				terser.set("/MSH-9-3", "ACK");
+			}
 			terser.set("/MSH-12", Terser.get(inboundHeader, 12, 0, 1, 1));
-			terser.set("/MSA-1", "AA");
+			terser.set("/MSA-1", AcknowledgementCode.AA.name());
 			terser.set("/MSA-2", Terser.get(inboundHeader, 10, 0, 1, 1));
 			return out;
 
@@ -189,6 +162,8 @@ public class DefaultApplication implements Application {
 	 * used for the message time field, and <code>MessageIDGenerator</code> is
 	 * used to create a unique message ID. Version and message type fields are
 	 * not populated.
+	 * 
+	 * TODO move to AbstractMessage and deprecated
 	 */
 	public static void fillResponseHeader(Segment inbound, Segment outbound)
 			throws HL7Exception, IOException {

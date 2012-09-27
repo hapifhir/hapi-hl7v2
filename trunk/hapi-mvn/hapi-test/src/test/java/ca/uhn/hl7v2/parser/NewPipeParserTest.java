@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Composite;
@@ -946,7 +947,7 @@ public class NewPipeParserTest extends TestCase {
 			ORU_R01 parsed = (ORU_R01) parser.parse(message);
 			fail(parser.encode(parsed));
 		} catch (HL7Exception e) {
-			assertEquals(HL7Exception.UNSUPPORTED_VERSION_ID, e.getErrorCode());
+			assertEquals(ErrorCode.UNSUPPORTED_VERSION_ID, e.getError());
 		}
 
 	}

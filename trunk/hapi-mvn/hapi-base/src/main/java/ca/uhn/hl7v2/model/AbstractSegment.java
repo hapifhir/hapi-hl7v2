@@ -150,8 +150,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (number < 1 || number > fields.size()) {
 			throw new HL7Exception("Can't retrieve field " + number
 					+ " from segment " + this.getClass().getName()
-					+ " - there are only " + fields.size() + " fields.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ " - there are only " + fields.size() + " fields.");
 		}
 
 		return fields.get(number - 1);
@@ -183,8 +182,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (number < 1 || number > fields.size()) {
 			throw new HL7Exception("Can't get field " + number + " in segment "
 					+ getName() + " - there are currently only "
-					+ fields.size() + " reps.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ fields.size() + " reps.");
 		}
 
 		List<Type> arr = fields.get(number - 1);
@@ -193,8 +191,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (rep > arr.size())
 			throw new HL7Exception("Can't get repetition " + rep
 					+ " from field " + number + " - there are currently only "
-					+ arr.size() + " reps.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ arr.size() + " reps.");
 
 		// add a rep if necessary ...
 		if (rep == arr.size()) {
@@ -270,20 +267,18 @@ public abstract class AbstractSegment extends AbstractStructure implements
 			newType = c.getConstructor(argClasses).newInstance(args);
 		} catch (IllegalAccessException iae) {
 			throw new HL7Exception("Can't access class " + c.getName() + " ("
-					+ iae.getClass().getName() + "): " + iae.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ iae.getClass().getName() + "): " + iae.getMessage());
 		} catch (InstantiationException ie) {
 			throw new HL7Exception("Can't instantiate class " + c.getName()
-					+ " (" + ie.getClass().getName() + "): " + ie.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ " (" + ie.getClass().getName() + "): " + ie.getMessage());
 		} catch (InvocationTargetException ite) {
 			throw new HL7Exception("Can't instantiate class " + c.getName()
 					+ " (" + ite.getClass().getName() + "): "
-					+ ite.getMessage(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ ite.getMessage());
 		} catch (NoSuchMethodException nme) {
 			throw new HL7Exception("Can't instantiate class " + c.getName()
 					+ " (" + nme.getClass().getName() + "): "
-					+ nme.getMessage(), HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ nme.getMessage());
 		}
 		return newType;
 	}
@@ -313,16 +308,14 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (number < 1 || number > required.size()) {
 			throw new HL7Exception("Can't retrieve optionality of field "
 					+ number + " from segment " + this.getClass().getName()
-					+ " - there are only " + fields.size() + " fields.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ " - there are only " + fields.size() + " fields.");
 		}
 
 		try {
 			return required.get(number - 1);
 		} catch (Exception e) {
 			throw new HL7Exception("Can't retrieve optionality of field "
-					+ number + ": " + e.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ number + ": " + e.getMessage());
 		}
 	}
 
@@ -337,16 +330,14 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (number < 1 || number > length.size()) {
 			throw new HL7Exception("Can't retrieve max length of field "
 					+ number + " from segment " + this.getClass().getName()
-					+ " - there are only " + fields.size() + " fields.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ " - there are only " + fields.size() + " fields.");
 		}
 
 		try {
 			return length.get(number - 1); // fields #d from 1 to user
 		} catch (Exception e) {
 			throw new HL7Exception("Can't retrieve max length of field "
-					+ number + ": " + e.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ number + ": " + e.getMessage());
 		}
 
 	}
@@ -361,16 +352,14 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (number < 1 || number > length.size()) {
 			throw new HL7Exception("Can't retrieve cardinality of field "
 					+ number + " from segment " + this.getClass().getName()
-					+ " - there are only " + fields.size() + " fields.",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ " - there are only " + fields.size() + " fields.");
 		}
 
 		try {
 			return maxReps.get(number - 1); // fields #d from 1 to user
 		} catch (Exception e) {
 			throw new HL7Exception("Can't retrieve max repetitions of field "
-					+ number + ": " + e.getMessage(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ number + ": " + e.getMessage());
 		}
 	}
 
@@ -561,7 +550,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 
 	/**
 	 * Removes a repetition of a given field by name. For example, if a PID
-	 * segment contains 10 repititions a "Patient Identifier List" field and
+	 * segment contains 10 repetitions a "Patient Identifier List" field and
 	 * "Patient Identifier List" is supplied with an index of 2, then this call
 	 * would remove the 3rd repetition.
 	 * 
@@ -574,21 +563,18 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (fieldNum < 1 || fieldNum > fields.size()) {
 			throw new HL7Exception("The field " + fieldNum
 					+ " does not exist in the segment "
-					+ this.getClass().getName(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ this.getClass().getName());
 		}
 
 		String name = names.get(fieldNum - 1);
 		List<Type> list = fields.get(fieldNum - 1);
 		if (list.size() == 0) {
 			throw new HL7Exception("Invalid index: " + index + ", structure "
-					+ name + " has no repetitions",
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ name + " has no repetitions");
 		}
 		if (list.size() <= index) {
 			throw new HL7Exception("Invalid index: " + index + ", structure "
-					+ name + " must be between 0 and " + (list.size() - 1),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ name + " must be between 0 and " + (list.size() - 1));
 		}
 
 		return list.remove(index);
@@ -607,8 +593,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		if (fieldNum < 1 || fieldNum > fields.size()) {
 			throw new HL7Exception("The field " + fieldNum
 					+ " does not exist in the segment "
-					+ this.getClass().getName(),
-					HL7Exception.APPLICATION_INTERNAL_ERROR);
+					+ this.getClass().getName());
 		}
 
 		List<Type> list = fields.get(fieldNum - 1);

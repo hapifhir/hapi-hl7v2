@@ -25,17 +25,12 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
-import static ca.uhn.hl7v2.Version.V25;
-import static ca.uhn.hl7v2.Version.versionOf;
-
 import java.io.IOException;
 import java.util.List;
 
+import ca.uhn.hl7v2.AcknowledgementCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
 
 /**
  * ValidationExceptionHandler that generates response messages as statically configured and based on
@@ -49,8 +44,8 @@ import ca.uhn.hl7v2.validation.ValidationException.ErrorCode;
  */
 public class RespondingValidationExceptionHandler extends CollectingValidationExceptionHandler {
 
-	private String successAcknowledgementCode = "AA";
-	private String errorAcknowledgementCode = "AE";
+	private AcknowledgementCode successAcknowledgementCode = AcknowledgementCode.AA;
+	private AcknowledgementCode errorAcknowledgementCode = AcknowledgementCode.AE;
 
 	/**
 	 * Returns the generated response message.
@@ -79,7 +74,7 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * 
 	 * @param successAcknowledgementCode (AA, CA)
 	 */
-	public void setSuccessAcknowledgementCode(String successAcknowledgementCode) {
+	public void setSuccessAcknowledgementCode(AcknowledgementCode successAcknowledgementCode) {
 		this.successAcknowledgementCode = successAcknowledgementCode;
 	}
 
@@ -89,15 +84,15 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * 
 	 * @param errorAcknowledgementCode (AR, AE ,CR, CE)
 	 */
-	public void setErrorAcknowledgementCode(String errorAcknowledgementCode) {
+	public void setErrorAcknowledgementCode(AcknowledgementCode errorAcknowledgementCode) {
 		this.errorAcknowledgementCode = errorAcknowledgementCode;
 	}
 
-	public String getSuccessAcknowledgementCode() {
+	public AcknowledgementCode getSuccessAcknowledgementCode() {
 		return successAcknowledgementCode;
 	}
 
-	public String getErrorAcknowledgementCode() {
+	public AcknowledgementCode getErrorAcknowledgementCode() {
 		return errorAcknowledgementCode;
 	}
 
@@ -128,80 +123,9 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 		if (exceptions.isEmpty()) {
 			return;
 		}
-		// Fill MSA/ERR segment
-		if (V25.isGreaterThan(versionOf(response.getVersion()))) {
-			fillSegmentsBefore25(response, exceptions);
-		} else {
-			fillSegmentsAsOf25(response, exceptions);
+		for (int i = 0; i < exceptions.size(); i++) {
+			exceptions.get(i).populateResponse(response, getErrorAcknowledgementCode(), i);
 		}
 	}
 
-	/**
-	 * Fill segments for HL7 versions 2.5 or newer.
-	 * <p>
-	 * HL7 versions before 2.5 require to set MSA-1. The ERR segment has various fields (ERR-2,
-	 * ERR-3) containing details about the exception. ERR-1 is marked as obsolete.
-	 * 
-	 * @param response the raw response message
-	 * @param exceptions exceptions encountered during validation
-	 * @throws HL7Exception
-	 */
-	protected void fillSegmentsAsOf25(Message response, List<ValidationException> exceptions)
-			throws HL7Exception {
-		Segment msa = (Segment) response.get("MSA");
-		Terser.set(msa, 1, 0, 1, 1, getErrorAcknowledgementCode());
-		int repetition = 0;
-		for (ValidationException exception : exceptions) {
-			Segment err = (Segment) response.get("ERR", repetition);
-			Location l = exception.getLocation();
-			if (l.getSegmentName() != null)
-				Terser.set(err, 2, 0, 1, 1, l.getSegmentName());
-			if (l.getField() > 0)
-				Terser.set(err, 2, 0, 3, 1, Integer.toString(l.getField()));
-			if (l.getFieldRepetition() > 0)
-				Terser.set(err, 2, 0, 4, 1, Integer.toString(l.getFieldRepetition()));
-			if (l.getComponent() > 0)
-				Terser.set(err, 2, 0, 5, 1, Integer.toString(l.getComponent()));
-			if (l.getSubcomponent() > 0)
-				Terser.set(err, 2, 0, 6, 1, Integer.toString(l.getSubcomponent()));
-			Terser.set(err, 3, 0, 1, 1, Integer.toString(exception.getErrorCode().getCode()));
-			Terser.set(err, 3, 0, 2, 1, exception.getErrorCode().getMessage());
-			Terser.set(err, 3, 0, 3, 1, ErrorCode.errorCodeTable());
-			Terser.set(err, 3, 0, 9, 1, exception.getMessage());
-			Terser.set(err, 4, 0, 1, 1, "E");
-			repetition++;
-		}
-	}
-
-	/**
-	 * Fill segments for HL7 versions before 2.5.
-	 * <p>
-	 * HL7 versions before 2.5 require to set MSA-1 and MSA-3. The ERR segment only has one
-	 * repeatable field (ERR-1) with components containing details about the exception.
-	 * 
-	 * @param response the raw response message
-	 * @param exceptions exceptions encountered during validation
-	 * @throws HL7Exception
-	 */
-	protected void fillSegmentsBefore25(Message response, List<ValidationException> exceptions)
-			throws HL7Exception {
-		Segment msa = (Segment) response.get("MSA");
-		Terser.set(msa, 1, 0, 1, 1, getErrorAcknowledgementCode());
-		Terser.set(msa, 3, 0, 1, 1, "Message validation failed");
-		int repetition = 0;
-		Segment err = (Segment) response.get("ERR");
-		for (ValidationException exception : exceptions) {
-			Location l = exception.getLocation();
-			if (l.getSegmentName() != null)
-				Terser.set(err, 1, repetition, 1, 1, l.getSegmentName());
-			if (l.getField() > 0)
-				Terser.set(err, 1, repetition, 3, 1, Integer.toString(l.getField()));
-			Terser.set(err, 1, repetition, 4, 1,
-					Integer.toString(exception.getErrorCode().getCode()));
-			Terser.set(err, 1, repetition, 4, 2, exception.getErrorCode().getMessage());
-			Terser.set(err, 1, repetition, 4, 3, ErrorCode.errorCodeTable());
-			Terser.set(err, 1, repetition, 4, 5, exception.getMessage());
-			repetition++;
-		}
-	}
 }

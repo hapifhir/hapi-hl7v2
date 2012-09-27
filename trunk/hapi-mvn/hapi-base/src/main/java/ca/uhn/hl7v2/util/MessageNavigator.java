@@ -79,7 +79,7 @@ public class MessageNavigator {
         if (childNumber != -1) {
             Structure s = currentGroup.get(childNames[childNumber], rep);
             if (!(s instanceof Group)) {
-                throw new HL7Exception("Can't drill into segment", HL7Exception.APPLICATION_INTERNAL_ERROR);
+                throw new HL7Exception("Can't drill into segment");
             }
             Group group = (Group) s;
             
@@ -150,8 +150,7 @@ public class MessageNavigator {
         if (child >= 0 && child < this.childNames.length) {
             this.currentChild = child;
         } else {
-            throw new HL7Exception("Can't advance to child " + child + " -- only " + this.childNames.length + " children",
-            HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("Can't advance to child " + child + " -- only " + this.childNames.length + " children");
         }
     }
     
@@ -230,8 +229,7 @@ public class MessageNavigator {
         } else if (loop) {
             this.reset();
         } else {
-            throw new HL7Exception("End of message reached while iterating without loop", 
-                HL7Exception.APPLICATION_INTERNAL_ERROR);
+            throw new HL7Exception("End of message reached while iterating without loop");
         }
             
     }
