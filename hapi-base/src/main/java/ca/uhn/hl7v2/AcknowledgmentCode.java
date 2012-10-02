@@ -6,7 +6,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "AcknowledgementCode.java".  Description: 
+The Original Code is "AcknowledgmentCode.java".  Description: 
 "Enum for HL7 table 0008" 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
@@ -26,9 +26,9 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2;
 
 /**
- * Acknowledgement code table
+ * Acknowledgment code table
  */
-public enum AcknowledgementCode {
+public enum AcknowledgmentCode {
 	AA("Application Accept"),
 	AE("Application Error"), 
 	AR("Application Reject"), 
@@ -38,7 +38,7 @@ public enum AcknowledgementCode {
 
 	private final String message;
 
-	AcknowledgementCode(String message) {
+	AcknowledgmentCode(String message) {
 		this.message = message;
 	}
 

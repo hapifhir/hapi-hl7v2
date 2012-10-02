@@ -21,7 +21,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
@@ -194,7 +194,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		ADT_A05 msg = new ADT_A05();
 		msg.parse(message);
 		
-		myResponse = msg.generateACK(AcknowledgementCode.AR, new HL7Exception("ewrerwe")).encode();
+		myResponse = msg.generateACK(AcknowledgmentCode.AR, new HL7Exception("ewrerwe")).encode();
 		
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		String charsetName = "ISO-8859-2";
@@ -263,7 +263,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		ADT_A05 msg = new ADT_A05();
 		msg.parse(message);
 		
-		myResponse = msg.generateACK(AcknowledgementCode.AE, new HL7Exception("ewrerwe")).encode();
+		myResponse = msg.generateACK(AcknowledgmentCode.AE, new HL7Exception("ewrerwe")).encode();
 		
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		String charsetName = "ISO-8859-2";

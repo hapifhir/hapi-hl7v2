@@ -8,9 +8,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
@@ -19,7 +19,7 @@ import ca.uhn.hl7v2.protocol.AcceptValidator;
 import ca.uhn.hl7v2.protocol.Processor;
 import ca.uhn.hl7v2.protocol.ProcessorContext;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.DeepCopy;
 
 /**
  * Checks whether messages can be accepted and creates appropriate
@@ -69,29 +69,25 @@ public class AcceptAcknowledger {
     }
 
 
-    private static Transportable makeAcceptAck(Transportable theMessage, String theAckCode, ErrorCode theErrorCode, String theDescription) throws HL7Exception {
-        
+    private static Transportable makeAcceptAck(Transportable theMessage, String theAckCode, ErrorCode theErrorCode, String theDescription) throws HL7Exception {        
         Segment header = ourParser.getCriticalResponseData(theMessage.getMessage());
-        Message out;
+        Message dummy = header.getMessage();
+        // MSH header refers to dummy, but not the other way round!
+        DeepCopy.copy(header, (Segment)dummy.get("MSH"));
+
         try {
-            out = DefaultApplication.makeACK(header);
+            HL7Exception hl7e = new HL7Exception(theDescription, theErrorCode);
+            AcknowledgmentCode code = theAckCode == null ?
+            		AcknowledgmentCode.CR :
+            		AcknowledgmentCode.valueOf(theAckCode);
+        	Message out = dummy.generateACK(code, hl7e);
+            String originalEncoding = ourParser.getEncoding(theMessage.getMessage());
+            String ackText = ourParser.encode(out, originalEncoding);
+            return new TransportableImpl(ackText);
         } catch (IOException e) {
             throw new HL7Exception(e);
         }
         
-        Terser t = new Terser(out);
-        t.set("/MSA-1", theAckCode);
-
-        //TODO: when 2.5 is available, use 2.5 fields for remaining problems 
-        if (theErrorCode != ErrorCode.MESSAGE_ACCEPTED) {
-            t.set("/MSA-3", theDescription.substring(0, Math.min(80, theDescription.length())));            
-            t.set("/ERR-1-4-1", String.valueOf(theErrorCode));
-            t.set("/ERR-1-4-3", "HL70357");
-        }
-        
-        String originalEncoding = ourParser.getEncoding(theMessage.getMessage());
-        String ackText = ourParser.encode(out, originalEncoding);
-        return new TransportableImpl(ackText);
     }    
     
     

@@ -58,19 +58,13 @@ public class ExampleReceiverApplication implements Application
 
         String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theIn);
         System.out.println("Received message:\n" + encodedMessage + "\n\n");
-
-        // Now we need to generate a message to return. This will generally be an ACK message.
-        MSH msh = (MSH)theIn.get("MSH");
-        ACK retVal;
+        // Now generate a simple acknowledgment message and return it
         try {
-            // This method takes in the MSH segment of an incoming message, and generates an
-            // appropriate ACK
-            retVal = (ACK)DefaultApplication.makeACK(msh);
+        	return theIn.generateACK();
         } catch (IOException e) {
             throw new HL7Exception(e);
         }
 
-        return retVal;
     }
 
 }

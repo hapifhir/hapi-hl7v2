@@ -1,12 +1,13 @@
 package ca.uhn.hl7v2.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import ca.uhn.hl7v2.AcknowledgementCode;
+import org.junit.Assert;
+import org.junit.Test;
+
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -16,27 +17,16 @@ import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * JUnit test cases for AbstractMessage
  * @author bryan
  */
-public class AbstractMessageTest extends TestCase {
+public class AbstractMessageTest {
 
-    public AbstractMessageTest(java.lang.String testName) {
-        super(testName);
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractMessageTest.class);
-        return suite;
-    }
-
+	@Test
     public void testGetVersion() {
         Message msg = new ca.uhn.hl7v2.model.v22.message.ADT_A01();
         assertEquals("2.2", msg.getVersion());
@@ -51,6 +41,7 @@ public class AbstractMessageTest extends TestCase {
     // for example:
     // public void testHello() {}
 
+	@Test
     public void testGenerateAck() throws HL7Exception, IOException {
 
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
@@ -62,20 +53,21 @@ public class AbstractMessageTest extends TestCase {
         MSA msa = (MSA)ack.get("MSA");
         assertEquals("LABGL1199510021852632", msa.getMsa2_MessageControlID().encode());
 
-        System.out.println(ack.encode());
+        // System.out.println(ack.encode());
         // MSH|^~\&|||||20090926173004.067-0500||ACK|225|P|2.2
         // MSA|AA|LABGL1199510021852632
 
-        Message nak = message.generateACK(AcknowledgementCode.AR, new HL7Exception("Error Message"));
+        Message nak = message.generateACK(AcknowledgmentCode.AR, new HL7Exception("Error Message"));
         msa = (MSA)nak.get("MSA");
         assertEquals("LABGL1199510021852632", msa.getMsa2_MessageControlID().encode());
 
-        System.out.println(nak.encode());
+        // System.out.println(nak.encode());
         // MSH|^~\&|||||20090926180218.494-0500||ACK|231|P|2.2
         // MSA|AR|LABGL1199510021852632
         // ERR|^^^2&ERROR&hl70357&&Error Message
     }
     
+	@Test
     public void testGenerateAckWithCanonicalFactory() throws HL7Exception, IOException {
 
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
@@ -96,6 +88,7 @@ public class AbstractMessageTest extends TestCase {
     }    
 
 
+	@Test
     public void testParseAndEncode() throws HL7Exception, IOException {
 
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
@@ -124,6 +117,7 @@ public class AbstractMessageTest extends TestCase {
 
     }
 
+	@Test
     public void testNumberedAccessor() throws HL7Exception, IOException {
 
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
@@ -139,6 +133,7 @@ public class AbstractMessageTest extends TestCase {
      * If a group contains two segments with the same name in different positions,
      * they should be shown separately
      */
+	@Test
     public void testPrintMessageStructureCorrectlyShowsMultipleSegmentsWithSameName() throws HL7Exception, IOException {
     	
     	ADT_A01 msg = new ADT_A01();
@@ -155,6 +150,36 @@ public class AbstractMessageTest extends TestCase {
     	Assert.assertTrue(struct.contains(" ZZZ2 "));
     	
     }
+    
+    
+    @Test
+    // moved from DefaultApplicationTest
+    public void testMakeACK() throws Exception {
+    	Message in = new ca.uhn.hl7v2.model.v24.message.ACK();
+        Terser t = new Terser(in);
+        t.set("/MSH-1", "|");
+        t.set("/MSH-2", "^~\\&");
+        t.set("/MSH-3", "senderapp");
+        t.set("/MSH-4", "senderfac");
+        t.set("/MSH-5", "receiverapp");
+        t.set("/MSH-6", "receiverfac");        
+        t.set("/MSH-10", "boo");
+        t.set("/MSH-11", "D");
+        t.set("/MSH-12", "2.4");
+        Message ack = in.generateACK();
+        assertEquals(ack.getClass(), ca.uhn.hl7v2.model.v24.message.ACK.class);
+        Terser to = new Terser(ack);
+        assertEquals("|", to.get("/MSH-1"));
+        assertEquals("^~\\&", to.get("/MSH-2"));
+        assertEquals(t.get("/MSH-3"), to.get("/MSH-5"));
+        assertEquals(t.get("/MSH-4"), to.get("/MSH-6"));
+        assertEquals(t.get("/MSH-5"), to.get("/MSH-3"));
+        assertEquals(t.get("/MSH-6"), to.get("/MSH-4"));
+        assertEquals("D", to.get("/MSH-11"));
+        assertEquals("2.4", to.get("/MSH-12"));
+        assertEquals(AcknowledgmentCode.AA.name(), to.get("/MSA-1"));
+        assertEquals("boo", to.get("/MSA-2"));
+    }    
     
 
 }

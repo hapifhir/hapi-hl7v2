@@ -6,9 +6,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 
-import static ca.uhn.hl7v2.AcknowledgementCode.*;
+import static ca.uhn.hl7v2.AcknowledgmentCode.*;
 
 public enum ResponseCode {
 
@@ -20,7 +20,7 @@ public enum ResponseCode {
 
 	private int myCode;
 	private String myMessage;
-	private static final Map<AcknowledgementCode, ResponseCode> ourAckCodesToResponseCodes = new HashMap<AcknowledgementCode, ResponseCode>();
+	private static final Map<AcknowledgmentCode, ResponseCode> ourAckCodesToResponseCodes = new HashMap<AcknowledgmentCode, ResponseCode>();
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ResponseCode.class);
 
 	static {
@@ -48,7 +48,7 @@ public enum ResponseCode {
 	public static ResponseCode forAcknowledgementCode(String theAcknowledgementCode) {
 		ResponseCode retVal = null;
 		if (theAcknowledgementCode != null) {
-			retVal = ourAckCodesToResponseCodes.get(AcknowledgementCode.valueOf(theAcknowledgementCode));
+			retVal = ourAckCodesToResponseCodes.get(AcknowledgmentCode.valueOf(theAcknowledgementCode));
 		} else {
 			ourLog.warn("No HTTP response code defined for acknowledgement code: " + theAcknowledgementCode);
 			retVal = ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR;

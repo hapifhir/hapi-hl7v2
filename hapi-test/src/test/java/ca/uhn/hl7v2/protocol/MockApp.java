@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -26,7 +24,7 @@ public class MockApp implements ReceivingApplication {
     public Message processMessage(Message in, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
         Message response = null;
         try {
-            response = DefaultApplication.makeACK((Segment) in.get("MSH"));
+            response = in.generateACK();
         } catch (HL7Exception e) {
             e.printStackTrace();
         } catch (IOException e) {

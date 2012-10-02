@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
@@ -22,6 +23,7 @@ import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.Transportable;
+import ca.uhn.hl7v2.util.DeepCopy;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -268,6 +270,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     //support method for matches(AppRoutingData theMessageData, AppRoutingData theReferenceData)
     private static boolean matches(String theMessageData, String theReferenceData) {
         boolean result = false;
+        // TODO may throw NPE!
         if (theMessageData.equals(theReferenceData) || 
                 theReferenceData.equals("*") || 
                 Pattern.matches(theReferenceData, theMessageData)) {
@@ -319,48 +322,18 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 			Parser p, String encoding) throws HL7Exception {
 
 		log.error("Attempting to send error message to remote system.", e);
+		
+		HL7Exception hl7e = e instanceof HL7Exception ? 
+				(HL7Exception) e :
+				new HL7Exception(e.getMessage(), e);
 
 		// create error message ...
 		String errorMessage = null;
 		try {
-			Message out = DefaultApplication.makeACK(inHeader);
-			Terser t = new Terser(out);
-
-			// copy required data from incoming message ...
-			try {
-				t.set(METADATA_KEY_MESSAGE_CONTROL_ID, out.getParser().getParserConfiguration().getIdGenerator().getID());
-			} catch (IOException ioe) {
-				throw new HL7Exception("Problem creating error message ID: "
-						+ ioe.getMessage());
-			}
-
-			// populate MSA ...
-			t.set("/MSA-1", "AE"); // should this come from HL7Exception
-									// constructor?
-			t.set("/MSA-2", Terser.get(inHeader, 10, 0, 1, 1));
-			String excepMessage = e.getMessage();
-			if (excepMessage != null)
-				t.set("/MSA-3",
-						excepMessage.substring(0,
-								Math.min(80, excepMessage.length())));
-
-			/*
-			 * Some earlier ACKs don't have ERRs, but I think we'll change this
-			 * within HAPI so that there is a single ACK for each version (with
-			 * an ERR).
-			 */
-			// see if it's an HL7Exception (so we can get specific information)
-			// ...
-			if (e.getClass().equals(HL7Exception.class)) {
-//				Segment err = (Segment) out.get("ERR");
-				// ((HL7Exception) e).populate(err); // FIXME: this is broken,
-				// it relies on the database in a place where it's not available
-			} else {
-				t.set("/ERR-1-4-1", "207");
-				t.set("/ERR-1-4-2", "Application Internal Error");
-				t.set("/ERR-1-4-3", "HL70357");
-			}
-
+			Message in = inHeader.getMessage();
+			// the message may be a dummy message, whose MSH segment is incomplete
+			DeepCopy.copy(inHeader, (Segment)in.get("MSH"));				
+			Message out = in.generateACK(AcknowledgmentCode.AE, hl7e);
 			if (encoding != null) {
 				errorMessage = p.encode(out, encoding);
 			} else {

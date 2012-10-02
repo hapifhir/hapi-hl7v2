@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
 import ca.uhn.hl7v2.model.Message;
@@ -80,7 +80,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 			 */
 			if (somethingFailed) {
 				try {
-					response = theMessage.generateACK(AcknowledgementCode.AE, 
+					response = theMessage.generateACK(AcknowledgmentCode.AE, 
 							new HL7Exception("There was a problem!!"));
 				} catch (IOException e) {
 					throw new ReceivingApplicationException(e);

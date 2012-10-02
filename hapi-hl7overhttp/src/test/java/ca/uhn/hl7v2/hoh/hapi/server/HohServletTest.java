@@ -15,7 +15,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Connection;
@@ -112,7 +112,7 @@ public class HohServletTest {
 		msg.initQuickstart("ADT", "A05", "T");
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
-		myResponse = msg.generateACK(AcknowledgementCode.AE, new HL7Exception("dsfasfs"));
+		myResponse = msg.generateACK(AcknowledgmentCode.AE, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
@@ -137,7 +137,7 @@ public class HohServletTest {
 		msg.initQuickstart("ADT", "A05", "T");
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
-		myResponse = msg.generateACK(AcknowledgementCode.AR, new HL7Exception("dsfasfs"));
+		myResponse = msg.generateACK(AcknowledgmentCode.AR, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
 		llp.setPreferredCharset(Charset.forName("UTF-8"));
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);

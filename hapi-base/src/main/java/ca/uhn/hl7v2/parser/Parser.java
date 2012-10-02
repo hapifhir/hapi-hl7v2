@@ -44,6 +44,8 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.util.DeepCopy;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.Validator;
 
@@ -456,7 +458,7 @@ public abstract class Parser extends HapiContextSupport {
 					msh = constructor.newInstance(constructorParamArgs);
 				}
 			} else {
-				msh = new GenericSegment(dummy, "MSH");
+				msh = new GenericSegment(dummy, "MSH");    	
 			}
 		} catch (Exception e) {
 			throw new HL7Exception("Couldn't create MSH for version " + version
