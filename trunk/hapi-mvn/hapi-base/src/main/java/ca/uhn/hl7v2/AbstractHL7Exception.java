@@ -104,12 +104,13 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * @throws HL7Exception
 	 * @throws IOException
 	 */
-	public Message populateResponse(Message response, AcknowledgementCode acknowledgementCode, int repetition)
+	public Message populateResponse(Message response, AcknowledgmentCode acknowledgmentCode, int repetition)
 			throws HL7Exception {
+		if (acknowledgmentCode == null) acknowledgmentCode = AcknowledgmentCode.AA;
 		if (V25.isGreaterThan(versionOf(response.getVersion()))) {
-			return populateResponseBefore25(response, acknowledgementCode, repetition);
+			return populateResponseBefore25(response, acknowledgmentCode, repetition);
 		}
-		return populateResponseAsOf25(response, acknowledgementCode, repetition);
+		return populateResponseAsOf25(response, acknowledgmentCode, repetition);
 	}
 
 	/**
@@ -122,11 +123,11 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * @param exceptions exceptions encountered during validation
 	 * @throws HL7Exception
 	 */
-	private Message populateResponseAsOf25(Message response, AcknowledgementCode acknowledgementCode,
+	private Message populateResponseAsOf25(Message response, AcknowledgmentCode acknowledgmentCode,
 			int repetition) throws HL7Exception {
 		// TODO define what should happen if there is no MSA or ERR
 		Segment msa = (Segment) response.get("MSA");
-		Terser.set(msa, 1, 0, 1, 1, acknowledgementCode.name());
+		Terser.set(msa, 1, 0, 1, 1, acknowledgmentCode.name());
 		Segment err = (Segment) response.get("ERR", repetition);
 		if (location != null) {
 			if (location.getSegmentName() != null)
@@ -158,11 +159,11 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * @param exceptions exceptions encountered during validation
 	 * @throws HL7Exception
 	 */
-	private Message populateResponseBefore25(Message response, AcknowledgementCode acknowledgementCode,
+	private Message populateResponseBefore25(Message response, AcknowledgmentCode acknowledgmentCode,
 			int repetition) throws HL7Exception {
 		// TODO define what should happen if there is no MSA or ERR
 		Segment msa = (Segment) response.get("MSA");
-		Terser.set(msa, 1, 0, 1, 1, acknowledgementCode.name());
+		Terser.set(msa, 1, 0, 1, 1, acknowledgmentCode.name());
 		Terser.set(msa, 3, 0, 1, 1, errorCode.getMessage());
 		Segment err = (Segment) response.get("ERR");
 		if (location != null) {
@@ -179,7 +180,9 @@ public abstract class AbstractHL7Exception extends Exception {
 	}
 
 	public String getMessage() {
-		StringBuilder msg = new StringBuilder(super.getMessage());
+		String message = super.getMessage();
+		if (message == null) message = "Exception";
+		StringBuilder msg = new StringBuilder(message);
 		if (getLocation() != null) {
 			msg.append(" at ").append(getLocation().toString());
 		}

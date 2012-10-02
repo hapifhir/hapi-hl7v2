@@ -67,14 +67,13 @@ public abstract class TestApplication implements ca.uhn.hl7v2.app.Application {
         
         NDC.pop();
         
-        Message ack = null;
         try {
-            ack = ca.uhn.hl7v2.app.DefaultApplication.makeACK(in);
+        	Message ack = in.generateACK();
             addProblemsToACK(ack, problems);
+            return ack;
         } catch (java.io.IOException e) {
             throw new HL7Exception(e);
         }
-        return ack;
     }
     
     /**

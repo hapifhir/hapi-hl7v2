@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.hoh.encoder.ResponseCode;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A05;
@@ -21,15 +21,15 @@ public class ResponseCodeTest {
 		ADT_A05 a05 = new ADT_A05();
 		a05.parse(message);
 		
-		Message ack = a05.generateACK(AcknowledgementCode.AA, null);
+		Message ack = a05.generateACK(AcknowledgmentCode.AA, null);
 		String ackString = ack.encode();
 		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 		
-		ack = a05.generateACK(AcknowledgementCode.AE, null);
+		ack = a05.generateACK(AcknowledgmentCode.AE, null);
 		ackString = ack.encode();
 		assertEquals(ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR, ResponseCode.detect(ackString));
 		
-		ack = a05.generateACK(AcknowledgementCode.AR, null);
+		ack = a05.generateACK(AcknowledgmentCode.AR, null);
 		ackString = ack.encode();
 		assertEquals(ResponseCode.HTTP_400_BAD_REQUEST, ResponseCode.detect(ackString));
 
@@ -48,16 +48,16 @@ public class ResponseCodeTest {
 		String encoded = a05.encode();
 		assertTrue(encoded, encoded.contains("<MSH"));
 
-		Message ack = a05.generateACK(AcknowledgementCode.AA, null);
+		Message ack = a05.generateACK(AcknowledgmentCode.AA, null);
 		String ackString = ack.encode();
 		assertTrue(ackString, ackString.contains("<MSH"));
 		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 		
-		ack = a05.generateACK(AcknowledgementCode.AE, null);
+		ack = a05.generateACK(AcknowledgmentCode.AE, null);
 		ackString = ack.encode();
 		assertEquals(ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR, ResponseCode.detect(ackString));
 		
-		ack = a05.generateACK(AcknowledgementCode.AR, null);
+		ack = a05.generateACK(AcknowledgmentCode.AR, null);
 		ackString = ack.encode();
 		assertEquals(ResponseCode.HTTP_400_BAD_REQUEST, ResponseCode.detect(ackString));
 

@@ -27,7 +27,7 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.parser.Parser;
@@ -165,7 +165,7 @@ public interface Message extends Group {
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
 	 * 
-	 * @deprecated use {@link #generateACK(AcknowledgementCode, HL7Exception)}
+	 * @deprecated use {@link #generateACK(AcknowledgmentCode, HL7Exception)}
 	 */
 	public Message generateACK(String theAcknowldegementCode, HL7Exception theException)
 			throws HL7Exception, IOException;
@@ -185,13 +185,13 @@ public interface Message extends Group {
 	 * <li>First segment is not an MSH</li>
 	 * </p>
 	 * 
-	 * @param theAcknowldegementCode If null, defaults to
-	 *            AcknowledgementCode.AA. To generate a typical NAK, use AcknowledgementCode.AE
+	 * @param theAcknowlegementCode If null, defaults to
+	 *            AcknowledgmentCode.AA. To generate a typical NAK, use AcknowledgmentCode.AE
 	 * @param theException The exceptions used to populate the ERR segment (if any)
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
 	 */	
-	public Message generateACK(AcknowledgementCode theAcknowldegementCode, HL7Exception theException)
+	public Message generateACK(AcknowledgmentCode theAcknowlegementCode, HL7Exception theException)
 			throws HL7Exception, IOException;	
 	/**
 	 * <p>

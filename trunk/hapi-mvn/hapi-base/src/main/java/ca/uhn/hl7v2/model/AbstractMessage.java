@@ -28,15 +28,16 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.model;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -202,37 +203,109 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         return getParser().encode(this);
     }
 
-    
     /**
      * {@inheritDoc }
      */
     public Message generateACK() throws HL7Exception, IOException {
-        return generateACK(AcknowledgementCode.AA, null);
+        return generateACK(AcknowledgmentCode.AA, null);
     }
-
 
     /**
      * {@inheritDoc }
+     * @deprecated
      */
     public Message generateACK(String theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
-        if (theAcknowledgementCode == null) {
-            theAcknowledgementCode = AcknowledgementCode.AA.name();
-        }
-        return generateACK(AcknowledgementCode.valueOf(theAcknowledgementCode), theException);
+    	AcknowledgmentCode theCode = theAcknowledgementCode == null ? 
+    			AcknowledgmentCode.AA :
+    			AcknowledgmentCode.valueOf(theAcknowledgementCode);
+        return generateACK(theCode, theException);
     }
-    
-    public Message generateACK(AcknowledgementCode theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
-        Message retVal = DefaultApplication.makeACK(this);
-        retVal.setParser(getParser());
-        
-        if (theAcknowledgementCode == null) {
-            theAcknowledgementCode = AcknowledgementCode.AA;
-        }
+
+    /**
+     * {@inheritDoc }
+     */    
+    public Message generateACK(AcknowledgmentCode theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
+		Message out = instantiateACK(theAcknowledgementCode);
+		out.setParser(getParser());
+		fillResponseHeader(out, theAcknowledgementCode);
         if (theException != null) {
-            theException.populateResponse(retVal, theAcknowledgementCode, 0);
+            theException.populateResponse(out, theAcknowledgementCode, 0);
         }
-        return retVal;
-    }    
+        return out;
+    }
+
+	private Message instantiateACK(AcknowledgmentCode theAcknowledgementCode) throws HL7Exception {
+		ModelClassFactory mcf = getParser() != null ? 
+				getParser().getFactory() : 
+				new DefaultModelClassFactory();
+		Version version = Version.versionOf(getVersion());
+		Message out = null;
+		if (version != null && version.available()) {
+			Class<? extends Message> clazz = mcf.getMessageClass("ACK", version.getVersion(), false);
+			if (clazz != null) {
+				try {
+					out = clazz.newInstance();
+				} catch (Exception e) {
+					throw new HL7Exception("Can't instantiate ACK", e);
+				}
+			}
+		}
+		if (out == null) {
+			out = new GenericMessage.UnknownVersion(mcf);
+			out.addNonstandardSegment("MSA");
+			out.addNonstandardSegment("ERR");
+		}
+		return out;
+	}
+
+	/**
+	 * Populates certain required fields in a response message header, using
+	 * information from the corresponding inbound message. The current time is
+	 * used for the message time field, and <code>MessageIDGenerator</code> is
+	 * used to create a unique message ID. Version and message type fields are
+	 * not populated.
+	 */
+	public Message fillResponseHeader(Message out, AcknowledgmentCode code)
+			throws HL7Exception, IOException {
+		Segment mshIn = (Segment) get("MSH");
+		Segment mshOut = (Segment) out.get("MSH");
+
+		// get MSH data from incoming message ...
+		String fieldSep = Terser.get(mshIn, 1, 0, 1, 1);
+		String encChars = Terser.get(mshIn, 2, 0, 1, 1);
+		String procID = Terser.get(mshIn, 11, 0, 1, 1);
+
+		// populate outbound MSH using data from inbound message ...
+		Terser.set(mshOut, 1, 0, 1, 1, fieldSep);
+		Terser.set(mshOut, 2, 0, 1, 1, encChars);
+		GregorianCalendar now = new GregorianCalendar();
+		now.setTime(new Date());
+		Terser.set(mshOut, 7, 0, 1, 1, CommonTS.toHl7TSFormat(now));
+		Terser.set(mshOut, 9, 0, 1, 1, "ACK");
+		Terser.set(mshOut, 9, 0, 2, 1, Terser.get(mshIn, 9, 0, 2, 1));
+		String v = mshOut.getMessage().getVersion();
+		if (v != null) {
+			Version version = Version.versionOf(v);
+			if (version != null && !Version.V25.isGreaterThan(version)) {
+				Terser.set(mshOut, 9, 0, 3, 1, "ACK");
+			}
+		}
+		Terser.set(mshOut, 10, 0, 1, 1, mshIn.getMessage().getParser().getParserConfiguration().getIdGenerator().getID());
+		Terser.set(mshOut, 11, 0, 1, 1, procID);
+		Terser.set(mshOut, 12, 0, 1, 1, Terser.get(mshIn, 12, 0, 1, 1));
+
+		// revert sender and receiver
+		Terser.set(mshOut, 3, 0, 1, 1, Terser.get(mshIn, 5, 0, 1, 1));
+		Terser.set(mshOut, 4, 0, 1, 1, Terser.get(mshIn, 6, 0, 1, 1));
+		Terser.set(mshOut, 5, 0, 1, 1, Terser.get(mshIn, 3, 0, 1, 1));
+		Terser.set(mshOut, 6, 0, 1, 1, Terser.get(mshIn, 4, 0, 1, 1));
+		
+		// fill MSA for the happy case
+		Segment msaOut = (Segment) out.get("MSA");
+		Terser.set(msaOut, 1, 0, 1, 1, code.name());
+		Terser.set(msaOut, 2, 0, 1, 1, Terser.get(mshIn, 10, 0, 1, 1));
+		return out;
+	}
     
 
     /**

@@ -28,7 +28,7 @@ package ca.uhn.hl7v2.validation;
 import java.io.IOException;
 import java.util.List;
 
-import ca.uhn.hl7v2.AcknowledgementCode;
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
@@ -44,8 +44,8 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class RespondingValidationExceptionHandler extends CollectingValidationExceptionHandler {
 
-	private AcknowledgementCode successAcknowledgementCode = AcknowledgementCode.AA;
-	private AcknowledgementCode errorAcknowledgementCode = AcknowledgementCode.AE;
+	private AcknowledgmentCode successAcknowledgementCode = AcknowledgmentCode.AA;
+	private AcknowledgmentCode errorAcknowledgementCode = AcknowledgmentCode.AE;
 
 	/**
 	 * Returns the generated response message.
@@ -74,7 +74,7 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * 
 	 * @param successAcknowledgementCode (AA, CA)
 	 */
-	public void setSuccessAcknowledgementCode(AcknowledgementCode successAcknowledgementCode) {
+	public void setSuccessAcknowledgementCode(AcknowledgmentCode successAcknowledgementCode) {
 		this.successAcknowledgementCode = successAcknowledgementCode;
 	}
 
@@ -84,15 +84,15 @@ public class RespondingValidationExceptionHandler extends CollectingValidationEx
 	 * 
 	 * @param errorAcknowledgementCode (AR, AE ,CR, CE)
 	 */
-	public void setErrorAcknowledgementCode(AcknowledgementCode errorAcknowledgementCode) {
+	public void setErrorAcknowledgementCode(AcknowledgmentCode errorAcknowledgementCode) {
 		this.errorAcknowledgementCode = errorAcknowledgementCode;
 	}
 
-	public AcknowledgementCode getSuccessAcknowledgementCode() {
+	public AcknowledgmentCode getSuccessAcknowledgementCode() {
 		return successAcknowledgementCode;
 	}
 
-	public AcknowledgementCode getErrorAcknowledgementCode() {
+	public AcknowledgmentCode getErrorAcknowledgementCode() {
 		return errorAcknowledgementCode;
 	}
 
