@@ -155,7 +155,7 @@ public class CustomMessageValidation {
 		 * conjunction with a custom ValidationExceptionHandler, which would normally be defined in
 		 * its own class file.
 		 */
-		ValidationExceptionHandler<Boolean> customHandler = new DefaultValidationExceptionHandler() {
+		ValidationExceptionHandler<Boolean> customHandler = new DefaultValidationExceptionHandler(context) {
 
 		    @Override
 			public void onExceptions(ValidationException... exceptions) {

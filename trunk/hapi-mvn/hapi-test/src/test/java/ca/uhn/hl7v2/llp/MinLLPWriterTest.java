@@ -26,22 +26,30 @@
  */
 package ca.uhn.hl7v2.llp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.util.LibraryEntry;
 import ca.uhn.hl7v2.util.MessageLibrary;
 
-import junit.framework.TestCase;
 
 /**
  * Unit test class for ca.uhn.hl7v2.llp.MinLLPWriter
  *
  * @author Leslie Mann
  */
-public class MinLLPWriterTest extends TestCase {
+public class MinLLPWriterTest {
     // NB: Per the minimal lower layer protocol.
 	// character indicating the termination of an HL7 message
     private static final char END_MESSAGE = '\u001c'; 
@@ -55,33 +63,16 @@ public class MinLLPWriterTest extends TestCase {
 	private ByteArrayOutputStream outputStream;
 	private static MessageLibrary messageLib;
 
-	/**
-	 * Constructor for MinLLPWriterTest.
-	 * @param testName
-	 */
-	public MinLLPWriterTest(String testName) {
-		super(testName);
-	}
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(MinLLPWriterTest.class);
-	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		message = "This is a test HL7 message";
 		minLLPWriter = new MinLLPWriter();
 		outputStream = new ByteArrayOutputStream();
 	}
 
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		message = null;
 		minLLPWriter = null;
 		outputStream = null;
@@ -96,6 +87,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Test default constructor
 	 */	 
+	@Test
 	public void testConstructor() {
 		assertNotNull("Should have a valid MinLLPWriter object", minLLPWriter);
 	}
@@ -103,6 +95,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Test constructor with output stream
 	 */
+	@Test
 	public void testConstructorWithOutputStream() throws IOException {
 		minLLPWriter = new MinLLPWriter(outputStream);
 		assertNotNull("Should have a valid MinLLPWriter object", minLLPWriter);
@@ -111,6 +104,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Ensure constructor validates inputs. Pass a null outputStream
 	 */
+	@Test
 	public void testConstructorWithNullOutputStream() {
 		ByteArrayOutputStream nullOutputStream = null;
 		
@@ -125,6 +119,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Ensure setOutputStream validates inputs. Pass a null outputStream
 	 */
+	@Test
 	public void testSetNullOutputStream() {
 		ByteArrayOutputStream nullOutputStream = null;
 
@@ -139,6 +134,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Attempt to write a message without calling - <code>setOutputStream</code>
 	 */
+	@Test
 	public void testWriteMessageWithoutOutputStream() throws LLPException {
 		try {
 			minLLPWriter.writeMessage(message);
@@ -161,6 +157,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Test writeMessage with MessageLibrary contents
 	 */
+	@Test
 	public void testWriteLibraryMessages() throws IOException, LLPException {
 		minLLPWriter.setOutputStream(outputStream);
 		int mismatch = 0;
@@ -181,10 +178,10 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Testing writeMessage with various messages.
 	 */
+	@Test
 	public void testWriteMessages() {
 		class TestSpec {
 			String writeMessage;
-			String recvMessage;
 			Object outcome;
 			
 			TestSpec(String message, Object outcome) {
@@ -230,6 +227,7 @@ public class MinLLPWriterTest extends TestCase {
 	/**
 	 * Test closing writer with as if private access
 	 */
+	@Test
 	public void testClosePrivateWriter() {
 		try {
 			minLLPWriter= new MinLLPWriter(outputStream);
@@ -244,6 +242,7 @@ public class MinLLPWriterTest extends TestCase {
 		} catch (LLPException llpe) {}
 	}
     
+	@Test
     public void testWithSpecifiedCharset() throws Exception {
         String test = "foo";
         String charset = "UTF-16"; //makes "foo" look like "???" with default charset
@@ -253,6 +252,7 @@ public class MinLLPWriterTest extends TestCase {
         assertTrue(out.toString(charset).indexOf(test) >= 0);
     }
     
+	@Test
     public void testWithCharsetProperty() throws Exception {
         String test = "foo";
         String charset = "UTF-16"; //makes "foo" look like "???" with default charset

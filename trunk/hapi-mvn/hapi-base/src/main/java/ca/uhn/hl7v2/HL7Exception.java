@@ -37,23 +37,41 @@ package ca.uhn.hl7v2;
 @SuppressWarnings("serial")
 public class HL7Exception extends AbstractHL7Exception {
 
-	/** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept */
+	/** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept
+     *
+     * @deprecated use {@link AcknowledgmentCode}
+     */
 	public static final int ACK_AA = 1;
 
-	/** Original mode: Application Error - Enhanced mode: Application acknowledgment: Error */
-	public static final int ACK_AE = 2;
+	/** Original mode: Application Error - Enhanced mode: Application acknowledgment: Error
+    *
+    * @deprecated use {@link AcknowledgmentCode}
+    */
+    public static final int ACK_AE = 2;
 
-	/** Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject */
-	public static final int ACK_AR = 3;
+	/** Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject 
+     *
+     * @deprecated use {@link AcknowledgmentCode}
+     */	
+    public static final int ACK_AR = 3;
 
-	/** Enhanced mode: Accept acknowledgment: Commit Accept */
-	public static final int ACK_CA = 4;
+	/** Enhanced mode: Accept acknowledgment: Commit Accept 
+     *
+     * @deprecated use {@link AcknowledgmentCode}
+     */	
+    public static final int ACK_CA = 4;
 
-	/** Enhanced mode: Accept acknowledgment: Commit Error */
-	public static final int ACK_CE = 5;
+	/** Enhanced mode: Accept acknowledgment: Commit Error 
+     *
+     * @deprecated use {@link AcknowledgmentCode}
+     */	
+    public static final int ACK_CE = 5;
 
-	/** Enhanced mode: Accept acknowledgment: Commit Reject */
-	public static final int ACK_CR = 6;
+	/** Enhanced mode: Accept acknowledgment: Commit Reject 
+     *
+     * @deprecated use {@link AcknowledgmentCode}
+     */	
+    public static final int ACK_CR = 6;
 
 	/**
 	 * @deprecated use {@link ErrorCode}
@@ -108,6 +126,9 @@ public class HL7Exception extends AbstractHL7Exception {
 	 */
 	public static final int APPLICATION_INTERNAL_ERROR = 207;
 
+	private Object detail;
+	
+	
 	/**
 	 * Creates an HL7Exception.
 	 * 
@@ -185,5 +206,17 @@ public class HL7Exception extends AbstractHL7Exception {
 		super(message);
 	}
 
+    public Object getDetail() {
+        return detail;
+    }
+
+    /**
+     * @param detail context details for this exception instance
+     */
+    public void setDetail(Object detail) {
+        this.detail = detail;
+    }
+
+	
 
 }

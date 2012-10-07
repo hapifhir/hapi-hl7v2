@@ -26,13 +26,21 @@
  */
 package ca.uhn.hl7v2.llp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.util.MessageLibrary;
 
 /**
@@ -40,7 +48,7 @@ import ca.uhn.hl7v2.util.MessageLibrary;
  * 
  * @author Leslie Mann
  */
-public class MinLLPReaderTest extends TestCase {
+public class MinLLPReaderTest {
     // NB: Per the minimal lower layer protocol.
     // character indicating the termination of an HL7 message
     static final char END_MESSAGE = '\u001c';
@@ -50,52 +58,33 @@ public class MinLLPReaderTest extends TestCase {
     static final char LAST_CHARACTER = 13;
 
     private String message;
-//    private byte[] sendMessage;
     private MinLLPReader minLLPReader;
     private ByteArrayInputStream inputStream;
 
-    /**
-     * Constructor for MinLLPReaderTest.
-     * 
-     * @param testName
-     */
-    public MinLLPReaderTest(String testName) {
-        super(testName);
-    }
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(MinLLPReaderTest.class);
-    }
-
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         message = "This is a test HL7 message";
-//        sendMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
         minLLPReader = new MinLLPReader();
         inputStream = MinLLPWriterTest.getMessageLib().getAsByteArrayInputStream();
     }
 
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         message = null;
-//        sendMessage = null;
         minLLPReader = null;
     }
 
     /*
      * *********************************************************
-     * Test Cases*********************************************************
+     * Test Cases
+     * *********************************************************
      */
 
     /**
      * Test default constructor
      */
+    @Test
     public void testConstructor() {
         assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
     }
@@ -103,6 +92,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Test constructor with input stream
      */
+    @Test
     public void testConstructorWithInputStream() throws IOException {
         minLLPReader = new MinLLPReader(inputStream);
         assertNotNull("Should have a valid MinLLPReader object", minLLPReader);
@@ -111,6 +101,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Ensure constructor validates inputs. Pass a null inputStream
      */
+    @Test
     public void testConstructorWithNullInputStream() {
         ByteArrayInputStream nullInputStream = null;
 
@@ -125,6 +116,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Ensure setInputStream validates inputs. Pass a null inputStream
      */
+    @Test
     public void testSetNullInputStream() {
         ByteArrayInputStream nullInputStream = null;
 
@@ -139,6 +131,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Testing readMessage method with a null input stream
      */
+    @Test
     public void testSetReadMessageNullInputStream() throws LLPException {
         ByteArrayInputStream nullInputStream = null;
 
@@ -154,6 +147,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Attempt to read a message without calling - <code>setInputStream</code>
      */
+    @Test
     public void testReadMessageWithoutOutputStream() throws LLPException {
         try {
             minLLPReader.getMessage();
@@ -166,6 +160,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Test readMessage with MessageLibrary contents
      */
+    @Test
     public void testReadLibraryMessages() throws IOException, LLPException {
         minLLPReader.setInputStream(inputStream);
         int mismatch = 0;
@@ -184,6 +179,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Testing readMessage with well and malformed llp encoded input messages.
      */
+    @Test
     public void testReadMessages() {
         class TestSpec {
             byte[] sendMessage;
@@ -234,6 +230,7 @@ public class MinLLPReaderTest extends TestCase {
     /**
      * Test closing reader
      */
+    @Test
     public void testClose() {
         try {
             minLLPReader = new MinLLPReader(inputStream);
@@ -249,6 +246,7 @@ public class MinLLPReaderTest extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromClosedStream() throws LLPException, IOException {
         InputStream in = new ByteArrayInputStream("".getBytes()); // will return
                                                                   // -1 as if

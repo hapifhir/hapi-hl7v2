@@ -27,7 +27,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +40,7 @@ import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 
 /**
  * A partial implementation of Group. Subclasses correspond to specific groups
@@ -53,9 +53,9 @@ import ca.uhn.hl7v2.parser.PipeParser;
  */
 public abstract class AbstractGroup extends AbstractStructure implements Group {
 
-	private static final long serialVersionUID = 1772720246448224363L;
-	
-	private List<String> names;
+    private static final long serialVersionUID = 1772720246448224363L;
+
+    private List<String> names;
     private Map<String, List<Structure>> structures;
     private Map<String, Boolean> required;
     private Map<String, Boolean> repeating;
@@ -67,19 +67,17 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     static {
         VersionLogger.init();
     }
-    
+
     /**
      * This constructor should be used by implementing classes that do not also
      * implement Message.
      * 
-     * @param parent
-     *            the group to which this Group belongs.
-     * @param factory
-     *            the factory for classes of segments, groups, and datatypes
+     * @param parent the group to which this Group belongs.
+     * @param factory the factory for classes of segments, groups, and datatypes
      *            under this group
      */
     protected AbstractGroup(Group parent, ModelClassFactory factory) {
-    	super(parent);
+        super(parent);
         this.myFactory = factory;
         init();
     }
@@ -96,33 +94,34 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * Returns the named structure. If this Structure is repeating then the
      * first repetition is returned. Creates the Structure if necessary.
      * 
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
     public Structure get(String name) throws HL7Exception {
         return get(name, 0);
     }
-    
+
     protected <T extends Structure> T getTyped(String name, Class<T> type) {
         try {
-           @SuppressWarnings("unchecked") T ret = (T)get(name);
-           return ret;
-        } catch(HL7Exception e) {
-           log.error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-           throw new RuntimeException(e);
+            @SuppressWarnings("unchecked")
+            T ret = (T) get(name);
+            return ret;
+        } catch (HL7Exception e) {
+            log.error(
+                    "Unexpected error accessing data - this is probably a bug in the source code generator.",
+                    e);
+            throw new RuntimeException(e);
         }
-     }
+    }
 
     /**
      * Returns a particular repetition of the named Structure. If the given
      * repetition number is one greater than the existing number of repetitions
      * then a new Structure is created.
      * 
-     * @throws HL7Exception
-     *             if the named Structure is not part of this group, if the
-     *             structure is not repeatable and the given rep is > 0, or if
-     *             the given repetition number is more than one greater than the
-     *             existing number of repetitions.
+     * @throws HL7Exception if the named Structure is not part of this group, if
+     *             the structure is not repeatable and the given rep is > 0, or
+     *             if the given repetition number is more than one greater than
+     *             the existing number of repetitions.
      */
     public Structure get(String name, int rep) throws HL7Exception {
         List<Structure> list = structures.get(name);
@@ -136,7 +135,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         } else if (rep == list.size()) {
             // verify that Structure is repeating ...
             Boolean repeats = this.repeating.get(name);
-            if (!repeats.booleanValue() && list.size() > 0)
+            if (!repeats && list.size() > 0)
                 throw new HL7Exception("Can't create repetition #" + rep + " of Structure " + name + " - this Structure is non-repeating");
 
             // create a new Structure, add it to the list, and return it
@@ -148,35 +147,39 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
         return ret;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isEmpty() throws HL7Exception {
         for (String name : getNames()) {
-        	if (!get(name).isEmpty()) return false;
-		}
-        return true;
-	}
-
-	protected <T extends Structure> T getTyped(String name, int rep, Class<T> type) {
-        try {
-           @SuppressWarnings("unchecked") T ret = (T)get(name, rep);
-           return ret;
-        } catch(HL7Exception e) {
-           log.error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
-           throw new RuntimeException(e);
+            if (!get(name).isEmpty())
+                return false;
         }
-     }
-    
-    protected int getReps(String name) { 
-        try { 
-            return getAll(name).length; 
-        } catch (HL7Exception e) { 
-            String message = "Unexpected error accessing data - this is probably a bug in the source code generator."; 
-            log.error(message, e); 
+        return true;
+    }
+
+    protected <T extends Structure> T getTyped(String name, int rep, Class<T> type) {
+        try {
+            @SuppressWarnings("unchecked")
+            T ret = (T) get(name, rep);
+            return ret;
+        } catch (HL7Exception e) {
+            log.error(
+                    "Unexpected error accessing data - this is probably a bug in the source code generator.",
+                    e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected int getReps(String name) {
+        try {
+            return getAll(name).length;
+        } catch (HL7Exception e) {
+            String message = "Unexpected error accessing data - this is probably a bug in the source code generator.";
+            log.error(message, e);
             throw new RuntimeException(message);
-        }   	
+        }
     }
 
     /**
@@ -190,8 +193,9 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     public String addNonstandardSegment(String name) throws HL7Exception {
         String version = this.getMessage().getVersion();
         if (version == null)
-            throw new HL7Exception("Need message version to add segment by name; message.getVersion() returns null");
-        Class<? extends Structure> c = myFactory.getSegmentClass(name, version);
+            throw new HL7Exception(
+                    "Need message version to add segment by name; message.getVersion() returns null");
+        Class<? extends Segment> c = myFactory.getSegmentClass(name, version);
         if (c == null)
             c = GenericSegment.class;
 
@@ -210,14 +214,16 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
     public String addNonstandardSegment(String theName, int theIndex) throws HL7Exception {
         if (this instanceof Message && theIndex == 0) {
-            throw new HL7Exception("Can not add nonstandard segment \"" + theName + "\" to start of message.");
+            throw new HL7Exception("Can not add nonstandard segment \"" + theName
+                    + "\" to start of message.");
         }
 
         String version = this.getMessage().getVersion();
         if (version == null)
-            throw new HL7Exception("Need message version to add segment by name; message.getVersion() returns null");
-        Class<? extends Structure> c = myFactory.getSegmentClass(theName, version);
-        
+            throw new HL7Exception(
+                    "Need message version to add segment by name; message.getVersion() returns null");
+        Class<? extends Segment> c = myFactory.getSegmentClass(theName, version);
+
         if (c == null) {
             c = GenericSegment.class;
         }
@@ -234,16 +240,16 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     }
 
     /**
-     * Returns a Set containing the names of all non-standard structures
-     * which have been added to this structure
+     * Returns a Set containing the names of all non-standard structures which
+     * have been added to this structure
      */
     public Set<String> getNonStandardNames() {
-    	if (nonStandardNames == null) {
-    		return Collections.emptySet();
-    	}
-    	return Collections.unmodifiableSet(nonStandardNames);
+        if (nonStandardNames == null) {
+            return Collections.emptySet();
+        }
+        return Collections.unmodifiableSet(nonStandardNames);
     }
-    
+
     /**
      * Returns an ordered array of the names of the Structures in this Group.
      * These names can be used to iterate through the group using repeated calls
@@ -270,7 +276,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * @return the actual name used to store this structure (may be appended
      *         with an integer if there are duplicates in the same Group).
      */
-    protected String add(Class<? extends Structure> c, boolean required, boolean repeating) throws HL7Exception {
+    protected String add(Class<? extends Structure> c, boolean required, boolean repeating)
+            throws HL7Exception {
         String name = getName(c);
         return insert(c, required, repeating, this.names.size(), name);
     }
@@ -288,7 +295,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * @return the actual name used to store this structure (may be appended
      *         with an integer if there are duplicates in the same Group).
      */
-    protected String add(Class<? extends Structure> c, boolean required, boolean repeating, int index) throws HL7Exception {
+    protected String add(Class<? extends Structure> c, boolean required, boolean repeating,
+            int index) throws HL7Exception {
         String name = getName(c);
         return insert(c, required, repeating, index, name);
     }
@@ -304,45 +312,26 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * Attempts to create an instance of the given class and return it as a
      * Structure.
      * 
-     * @param c
-     *            the Structure implementing class
-     * @param name
-     *            an optional name of the structure (used by Generic structures;
-     *            may be null)
+     * @param c the Structure implementing class
+     * @param name an optional name of the structure (used by Generic
+     *            structures; may be null)
      */
-    protected Structure tryToInstantiateStructure(Class<? extends Structure> c, String name) throws HL7Exception {
+    protected Structure tryToInstantiateStructure(Class<? extends Structure> c, String name)
+            throws HL7Exception {
         Structure s = null;
-        try {
-            Object o = null;
-            if (GenericSegment.class.isAssignableFrom(c)) {
-                String genericName = name;
-                if (genericName.length() > 3) {
-                	genericName = genericName.substring(0, 3);
-                }
-                
-				s = new GenericSegment(this, genericName);
-            } else if (GenericGroup.class.isAssignableFrom(c)) {
-                s = new GenericGroup(this, name, myFactory);
-            } else {
-                // first try to instantiate using constructor w/ Message args
-                // ...
-                try {
-                    Class<?>[] argClasses = { Group.class, ModelClassFactory.class };
-                    Object[] argObjects = { this, myFactory };
-                    Constructor<?> con = c.getConstructor(argClasses);
-                    o = con.newInstance(argObjects);
-                } catch (NoSuchMethodException nme) {
-                    o = c.newInstance();
-                }
-                if (!(o instanceof Structure))
-                    throw new HL7Exception("Class " + c.getName() + " does not implement " + "ca.on.uhn.hl7.message.Structure");
-                s = (Structure) o;
+        if (GenericSegment.class.isAssignableFrom(c)) {
+            String genericName = name;
+            if (genericName.length() > 3) {
+                genericName = genericName.substring(0, 3);
             }
-        } catch (Exception e) {
-            if (e instanceof HL7Exception) {
-                throw (HL7Exception) e;
-            } else {
-                throw new HL7Exception("Can't instantiate class " + c.getName(), e);
+            s = new GenericSegment(this, genericName);
+        } else if (GenericGroup.class.isAssignableFrom(c)) {
+            s = new GenericGroup(this, name, myFactory);
+        } else {
+            try {
+                s = ReflectionUtil.instantiateStructure(c, this, myFactory);
+            } catch (Exception e) {
+                s = ReflectionUtil.instantiate(c);
             }
         }
         return s;
@@ -362,22 +351,22 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * Returns true if the named structure is required.
      */
     public boolean isRequired(String name) throws HL7Exception {
-        Object o = required.get(name);
-        if (o == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
-        Boolean req = (Boolean) o;
-        return req.booleanValue();
+        Boolean req = required.get(name);
+        if (req == null)
+            throw new HL7Exception("The structure " + name + " does not exist in the group "
+                    + this.getClass().getName());
+        return req;
     }
 
     /**
      * Returns true if the named structure is required.
      */
     public boolean isRepeating(String name) throws HL7Exception {
-        Object o = repeating.get(name);
-        if (o == null)
-            throw new HL7Exception("The structure " + name + " does not exist in the group " + this.getClass().getName());
-        Boolean rep = (Boolean) o;
-        return rep.booleanValue();
+        Boolean rep = repeating.get(name);
+        if (rep == null)
+            throw new HL7Exception("The structure " + name + " does not exist in the group "
+                    + this.getClass().getName());
+        return rep;
     }
 
     /**
@@ -397,8 +386,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * returned when the segment or group repeats. The array may be empty if no
      * repetitions have been accessed yet using the get(...) methods.
      * 
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
     public Structure[] getAll(String name) throws HL7Exception {
         List<Structure> list = structures.get(name);
@@ -412,19 +400,20 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * Returns a list containing all existing repetitions of the structure
      * identified by name
      * 
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
     @SuppressWarnings("unchecked")
-	protected <T extends Structure> List<T> getAllAsList(String name, Class<T> theType) throws HL7Exception {
+    protected <T extends Structure> List<T> getAllAsList(String name, Class<T> theType)
+            throws HL7Exception {
         Class<? extends Structure> clazz = classes.get(name);
-        
-		if (!theType.equals(clazz)) {
-        	throw new HL7Exception("Structure with name \"" + name + "\" has type " + clazz.getName() + " but should be " + theType); 
+
+        if (!theType.equals(clazz)) {
+            throw new HL7Exception("Structure with name \"" + name + "\" has type "
+                    + clazz.getName() + " but should be " + theType);
         }
-    	List<T> retVal = new ArrayList<T>();
+        List<T> retVal = new ArrayList<T>();
         for (Structure next : structures.get(name)) {
-        	retVal.add((T) next);
+            retVal.add((T) next);
         }
         return Collections.unmodifiableList(retVal);
     }
@@ -437,8 +426,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * to be renumbered manually.
      * 
      * @return The removed structure
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
     public Structure removeRepetition(String name, int index) throws HL7Exception {
         List<Structure> list = structures.get(name);
@@ -459,14 +447,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * Inserts a repetition of a given Structure into repetitions of that
      * structure by name. For example, if the Group contains 10 repetitions an
      * OBX segment and an OBX is supplied with an index of 2, then this call
-     * would insert the new repetition at index 2. (Note that in this example, the
-     * Set ID field in the OBX segments would also need to be renumbered
+     * would insert the new repetition at index 2. (Note that in this example,
+     * the Set ID field in the OBX segments would also need to be renumbered
      * manually).
      * 
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
-    protected void insertRepetition(String name, Structure structure, int index) throws HL7Exception {
+    protected void insertRepetition(String name, Structure structure, int index)
+            throws HL7Exception {
         if (structure == null) {
             throw new NullPointerException("Structure may not be null");
         }
@@ -496,8 +484,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * manually.
      * 
      * @return The removed structure
-     * @throws HL7Exception
-     *             if the named Structure is not part of this Group.
+     * @throws HL7Exception if the named Structure is not part of this Group.
      */
     public Structure insertRepetition(String name, int index) throws HL7Exception {
         if (name == null || name.length() == 0) {
@@ -516,17 +503,17 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     }
 
     /**
-     * Given a child structure name, returns the child index (which is 1-indexed, meaning
-     * that the first child is at index 1 
+     * Given a child structure name, returns the child index (which is
+     * 1-indexed, meaning that the first child is at index 1
      */
     public int getFieldNumForName(String name) throws HL7Exception {
-    	int retVal = names.indexOf(name);
-    	if (retVal == -1) {
-    		throw new HL7Exception("Unknown name: " + name);
-    	}
-    	return retVal + 1;
+        int retVal = names.indexOf(name);
+        if (retVal == -1) {
+            throw new HL7Exception("Unknown name: " + name);
+        }
+        return retVal + 1;
     }
-    
+
     /**
      * Returns the Class of the Structure at the given name index.
      */
@@ -540,7 +527,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * @see Structure#getName()
      */
     public String getName() {
-        return getName(this.getClass());
+        return getName(getClass());
     }
 
     // returns a name for a class of a Structure in this Message
@@ -567,7 +554,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * (e.g. Z-segments). In contrast, specification of the group's normal
      * children should be done at construction time, using the add(...) method.
      */
-    protected String insert(Class<? extends Structure> c, boolean required, boolean repeating, int index, String name) throws HL7Exception {
+    protected String insert(Class<? extends Structure> c, boolean required, boolean repeating,
+            int index, String name) throws HL7Exception {
         // tryToInstantiateStructure(c, name); //may throw exception
 
         // see if there is already something by this name and make a new name if
@@ -580,11 +568,12 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             }
             name = newName;
         }
-        
+
         if (index > this.names.size()) {
-        	throw new HL7Exception("Invalid index " + index + " - Should be <= " + this.names.size());
+            throw new HL7Exception("Invalid index " + index + " - Should be <= "
+                    + this.names.size());
         }
-        
+
         this.names.add(index, name);
         this.required.put(name, new Boolean(required));
         this.repeating.put(name, new Boolean(repeating));
@@ -614,23 +603,26 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
     /**
      * <p>
-     * Appends a description of this group's structure and all children's structure
-     * to a string builder.
+     * Appends a description of this group's structure and all children's
+     * structure to a string builder.
      * </p>
      * <p>
-     * Note that this method is intended only to be called by {@link AbstractMessage#printStructure()}.
-     * Please use caution if calling this method directly, as the method signature and/or behaviour may 
-     * change in the future.
+     * Note that this method is intended only to be called by
+     * {@link AbstractMessage#printStructure()}. Please use caution if calling
+     * this method directly, as the method signature and/or behaviour may change
+     * in the future.
      * </p>
      */
-    void appendStructureDescription(StringBuilder theStringBuilder, int theIndent, boolean theOptional, boolean theRepeating, boolean theAddStartName, boolean theAddEndName) throws HL7Exception {
+    void appendStructureDescription(StringBuilder theStringBuilder, int theIndent,
+            boolean theOptional, boolean theRepeating, boolean theAddStartName,
+            boolean theAddEndName) throws HL7Exception {
         String lineSeparator = System.getProperty("line.separator");
 
         if (theAddStartName) {
             indent(theStringBuilder, theIndent);
             theStringBuilder.append(getName()).append(" (start)").append(lineSeparator);
         }
-        
+
         if (theOptional || theRepeating) {
             indent(theStringBuilder, theIndent);
             if (theOptional) {
@@ -640,34 +632,36 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                 theStringBuilder.append("{");
             }
             theStringBuilder.append(lineSeparator);
-        } 
+        }
 
         for (String nextName : getNames()) {
-            
+
             Class<? extends Structure> nextClass = classes.get(nextName);
-            
+
             boolean nextOptional = !isRequired(nextName);
             boolean nextRepeating = isRepeating(nextName);
-            
+
             if (AbstractGroup.class.isAssignableFrom(nextClass)) {
-                
+
                 Structure[] nextChildren = getAll(nextName);
                 for (int i = 0; i < nextChildren.length; i++) {
-                    
+
                     Structure structure = nextChildren[i];
                     boolean addStartName = (i == 0);
                     boolean addEndName = (i == (nextChildren.length - 1));
-                    ((AbstractGroup)structure).appendStructureDescription(theStringBuilder, theIndent + 3, nextOptional, nextRepeating, addStartName, addEndName);
-                    
+                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder,
+                            theIndent + 3, nextOptional, nextRepeating, addStartName, addEndName);
+
                 }
 
                 if (nextChildren.length == 0) {
                     Structure structure = tryToInstantiateStructure(nextClass, nextName);
-                    ((AbstractGroup)structure).appendStructureDescription(theStringBuilder, theIndent + 3, nextOptional, nextRepeating, true, true);
+                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder,
+                            theIndent + 3, nextOptional, nextRepeating, true, true);
                 }
-                
+
             } else if (Segment.class.isAssignableFrom(nextClass)) {
-                
+
                 int currentIndent = theStringBuilder.length();
 
                 StringBuilder structurePrefix = new StringBuilder();
@@ -690,7 +684,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                     structurePrefix.append(" (non-standard)");
                 }
                 structurePrefix.append(" - ");
-                
+
                 currentIndent = theStringBuilder.length() - currentIndent;
                 List<Structure> nextStructureList = structures.get(nextName);
                 theStringBuilder.append(structurePrefix);
@@ -702,13 +696,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                         if (i > 0) {
                             indent(theStringBuilder, currentIndent + structurePrefix.length());
                         }
-                        Segment nextSegment = (Segment)nextStructureList.get(i);
-                        theStringBuilder.append(new PipeParser().doEncode(nextSegment, EncodingCharacters.getInstance(getMessage())));
+                        Segment nextSegment = (Segment) nextStructureList.get(i);
+                        theStringBuilder.append(new PipeParser().doEncode(nextSegment,
+                                EncodingCharacters.getInstance(getMessage())));
                         theStringBuilder.append(lineSeparator);
-                        
+
                     }
                 }
-                
+
             }
         }
 
@@ -721,8 +716,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                 theStringBuilder.append("]");
             }
             theStringBuilder.append(lineSeparator);
-        } 
-        
+        }
+
         if (theAddEndName) {
             indent(theStringBuilder, theIndent);
             theStringBuilder.append(getName()).append(" (end)").append(lineSeparator);

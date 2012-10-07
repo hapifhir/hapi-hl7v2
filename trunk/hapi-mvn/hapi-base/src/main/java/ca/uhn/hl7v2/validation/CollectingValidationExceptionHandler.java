@@ -30,19 +30,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ca.uhn.hl7v2.HapiContext;
+
 /**
  * ValidationExceptionHandler that collects all {@link ValidationException}s in a list.
  * 
  * @author Christian Ohr
  * 
  */
-public class CollectingValidationExceptionHandler extends DefaultValidationExceptionHandler {
+public abstract class CollectingValidationExceptionHandler<R> extends AbstractValidationExceptionHandler<R> {
 
 	private List<ValidationException> exceptions = new ArrayList<ValidationException>();
 
-	@Override
-	public void onValidationExceptions(ValidationException[] exceptions) {
-		super.onValidationExceptions(exceptions);
+    public CollectingValidationExceptionHandler(HapiContext context) {
+        super(context);
+    }
+
+    public void onExceptions(ValidationException... exceptions) {
 		this.exceptions.addAll(Arrays.asList(exceptions));
 	}
 
@@ -52,5 +56,14 @@ public class CollectingValidationExceptionHandler extends DefaultValidationExcep
 	public List<ValidationException> getExceptions() {
 		return Collections.unmodifiableList(exceptions);
 	}
+
+    /**
+     * @see ca.uhn.hl7v2.validation.ValidationExceptionHandler#hasFailed()
+     */
+    public boolean hasFailed() {
+        return !exceptions.isEmpty();
+    }
+	
+	
 
 }

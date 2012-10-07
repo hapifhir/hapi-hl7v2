@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -10,12 +11,12 @@ public class DefaultValidationExceptionHandlerTest {
 
 	@Test
 	public void testHandler() throws HL7Exception {
-		ValidationExceptionHandler handler = new DefaultValidationExceptionHandler();
-		assertTrue(handler.validationPassed());
-		handler.onValidationExceptions(new ValidationException[] {
+		ValidationExceptionHandler<Boolean> handler = new DefaultValidationExceptionHandler();
+		assertTrue(handler.result());
+		handler.onExceptions(new ValidationException[] {
 				new ValidationException("test")
 		});
-		assertFalse(handler.validationPassed());
+		assertFalse(handler.result());
 	}
 
 }

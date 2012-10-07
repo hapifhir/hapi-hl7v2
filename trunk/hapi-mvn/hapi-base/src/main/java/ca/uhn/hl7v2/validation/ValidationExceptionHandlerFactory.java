@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "ValidationExceptionHandler.java".  Description: 
-"Interface for handling violations during the validation process." 
+The Original Code is "ValidationExceptionHandlerFactory.java".  Description: 
+"Interface for creating ValidationExceptionHandler instances." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2012.  All Rights Reserved. 
@@ -25,26 +25,24 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
-import ca.uhn.hl7v2.ExceptionHandler;
+import ca.uhn.hl7v2.HapiContext;
 
 /**
- * Handler that is called for every violation during a message validation.
+ * This factory is responsible for generating a
+ * {@link ValidationExceptionHandler} instance, which is then used when
+ * validating a message using a {@link DefaultValidator}.
  * <p>
- * Instances of this class are NOT thread safe as they collect data during the
- * validation process.
+ * This allows to to keep the validator thread-safe, so it can be concurrently
+ * used e.g. in a Parser.
  * 
  * @author Christian Ohr
+ * 
+ * @param <R>
+ * 
+ * @see DefaultValidator#initializeHandler()
  */
-public interface ValidationExceptionHandler<R> extends ExceptionHandler<ValidationException, R> {
-	
-	/**
-	 * Should be called before validation starts. Some ValidationHandler implementations
-	 * may need context information of the subject being validated
-	 * 
-	 * @param subject subject to be validated
-	 */
-	void setValidationSubject(Object subject);
-	
-	boolean hasFailed();
+public interface ValidationExceptionHandlerFactory<R> {
+
+    ValidationExceptionHandler<R> getNewInstance(HapiContext context);
 
 }

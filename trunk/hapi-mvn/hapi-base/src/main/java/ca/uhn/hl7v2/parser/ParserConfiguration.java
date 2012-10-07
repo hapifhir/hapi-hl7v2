@@ -8,6 +8,7 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
+import ca.uhn.hl7v2.validation.ValidationContext;
 
 public class ParserConfiguration {
 
@@ -16,6 +17,7 @@ public class ParserConfiguration {
 	private Set<String> myForcedEncode = new HashSet<String>();
 	private String myInvalidObx2Type;
 	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
+	private boolean validating = true;
 
 	/**
 	 * <p>
@@ -309,6 +311,25 @@ public class ParserConfiguration {
 	public void setIdGenerator(IDGenerator idGenerator) {
 		this.idGenerator = idGenerator;
 	}
+
+    /**
+     * @return <code>true</code> if the parser validates using a configured {@link ValidationContext}
+     */
+    public boolean isValidating() {
+        return validating;
+    }
+
+    /**
+     * Determines whether the parser validates using a configured {@link ValidationContext}
+     * or not. This allows to disable message validation although a validation context
+     * is defined.
+     * 
+     * @param validating <code>true</code> if parser shall validate, <code>false</code> if not
+     */
+    public void setValidating(boolean validating) {
+        this.validating = validating;
+    }
+	
 	
 	
 

@@ -26,13 +26,14 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.validation;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.AbstractHL7Exception;
+import ca.uhn.hl7v2.HL7Exception;
 
 /**
  * A failure to validate against a rule.
  * 
  * @author Bryan Tripp
+ * @author Christian Ohr
  */
 @SuppressWarnings("serial")
 public class ValidationException extends AbstractHL7Exception {

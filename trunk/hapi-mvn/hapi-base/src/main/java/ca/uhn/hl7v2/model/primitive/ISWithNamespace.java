@@ -5,6 +5,7 @@ import ca.uhn.hl7v2.model.Message;
 /**
  * Base class for an ID type which also stores a namespace string
  */
+@SuppressWarnings("serial")
 public class ISWithNamespace extends IS {
 
 	private String myNamespace;

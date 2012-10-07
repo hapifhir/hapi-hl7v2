@@ -34,6 +34,15 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.util.Terser;
 
+/**
+ * 
+ * Abstract base class for Exceptions that are able to create acknowledgement
+ * messages from their error code and locatin information
+ * 
+ * @author Christian Ohr
+ *
+ */
+@SuppressWarnings("serial")
 public abstract class AbstractHL7Exception extends Exception {
 
 	private Location location;

@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "ValidationExceptionHandler.java".  Description: 
-"Interface for handling violations during the validation process." 
+The Original Code is "ExceptionHandler.java".  Description: 
+"Generic Interface for exception handling." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 2012.  All Rights Reserved. 
@@ -23,28 +23,19 @@ and replace  them with the notice and other provisions required by the GPL Licen
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
  */
-package ca.uhn.hl7v2.validation;
-
-import ca.uhn.hl7v2.ExceptionHandler;
+package ca.uhn.hl7v2;
 
 /**
- * Handler that is called for every violation during a message validation.
- * <p>
- * Instances of this class are NOT thread safe as they collect data during the
- * validation process.
+ * Generic interface for handling exceptions of type T
  * 
  * @author Christian Ohr
+ *
+ * @param <T>
+ * @param <R>
  */
-public interface ValidationExceptionHandler<R> extends ExceptionHandler<ValidationException, R> {
-	
-	/**
-	 * Should be called before validation starts. Some ValidationHandler implementations
-	 * may need context information of the subject being validated
-	 * 
-	 * @param subject subject to be validated
-	 */
-	void setValidationSubject(Object subject);
-	
-	boolean hasFailed();
+public interface ExceptionHandler<T extends Throwable, R> {
 
+	void onExceptions(T... exceptions);
+	
+	R result() throws HL7Exception;
 }

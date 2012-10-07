@@ -27,37 +27,52 @@
 package ca.uhn.hl7v2.util;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 
 public class ReflectionUtil {
 
-	/** Non instantiable */
-	private ReflectionUtil() {
-		// nothing
-	}
-	
-	public static Message instantiateMessage(Class<? extends Message> theType, ModelClassFactory theModelClassFactory) throws HL7Exception {
-		try {
-			Constructor<? extends Message> constructor = theType.getConstructor(new Class<?>[] {ModelClassFactory.class});
-			Message message = constructor.newInstance(theModelClassFactory);
-			return message;
-		} catch (SecurityException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		} catch (NoSuchMethodException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		} catch (IllegalArgumentException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		} catch (InstantiationException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		} catch (IllegalAccessException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		} catch (InvocationTargetException e) {
-			throw new HL7Exception("Failed to instantiate message type " + theType.getCanonicalName() + ": ", e);
-		}
-	}
-	
+    /** Non instantiable */
+    private ReflectionUtil() {
+        // nothing
+    }
+
+    public static <T extends Structure> T instantiateStructure(Class<T> theType, Group parent,
+            ModelClassFactory theModelClassFactory) throws HL7Exception {
+        try {
+            Constructor<T> constructor = theType.getConstructor(new Class<?>[] { Group.class,
+                    ModelClassFactory.class });
+            T message = constructor.newInstance(parent, theModelClassFactory);
+            return message;
+        } catch (Exception e) {
+            throw new HL7Exception("Failed to instantiate type " + theType.getCanonicalName()
+                    + ": ", e);
+        }
+    }
+
+    public static <T extends Structure> T instantiateMessage(Class<T> theType,
+            ModelClassFactory theModelClassFactory) throws HL7Exception {
+        try {
+            Constructor<T> constructor = theType
+                    .getConstructor(new Class<?>[] { ModelClassFactory.class });
+            T message = constructor.newInstance(theModelClassFactory);
+            return message;
+        } catch (Exception e) {
+            throw new HL7Exception("Failed to instantiate type " + theType.getCanonicalName()
+                    + ": ", e);
+        }
+    }
+
+    public static <T> T instantiate(Class<T> theType) throws HL7Exception {
+        try {
+            return theType.newInstance();
+        } catch (Exception e) {
+            throw new HL7Exception("Failed to instantiate type " + theType.getCanonicalName()
+                    + ": ", e);
+        }
+    }
+
 }

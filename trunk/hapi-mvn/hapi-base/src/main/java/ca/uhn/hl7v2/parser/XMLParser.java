@@ -687,11 +687,11 @@ public abstract class XMLParser extends Parser {
 	}
 
 	public String getVersion(String message) throws HL7Exception {
-		String version = parseLeaf(message, "MSH.12", 0);
-		if (version == null || version.trim().length() == 0) {
-			version = parseLeaf(message, "VID.1", message.indexOf("MSH.12"));
-		}
-		return version;
+        String version = parseLeaf(message, "MSH.12", 0);
+        if (version == null || version.trim().length() == 0) {
+            version = parseLeaf(message, "VID.1", message.indexOf("MSH.12"));
+        }
+        return version;	    
 	}
 
 	/**
@@ -706,7 +706,7 @@ public abstract class XMLParser extends Parser {
 	 * @param startAt the character location at which to start searching
 	 * @throws HL7Exception if the tag can not be found
 	 */
-	protected String parseLeaf(String message, String tagName, int startAt) throws HL7Exception {
+	protected static String parseLeaf(String message, String tagName, int startAt) throws HL7Exception {
 		String value = null;
 
 		int tagStart = message.indexOf("<" + tagName, startAt);

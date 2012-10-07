@@ -40,6 +40,7 @@ import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
@@ -67,7 +68,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * <li>{@link ValidationContext}: validation rules used during parsing or during a dedcated
  * validation step
  * <li>{@link ValidationRuleBuilder}: alternative way of providing a ValidationContext
- * <li>{@link ValidationExceptionHandler}: exception handler used during message validation
+ * <li>{@link ValidationExceptionHandlerFactory}: factory for exception handler used during message validation
  * </ul>
  * <p>
  * HapiContext serves as factory for HAPI objects that refer to this configuration. Changing the
@@ -201,12 +202,15 @@ public interface HapiContext extends Serializable {
 	 *         use a new instance of {@link ValidationExceptionHandler} as obtained by
 	 *         {@link #getValidationExceptionHandler()}.
 	 */
-	Validator getMessageValidator();
-
+	<R> Validator<R> getMessageValidator();
+	
+	<R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory();
+	
 	/**
-	 * @return a new ValidationExceptionHandler instance
+	 * @param factory a {@link ValidationExceptionHandlerFactory} that is used to create
+	 * a {@link ValidationExceptionHandler} during message validation.
 	 */
-	ValidationExceptionHandler getValidationExceptionHandler();
+	<R> void setValidationExceptionHandlerFactory(ValidationExceptionHandlerFactory<R> factory);
 
 	/**
 	 * @return the {@link LowerLayerProtocol} instance used by all HL7 MLLP operations

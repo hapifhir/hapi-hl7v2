@@ -44,9 +44,10 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.util.DeepCopy;
-import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 import ca.uhn.hl7v2.validation.Validator;
 
 /**
@@ -98,7 +99,7 @@ public abstract class Parser extends HapiContextSupport {
 	 *         parser. Note that this method may return <code>null</code>
 	 */
 	public ValidationContext getValidationContext() {
-		return getHapiContext().getValidationContext();
+		return isValidating() ? getHapiContext().getValidationContext() : null;
 	}
 
 	/**
@@ -177,10 +178,9 @@ public abstract class Parser extends HapiContextSupport {
 		String version = getVersion(message);
 		assertVersionExists(version);
 
-		Validator validator = getHapiContext().getMessageValidator();
-		validator.validate(message, encoding.equals("XML"), version);
+		assertMessageValidates(message, encoding, version);
 		Message result = doParse(message, version);
-		validator.validate(result);
+		assertMessageValidates(result);
 
 		result.setParser(this);
 
@@ -213,10 +213,9 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	public String encode(Message source, String encoding) throws HL7Exception,
 			EncodingNotSupportedException {
-		Validator validator = getHapiContext().getMessageValidator();
-		validator.validate(source);
+		assertMessageValidates(source);
 		String result = doEncode(source, encoding);
-		validator.validate(result, encoding.equals("XML"), source.getVersion());
+	    assertMessageValidates(result, encoding, source.getVersion());
 		return result;
 	}
 
@@ -246,11 +245,9 @@ public abstract class Parser extends HapiContextSupport {
 	 *             fields are null)
 	 */
 	public String encode(Message source) throws HL7Exception {
-		String encoding = getDefaultEncoding();
-		Validator validator = getHapiContext().getMessageValidator();
-		validator.validate(source);
+		assertMessageValidates(source);
 		String result = doEncode(source);
-		validator.validate(result, encoding.equals("XML"), source.getVersion());
+		assertMessageValidates(result, getDefaultEncoding(), source.getVersion());
 		return result;
 	}
 
@@ -362,13 +359,11 @@ public abstract class Parser extends HapiContextSupport {
 		String version = getVersion(message);
 		assertVersionExists(version);
 
-		Validator validator = getHapiContext().getMessageValidator();
-		validator.validate(message, encoding.equals("XML"), version);
+		assertMessageValidates(message, encoding, version);
 		Message result = doParseForSpecificPackage(message, version, packageName);
-		validator.validate(result);
+		assertMessageValidates(result);
 
 		result.setParser(this);
-
 		return result;
 	}
 
@@ -384,20 +379,13 @@ public abstract class Parser extends HapiContextSupport {
 	 * @see ModelClassFactory#getMessageClassInASpecificPackage(String, String, boolean, String)
 	 */
 	protected Message instantiateMessageInASpecificPackage(String theName, String theVersion,
-			boolean isExplicit, String packageName) throws HL7Exception {
-		try {
-			ModelClassFactory factory = getHapiContext().getModelClassFactory();
-			Class<? extends Message> messageClass = factory.getMessageClassInASpecificPackage(
-					theName, theVersion, isExplicit, packageName);
-			if (messageClass == null) {
-				throw new ClassNotFoundException(
-						"Can't find message class in current package list: " + theName);
-			}
-			return instantiate(messageClass);
-		} catch (Exception e) {
-			throw new HL7Exception("Couldn't create Message object of type " + theName,
-					ErrorCode.UNSUPPORTED_MESSAGE_TYPE, e);
+		boolean isExplicit, String packageName) throws HL7Exception {
+		Class<? extends Message> messageClass = getFactory().getMessageClassInASpecificPackage(
+				theName, theVersion, isExplicit, packageName);
+		if (messageClass == null) {
+			throw new HL7Exception("Can't find message class in current package list: " + theName);
 		}
+	    return ReflectionUtil.instantiateMessage(messageClass, getFactory());
 	}
 
 	/**
@@ -469,7 +457,7 @@ public abstract class Parser extends HapiContextSupport {
 
 	/**
 	 * Returns true if the given string represents a valid 2.x version. Valid versions include
-	 * "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.6"
+	 * "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", s"2.6"
 	 *
 	 * @param version HL7 version string
 	 * @return <code>true</code> if version is known
@@ -525,25 +513,44 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	protected Message instantiateMessage(String theName, String theVersion, boolean isExplicit)
 			throws HL7Exception {
-		try {
-			ModelClassFactory factory = getHapiContext().getModelClassFactory();
-			Class<? extends Message> messageClass = factory.getMessageClass(theName, theVersion,
-					isExplicit);
-			if (messageClass == null)
-				throw new ClassNotFoundException(
-						"Can't find message class in current package list: " + theName);
-			return instantiate(messageClass);
-		} catch (Exception e) {
-			throw new HL7Exception("Couldn't create Message object of type " + theName,
-					ErrorCode.UNSUPPORTED_MESSAGE_TYPE, e);
-		}
+		Class<? extends Message> messageClass = getFactory().getMessageClass(theName, theVersion, isExplicit);
+		if (messageClass == null)
+			throw new HL7Exception("Can't find message class in current package list: " + theName);
+		return ReflectionUtil.instantiateMessage(messageClass, getFactory());
 	}
 	
-	private Message instantiate(Class<? extends Message> messageClass) throws Exception {
-		log.debug("Instantiating msg of class {}", messageClass.getName());
-		Constructor<? extends Message> constructor = messageClass
-				.getConstructor(new Class[] { ModelClassFactory.class });
-		return constructor.newInstance(getHapiContext().getModelClassFactory());
+	private <R> void assertMessageValidates(String message, String encoding, String version) throws HL7Exception {
+	    if (isValidating()) {
+	        Validator<R> validator = getHapiContext().getMessageValidator();
+	        ValidationExceptionHandlerFactory<R> factory  = getHapiContext().getValidationExceptionHandlerFactory();
+	        ValidationExceptionHandler<R> handler = factory.getNewInstance(getHapiContext());
+	        R result = validator.validate(message, encoding.equals("XML"), version, handler);
+            handleException(handler, result);
+	    }
 	}
+	
+    private <R> void assertMessageValidates(Message message) throws HL7Exception {
+        if (isValidating()) {
+            Validator<R> validator = getHapiContext().getMessageValidator();
+            ValidationExceptionHandlerFactory<R> factory  = getHapiContext().getValidationExceptionHandlerFactory();
+            ValidationExceptionHandler<R> handler = factory.getNewInstance(getHapiContext());
+            R result = validator.validate(message, handler);
+            handleException(handler, result);
+        }
+    }
+
+    private <R> void handleException(ValidationExceptionHandler<R> handler, R result)
+            throws HL7Exception {
+        if (handler.hasFailed()) {
+            HL7Exception e = new HL7Exception("Validation has failed");
+            e.setDetail(result);
+            throw e;
+        }
+    }
+    
+    private boolean isValidating() {
+        return getHapiContext().getParserConfiguration().isValidating();
+    }
+    
 
 }
