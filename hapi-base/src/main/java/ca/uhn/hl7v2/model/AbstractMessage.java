@@ -41,6 +41,7 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -243,11 +244,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 		if (version != null && version.available()) {
 			Class<? extends Message> clazz = mcf.getMessageClass("ACK", version.getVersion(), false);
 			if (clazz != null) {
-				try {
-					out = clazz.newInstance();
-				} catch (Exception e) {
-					throw new HL7Exception("Can't instantiate ACK", e);
-				}
+			    out = ReflectionUtil.instantiateMessage(clazz, mcf);
 			}
 		}
 		if (out == null) {

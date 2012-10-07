@@ -250,6 +250,7 @@ public class PipeParser extends Parser {
 			retVal = createStructureDefinition(theMessage, previousLeaf);
 		} else {
 			Message message = ReflectionUtil.instantiateMessage(clazz, getFactory());
+
 			Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
 			retVal = createStructureDefinition(message, previousLeaf);
 			myStructureDefinitions.put(clazz, retVal);
@@ -862,7 +863,7 @@ public class PipeParser extends Parser {
 			// fill MSH segment
 			String version = Version.lowestAvailableVersion().getVersion(); // default
 			try {
-				version = this.getVersion(message);
+				version = getVersion(message);
 			} catch (Exception e) { /* use the default */
 			}
 

@@ -30,102 +30,135 @@ import java.util.List;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.util.DeepCopy;
 
 /**
- * ValidationExceptionHandler that generates response messages as statically configured and based on
- * the outcome of a validation process. Aspects of creating and populating the response message can
- * be overwritten in subclasses.
+ * ValidationExceptionHandler that generates response messages as statically
+ * configured and based on the outcome of a validation process. Aspects of
+ * creating and populating the response message can be overwritten in
+ * subclasses.
  * <p>
- * This handler (or a subclass thereof) should be used for validation if a response message must be
- * generated upon the validation result.
+ * This handler (or a subclass thereof) can be used for validation if a
+ * response message must be generated upon the validation result.
  * 
  * @author Christian Ohr
  */
-public class RespondingValidationExceptionHandler extends CollectingValidationExceptionHandler {
+public class RespondingValidationExceptionHandler extends
+        CollectingValidationExceptionHandler<Message> implements
+        ValidationExceptionHandlerFactory<Message> {
 
-	private AcknowledgmentCode successAcknowledgementCode = AcknowledgmentCode.AA;
-	private AcknowledgmentCode errorAcknowledgementCode = AcknowledgmentCode.AE;
+    private AcknowledgmentCode successAcknowledgementCode = AcknowledgmentCode.AA;
+    private AcknowledgmentCode errorAcknowledgementCode = AcknowledgmentCode.AE;
 
-	/**
-	 * Returns the generated response message.
-	 * 
-	 * @return the generated response
-	 * 
-	 * @see {@link #generateResponseMessage()}
-	 * @see {@link #populateResponseMessage()}
-	 * 
-	 * @throws HL7Exception if no response could be generated
-	 * @throws IOException if the response message could not be created due to failures in the
-	 *             message id generation strategy
-	 */
-	public final Message getResponse() throws HL7Exception, IOException {
-		if (subject == null || !(subject instanceof Message)) {
-			throw new HL7Exception("Need valid " + Message.class.getName()
-					+ " instance in order to generate a response");
-		}
-		Message response = generateResponseMessage((Message)subject);
-		populateResponseMessage(response);
-		return response;
-	}
+    public RespondingValidationExceptionHandler(HapiContext context) {
+        super(context);
+    }
 
-	/**
-	 * Set acknowledgment code (AA,CA) in case validation passes.
-	 * 
-	 * @param successAcknowledgementCode (AA, CA)
-	 */
-	public void setSuccessAcknowledgementCode(AcknowledgmentCode successAcknowledgementCode) {
-		this.successAcknowledgementCode = successAcknowledgementCode;
-	}
+    /**
+     * Returns the generated response message.
+     * 
+     * @return the generated response
+     * 
+     * @see {@link #generateResponseMessage()}
+     * @see {@link #populateResponseMessage()}
+     * 
+     * @throws HL7Exception if no response could be generated
+     * @throws IOException if the response message could not be created due to
+     *             failures in the message id generation strategy
+     */
+    public final Message result() throws HL7Exception {
+        Object validationSubject = getValidationSubject();
+        if (validationSubject == null) {
+            throw new HL7Exception("Need non-null validation subject");
+        }
+        Message response = generateResponseMessage(validationSubject);
+        populateResponseMessage(response);
+        return response;
+    }
 
-	/**
-	 * 
-	 * Set acknowledgment code (AR, AE ,CR, CE) in case validation passes.
-	 * 
-	 * @param errorAcknowledgementCode (AR, AE ,CR, CE)
-	 */
-	public void setErrorAcknowledgementCode(AcknowledgmentCode errorAcknowledgementCode) {
-		this.errorAcknowledgementCode = errorAcknowledgementCode;
-	}
+    /**
+     * Set acknowledgment code (AA,CA) in case validation passes.
+     * 
+     * @param successAcknowledgementCode (AA, CA)
+     */
+    public void setSuccessAcknowledgementCode(AcknowledgmentCode successAcknowledgementCode) {
+        this.successAcknowledgementCode = successAcknowledgementCode;
+    }
 
-	public AcknowledgmentCode getSuccessAcknowledgementCode() {
-		return successAcknowledgementCode;
-	}
+    /**
+     * Set acknowledgment code (AR, AE ,CR, CE) in case validation passes.
+     * 
+     * @param errorAcknowledgementCode (AR, AE ,CR, CE)
+     */
+    public void setErrorAcknowledgementCode(AcknowledgmentCode errorAcknowledgementCode) {
+        this.errorAcknowledgementCode = errorAcknowledgementCode;
+    }
 
-	public AcknowledgmentCode getErrorAcknowledgementCode() {
-		return errorAcknowledgementCode;
-	}
+    public AcknowledgmentCode getSuccessAcknowledgementCode() {
+        return successAcknowledgementCode;
+    }
 
-	/**
-	 * Generates an empty response based on the {@link #getRequest() request} message. This class
-	 * generates an ACKnowledgement using the code returned by
-	 * {@link #getSuccessAcknowledgementCode()}.
-	 * 
-	 * @return acknowledgment to the request
-	 * @throws HL7Exception
-	 * @throws IOException
-	 */
-	protected Message generateResponseMessage(Message request) throws HL7Exception, IOException {
-		return request.generateACK(getSuccessAcknowledgementCode(), null);
-	}
+    public AcknowledgmentCode getErrorAcknowledgementCode() {
+        return errorAcknowledgementCode;
+    }
 
-	/**
-	 * Populates the generated response based on the collected {@link ValidationException}s. In case
-	 * of exceptions, each exception will cause an entry in one or more ERR segments.
-	 * 
-	 * @param response
-	 * @throws HL7Exception
-	 * @throws IOException
-	 */
-	protected void populateResponseMessage(Message response) throws HL7Exception, IOException {
-		List<ValidationException> exceptions = getExceptions();
-		// No exceptions - just return response, MSA-1 is already set
-		if (exceptions.isEmpty()) {
-			return;
-		}
-		for (int i = 0; i < exceptions.size(); i++) {
-			exceptions.get(i).populateResponse(response, getErrorAcknowledgementCode(), i);
-		}
-	}
+    /**
+     * Generates an empty response based on the {@link #getRequest() request}
+     * message. This class generates an ACKnowledgement using the code returned
+     * by {@link #getSuccessAcknowledgementCode()}.
+     * 
+     * @param request request message, either a {@link String} or a
+     *            {@link Message}
+     * @return acknowledgment to the request
+     * @throws HL7Exception
+     */
+    protected Message generateResponseMessage(Object request) throws HL7Exception {
+        try {
+            Message in = null;
+            if (request instanceof String) {
+                Segment s = getHapiContext().getGenericParser().getCriticalResponseData(
+                        (String)request);
+                in = s.getMessage();
+                DeepCopy.copy(s, (Segment) in.get("MSH"));
+            } else if (request instanceof Message) {
+                in = (Message) request;
+            } else {
+                throw new HL7Exception("Validated message must be either Message or String");
+            }
+            return in.generateACK(getSuccessAcknowledgementCode(), null);
+
+        } catch (IOException e) {
+            throw new HL7Exception(e);
+        }
+    }
+
+    /**
+     * Populates the generated response based on the collected
+     * {@link ValidationException}s. In case of exceptions, each exception will
+     * cause an entry in one or more ERR segments.
+     * 
+     * @param response
+     * @throws HL7Exception
+     * @throws IOException
+     */
+    protected void populateResponseMessage(Message response) throws HL7Exception {
+        if (response == null)
+            return;
+        List<ValidationException> exceptions = getExceptions();
+        // No exceptions - just return response, MSA-1 is already set
+        if (exceptions.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < exceptions.size(); i++) {
+            exceptions.get(i).populateResponse(response, getErrorAcknowledgementCode(), i);
+        }
+    }
+
+    public ValidationExceptionHandler<Message> getNewInstance(HapiContext context) {
+        return new RespondingValidationExceptionHandler(context);
+    }
 
 }

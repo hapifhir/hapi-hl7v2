@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
@@ -159,12 +159,19 @@ public class HapiContextSupport {
 			return context.getGenericParser();
 		}
 
-		public Validator getMessageValidator() {
+		public <R> Validator<R> getMessageValidator() {
 			return context.getMessageValidator();
 		}
 		
-		public ValidationExceptionHandler getValidationExceptionHandler() {
-			return context.getValidationExceptionHandler();
+		
+
+		public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
+			return context.getValidationExceptionHandlerFactory();
+		}
+
+		public <R> void setValidationExceptionHandlerFactory(
+				ValidationExceptionHandlerFactory<R> factory) {
+			context.setValidationExceptionHandlerFactory(factory);
 		}
 
 		public SimpleServer getSimpleService(int port, boolean tls) {

@@ -29,64 +29,70 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 
 /**
- * ValidationExceptionHandler that logs all {@link ValidationException}s and optionally throws the
- * first one wrapped in a {@link HL7Exception}.
+ * ValidationExceptionHandler that logs all {@link ValidationException}s and
+ * optionally throws the first one wrapped in a {@link HL7Exception}.
  * <p>
  * The mimics the behavior of the {@link MessageValidator} of previous releases.
  * 
  * @author Christian Ohr
  * 
  */
-public class ReportingValidationExceptionHandler extends CollectingValidationExceptionHandler {
+public class ReportingValidationExceptionHandler implements ValidationExceptionHandler<Boolean>,
+        ValidationExceptionHandlerFactory<Boolean> {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ReportingValidationExceptionHandler.class);
-	private boolean throwFirstException;
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ReportingValidationExceptionHandler.class);
+    private boolean throwFirstException;
+    private ValidationException firstException;
 
-	/**
-	 * @param messageValidator
-	 */
-	public ReportingValidationExceptionHandler(boolean throwFirstException) {
-		this.throwFirstException = throwFirstException;
-	}
+    /**
+     * @param messageValidator
+     */
+    public ReportingValidationExceptionHandler(boolean throwFirstException) {
+        this.throwFirstException = throwFirstException;
+    }
 
-	/**
-	 * Logs all exceptions
-	 * 
-	 * @see ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler#onValidationExceptions(ca.uhn.hl7v2.validation.ValidationException[])
-	 */
-	public void onValidationExceptions(ValidationException[] exceptions) {
-		super.onValidationExceptions(exceptions);
-		for (ValidationException ve : exceptions) {
-			LOG.error("Invalid message", ve);
-		}
-	}
+    /**
+     * Logs all exceptions
+     * 
+     * @see ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler#onExceptions(ca.uhn.hl7v2.validation.ValidationException[])
+     */
+    public void onExceptions(ValidationException... exceptions) {
+        if (firstException == null)
+            firstException = exceptions[0];
+        for (ValidationException ve : exceptions) {
+            LOG.error("Invalid message", ve);
+        }
+    }
 
-	/**
-	 * If the validation failed, throws Exception or returns <code>false</code>, depending on {link
-	 * {@link #throwFirstException}.
-	 * 
-	 * @throws HL7Exception if validation has failed and {@link #throwFirstException} is true
-	 * @see ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler#validationPassed()
-	 */
-	public boolean validationPassed() throws HL7Exception {
-		boolean passed = super.validationPassed();
-		if (!passed && throwFirstException) {
-			ValidationException firstException = firstException();
-			if (firstException != null) {
-				throw new HL7Exception(firstException.getMessage(), firstException);
-			} else {
-				// should never happen
-				throw new HL7Exception("Validation failed, but details available");
-			}
-		}
-		return passed;
-	}
+    /**
+     * If the validation failed, throws Exception or returns <code>false</code>,
+     * depending on {link {@link #throwFirstException}.
+     * 
+     * @throws HL7Exception if validation has failed and
+     *             {@link #throwFirstException} is true
+     * @see ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler#result()
+     */
+    public Boolean result() throws HL7Exception {
+        if (hasFailed() && throwFirstException)
+            throw new HL7Exception(firstException.getMessage(), firstException);
+        return !hasFailed();
+    }
 
-	private ValidationException firstException() {
-		return getExceptions().get(0);
-	}
+    public boolean hasFailed() {
+        return firstException != null;
+    }
+
+    public ValidationExceptionHandler<Boolean> getNewInstance(HapiContext context) {
+        return new ReportingValidationExceptionHandler(throwFirstException);
+    }
+
+    public void setValidationSubject(Object subject) {
+    }
+    
+    
 
 }

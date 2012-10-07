@@ -25,8 +25,6 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
-
-
 /**
  * Location class to determine the location of an element that caused an exception
  * 

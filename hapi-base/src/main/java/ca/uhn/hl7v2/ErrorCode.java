@@ -7,15 +7,15 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
 specific language governing rights and limitations under the License. 
 
 The Original Code is "ErrorCode.java".  Description: 
-"Enum for HL7 table 0357" 
+"Error code enumeration." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
-2001.  All Rights Reserved. 
+2012.  All Rights Reserved. 
 
 Contributor(s): ______________________________________. 
 
 Alternatively, the contents of this file may be used under the terms of the 
-GNU General Public License (the  "GPL"), in which case the provisions of the GPL are 
+GNU General Public License (the "GPL"), in which case the provisions of the GPL are 
 applicable instead of those above.  If you wish to allow use of your version of this 
 file only under the terms of the GPL and not to allow others to use your version 
 of this file under the MPL, indicate your decision by deleting  the provisions above 
@@ -44,7 +44,8 @@ public enum ErrorCode {
 	APPLICATION_RECORD_LOCKED(206, "Application record locked"),
 	APPLICATION_INTERNAL_ERROR(207, "Application internal error");
 
-	private final int code;
+	private static final String HL70357 = "HL70357";
+    private final int code;
 	private final String message;
 
 	ErrorCode(int errCode, String message) {
@@ -70,6 +71,6 @@ public enum ErrorCode {
 	}
 	
 	public static String codeTable() {
-		return "HL70357";
+		return HL70357;
 	}
 }

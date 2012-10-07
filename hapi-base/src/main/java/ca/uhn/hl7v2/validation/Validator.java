@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.model.Message;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-public interface Validator {
+public interface Validator<R> {
 
 	/**
 	 * Validates a {@link Message}
@@ -45,7 +45,7 @@ public interface Validator {
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message is null
 	 */
-	public boolean validate(Message message) throws HL7Exception;
+	public R validate(Message message) throws HL7Exception;
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public interface Validator {
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message is null
 	 */
-	public boolean validate(String message, boolean isXML, String version) throws HL7Exception;
+	public R validate(String message, boolean isXML, String version) throws HL7Exception;
 
 	/**
 	 * Validates a {@link Message} using a custom {@link ValidationExceptionHandler}. The handler
@@ -74,7 +74,7 @@ public interface Validator {
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
-	public boolean validate(Message message, ValidationExceptionHandler handler)
+	public R validate(Message message, ValidationExceptionHandler<R> handler)
 			throws HL7Exception;
 
 	/**
@@ -90,7 +90,7 @@ public interface Validator {
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
-	public boolean validate(String message, boolean isXML, String version,
-			ValidationExceptionHandler handler) throws HL7Exception;
+	public R validate(String message, boolean isXML, String version,
+			ValidationExceptionHandler<R> handler) throws HL7Exception;
 
 }

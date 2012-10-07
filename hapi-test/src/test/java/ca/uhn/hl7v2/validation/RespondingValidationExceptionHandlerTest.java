@@ -1,30 +1,42 @@
 package ca.uhn.hl7v2.validation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 
 public class RespondingValidationExceptionHandlerTest {
 
+	private DefaultValidator<Message> validator;
+	
+	@Before
+	public void setup() {
+		final HapiContext context = new DefaultHapiContext();
+		validator = (new DefaultValidator<Message>(context) {
+
+			@Override
+			protected ValidationExceptionHandler<Message> initializeHandler() {
+				return new RespondingValidationExceptionHandler(context);
+			}
+		});
+	}
+	
 	@Test
 	public void testPassingHandler() throws Exception {
 		ADT_A01 a01 = new ADT_A01();
 		a01.initQuickstart("ADT", "A01", "P");
 		String messageId = a01.getMSH().getMessageControlID().getValue();
-		HapiContext context = new DefaultHapiContext();
-		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler();
-		Validator validator = context.getMessageValidator();
-		assertTrue(validator.validate(a01, handler));
-		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
-				.getResponse();
+
+		Message msg = validator.validate(a01);
+		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) msg;
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AA.name(), ack.getMSA().getAcknowledgmentCode().getValue());
 	}
@@ -40,13 +52,13 @@ public class RespondingValidationExceptionHandlerTest {
 
 		String messageId = a01.getMSH().getMessageControlID().getValue();
 		HapiContext context = new DefaultHapiContext();
-		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler();
+		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler(context);
 		handler.setErrorAcknowledgementCode(AcknowledgmentCode.AR);
 
-		Validator validator = context.getMessageValidator();
-		assertFalse(validator.validate(a01, handler));
+		Validator<Message> validator = context.getMessageValidator();
+		assertNotNull(validator.validate(a01, handler));
 		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
-				.getResponse();
+				.result();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AR.name(), ack.getMSA().getAcknowledgmentCode().getValue());
 		assertEquals("PID", ack.getERR(0).getErrorLocation(0).getSegmentID().getValue());
@@ -68,12 +80,8 @@ public class RespondingValidationExceptionHandlerTest {
 		a02.getPV1().getAdmitDateTime().getTimeOfAnEvent().setValue("gablorg");
 
 		String messageId = a02.getMSH().getMessageControlID().getValue();
-		HapiContext context = new DefaultHapiContext();
-		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler();
-		Validator validator = context.getMessageValidator();
-		assertFalse(validator.validate(a02, handler));
-		ca.uhn.hl7v2.model.v23.message.ACK ack = (ca.uhn.hl7v2.model.v23.message.ACK) handler
-				.getResponse();
+		Message msg = validator.validate(a02);
+		ca.uhn.hl7v2.model.v23.message.ACK ack = (ca.uhn.hl7v2.model.v23.message.ACK) msg;
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AE.name(), ack.getMSA().getAcknowledgementCode().getValue());
 		assertEquals("PID", ack.getERR().getErrorCodeAndLocation(0).getSegmentID().getValue());

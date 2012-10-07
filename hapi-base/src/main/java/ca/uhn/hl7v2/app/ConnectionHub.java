@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
@@ -158,15 +159,9 @@ public class ConnectionHub extends HapiContextSupport {
 	 * @since 2.0
 	 */
 	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser,
-			Class<? extends LowerLayerProtocol> llpClass, boolean tls) throws HL7Exception {
-		try {
-			LowerLayerProtocol llp = llpClass.newInstance();
-			return attach(host, outboundPort, inboundPort, parser, llp, tls);
-		} catch (InstantiationException e) {
-			throw new HL7Exception("Cannot open connection to " + host + ":" + outboundPort, e);
-		} catch (IllegalAccessException e) {
-			throw new HL7Exception("Cannot open connection to " + host + ":" + outboundPort, e);
-		}
+		Class<? extends LowerLayerProtocol> llpClass, boolean tls) throws HL7Exception {
+		LowerLayerProtocol llp = ReflectionUtil.instantiate(llpClass);
+		return attach(host, outboundPort, inboundPort, parser, llp, tls);
 	}
 
 	/**

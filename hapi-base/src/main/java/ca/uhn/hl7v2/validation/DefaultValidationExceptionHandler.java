@@ -25,28 +25,54 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 
 /**
  * Simple implementation of a handler that just tracks if
- * {@link #onValidationExceptions(ValidationException[])} has been called at least once.
+ * {@link #onExceptions(ValidationException[])} has been called at least once.
  * 
  * @author Christian Ohr
  */
-public class DefaultValidationExceptionHandler implements ValidationExceptionHandler {
+public class DefaultValidationExceptionHandler extends AbstractValidationExceptionHandler<Boolean> {
 
 	private boolean result = true;
-	protected Object subject;
 
-	public void setValidationSubject(Object subject) {
-		this.subject = subject; 
-	}
+	public DefaultValidationExceptionHandler() {
+        super(new DefaultHapiContext());
+    }
+	
+    public DefaultValidationExceptionHandler(HapiContext context) {
+        super(context);
+    }
 
-	public void onValidationExceptions(ValidationException[] exceptions) {
+    /**
+	 * If the validation process encounters a violation, this method is called.
+	 * 
+	 * @param exceptions a non-empty array of {@link ValidationException}s.
+	 */
+	public void onExceptions(ValidationException... exceptions) {
 		result = false;
 	}
 
-	public boolean validationPassed() throws HL7Exception {
+	/**
+	 * Called after the validation process. Should return an overall boolean validation result.
+	 * 
+	 * @return the overall assessment of the validation process. This method should usually return
+	 *         <code>false</code> if {@link #onExceptions(ValidationException[])} has been
+	 *         called at least once.
+	 * @throws HL7Exception
+	 * 
+	 * @see {@link DefaultValidationExceptionHandler}
+	 */
+	public Boolean result() throws HL7Exception {
 		return result;
 	}
+
+    public boolean hasFailed() {
+        return !result;
+    }
+	
+	
 }

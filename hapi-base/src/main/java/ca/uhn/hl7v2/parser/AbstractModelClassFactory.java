@@ -41,6 +41,7 @@ import ca.uhn.hl7v2.Version;
  * 
  * @author Christian Ohr
  */
+@SuppressWarnings("serial")
 public abstract class AbstractModelClassFactory implements ModelClassFactory {
 
 	protected static final String DEFAULT_EVENT_MAP_DIRECTORY = "ca/uhn/hl7v2/parser/eventmap/";

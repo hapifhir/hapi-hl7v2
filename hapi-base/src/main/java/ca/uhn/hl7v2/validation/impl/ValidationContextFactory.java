@@ -25,6 +25,8 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.impl;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
@@ -33,16 +35,19 @@ import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 
 /**
  * <p>
- * The <code>ValidationContext</code> returned by <code>getContext()</code> is determined by the
- * system property "ca.uhn.hl7v2.validation.context_class". This factory defines two inner classes
- * that can be used: DefaultValidation and NoValidation. You can also create your own context,
- * setting whatever rules you want in its constructor, and reference it instead (it must have a
- * zero-arg constructor). If this property is not set, DefaultValidation is used.
+ * The <code>ValidationContext</code> returned by <code>getContext()</code> is
+ * determined by the system property "ca.uhn.hl7v2.validation.context_class".
+ * This factory defines two inner classes that can be used: DefaultValidation
+ * and NoValidation. You can also create your own context, setting whatever
+ * rules you want in its constructor, and reference it instead (it must have a
+ * zero-arg constructor). If this property is not set, DefaultValidation is
+ * used.
  * </p>
  * 
  * <p>
- * Also note that the contexts provided here use <code>ValidationContextImpl</code>, so rule
- * bindings can be added or removed programmatically from the starting set.
+ * Also note that the contexts provided here use
+ * <code>ValidationContextImpl</code>, so rule bindings can be added or removed
+ * programmatically from the starting set.
  * </p>
  * 
  * @author Bryan Tripp
@@ -51,79 +56,81 @@ import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
  */
 public class ValidationContextFactory {
 
-	private static ValidationContext ourContext;
+    private static ValidationContext ourContext;
 
-	public static final String CONTEXT_PROPERTY = "ca.uhn.hl7v2.validation.context_class";
+    public static final String CONTEXT_PROPERTY = "ca.uhn.hl7v2.validation.context_class";
 
-	/**
-	 * Returns a singleton <code>ValidationContext</code>, creating it if necessary.
-	 * 
-	 * @return <code>ValidationContext</code>
-	 */
-	public synchronized static ValidationContext getContext() throws ValidationException {
-		if (ourContext == null) {
-			String contextClassName = System.getProperty(CONTEXT_PROPERTY);
-			ourContext = contextClassName == null ? defaultValidation()
-					: customValidation(contextClassName);
-		}
-		return ourContext;
-	}
+    /**
+     * Returns a singleton <code>ValidationContext</code>, creating it if
+     * necessary.
+     * 
+     * @return <code>ValidationContext</code>
+     */
+    public synchronized static ValidationContext getContext() throws HL7Exception {
+        if (ourContext == null) {
+            String contextClassName = System.getProperty(CONTEXT_PROPERTY);
+            ourContext = contextClassName == null ? defaultValidation()
+                    : customValidation(contextClassName);
+        }
+        return ourContext;
+    }
 
-	/**
-	 * @return an instance of a non-validating context
-	 */
-	public static ValidationContext noValidation() {
-		return new ValidationContextImpl(new NoValidationBuilder());
-	}
+    /**
+     * @return an instance of a non-validating context
+     */
+    public static ValidationContext noValidation() {
+        return new ValidationContextImpl(new NoValidationBuilder());
+    }
 
-	/**
-	 * @return an instance of a default validation context
-	 */
-	public static ValidationContext defaultValidation() {
-		return new ValidationContextImpl(new DefaultValidationBuilder());
-	}
+    /**
+     * @return an instance of a default validation context
+     */
+    public static ValidationContext defaultValidation() {
+        return new ValidationContextImpl(new DefaultValidationBuilder());
+    }
 
-	/**
-	 * @param ruleBuilderClassName class name of a {@link ValidationRuleBuilder} subclass
-	 * @return a validation rule builder instance
-	 * @throws ValidationException
-	 */
-	@SuppressWarnings("unchecked")
-	public static ValidationRuleBuilder customBuilder(String ruleBuilderClassName)
-			throws ValidationException {
-		try {
-			Class<? extends ValidationRuleBuilder> c = (Class<? extends ValidationRuleBuilder>) Class
-					.forName(ruleBuilderClassName);
-			return c.newInstance();
-		} catch (Exception e) {
-			throw new ValidationException(e);
-		}
-	}
+    /**
+     * @param ruleBuilderClassName class name of a {@link ValidationRuleBuilder}
+     *            subclass
+     * @return a validation rule builder instance
+     * @throws ValidationException
+     */
+    @SuppressWarnings("unchecked")
+    public static ValidationRuleBuilder customBuilder(String ruleBuilderClassName)
+            throws HL7Exception {
+        Class<? extends ValidationRuleBuilder> c;
+        try {
+            c = (Class<? extends ValidationRuleBuilder>) Class.forName(ruleBuilderClassName);
+        } catch (ClassNotFoundException e) {
+            throw new HL7Exception(e);
+        }
+        return ReflectionUtil.instantiate(c);
+    }
 
-	public static ValidationContext fromBuilder(String ruleBuilderClassName)
-			throws ValidationException {
-		return new ValidationContextImpl(customBuilder(ruleBuilderClassName));
-	}
-	
-	public static ValidationContext fromBuilder(ValidationRuleBuilder builder) {
-		return new ValidationContextImpl(builder);
-	}	
+    public static ValidationContext fromBuilder(String ruleBuilderClassName) throws HL7Exception {
+        return new ValidationContextImpl(customBuilder(ruleBuilderClassName));
+    }
 
-	/**
-	 * @param contextClassName class name of a {@link ValidationContext} subclass
-	 * @return instance of the ValidationContext
-	 * @throws ValidationException
-	 */
-	@SuppressWarnings("unchecked")
-	public static ValidationContext customValidation(String contextClassName)
-			throws ValidationException {
-		try {
-			Class<? extends ValidationContext> c = (Class<? extends ValidationContext>) Class
-					.forName(contextClassName);
-			return c.newInstance();
-		} catch (Exception e) {
-			throw new ValidationException(e);
-		}
-	}
+    public static ValidationContext fromBuilder(ValidationRuleBuilder builder) {
+        return new ValidationContextImpl(builder);
+    }
+
+    /**
+     * @param contextClassName class name of a {@link ValidationContext}
+     *            subclass
+     * @return instance of the ValidationContext
+     * @throws ValidationException
+     */
+    @SuppressWarnings("unchecked")
+    public static ValidationContext customValidation(String contextClassName) throws HL7Exception {
+        Class<? extends ValidationContext> c;
+        try {
+            c = (Class<? extends ValidationContext>) Class.forName(contextClassName);
+        } catch (Exception e) {
+            throw new HL7Exception(e);
+        }
+        return ReflectionUtil.instantiate(c);
+
+    }
 
 }

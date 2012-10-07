@@ -31,17 +31,19 @@ import ca.uhn.hl7v2.HL7Exception;
 
 /**
  * Validation utilities for parsed and encoded messages. The
- * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and throws a
- * {@link HL7Exception} if {@link #throwOnError} has been set to <code>true</code>.
+ * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and
+ * throws a {@link HL7Exception} if {@link #throwOnError} has been set to
+ * <code>true</code>.
  * <p>
  * This class is kept for backwards compatibility.
  * 
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-public class MessageValidator extends DefaultValidator {
+public class MessageValidator extends AbstractValidator<Boolean> {
 
-	private boolean throwOnError = false;
+	private boolean theFailOnErrorFlag;
+	private ValidationContext validationContext;
 
 	public MessageValidator(ValidationContext context) {
 		this(context, false);
@@ -52,12 +54,23 @@ public class MessageValidator extends DefaultValidator {
 	 * @param theFailOnErrorFlag
 	 */
 	public MessageValidator(ValidationContext theContext, boolean theFailOnErrorFlag) {
-		super(theContext);
-		throwOnError = theFailOnErrorFlag;
+		super();
+		this.validationContext = theContext;
+		this.theFailOnErrorFlag = theFailOnErrorFlag;
+	}
+
+	/**
+	 * For backwards compatibility, always returns a new instance of
+	 * {@link ReportingValidationExceptionHandler}
+	 */
+	@Override
+	protected ValidationExceptionHandler<Boolean> initializeHandler() {
+		return new ReportingValidationExceptionHandler(theFailOnErrorFlag);
 	}
 
 	@Override
-	protected ValidationExceptionHandler initializeHandler() {
-		return new ReportingValidationExceptionHandler(throwOnError);
+	protected ValidationContext getValidationContext() {
+		return validationContext;
 	}
+
 }
