@@ -26,15 +26,21 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
 
+import org.junit.Test;
+
+import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
@@ -44,224 +50,96 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  *
  * @author Leslie Mann
  */
-public class CommonIDTest extends TestCase {
-	private int table;
-	private String value;
-	private ID commonID;
+public class CommonIDTest {
 
-	/**
-	 * Constructor for CommonIDTest.
-	 * @param name
-	 */
-	public CommonIDTest(String testName) {
-		super(testName);
+    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
+    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+
+	static private class Params {
+	    int table;
+	    String value;
 	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(CommonIDTest.class);
+	
+	static Params param(int table, String value) {
+	    Params p = new Params();
+	    p.table = table;
+	    p.value = value;
+	    return p;
 	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		table = 5;
-		value = "test";
-		commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
-        };
-	}
-
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		commonID = null;
-	}
-
-	/*
-	 ********************************************************** 
-	 * Test Cases
-	 ********************************************************** 
-	 */
 	 
 	 /**
 	  * Test for default constructor
 	  */
+	@SuppressWarnings("serial")
+    @Test
 	 public void testConstructor() {
+	    ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {
+        };
 	 	assertNotNull("Should have a valid CommonID object", commonID);
 	 }
-
-	 /**
-	  * Test for table and value constructor
-	  */
-//	 public void testConstructorString() throws DataTypeException {
-//		commonID = new CommonID(table, value);
-//	 	assertNotNull("Should have a valid CommonID object", commonID);
-//	 }
-
+    
 	/**
 	 * Test for void set/getValue(int, String)
 	 */
+	
+    public static class SetGetSpec extends TestSpec<Params, String> {
+
+        @Override
+        protected String transform(Params input) throws Throwable {
+            Message message = new GenericMessage.V25(MCF);
+            message.setValidationContext(VC);
+            ID id = new ca.uhn.hl7v2.model.v25.datatype.ID(message);
+            id.setTable(input.table);
+            id.setValue(input.value);
+            return id.getValue();
+        }
+        
+    }
+    
+	@Test
 	public void testSetGetValueStringAndTable() throws DataTypeException {
-		class TestSpec {
-			String value;
-			int table;
-			Object outcome;
-			Exception exception = null;
-
-			TestSpec(int table, String value, Object outcome) {
-				this.value = value;
-				this.table = table;
-				this.outcome = outcome;
-			}
-
-			public String toString() {
-				return "[ " + table + " " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(new DefaultValidation());
-				ID id = new ca.uhn.hl7v2.model.v25.datatype.ID(message, table);
-				try {
-                    id.setTable(table);
-					id.setValue(value);
-					String retval = id.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(2, null, null),
-			new TestSpec(2, "", ""),
-            new TestSpec(-1,"\"\"", "\"\""),
-            new TestSpec(0,"\"\"", "\"\""),
-			new TestSpec(2, "IDString", "IDString"),
-			new TestSpec(2, getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(2, getString(201, 'a'), DataTypeException.class),
-		};
-
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
+	    buildSpecs(SetGetSpec.class)
+			.add(param(2, null), (String)null)
+			.add(param(2, ""), "")
+            .add(param(-1,"\"\""), "\"\"")
+            .add(param(0,"\"\""), "\"\"")
+			.add(param(2, "IDString"), "IDString")
+			.add(param(2, getString(200, 'a')), getString(200, 'a'))
+			.add(param(2, getString(201, 'a')), DataTypeException.class)			
+			.executeTests();
 	}
 
-	/**
-	 * Test for void set/getValue(String)
-	 * table set
-	 */
-	public void testSetGetValueString() throws DataTypeException {
-		class TestSpec {
-			String value;
-			Object outcome;
-			ID commonID;
-			Exception exception = null;
-
-			TestSpec(String value, Object outcome) throws DataTypeException {
-				this.value = value;
-				this.outcome = outcome;
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(ValidationContextFactory.defaultValidation());
-				this.commonID = new ca.uhn.hl7v2.model.v25.datatype.ID(message, 1);
-                this.commonID.setValue("ID");
-			}
-
-			public String toString() {
-				return "[ " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-				try {
-					commonID.setValue(value);
-					String retval = commonID.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(null, null),
-			new TestSpec("", ""),
-            new TestSpec("\"\"", "\"\""),
-			new TestSpec("IDString", "IDString"),
-			new TestSpec(getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(getString(201, 'a'), DataTypeException.class),
-		};
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
-	}
 
 	/**
 	 * Testing ability to return the code value
 	 */
+	@SuppressWarnings("serial")
+    @Test
 	public void testGetValue() throws DataTypeException {
-		commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
+		ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {
         };
-        commonID.setValue(value);
-		assertEquals("Should get code value back.", value, commonID.getValue());
+        commonID.setValue("test");
+		assertEquals("Should get code value back.", "test", commonID.getValue());
 	}
 	
 	/**
 	 * Testing ability to return the number of the HL7 code table
 	 */
+	@SuppressWarnings("serial")
+    @Test
 	public void testGetTable() throws DataTypeException {
-		commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
+		ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {
         };
-        commonID.setValue(value);
-		assertEquals("Should get table number back.", table, commonID.getTable());
+        commonID.setValue("test");
+		assertEquals("Should get table number back.", 5, commonID.getTable());
 	}
 
 	/*
 	 * Returns a string of character c repeated length times
 	 */
 	private String getString(int length, char c) {
-		StringBuffer buf = new StringBuffer(length);
-		
-		for (int i=0;i<length;i++) {
-			buf.append(c);
-		}
-		return buf.toString();
+        char[] chars = new char[length];
+        Arrays.fill(chars, c);
+        return new String(chars);
 	}
 }
