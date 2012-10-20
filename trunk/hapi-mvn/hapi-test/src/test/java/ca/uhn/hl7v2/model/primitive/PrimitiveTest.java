@@ -1,16 +1,19 @@
 package ca.uhn.hl7v2.model.primitive;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
+
+import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v231.datatype.ST;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class PrimitiveTest extends TestCase {
+public class PrimitiveTest {
 
+    @Test
 	public void testParseClearsExtraComponents() throws HL7Exception, IOException {
 		
 		ORU_R01 msg = new ORU_R01();
@@ -31,16 +34,17 @@ public class PrimitiveTest extends TestCase {
 		f2c2.setValue("F2C2");
 
 		String encode = obx5.encode();
-		Assert.assertEquals("F1C1^F2C1&F2C2", encode);
+		assertEquals("F1C1^F2C1&F2C2", encode);
 		
 		System.out.println("Message: " + msg.encode().replace("\r", "\n"));
 		
 		obx5.parse("NF1^NF2");
 		encode = obx5.encode();
-		Assert.assertEquals("NF1^NF2", encode);
+		assertEquals("NF1^NF2", encode);
 		
 	}
 
+    @Test
 	public void testEncodeIncludesExtraComponents() throws HL7Exception, IOException {
 		
 		ORU_R01 msg = new ORU_R01();
@@ -61,11 +65,11 @@ public class PrimitiveTest extends TestCase {
 		f2c2.setValue("F2C2");
 
 		String encode = f1c1.encode();
-		Assert.assertEquals("F1C1^F2C1&F2C2", encode);
+		assertEquals("F1C1^F2C1&F2C2", encode);
 				
 	}
 
-
+    @Test
 	public void testParseNull() throws HL7Exception, IOException {
 		
 		ORU_R01 msg = new ORU_R01();

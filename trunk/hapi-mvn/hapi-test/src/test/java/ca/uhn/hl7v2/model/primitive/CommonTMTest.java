@@ -26,24 +26,22 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
-import static org.junit.Assert.*;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
+import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 
 /**
@@ -56,12 +54,10 @@ import ca.uhn.hl7v2.model.DataTypeException;
  *
  * @author Leslie Mann
  */
-// FIXME: make junit4, globally set timezone to toronto
 public class CommonTMTest {
-	final String baseTime = "154638";
-	final String baseTimePrecision = baseTime + ".4321";
-	final String baseTimePrecisionOffset = baseTimePrecision + "-2345";
-	private CommonTM commonTM;
+	static final String baseTime = "154638";
+	static final String baseTimePrecision = baseTime + ".4321";
+	static final String baseTimePrecisionOffset = baseTimePrecision + "-2345";
 
 	private static TimeZone tz;
 
@@ -75,23 +71,6 @@ public class CommonTMTest {
 	public static void tearDownBeforeClass() {
 		TimeZone.setDefault(tz);
     }
-	
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	@Before
-	public void setUp() throws Exception {
-		commonTM = new CommonTM();
-	}
-
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	@After
-	public void tearDown() throws Exception {
-		commonTM = null;
-	}
 
 	/*
 	 ********************************************************** 
@@ -104,6 +83,7 @@ public class CommonTMTest {
 	 */
 	@Test
 	public void testConstructor() {
+	    CommonTM commonTM = new CommonTM();
 		assertNotNull("Should have a valid CommonTM object", commonTM);
 	}
 
@@ -114,15 +94,12 @@ public class CommonTMTest {
 	public void testSetCalendarUsingHighValueTimeZoneOffset() throws ParseException, DataTypeException {
 
 		Calendar c = Calendar.getInstance();
-		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));
-		
-		System.out.println(c.getTime());
-		
+		c.setTime(new SimpleDateFormat("yyyyMMdd HH:mm:ss Z").parse("20110102 12:00:00 -0000"));	
+		// System.out.println(c.getTime());	
 		c.set(Calendar.ZONE_OFFSET, 12 * 60 * 60 * 1000);
-		System.out.println(c.getTime());
-		
+		// System.out.println(c.getTime());
+		CommonTM commonTM = new CommonTM();
 		commonTM.setValue(c);
-		
 		String val = commonTM.getValue();
 		assertEquals("070000+1200", val);
 	}
@@ -136,7 +113,7 @@ public class CommonTMTest {
         cal.setTimeZone(TimeZone.getTimeZone("America/Toronto"));
         cal.setTime(date);
         
-        commonTM = new CommonTM();
+        CommonTM commonTM = new CommonTM();
         commonTM.setValueToMinute(cal);
         assertEquals("1240", commonTM.getValue());
 
@@ -211,7 +188,7 @@ public class CommonTMTest {
 	 */
 	@Test
 	public void testStringConstructor() throws DataTypeException {
-		commonTM = new CommonTM(baseTime);
+	    CommonTM commonTM = new CommonTM(baseTime);
 		assertNotNull("Should have a valid CommonTM object", commonTM);
 	}
     
@@ -220,7 +197,7 @@ public class CommonTMTest {
      */
 	@Test
 	public void testStringConstructor2() throws DataTypeException {
-        commonTM = new CommonTM("\"\"");
+	    CommonTM commonTM = new CommonTM("\"\"");
         assertNotNull("Should have a valid CommonTM object", commonTM);
         assertEquals("Should have a value of \"\" ", "\"\"", commonTM.getValue());
     }
@@ -228,364 +205,177 @@ public class CommonTMTest {
 	/**
 	 * Test set/get value with various time strings
 	 */
-	@Test
-	public void testSetGetValue() {
-		class TestSpec {
-			String time;
-			Object outcome;
-                        String retval;
-			Exception exception = null;
-			
-			TestSpec(String time, Object outcome) {
-				this.time = time;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + (time != null ? time : "null") + " : "
-					+ (outcome != null ? outcome : "null") + " : "
-					+ (retval != null ? retval : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				CommonTM tm = new CommonTM();
-				try {
-					tm.setValue(time);
-					retval = tm.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
-    		
-		TestSpec [] tests = {
-			new TestSpec(null, null),
-			new TestSpec("\"\"", "\"\""), 
-			new TestSpec("0", DataTypeException.class),
-			new TestSpec("08", "08"), //note: default time zone has been removed in case parser in different zone than sender
-			new TestSpec("080", DataTypeException.class),
-			new TestSpec("0800", "0800"),
-			new TestSpec("08000", DataTypeException.class),
-			new TestSpec("080005", "080005"),
-			new TestSpec("0800051", DataTypeException.class),
-			new TestSpec("080005.1", "080005.1"),
-			new TestSpec("080005.14", "080005.14"),
-			new TestSpec("080005.147", "080005.147"),
-			new TestSpec("080005.1479", "080005.1479"),
-			new TestSpec("080005.14793", DataTypeException.class),
-			new TestSpec("0+0600", DataTypeException.class),
-			new TestSpec("08-0100", "08-0100"),
-			new TestSpec("080-0500", DataTypeException.class),
-			new TestSpec("0800-0500", "0800-0500"),
-			new TestSpec("080005-1300", "080005-1300"),
-			new TestSpec("0800051", DataTypeException.class),
-			new TestSpec("080005.1+0100", "080005.1+0100"),
-			new TestSpec("080005.14+1000", "080005.14+1000"),
-			new TestSpec("080005.147-1200", "080005.147-1200"),
-			new TestSpec("080005.1479+0340", "080005.1479+0340"),
-			new TestSpec("080005.1479+0330", "080005.1479+0330"),
-			new TestSpec("080005.1479+1234", "080005.1479+1234")
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
+	
+	public static class SetGetSpec extends TestSpec<String, String> {
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+        @Override
+        protected String transform(String input) throws Throwable {
+            CommonTM tm = new CommonTM();
+            tm.setValue(input);
+            return tm.getValue();
+        }
+	    
+	}
+	
+    public void testSetGet() {
+		buildSpecs(SetGetSpec.class)
+			.add(null, (String)null)
+			.add("\"\"", "\"\"")
+			.add("0", DataTypeException.class)
+			.add("08", "08") //note: default time zone has been removed in case parser in different zone than sender
+			.add("080", DataTypeException.class)
+			.add("0800", "0800")
+			.add("08000", DataTypeException.class)
+			.add("080005", "080005")
+			.add("0800051", DataTypeException.class)
+			.add("080005.1", "080005.1")
+			.add("080005.14", "080005.14")
+			.add("080005.147", "080005.147")
+			.add("080005.1479", "080005.1479")
+			.add("080005.14793", DataTypeException.class)
+			.add("0+0600", DataTypeException.class)
+			.add("08-0100", "08-0100")
+			.add("080-0500", DataTypeException.class)
+			.add("0800-0500", "0800-0500")
+			.add("080005-1300", "080005-1300")
+			.add("0800051", DataTypeException.class)
+			.add("080005.1+0100", "080005.1+0100")
+			.add("080005.14+1000", "080005.14+1000")
+			.add("080005.147-1200", "080005.147-1200")
+			.add("080005.1479+0340", "080005.1479+0340")
+			.add("080005.1479+0330", "080005.1479+0330")
+			.add("080005.1479+1234", "080005.1479+1234")
+			.executeTests();	
 	}
 
+    public static class SetHourPrecisionSpec extends TestSpec<Integer, String> {
+
+        @Override
+        protected String transform(Integer input) throws Throwable {
+            CommonTM tm = new CommonTM();
+            tm.setHourPrecision(input);
+            return tm.getValue();       
+        }  
+    }
+    
 	@Test
 	public void testSetHourPrecision() {
-		class TestSpec {
-			int hour;
-			Object outcome;
-			Exception exception = null;
-			
-			TestSpec(int hour, Object outcome) {
-				this.hour = hour;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + Integer.toString(hour) + " : "
-					+ (outcome != null ? outcome : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				CommonTM tm = new CommonTM();
-				try {
-					tm.setHourPrecision(hour);
-					String retval = tm.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(-1, DataTypeException.class),
-			new TestSpec(0, "00"),
-			new TestSpec(8, "08"),
-			new TestSpec(13, "13"),
-			new TestSpec(23, "23"),
-			new TestSpec(24, DataTypeException.class)
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(SetHourPrecisionSpec.class)
+			.add(-1, DataTypeException.class)
+			.add(0, "00")
+			.add(8, "08")
+			.add(13, "13")
+			.add(23, "23")
+			.add(24, DataTypeException.class)
+			.executeTests();
 	}
 
+    public static class SetHourMinutePrecisionSpec extends TestSpec<int[], String> {
+
+        @Override
+        protected String transform(int[] input) throws Throwable {
+            CommonTM tm = new CommonTM();
+            tm.setHourMinutePrecision(input[0], input[1]);
+            return tm.getValue();       
+        }  
+    }
+    
+    private int[] ints(int... ints) {
+        return ints;
+    }
+    
 	@Test
 	public void testSetHourMinutePrecision() {
-		class TestSpec {
-			int hour;
-			int minute;
-			Object outcome;
-			Exception exception = null;
-			
-			TestSpec(int hour, int minute, Object outcome) {
-				this.hour = hour;
-				this.minute = minute;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + Integer.toString(hour) + " " + Integer.toString(minute) + " : "
-					+ (outcome != null ? outcome : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				CommonTM tm = new CommonTM();
-				try {
-					tm.setHourMinutePrecision(hour, minute);
-					String retval = tm.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(-1,0, DataTypeException.class),
-			new TestSpec(0, -1, DataTypeException.class),
-			new TestSpec(0, 0, "0000"),
-			new TestSpec(0, 30, "0030"),
-			new TestSpec(0, 59, "0059"),
-			new TestSpec(0, 60, DataTypeException.class),
-			new TestSpec(8, 15, "0815"),
-			new TestSpec(13, 27, "1327"),
-			new TestSpec(24, 59, DataTypeException.class)
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(SetHourMinutePrecisionSpec.class)
+			.add(ints(-1,0), DataTypeException.class)
+			.add(ints(0, -1), DataTypeException.class)
+			.add(ints(0, 0), "0000")
+			.add(ints(0, 30), "0030")
+			.add(ints(0, 59), "0059")
+			.add(ints(0, 60), DataTypeException.class)
+			.add(ints(8, 15), "0815")
+			.add(ints(13, 27), "1327")
+			.add(ints(24, 59), DataTypeException.class)
+			.executeTests();
 	}
 
+    public static class SetHourMinuteSecondPrecisionSpec extends TestSpec<int[], String> {
+
+        @Override
+        protected String transform(int[] input) throws Throwable {
+            CommonTM tm = new CommonTM();
+            tm.setHourMinSecondPrecision(input[0], input[1], input[2]);
+            return tm.getValue();       
+        }  
+    }
+    
 	@Test
 	public void testSetHourMinSecondPrecision() {
-		class TestSpec {
-			int hour;
-			int minute;
-			int second;
-			Object outcome;
-			Exception exception = null;
-			
-			TestSpec(int hour, int minute, int second, Object outcome) {
-				this.hour = hour;
-				this.minute = minute;
-				this.second = second;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + Integer.toString(hour) + " " + Integer.toString(minute) 
-					+ " " + Integer.toString(minute) + " : "
-					+ (outcome != null ? outcome : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				CommonTM tm = new CommonTM();
-				try {
-					tm.setHourMinSecondPrecision(hour, minute, second);
-					String retval = tm.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(-1, 0, 0, DataTypeException.class),
-			new TestSpec(0, -1, 0, DataTypeException.class),
-			new TestSpec(0, 0, -1, DataTypeException.class),
-			new TestSpec(0, 0, 0, "000000"),
-			new TestSpec(1, 1, 1, "010101"),
-			new TestSpec(0, 30, 47, "003047"),
-			new TestSpec(8, 15, 59, "081559"),
-			new TestSpec(8, 15, 60, DataTypeException.class),
-			new TestSpec(13, 27, 0, "132700"),
-			new TestSpec(23, 59, 59, "235959"),
-			new TestSpec(24, 59, 59, DataTypeException.class),
-			new TestSpec(23, 60, 59, DataTypeException.class),
-			new TestSpec(23, 59, 60, DataTypeException.class),
-			new TestSpec(24, 60, 60, DataTypeException.class)
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(SetHourMinuteSecondPrecisionSpec.class)
+			.add(ints(-1, 0, 0), DataTypeException.class)
+			.add(ints(0, -1, 0), DataTypeException.class)
+			.add(ints(0, 0, -1), DataTypeException.class)
+			.add(ints(0, 0, 0), "000000")
+			.add(ints(1, 1, 1), "010101")
+			.add(ints(0, 30, 47), "003047")
+			.add(ints(8, 15, 59), "081559")
+			.add(ints(8, 15, 60), DataTypeException.class)
+			.add(ints(13, 27, 0), "132700")
+			.add(ints(23, 59, 59), "235959")
+			.add(ints(24, 59, 59), DataTypeException.class)
+			.add(ints(23, 60, 59), DataTypeException.class)
+			.add(ints(23, 59, 60), DataTypeException.class)
+			.add(ints(24, 60, 60), DataTypeException.class)
+			.executeTests();
 	}
 
+    public static class SetOffsetSpec extends TestSpec<Integer, String> {
+
+        @Override
+        protected String transform(Integer signedOffset) throws Throwable {
+            CommonTM tm = new CommonTM(baseTime);
+            tm.setOffset(signedOffset);
+            return tm.getValue();       
+        }  
+    }
 	/**
 	 * Test set/getOffset.  Testspec constructor sets up a value
 	 * of "154638" so we can get a value back
 	 */
 	@Test
 	public void testSetGetOffset() {
-		
-		class TestSpec {
-			int offset;
-			Object outcome;
-                        String retval;
-			Exception exception = null;
-			
-			TestSpec(int offset, Object outcome) {
-				this.offset = offset;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + Integer.toString(offset) + " : "
-					+ (outcome != null ? outcome : "null") + " : "
-					+ (retval != null ? retval : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				try {
-					CommonTM tm = new CommonTM(baseTime);
-					tm.setOffset(offset);
-					retval = tm.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
     		
-		TestSpec [] tests = {
-			new TestSpec(-0000, baseTime + "+0000"),
-			new TestSpec(-24, baseTime + "-0024"),  
-			new TestSpec(-1160, DataTypeException.class),
-			new TestSpec(-1159, baseTime + "-1159"),
-			new TestSpec(800, baseTime + "+0800"),
-			new TestSpec(1300, baseTime + "+1300"),
-			new TestSpec(2400, DataTypeException.class),
-			new TestSpec(2300, baseTime + "+2300"),
-			new TestSpec(2106, baseTime + "+2106"),
-			new TestSpec(21064, DataTypeException.class)
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(SetOffsetSpec.class)
+			.add(-0000, baseTime + "+0000")
+			.add(-24, baseTime + "-0024")
+			.add(-1160, DataTypeException.class)
+			.add(-1159, baseTime + "-1159")
+			.add(800, baseTime + "+0800")
+			.add(1300, baseTime + "+1300")
+			.add(2400, DataTypeException.class)
+			.add(2300, baseTime + "+2300")
+			.add(2106, baseTime + "+2106")
+			.add(21064, DataTypeException.class)
+			.executeTests();
 	}
 
 	@Test
 	public void testGetHour() throws DataTypeException {
-		commonTM = new CommonTM(baseTime);
+	    CommonTM commonTM = new CommonTM(baseTime);
 		int hour = commonTM.getHour();
 		assertEquals("Should get hour back", Integer.parseInt(baseTime.substring(0,2)), hour);
 	}
 
 	@Test
 	public void testGetMinute() throws DataTypeException {
-		commonTM = new CommonTM(baseTime);
+	    CommonTM commonTM = new CommonTM(baseTime);
 		int minute = commonTM.getMinute();
 		assertEquals("Should get minute back", Integer.parseInt(baseTime.substring(2,4)), minute);
 	}
 
 	@Test
 	public void testGetSecond() throws DataTypeException {
-		commonTM = new CommonTM(baseTime);
+	    CommonTM commonTM = new CommonTM(baseTime);
 		int second = commonTM.getSecond();
 		assertEquals("Should get second back", Integer.parseInt(baseTime.substring(4,6)), second);
 	}
@@ -593,7 +383,7 @@ public class CommonTMTest {
 	@Test
 	public void testGetFractSecond() throws DataTypeException {
 		float delta = .0001f;
-		commonTM = new CommonTM(baseTimePrecision);
+		CommonTM commonTM = new CommonTM(baseTimePrecision);
 		float fractSecond = commonTM.getFractSecond();
 		assertEquals("Should get fractional second back", Float.parseFloat(baseTimePrecision.substring(6,11)),
 			fractSecond, delta);
@@ -601,7 +391,7 @@ public class CommonTMTest {
 
 	@Test
 	public void testGetGMTOffset() throws DataTypeException {
-		commonTM = new CommonTM(baseTimePrecisionOffset);
+	    CommonTM commonTM = new CommonTM(baseTimePrecisionOffset);
 		int offset = commonTM.getGMTOffset();
 		assertEquals("Should get GMT offset back", Integer.parseInt(baseTimePrecisionOffset.substring(11,16)),
 			offset);

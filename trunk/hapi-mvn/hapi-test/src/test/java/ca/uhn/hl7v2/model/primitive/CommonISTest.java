@@ -26,14 +26,22 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
@@ -43,42 +51,19 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * 
  * @author Leslie Mann
  */
-public class CommonISTest extends TestCase {
-	private int table;
-	private String value;
-	private IS commonIS;
+public class CommonISTest {
+
+    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
+    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+    
+    private IS commonIS;
 	
-	/**
-	 * Constructor for CommonISTest.
-	 * @param testName
-	 */
-	public CommonISTest(String testName) {
-		super(testName);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(CommonISTest.class);
-	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-        table = 2;
-		commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
+	
+	
+	@Before
+	public void setUp() throws Exception {
+		commonIS = new IS(new GenericMessage.V25(MCF), 2) {
         };
-		value = "CodedValue";
-	}
-
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		commonIS = null;
-		table = -1;
-		value = null;
 	}
 
 	/*
@@ -90,183 +75,72 @@ public class CommonISTest extends TestCase {
 	/**
 	 * Test default constructor 
 	 */
+	@Test
 	public void testConstructor() {
 		assertNotNull("Should have a CommonIS object", commonIS);
 	}
 
-	 /**
-	  * Test for table and value constructor
-	  */
-//	 public void testConstructorString() throws DataTypeException {
-//		commonIS = new CommonIS(table, value);
-//	 	assertNotNull("Should have a valid CommonIS object", commonIS);
-//	 }
+	public static class SetGetSpec extends TestSpec<String, String> {
 
+        @Override
+        protected String transform(String input) throws Throwable {
+            Message message = new GenericMessage.V25(MCF);
+            message.setValidationContext(VC);
+            IS is = new ca.uhn.hl7v2.model.v25.datatype.IS(message, 0);
+            is.setTable(2);
+            is.setValue(input);
+            return is.getValue();
+        }
+	    
+	}
+	
 	/**
 	 * Test for void set/getValue(int, String)
 	 */
+	@Test
 	public void testSetGetValueStringAndTable() throws DataTypeException {
-		class TestSpec {
-			String value;
-			int table;
-			Object outcome;
-			Exception exception = null;
-
-			TestSpec(int table, String value, Object outcome) {
-				this.value = value;
-				this.table = table;
-				this.outcome = outcome;
-			}
-
-			public String toString() {
-				return "[ " + table + " " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(new DefaultValidation());
-				IS is = new ca.uhn.hl7v2.model.v25.datatype.IS(message, 0);
-				try {
-                    is.setTable(table);
-					is.setValue(value);
-					String retval = is.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(2, null, null),
-			new TestSpec(2, "", ""),
-            new TestSpec(-1,"\"\"", "\"\""),
-            new TestSpec(0,"\"\"", "\"\""),
-			new TestSpec(2, "ISString", "ISString"),
-			//new TestSpec(-1, "ISString", DataTypeException.class),
-			new TestSpec(2, getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(2, getString(201, 'a'), DataTypeException.class),
-		};
-        
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
-	}
-
-	/**
-	 * Test for void set/getValue(String)
-	 * table set
-	 */
-	public void testSetGetValueString() throws DataTypeException {
-		class TestSpec {
-			String value;
-			Object outcome;
-			IS commonIS;
-			Exception exception = null;
-
-			TestSpec(String value, Object outcome) throws DataTypeException {
-				this.value = value;
-				this.outcome = outcome;
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(ValidationContextFactory.defaultValidation());
-				this.commonIS = new ca.uhn.hl7v2.model.v25.datatype.IS(message, 1);
-                this.commonIS.setValue("IS");
-			}
-
-			public String toString() {
-				return "[ " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-				try {
-					commonIS.setValue(value);
-					String retval = commonIS.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(null, null),
-			new TestSpec("", ""),
-            new TestSpec("\"\"", "\"\""),
-            new TestSpec("ISString", "ISString"),
-			new TestSpec(getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(getString(201, 'a'), DataTypeException.class),
-		};
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
+		buildSpecs(SetGetSpec.class)
+			.add(null, (String)null)
+			.add("", "")
+            .add("\"\"", "\"\"")
+            .add("\"\"", "\"\"")
+			.add("ISString", "ISString")
+			.add(getString(200, 'a'), getString(200, 'a'))
+			.add(getString(201, 'a'), DataTypeException.class)
+			.executeTests();
 	}
 
 	/**
 	 * Testing ability to return the code value
 	 */
+	@Test
 	public void testGetValue() throws DataTypeException {
-		commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
+		commonIS = new IS(new GenericMessage.V25(MCF), 2) {
         };
-        commonIS.setValue(value);
-		assertEquals("Should get code value back.", value, commonIS.getValue());
+        commonIS.setValue("Value");
+		assertEquals("Should get code value back.", "Value", commonIS.getValue());
 	}
 	
 	/**
 	 * Testing ability to return the number of the HL7 code table
 	 */
+    @Test
 	public void testGetTable() throws DataTypeException {
-        commonIS = new IS(new GenericMessage.V25(new DefaultModelClassFactory()), table) {
+        commonIS = new IS(new GenericMessage.V25(MCF), 2) {
         };
-        commonIS.setValue(value);
-		assertEquals("Should get table number back.", table, commonIS.getTable());
+        commonIS.setValue("Value");
+		assertEquals("Should get table number back.", 2, commonIS.getTable());
 	}
 
 
-	/*
-	 * Returns a string of character c repeated length times
-	 */
-	private String getString(int length, char c) {
-		StringBuffer buf = new StringBuffer(length);
-		
-		for (int i=0;i<length;i++) {
-			buf.append(c);
-		}
-		return buf.toString();
-	}
+    /*
+     * Returns a string of character c repeated length times
+     */
+    private String getString(int length, char c) {
+        char[] chars = new char[length];
+        Arrays.fill(chars, c);
+        return new String(chars);
+    }
 
 
 }
