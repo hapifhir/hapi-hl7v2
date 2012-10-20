@@ -1,6 +1,10 @@
 package ca.uhn.hl7v2.app;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.util.*;
 
@@ -8,21 +12,18 @@ import ca.uhn.hl7v2.util.*;
  * JUnit test harness for MessageTypeRouter
  * @author Bryan Tripp
  */
-public class MessageTypeRouterTest extends TestCase {
+public class MessageTypeRouterTest {
 
     private MessageTypeRouter router;
     
-    /** Creates a new instance of MessageTypeRouterTest */
-    public MessageTypeRouterTest(String arg) {
-        super(arg);
-    }
-    
+    @Before
     public void setUp() {
         router = new MessageTypeRouter();
         DefaultApplication app = new DefaultApplication();
         router.registerApplication("ADT", "A01", app);
     }
     
+	@Test
     public void testRegisterApplication() throws Exception {
         Message ack = new ca.uhn.hl7v2.model.v24.message.ACK();
         Terser t = new Terser(ack);
@@ -33,6 +34,7 @@ public class MessageTypeRouterTest extends TestCase {
         assertEquals(true, router.canProcess(ack));
     }
 
+	@Test
     public void testProcessMessage() throws Exception {
         Message in = new ca.uhn.hl7v2.model.v24.message.ACK();        
         Terser t = new Terser(in);
