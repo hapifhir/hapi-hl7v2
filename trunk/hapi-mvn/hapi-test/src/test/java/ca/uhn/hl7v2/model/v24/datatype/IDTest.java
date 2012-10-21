@@ -1,236 +1,145 @@
+/**
+ * The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+ * specific language governing rights and limitations under the License.
+ *
+ * The Original Code is "CommonIDTest.java".  Description:
+ * "Unit test class for ca.uhn.hl7v2.model.primitive.CommonID"
+ *
+ * The Initial Developer of the Original Code is Leslie Mann. Copyright (C)
+ * 2002.  All Rights Reserved.
+ *
+ * Contributor(s): ______________________________________.
+ *
+ * Alternatively, the contents of this file may be used under the terms of the
+ * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * applicable instead of those above.  If you wish to allow use of your version of this
+ * file only under the terms of the GPL and not to allow others to use your version
+ * of this file under the MPL, indicate your decision by deleting  the provisions above
+ * and replace  them with the notice and other provisions required by the GPL License.
+ * If you do not delete the provisions above, a recipient may use your version of
+ * this file under either the MPL or the GPL.
+ *
+ */
 package ca.uhn.hl7v2.model.v24.datatype;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
+
+import org.junit.Test;
+
+import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
- * Unit test class for ca.uhn.hl7v2.model.v24.datatype.ID
+ * Unit test class for ca.uhn.hl7v2.model.primitive.CommonID
  * 
  * No TableRepository used yet
  *
- * @author Leslie Mann, Elmar Hinz
+ * @author Leslie Mann
  */
-public class IDTest extends TestCase {
-	private int table;
-	private String value;
-	private ID ID;
+public class IDTest {
 
-	/**
-	 * Constructor for IDTest.
-	 * @param name
-	 */
-	public IDTest(String testName) {
-		super(testName);
+    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
+    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+
+	static private class Params {
+	    int table;
+	    String value;
 	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(IDTest.class);
+	
+	static Params param(int table, String value) {
+	    Params p = new Params();
+	    p.table = table;
+	    p.value = value;
+	    return p;
 	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		table = 5;
-		value = "test";
-		ID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table);
-	}
-
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		ID = null;
-	}
-
-	/*
-	 ********************************************************** 
-	 * Test Cases
-	 ********************************************************** 
-	 */
 	 
 	 /**
 	  * Test for default constructor
 	  */
+	@SuppressWarnings("serial")
+    @Test
 	 public void testConstructor() {
-	 	assertNotNull("Should have a valid ID object", ID);
+	    ID commonID = new ID(new GenericMessage.V24(new DefaultModelClassFactory()), 5) {
+        };
+	 	assertNotNull("Should have a valid ID object", commonID);
 	 }
-
-	 /**
-	  * Test for table and value constructor
-	  */
-//	 public void testConstructorString() throws DataTypeException {
-//		ID = new ID(table, value);
-//	 	assertNotNull("Should have a valid ID object", ID);
-//	 }
-
+    
 	/**
 	 * Test for void set/getValue(int, String)
 	 */
+	
+    public static class SetGetSpec extends TestSpec<Params, String> {
+
+        @Override
+        protected String transform(Params input) throws Throwable {
+            Message message = new GenericMessage.V24(MCF);
+            message.setValidationContext(VC);
+            ID id = new ca.uhn.hl7v2.model.v24.datatype.ID(message);
+            id.setTable(input.table);
+            id.setValue(input.value);
+            return id.getValue();
+        }
+        
+    }
+    
+	@Test
 	public void testSetGetValueStringAndTable() throws DataTypeException {
-		class TestSpec {
-			String value;
-			int table;
-			Object outcome;
-			Exception exception = null;
-
-			TestSpec(int table, String value, Object outcome) {
-				this.value = value;
-				this.table = table;
-				this.outcome = outcome;
-			}
-
-			public String toString() {
-				return "[ " + table + " " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(new DefaultValidation());
-                
-				ID id = new ID(message, table);
-				try {
-					id.setValue(value);
-					String retval = id.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(2, null, null),
-			new TestSpec(2, "", ""),
-			new TestSpec(2, "IDString", "IDString"),
-			//new TestSpec(-1, "IDString", DataTypeException.class), //can't test this -- it assumes a DB connection 
-			new TestSpec(2, getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(2, getString(201, 'a'), DataTypeException.class),
-		};
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
+	    buildSpecs(SetGetSpec.class)
+			.add(param(2, null), (String)null)
+			.add(param(2, ""), "")
+            .add(param(-1,"\"\""), "\"\"")
+            .add(param(0,"\"\""), "\"\"")
+			.add(param(2, "IDString"), "IDString")
+			.add(param(2, getString(200, 'a')), getString(200, 'a'))
+			.add(param(2, getString(201, 'a')), DataTypeException.class)			
+			.executeTests();
 	}
 
-	/**
-	 * Test for void set/getValue(String)
-	 * table set
-	 */
-	public void testSetGetValueString() throws DataTypeException {
-		class TestSpec {
-			String value;
-			Object outcome;
-			ID ID;
-			Exception exception = null;
-
-			TestSpec(String value, Object outcome) throws DataTypeException {
-				this.value = value;
-				this.outcome = outcome;
-
-                Message message = new GenericMessage.V25(new DefaultModelClassFactory());
-                message.setValidationContext(ValidationContextFactory.defaultValidation());
-                this.ID = new ID(message, 1);
-                this.ID.setValue("ID");
-			}
-
-			public String toString() {
-				return "[ " + value + " : "
-					+ (outcome != null ? outcome : "null")
-					+ (exception != null ? " [ " + exception.toString() + " ]"	: " ]");
-			}
-
-			public boolean executeTest() {
-				try {
-					ID.setValue(value);
-					String retval = ID.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		} //inner class
-
-		TestSpec[] tests = {
-			new TestSpec(null, null),
-			new TestSpec("", ""),
-			new TestSpec("IDString", "IDString"),
-			new TestSpec(getString(200, 'a'), getString(200, 'a')),
-			new TestSpec(getString(201, 'a'), DataTypeException.class),
-		};
-
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length; i++) {
-			if (!tests[i].executeTest())
-				failedTests.add(tests[i]);
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size());
-	}
 
 	/**
 	 * Testing ability to return the code value
 	 */
+	@SuppressWarnings("serial")
+    @Test
 	public void testGetValue() throws DataTypeException {
-		ID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table);
-        ID.setValue(value);
-		assertEquals("Should get code value back.", value, ID.getValue());
+		ID commonID = new ID(new GenericMessage.V24(new DefaultModelClassFactory()), 5) {
+        };
+        commonID.setValue("test");
+		assertEquals("Should get code value back.", "test", commonID.getValue());
 	}
 	
 	/**
 	 * Testing ability to return the number of the HL7 code table
 	 */
+	@SuppressWarnings("serial")
+    @Test
 	public void testGetTable() throws DataTypeException {
-		ID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), table);
-        ID.setValue(value);
-		assertEquals("Should get table number back.", table, ID.getTable());
+		ID commonID = new ID(new GenericMessage.V24(new DefaultModelClassFactory()), 5) {
+        };
+        commonID.setValue("test");
+		assertEquals("Should get table number back.", 5, commonID.getTable());
 	}
 
 	/*
 	 * Returns a string of character c repeated length times
 	 */
 	private String getString(int length, char c) {
-		StringBuffer buf = new StringBuffer(length);
-		
-		for (int i=0;i<length;i++) {
-			buf.append(c);
-		}
-		int l = buf.length();
-		return buf.toString();
+        char[] chars = new char[length];
+        Arrays.fill(chars, c);
+        return new String(chars);
 	}
 }
