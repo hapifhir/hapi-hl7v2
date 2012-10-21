@@ -73,7 +73,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * 
  */
 
-@SuppressWarnings("serial")
 public class DefaultHapiContext implements HapiContext {
 
     private ExecutorService executorService;

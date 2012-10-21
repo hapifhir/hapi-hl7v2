@@ -86,7 +86,6 @@ public class HapiContextSupport {
 		return new UnmodifiableHapiContext(context);
 	}
 
-	@SuppressWarnings("serial")
 	private static class UnmodifiableHapiContext implements HapiContext {
 
 		private HapiContext context;

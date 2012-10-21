@@ -25,7 +25,6 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
-import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.ConnectionHub;
@@ -85,7 +84,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * </ul>
  * 
  */
-public interface HapiContext extends Serializable {
+public interface HapiContext {
 
 	/**
 	 * @return the {@link ExecutorService} to be used by all services that spawn threads
