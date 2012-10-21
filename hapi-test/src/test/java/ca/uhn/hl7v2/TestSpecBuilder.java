@@ -87,4 +87,8 @@ public class TestSpecBuilder<I, O> {
             fail(failedTests + " test(s) failed: \n" + builder.toString());
         }
     }
+    
+    public static int[] ints(int... ints) {
+        return ints;
+    }    
 }

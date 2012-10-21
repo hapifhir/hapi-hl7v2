@@ -1,8 +1,9 @@
 package ca.uhn.hl7v2.model;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.ARQ;
@@ -13,24 +14,9 @@ import ca.uhn.hl7v2.model.v25.message.ORU_R01;
  * JUnit test cases for AbstractGroup
  * @author bryan
  */
-public class AbstractGroupTest extends TestCase {
+public class AbstractGroupTest {
     
-    public AbstractGroupTest(java.lang.String testName) {
-        super(testName);
-    }
-    
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-    
-    public static Test suite() {
-        TestSuite suite = new TestSuite(AbstractGroupTest.class);
-        return suite;
-    }
-    
-    // Add test methods here, they have to start with 'test' name.
-    // for example:
-    // public void testHello() {}
+    @Test
     public void testAddNonstandardSegment() throws Exception {
         ADT_A01 message = new ADT_A01();
 
@@ -46,7 +32,7 @@ public class AbstractGroupTest extends TestCase {
         assertEquals(GenericSegment.class.getName(), z.getClass().getName());
     }
 
-
+    @Test
     public void testInsertNewRepetition() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.5\r"
@@ -76,6 +62,7 @@ public class AbstractGroupTest extends TestCase {
     }
 
 
+    @Test
     public void testInsertRepetition() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.5\r"
@@ -107,6 +94,7 @@ public class AbstractGroupTest extends TestCase {
     }
 
 
+    @Test
     public void testRemoveRepetition() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.5\r"

@@ -88,29 +88,19 @@ public class TsComponentOneTest {
 	/**
 	 * This caused an exception at one point
 	 */
-	@Test
-	public void testGetWithInvalid() throws HL7Exception {
+	@Test(expected=DataTypeException.class)
+	public void testGetWithInvalid1() throws HL7Exception {
 		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
 		dtm.setValue("HELP I'M A BUG");
-		
-		dtm.getValue();
-		
-		try {
-			dtm.getValueAsCalendar();
-			fail();
-		} catch (DataTypeException e) {
-			e.toString();
-		}
-		
-		try {
-			dtm.getValueAsDate();
-			fail();
-		} catch (DataTypeException e) {
-			e.toString();
-		}
-		
-
+		dtm.getValueAsCalendar();
 	}
+	
+    @Test(expected=DataTypeException.class)
+    public void testGetWithInvalid2() throws HL7Exception {
+        DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
+        dtm.setValue("HELP I'M A BUG");
+        dtm.getValueAsDate();
+    }
 
 	@Test
 	public void testSetValueAsCalendar() throws HL7Exception {

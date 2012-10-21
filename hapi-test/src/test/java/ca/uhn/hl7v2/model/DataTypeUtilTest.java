@@ -26,10 +26,13 @@
  */
 package ca.uhn.hl7v2.model;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static ca.uhn.hl7v2.TestSpecBuilder.ints;
+import static org.junit.Assert.assertEquals;
+
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.DataTypeUtil
@@ -37,76 +40,46 @@ import junit.framework.TestCase;
  * @author Leslie Mann
  */
 
-public class DataTypeUtilTest extends TestCase {
+public class DataTypeUtilTest {
 
-	/**
-	 * Constructor for DataTypeUtilTest.
-	 * @param testName
-	 */
-	public DataTypeUtilTest(String testName) {
-		super(testName);
-	}
 
+    public static class PreAppendZeroesSpec extends ca.uhn.hl7v2.TestSpec<int[], String> {
+
+        @Override
+        protected String transform(int[] input) throws Throwable {
+            return DataTypeUtil.preAppendZeroes(input[0],input[1]);
+        }
+        
+    }
+    
 	/**
 	 * Testing preAppendZeroes()
 	 */
+    @Test
  	public void testPreAppendZeroes() {
-		class TestSpec {
-			int num;
-			int totalDigitLength;
-			Object outcome;
-		
-			TestSpec(int num, int totalDigitLength, Object outcome) {
-				this.num = num;
-				this.totalDigitLength = totalDigitLength;
-				this.outcome = outcome;
-			}
-		
-			public String toString() {
-				return outcome.toString();
-			}
-		
-			public boolean executeTest() {
-				String retval = DataTypeUtil.preAppendZeroes(num,totalDigitLength);
-				if (retval != null) {
-					return retval.equals(outcome);
-				} else {
-					return outcome == null;
-				}
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(1, 0, "1"),
-			new TestSpec(1, 1, "1"),
-			new TestSpec(1, 2, "01"),
-			new TestSpec(1, 3, "001"),
-			new TestSpec(1, 4, "0001"),
-			new TestSpec(21, 0, "21"),
-			new TestSpec(21, 1, "21"),
-			new TestSpec(21, 2, "21"),
-			new TestSpec(21, 3, "021"),
-			new TestSpec(21, 4, "0021"),
-			new TestSpec(54321, 0, "54321"),
-			new TestSpec(54321, 1, "54321"),
-			new TestSpec(54321, 2, "54321"),
-			new TestSpec(54321, 3, "54321"),
-			new TestSpec(54321, 4, "54321"),
-			new TestSpec(54321, 5, "54321"),
-			new TestSpec(54321, 6, "054321"),
-			new TestSpec(54321, 7, "0054321"),
-		};
-	
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-				failedTests.add( tests[ i ] );
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(PreAppendZeroesSpec.class)
+			.add(ints(1, 0), "1")
+			.add(ints(1, 1), "1")
+			.add(ints(1, 2), "01")
+			.add(ints(1, 3), "001")
+			.add(ints(1, 4), "0001")
+			.add(ints(21, 0), "21")
+			.add(ints(21, 1), "21")
+			.add(ints(21, 2), "21")
+			.add(ints(21, 3), "021")
+			.add(ints(21, 4), "0021")
+			.add(ints(54321, 0), "54321")
+			.add(ints(54321, 1), "54321")
+			.add(ints(54321, 2), "54321")
+			.add(ints(54321, 3), "54321")
+			.add(ints(54321, 4), "54321")
+			.add(ints(54321, 5), "54321")
+			.add(ints(54321, 6), "054321")
+			.add(ints(54321, 7), "0054321")
+			.executeTests(); 
 	}
 
+    @Test
 	public void testGetLocalGMTOffset() {
 		TimeZone tz = TimeZone.getDefault();
 		int offset = tz.getRawOffset();

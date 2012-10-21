@@ -9,7 +9,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 
 public class ExtraComponentsTest {
-//	private static final Logger ourLog = LoggerFactory.getLogger(ExtraComponentsTest.class);
 	
 	@Test
 	public void testClear() throws HL7Exception, IOException {
