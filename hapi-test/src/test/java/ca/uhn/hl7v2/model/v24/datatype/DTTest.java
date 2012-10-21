@@ -1,14 +1,19 @@
 package ca.uhn.hl7v2.model.v24.datatype;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
+import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.validation.impl.DefaultValidation;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.v24.datatype.DT
@@ -16,360 +21,182 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
  * @author Leslie Mann, Elmar Hinz
  */
 
-public class DTTest extends TestCase {
-    private int year;
-    private int month;
-    private int day;
-    private String dateString;
-    private DT DT;
+public class DTTest {
+    private static final int year = 2002;
+    private static int month = 2;
+    private static int day = 24;
+    private static String dateString = "20020224";
+    
+    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
+    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
 
-    /**
-     * Constructor for DTTest.
-     * @param testName
-     */
-    public DTTest(String testName) {
-	super(testName);
-    }
-
-    public static void main(String[] args) {
-	junit.textui.TestRunner.run(DTTest.class);
-    }
-
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-	super.setUp();
-	year = 2002;
-	month = 2;
-	day = 24;
-	dateString = "20020224";
-	DT = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-    }
-
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-	super.tearDown();
-	DT = null;
-    }
-
-    /*
-********************************************************** 
-* Test Cases
-********************************************************** 
-*/
 	 
     /**
      * Testing default constructor
      */
+    @Test
     public void testConstructor() {
-	assertNotNull("Should have a valid DT object", DT);
+        DT dt = new DT(new GenericMessage.V24(MCF));
+        assertNotNull("Should have a valid DT object", dt);
     }
 
-    /**
-     * Testing string constructor with a HL7 date string.
-     */
-//    public void testStringConstructor() throws DataTypeException {
-//	DT = new DT(dateString);
-//	assertNotNull("Should have a valid DT object", DT);
-//    }
+    public static class SetGetSpec extends TestSpec<String, String> {
+
+        @Override
+        protected String transform(String input) throws Throwable {
+            Message message = new GenericMessage.V24(MCF);  
+            message.setValidationContext(VC);
+            DT dt = new DT(message);
+            dt.setValue(input);
+            return dt.getValue();
+        }
+        
+    }
 
     /**
      * Testing set/getValue() with various date strings
      */
+    @Test
     public void testSetGetValue() throws DataTypeException {
-	class TestSpec {
-	    String dateString;
-	    Object outcome;
-	    Exception exception = null;
-			
-	    TestSpec(String dateString, Object outcome) {
-		this.dateString = dateString;
-		this.outcome = outcome;
-	    }
-			
-	    public String toString() {
-		return "[ " + dateString + " : "
-		    + (outcome != null ? outcome : "null")
-		    + (exception != null ? " [ " + exception.toString() + " ]":" ]");
-	    }
-			
-	    public boolean executeTest() {
-        Message message = new GenericMessage.V25(new DefaultModelClassFactory());  
-        message.setValidationContext(new DefaultValidation());
-
-		DT dt = new DT(message);
-		try {
-		    dt.setValue(dateString);
-		    String retval = dt.getValue();
-		    if (retval != null) {
-			return retval.equals(outcome);
-		    } else {
-			return outcome == null;
-		    }
-		} catch (Exception e) {
-		    if (e.getClass().equals(outcome)) {
-			return true;
-		    } else {
-			this.exception = e;
-			return (e.getClass().equals(outcome));
-		    }
-		}
-	    }
-	}//inner class
-    	
-	TestSpec [] tests = {
-	    new TestSpec(null, null),
-	    new TestSpec("", ""),
-	    new TestSpec(" ", DataTypeException.class),
-	    new TestSpec("2", DataTypeException.class),
-	    new TestSpec("20", DataTypeException.class),
-	    new TestSpec("200", DataTypeException.class),
-	    new TestSpec("999", DataTypeException.class),
-	    //year
-	    new TestSpec("1000", "1000"),
-	    new TestSpec("1987", "1987"),
-	    new TestSpec("2002", "2002"),
-	    new TestSpec("9999", "9999"),
-	    new TestSpec("10000", DataTypeException.class),
-	    //month
-	    new TestSpec("20021", DataTypeException.class),
-	    //new TestSpec("200200", DataTypeException.class),
-	    new TestSpec("200201", "200201"),
-	    new TestSpec("200207", "200207"),
-	    new TestSpec("200211", "200211"),
-	    new TestSpec("200212", "200212"),
-	    //new TestSpec("200213", DataTypeException.class),
-	    //day
-	    new TestSpec("2002010", DataTypeException.class),
-	    //new TestSpec("20020100", DataTypeException.class),
-	    new TestSpec("20020101", "20020101"),
-	    new TestSpec("20020107", "20020107"),
-	    new TestSpec("20020121", "20020121"),
-	    new TestSpec("20020131", "20020131"),
-	    //new TestSpec("20020132", DataTypeException.class),
-	};
-		
-	ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-	for (int i = 0; i < tests.length ; i++) {
-	    if ( ! tests[ i ].executeTest() ) 
-		failedTests.add( tests[ i ] );
-	}
-
-	assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+        buildSpecs(SetGetSpec.class)
+    	    .add(null, (String)null)
+    	    .add("", "")
+    	    .add(" ", DataTypeException.class)
+    	    .add("2", DataTypeException.class)
+    	    .add("20", DataTypeException.class)
+    	    .add("200", DataTypeException.class)
+    	    .add("999", DataTypeException.class)
+    	    //year
+    	    .add("1000", "1000")
+    	    .add("1987", "1987")
+    	    .add("2002", "2002")
+    	    .add("9999", "9999")
+    	    .add("10000", DataTypeException.class)
+    	    //month
+    	    .add("20021", DataTypeException.class)
+    	    //.add("200200", DataTypeException.class),
+    	    .add("200201", "200201")
+    	    .add("200207", "200207")
+    	    .add("200211", "200211")
+    	    .add("200212", "200212")
+    	    //.add("200213", DataTypeException.class),
+    	    //day
+    	    .add("2002010", DataTypeException.class)
+    	    //.add("20020100", DataTypeException.class),
+    	    .add("20020101", "20020101")
+    	    .add("20020107", "20020107")
+    	    .add("20020121", "20020121")
+    	    .add("20020131", "20020131")
+    	    //new TestSpec("20020132", DataTypeException.class)
+    	    .executeTests();
     }
 
+    public static class SetYearPrecisionSpec extends TestSpec<Integer, String> {
+
+        @Override
+        protected String transform(Integer input) throws Throwable {
+            Message message = new GenericMessage.V24(MCF);  
+            message.setValidationContext(VC);
+
+            DT dt = new DT(message);
+            dt.setYearPrecision(input);
+            return dt.getValue();       
+        }
+        
+    }
     /**
      * Testing setYearPrecision() with various year values
      */
-    public void testSetYearPrecision() throws DataTypeException {
-	class TestSpec {
-	    int year;
-	    Object outcome;
-	    Exception exception = null;
-			
-	    TestSpec(int year, Object outcome) {
-		this.year = year;
-		this.outcome = outcome;
-	    }
-			
-	    public String toString() {
-		return "[ " + Integer.toString(year) + " : "
-		    + (outcome != null ? outcome : "null")
-		    + (exception != null ? " [ " + exception.toString() + " ]":" ]");
-	    }
-			
-	    public boolean executeTest() {
-		DT dt = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-		try {
-		    dt.setYearPrecision(year);
-		    String retval = dt.getValue();
-		    if (retval != null) {
-			return retval.equals(outcome);
-		    } else {
-			return outcome == null;
-		    }
-		} catch (Exception e) {
-		    if (e.getClass().equals(outcome)) {
-			return true;
-		    } else {
-			this.exception = e;
-			return (e.getClass().equals(outcome));
-		    }
-		}
-	    }
-	}//inner class
-    	
-	TestSpec [] tests = {
-	    new TestSpec(-2000, DataTypeException.class),
-	    new TestSpec(9, DataTypeException.class),
-	    new TestSpec(99, DataTypeException.class),
-	    new TestSpec(999, DataTypeException.class),
-	    new TestSpec(1000, "1000"),
-	    new TestSpec(1987, "1987"),
-	    new TestSpec(2001, "2001"),
-	    new TestSpec(9999, "9999"),
-	    new TestSpec(10000, DataTypeException.class),
-	};
-		
-	ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-	for (int i = 0; i < tests.length ; i++) {
-	    if ( ! tests[ i ].executeTest() ) 
-		failedTests.add( tests[ i ] );
-	}
-
-	assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+    @Test    
+    public void testSetYearPrecision() throws DataTypeException {  	
+        buildSpecs(SetYearPrecisionSpec.class)
+    	    .add(-2000, DataTypeException.class)
+    	    .add(9, DataTypeException.class)
+    	    .add(99, DataTypeException.class)
+    	    .add(999, DataTypeException.class)
+    	    .add(1000, "1000")
+    	    .add(1987, "1987")
+    	    .add(2001, "2001")
+    	    .add(9999, "9999")
+    	    .add(10000, DataTypeException.class)
+    	    .executeTests();
     }
 
+    private int[] ints(int... ints) {
+        return ints;
+    }
+    
+    public static class SetYearMonthPrecisionSpec extends TestSpec<int[], String> {
+        @Override
+        protected String transform(int[] input) throws Throwable {
+            Message message = new GenericMessage.V24(MCF);  
+            message.setValidationContext(VC);
+    
+            DT dt = new DT(message);
+            dt.setYearMonthPrecision(input[0], input[1]);
+            return dt.getValue();           
+        }
+    }
+    
     /**
      * Testing setYearMonthPrecision() with various year, month values
      */
-    public void testSetYearMonthPrecision() throws DataTypeException {
-	class TestSpec {
-	    int year;
-	    int month;
-	    Object outcome;
-	    Exception exception = null;
-			
-	    TestSpec(int year, int month, Object outcome) {
-		this.year = year;
-		this.month = month;
-		this.outcome = outcome;
-	    }
-			
-	    public String toString() {
-		return "[ " + Integer.toString(year) + " " + Integer.toString(month) + " : "
-		    + (outcome != null ? outcome : "null")
-		    + (exception != null ? " [ " + exception.toString() + " ]":" ]");
-	    }
-			
-	    public boolean executeTest() {
-		DT dt = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-		try {
-		    dt.setYearMonthPrecision(year, month);
-		    String retval = dt.getValue();
-		    if (retval != null) {
-			return retval.equals(outcome);
-		    } else {
-			return outcome == null;
-		    }
-		} catch (Exception e) {
-		    if (e.getClass().equals(outcome)) {
-			return true;
-		    } else {
-			this.exception = e;
-			return (e.getClass().equals(outcome));
-		    }
-		}
-	    }
-	}//inner class
-    	
-	TestSpec [] tests = {
-	    new TestSpec(2001, -1, DataTypeException.class),
-	    new TestSpec(9, 1, DataTypeException.class),
-	    new TestSpec(99, 1, DataTypeException.class),
-	    new TestSpec(999, 1, DataTypeException.class),
-	    new TestSpec(2001, 0, DataTypeException.class),
-	    new TestSpec(2001, 1, "200101"),
-	    new TestSpec(1000, 1, "100001"),
-	    new TestSpec(1987, 1, "198701"),
-	    new TestSpec(2001, 1, "200101"),
-	    new TestSpec(2001, 7, "200107"),
-	    new TestSpec(2001, 12, "200112"),
-	    new TestSpec(2001, 13, DataTypeException.class),
-	    new TestSpec(9999, 1, "999901"),
-	    new TestSpec(10000, 1, DataTypeException.class),
-	};
-		
-	ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-	for (int i = 0; i < tests.length ; i++) {
-	    if ( ! tests[ i ].executeTest() ) 
-		failedTests.add( tests[ i ] );
-	}
-
-	assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+    @Test    
+    public void testSetYearMonthPrecision() throws DataTypeException {	
+        buildSpecs(SetYearMonthPrecisionSpec.class)
+    	    .add(ints(2001, -1), DataTypeException.class)
+    	    .add(ints(9, 1), DataTypeException.class)
+    	    .add(ints(99, 1), DataTypeException.class)
+    	    .add(ints(999, 1), DataTypeException.class)
+    	    .add(ints(2001, 0), DataTypeException.class)
+    	    .add(ints(2001, 1), "200101")
+    	    .add(ints(1000, 1), "100001")
+    	    .add(ints(1987, 1), "198701")
+    	    .add(ints(2001, 1), "200101")
+    	    .add(ints(2001, 7), "200107")
+    	    .add(ints(2001, 12), "200112")
+    	    .add(ints(2001, 13), DataTypeException.class)
+    	    .add(ints(9999, 1), "999901")
+    	    .add(ints(10000, 1), DataTypeException.class)
+    	    .executeTests();
     }
 
+    public static class SetYearMonthDayPrecisionSpec extends TestSpec<int[], String> {
+        @Override
+        protected String transform(int[] input) throws Throwable {
+            Message message = new GenericMessage.V24(MCF);  
+            message.setValidationContext(VC);
+            DT dt = new DT(message);
+            dt.setYearMonthDayPrecision(input[0], input[1], input[2]);
+            return dt.getValue();           
+        }
+    }
+    
     /**
      * Testing setYearMonthDayPrecision() with various year, month, day values
      */
-    public void testSetYearMonthDayPrecision() throws DataTypeException {
-	class TestSpec {
-	    int year;
-	    int month;
-	    int day;
-	    Object outcome;
-	    Exception exception = null;
-			
-	    TestSpec(int year, int month, int day, Object outcome) {
-		this.year = year;
-		this.month = month;
-		this.day = day;
-		this.outcome = outcome;
-	    }
-			
-	    public String toString() {
-		return "[ " + Integer.toString(year) + " " + Integer.toString(month) + " : "
-		    + Integer.toString(day) + " : "
-		    + (outcome != null ? outcome : "null")
-		    + (exception != null ? " [ " + exception.toString() + " ]":" ]");
-	    }
-			
-	    public boolean executeTest() {
-		DT dt = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-		try {
-		    dt.setYearMonthDayPrecision(year, month, day);
-		    String retval = dt.getValue();
-		    if (retval != null) {
-			return retval.equals(outcome);
-		    } else {
-			return outcome == null;
-		    }
-		} catch (Exception e) {
-		    if (e.getClass().equals(outcome)) {
-			return true;
-		    } else {
-			this.exception = e;
-			return (e.getClass().equals(outcome));
-		    }
-		}
-	    }
-	}//inner class
-    	
-	TestSpec [] tests = {
-	    new TestSpec(2001, 1, -1, DataTypeException.class),
-	    new TestSpec(9, 1, 1, DataTypeException.class),
-	    new TestSpec(99, 1, 1, DataTypeException.class),
-	    new TestSpec(999, 1, 1, DataTypeException.class),
-	    new TestSpec(2001, 1, 0, DataTypeException.class),
-	    new TestSpec(2001, 1, 1, "20010101"),
-	    new TestSpec(1000, 1, 1, "10000101"),
-	    new TestSpec(1987, 1, 1, "19870101"),
-	    new TestSpec(2001, 1, 1, "20010101"),
-	    new TestSpec(2001, 1, 7, "20010107"),
-	    new TestSpec(2001, 1, 12, "20010112"),
-	    new TestSpec(2001, 1, 25, "20010125"),
-	    new TestSpec(2001, 1, 31, "20010131"),
-	    new TestSpec(2001, 1, 32, DataTypeException.class),
-	    new TestSpec(9999, 1, 1, "99990101"),
-	    new TestSpec(10000, 1, 1, DataTypeException.class),
-	    new TestSpec(2001, 1, 1, "20010101"),
-	    new TestSpec(2001, -1, 21, DataTypeException.class),
-	};
-		
-	ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-	for (int i = 0; i < tests.length ; i++) {
-	    if ( ! tests[ i ].executeTest() ) 
-		failedTests.add( tests[ i ] );
-	}
-
-	assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+    @Test    
+    public void testSetYearMonthDayPrecision() throws DataTypeException {  	
+        buildSpecs(SetYearMonthDayPrecisionSpec.class)
+    	    .add(ints(2001, 1, -1), DataTypeException.class)
+    	    .add(ints(9, 1, 1), DataTypeException.class)
+    	    .add(ints(99, 1, 1), DataTypeException.class)
+    	    .add(ints(999, 1, 1), DataTypeException.class)
+    	    .add(ints(2001, 1, 0), DataTypeException.class)
+    	    .add(ints(2001, 1, 1), "20010101")
+    	    .add(ints(1000, 1, 1), "10000101")
+    	    .add(ints(1987, 1, 1), "19870101")
+    	    .add(ints(2001, 1, 1), "20010101")
+    	    .add(ints(2001, 1, 7), "20010107")
+    	    .add(ints(2001, 1, 12), "20010112")
+    	    .add(ints(2001, 1, 25), "20010125")
+    	    .add(ints(2001, 1, 31), "20010131")
+    	    .add(ints(2001, 1, 32), DataTypeException.class)
+    	    .add(ints(9999, 1, 1), "99990101")
+    	    .add(ints(10000, 1, 1), DataTypeException.class)
+    	    .add(ints(2001, 1, 1), "20010101")
+    	    .add(ints(2001, -1, 21), DataTypeException.class)
+    	    .executeTests();
     }
 
     /**
@@ -387,28 +214,31 @@ public class DTTest extends TestCase {
     /**
      * Testing ability to retrieve year value
      */
+    @Test
     public void testGetYear() throws DataTypeException {
-    	DT = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-        DT.setValue(dateString);
-    	assertEquals("Should get year back", year, DT.getYear());
+    	DT dt = new DT(new GenericMessage.V24(MCF));
+        dt.setValue(dateString);
+    	assertEquals("Should get year back", year, dt.getYear());
     }
     
     /**
      * Testing ability to retrieve month value
      */
+    @Test
     public void testGetMonth() throws DataTypeException {
-        DT = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-        DT.setValue(dateString);
-	    assertEquals("Should get month back", month, DT.getMonth());
+        DT dt = new DT(new GenericMessage.V24(MCF));
+        dt.setValue(dateString);
+	    assertEquals("Should get month back", month, dt.getMonth());
     }
     
     /**
      * Testing ability to retrieve day value
      */
+    @Test
     public void testGetDay() throws DataTypeException {
-        DT = new DT(new GenericMessage.V25(new DefaultModelClassFactory()));
-        DT.setValue(dateString);
-        assertEquals("Should get day back", day, DT.getDay());
+        DT dt = new DT(new GenericMessage.V24(MCF));
+        dt.setValue(dateString);
+        assertEquals("Should get day back", day, dt.getDay());
     }
 
 }
