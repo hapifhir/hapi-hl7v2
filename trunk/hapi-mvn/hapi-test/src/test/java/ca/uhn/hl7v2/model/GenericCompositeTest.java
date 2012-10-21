@@ -26,9 +26,13 @@
  */
 package ca.uhn.hl7v2.model;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 /**
@@ -37,164 +41,83 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
  * @author 
  */
 
-public class GenericCompositeTest extends TestCase {
-	GenericComposite genericComposite;
-    Message message;
+public class GenericCompositeTest  {
+	private static GenericComposite genericComposite;
+	private static Message message;
 	
-	/**
-	 * Constructor for GenericCompositeTest.
-	 * 
-	 * @param testName
-	 */
-	public GenericCompositeTest(String testName) {
-		super(testName);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(GenericCompositeTest.class);
-	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+    @BeforeClass
+	public static void setUp() throws Exception {
         message = new GenericMessage.V25(new DefaultModelClassFactory());
 		genericComposite = new GenericComposite(message);
 	}
 
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		genericComposite = null;
-	}
-
-	/*
-	 ********************************************************** 
-	 * Test Cases
-	 ********************************************************** 
-	 */
 	 
 	/**
 	 * Testing default constructor
 	 */
+    @Test
 	public void testConstructor() {
 		assertNotNull("Should have a valid GenericCompositeTest object", genericComposite);
 	}
 
+	public static class GetComponentSpec extends ca.uhn.hl7v2.TestSpec<Integer, Class<? extends Type>> {
+
+        @Override
+        protected Class<? extends Type> transform(Integer input) throws Throwable {
+            GenericComposite gc = new GenericComposite(message);
+            return gc.getComponent(input).getClass();
+        }
+	    
+	}
+	
 	/**
 	 * Testing getComponent(), attempting to get components at various indexes
 	 */
+    @Test
 	public void testGetComponent() throws DataTypeException {
-		class TestSpec {
-			int number;
-			Object outcome;
-			Exception exception = null;
-			
-			TestSpec(int number, Object outcome) {
-				this.number = number;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + number + " : "
-					+ (outcome != null ? outcome : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				GenericComposite gc = new GenericComposite(message);
-				try {
-					Object retval = gc.getComponent(number);
-					if (retval != null) {
-						return retval.getClass().equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (((Class<?>) outcome).isAssignableFrom(e.getClass())) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
     	
-		TestSpec [] tests = {
-			new TestSpec(-1, IndexOutOfBoundsException.class),
-			new TestSpec(0, Varies.class),
-			new TestSpec(1, Varies.class),
-			new TestSpec(2, Varies.class),
-			new TestSpec(100, Varies.class),
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
-
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(GetComponentSpec.class)
+			.add(-1, ArrayIndexOutOfBoundsException.class)
+			.add(0, Varies.class)
+			.add(1, Varies.class)
+			.add(2, Varies.class)
+			.add(100, Varies.class)
+			.executeTests();
 	}
 
+    public static class GetComponentsSpec extends ca.uhn.hl7v2.TestSpec<Integer, Integer> {
+
+        @Override
+        protected Integer transform(Integer input) throws Throwable {
+            GenericComposite gc = new GenericComposite(message);
+            try { 
+                gc.getComponent(input); 
+            } catch (Exception e) { // ignore exception
+            }
+            Type[] retval = gc.getComponents();
+            return retval.length; 
+        }
+        
+    }
+    
 	/**
 	 * Testing getComponents()
 	 */
+    @Test
 	public void testGetComponents() throws DataTypeException {
-		class TestSpec {
-			int number;
-			int returnedArraySize;
-			Exception exception = null;
-			
-			TestSpec(int number, int retSize) {
-				this.number = number;
-				this.returnedArraySize = retSize;
-			}
-			
-			public String toString() {
-				return "[ " + number + " : "
-					+ returnedArraySize
-					+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				GenericComposite gc = new GenericComposite(message);
-				try {
-					// create some components
-					gc.getComponent(number);
-					// ignore exceptions (first test spec) 
-				} catch (Exception e) {}
-				Type[] retval = gc.getComponents();
-				return retval.length == returnedArraySize;
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(-1, 0),
-			new TestSpec(0, 1),
-			new TestSpec(1, 2),
-			new TestSpec(2, 3),
-			new TestSpec(100, 101),
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
-
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-				failedTests.add( tests[ i ] );
-		}
-
-		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
+		buildSpecs(GetComponentsSpec.class)
+			.add(-1, 0)
+			.add(0, 1)
+			.add(1, 2)
+			.add(2, 3)
+			.add(100, 101)
+			.executeTests();
 	}
 
 	/**
 	 * Testing getName()
 	 */
+	@Test
 	public void testGetName() {
 		assertEquals(genericComposite.getName(),"UNKNOWN");
 	}

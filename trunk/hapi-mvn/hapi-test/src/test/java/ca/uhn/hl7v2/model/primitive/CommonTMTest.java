@@ -27,6 +27,7 @@
 package ca.uhn.hl7v2.model.primitive;
 
 import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static ca.uhn.hl7v2.TestSpecBuilder.ints;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -278,10 +279,6 @@ public class CommonTMTest {
             tm.setHourMinutePrecision(input[0], input[1]);
             return tm.getValue();       
         }  
-    }
-    
-    private int[] ints(int... ints) {
-        return ints;
     }
     
 	@Test

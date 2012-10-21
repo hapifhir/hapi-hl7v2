@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.model.v24.datatype;
 
 import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static ca.uhn.hl7v2.TestSpecBuilder.ints;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -120,10 +121,6 @@ public class DTTest {
     	    .add(9999, "9999")
     	    .add(10000, DataTypeException.class)
     	    .executeTests();
-    }
-
-    private int[] ints(int... ints) {
-        return ints;
     }
     
     public static class SetYearMonthPrecisionSpec extends TestSpec<int[], String> {

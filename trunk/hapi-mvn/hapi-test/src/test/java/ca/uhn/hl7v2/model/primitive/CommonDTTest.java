@@ -27,6 +27,7 @@
 package ca.uhn.hl7v2.model.primitive;
 
 import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static ca.uhn.hl7v2.TestSpecBuilder.ints;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -339,10 +340,6 @@ public class CommonDTTest {
         assertEquals(2, cal.get(Calendar.MONTH));
         assertEquals(6, cal.get(Calendar.DAY_OF_MONTH));
 
-    }
-    
-    private int[] ints(int... values) {
-        return values;
     }
 
 }

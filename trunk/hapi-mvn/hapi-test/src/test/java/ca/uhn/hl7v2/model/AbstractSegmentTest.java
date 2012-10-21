@@ -15,11 +15,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * @author bryan
  */
 public class AbstractSegmentTest {
-    private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractSegmentTest.class);
     
-    // Add test methods here, they have to start with 'test' name.
-    // for example:
-    // public void testHello() {}
 	@Test
     public void testEnsureEnoughFields() throws Exception {
         ModelClassFactory factory = new DefaultModelClassFactory();
@@ -66,7 +62,7 @@ public class AbstractSegmentTest {
 
 	}
 
-	@Test
+	@Test(expected=NullPointerException.class)
 	public void testParseNull() throws HL7Exception {
 
         String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r"
@@ -74,14 +70,7 @@ public class AbstractSegmentTest {
                 + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
         ADT_A01 a01 = new ADT_A01();
         a01.parse(string);
-
-        try {
-        	a01.getPID().parse(null);
-        	fail();
-        } catch (NullPointerException e) {
-        	// expected
-        }
-
+        a01.getPID().parse(null);
 	}
 
 	@Test
@@ -108,17 +97,10 @@ public class AbstractSegmentTest {
 	}
 	
 	
-	@Test
-	public void testParseMshWithNoContent() {
-		
-		try {
-			ADT_A01 msg = new ADT_A01();
-			msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");
-			fail();
-		} catch (HL7Exception e) {
-			ourLog.debug("Caught exception, as we should", e);
-		}
-		
+	@Test(expected=HL7Exception.class)
+	public void testParseMshWithNoContent() throws HL7Exception {
+		ADT_A01 msg = new ADT_A01();
+		msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");		
 	}
 	
 }

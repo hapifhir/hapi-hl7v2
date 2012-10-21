@@ -1,21 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ca.uhn.hl7v2.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.parser.PipeParser;
 
-public class ConvenienceModelParseTest extends TestCase {
+public class ConvenienceModelParseTest {
     private PipeParser parser;
 
-    @Override
+    @Before
   	public void setUp() throws Exception {
 		parser = new PipeParser();
 	}
 
+    @Test
     public void testMessageParse() throws Exception {
 
 		String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
@@ -30,7 +30,6 @@ public class ConvenienceModelParseTest extends TestCase {
         message.parse(string);
 
 		String reEncoded = parser.encode(message);
-		System.out.println(reEncoded);
 		assertEquals(string, reEncoded);
 
     }
