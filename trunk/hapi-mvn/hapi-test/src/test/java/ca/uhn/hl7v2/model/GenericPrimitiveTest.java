@@ -26,9 +26,14 @@
  */
 package ca.uhn.hl7v2.model;
 
-import java.util.ArrayList;
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import junit.framework.TestCase;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
@@ -38,121 +43,58 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
  * @author 
  */
 
-public class GenericPrimitiveTest extends TestCase {
-	GenericPrimitive genericPrimitive;
-    GenericMessage message;
+public class GenericPrimitiveTest {
+	private static GenericPrimitive genericPrimitive;
+	private static GenericMessage message;
 	
-	/**
-	 * Constructor for GenericPrimitiveTest.
-	 * 
-	 * @param testName
-	 */
-	public GenericPrimitiveTest(String testName) {
-		super(testName);
-	}
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(GenericPrimitiveTest.class);
-	}
-
-	/**
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+    @BeforeClass
+	public static void setUp() throws Exception {
         message = new GenericMessage.V25(new DefaultModelClassFactory());
         message.initQuickstart("ADT", "A01", "T");
 		genericPrimitive = new GenericPrimitive(message);
 	}
-
-	/**
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		genericPrimitive = null;
-	}
-
-	/*
-	 ********************************************************** 
-	 * Test Cases
-	 ********************************************************** 
-	 */
 	 
 	/**
 	 * Testing default constructor
 	 */
+    @Test
 	public void testConstructor() {
 		assertNotNull("Should have a valid GenericPrimitiveTest object", genericPrimitive);
 	}
 
-	public void testClear() throws HL7Exception {
-		
+    @Test
+    public void testClear() throws HL7Exception {	
 		genericPrimitive.parse("AAAA");
 		genericPrimitive.clear();
-		assertEquals(null, genericPrimitive.getValue());
+		assertNull(genericPrimitive.getValue());
 	}
 	
+    public static class SetGetSpec extends ca.uhn.hl7v2.TestSpec<String, String> {
+
+        @Override
+        protected String transform(String input) throws Throwable {
+            GenericPrimitive gp = new GenericPrimitive(message);
+            gp.setValue(input);
+            return gp.getValue();
+        }
+        
+    }
 	/**
 	 * Testing set/getValue() with various date strings
 	 */
 	public void testSetGetValue() throws DataTypeException {
-		class TestSpec {
-			String value;
-			Object outcome;
-			Exception exception = null;
-			
-			TestSpec(String value, Object outcome) {
-				this.value = value;
-				this.outcome = outcome;
-			}
-			
-			public String toString() {
-				return "[ " + value + " : "
-					+ (outcome != null ? outcome : "null")
- 			    	+ (exception != null ? " [ " + exception.toString() + " ]":" ]");
-			}
-			
-			public boolean executeTest() {
-				GenericPrimitive gp = new GenericPrimitive(message);
-				try {
-					gp.setValue(value);
-					String retval = gp.getValue();
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
-				} catch (Exception e) {
-					if (e.getClass().equals(outcome)) {
-						return true;
-					} else {
-						this.exception = e;
-						return (e.getClass().equals(outcome));
-					}
-				}
-			}
-		}//inner class
-    	
-		TestSpec [] tests = {
-			new TestSpec(null, null),
-			new TestSpec("", ""),
-			new TestSpec(" ", " "),
-			new TestSpec("abcdefghijklmnopqrstuv","abcdefghijklmnopqrstuv"),
-			new TestSpec("1234aBCDerfgkyuy^asdflkasd|adsjkl","1234aBCDerfgkyuy^asdflkasd|adsjkl"),
-			new TestSpec(" ", " "),
-			new TestSpec("", ""),
-			new TestSpec(null, null),
-		};
-		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
-		}
+    	buildSpecs(SetGetSpec.class)
+			.add(null, (String)null)
+			.add("", "")
+			.add(" ", " ")
+			.add("abcdefghijklmnopqrstuv","abcdefghijklmnopqrstuv")
+			.add("1234aBCDerfgkyuy^asdflkasd|adsjkl","1234aBCDerfgkyuy^asdflkasd|adsjkl")
+			.add(" ", " ")
+			.add("", "")
+			.executeTests();
 
-   		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
 	}
 
 	/**
