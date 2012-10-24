@@ -133,6 +133,8 @@ public class Location {
 					}
 				}
 			}
+		} else {
+			sb.append("unknown location");
 		}
 		return sb.toString();
 	}

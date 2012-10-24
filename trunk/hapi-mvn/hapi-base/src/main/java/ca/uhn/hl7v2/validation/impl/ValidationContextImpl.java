@@ -27,6 +27,7 @@ package ca.uhn.hl7v2.validation.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ca.uhn.hl7v2.model.Primitive;
@@ -40,7 +41,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 /**
  * A default implementation of <code>ValidationContext</code>.
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @author Christian Ohr
  */
 @SuppressWarnings("serial")
@@ -74,7 +75,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 *      java.lang.String)
 	 * @param theType ignored
 	 */
-	public PrimitiveTypeRule[] getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
+	public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
 		return getRules(myPrimitiveRuleBindings, theVersion, theTypeName, PrimitiveTypeRule.class);
 	}
 
@@ -92,7 +93,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 *      #getMessageRules(java.lang.String, java.lang.String,
 	 *      java.lang.String)
 	 */
-	public MessageRule[] getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
+	public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
 		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent, MessageRule.class);
 	}
 
@@ -107,7 +108,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 * @see ca.uhn.hl7v2.validation.ValidationContext#getEncodingRules(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public EncodingRule[] getEncodingRules(String theVersion, String theEncoding) {
+	public Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding) {
 		return getRules(myEncodingRuleBindings, theVersion, theEncoding, EncodingRule.class);
 	}
 
@@ -118,23 +119,19 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 		return myEncodingRuleBindings;
 	}
 	
-	private <T extends Rule<?>> T[] getRules(List<RuleBinding<T>> bindings, String version, String scope,
+	private <T extends Rule<?>> Collection<T> getRules(List<RuleBinding<T>> bindings, String version, String scope,
 			Class<T> ruleClass) {
 		List<T> active = new ArrayList<T>(bindings.size());
 		for (RuleBinding<T> binding : bindings) {
 			if (applies(binding, version, scope))
 				active.add(binding.getRule());
 		}
-		return toArray(active, ruleClass);
+		return active;
 	}
 
 	private boolean applies(RuleBinding<?> binding, String version, String scope) {
 		return (binding.getActive() && binding.appliesToVersion(version) && binding.appliesToScope(scope));
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T> T[] toArray(List<T> list, Class<T> c) {
-		return list.toArray((T[]) java.lang.reflect.Array.newInstance(c, list.size()));
-	}
 
 }

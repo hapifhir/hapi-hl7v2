@@ -25,6 +25,8 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.validation;
 
+import java.util.Collection;
+
 import ca.uhn.hl7v2.model.Primitive;
 
 /**
@@ -41,7 +43,7 @@ public interface ValidationContext {
      * @param theType the Primitive being validated 
      * @return active rules for checking the given type in the given version 
      */
-    public PrimitiveTypeRule[] getPrimitiveRules(String theVersion, String theTypeName, Primitive theType);
+    public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType);
 
     /**
      * @param theVersion an HL7 version (eg "2.1")
@@ -50,13 +52,13 @@ public interface ValidationContext {
      * @return the active rules that apply to message of the given version, message type, 
      *      and trigger event 
      */    
-    public MessageRule[] getMessageRules(String theVersion, String theMessageType, String theTriggerEvent);
+    public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent);
     
     /**
      * @param theVersion an HL7 version (eg "2.1")
      * @param theEncoding an encoding name (eg "VB", "XML)
      * @return the active encoding rules that apply to the given version and encoding
      */
-    public EncodingRule[] getEncodingRules(String theVersion, String theEncoding);
+    public Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding);
     
 }

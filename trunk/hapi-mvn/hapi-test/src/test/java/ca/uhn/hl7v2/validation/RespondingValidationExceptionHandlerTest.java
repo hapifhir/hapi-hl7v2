@@ -2,39 +2,33 @@ package ca.uhn.hl7v2.validation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Location;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 public class RespondingValidationExceptionHandlerTest {
 
-	private DefaultValidator<Message> validator;
-	
-	@Before
-	public void setup() {
-		final HapiContext context = new DefaultHapiContext();
-		validator = (new DefaultValidator<Message>(context) {
-
-			@Override
-			protected ValidationExceptionHandler<Message> initializeHandler() {
-				return new RespondingValidationExceptionHandler(context);
-			}
-		});
-	}
-	
 	@Test
 	public void testPassingHandler() throws Exception {
 		ADT_A01 a01 = new ADT_A01();
 		a01.initQuickstart("ADT", "A01", "P");
 		String messageId = a01.getMSH().getMessageControlID().getValue();
-
+		HapiContext context = new DefaultHapiContext();
+		context.setValidationExceptionHandlerFactory(new RespondingValidationExceptionHandler(context));
+		Validator<Message> validator = context.getMessageValidator();
 		Message msg = validator.validate(a01);
 		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) msg;
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
@@ -46,19 +40,18 @@ public class RespondingValidationExceptionHandlerTest {
 		ADT_A01 a01 = new ADT_A01();
 		a01.initQuickstart("ADT", "A01", "P");
 
-		// Add two mistakes
-		a01.getPID().getSetIDPID().setValue("blorg");
-		a01.getPV1().getAdmitDateTime().setValue("gablorg");
-
-		String messageId = a01.getMSH().getMessageControlID().getValue();
 		HapiContext context = new DefaultHapiContext();
-		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler(context);
+		context.setValidationContext(context(failingMessageRule("PID-1", "PV1-44"), "ADT", "A01",
+				Version.V26));
+		RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler(
+				context);
 		handler.setErrorAcknowledgementCode(AcknowledgmentCode.AR);
 
 		Validator<Message> validator = context.getMessageValidator();
 		assertNotNull(validator.validate(a01, handler));
 		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
 				.result();
+		String messageId = a01.getMSH().getMessageControlID().getValue();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AR.name(), ack.getMSA().getAcknowledgmentCode().getValue());
 		assertEquals("PID", ack.getERR(0).getErrorLocation(0).getSegmentID().getValue());
@@ -75,13 +68,14 @@ public class RespondingValidationExceptionHandlerTest {
 		ADT_A02 a02 = new ADT_A02();
 		a02.initQuickstart("ADT", "A02", "P");
 
-		// Add two mistakes
-		a02.getPID().getSetIDPatientID().setValue("blorg");
-		a02.getPV1().getAdmitDateTime().getTimeOfAnEvent().setValue("gablorg");
-
-		String messageId = a02.getMSH().getMessageControlID().getValue();
+		HapiContext context = new DefaultHapiContext();
+		context.setValidationContext(context(failingMessageRule("PID-1", "PV1-44"), "ADT", "A02",
+				Version.V23));
+		context.setValidationExceptionHandlerFactory(new RespondingValidationExceptionHandler(context));
+		Validator<Message> validator = context.getMessageValidator();
 		Message msg = validator.validate(a02);
 		ca.uhn.hl7v2.model.v23.message.ACK ack = (ca.uhn.hl7v2.model.v23.message.ACK) msg;
+		String messageId = a02.getMSH().getMessageControlID().getValue();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AE.name(), ack.getMSA().getAcknowledgementCode().getValue());
 		assertEquals("PID", ack.getERR().getErrorCodeAndLocation(0).getSegmentID().getValue());
@@ -95,4 +89,31 @@ public class RespondingValidationExceptionHandlerTest {
 		// System.out.println(ack.encode());
 	}
 
+	private ValidationContext context(final MessageRule rule, final String eventType,
+			final String trigger, final Version version) {
+		return ValidationContextFactory.fromBuilder(new ValidationRuleBuilder() {
+
+			@Override
+			protected void configure() {
+				forVersion(version).message(eventType, trigger).test(rule);
+			}
+
+		});
+	}
+	
+	private MessageRule failingMessageRule(String... locations) {
+		MessageRule rule = mock(MessageRule.class);
+		ValidationException[] exceptions = new ValidationException[locations.length];
+		for (int i = 0; i < locations.length; i++) {
+			String[] s = locations[i].split("-");
+			Location l = new Location();
+			l.setSegmentName(s[0]);
+			l.setField(Integer.parseInt(s[1]));
+			ValidationException ve = new ValidationException();
+			ve.setLocation(l);
+			exceptions[i] = ve;
+		}
+		when(rule.apply(any(Message.class))).thenReturn(exceptions);
+		return rule;
+	}	
 }

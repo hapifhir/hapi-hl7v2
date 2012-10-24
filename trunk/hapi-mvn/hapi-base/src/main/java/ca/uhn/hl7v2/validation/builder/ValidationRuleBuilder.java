@@ -60,12 +60,12 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 	protected void configure() {
 	}
 
-	public ValidationRuleBuilder forVersion(
+	public final ValidationRuleBuilder forVersion(
 			Version... version) {
 		return new ValidationRuleBuilder(getRules(), version);
 	}
 
-	public ValidationRuleBuilder forVersion(
+	public final ValidationRuleBuilder forVersion(
 			String... version) {
 		Version[] versions = new Version[version.length];
 		for (int i = 0; i < versions.length; i++) {
@@ -74,11 +74,11 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 		return new ValidationRuleBuilder(getRules(), versions);
 	}
 
-	public VersionExpressionBuilder forVersion() {
+	public final VersionExpressionBuilder forVersion() {
 		return new VersionExpressionBuilder();
 	}
 
-	public ValidationRuleBuilder forAllVersions() {
+	public final ValidationRuleBuilder forAllVersions() {
 		return forVersion().all();
 	}
 
