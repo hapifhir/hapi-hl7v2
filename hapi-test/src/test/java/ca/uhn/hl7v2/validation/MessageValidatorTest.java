@@ -1,20 +1,32 @@
 package ca.uhn.hl7v2.validation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
+
+import java.util.Collection;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilderTest;
 import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
@@ -35,14 +47,27 @@ public class MessageValidatorTest {
     private MessageValidator myFailingValidator;
     private MessageValidator myNonFailingValidator;
 
-    @Before
+    @SuppressWarnings("serial")
+	@Before
     public void setUp() throws Exception {
-        ValidationContextImpl context = new ValidationContextImpl();
-        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
-        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
-        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
-        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
+//        ValidationContextImpl context = new ValidationContextImpl();
+//        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
+//        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
+//        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
+//        context.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("*", "*", new MockEncodingRule()));
 
+        ValidationContext context = ValidationContextFactory.fromBuilder(new ValidationRuleBuilder() {
+
+			@Override
+			protected void configure() {
+				forAllVersions()
+					.message().all()
+						.test(mockRule(Message.class, MessageRule.class, true))
+					.encoding("ER7")
+						.test(mockRule(String.class, EncodingRule.class, true));
+			}
+        	
+        });
         myFailingValidator = new MessageValidator(context, true);
         myNonFailingValidator = new MessageValidator(context, false);
     }
@@ -50,32 +75,24 @@ public class MessageValidatorTest {
     /*
      * Class under test for void validate(Message)
      */
-    @Test
+    @Test(expected=HL7Exception.class)
     public void testValidateMessage() throws HL7Exception {
         ACK m = new ACK();
         Terser t = new Terser(m);
         t.set("MSH-9-1", "ACK");
         t.set("MSH-9-2", "A01");
-        assertEquals(false, myNonFailingValidator.validate(m));
-        try {
-            myFailingValidator.validate(m);
-            fail("Should throw exception on fail");
-        } catch (HL7Exception e) {
-        }
+        assertFalse(myNonFailingValidator.validate(m));
+        myFailingValidator.validate(m);
     }
 
     /*
      * Class under test for void validate(String, boolean, String)
      */
-    @Test
+    @Test(expected=HL7Exception.class)
     public void testValidateString() throws HL7Exception {
         String m = "a message";
-        assertEquals(false, myNonFailingValidator.validate(m, false, "2.5"));
-        try {
-            myFailingValidator.validate(m, false, "2.5");
-            fail("Should throw exception on fail");
-        } catch (HL7Exception e) {
-        }
+        assertFalse(myNonFailingValidator.validate(m, false, "2.5"));
+        myFailingValidator.validate(m, false, "2.5");
     }
 
     @Test
@@ -97,11 +114,12 @@ public class MessageValidatorTest {
             parser.parse(deviceObservationMessage);
             fail();
         } catch (Exception e) {
-            Assert.assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
+            assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
         }
     }
     
-    @Test
+    // TODO to be enabled if Message Validation also tests primitives 
+    @Ignore
     public void testWithdrawnDatatype2() throws EncodingNotSupportedException, HL7Exception {
 
         String deviceObservationMessage = "MSH|^~\\&|AcmeInc^ACDE48234567ABCD^EUI-64||||20090713090030+0000||ORU^R01^ORU_R01|MSGID1234|P|2.6|||NE|AL|||||IHE PCD ORU-R01 2006^HL7^2.16.840.1.113883.9.n.m^HL7\r"
@@ -122,34 +140,20 @@ public class MessageValidatorTest {
         	v.validate(m);
         	fail();
         } catch (HL7Exception e) {
-        	Assert.assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
-        	Assert.assertTrue(e.getCause().getMessage().contains("PID-13(0)-1"));
+        	assertTrue(e.getMessage().toLowerCase().contains("withdrawn"));
+        	assertTrue(e.getCause().getMessage().contains("PID-13(0)-1"));
         }
     }    
 
-    @SuppressWarnings("serial")
-	private class MockMessageRule extends AbstractMessageRule {
-
-        public ValidationException[] apply(Message msg) {
-            return failed("testing validator");
-        }
-
+    private <S, T extends Rule<S>> T mockRule(Class<S> testClass, Class<T> ruleClass, boolean fail) {
+    	T rule = mock(ruleClass);
+    	when(rule.apply(any(testClass))).thenReturn(fail ? failed() : new ValidationException[0]);
+    	return rule;
     }
-
-    @SuppressWarnings("serial")
-	private class MockEncodingRule extends AbstractEncodingRule {
-
-        public ValidationException[] apply(String msg) {
-            return failed("testing validator");
-        }
-
-        public String getDescription() {
-            return null;
-        }
-
-        public String getSectionReference() {
-            return null;
-        }
+    private ValidationException[] failed() {
+    	ValidationException ve = new ValidationException("Blargh!");
+    	ve.setLocation(Location.UNKNOWN);
+    	return new ValidationException[] { ve };
     }
 
 }

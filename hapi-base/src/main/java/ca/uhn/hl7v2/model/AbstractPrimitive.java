@@ -27,6 +27,8 @@
 
 package ca.uhn.hl7v2.model;
 
+import java.util.Collection;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Escape;
@@ -88,11 +90,11 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
             String version = message.getVersion();
 
             if (context != null) {
-                PrimitiveTypeRule[] rules = context.getPrimitiveRules(version, getName(), this); 
+                Collection<PrimitiveTypeRule> rules = context.getPrimitiveRules(version, getName(), this); 
         
-                for (int i = 0; i < rules.length; i++) {
-                    theValue = rules[i].correct(theValue);
-                    ValidationException[] ve = rules[i].apply(theValue);
+                for (PrimitiveTypeRule rule : rules) {
+                    theValue = rule.correct(theValue);
+                    ValidationException[] ve = rule.apply(theValue);
                     if (ve.length > 0) {
                         throw new DataTypeException(ve[0]);
                     }

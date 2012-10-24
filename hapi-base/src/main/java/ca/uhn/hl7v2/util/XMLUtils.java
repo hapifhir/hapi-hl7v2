@@ -43,14 +43,19 @@ import org.w3c.dom.ls.LSSerializer;
 
 public class XMLUtils {
 
+	private static DOMImplementation IMPL;
+
 	@SuppressWarnings("unchecked")
-	public static <T> T getDOMImpl() {
-		try {
-			DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-			return (T) registry.getDOMImplementation("LS 3.0");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	public synchronized static <T> T getDOMImpl() {
+		if (IMPL == null) {
+			try {
+				DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+				IMPL = registry.getDOMImplementation("LS 3.0");
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
+		return (T) IMPL;
 	}
 
 	public static Document parse(String s) {
@@ -63,14 +68,14 @@ public class XMLUtils {
 		input.setStringData(s);
 		return parse(input, validateIfSchema);
 	}
-	
+
 	public static Document parse(InputStream s, boolean validateIfSchema) {
 		DOMImplementationLS impl = getDOMImpl();
 		LSInput input = impl.createLSInput();
 		input.setByteStream(s);
 		return parse(input, validateIfSchema);
 	}
-	
+
 	private static Document parse(LSInput input, boolean validateIfSchema) {
 		DOMImplementationLS impl = getDOMImpl();
 		LSParser parser = impl.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
@@ -79,7 +84,7 @@ public class XMLUtils {
 		config.setParameter("namespaces", true);
 		config.setParameter("validate-if-schema", validateIfSchema);
 		return parser.parse(input);
-	}	
+	}
 
 	public static void validate(Document d, String schema, DOMErrorHandler handler) {
 		DOMConfiguration config = d.getDomConfig();

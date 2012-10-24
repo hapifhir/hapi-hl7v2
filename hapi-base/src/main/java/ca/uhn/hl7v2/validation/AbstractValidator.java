@@ -25,7 +25,9 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +55,6 @@ import ca.uhn.hl7v2.util.Terser;
 public abstract class AbstractValidator<R> implements Validator<R> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractValidator.class);
-	private static final MessageRule[] EMPTY_MESSAGE_RULES_ARRAY = new MessageRule[0];
-	private static final EncodingRule[] EMPTY_ENCODING_RULES_ARRAY = new EncodingRule[0];
-	private static final PrimitiveTypeRule[] EMPTY_PRIMITIVE_RULES_ARRAY = new PrimitiveTypeRule[0];
-
 
 	/**
 	 * Calls {@link #initializeHandler()} to obtain a default instance of a
@@ -80,7 +78,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
 		handler.setValidationSubject(message);
-		testPrimitiveRules(message, handler);
+		// testPrimitiveRules(message, handler); TODO this slows down parser 3x
 		testMessageRules(message, handler);
 		return handler.result();
 	}
@@ -90,12 +88,12 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 		Terser t = new Terser(message);
 		String messageType = t.get("MSH-9-1");
 		String triggerEvent = t.get("MSH-9-2");
-		MessageRule[] rules = EMPTY_MESSAGE_RULES_ARRAY;
+		List<MessageRule> rules = new ArrayList<MessageRule>();
 		if (getValidationContext() != null) {
-			rules = getValidationContext().getMessageRules(message.getVersion(), messageType,
-					triggerEvent);
+			rules.addAll(getValidationContext().getMessageRules(message.getVersion(), messageType,
+					triggerEvent));
 		}
-		LOG.debug("Validating message against {} message rules", rules.length);
+		LOG.debug("Validating message against {} message rules", rules.size());
 		for (MessageRule rule : rules) {
 			ValidationException[] ex = rule.apply(message);
 			if (ex != null && ex.length > 0) {
@@ -162,10 +160,10 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 	}
 
 	private void testPrimitive(Primitive p, ValidationExceptionHandler<R> handler, Location l) {
-		PrimitiveTypeRule[] rules = EMPTY_PRIMITIVE_RULES_ARRAY;
+		List<PrimitiveTypeRule> rules = new ArrayList<PrimitiveTypeRule>();
 		Message m = p.getMessage();
 		if (getValidationContext() != null) {
-			rules = getValidationContext().getPrimitiveRules(m.getVersion(), p.getName(), p);
+			rules.addAll(getValidationContext().getPrimitiveRules(m.getVersion(), p.getName(), p));
 		}
 		for (PrimitiveTypeRule rule : rules) {
 			ValidationException[] ex = rule.apply(p.getValue());
@@ -203,11 +201,11 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
 		handler.setValidationSubject(message);
-		EncodingRule[] rules = EMPTY_ENCODING_RULES_ARRAY;
+		List<EncodingRule> rules = new ArrayList<EncodingRule>();
 		if (getValidationContext() != null) {
-			rules = getValidationContext().getEncodingRules(version, isXML ? "XML" : "ER7");
+			rules.addAll(getValidationContext().getEncodingRules(version, isXML ? "XML" : "ER7"));
 		}
-		LOG.debug("Validating message against {} encoding rules", rules.length);
+		LOG.debug("Validating message against {} encoding rules", rules.size());
 		for (EncodingRule rule : rules) {
 			ValidationException[] ex = rule.apply(message);
 			if (ex != null && ex.length > 0) {

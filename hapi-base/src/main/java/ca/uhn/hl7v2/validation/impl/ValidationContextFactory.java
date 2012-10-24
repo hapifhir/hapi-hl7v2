@@ -78,15 +78,17 @@ public class ValidationContextFactory {
     /**
      * @return an instance of a non-validating context
      */
-    public static ValidationContext noValidation() {
-        return new ValidationContextImpl(new NoValidationBuilder());
+    @SuppressWarnings("unchecked")
+	public static <T extends ValidationContext> T noValidation() {
+        return (T) new ValidationContextImpl(new NoValidationBuilder());
     }
 
     /**
      * @return an instance of a default validation context
      */
-    public static ValidationContext defaultValidation() {
-        return new ValidationContextImpl(new DefaultValidationBuilder());
+    @SuppressWarnings("unchecked")
+	public static <T extends ValidationContext> T defaultValidation() {
+        return (T)new ValidationContextImpl(new DefaultValidationBuilder());
     }
 
     /**

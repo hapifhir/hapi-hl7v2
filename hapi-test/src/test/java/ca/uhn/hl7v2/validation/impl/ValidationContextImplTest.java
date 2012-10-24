@@ -4,6 +4,11 @@
 package ca.uhn.hl7v2.validation.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import static org.mockito.Mockito.*;
+
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +17,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
+import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 /**
@@ -23,6 +29,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
 public class ValidationContextImplTest {
     
     private ValidationContextImpl myContext;
+    private static final ValidationException[] PASS = new ValidationException[0];
     
     @Before
     public void setUp() throws Exception {
@@ -30,86 +37,48 @@ public class ValidationContextImplTest {
     }
 
     @Test
-    public void testGetPrimitiveRules() {
-        PrimitiveTypeRule rule1 = new SizeRule(10);
-        PrimitiveTypeRule rule2 = new SizeRule(20);
-        
+    public void testGetPrimitiveRules() {       
+        PrimitiveTypeRule rule1 = mockRule(String.class, PrimitiveTypeRule.class);
+        PrimitiveTypeRule rule2 = mockRule(String.class, PrimitiveTypeRule.class);
         myContext.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "ST", rule1));
-        myContext.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "FT", rule2));
-        
-        PrimitiveTypeRule[] rules = myContext.getPrimitiveRules("2.5", "ST", null);
-        assertEquals(1, rules.length);
-        assertEquals(rule1, rules[0]);
+        myContext.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "FT", rule2));        
+        assertOnlyElement(rule1, myContext.getPrimitiveRules("2.5", "ST", null));
     }
 
     @Test    
     public void testGetMessageRules() {
-        MessageRule rule1 = new MockMessageRule();
-        MessageRule rule2 = new MockMessageRule();
-        
+        MessageRule rule1 = mockRule(Message.class, MessageRule.class);
+        MessageRule rule2 = mockRule(Message.class, MessageRule.class);
         myContext.getMessageRuleBindings().add(new MessageRuleBinding("2.5", "ADT", "A01", rule1));
         myContext.getMessageRuleBindings().add(new MessageRuleBinding("2.5", "ADT", "A04", rule2));
-        
-        MessageRule[] rules = myContext.getMessageRules("2.5", "ADT", "A01");
-        assertEquals(1, rules.length);
-        assertEquals(rule1, rules[0]);
+        assertOnlyElement(rule1, myContext.getMessageRules("2.5", "ADT", "A01"));
     }
     
     @Test    
     public void testGetWildcardMessageRules1() {
-        MessageRule rule1 = new MockMessageRule();
-        
+        MessageRule rule1 = mockRule(Message.class, MessageRule.class);
         myContext.getMessageRuleBindings().add(new MessageRuleBinding("2.5", "ADT", "*", rule1));
-        
-        MessageRule[] rules = myContext.getMessageRules("2.5", "ADT", "A01");
-        assertEquals(1, rules.length);
-        assertEquals(rule1, rules[0]);
+        assertOnlyElement(rule1, myContext.getMessageRules("2.5", "ADT", "A01"));
     }    
 
     @Test    
     public void testGetEncodingRules() {
-        EncodingRule rule1 = new MockEncodingRule();
-        
+    	EncodingRule rule1 = mockRule(String.class, EncodingRule.class);
         myContext.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("2.5", "XML", rule1));
         myContext.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("2.5", "ER7", rule1));
-        
-        EncodingRule[] rules = myContext.getEncodingRules("2.5", "XML");
-        assertEquals(1, rules.length);
-        assertEquals(rule1, rules[0]);
-    }
-
-    
-    @SuppressWarnings("serial")
-	private class MockMessageRule extends AbstractMessageRule {
-
-        /**
-         * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
-         */
-        public ValidationException[] apply(Message arg0) {
-            return passed();
-        }
-
-        
+        assertOnlyElement(rule1, myContext.getEncodingRules("2.5", "XML"));
     }
     
-    @SuppressWarnings("serial")
-	private class MockEncodingRule extends AbstractEncodingRule {
-
-        /** 
-         * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
-         */
-        public ValidationException[] apply(String arg0) {
-            return passed();
-        }
-
-        /** 
-         * @see ca.uhn.hl7v2.validation.Rule#getDescription()
-         */
-        public String getDescription() {
-            return null;
-        }
-
-        
+    private <S, T extends Rule<S>> T mockRule(Class<S> testClass, Class<T> ruleClass) {
+    	T rule = mock(ruleClass);
+    	when(rule.apply(any(testClass))).thenReturn(PASS);
+    	return rule;
+    }
+    
+    private <T> void assertOnlyElement(T elem, Collection<T> c) {
+    	assertNotNull(c);
+    	assertEquals(1, c.size());
+    	assertEquals(elem, c.iterator().next());
     }
 
 }
