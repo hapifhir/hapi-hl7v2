@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.model;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,8 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -21,10 +22,11 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v251.message.ADT_A01;
 
-public class ModelInstantiationTest extends TestCase {
+public class ModelInstantiationTest {
 
 	private static final Logger log = LoggerFactory.getLogger(ModelInstantiationTest.class);
 
+	@Test
 	public void testDataTypes() throws IOException, ClassNotFoundException {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 		
@@ -72,6 +74,7 @@ public class ModelInstantiationTest extends TestCase {
 
 	}
 
+	@Test
 	public void testMessageTypes() throws IOException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, HL7Exception {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 
