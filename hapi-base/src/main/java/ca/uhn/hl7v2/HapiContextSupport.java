@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
+import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -158,13 +160,31 @@ public class HapiContextSupport {
 			return context.getGenericParser();
 		}
 
-		public <R> Validator<R> getMessageValidator() {
+		public ca.uhn.hl7v2.conf.check.Validator getConformanceValidator() {
+            return context.getConformanceValidator();
+        }
+
+        public <R> Validator<R> getMessageValidator() {
 			return context.getMessageValidator();
 		}
-		
-		
 
-		public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
+		public ProfileStore getProfileStore() {
+            return context.getProfileStore();
+        }
+
+        public void setProfileStore(ProfileStore store) {
+            throw new UnsupportedOperationException("Read-only instance");
+        }
+
+        public CodeStoreRegistry getCodeStoreRegistry() {
+            return context.getCodeStoreRegistry();
+        }
+
+        public void setCodeStoreRegistry(CodeStoreRegistry store) {
+            throw new UnsupportedOperationException("Read-only instance");
+        }
+        
+        public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
 			return context.getValidationExceptionHandlerFactory();
 		}
 

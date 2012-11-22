@@ -35,7 +35,7 @@ import java.net.*;
  * attempt is also made to write 
  * @author Bryan Tripp
  */
-public abstract class URLProfileStore implements ProfileStore {
+public abstract class URLProfileStore extends ReadOnlyProfileStore {
     
     /** Creates a new instance of URLProfileStore */
     public URLProfileStore() {
@@ -59,12 +59,7 @@ public abstract class URLProfileStore implements ProfileStore {
         }
         return profile;
     }
-    
-    /** Stores profile in persistent storage with given ID.
-     */
-    public void persistProfile(String ID, String profile) throws IOException {
-        throw new IOException("Can't persist profile -- this profile store is read-only");
-    }
+
 
     /**
      * Returns the URL from which to read a profile given the profile ID.  For example

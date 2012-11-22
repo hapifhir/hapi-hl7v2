@@ -5,10 +5,11 @@ package ca.uhn.hl7v2.conf;
  * something that is wrong with a message according to a profile (in the latter
  * case, an HL7Exception might be thrown when the message is validated against 
  * the profile).  
+ * 
  * @author Bryan Tripp
  */
 @SuppressWarnings("serial")
-public class ProfileException extends java.lang.Exception {
+public class ProfileException extends Exception {
     
     /**
      * Constructs an instance of <code>ProfileException</code> with the specified detail message.

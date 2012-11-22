@@ -7,11 +7,11 @@ import java.net.URL;
 import org.junit.Test;
 
 /**
- * JUnit test cases for ProfileStoreFactory 
- * 
- * @author Bryan Tripp
+ * JUnit test cases for DefaultCodeStoreRegistryTest
+ *  
+ * @author Christian Ohr
  */
-public class ProfileStoreFactoryTest  {
+public class DefaultCodeStoreRegistryTest  {
     
     @Test
     public void testCodeStoreRegistration() throws Exception {
@@ -25,16 +25,18 @@ public class ProfileStoreFactoryTest  {
         CodeStore cs2 = new ProfileCodeStore(specURL1);
         CodeStore cs3 = new ProfileCodeStore(specURL61);
         
-        ProfileStoreFactory.addCodeStore(cs1, "foo"); //for foo profile
-        ProfileStoreFactory.addCodeStore(cs2, ".*test.*"); 
-        ProfileStoreFactory.addCodeStore(cs3);  //for all profiles
+        CodeStoreRegistry registry = new DefaultCodeStoreRegistry();
         
-        CodeStore codeStore = ProfileStoreFactory.getCodeStore("foo", "HL70001");
+        registry.addCodeStore(cs1, "foo"); //for foo profile
+        registry.addCodeStore(cs2, ".*test.*"); 
+        registry.addCodeStore(cs3);  //for all profiles
+        
+        CodeStore codeStore = registry.getCodeStore("foo", "HL70001");
         assertTrue(codeStore.knowsCodes("HL70396"));
         
-        assertTrue( ! ProfileStoreFactory.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061") );
-        assertTrue( ! ProfileStoreFactory.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
-        assertTrue(null == ProfileStoreFactory.getCodeStore("xxx", "xxx"));
+        assertTrue( ! registry.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061") );
+        assertTrue( ! registry.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
+        assertTrue(null == registry.getCodeStore("xxx", "xxx"));
         
     }
 }

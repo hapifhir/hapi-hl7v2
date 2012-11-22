@@ -34,11 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.conf.ProfileException;
-import ca.uhn.hl7v2.conf.check.DefaultValidator;
+import ca.uhn.hl7v2.conf.check.Validator;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
-import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
+import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -55,12 +56,13 @@ import ca.uhn.hl7v2.validation.ValidationException;
 public class ConformanceProfileRule extends AbstractMessageRule {
 
     private static final Logger log = LoggerFactory.getLogger(ConformanceProfileRule.class);
-
+    private static final ProfileParser PARSER = new ProfileParser(true);
     private String myProfileID;
 
     /**
      * Creates an instance that tests messages against whatever profiles they declare in 
-     * MSH-21. 
+     * MSH-21. The ID declared in MSH-21 is evaluated in a way that the corresponding
+     * profile file is expected to be BASEDIR/profiles/ID.xml.
      */
     public ConformanceProfileRule() {
     	super();
@@ -70,7 +72,8 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     
     /**
      * @param theProfileID the ID of a constant profile against which to test all messages
-     *      (instead of the profiles they declare in MSH-21) 
+     *      (instead of the profiles they declare in MSH-21). The ID dis evaluated in a way 
+     *      that the corresponding profile file is expected to be BASEDIR/profiles/ID.xml.
      */
     public ConformanceProfileRule(String theProfileID) {
     	this();
@@ -127,14 +130,14 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     
     private ValidationException[] testAgainstProfile(Message message, String id) throws ProfileException, HL7Exception {
         HL7Exception[] exceptions = null;
-        DefaultValidator val = new DefaultValidator();
+        HapiContext context = message.getParser().getHapiContext();
+        Validator validator = context.getConformanceValidator();
         try {
-            String profileString = ProfileStoreFactory.getProfileStore().getProfile(id);
+            ProfileStore profileStore = context.getProfileStore();
+            String profileString = profileStore.getProfile(id);
             if (profileString != null) {
-                ProfileParser profParser = new ProfileParser(true);
-                RuntimeProfile profile = profParser.parse(profileString);
-                
-                exceptions = val.validate(message, profile.getMessage());
+                RuntimeProfile profile = PARSER.parse(profileString);               
+                exceptions = validator.validate(message, profile.getMessage());
             } else {
                 throw new ProfileException("Unable to find the profile " + id);
             }

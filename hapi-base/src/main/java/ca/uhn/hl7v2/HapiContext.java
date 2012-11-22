@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
+import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -168,6 +170,26 @@ public interface HapiContext {
 	 *            from this class.
 	 */
 	void setModelClassFactory(ModelClassFactory modelClassFactory);
+	
+	/**
+	 * @return the {@link ProfileStore} to be used for loading conformance profile files
+	 */
+	ProfileStore getProfileStore();
+	
+	/**
+	 * @param store the {@link ProfileStore} to be used for loading conformance profile files
+	 */
+	void setProfileStore(ProfileStore store);
+	
+    /**
+     * @return the {@link CodeStoreRegistry} to be used for serving codes for conformance profiles
+     */
+	CodeStoreRegistry getCodeStoreRegistry();
+    
+    /**
+     * @param store the {@link CodeStoreRegistry} to be used for serving codes for conformance profiles
+     */
+    void setCodeStoreRegistry(CodeStoreRegistry store);	
 
 	// Default instances of business objects
 
@@ -195,6 +217,16 @@ public interface HapiContext {
 	 */
 	GenericParser getGenericParser();
 
+    /**
+     * Returns a ca.uhn.hl7v2.conf.check.Validator instance. It is recommended to
+     * use {@link #getMessageValidator()} and configure a Validation rule that checks
+     * a message against a conformance profile
+     * 
+     * @return a ca.uhn.hl7v2.conf.check.Validator instance initialized as set with
+     * {@link #setCodeStoreRegistry(CodeStoreRegistry)}
+     */
+    ca.uhn.hl7v2.conf.check.Validator getConformanceValidator();
+    
 	/**
 	 * @return a MessageValidator instance initialized with the {@link ValidationContext} as set
 	 *         using {@link #setValidationContext(ValidationContext)}. For each validation it will
@@ -246,4 +278,6 @@ public interface HapiContext {
 	 *         service instances provided by this interface.
 	 */
 	TwoPortService getTwoPortService(int inbound, int outbound, boolean tls);
+	
+
 }
