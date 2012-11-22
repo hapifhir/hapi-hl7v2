@@ -90,6 +90,9 @@ public class ReportingValidationExceptionHandler implements ValidationExceptionH
         return new ReportingValidationExceptionHandler(throwFirstException);
     }
 
+    /**
+     * Does nothing
+     */
     public void setValidationSubject(Object subject) {
     }
     

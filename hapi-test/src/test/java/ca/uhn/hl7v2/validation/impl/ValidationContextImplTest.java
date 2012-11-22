@@ -13,6 +13,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.EncodingRule;
 import ca.uhn.hl7v2.validation.MessageRule;
@@ -23,10 +24,10 @@ import ca.uhn.hl7v2.validation.ValidationException;
 /**
  * Unit tests for ValidationContextImpl. 
  * 
- * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
+ * @author Bryan Tripp
  * @author Christian Ohr 
  */
-public class ValidationContextImplTest {
+public class ValidationContextImplTest extends MockitoTest {
     
     private ValidationContextImpl myContext;
     private static final ValidationException[] PASS = new ValidationException[0];

@@ -317,7 +317,7 @@ public class CommonDTTest {
                 + "PID|||A9283923889^^^^||Doe^John||19680306|M\r"
                 + "PV1||I|Cardiology^4^01^CATEUR_WARDS&&L||||||||||||||||V00001\r"
                 + "IN1|s|ID001^Full Insurance|XXXX|INSURANCE_Ltd.\r"
-                + "ORC|NW|PL001||P001|||||20110414153220|||00000999^Strangelove^Peter^^^Dr.|||||||P0343874^Jansen^Patricia||Connectathon Europe 2011^^^^^^^^^CATEUR2011|Casa della Cittˆ Leopolda, Piazza Guerrazzi, 56125 Pisa|0039 50 48587||P3;V3\r"
+                + "ORC|NW|PL001||P001|||||20110414153220|||00000999^Strangelove^Peter^^^Dr.|||||||P0343874^Jansen^Patricia||Connectathon Europe 2011^^^^^^^^^CATEUR2011|Casa della Citta Leopolda, Piazza Guerrazzi, 56125 Pisa|0039 50 48587||P3;V3\r"
                 + "TQ1|1|2^Tab&Tablets&99FCS|TID\r"
                 + "RXO|S0002^Paracetamol^99SCS|500||mg^milligram^99UCS|Tab^Tablets^99FCS||||G|||||||||||J00.0^Cold^I10\r"
                 + "NTE|1||TAKE WITH WATER\r"

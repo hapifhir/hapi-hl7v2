@@ -46,7 +46,20 @@ public interface Expression<T extends Structure> {
 	 */
 	Object evaluate(T structure) throws HL7Exception;
 
+	/**
+	 * Returns the expression description used for describing the Rule this expression
+	 * is used in.
+	 * 
+	 * @return description 
+	 */
 	String getDescription();
 
+	/**
+	 * Returns the location of the structure to which is expression is applied to
+	 * 
+	 * @param structure
+	 * @return the location of the structure
+	 * @throws HL7Exception if the structure refers to an invalid location
+	 */
 	Location getLocation(T structure) throws HL7Exception;
 }

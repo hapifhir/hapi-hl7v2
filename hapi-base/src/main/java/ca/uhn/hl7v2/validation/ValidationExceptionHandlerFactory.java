@@ -32,7 +32,7 @@ import ca.uhn.hl7v2.HapiContext;
  * {@link ValidationExceptionHandler} instance, which is then used when
  * validating a message using a {@link DefaultValidator}.
  * <p>
- * This allows to to keep the validator thread-safe, so it can be concurrently
+ * This allows to to keep the validator itself thread-safe, so it can be concurrently
  * used e.g. in a Parser.
  * 
  * @author Christian Ohr

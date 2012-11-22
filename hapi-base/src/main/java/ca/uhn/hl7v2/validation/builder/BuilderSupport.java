@@ -32,8 +32,7 @@ import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.validation.ValidationException;
 
-/**
- * 
+/** 
  * Abstract base class for Validation Rule building that provides factory methods for
  * {@link Predicate}s.
  * 
@@ -95,6 +94,10 @@ public abstract class BuilderSupport implements Serializable {
 	public Predicate matches(String regex) {
 		return new MatchesPredicate(regex);
 	}
+	
+    public Predicate matches(String regex, String description) {
+        return new MatchesPredicate(regex, description);
+    }	
 
 	/**
 	 * @param prefix
@@ -102,7 +105,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         specified prefix.
 	 */
 	public Predicate startsWith(String prefix) {
-		return matches("^" + prefix + ".*");
+		return matches("^" + prefix + ".*", "starts with " + prefix);
 	}
 
 	/**
@@ -110,7 +113,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         into a non-negative integer.
 	 */
 	public Predicate nonNegativeInteger() {
-		return matches("\\d*");
+		return matches("\\d*", "a non-negative integer (0,1,2,...)");
 	}
 
 	/**
@@ -118,7 +121,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         into a number with optional decimal digits.
 	 */
 	public Predicate number() {
-		return matches("(\\+|\\-)?\\d*\\.?\\d*");
+		return matches("(\\+|\\-)?\\d*\\.?\\d*", "a number with optional decimal digits");
 	}
 
 	/**
@@ -126,7 +129,7 @@ public abstract class BuilderSupport implements Serializable {
 	 *         date pattern (YYYY[MM[DD]])
 	 */
 	public Predicate date() {
-		return matches("(\\d{4}([01]\\d(\\d{2})?)?)?");
+		return matches("(\\d{4}([01]\\d(\\d{2})?)?)?", "a date string (YYYY[MM[DD]])");
 	}
 
 	/**
@@ -134,7 +137,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         time pattern
 	 */
 	public Predicate time() {
-		return matches("([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?([\\+\\-]\\d{4})?");
+		return matches("([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?([\\+\\-]\\d{4})?",
+		        "a HL7 time string");
 	}
 
 	/**
@@ -142,7 +146,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         datetime pattern
 	 */
 	public Predicate dateTime() {
-		return matches("(\\d{4}([01]\\d(\\d{2}([012]\\d[0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?");
+		return matches("(\\d{4}([01]\\d(\\d{2}([012]\\d[0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?",
+		        "a HL7 datetime string");
 	}
 
 	/**
@@ -150,7 +155,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         datetime pattern
 	 */
 	public Predicate dateTime25() {
-		return matches("(\\d{4}([01]\\d(\\d{2}([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?");
+		return matches("(\\d{4}([01]\\d(\\d{2}([012]\\d([0-5]\\d([0-5]\\d(\\.\\d(\\d(\\d(\\d)?)?)?)?)?)?)?)?)?)?([\\+\\-]\\d{4})?",
+		        "a HL7 datetime string");
 	}
 
 	/**
@@ -158,7 +164,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         phone number pattern
 	 */
 	public Predicate usPhoneNumber() {
-		return matches("(\\d{1,2} )?(\\(\\d{3}\\))?\\d{3}-\\d{4}(X\\d{1,5})?(B\\d{1,5})?(C.*)?");
+		return matches("(\\d{1,2} )?(\\(\\d{3}\\))?\\d{3}-\\d{4}(X\\d{1,5})?(B\\d{1,5})?(C.*)?",
+		        "a US phone number");
 	}
 
 	/**
@@ -166,7 +173,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         OID pattern
 	 */
 	public Predicate oid() {
-		return matches("[0-2](\\.(0|([1-9][0-9]*)))+");
+		return matches("[0-2](\\.(0|([1-9][0-9]*)))+",
+		        "an Object Identifier (OID)");
 	}
 
 	/**
@@ -174,7 +182,8 @@ public abstract class BuilderSupport implements Serializable {
 	 *         pattern
 	 */
 	public Predicate uuid() {
-		return matches("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
+		return matches("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}",
+		        "a Unique Universal Identifier (UUID)");
 	}
 
 	/**
@@ -431,21 +440,32 @@ public abstract class BuilderSupport implements Serializable {
 	private class MatchesPredicate implements Predicate {
 
 		private Pattern p;
+		private String description;
 
 		public MatchesPredicate(String regex) {
-			p = Pattern.compile(regex);
+			this(regex, "matching with " + regex);
 		}
+		
+        public MatchesPredicate(String regex, String description) {
+            p = Pattern.compile(regex);
+            this.description = description;
+        }		
 
 		public MatchesPredicate(String regex, int flags) {
-			p = Pattern.compile(regex, flags);
+			this(regex, flags, "matching with " + regex);
 		}
+		
+        public MatchesPredicate(String regex, int flags, String description) {
+            p = Pattern.compile(regex);
+            this.description = description;
+        }		
 
 		public boolean evaluate(Object data) throws ValidationException {
 			return (data != null && p.matcher(data.toString()).matches());
 		}
 
 		public String getDescription() {
-			return "matching with " + String.valueOf(p.pattern());
+			return description;
 		}
 
 	}

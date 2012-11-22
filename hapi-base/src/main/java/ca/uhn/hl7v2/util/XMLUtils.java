@@ -43,100 +43,110 @@ import org.w3c.dom.ls.LSSerializer;
 
 public class XMLUtils {
 
-	private static DOMImplementation IMPL;
+    private static DOMImplementation IMPL;
 
-	@SuppressWarnings("unchecked")
-	public synchronized static <T> T getDOMImpl() {
-		if (IMPL == null) {
-			try {
-				DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-				IMPL = registry.getDOMImplementation("LS 3.0");
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return (T) IMPL;
-	}
+    @SuppressWarnings("unchecked")
+    public synchronized static <T> T getDOMImpl() {
+        if (IMPL == null) {
+            try {
+                DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+                IMPL = registry.getDOMImplementation("LS 3.0");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return (T) IMPL;
+    }
 
-	public static Document parse(String s) {
-		return parse(s, false);
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> T getDOMImplUncached() {
+        try {
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            return (T) registry.getDOMImplementation("LS 3.0");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public static Document parse(String s, boolean validateIfSchema) {
-		DOMImplementationLS impl = getDOMImpl();
-		LSInput input = impl.createLSInput();
-		input.setStringData(s);
-		return parse(input, validateIfSchema);
-	}
+    public static Document parse(String s) {
+        return parse(s, false);
+    }
 
-	public static Document parse(InputStream s, boolean validateIfSchema) {
-		DOMImplementationLS impl = getDOMImpl();
-		LSInput input = impl.createLSInput();
-		input.setByteStream(s);
-		return parse(input, validateIfSchema);
-	}
+    public static Document parse(String s, boolean validateIfSchema) {
+        DOMImplementationLS impl = getDOMImpl();
+        LSInput input = impl.createLSInput();
+        input.setStringData(s);
+        return parse(input, validateIfSchema);
+    }
 
-	private static Document parse(LSInput input, boolean validateIfSchema) {
-		DOMImplementationLS impl = getDOMImpl();
-		LSParser parser = impl.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
-		DOMConfiguration config = parser.getDomConfig();
-		config.setParameter("element-content-whitespace", false);
-		config.setParameter("namespaces", true);
-		config.setParameter("validate-if-schema", validateIfSchema);
-		return parser.parse(input);
-	}
+    public static Document parse(InputStream s, boolean validateIfSchema) {
+        DOMImplementationLS impl = getDOMImpl();
+        LSInput input = impl.createLSInput();
+        input.setByteStream(s);
+        return parse(input, validateIfSchema);
+    }
 
-	public static void validate(Document d, String schema, DOMErrorHandler handler) {
-		DOMConfiguration config = d.getDomConfig();
-		config.setParameter("schema-type", "http://www.w3.org/2001/XMLSchema");
-		config.setParameter("validate", true);
-		config.setParameter("schema-location", schema);
-		config.setParameter("resource-resolver", new ClasspathResourceResolver());
-		config.setParameter("error-handler", handler);
-		d.normalizeDocument();
-	}
+    private static Document parse(LSInput input, boolean validateIfSchema) {
+        DOMImplementationLS impl = getDOMImpl();
+        LSParser parser = impl.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
+        DOMConfiguration config = parser.getDomConfig();
+        config.setParameter("element-content-whitespace", false);
+        config.setParameter("namespaces", true);
+        config.setParameter("validate-if-schema", validateIfSchema);
+        return parser.parse(input);
+    }
 
-	public static String serialize(Document document) {
-		DOMImplementationLS impl = getDOMImpl();
-		LSSerializer serializer = impl.createLSSerializer();
-		// document.normalizeDocument();
-		DOMConfiguration config = serializer.getDomConfig();
-		config.setParameter("xml-declaration", true);
-		config.setParameter("format-pretty-print", true);
-		LSOutput output = impl.createLSOutput();
-		output.setEncoding("UTF-8");
-		Writer writer = new StringWriter();
-		output.setCharacterStream(writer);
-		serializer.write(document, output);
-		return writer.toString();
-	}
+    public static void validate(Document d, String schema, DOMErrorHandler handler) {
+        DOMConfiguration config = d.getDomConfig();
+        config.setParameter("schema-type", "http://www.w3.org/2001/XMLSchema");
+        config.setParameter("validate", true);
+        config.setParameter("schema-location", schema);
+        config.setParameter("resource-resolver", new ClasspathResourceResolver());
+        config.setParameter("error-handler", handler);
+        d.normalizeDocument();
+    }
 
-	public static Document emptyDocument(String title) {
-		DOMImplementation impl = getDOMImpl();
-		Document doc = impl.createDocument("urn:hl7-org:v2xml", title, null);
-		return doc;
-	}
+    public static String serialize(Document document) {
+        DOMImplementationLS impl = getDOMImpl();
+        LSSerializer serializer = impl.createLSSerializer();
+        // document.normalizeDocument();
+        DOMConfiguration config = serializer.getDomConfig();
+        config.setParameter("xml-declaration", true);
+        config.setParameter("format-pretty-print", true);
+        LSOutput output = impl.createLSOutput();
+        output.setEncoding("UTF-8");
+        Writer writer = new StringWriter();
+        output.setCharacterStream(writer);
+        serializer.write(document, output);
+        return writer.toString();
+    }
 
-	/**
-	 * This is an implementation of LSResourceResolver that can resolve XML schemas from the
-	 * classpath
-	 */
-	private static class ClasspathResourceResolver implements LSResourceResolver {
-		private DOMImplementationLS impl;
+    public static Document emptyDocument(String title) {
+        DOMImplementation impl = getDOMImpl();
+        Document doc = impl.createDocument("urn:hl7-org:v2xml", title, null);
+        return doc;
+    }
 
-		ClasspathResourceResolver() {
-			impl = getDOMImpl();
-		}
+    /**
+     * This is an implementation of LSResourceResolver that can resolve XML schemas from the
+     * classpath
+     */
+    private static class ClasspathResourceResolver implements LSResourceResolver {
+        private DOMImplementationLS impl;
 
-		public LSInput resolveResource(String type, String namespaceURI, String publicId,
-				String systemId, String baseURI) {
-			LSInput lsInput = impl.createLSInput();
-			InputStream is = getClass().getResourceAsStream("/" + systemId);
-			if (is == null)
-				return null;
-			lsInput.setByteStream(is);
-			return lsInput;
-		}
-	}
+        ClasspathResourceResolver() {
+            impl = getDOMImpl();
+        }
+
+        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
+                String baseURI) {
+            LSInput lsInput = impl.createLSInput();
+            InputStream is = getClass().getResourceAsStream("/" + systemId);
+            if (is == null)
+                return null;
+            lsInput.setByteStream(is);
+            return lsInput;
+        }
+    }
 
 }

@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
- * Validation rule for detecting unknown Segments in a message
+ * Validation rule for detecting unknown segments in a message
  * 
  * @author Christian Ohr
  */

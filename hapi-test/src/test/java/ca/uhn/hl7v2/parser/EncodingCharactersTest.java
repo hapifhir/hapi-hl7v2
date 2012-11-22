@@ -1,11 +1,13 @@
 package ca.uhn.hl7v2.parser;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 
-public class EncodingCharactersTest extends TestCase {
+public class EncodingCharactersTest  {
 
+    @Test(expected=HL7Exception.class)
 	public void testValidateMSH2() throws HL7Exception {
 
 		// MSH-2 has only three chars
@@ -17,14 +19,7 @@ public class EncodingCharactersTest extends TestCase {
 
 		ORU_R01 msg = new ORU_R01();
 		msg.parse(msgString);
-
-		try {
-			System.out.println(msg.encode().replace('\r', '\n'));
-			fail();
-		} catch (HL7Exception e) {
-			e.printStackTrace();
-		}
-		
+		msg.encode().replace('\r', '\n');	
 	}
 	
 	

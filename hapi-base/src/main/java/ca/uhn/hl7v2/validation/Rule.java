@@ -31,38 +31,18 @@ import java.io.Serializable;
 /**
  * <p>
  * A testable rule to which HL7 messages (at least certain specific message)
- * should conform. This is the central interface of the new HAPI validation
- * model (as of HAPI 0.4). Previously, the only run-time message validation HAPI
- * performs is within the setValue() methods of the Primitive datatype classes.
- * For example when you called setValue() on a DT an exception was thrown if the
- * String arg was not in the correct DT format. This method served well
- * initially but left us with the following limitations:
- * <ol>
- * <li>Sometimes validation is inappropriate (e.g. some of the standard rules,
- * like phone number format, don't make sense in some regions).</li>
- * <li>Couldn't add further optional constraints (such as all timestamps must
- * have a time zone).</li>
- * <li>Couldn't turn off validation to improve performance.</li>
- * <li>Other forms of validation (e.g. conformance profiles, standard DTDs) were
- * not covered.</li>
- * </ol>
- * </p>
- * <p>
- * Thus the new validation model is broader in scope, and is based on validation
- * rules implemented as Rule objects, which can be configured to run or not, as
- * needed, depending on run-time configuration.
- * </p>
+ * should conform. 
  * <p>
  * There are three kinds of rules:
- * <ol>
+ * <ul>
  * <li>PrimitiveTypeRule: Called when the values of simple datatypes are set,
  * like the existing hard-coded datatype validations (e.g.
  * TNFollowsNorthAmericanFormat).</li>
  * <li>MessageRule: Called when complete message content is to be checked on a
  * parsed message (e.g. conformance profile).</li>
  * <li>EncodingRule: Applied to an encoded message (e.g. validation against a
- * 2.xml Schema, a rule that prohibits empty tags, etc.).</li>
- * </ol>
+ * .xml Schema, a rule that prohibits empty tags, etc.).</li>
+ * </ul>
  * </p>
  * 
  * @author Bryan Tripp

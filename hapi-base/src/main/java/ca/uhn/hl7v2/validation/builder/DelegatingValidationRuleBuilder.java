@@ -26,8 +26,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.builder;
 
 /**
- * Delegating Rule Builder that additionally allows to delegate
- * rule building. 
+ * Delegating Rule Builder that additionally allows to delegate rule building. 
  *
  * @author Christian Ohr
  */

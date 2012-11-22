@@ -28,7 +28,12 @@ package ca.uhn.hl7v2.validation;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
 
-
+/**
+ * Abstract base class of a ValidationExceptionHandler that supports a validation subject. Concrete
+ * implementations should inherit from this class.
+ * 
+ * @author Christian Ohr
+ */
 public abstract class AbstractValidationExceptionHandler<R> extends HapiContextSupport implements
         ValidationExceptionHandler<R> {
 

@@ -1,18 +1,23 @@
 package ca.uhn.hl7v2.parser;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+
+import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
-import junit.framework.TestCase;
 
-public class ParserConfigurationTest extends TestCase {
+public class ParserConfigurationTest  {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ParserConfigurationTest.class);
 	
 	/**
 	 * Test for
 	 * http://sourceforge.net/tracker/?func=detail&aid=3472728&group_id=38899&atid=423835
 	 */
+	@Test
 	public void testCheckFirstCharacterForcedEncode() throws HL7Exception, IOException {
 		
 		ORU_R01 msg = new ORU_R01();
@@ -27,48 +32,28 @@ public class ParserConfigurationTest extends TestCase {
 		assertTrue(encoded.contains("PID|||||||||||^^^^^^"));
 		
 	}
-	
+
+	@Test
 	public void testAddForcedEncodeValidatesInput() {
 		
 		ParserConfiguration pc = new ParserConfiguration();
-
 		pc.addForcedEncode("ORDER/RXR-22");
 		
-		try {
-			pc.addForcedEncode("A");
-			fail();
-		} catch (IllegalArgumentException e) {
-			ourLog.debug(e.getMessage());
-		}
+		assertIllegalArgument(pc, "A");
+        assertIllegalArgument(pc, "AA");
+        assertIllegalArgument(pc, "AAA/");
+        assertIllegalArgument(pc, "AAA-A");
+        assertIllegalArgument(pc, "AAA-123-");
 
-		try {
-			pc.addForcedEncode("AA");
-			fail();
-		} catch (IllegalArgumentException e) {
-			ourLog.debug(e.getMessage());
-		}
-
-		try {
-			pc.addForcedEncode("AAA/");
-			fail();
-		} catch (IllegalArgumentException e) {
-			ourLog.debug(e.getMessage());
-		}
-
-		try {
-			pc.addForcedEncode("AAA-A");
-			fail();
-		} catch (IllegalArgumentException e) {
-			ourLog.debug(e.getMessage());
-		}
-
-		try {
-			pc.addForcedEncode("AAA-123-");
-			fail();
-		} catch (IllegalArgumentException e) {
-			ourLog.debug(e.getMessage());
-		}
-		
+	}
+	
+	private void assertIllegalArgument(ParserConfiguration pc, String forcedEncode) {
+        try {
+            pc.addForcedEncode(forcedEncode);
+            fail();
+        } catch (IllegalArgumentException e) {
+            ourLog.debug(e.getMessage());
+        }	    
 	}
 	
 }

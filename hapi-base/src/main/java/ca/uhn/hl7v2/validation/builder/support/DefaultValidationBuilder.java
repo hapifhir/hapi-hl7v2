@@ -26,6 +26,12 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.builder.support;
 
 
+/**
+ * Builder implementing the default validation rules as described in the
+ * HL7 standard
+ * 
+ * @author Christian Ohr
+ */
 @SuppressWarnings("serial")
 public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
 

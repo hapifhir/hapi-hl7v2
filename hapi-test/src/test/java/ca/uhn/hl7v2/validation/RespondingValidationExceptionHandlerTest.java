@@ -12,6 +12,7 @@ import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Location;
+import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
@@ -19,7 +20,7 @@ import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
-public class RespondingValidationExceptionHandlerTest {
+public class RespondingValidationExceptionHandlerTest extends MockitoTest {
 
 	@Test
 	public void testPassingHandler() throws Exception {
