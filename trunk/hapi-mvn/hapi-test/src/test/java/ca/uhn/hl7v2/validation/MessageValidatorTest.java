@@ -1,24 +1,20 @@
 package ca.uhn.hl7v2.validation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.Collection;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
+import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
@@ -26,13 +22,7 @@ import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
-import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilderTest;
-import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
-import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
-import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
-import ca.uhn.hl7v2.validation.impl.RuleBinding;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 /**
  * Unit tests for MessageValidator.
@@ -42,7 +32,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  * @version $Revision: 1.2 $ updated on $Date: 2011-02-19 17:40:18 $ by $Author:
  *          jamesagnew $
  */
-public class MessageValidatorTest {
+public class MessageValidatorTest extends MockitoTest {
 
     private MessageValidator myFailingValidator;
     private MessageValidator myNonFailingValidator;

@@ -28,6 +28,13 @@ package ca.uhn.hl7v2.validation.builder.support;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 
+/**
+ * Builder implementing the default validation rules as described in the
+ * HL7 standard except for the TN data type, which is not appropriate anywhere
+ * outside the U.S.
+ * 
+ * @author Christian Ohr
+ */
 @SuppressWarnings("serial")
 public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 

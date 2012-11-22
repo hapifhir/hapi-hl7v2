@@ -30,7 +30,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
 /**
- * Validates messages.
+ * Interface to validates messages.
  * 
  * @author Bryan Tripp
  * @author Christian Ohr

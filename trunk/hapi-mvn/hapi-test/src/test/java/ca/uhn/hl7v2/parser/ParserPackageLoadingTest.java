@@ -23,102 +23,80 @@ of this file under the MPL, indicate your decision by deleting  the provisions a
 and replace  them with the notice and other provisions required by the GPL License.  
 If you do not delete the provisions above, a recipient may use your version of 
 this file under either the MPL or the GPL. 
-*/
+ */
 package ca.uhn.hl7v2.parser;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.mock.MockClassLoader;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.MockitoTest;
+import ca.uhn.hl7v2.Version;
 
 /**
- * Test the package list loading from the classpath.  
+ * Test the package list loading from the classpath.
  * 
  * @author <a href="mailto:alexei.guevara@uhn.on.ca">Alexei Guevara</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:49 $ by $Author: jamesagnew $
  */
-public class ParserPackageLoadingTest extends TestCase {
-    
-    private String myPackageListResourceNameTemplate;
+public class ParserPackageLoadingTest extends MockitoTest {
 
-	public ParserPackageLoadingTest( String theTestCaseName ) throws Exception {
-        super( theTestCaseName );
+    private static String versionPackage1 = "foo.bar.1";
+    private static String versionPackage2 = "foo.bar.2";
+    private static String versionPackage3 = "foo.bar.3";
+
+    private void testPackageList(String theVersion) throws HL7Exception, NoSuchFieldException {
+
+        String packageListResourceName = MessageFormat.format(
+                DefaultModelClassFactory.CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE, 
+                new Object[] { theVersion });
+
+        ClassLoader mockClassLoader = mock(ClassLoader.class);
         
-        //avoid code duplication using the private accessor.
-    	myPackageListResourceNameTemplate = DefaultModelClassFactory.CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE;
-        
-    }
-    
-	/*
-	 * not a test case
-	 */
-    public void testPackageList( String theVersion ) throws HL7Exception, NoSuchFieldException {
-    	
-    	String versionPackage1 = "foo.bar.1"; 
-    	String versionPackage2 = "foo.bar.2";
-    	String versionPackage3 = "foo.bar.3";
-    	
-    	String packageListResourceName = 
-    		MessageFormat.format( myPackageListResourceNameTemplate, new Object[] { theVersion } );
-    	 
-    	InputStream packageListStream =
-	    	new ByteArrayInputStream(
-	    		(versionPackage1 + "\n" +
-				 versionPackage2 + "\n" +
-				 versionPackage3).getBytes()
-	    	);
-    	
-    	ClassLoader mockClassLoader = new MockClassLoader( packageListResourceName, packageListStream );
-        
-        Thread.currentThread().setContextClassLoader( mockClassLoader );
-        
+        // Return a new stream each time - the first test loads the packages twice!
+        when(mockClassLoader.getResourceAsStream(packageListResourceName))
+            .thenAnswer(new Answer<InputStream>() {
+
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return packageListStream();
+            }
+
+        });
+
+        Thread.currentThread().setContextClassLoader(mockClassLoader);
+
         DefaultModelClassFactory.reloadPackages();
-        String[] packages = DefaultModelClassFactory.packageList( theVersion );
-        
-        String[] expectedPackages = 
-        	new String[] { 
-        		versionPackage1, 
-        		versionPackage2, 
-        		versionPackage3, 
-        		DefaultModelClassFactory.getVersionPackageName(theVersion) };
-        
-        assertEquals( Arrays.asList(expectedPackages), Arrays.asList(packages) );
-    }
-    
-    public void setUp() throws NoSuchFieldException {
-    	//clear the Parser.packages class variable
-    	// PrivateAccessor.setField( DefaultModelClassFactory.class, "packages", null );
-    }
-    
-    public void testPackageListV2_1() throws Exception {
-    	testPackageList( "2.1" );
+        String[] packages = DefaultModelClassFactory.packageList(theVersion);
+
+        String[] expectedPackages = new String[] { 
+                versionPackage1, 
+                versionPackage2, 
+                versionPackage3,
+                DefaultModelClassFactory.getVersionPackageName(theVersion) };
+
+        assertEquals(Arrays.asList(expectedPackages), Arrays.asList(packages));
     }
 
-    public void testPackageListV2_2() throws Exception {
-    	testPackageList( "2.2" );
+    private InputStream packageListStream() {
+        return new ByteArrayInputStream((versionPackage1 + "\n" + versionPackage2 + "\n" + versionPackage3).getBytes());
     }
 
-    public void testPackageListV2_3() throws Exception {
-    	testPackageList( "2.3" );
+    @Test
+    public void testPackageList() throws Exception {
+        for (Version v : Version.values()) {
+            testPackageList(v.getVersion());
+        }
     }
 
-    public void testPackageListV2_3_1() throws Exception {
-    	testPackageList( "2.3.1" );
-    }
 
-    public void testPackageListV2_4() throws Exception {
-    	testPackageList( "2.4" );
-    }
-    
-    public void testPackageListV2_5() throws Exception {
-    	testPackageList( "2.5" );
-    }
-    
-    
-    
 }

@@ -28,7 +28,7 @@ public class ParserPerformance {
         }        
         long elapsed = System.currentTimeMillis() - now;
         
-        System.out.println(reps + " message parses in " + elapsed + "ms");
+        System.out.println(reps + " messages parses in " + elapsed + " ms");
     }
     
     private static String getMessage() {

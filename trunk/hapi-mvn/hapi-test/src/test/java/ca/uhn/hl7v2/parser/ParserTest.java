@@ -80,11 +80,6 @@ public class ParserTest
         PipeParser p = new PipeParser();
         Message m = p.parse(message);
         p.encode(m);
-        p.encode(m);
-        p.encode(m);
-        p.encode(m);
-        p.encode(m);
-        p.encode(m);
 
         assertEquals(GenericMessage.V22.class, m.getClass());
         Terser t = new Terser(m);
@@ -171,5 +166,20 @@ public class ParserTest
     	String test = p.encode(m);
     	assertEquals(message, test);
     }
+    
+    @Test
+    public void test17142192() throws Exception {
+
+        String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||ORM^O01||P|2.3\r" +
+                "PID|||12345678||Lastname^^INI^^PREFIX||19340207|F|||Street 15^^S GRAVENHAGE^^2551HL^NEDERLAND|||||||||||||||NL\r" +
+                "ORC|NW|8100088345^ORDERNR||LN1||C|^^^20070504080000||20070504141816|||0^Doctor\r" +
+                "OBR|1|8100088345^ORDERNR||ADR^Something||||||||||||0^Doctor\r" +
+                "OBX|1|RP|ADR^Something||http://TRACEMASTERVUE/TMVWebAPIClient/ShowTIFFImage.aspx?ECGID=0595f00-317e-11e2-4823-00201fe00029||||||F\r";
+        
+        Parser p = new PipeParser();
+        Message m = p.parse(message);
+        String test = p.encode(m);
+        assertEquals(message, test);
+    }    
 
 }

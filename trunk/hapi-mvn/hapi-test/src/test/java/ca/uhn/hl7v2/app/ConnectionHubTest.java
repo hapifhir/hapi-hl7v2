@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
@@ -44,7 +45,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-public class ConnectionHubTest {
+public class ConnectionHubTest extends MockitoTest {
 
 	private static final Logger ourLog = LoggerFactory.getLogger(ConnectionHubTest.class);
 	private static int port1;
