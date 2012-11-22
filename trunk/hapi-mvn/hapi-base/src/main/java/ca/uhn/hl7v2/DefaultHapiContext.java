@@ -31,6 +31,10 @@ import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
+import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
+import ca.uhn.hl7v2.conf.store.DefaultCodeStoreRegistry;
+import ca.uhn.hl7v2.conf.store.ProfileStore;
+import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -83,6 +87,8 @@ public class DefaultHapiContext implements HapiContext {
     private ConnectionHub connectionHub;
     private LowerLayerProtocol llp;
     private SocketFactory socketFactory;
+    private ProfileStore profileStore;
+    private CodeStoreRegistry codeStoreRegistry;
 
     private PipeParser pipeParser;
     private XMLParser xmlParser;
@@ -121,6 +127,8 @@ public class DefaultHapiContext implements HapiContext {
         setLowerLayerProtocol(new MinLowerLayerProtocol());
         setSocketFactory(new StandardSocketFactory());
         setValidationExceptionHandlerFactory(new ReportingValidationExceptionHandler(true));
+        setProfileStore(ProfileStoreFactory.getProfileStore());
+        setCodeStoreRegistry(new DefaultCodeStoreRegistry());
     }
 
     public DefaultHapiContext(ParserConfiguration parserConfiguration,
@@ -131,6 +139,8 @@ public class DefaultHapiContext implements HapiContext {
         setModelClassFactory(modelClassFactory);
         setLowerLayerProtocol(new MinLowerLayerProtocol());
         setSocketFactory(new StandardSocketFactory());
+        setProfileStore(ProfileStoreFactory.getProfileStore());
+        setCodeStoreRegistry(new DefaultCodeStoreRegistry());
     }
 
     public DefaultHapiContext(HapiContext context) {
@@ -233,6 +243,26 @@ public class DefaultHapiContext implements HapiContext {
 
     public void setModelClassFactory(ModelClassFactory modelClassFactory) {
         this.modelClassFactory = modelClassFactory;
+    }
+    
+    public ProfileStore getProfileStore() {
+        return profileStore;
+    }
+
+    public void setProfileStore(ProfileStore profileStore) {
+        this.profileStore = profileStore;
+    }
+
+    public CodeStoreRegistry getCodeStoreRegistry() {
+        return codeStoreRegistry;
+    }
+
+    public void setCodeStoreRegistry(CodeStoreRegistry codeStoreRegistry) {
+        this.codeStoreRegistry = codeStoreRegistry;
+    }
+    
+    public ca.uhn.hl7v2.conf.check.Validator getConformanceValidator() {
+        return new ca.uhn.hl7v2.conf.check.DefaultValidator(this);
     }
 
     public synchronized PipeParser getPipeParser() {

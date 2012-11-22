@@ -3,7 +3,8 @@ package ca.uhn.hl7v2.conf.store;
 import java.io.IOException;
 
 /**
- * A repository for conformance profile documents.  
+ * A repository for conformance profile documents.
+ * 
  * @author Bryan Tripp
  */
 public interface ProfileStore {

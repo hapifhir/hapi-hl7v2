@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Stores profiles in a local directory.  Profiles are stored as text
  * in files named ID.xml (where ID is the profile ID).
+ * 
  * @author Bryan Tripp
  */
 public class FileProfileStore implements ProfileStore {

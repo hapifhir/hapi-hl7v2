@@ -7,32 +7,23 @@
 
 package ca.uhn.hl7v2.conf.store;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Ignore;
+import org.junit.Test;
+
 
 /**
  * JUnit tests for URLProfileStore 
  * @author Bryan Tripp
  */
-public class URLProfileStoreTest extends TestCase {
+public class URLProfileStoreTest  {
     
-    public URLProfileStoreTest(java.lang.String testName) {
-        super(testName);
-    }
-    
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-    
-    public static Test suite() {
-        TestSuite suite = new TestSuite(URLProfileStoreTest.class);
-        return suite;
-    }
-    
+    @Test
     public void testWithClassLoader() throws Exception {
         URLProfileStore store = new URLProfileStore() {
             public URL getURL(String ID) throws MalformedURLException {
@@ -44,6 +35,7 @@ public class URLProfileStoreTest extends TestCase {
         assertEquals("<foo/>", profile);        
     }
 
+    @Ignore
     public void testWithHTTP() throws Exception {
         URLProfileStore store = new URLProfileStore() {
             public URL getURL(String ID) throws MalformedURLException {
