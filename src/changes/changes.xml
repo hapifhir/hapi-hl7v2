@@ -6,6 +6,9 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+        	<action type="fix" dev="Christian Ohr" issue="3590954">
+            	Fixed incorrect trimming rule for TX. Thanks to Søren Therkildsen for reporting.
+            </action>
         	<action type="fix" dev="Christian Ohr" issue="3571839">
             	Fixed incorrect generation of ACK messages for HL7 versions newer
             	than 2.4. Thanks to Anne-Gaelle for reporting.

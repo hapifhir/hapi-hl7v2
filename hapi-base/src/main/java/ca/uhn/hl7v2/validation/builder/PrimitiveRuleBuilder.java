@@ -33,6 +33,7 @@ import java.util.Set;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
+import ca.uhn.hl7v2.validation.builder.PredicatePrimitiveTypeRule.Trimmer;
 import ca.uhn.hl7v2.validation.impl.PrimitiveTypeRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
@@ -72,19 +73,63 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
 	 * 
 	 * @return this instance to build more rules
 	 */
-	public PrimitiveRuleBuilder trimmed(Predicate predicate) {
-		return test(new PredicatePrimitiveTypeRule(predicate, true));
+	public PrimitiveRuleBuilder leftTrim(Predicate predicate) {
+		return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.LEFT));
 	}
 
+    /**
+     * Builds a {@link PrimitiveTypeRule} that always evaluates to <code>true</code> and trims
+     * leading whitespaces.
+     * 
+     * @return this instance to build more rules
+     */
+    public PrimitiveRuleBuilder leftTrim() {
+        return leftTrim(always(true));
+    }
+    
 	/**
 	 * Builds a {@link PrimitiveTypeRule} that always evaluates to <code>true</code> and trims
-	 * leading whitespaces.
+	 * trailing whitespaces.
 	 * 
 	 * @return this instance to build more rules
 	 */
-	public PrimitiveRuleBuilder trimmed() {
-		return trimmed(always(true));
-	}	
+	public PrimitiveRuleBuilder rightTrim() {
+		return rightTrim(always(true));
+	}
+	
+    /**
+     * Builds a {@link PrimitiveTypeRule} that evaluates the specified {@link Predicate} against the
+     * primitive value with trailing whitespaces trimmed.
+     * 
+     * @param predicate predicate to evaluate the primitive value against
+     * 
+     * @return this instance to build more rules
+     */
+    public PrimitiveRuleBuilder rightTrim(Predicate predicate) {
+        return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.RIGHT));
+    }
+    
+    /**
+     * Builds a {@link PrimitiveTypeRule} that always evaluates to <code>true</code> and trims
+     * leading and trailing whitespaces.
+     * 
+     * @return this instance to build more rules
+     */
+    public PrimitiveRuleBuilder allTrim() {
+        return allTrim(always(true));
+    }
+    
+    /**
+     * Builds a {@link PrimitiveTypeRule} that evaluates the specified {@link Predicate} against the
+     * primitive value with leading and trailing whitespaces trimmed.
+     * 
+     * @param predicate predicate to evaluate the primitive value against
+     * 
+     * @return this instance to build more rules
+     */
+    public PrimitiveRuleBuilder allTrim(Predicate predicate) {
+        return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.ALL));
+    }    
 
 	@Override
 	protected Collection<RuleBinding<PrimitiveTypeRule>> getRuleBindings(PrimitiveTypeRule rule,

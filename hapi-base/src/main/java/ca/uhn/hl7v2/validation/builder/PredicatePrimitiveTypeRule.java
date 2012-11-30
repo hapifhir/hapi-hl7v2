@@ -38,19 +38,45 @@ import ca.uhn.hl7v2.validation.impl.AbstractPrimitiveTypeRule;
 @SuppressWarnings("serial")
 public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implements
 		PredicateRuleSupport<String> {
+ 
+    private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
+    private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");
 
-	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
+    
+    public enum Trimmer {
+
+        LEFT {
+            @Override public String trim(String source) { return trimPattern(LEADING_WHITESPACE, source); }            
+        },
+        RIGHT {
+            @Override public String trim(String source) { return trimPattern(TRAILING_WHITESPACE, source); }            
+        },                
+        NONE {
+            @Override public String trim(String source) { return source; }            
+        },
+        ALL {
+            @Override public String trim(String source) { return source == null ? null : source.trim(); }                        
+        };
+        
+        public abstract String trim(String source);
+        
+        protected String trimPattern(Pattern pattern, String source) {
+            if (source == null || pattern == null) 
+                return source;
+            return pattern.matcher(source).replaceAll("");
+        }
+    }
 
 	private Predicate predicate;
-	private boolean trimLeadingWhitespace;
+	private Trimmer trimmer;
 
 	public PredicatePrimitiveTypeRule(Predicate predicate) {
-		this(predicate, false);
+		this(predicate, Trimmer.NONE);
 	}
 
-	public PredicatePrimitiveTypeRule(Predicate predicate, boolean trimLeadingWhitespace) {
+	public PredicatePrimitiveTypeRule(Predicate predicate, Trimmer trimmer) {
 		this.predicate = predicate;
-		this.trimLeadingWhitespace = trimLeadingWhitespace;
+		this.trimmer = trimmer;
 	}
 
 	public Predicate getPredicate() {
@@ -62,9 +88,7 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 	}
 
 	public String correct(String value) {
-		if (value == null || !trimLeadingWhitespace) return value;
-		String trimmed = LEADING_WHITESPACE.matcher(value).replaceAll("");
-		return trimmed;
+	    return trimmer.trim(value);
 	}
 
 	public boolean test(String value) {

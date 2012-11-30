@@ -73,8 +73,9 @@ Validation of HL7 messages
 		forAllVersions()
 		
 			// you can trim the value before validation
-			.primitive("FT").trimmed(maxLength(32000))
-			.primitive("ST", "TX").trimmed()
+			.primitive("FT").trimLeft(maxLength(32000))
+			.primitive("ST").trimLeft()
+			.primitive("TX").trimRight()
 			
 			// you can apply the same rule to more than one type
 			.primitive("ID", "IS").is(maxLength(200))
