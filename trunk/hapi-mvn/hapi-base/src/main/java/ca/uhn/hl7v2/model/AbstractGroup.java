@@ -511,22 +511,38 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     }
 
     // returns a name for a class of a Structure in this Message
-    private String getName(Class<? extends Structure> c) {
-        String fullName = c.getName();
-        int dotLoc = fullName.lastIndexOf('.');
-        String name = fullName.substring(dotLoc + 1, fullName.length());
-
-        // remove message name prefix from group names for compatibility with
-        // getters ...
+    private String getName(Class<? extends Structure> c) {        
+        String name = c.getSimpleName();
         if (Group.class.isAssignableFrom(c) && !Message.class.isAssignableFrom(c)) {
-            String messageName = getMessage().getName();
-            if (name.startsWith(messageName) && name.length() > messageName.length()) {
-                name = name.substring(messageName.length() + 1);
-            }
+            name = getGroupName(name);
         }
-
         return name;
     }
+
+    /**
+     * Remove message name prefix from group names for compatibility with getters. Due to
+     * 3558962 we also need to look at the message's super classes to enable custom
+     * messages that reuse groups from their ancestors.
+     *
+     * @param name the simple name of the group
+     * @return the abbreviated group in name in case of matching prefixes
+     */
+    private String getGroupName(String name) {
+        Class<?> messageClass = getMessage().getClass();
+        while (Message.class.isAssignableFrom(messageClass)) {
+            @SuppressWarnings("unchecked")
+            // actually we should call getName() instead of getName(Class), but this
+            // is due to issue 3558962
+            String messageName = getName((Class<? extends Message>)messageClass);
+            if (name.startsWith(messageName) && name.length() > messageName.length()) {
+                return name.substring(messageName.length() + 1);
+            }
+            messageClass = messageClass.getSuperclass();
+        }
+        return name;
+    }
+    
+
 
     /**
      * Inserts the given structure into this group, at the indicated index number. This method is
