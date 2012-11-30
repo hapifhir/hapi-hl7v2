@@ -6,7 +6,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "TrimLeadingWhitespaceRule.java".  Description: 
+The Original Code is "TrimTrailingWhitespaceRule.java".  Description: 
 "Performs no validation but removes leading whitespace in the correct() method." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
@@ -39,9 +39,9 @@ import ca.uhn.hl7v2.validation.builder.PrimitiveRuleBuilder;
  * @deprecated use {@link PrimitiveRuleBuilder#leftTrim()} instead
  */
 @SuppressWarnings("serial")
-public class TrimLeadingWhitespace extends AbstractPrimitiveTypeRule {
+public class TrimTrailingWhitespace extends AbstractPrimitiveTypeRule {
 
-	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");
+	private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");
 
 	/**
 	 * Removes leading whitespace.
@@ -49,7 +49,7 @@ public class TrimLeadingWhitespace extends AbstractPrimitiveTypeRule {
 	 * @see ca.uhn.hl7v2.validation.PrimitiveTypeRule#correct(java.lang.String)
 	 */
 	public String correct(String value) {
-		return value != null ? LEADING_WHITESPACE.matcher(value).replaceAll("") : null;
+		return value != null ? TRAILING_WHITESPACE.matcher(value).replaceAll("") : null;
 	}
 
 	public ValidationException[] apply(String value) {
@@ -60,7 +60,7 @@ public class TrimLeadingWhitespace extends AbstractPrimitiveTypeRule {
 	 * @see ca.uhn.hl7v2.validation.Rule#getDescription()
 	 */
 	public String getDescription() {
-		return "Leading whitespace removed";
+		return "Trailing whitespace removed";
 	}
 
 }

@@ -33,6 +33,7 @@ public class NoValidationBuilder extends ValidationRuleBuilder {
 
 	protected void configure() {
 		forAllVersions()
-			.primitive("FT", "ST", "TX").trimmed();
+			.primitive("FT", "ST").leftTrim()
+			.primitive("TX").rightTrim();
 	}
 }

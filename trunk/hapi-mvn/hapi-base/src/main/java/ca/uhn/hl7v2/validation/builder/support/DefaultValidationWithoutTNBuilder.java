@@ -44,8 +44,9 @@ public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 	protected void configure() {
 		
 		forAllVersions()
-			.primitive("FT").trimmed(maxLength(32000))
-			.primitive("ST", "TX").trimmed()
+			.primitive("FT").leftTrim(maxLength(32000))
+			.primitive("ST").leftTrim()
+			.primitive("TX").rightTrim()
 			.primitive("ID", "IS").is(maxLength(200))
 			.primitive("SI").is(emptyOr(nonNegativeInteger()))
 			.primitive("NM").is(emptyOr(number()))
