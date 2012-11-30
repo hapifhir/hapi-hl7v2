@@ -79,7 +79,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * </p>
      */
     public CustomModelClassFactory(String packageName) {
-        this();
+        this(new HashMap<String, String[]>());
 
         if (!packageName.endsWith(".")) {
             packageName += ".";
