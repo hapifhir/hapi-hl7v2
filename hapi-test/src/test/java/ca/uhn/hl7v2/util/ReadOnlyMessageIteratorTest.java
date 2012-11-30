@@ -3,15 +3,18 @@
  */
 package ca.uhn.hl7v2.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Iterator;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.v25.group.ORU_R01_ORDER_OBSERVATION;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -28,20 +31,30 @@ public class ReadOnlyMessageIteratorTest {
 		PipeParser parser = new PipeParser();
 		Message msg = parser.parse(getMessageOne());
 		Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedSegmentIterator(msg);
-
-		assertEquals("MSH", ((Segment) it.next()).getName());
-		assertEquals("PID", ((Segment) it.next()).getName());
-		assertEquals("PV1", ((Segment) it.next()).getName());
-		assertEquals("OBR", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("NTE", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
-		assertEquals("OBX", ((Segment) it.next()).getName());
+		
+		String[] segments = { "MSH","PID","PV1","OBR","OBX","OBX","OBX","OBX","OBX","NTE","OBX","OBX"};
+		for (String segment : segments) {
+		    assertEquals(segment, ((Segment) it.next()).getName());
+        }
 	}
+	
+    @Test
+    public void testFilteredGroups() throws EncodingNotSupportedException, HL7Exception {
+        PipeParser parser = new PipeParser();
+        Message msg = parser.parse(getMessageOne());
+        Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedStructureIterator(msg, ORU_R01_ORDER_OBSERVATION.class);
+        assertEquals(ORU_R01_ORDER_OBSERVATION.class, it.next().getClass());
+        assertFalse(it.hasNext());
+    }
+    
+    @Test
+    public void testFilteredGroupNames() throws EncodingNotSupportedException, HL7Exception {
+        PipeParser parser = new PipeParser();
+        Message msg = parser.parse(getMessageOne());
+        Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedStructureIterator(msg, "ORDER_OBSERVATION");
+        assertEquals(ORU_R01_ORDER_OBSERVATION.class, it.next().getClass());
+        assertFalse(it.hasNext());
+    }    
 
 	private String getMessageOne() {
 		return "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.5\r"
