@@ -70,21 +70,44 @@ public class ReadOnlyMessageIterator implements Iterator<Structure> {
         return createPopulatedStructureIterator(theRoot, Segment.class);       
     }
     
+    /**
+     * @param theRoot root of depth first iteration, which starts with the first child
+     * @param c structure class to look for
+     * @return an iterator that skips all structures that do not match the parameter
+     */
     public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, Class<? extends Structure> c) {
+        return createPopulatedStructureIterator(theRoot, new StructurePredicate(c));       
+    }    
+
+    /**
+     * @param theRoot root of depth first iteration, which starts with the first child
+     * @param structureName structure name to look for
+     * @return n iterator that skips all structures that do not match the parameter
+     */
+    public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, String structureName) {
+        return createPopulatedStructureIterator(theRoot, new StructureNamePredicate(structureName));
+    }
+    
+    /**
+     * @param theRoot root of depth first iteration, which starts with the first child
+     * @param structureFilter filter class
+     * @return iterator that skips all structures that the filter does not accept
+     */
+    public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, FilterIterator.Predicate<Structure> structureFilter) {
         Iterator<Structure> allIterator = new ReadOnlyMessageIterator(theRoot);
-        Iterator<Structure> structureIterator = new FilterIterator<Structure>(allIterator, new StructurePredicate(c));
+        Iterator<Structure> structureIterator = new FilterIterator<Structure>(allIterator, structureFilter);
         
         FilterIterator.Predicate<Structure> populatedOnly = new FilterIterator.Predicate<Structure>() {
             public boolean evaluate(Structure obj) {
                 try {
-					return !obj.isEmpty();
-				} catch (HL7Exception e) {
-					return false; // no exception expected
-				}
+                    return !obj.isEmpty();
+                } catch (HL7Exception e) {
+                    return false; // no exception expected
+                }
             }
         };
-        return new FilterIterator<Structure>(structureIterator, populatedOnly);        
-    }    
+        return new FilterIterator<Structure>(structureIterator, populatedOnly);         
+    }
     
     private void addChildren(Group theParent) {
         String[] names = theParent.getNames();
