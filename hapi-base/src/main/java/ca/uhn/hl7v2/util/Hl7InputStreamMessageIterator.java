@@ -7,11 +7,11 @@ import java.util.Iterator;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageStringIterator.ParseFailureError;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * <p>
@@ -34,12 +34,10 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  * {@link ParseFailureError}
  * </p>
  */
-public class Hl7InputStreamMessageIterator implements Iterator<Message> {
+public class Hl7InputStreamMessageIterator extends HapiContextSupport implements Iterator<Message> {
 
 	private Class<? extends Message> myMessageType;
-	private PipeParser myParser;
 	private Hl7InputStreamMessageStringIterator myWrapped;
-	private HapiContext myHapiContext;
 
 	/**
 	 * Constructor
@@ -48,8 +46,7 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 *            The input stream to read from
 	 */
 	public Hl7InputStreamMessageIterator(InputStream theInputStream) {
-		myWrapped = new Hl7InputStreamMessageStringIterator(theInputStream);
-		initParser();
+        this(theInputStream, new DefaultHapiContext(ValidationContextFactory.noValidation()));
 	}
 
 	/**
@@ -59,8 +56,7 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 *            The reader to read from
 	 */
 	public Hl7InputStreamMessageIterator(Reader theReader) {
-		myWrapped = new Hl7InputStreamMessageStringIterator(theReader);
-		initParser();
+		this(theReader, new DefaultHapiContext(ValidationContextFactory.noValidation()));
 	}
 
 	/**
@@ -72,9 +68,8 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 * 			 The HapiContext from which to obtain the parser
 	 */
 	public Hl7InputStreamMessageIterator(InputStream theInputStream, HapiContext theHapiContext) {
+	    super(theHapiContext);
 		myWrapped = new Hl7InputStreamMessageStringIterator(theInputStream);
-		myHapiContext = theHapiContext;
-		initParser();
 	}
 
 	/**
@@ -86,9 +81,8 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 * 			 The HapiContext from which to obtain the parser
 	 */
 	public Hl7InputStreamMessageIterator(Reader theReader, HapiContext theHapiContext) {
+        super(theHapiContext);
 		myWrapped = new Hl7InputStreamMessageStringIterator(theReader);
-		myHapiContext = theHapiContext;
-		initParser();
 	}
 
 	/**
@@ -96,14 +90,6 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 	 */
 	public boolean hasNext() {
 		return myWrapped.hasNext();
-	}
-
-	private void initParser() {
-		if (myHapiContext == null) {
-			myHapiContext = new DefaultHapiContext();
-			myHapiContext.setValidationContext(new NoValidation());
-		}
-		myParser = myHapiContext.getPipeParser();
 	}
 
 	/**
@@ -114,10 +100,10 @@ public class Hl7InputStreamMessageIterator implements Iterator<Message> {
 		Message retVal;
 		try {
 			if (myMessageType != null) {
-				retVal = ReflectionUtil.instantiateMessage(myMessageType, myParser.getHapiContext().getModelClassFactory());
+				retVal = ReflectionUtil.instantiateMessage(myMessageType, getHapiContext().getModelClassFactory());
 				retVal.parse(nextString);
 			} else {
-				retVal = myParser.parse(nextString);
+				retVal = getHapiContext().getPipeParser().parse(nextString);
 			}
 		} catch (EncodingNotSupportedException e) {
 			throw new Hl7InputStreamMessageStringIterator.ParseFailureError("Failed to parse message", e);
