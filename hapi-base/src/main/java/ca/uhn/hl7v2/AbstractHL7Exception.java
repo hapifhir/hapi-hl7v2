@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.util.Terser;
 /**
  * 
  * Abstract base class for Exceptions that are able to create acknowledgement
- * messages from their error code and locatin information
+ * messages from their error code and location information
  * 
  * @author Christian Ohr
  *
@@ -192,7 +192,7 @@ public abstract class AbstractHL7Exception extends Exception {
 		String message = super.getMessage();
 		if (message == null) message = "Exception";
 		StringBuilder msg = new StringBuilder(message);
-		if (getLocation() != null) {
+		if (getLocation() != null && !getLocation().isUnknown()) {
 			msg.append(" at ").append(getLocation().toString());
 		}
 		return msg.toString();
