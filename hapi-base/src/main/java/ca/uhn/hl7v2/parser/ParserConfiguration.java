@@ -18,6 +18,7 @@ public class ParserConfiguration {
 	private String myInvalidObx2Type;
 	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 	private boolean validating = true;
+	private boolean escapeSubcomponentDelimiterInPrimitive = false;
 
 	/**
 	 * <p>
@@ -329,7 +330,24 @@ public class ParserConfiguration {
     public void setValidating(boolean validating) {
         this.validating = validating;
     }
+
+    /**
+     * @return <code>true</code> if subcomponent delimiters in OBX-5 shall be ignored
+     */
+    public boolean isEscapeSubcomponentDelimiterInPrimitive() {
+        return escapeSubcomponentDelimiterInPrimitive;
+    }
+
+    /**
+     * Set to <code>true</code> if subcomponent delimiters in OBX-5 shall be ignored
+     * 
+     * @param escapeSubcomponentDelimiterInPrimitive
+     */
+    public void setEscapeSubcomponentDelimiterInPrimitive(boolean escapeSubcomponentDelimiterInPrimitive) {
+        this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;
+    }
 	
+    
 	
 	
 

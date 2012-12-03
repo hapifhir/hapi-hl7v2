@@ -163,6 +163,35 @@ public class VariesTest {
 		assertEquals(expected.trim(), encode.trim());
 
 	}
+	
+    @Test
+    public void testObx5WithExpectedComponentUnpexpectedSubcomponentWithinPrimitive2()
+            throws HL7Exception {
+
+        // Message is stripped down
+        String msgString = "MSH|^~\\&\r" // -
+                + "OBR|\r" // -
+                + "OBX||ST|||F1C1&F1C2\r";
+
+        ORU_R01 msg = new ORU_R01();
+        msg.getParser().getParserConfiguration().setEscapeSubcomponentDelimiterInPrimitive(true);
+        msg.parse(msgString);
+
+        String encode = msg.encode();
+        ourLog.debug("\n\n" + encode);
+
+        Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
+                .getOBX().getObx5_ObservationValue(0);
+        ST obx5 = (ST) observationValue.getData();
+        assertEquals("F1C1&F1C2", obx5.getValue());
+
+        String expected = "MSH|^~\\&\r" // -
+                + "OBR|\r" // -
+                + "OBX||ST|||F1C1\\T\\F1C2\r";
+
+        assertEquals(expected.trim(), encode.trim());
+
+    }	
 
 	/**
 	 * AD = ST, ST,...

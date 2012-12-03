@@ -80,15 +80,13 @@ public class MessageTypeRouter implements Application,
 	 *             Application throws this exception during processing.
 	 */
 	public Message processMessage(Message in) throws ApplicationException {
-		Message out;
 		try {
 			Application matchingApp = this.getMatchingApplication(in);
-			out = matchingApp.processMessage(in);
+			return matchingApp.processMessage(in);
 		} catch (HL7Exception e) {
 			throw new ApplicationException("Error internally routing message: "
 					+ e.toString(), e);
 		}
-		return out;
 	}
 
 	/**
