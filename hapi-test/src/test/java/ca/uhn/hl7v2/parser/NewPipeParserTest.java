@@ -126,6 +126,7 @@ public class NewPipeParserTest {
     /**
      * See 1643780
      */
+    @Test
     public void testMisplacedAl1() throws Exception {
 
         // AIL is non-standard
@@ -163,6 +164,7 @@ public class NewPipeParserTest {
      * This test checks for correct behaviour if a required segment at the tail of the message is
      * missing
      */
+    @Test
     public void testMissingRequiredLastSegment() throws HL7Exception {
 
         String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
@@ -182,6 +184,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testParseRepeatingNonRepeatableSegment() throws HL7Exception {
         String message = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
@@ -202,6 +205,7 @@ public class NewPipeParserTest {
         ourLog.debug(msg.printStructure());
     }
 
+    @Test
     public void testPreserveFormattingChars() throws HL7Exception {
 
         String msgString = "MSH|^~\\&|PHCN_ULTRA|2220|HSIE|2220|201106161233||ORU^R01|72313573|T|2.4|||AL|AL|AU\r\n"
@@ -224,7 +228,6 @@ public class NewPipeParserTest {
         String obx5encoded = obx.getObx5_ObservationValue(0).encode();
         assertTrue(obx5encoded, obx5encoded.contains("Type Venous\\.br\\\\.br\\ Analysis"));
         assertTrue(obx5encoded, obx5encoded.contains("pH : \\H\\ 7.28\\N\\ (7.38-7.43) "));
-
     }
 
     /**
@@ -232,6 +235,7 @@ public class NewPipeParserTest {
      * 
      * Ensure that the correct class is parsed for 2.3.1 ORM^O01
      */
+    @Test
     public void testParseCorrectClass() throws EncodingNotSupportedException, HL7Exception {
 
         String sn = "MSH|^~\\&|RIS 2.0|KIR|InterRis 2.0|Receiving facility|20110309132505||ORM^O01|MSG00001|1|2.3.1|1||||SL|UNICODE UTF-8|SL\r"
@@ -252,6 +256,7 @@ public class NewPipeParserTest {
      * Checking an issue reported by a user where an ampersand in OBx-5 causes the content after the
      * ampersand to be repeated
      */
+    @Test
     public void testAmpersandInObx5() throws HL7Exception {
 
         // Message is stripped down
@@ -269,6 +274,7 @@ public class NewPipeParserTest {
      * Make sure mandatory segments are encoded, even if they are empty. This is required to give
      * parsing applications a hint as to where the following segments belong.
      */
+    @Test
     public void testEncodeEmptySegmentsIfTheyAreMandatory() throws HL7Exception {
 
         // Message is stripped down
@@ -343,6 +349,7 @@ public class NewPipeParserTest {
      * Ensure that incorrectly placed extra segment at end of message is in the same position when
      * message is re-encoded. This is based on an issue found by UHN
      */
+    @Test
     public void testAddExtraSegmentToEnd() throws EncodingNotSupportedException, HL7Exception {
 
         String msgString = "MSH|^~\\&|REG|W|||201103230042||ADT^A06|32153168-A06|P|2.2\r"
@@ -361,6 +368,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testTwoSegmentsWithSameName() throws EncodingNotSupportedException, HL7Exception {
 
         String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1||||||\r"
@@ -380,6 +388,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testLotsOfExtraSegments() throws EncodingNotSupportedException, HL7Exception {
 
         String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1\r"
@@ -400,6 +409,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testDTInObx2() throws EncodingNotSupportedException, HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
@@ -418,6 +428,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testInvalidLengthInObx2() throws EncodingNotSupportedException, HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.4\r"
@@ -446,6 +457,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testUnexpectedSegmentAtEng() throws EncodingNotSupportedException, HL7Exception {
         String messageText = "MSH|^~\\&|REG|G|||201002220026||ADT^A14|33186452|P|2.2|||||\r"
                 + "EVN|A14|201002220026|||14380\r"
@@ -463,6 +475,7 @@ public class NewPipeParserTest {
     /**
      * In SIU_S12, Groups begin with RGS and have nested subgroups as well
      */
+    @Test
     public void testNestedRepeatingGroups() throws EncodingNotSupportedException, HL7Exception {
 
         String messageText = "MSH|^~\\&|ORSOS|G|PRECASE^SCHEDULING||20100406132803||SIU^S14| 38762|P|2.3\r"
@@ -490,6 +503,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testAL1Reps() throws IOException, EncodingNotSupportedException, HL7Exception {
         InputStream stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("ca/uhn/hl7v2/parser/adt_a03.txt");
@@ -509,6 +523,7 @@ public class NewPipeParserTest {
         ourLog.debug(parser.encode(message));
     }
 
+    @Test
     public void testGetVersion() throws Exception {
         String message = "MSH|^~\\&|3|4|5|6|7|8|9|10|11|12|13|||\rMSA|foo\rERR|bar|||";
         assertEquals("12", parser.getVersion(message));
@@ -517,7 +532,8 @@ public class NewPipeParserTest {
         message = "MSH|^~\\&|STML|001|STML|001|20020307142717||ADT^A08|01501|T|2.2^x^x|||AL|NE\rEVN|A08|20020307142652";
         assertEquals("2.2", parser.getVersion(message));
     }
-
+    
+    @Test
     public void testGetAckID() throws Exception {
         String message = "MSH|foo|foo";
         String ackID = parser.getAckID(message);
@@ -532,6 +548,7 @@ public class NewPipeParserTest {
      * be placed in the first location following the last location that was filled. It shouldn't be
      * placed in a location preceding previously used locations.
      */
+    @Test
     public void testCorrectSegmentOrderWithMultipleOptions() throws Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "ORC|\r" + //
@@ -545,6 +562,7 @@ public class NewPipeParserTest {
         assertEquals("test", val);
     }
 
+    @Test
     public void testNonStandardSegmentNearStart() throws EncodingNotSupportedException, HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
@@ -565,6 +583,7 @@ public class NewPipeParserTest {
         assertEquals("7005728", pidMrn);
     }
 
+    @Test
     public void testNonStandardSegmentNearEnd() throws EncodingNotSupportedException, HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
@@ -582,6 +601,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testNonStandardSegmentAfterEnd() throws EncodingNotSupportedException, HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
@@ -603,6 +623,7 @@ public class NewPipeParserTest {
     /**
      * Test repeating segment location
      */
+    @Test
     public void testRepeatingSegment() throws Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "ORC|\r" + //
@@ -624,6 +645,7 @@ public class NewPipeParserTest {
     /**
      * If a repeating group has an optional first child,
      */
+    @Test
     public void testRepeatingGroupWithOptionalFirstSegment() throws Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "ORC|\r" + //
@@ -653,6 +675,7 @@ public class NewPipeParserTest {
      * later segment has already been populated, and the group is repeating, then a new group
      * instance should be created and the segment should be placed there.
      */
+    @Test
     public void testParseIntoNewGroupIfMisorderedInCurrentGroup() throws Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "ORC|\r" + //
@@ -680,6 +703,7 @@ public class NewPipeParserTest {
     /**
      * Check that parsing an empty segment doesn't crash
      */
+    @Test
     public void testParseEmptySegment() throws EncodingNotSupportedException, HL7Exception {
         String message = "MSH|^~\\&|||||20080627102031.292+0100||ADT^A31^ADT_A31|EJ557600005480760|P|2.3|||||BE|8859/1|FR\r\n"
                 + "EVN||20080627101943+0100\r\n"
@@ -691,6 +715,7 @@ public class NewPipeParserTest {
      * If there is a potential location for a segment in a certain group, but the entire group is
      * out of order, the segment should not be placed there (in a current or subsequent repetition).
      */
+    @Test
     public void testNotParseIntoNewGroupIfWholeGroupMisordered() throws Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "DSC|\r" + //
@@ -706,6 +731,7 @@ public class NewPipeParserTest {
         assertTrue(val == null || val.length() == 0);
     }
 
+    @Test
     public void testComponents() throws Exception {
         // test normal component, subcomponent
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\rPID|||||x&y^z|\r";
@@ -716,6 +742,7 @@ public class NewPipeParserTest {
         assertEquals("z", pid.getPatientName(0).getGivenName().getValue());
     }
 
+    @Test
     public void testExtraComponents() throws Exception {
         // an extra subcomponent on a primitive field is treated as an
         // ExtraComponent of the Primitive
@@ -744,12 +771,14 @@ public class NewPipeParserTest {
         assertEquals("z", ((Primitive) ((Varies) c.getComponent(1)).getData()).getValue());
     }
 
+    @Test
     public void testExtraFieldReps() throws Exception {
         String message = "MSH|^~\\&|one~two~three||||||ORU^R01|1|D|2.4\r";
         ORU_R01 msg = (ORU_R01) parser.parse(message);
         assertEquals("three", ((HD) msg.getMSH().getField(3, 2)).getNamespaceID().getValue());
     }
 
+    @Test
     public void testEscape() throws Exception {
         ACK ack = new ACK();
         ack.getMSH().getFieldSeparator().setValue("|");
@@ -760,6 +789,7 @@ public class NewPipeParserTest {
         assertEquals(expected, actual);
     }
 
+    @Test
     public void testUnescape() throws Exception {
         String text = "MSH|^~\\&|\\F\\||||||ORU^R01|1|D|2.4\r";
         Message message = parser.parse(text);
@@ -767,6 +797,7 @@ public class NewPipeParserTest {
         assertEquals("|", t.get("MSH-3"));
     }
 
+    @Test
     public void testEarlyNonStandard() throws EncodingNotSupportedException, HL7Exception {
         String message = "MSH|^~\\&|IRIS|SANTER|AMB_R|SANTER|200803051508||ADT^A03|263206|P|2.5\r\n"
                 + "EVN||200803051509||||200803031508\r\n"
@@ -781,6 +812,7 @@ public class NewPipeParserTest {
     }
 
     @SuppressWarnings("serial")
+    @Test
     public void testValidation() throws Exception {
         HapiContext hc = new DefaultHapiContext();
         hc.setValidationRuleBuilder(new ValidationRuleBuilder() {
@@ -823,6 +855,7 @@ public class NewPipeParserTest {
      * If a non-repeating segment is found to be repeating, the extra should be added as a non
      * standard segment.
      */
+    @Test
     public void testDuplicateSegment() throws HL7Exception {
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ADT^A01|1|D|2.4\r" + //
                 "EVN|R01\r" + //
@@ -856,6 +889,7 @@ public class NewPipeParserTest {
      * @throws EncodingNotSupportedException -
      * @throws HL7Exception -
      */
+    @Test
     public void testInvalidSegmentName() throws EncodingNotSupportedException, HL7Exception {
 
         String msg = "MSH|^~\\&||Big Laboratory^33D0123456^CLIA|GEN2|NYSDOH|20060802101649||ORU^R01|200608021016491003|D|2.3\r\n"
@@ -867,6 +901,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testNonPipeDelimitor() throws EncodingNotSupportedException, HL7Exception {
         String msg = "MSH^~|\\&^HDRVTLS^552~DAYTDEV.FO-BAYPINES.MED.VA.GOV~DNS^GMRV VDEF IESIDE^200HD~HDR.MED.VA.GOV~DNS^20061006151615-0800^^ORU~R01^55253408603^T^2.4^^^AL^NE^US\r\n"
                 + "ORC^RE^^6240020~552_120.5^^^^^^^^^^OBS23~325~~~~~~~23 HOUR OBSERVATION^^^^552~DAYTON~L^^^^DAYTON\r\n"
@@ -879,6 +914,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testUnknownVersion() throws EncodingNotSupportedException, HL7Exception {
 
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.999\r" + //
@@ -897,6 +933,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testParseNonStandardSegment() throws EncodingNotSupportedException, HL7Exception {
 
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
@@ -939,6 +976,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testEmptySegment() throws EncodingNotSupportedException, HL7Exception {
         String msg = "MSH|^~\\&|1444-ADT|1444|S-ADT|SIMS|20071023160622||ADT^A03^ADT_A05|Q67084255T54052896X2|P^T|2.5|||NE|AL|CAN|8859/1\r\n"
                 + "EVN|A03|20071023160622\r\n"
@@ -1001,6 +1039,7 @@ public class NewPipeParserTest {
     /**
      * Make sure IS and ID datatypes are supported as OBX-5 values
      */
+    @Test
     public void testParseObx5WithTypeRequiringTable() throws EncodingNotSupportedException, HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -
@@ -1015,6 +1054,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testMissingSegment() throws EncodingNotSupportedException, HL7Exception {
 
         String messageString = "MSH|^~\\&|BLAH|Default Facility|||20100604104559||REF^I12^REF_I12|||2.5\r\n" // -
@@ -1040,6 +1080,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testEncodeHintSegmentAtStartOfMessage() throws HL7Exception, IOException {
 
         ca.uhn.hl7v2.model.v25.message.ADT_A01 msg = new ca.uhn.hl7v2.model.v25.message.ADT_A01();
@@ -1095,6 +1136,7 @@ public class NewPipeParserTest {
      * @throws HL7Exception
      * @throws IOException
      */
+    @Test
     public void testEncodeHintSegmentAtStartOfGroup() throws HL7Exception, IOException {
 
         ca.uhn.hl7v2.model.v25.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v25.message.ORU_R01();
@@ -1140,6 +1182,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testDontEncodeHintSegmentForEmptyGroup() throws HL7Exception, IOException {
 
         MessageWithGroupWithRequiredFinalSegment msg = new MessageWithGroupWithRequiredFinalSegment();
@@ -1170,6 +1213,7 @@ public class NewPipeParserTest {
         assertEquals(expected, actual);
     }
 
+    @Test
     public void testEncodeHintSegmentForMandatorySegmentBeforeGroup() throws HL7Exception, IOException {
 
         MessageWithMandatorySegmentBeforeSubgroup msg = new MessageWithMandatorySegmentBeforeSubgroup();
@@ -1197,6 +1241,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testEncodeHintSegmentForMandatorySegmentAfterGroup() throws HL7Exception, IOException {
 
         MessageWithMandatorySegmentAfterSubgroup msg = new MessageWithMandatorySegmentAfterSubgroup();
@@ -1223,6 +1268,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testEncodeWithForceEncoding() throws HL7Exception, IOException {
 
         PipeParser pOn = PipeParser.getInstanceWithNoValidation();
@@ -1282,6 +1328,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testEncodeWithForceEncodingOnMSH() throws HL7Exception, IOException {
 
         PipeParser pOn = PipeParser.getInstanceWithNoValidation();
@@ -1352,6 +1399,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testUnescapeComponents() throws HL7Exception {
 
         String message = "MSH|^~\\&|NES|NINTENDO|AGNEW|CORNERCUBICLE|20010101000000||ADT^A04|Q123456789T123456789X123456|P|2.3\r\n"
@@ -1388,6 +1436,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testParsePrimitiveWithUnexpectedSubcomponents() throws HL7Exception, IOException {
 
         ORU_R01 msg = new ORU_R01();
@@ -1405,6 +1454,7 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
     public void testParseTwice() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -
