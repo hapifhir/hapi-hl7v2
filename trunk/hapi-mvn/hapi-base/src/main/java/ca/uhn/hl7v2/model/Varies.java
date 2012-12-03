@@ -254,11 +254,16 @@ public class Varies implements Type {
                         newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class, Integer.class}).newInstance(new Object[]{v.getMessage(), 0});
                     }
                     
+                    boolean escapeSubcomponentDelimInPrimitive = 
+                            parserConfiguration.isEscapeSubcomponentDelimiterInPrimitive() ||
+                            escapeSubcomponentDelimInPrimitive();
+                    
+                    
                     if (newTypeInstance instanceof Primitive) {
                     	Type[] subComponentsInFirstField = v.getFirstComponentSubcomponentsOnlyIfMoreThanOne();
                     	if (subComponentsInFirstField != null) {
                     		
-                    		if (escapeSubcompponentDelimInPrimitive()) {
+                    		if (escapeSubcomponentDelimInPrimitive) {
                     		
 	                    		StringBuilder firstComponentValue = new StringBuilder();
 	                    		for (Type type : subComponentsInFirstField) {
@@ -292,7 +297,7 @@ public class Varies implements Type {
 	}
 
     
-    private static boolean escapeSubcompponentDelimInPrimitive() {
+    private static boolean escapeSubcomponentDelimInPrimitive() {
 		String property = System.getProperty(ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE);
 		return property == null || "true".equalsIgnoreCase(property);
 	}
