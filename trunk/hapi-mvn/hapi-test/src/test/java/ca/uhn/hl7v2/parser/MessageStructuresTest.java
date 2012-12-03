@@ -73,6 +73,7 @@ public class MessageStructuresTest {
 	/**
 	 * Make sure the "reps" methods are generated
 	 */
+	@Test
 	public void testRepsMethods() throws HL7Exception {
 
 		ACK ack = new ACK();
