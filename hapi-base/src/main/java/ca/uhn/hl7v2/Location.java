@@ -52,6 +52,10 @@ public class Location {
 		this.component = l.component;
 		this.subcomponent = l.subcomponent;
 	}
+	
+	public boolean isUnknown() {
+	    return this == UNKNOWN;
+	}
 
 	public String getSegmentName() {
 		return segmentName;
