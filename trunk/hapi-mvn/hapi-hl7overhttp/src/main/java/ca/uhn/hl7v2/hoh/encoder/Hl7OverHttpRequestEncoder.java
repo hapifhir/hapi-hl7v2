@@ -47,7 +47,7 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 
 	@Override
 	protected void setActionLineAppropriately() {
-		setActionLine("POST " + getUri() + " HTTP/1.1");
+		setActionLine("POST " + getPath() + " HTTP/1.1");
 	}
 
 	public void setHost(String theHost) {

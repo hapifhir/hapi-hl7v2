@@ -42,6 +42,12 @@
 			<item name="Generating Keys" href="generating_keys.html"/>
 		</menu>
 
+		<menu name="Documentation (Relay)">
+		    <item name="Description" href="relay_intro.html" />
+		    <item name="Installation" href="relay_install.html" />
+		    <item name="Configuration" href="relay_config.html" />
+		</menu>
+
 		<menu name="API">
 			<item name="JavaDocs" href="apidocs/index.html" />
 			<item name="Source Xref" href="xref/index.html" />

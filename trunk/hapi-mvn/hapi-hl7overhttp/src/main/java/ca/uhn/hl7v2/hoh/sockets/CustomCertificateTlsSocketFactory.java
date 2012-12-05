@@ -26,12 +26,14 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(CustomCertificateTlsSocketFactory.class);
+	private KeyStore myKeystore;
 	private String myKeystoreFilename;
 	private String myKeystorePassphrase;
 	private String myKeystoreType = "JKS";
 	private SSLServerSocketFactory myServerSocketFactory;
+
 	private SSLSocketFactory mySocketFactory = null;
-	private KeyStore myKeystore;
 
 	/**
 	 * Constructor
@@ -43,7 +45,8 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 	/**
 	 * Constructor
 	 * 
-	 * @throws NullPointerException If theKeystore is null
+	 * @throws NullPointerException
+	 *             If theKeystore is null
 	 */
 	public CustomCertificateTlsSocketFactory(KeyStore theKeystore, String theKeystorePass) {
 		if (theKeystore == null) {
@@ -75,6 +78,7 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 	 */
 	public Socket createClientSocket() throws IOException {
 		initialize();
+		ourLog.debug("Creating client socket");
 		return mySocketFactory.createSocket();
 	}
 
@@ -83,6 +87,7 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 	 */
 	public ServerSocket createServerSocket() throws IOException {
 		initialize();
+		ourLog.debug("Creating server socket");
 		return myServerSocketFactory.createServerSocket();
 	}
 

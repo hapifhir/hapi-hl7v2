@@ -4,10 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
@@ -39,7 +41,7 @@ public abstract class AbstractRawClient implements IClient {
 	/**
 	 * The default connection timeout in milliseconds: 10000
 	 */
-	private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
+	public static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
 
 	/**
 	 * The default number of milliseconds to wait before timing out waiting for
@@ -90,7 +92,11 @@ public abstract class AbstractRawClient implements IClient {
 	public AbstractRawClient(String theHost, int thePort, String theUri) {
 		setHost(theHost);
 		setPort(thePort);
-		setUri(theUri);
+		try {
+			setUri(URLEncoder.encode(theUri, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new Error("UTF-8 encoding is not present. This is probably a result of a misconfigured JVM.");
+		}
 	}
 
 	/**
@@ -130,7 +136,7 @@ public abstract class AbstractRawClient implements IClient {
 
 	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setUri(myPath);
+		enc.setPath(myPath);
 		enc.setHost(myHost);
 		enc.setPort(myPort);
 		enc.setCharset(myCharset);
@@ -371,7 +377,7 @@ public abstract class AbstractRawClient implements IClient {
 			// TODO check for other reserved chars, maybe also add this
 			// validation
 			// to encoder classes
-			throw new IllegalArgumentException("Invalid URI");
+			throw new IllegalArgumentException("Invalid URI: " + theUri);
 		}
 	}
 

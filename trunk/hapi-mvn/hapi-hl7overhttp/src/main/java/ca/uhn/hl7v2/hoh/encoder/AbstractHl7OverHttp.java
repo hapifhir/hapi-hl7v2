@@ -26,7 +26,7 @@ abstract class AbstractHl7OverHttp {
 	private String myMessage;
 	private String myPassword;
 	private ISigner mySigner;
-	private String myUri;
+	private String myPath;
 	private boolean myUsed;
 	private String myUsername;
 
@@ -81,10 +81,18 @@ abstract class AbstractHl7OverHttp {
 	}
 
 	/**
-	 * @return the uri
+	 * @return the path
 	 */
-	public String getUri() {
-		return myUri;
+	public String getPath() {
+		// TODO: un-url encode this
+		return myPath;
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPathRaw() {
+		return myPath;
 	}
 
 	/**
@@ -158,11 +166,11 @@ abstract class AbstractHl7OverHttp {
 	}
 
 	/**
-	 * @param theUri
-	 *            the uri to set
+	 * @param thePath
+	 *            the path to set
 	 */
-	public void setUri(String theUri) {
-		myUri = theUri;
+	public void setPath(String thePath) {
+		myPath = thePath;
 	}
 
 	/**

@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -15,12 +18,16 @@ import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.encoder.EncodingStyle;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpRequestDecoder;
 import ca.uhn.hl7v2.hoh.encoder.Hl7OverHttpResponseEncoder;
+import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.ISocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.StandardSocketFactory;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
 
 public class ServerSocketThreadForTesting extends Thread {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ServerSocketThreadForTesting.class);
 
+	private int myConnectionCount = 0;
 	private String myContentType;
 	private boolean myDone;
 	private EncodingStyle myEncoding;
@@ -28,22 +35,38 @@ public class ServerSocketThreadForTesting extends Thread {
 	private String myMessage;
 	private int myPort;
 	private Message myReply;
+	private String myRequestUri;
 	private IAuthorizationServerCallback myServerAuthCallback;
 	private ServerSocket myServerSocket;
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
-	private int myConnectionCount = 0;
+	private ISocketFactory mySocketFactory;
 
 	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
+		mySocketFactory = new StandardSocketFactory();
 	}
 
 	public ServerSocketThreadForTesting(int thePort, IAuthorizationServerCallback theServerAuthCallback) {
 		myPort = thePort;
 		myServerAuthCallback = theServerAuthCallback;
+		mySocketFactory = new StandardSocketFactory();
+	}
+
+	public ServerSocketThreadForTesting(int thePort, IAuthorizationServerCallback theServerAuthCallback, ISocketFactory theSocketFactory) {
+		myPort = thePort;
+		myServerAuthCallback = theServerAuthCallback;
+		mySocketFactory = theSocketFactory;
 	}
 
 	public void done() {
 		myDone = true;
+	}
+
+	/**
+	 * @return the connectionCount
+	 */
+	public int getConnectionCount() {
+		return myConnectionCount;
 	}
 
 	/**
@@ -81,6 +104,10 @@ public class ServerSocketThreadForTesting extends Thread {
 		return myReply;
 	}
 
+	public String getRequestUri() {
+		return myRequestUri;
+	}
+
 	@Override
 	public void run() {
 
@@ -90,7 +117,10 @@ public class ServerSocketThreadForTesting extends Thread {
 		
 		Exception ex = null;
 		try {
-			myServerSocket = new ServerSocket(myPort);
+			myServerSocket = mySocketFactory.createServerSocket();
+			myServerSocket.bind(new InetSocketAddress((InetAddress)null, myPort), 50);
+
+//			myServerSocket = new ServerSocket(myPort);
 			myServerSocket.setSoTimeout(1000);
 
 			while (!myDone) {
@@ -128,13 +158,6 @@ public class ServerSocketThreadForTesting extends Thread {
 	}
 
 	/**
-	 * @return the connectionCount
-	 */
-	public int getConnectionCount() {
-		return myConnectionCount;
-	}
-
-	/**
 	 * @param theMessage
 	 *            the message to set
 	 */
@@ -148,6 +171,10 @@ public class ServerSocketThreadForTesting extends Thread {
 	 */
 	public void setReply(Message theReply) {
 		myReply = theReply;
+	}
+
+	public void setServerSockewtFactory(CustomCertificateTlsSocketFactory theServerSocketFactory) {
+		mySocketFactory = theServerSocketFactory;
 	}
 
 	public void setSimulateOneSecondPauseInChunkedEncoding(boolean theB) {
@@ -167,15 +194,28 @@ public class ServerSocketThreadForTesting extends Thread {
 
 			ourLog.info("Starting socket reader");
 			try {
-				InputStream is = mySocket.getInputStream();
+				PushbackInputStream is = new PushbackInputStream(mySocket.getInputStream());
 				OutputStream os = mySocket.getOutputStream();
 				while (!myDone) {
 
+					try {
+						int nextChar = is.read();
+						ourLog.info("Read: " + nextChar);
+						if (nextChar > 0) { 
+							is.unread(nextChar);
+						}
+					
+					} catch (SocketTimeoutException e) {
+						// ignore
+					}
+					
 					if (is.available() > 0) {
 						ourLog.info("Socket reader has data");
 
-//						byte[] bis = IOUtils.readInputStreamIntoByteArraWhileDataAvailable(is);
-//						ourLog.info("Received input:\n" + new String(bis, HTTPUtils.DEFAULT_CHARSET));
+						// byte[] bis =
+						// IOUtils.readInputStreamIntoByteArraWhileDataAvailable(is);
+						// ourLog.info("Received input:\n" + new String(bis,
+						// HTTPUtils.DEFAULT_CHARSET));
 
 						Hl7OverHttpRequestDecoder d = new Hl7OverHttpRequestDecoder();
 						d.setAuthorizationCallback(myServerAuthCallback);
@@ -183,6 +223,7 @@ public class ServerSocketThreadForTesting extends Thread {
 						myMessage = d.getMessage();
 						myContentType = d.getContentType();
 						myEncoding = d.getEncodingStyle();
+						myRequestUri = d.getPathRaw();
 
 						Message parsedMessage = GenericParser.getInstanceWithNoValidation().parse(myMessage);
 						myReply = parsedMessage.generateACK();
@@ -194,7 +235,7 @@ public class ServerSocketThreadForTesting extends Thread {
 							e.encode();
 							e.getHeaders().remove("Content-Length");
 							e.getHeaders().put("Transfer-Encoding", "chunked");
-							
+
 							OutputStream tempOs = os;
 							tempOs.write("HTTP/1.1 200 OK\r\n".getBytes("ISO-8859-1"));
 							for (Map.Entry<String, String> next : e.getHeaders().entrySet()) {
@@ -202,15 +243,15 @@ public class ServerSocketThreadForTesting extends Thread {
 								ourLog.debug("Sending response header - " + nextHeader);
 								tempOs.write((nextHeader + "\r\n").getBytes("ISO-8859-1"));
 							}
-							
+
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));
-							
+
 							byte[] bytes = e.getData();
 							int halfLength = bytes.length / 2;
-							
+
 							String chunkLength = Integer.toHexString(halfLength);
 							ourLog.debug("Sending chunk length: {}", halfLength);
-							
+
 							tempOs.write(chunkLength.getBytes("ISO-8859-1"));
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));
 							tempOs.write(bytes, 0, halfLength);
@@ -218,23 +259,23 @@ public class ServerSocketThreadForTesting extends Thread {
 							tempOs.flush();
 
 							Thread.sleep(1000);
-							
+
 							int remaining = bytes.length - halfLength;
-							
+
 							String remChunkLength = Integer.toHexString(remaining);
 							ourLog.debug("Sending chunk length: {}", remaining);
 							tempOs.write(remChunkLength.getBytes("ISO-8859-1"));
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));
 							tempOs.write(bytes, halfLength, remaining);
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));
-							
+
 							tempOs.write("0\r\n\r\n\r\n".getBytes("ISO-8859-1"));
 							tempOs.flush();
-							
+
 						} else {
-							
+
 							e.encodeToOutputStream(os);
-							
+
 						}
 
 					} else {

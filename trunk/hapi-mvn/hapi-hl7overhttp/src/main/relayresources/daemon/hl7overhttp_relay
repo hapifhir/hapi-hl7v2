@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# hl7overhttp:      HAPI - HL7 over HTTP Relay
+#
+# chkconfig: 345 80 05
+# description:      HAPI - HL7 over HTTP Relay
+
+### BEGIN INIT INFO
+# Provides:          hl7overhttp_relay
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Should-Start:      $network
+# Should-Stop:       $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: HAPI - HL7 over HTTP Relay
+# Description:       HAPI - HL7 over HTTP Relay
+### END INIT INFO
+
+# *********************************************************
+# Start of configuration
+# *********************************************************
+
+RELAY_PATH=/opt/hl7overhttp-relay
+
+# If you want the relay to run under a specific user, put the username here
+RELAY_USER="root"
+
+# *********************************************************
+# End of Configuration
+# *********************************************************
+
+if [$RELAY_USER -eq "root"]
+then
+	SU=""
+else
+	SU="su --login  $RELAY_USER --command  "
+fi
+
+case "$1" in
+start)
+    echo "`date` - Starting HAPI - HL7 over HTTP Relay..."
+	 cd $RELAY_PATH/bin
+	 $SU ./hl7overhttp-relay start >/dev/null 2>/dev/null
+    echo "`date` - Successfully Started HAPI - HL7 over HTTP Relay"
+    ;;
+stop)
+    echo "`date` - Stopping HAPI - HL7 over HTTP Relay..."
+	 cd $RELAY_PATH/bin
+	 $SU ./hl7overhttp-relay stop >/dev/null 2>/dev/null
+    echo "`date` - Successfully Stopped HAPI - HL7 over HTTP Relay"
+    ;;
+*)
+    echo "usage: $0 (start|stop|help)"
+esac
+

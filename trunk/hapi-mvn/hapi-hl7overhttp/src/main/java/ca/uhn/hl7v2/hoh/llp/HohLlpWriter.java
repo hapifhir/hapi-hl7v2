@@ -88,7 +88,7 @@ class HohLlpWriter implements HL7Writer {
 			e.setCharset(getPreferredCharset());
 		}
 
-		e.setUri(myProtocol.getUriPath());
+		e.setPath(myProtocol.getUriPath());
 		DataOutputStream dos = new DataOutputStream(myOutputStream);
 		try {
 			e.encodeToOutputStream(dos);

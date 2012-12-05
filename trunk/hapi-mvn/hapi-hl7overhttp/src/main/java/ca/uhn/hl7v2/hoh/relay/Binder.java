@@ -25,7 +25,7 @@ public class Binder implements InitializingBean {
 		Validate.propertySet(myListener, "listener");
 		Validate.propertySet(mySender, "sender");
 
-		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[{}/{}/{}/{}]", new Object[] { mySender.getBeanName(), myListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId });
+		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[MsgType:{} / MsgTrigger:{} / Version:{} / Processing:{}]", new Object[] { mySender.getBeanName(), myListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId });
 
 		AppRoutingDataImpl appRoutingData = new AppRoutingDataImpl(myMessageType, myTriggerEvent, myProcessingId, myVersionId);
 		myListener.registerApplication(appRoutingData, mySender);

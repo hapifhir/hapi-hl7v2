@@ -34,7 +34,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	/**
 	 * Default {@link #setSocketTimeout(long) Socket Timeout}, 10000ms
 	 */
-	private static final long DEFAULT_SOCKET_TIMEOUT = 10000;
+	public static final long DEFAULT_SOCKET_TIMEOUT = 10000;
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientMultithreaded.class);
 
@@ -64,7 +64,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	 */
 	public HohRawClientMultithreaded(String theHost, int thePort, String thePath) {
 		this();
-		
+
 		setHost(theHost);
 		setPort(thePort);
 		setPath(thePath);
@@ -131,12 +131,26 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 		return retVal;
 	}
 
+	/**
+	 * Returns a socket to the pool. If the socket is closed, it will
+	 * not be returned.
+	 */
 	@Override
 	protected synchronized void returnSocket(Socket theSocket) {
+		if (theSocket.isClosed()) {
+			return;
+		}
+		
 		long now = System.currentTimeMillis();
 
+		// TODO: reap immediately if timeout is 0
+		
 		if (ourLog.isDebugEnabled()) {
-			ourLog.debug("Returning socket, will be eligible for reaping at " + myLogTimeFormat.format(new Date(now + mySocketTimeout)));
+			if (mySocketTimeout == -1) {
+				ourLog.debug("Returning socket, will not attempt to reap");
+			} else {
+				ourLog.debug("Returning socket, will be eligible for reaping at " + myLogTimeFormat.format(new Date(now + mySocketTimeout)));
+			}
 		}
 
 		myIdleSocketsToTimeBecameIdle.put(theSocket, now);
@@ -154,6 +168,10 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 			return;
 		}
 
+		if (mySocketTimeout == -1) {
+			return;
+		}
+		
 		long earliestReapingTime = Long.MAX_VALUE;
 		for (Long next : myIdleSocketsToTimeBecameIdle.values()) {
 			long nextReapingTime = next + mySocketTimeout;
@@ -171,13 +189,20 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 		myReapingScheduled = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.uhn.hl7v2.hoh.raw.client.IClientMultithreaded#setSocketTimeout(long)
+	/**
+	 * {@inheritDoc}
+	 */
+	public long getSocketTimeout() {
+		return mySocketTimeout;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized void setSocketTimeout(long theSocketTimeout) {
+		if (mySocketTimeout < -1) {
+			throw new IllegalArgumentException("Socket timeout must be -1, 0, or a positive integer");
+		}
 		mySocketTimeout = theSocketTimeout;
 		myReapingScheduled = false;
 		scheduleReaping();
@@ -186,6 +211,10 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	private class TimeoutTask implements Runnable {
 		public void run() {
 
+			if (mySocketTimeout == -1) {
+				return;
+			}
+			
 			ourLog.debug("Beginning socket reaping pass");
 			try {
 

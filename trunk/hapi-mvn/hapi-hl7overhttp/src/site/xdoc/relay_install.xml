@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP Relay - Installing</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="HL7 over HTTP Relay">
+
+			<macro name="toc">
+				<!-- <param name="section" value="2"/>
+				<param name="fromDepth" value="0"/>
+				<param name="toDepth" value="2"/>  -->
+			</macro>
+			
+		</section>
+		
+		<section name="Downloading">
+		
+		    <p>
+		    	To install the HL7 over HTTP Relay, first you should
+		    	download the latest version from the HAPI
+		    	<a href="http://sourceforge.net/projects/hl7api/files/hl7api-hl7overhttp-relay/">download area</a>.		    
+		    </p>
+		    
+		    <p>
+		    	Next, verify that your system has a suitable Jave Runtime Environment (JRE)
+		    	installed. Open a console window and execute the following command. Note that
+		    	a version of 1.5.xx or newer is required. If the following command does not work,
+		    	or if a version below 1.5.xx is found, you will need to upgrade or install
+		    	Java.
+		    </p>
+		    <div style="background: #E0E0E0; padding: 20px;">
+					~ $ <span style="color: #E06060;">java -version</span><br/>
+					java version "1.7.0_05"<br/>
+					Java(TM) SE Runtime Environment (build 1.7.0_05-b05)<br/>
+					Java HotSpot(TM) 64-Bit Server VM (build 23.1-b03, mixed mode)
+		   	</div>
+		    
+		    <p>
+		    	Next, unzip/untar the archive into an appropriate directory. 
+		    	Note that the application is entirely self-contained, meaning
+		    	that any configuration files live entirely within the directory
+		    	structure that is created when the application is unzipped. This
+		    	means that it is possible to run multiple instances of the 
+		    	application with different configurations simply by having
+		    	multiple installations in different directories. 
+		    </p>
+		    	
+		    <p>
+		    	The default installation contains configuration which listens for
+		    	MLLP connections on port 8079, and relays incoming messages to the 
+		    	URL: <code>http://localhost:8080/relayURI</code> (note that the this
+		    	configuration is only for demonstration purposes, and can be 
+		    	changed using the instructions
+		    	on the next page <a href="./relay_config.html">here</a>)
+		    </p>
+
+			<subsection name="Testing It Out">
+
+			    <p>
+			    	On <b>Linux/OSX</b> systems, you can test the Relay by starting it on a console:
+			    </p>
+			    	
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					hl7overhttp-relay/bin james$ <span style="color: #E06060;">./hl7overhttp-relay console</span><br/>
+					Running HAPI - Java HL7 API - HL7 over HTTP...<br/>
+					wrapper  | --> Wrapper Started as Console<br/>
+					wrapper  | Launching a JVM...<br/>
+					jvm 1    | 08:13:53,102  INFO [WrapperSimpleAppMain] - Starting listener on port 8079<br/>
+					jvm 1    | 08:13:53,103  INFO [pool-1-thread-1] - Starting ConnectionCleaner service<br/>
+					jvm 1    | 08:13:53,104  INFO [pool-1-thread-1] - Starting SimpleServer running on port 8079<br/>
+					[..snip..]<br/>
+					jvm 1    | 08:13:53,780  INFO [WrapperSimpleAppMain] - HAPI HL7 over HTTP Relay started in 1881 ms<br/>		    	
+				</div>
+				
+				<p>
+					Hit control-C to stop the relay.
+				</p>
+			
+			    <p>
+			    	On <b>Windows</b> systems, you can test the Relay by starting it on a console:
+			    </p>
+			    	
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					C:\hl7overhttp-relay\bin> <span style="color: #E06060;">hl7overhttp-relay console</span><br/>
+					Running HAPI - Java HL7 API - HL7 over HTTP...<br/>
+					wrapper  | --> Wrapper Started as Console<br/>
+					wrapper  | Launching a JVM...<br/>
+					jvm 1    | 08:13:53,102  INFO [WrapperSimpleAppMain] - Starting listener on port 8079<br/>
+					jvm 1    | 08:13:53,103  INFO [pool-1-thread-1] - Starting ConnectionCleaner service<br/>
+					jvm 1    | 08:13:53,104  INFO [pool-1-thread-1] - Starting SimpleServer running on port 8079<br/>
+					[..snip..]<br/>
+					jvm 1    | 08:13:53,780  INFO [WrapperSimpleAppMain] - HAPI HL7 over HTTP Relay started in 1881 ms<br/>		    	
+				</div>
+			
+			</subsection>
+
+			<subsection name="Configuring">
+				<p>
+					You may now want to visit the <a href="./relay_config.html">configuration</a>
+					page for more information on how to configure different listeners and transmitters. 
+					When you are satisfied with the configuration, the relay may be installed as a 
+					service/daemon on Linux or Windows.	
+				</p>
+			</subsection>
+								    		    
+		</section>
+
+		<section name="Installing as a Windows Service">
+
+			<p>
+				The relay may be installed the Relay as a Window Service, meaning that it will start 
+				automatically after a system reboot.
+			</p>
+
+			<p>
+				First, you should note: By default the relay will have a <b>service name</b> of
+				"<span style="color: olive; font-style: italic;">hl7overhttp-relay</span>"
+				and a <b>service description</b> of 
+				"<span style="color: olive; font-style: italic;">HAPI - HL7 over HTTP Relay</span>".
+				If you want to edit this (which is particularly important if you want to have
+				more than one instance of the Relay installed concurrently), 
+				edit the "<code>wrapper.conf</code>" file found in the <code>conf</code>
+				directory to modify the following properties:
+			</p>
+			<ul>
+				<li>wrapper.ntservice.name</li>
+				<li>wrapper.ntservice.displayname</li>
+			</ul>
+
+			<p>
+				Next, to install the service, execute the following command from a
+				console:
+			</p>
+			
+		    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+				C:\hl7overhttp-relay\bin> <span style="color: #E06060;">hl7overhttp-relay install</span><br/>
+				wrapper  | HAPI - HL7 over HTTP Relay installed.
+			</div>
+			
+			<p>
+				To start and stop the service, open the "services" dialog in the Windows 
+				Control Panel, and locate the HAPI HL7 over HTTP Relay. You may right click
+				and select "properties" to set up the service to automatically start
+				on reboot, and to recover from unexpected failures.
+			</p>
+			
+			<img src="images/relay_service_windows.png" alt="Services Dialog"/>
+			
+			<subsection name="Uninstalling">
+				
+				<p>
+					In order to remove this service, simply execute the following:
+				</p>
+
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					C:\hl7overhttp-relay\bin> <span style="color: #E06060;">hl7overhttp-relay uninstall</span><br/>
+					wrapper  | HAPI - HL7 over HTTP Relay removed.
+				</div>
+				
+				<p>
+					Note that you may need to reboot the system before the service is
+					removed from the Control Panel "Services" list.
+				</p>
+				
+			</subsection>
+					
+		</section>
+				
+		<section name="Installing as a Linux Daemon">
+		
+			<p>
+				The Relay can be installed on a Linux system as a daemon which is
+				started automatically on system startup. This should be possible on
+				any distribution, but the following instructions are known to work on
+				RedHat/CentOS, Debian, and Ubuntu.
+			</p>
+		
+			<p>
+				The following instructions assume that the Relay has been installed
+				in "<code>/opt/hl7overhttp-relay</code>". You will need to adjust the
+				script if you wish to install somewhere else.
+			</p>
+		
+			<p>
+				First, extract the relay to <code>/opt/hl7overhttp-relay</code> 
+			</p>
+
+		    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+				/opt$ <span style="color: #E06060;">sudo tar jxf ~/hapi-hl7overhttp-relay-XXX.tar.bz2</span>
+			</div>
+			
+			<p>
+				The daemon directory in the installation contains an init.d script
+			</p>
+			
+		    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+				/opt$ <span style="color: #E06060;">cd hl7overhttp-relay/daemon</span><br/>
+				/opt/hl7overhttp-relay/daemon$ <span style="color: #E06060;">sudo cp hl7overhttp_relay /etc/init.d/</span><br/>
+			</div>
+			
+			<subsection name="Enabling the Service on RedHat / CentOS">
+			    
+			    <p>
+			    	To enable the relay on RedHat (or any system where chkconfig is present):
+			    </p>
+			    
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					/etc/init.d$ <span style="color: #E06060;">update-rc.d --add hl7overhttp_relay</span>
+				</div>
+
+			    <p>
+			    	And to disable the relay on RedHat:
+			    </p>
+
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					/etc/init.d$ <span style="color: #E06060;">update-rc.d --del hl7overhttp_relay</span>
+				</div>
+				
+			</subsection>
+			
+			<subsection name="Enabling the Service on Debian / Ubuntu">
+			
+			    <p>
+			    	To enable the relay on Debian/Ubuntu (or any system where update-rc.d is present):
+			    </p>
+
+			    <div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					/etc/init.d$ <span style="color: #E06060;">update-rc.d hl7overhttp_relay defaults</span><br/>
+					/etc/rc0.d/K20hl7overhttp_relay<br/>
+					/etc/rc1.d/K20hl7overhttp_relay<br/>
+					/etc/rc2.d/S20hl7overhttp_relay<br/>
+					/etc/rc3.d/S20hl7overhttp_relay<br/>
+					/etc/rc4.d/S20hl7overhttp_relay<br/>
+					/etc/rc5.d/S20hl7overhttp_relay<br/>
+					/etc/rc6.d/K20hl7overhttp_relay
+				</div>
+
+			    <p>
+			    	And to disable the relay on Debian/Ubuntu:
+			    </p>
+
+				<div style="background: #E0E0E0; padding: 20px; white-space:nowrap; ">
+					/opt/hl7overhttp-relay/bin$ <span style="color: #E06060;">sudo update-rc.d -f hl7overhttp_relay remove</span><br/>
+					Removing any system startup links for /etc/init.d/hl7overhttp_relay ...<br/>
+					/etc/rc0.d/K20hl7overhttp_relay<br/>
+					/etc/rc1.d/K20hl7overhttp_relay<br/>
+					/etc/rc2.d/S20hl7overhttp_relay<br/>
+					/etc/rc3.d/S20hl7overhttp_relay<br/>
+					/etc/rc4.d/S20hl7overhttp_relay<br/>
+					/etc/rc5.d/S20hl7overhttp_relay<br/>
+					/etc/rc6.d/K20hl7overhttp_relay
+				</div>
+					
+			</subsection>					
+		</section>
+								
+	</body>
+
+</document>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP Relay - Configuration</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="HL7 over HTTP Relay">
+
+			<macro name="toc">
+				<!-- <param name="section" value="2"/>
+				<param name="fromDepth" value="0"/>
+				<param name="toDepth" value="2"/>  -->
+			</macro>
+			
+		</section>
+		
+		<section name="Basic Configuration">
+
+			<p>
+				The Relay is configured with a file in the <code>conf</code> directory
+				called <code>config.xml</code>. This file is a
+				<a href="http://www.springsource.org/">Spring Framwork</a> bean
+				definition file.
+			</p>
+		
+			<p>
+				To configure the relay, you must first understand a few basic concepts:
+			</p>
+			
+			<ul>
+				<li>
+					<b>Beans:</b>
+					Each bean element in the config file is a single module which
+					serves a specific purpose. Each bean has an ID which is defined
+					in the config file. The relay is configured by defining multiple
+					beans and "connecting" them to each other using a process that
+					Spring calls "wiring". 
+				</li>
+				<li>
+					<b>Listener Beans:</b>
+					Listener beans are used to receive messages.
+				</li>
+				<li>
+					<b>Sender Beans:</b>
+					Sender beans are used to transmit (i.e. relay) messages which
+					have been received by listener beans.
+				</li>
+				<li>
+					<b>Binder Beans:</b>
+					Binder beans connect listener beans to sender beans. In a basic
+					configuration, you will have one listener bean bound to one
+					sender bean using a single binder bean, but you can get more
+					complex by binding multiple beans on either side.
+				</li>
+			</ul>
+		
+			<subsection name="The Listener Bean">
+				
+				<p>
+					The following is a simple example of a listener bean which uses
+					MLLP to listen for incoming messages:
+				</p>
+				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="theListener">
+   <property name="port" value="8079"/>
+</bean>]]></source>
+			
+				<p>
+					The <b>class</b> attribute indicates what type of listener should be used.
+					Listeners must be of type
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IListener.html">IListener</a>.
+				</p>
+				
+				<p>
+					The <b>port</b> property selects the port on which the listener will
+					receive messages.
+				</p>
+			
+			</subsection>
+		
+			<subsection name="The Sender Bean">
+				
+				<p>
+					The following is a simple example of a sender bean which uses
+					HL7 over HTTP to transmit messages:
+				</p>
+				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="theSender">
+   <property name="urlString" value="http://localhost:8080/relayURI"/>
+</bean>]]></source>
+			
+				<p>
+					The <b>class</b> attribute indicates what type of listener should be used.
+					Listeners must be of type
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IListener.html">IListener</a>.
+				</p>
+				
+				<p>
+					The <b>port</b> property selects the port on which the listener will
+					receive messages.
+				</p>
+			
+			</subsection>
+
+			<subsection name="The Binder Bean">
+				
+				<p>
+					The binder bean "joins" a specific listener to a specific sender. In 
+					a basic configuration, you will bind one listener to one sender, but it
+					is possible to bind multiple senders to a single listner, or multiple
+					listeners to a single sender.
+				</p>
+				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.Binder">
+   <property name="listener" ref="theListener"/>
+   <property name="sender" ref="theSender"/>
+</bean>]]></source>
+			
+				<p>
+					Binder beans are always of <b>class</b>
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/Binder.html">Binder</a>. Note 
+					that the "<b>ref</b>" property indicates the "<b>id</b>" of the corresponding
+					listener and sender.
+				</p>
+				
+			</subsection>
+
+		</section>
+								
+	</body>
+
+</document>

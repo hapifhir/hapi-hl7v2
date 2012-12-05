@@ -16,7 +16,7 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 
 	protected void authorize() throws AuthorizationFailureException {
 		if (myAuthorizationCallback != null) {
-			if (!myAuthorizationCallback.authorize(getUri(), getUsername(), getPassword())) {
+			if (!myAuthorizationCallback.authorize(getPath(), getUsername(), getPassword())) {
 				throw new AuthorizationFailureException("Authorization failed for user: " + getUsername());
 			}
 		} else {
@@ -44,8 +44,8 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 				throw new DecodeException("HTTP request line message is not valid. Not HTTP version found. Request line was: " + firstLine);
 			}
 
-			setUri(firstLine.substring(0, nextSpace));
-			if (isBlank(getUri())) {
+			setPath(firstLine.substring(0, nextSpace));
+			if (isBlank(getPath())) {
 				throw new DecodeException("HTTP request line message is not valid. No request URI found. Request line was: " + firstLine);
 			}
 

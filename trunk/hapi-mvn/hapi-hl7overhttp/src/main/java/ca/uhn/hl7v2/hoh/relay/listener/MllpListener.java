@@ -34,7 +34,7 @@ public class MllpListener implements InitializingBean, DisposableBean, IListener
 		if (myPort <= 0) {
 			throw new IllegalStateException("Port not set");
 		}
-
+		
 		LowerLayerProtocol llp = new ExtendedMinLowerLayerProtocol();
 		Parser parser = new PipeParser(new GenericModelClassFactory());
 		myServer = new SimpleServer(myPort, llp, parser);
@@ -56,6 +56,7 @@ public class MllpListener implements InitializingBean, DisposableBean, IListener
 				throw new Error(ex);
 			}
 		}
+
 	}
 
 	
@@ -77,8 +78,13 @@ public class MllpListener implements InitializingBean, DisposableBean, IListener
 	public void registerApplication(AppRoutingData theAppRouting, ReceivingApplication theReceivingApplication) {
 		Validate.notNull(theAppRouting, "appRouting");
 		Validate.notNull(theReceivingApplication, "receivingApplication");
-		myAppRoutingData.add(theAppRouting);
-		myApplications.add(theReceivingApplication);
+		
+		if (myServer != null) {
+			myServer.registerApplication(theAppRouting, theReceivingApplication);
+		} else {
+			myAppRoutingData.add(theAppRouting);
+			myApplications.add(theReceivingApplication);
+		}
 	}
 
 
