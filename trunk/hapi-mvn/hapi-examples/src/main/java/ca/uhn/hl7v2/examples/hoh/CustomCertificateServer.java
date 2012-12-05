@@ -7,7 +7,7 @@ import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
-import ca.uhn.hl7v2.hoh.sockets.HapiSocketTlsFactoryWrapper;
+import ca.uhn.hl7v2.hoh.util.HapiSocketTlsFactoryWrapper;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
