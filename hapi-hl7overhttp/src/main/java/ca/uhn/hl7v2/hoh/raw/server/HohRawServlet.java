@@ -60,7 +60,7 @@ public class HohRawServlet extends HttpServlet {
 			decoder.getHeaders().put(nextName, theReq.getHeader(nextName));
 		}
 
-		decoder.setUri(theReq.getRequestURI());
+		decoder.setPath(theReq.getRequestURI());
 		decoder.setAuthorizationCallback(myAuthorizationCallback);
 		decoder.setSigner(mySigner);
 

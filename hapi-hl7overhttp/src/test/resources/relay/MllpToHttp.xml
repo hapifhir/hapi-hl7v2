@@ -7,9 +7,12 @@
     <bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="listener">
         <property name="port" value="#{ systemProperties['relay.port.in'] }"/>
     </bean>
+    
     <bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="sender">
         <property name="url" value="http://localhost:#{ systemProperties['relay.port.out'] }/relayURI"/>
+        <property name=""></property>
     </bean>
+    
     <bean class="ca.uhn.hl7v2.hoh.relay.Binder">
         <property name="sender" ref="sender"/>
         <property name="listener" ref="listener"/>

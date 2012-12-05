@@ -25,53 +25,44 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 	private int myPort;
 
-
 	@Before
 	public void before() {
 		myPort = RandomServerPortProvider.findFreePort();
 	}
 
-
 	@Test
 	public void testConnectToNonTrustedSocket() throws IOException, InterruptedException {
 
-		CustomCertificateTlsSocketFactory badServer = new CustomCertificateTlsSocketFactory();
-		badServer.setKeystoreFilename("src/test/resources/keystore.jks");
-		badServer.setKeystorePassphrase("changeit");
+		CustomCertificateTlsSocketFactory badServer = createTrustedServerSocketFactory();
 		Receiver receiver = new Receiver(badServer);
 		receiver.start();
 		Thread.sleep(500);
 
 		try {
 
-			CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
-			goodClient.setKeystoreFilename("src/test/resources/truststore2.jks");
-			goodClient.setKeystorePassphrase("trustpassword");
+			CustomCertificateTlsSocketFactory goodClient = createNonTrustedClientSocketFactory();
 			Socket client = goodClient.createClientSocket();
 			client.connect(new InetSocketAddress("localhost", myPort));
 
 			client.getOutputStream().write("HELLO WORLD".getBytes());
 			fail();
-			
+
 		} catch (SSLHandshakeException e) {
 
 		}
 	}
 
-
 	@Test
 	public void testConnectToTrustedSocket() throws IOException, InterruptedException {
 
-		CustomCertificateTlsSocketFactory goodServer = new CustomCertificateTlsSocketFactory();
-		goodServer.setKeystoreFilename("src/test/resources/keystore.jks");
-		goodServer.setKeystorePassphrase("changeit");
+		CustomCertificateTlsSocketFactory goodServer = createTrustedServerSocketFactory();
 		Receiver receiver = new Receiver(goodServer);
 		receiver.start();
 		Thread.sleep(500);
 
 		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
 		goodClient.setKeystoreFilename("src/test/resources/truststore.jks");
-//		goodClient.setKeystorePassphrase("changeit");
+		// goodClient.setKeystorePassphrase("changeit");
 		Socket client = goodClient.createClientSocket();
 		client.connect(new InetSocketAddress("localhost", myPort));
 
@@ -85,17 +76,50 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 	}
 
+	public static CustomCertificateTlsSocketFactory createNonTrustedClientSocketFactory() {
+		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
+		goodClient.setKeystoreFilename("src/test/resources/truststore2.jks");
+		goodClient.setKeystorePassphrase("trustpassword");
+		return goodClient;
+	}
+
+	public static CustomCertificateTlsSocketFactory createTrustedClientSocketFactory() {
+		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
+		goodClient.setKeystoreFilename("src/test/resources/truststore.jks");
+//		goodClient.setKeystorePassphrase("trustpassword");
+		return goodClient;
+	}
+
+	public static CustomCertificateTlsSocketFactory createTrustedServerSocketFactory() {
+		CustomCertificateTlsSocketFactory goodServer = new CustomCertificateTlsSocketFactory();
+		goodServer.setKeystoreFilename("src/test/resources/keystore.jks");
+		goodServer.setKeystorePassphrase("changeit");
+		return goodServer;
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		Server s = new Server();
+
+		SslSelectChannelConnector ssl = new SslSelectChannelConnector();
+		ssl.setKeystore("src/test/resources/keystore.jks");
+		ssl.setPassword("changeit");
+		ssl.setKeyPassword("changeit");
+		ssl.setPort(60647);
+
+		s.addConnector(ssl);
+		s.start();
+	}
+
 	private class Receiver extends Thread {
 
 		private ISocketFactory myFactory;
 		private ServerSocket myServer;
 		private String myString;
 
-
 		public Receiver(ISocketFactory theFactory) {
 			myFactory = theFactory;
 		}
-
 
 		@Override
 		public void run() {
@@ -140,21 +164,6 @@ public class CustomCertificateTlsSocketFactoryTest {
 			}
 		}
 
-	}
-
-
-	public static void main(String[] args) throws Exception {
-
-		Server s = new Server();
-
-		SslSelectChannelConnector ssl = new SslSelectChannelConnector();
-		ssl.setKeystore("src/test/resources/keystore.jks");
-		ssl.setPassword("changeit");
-		ssl.setKeyPassword("changeit");
-		ssl.setPort(60647);
-
-		s.addConnector(ssl);
-		s.start();
 	}
 
 }

@@ -86,6 +86,13 @@ public class HohClientMultithreaded extends AbstractClient<HohRawClientMultithre
 	/**
 	 * {@inheritDoc}
 	 */
+	public long getSocketTimeout() {
+		return getRawClient().getSocketTimeout();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setSocketTimeout(long theSocketTimeout) {
 		getRawClient().setSocketTimeout(theSocketTimeout);
 	}

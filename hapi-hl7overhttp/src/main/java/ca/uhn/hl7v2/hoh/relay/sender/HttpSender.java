@@ -28,6 +28,7 @@ public class HttpSender extends HohClientMultithreaded implements ISender, BeanN
 	 */
 	public void afterPropertiesSet() throws Exception {
 		Validate.propertySet(getUrl(), "Url");
+		ourLog.info("Sender [{}] will transmit by HL7 over HTTP to {}", myBeanName, getUrl().toExternalForm());
 	}
 
 	/**

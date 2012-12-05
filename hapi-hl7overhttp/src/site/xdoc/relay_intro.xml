@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>HL7 over HTTP - Relay</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="HL7 over HTTP - Relay">
+			
+		    <img src="images/HoH_Relay_Example_Simple.png" align="right"/>
+
+		    <p>
+		    	HAPI HL7 over HTTP (HoH) relay is a standalone and self-contained 
+		    	software package which can be used to bridge the gap between
+		    	applications which support HoH, and those that do not.
+		    </p>
+		    
+		    <p>
+		    	To get started with the HoH relay:
+		    </p>
+		    
+		    <ul>
+		    	<li>First, read about <a href="./relay_install.html">Installing HoH relay</a></li>
+		    	<li>Then, read about <a href="./relay_install.html">Configuring HoH relay</a></li>
+		    </ul>
+		    
+		</section>
+								
+	</body>
+
+</document>

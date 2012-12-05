@@ -1,4 +1,4 @@
-package ca.uhn.hl7v2.hoh.sockets;
+package ca.uhn.hl7v2.hoh.util;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,6 +6,7 @@ import java.net.Socket;
 
 import javax.net.ServerSocketFactory;
 
+import ca.uhn.hl7v2.hoh.sockets.ISocketFactory;
 import ca.uhn.hl7v2.util.SocketFactory;
 
 /**

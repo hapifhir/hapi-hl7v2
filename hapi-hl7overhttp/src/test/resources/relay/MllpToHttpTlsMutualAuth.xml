@@ -1,0 +1,36 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="theListener">
+        <property name="port" value="#{ systemProperties['relay.port.in'] }"/>
+    </bean>
+
+	<!-- Create a socket factory bean -->
+	<!--     
+    <bean class="ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory" id="theSocketFactory">
+    </bean>
+    -->
+	 
+	<!-- Create a socket factory bean -->    
+    <bean class="ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory" id="theSocketFactory">
+    	<property name="keystoreFilename" value="src/test/resources/truststore.jks"/>
+    	<!-- <property name="keystorePassphrase" value="trustpassword"/>  -->
+    </bean>
+    
+    <bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="theSender">
+        <property name="url" value="http://localhost:#{ systemProperties['relay.port.out'] }/relayURI"/>
+
+        <!-- Provide the socket factory to the sender -->
+        <property name="socketFactory" ref="theSocketFactory"/>
+        
+    </bean>
+    
+    <bean class="ca.uhn.hl7v2.hoh.relay.Binder">
+        <property name="sender" ref="theSender"/>
+        <property name="listener" ref="theListener"/>
+    </bean>
+    
+</beans>

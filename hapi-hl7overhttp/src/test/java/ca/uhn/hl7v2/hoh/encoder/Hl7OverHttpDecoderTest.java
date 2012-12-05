@@ -49,7 +49,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -80,7 +80,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -111,7 +111,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -137,7 +137,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 		// Read a second
 
@@ -152,7 +152,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -174,7 +174,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessageWithMultibyte, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -198,7 +198,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessageWithMultibyte, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -225,7 +225,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 		d = new Hl7OverHttpRequestDecoder();
 		d.readHeadersAndContentsFromInputStreamAndDecode(byteArrayInputStream);
@@ -238,7 +238,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -267,7 +267,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -296,7 +296,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 
@@ -325,7 +325,7 @@ public class Hl7OverHttpDecoderTest {
 		assertEquals(ourSampleMessage, d.getMessage());
 		assertEquals("hello", d.getUsername());
 		assertEquals("world", d.getPassword());
-		assertEquals("/AppName", d.getUri());
+		assertEquals("/AppName", d.getPath());
 
 	}
 }

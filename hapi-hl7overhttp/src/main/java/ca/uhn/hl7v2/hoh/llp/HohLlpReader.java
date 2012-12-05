@@ -76,10 +76,10 @@ class HohLlpReader implements HL7Reader {
 			
 			IAuthorizationServerCallback authorizationCallback = myProtocol.getAuthorizationServerCallback();
 			if (authorizationCallback != null) {
-				boolean auth = authorizationCallback.authorize(decoder.getUri(), decoder.getUsername(), decoder.getPassword());
+				boolean auth = authorizationCallback.authorize(decoder.getPath(), decoder.getUsername(), decoder.getPassword());
 				if (!auth) {
 					HTTPUtils.write401Unauthorized(myWriter.getOutputStream());
-					throw new LLPException("Authorization at URI[" + decoder.getUri() + "] failed for user[" + decoder.getUsername() + "]");
+					throw new LLPException("Authorization at URI[" + decoder.getPath() + "] failed for user[" + decoder.getUsername() + "]");
 				}
 			}
 		}

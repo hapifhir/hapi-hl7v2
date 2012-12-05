@@ -421,7 +421,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	}
 
 	/**
-	 * Note that if {@link #setUri(String)} is called, this method will assume
+	 * Note that if {@link #setPath(String)} is called, this method will assume
 	 * that the first line of the HTTP request has already been read from the
 	 * input stream. If {@link #setHeaders(java.util.LinkedHashMap)} has been
 	 * called, this method will assume that the HTTP headers have already been

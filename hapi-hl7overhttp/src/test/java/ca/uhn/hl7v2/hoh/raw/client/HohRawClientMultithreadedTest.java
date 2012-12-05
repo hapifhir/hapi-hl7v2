@@ -82,6 +82,49 @@ public class HohRawClientMultithreadedTest {
 
 	}
 
+	@Test
+	public void testSendMessageWithNoTimeout() throws Exception {
+
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientMultithreaded client = new HohRawClientMultithreaded("localhost", myPort, "/theUri");
+		client.setSocketTimeout(-1);
+		
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+
+		/*
+		 * Send one message
+		 */
+		ourLog.info("*** Send message #1");
+		
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(1, myServerSocketThread.getConnectionCount());
+		
+		Thread.sleep(1000);
+		
+		/*
+		 * Send a third message
+		 */
+		ourLog.info("*** Send message #2");
+		
+		response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(1, myServerSocketThread.getConnectionCount());
+
+	}
+
 	@After
 	public void after() throws InterruptedException {
 		ourLog.info("Marking done as true");
