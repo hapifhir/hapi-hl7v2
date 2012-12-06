@@ -36,8 +36,14 @@ import ca.uhn.hl7v2.parser.Parser;
 
 public enum Version {
 
-	V21("2.1"), V22("2.2"), V23("2.3"), V231("2.3.1"), V24("2.4"), V25("2.5"), V251("2.5.1"), V26(
-			"2.6");
+	V21("2.1"), // -
+	V22("2.2"), // -
+	V23("2.3"), // -
+	V231("2.3.1"), // -
+	V24("2.4"), // -
+	V25("2.5"), // -
+	V251("2.5.1"), // -
+	V26("2.6"); // -
 
 	private String version;
 	private static ArrayList<Version> ourVersionsOnClasspath;
@@ -58,8 +64,12 @@ public enum Version {
 		return "v" + version.replace(".", "");
 	}
 
-	public static boolean supportsVersion(String version) {
-		return versionOf(version) != null;
+	/**
+	 * Returns <code>true</code> if theVersion is a valid HL7
+	 * version string representing a known version, e.g. "2.4", "2.6"
+	 */
+	public static boolean supportsVersion(String theVersion) {
+		return versionOf(theVersion) != null;
 	}
 
 	/**
@@ -89,9 +99,17 @@ public enum Version {
 		return compareTo(theVersion) > 0;
 	}
 
+	/**
+	 * Returns the newest available version of the message structure classes
+	 * on the classpath, or <code>null</code> if none are found
+	 */
 	public static Version latestVersion() {
 		Version[] versions = Version.values();
-		return versions[versions.length - 1];
+		if (versions.length > 0) {
+			return versions[versions.length - 1];
+		} else {
+			return null;
+		}
 	}
 
 	public static Version[] asOf(Version v) {
@@ -159,13 +177,23 @@ public enum Version {
 	}
 	
 	/**
+	 * <p>
 	 * Returns the lowest version for which the structure classes are found
 	 * on the classes. For instance, if <code>hapi-structures-v24-[version].jar</code>
 	 * is the only structure JAR on the current JVM classpath, {@link Version#V24} will
 	 * be returned.
+	 * <p>
+	 * <p>
+	 * Returns <code>null</code> if none are found
+	 * </p>
 	 */
 	public static Version lowestAvailableVersion() {
-		return availableVersions().get(0);
+		List<Version> availableVersions = availableVersions();
+		if (availableVersions.size() >0) {
+			return availableVersions.get(0);
+		} else {
+			return null;
+		}
 	}
 	
 }
