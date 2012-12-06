@@ -85,8 +85,15 @@ public abstract class Service implements Runnable {
 	/**
 	 * Starts the server listening for connections in a new thread. This
 	 * continues until <code>stop()</code> is called.
+	 * 
+	 * @throws IllegalStateException If the service is already running (i.e.
+	 *                               start() has already been called.
+	 * 
 	 */
 	public void start() {
+		if (keepRunning) {
+			throw new IllegalStateException("Service is already running");
+		}
 		log.debug("Starting service {}", name);
 		keepRunning = true;
 		ExecutorService service = getExecutorService();
