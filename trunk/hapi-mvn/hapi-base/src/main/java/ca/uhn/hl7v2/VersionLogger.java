@@ -56,7 +56,8 @@ public class VersionLogger {
 		// Check if any structures are present
 		StringBuilder sb = new StringBuilder();
 		for (Version v : Version.availableVersions()) {
-			sb.append(v.getVersion()).append(' ');
+			sb.append(v.getVersion());
+			sb.append(sb.length() > 0 ? ", " : "");
 		}
 		if (sb.length() == 0) {
 			LOG.warn("No HL7 structure libraries found on the classpath!");
