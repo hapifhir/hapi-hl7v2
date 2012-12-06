@@ -56,8 +56,12 @@ public class SimpleServerNoDepsTest {
 		HL7Reader r = llp.getReader(s.getInputStream());
 
 		// AIL is non-standard
-		String msgText = "MSH|^~\\&|IDX|XXXX|COMMON|EXTERNAL|200608140653||ADT^A04|60491_4054_SC1|P|2.3\r" + "PID|||868063820614||||^003|F||1|^^^^84606|||||S\r"
-				+ "PV1||O||10||||||||||||||||||||||||||||||||||||||||200501091835\r" + "AIL|1||871|10|\r" + "DG1||||RASH ON BACK AND RT LEG\r" + "IN1||||||||||||||||||||||||||||||||||||||||||||";
+		String msgText = "MSH|^~\\&|IDX|XXXX|COMMON|EXTERNAL|200608140653||ADT^A04|60491_4054_SC1|P|2.3\r" 
+				+ "PID|||868063820614||||^003|F||1|^^^^84606|||||S\r"
+				+ "PV1||O||10||||||||||||||||||||||||||||||||||||||||200501091835\r" 
+				+ "AIL|1||871|10|\r" 
+				+ "DG1||||RASH ON BACK AND RT LEG\r" 
+				+ "IN1||||||||||||||||||||||||||||||||||||||||||||";
 		w.writeMessage(msgText);
 		String resp = r.getMessage();
 
