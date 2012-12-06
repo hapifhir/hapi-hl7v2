@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.Validate;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.spec.message.Component;
 import ca.uhn.hl7v2.conf.spec.message.Field;
@@ -320,6 +321,11 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 		}
 
 		public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String getMessageStructureForEvent(String theEventName, Version theVersion) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}
 

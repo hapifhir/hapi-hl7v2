@@ -1,13 +1,19 @@
 package ca.uhn.hl7v2.testpanel.model.conf;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +42,39 @@ public class ExportedProfileGroupFile {
 
 	@XmlElement(name = "tableFile")
 	private List<TableFile> myTableFiles;
+
+	/**
+	 * Constructor
+	 */
+	public ExportedProfileGroupFile() {
+		// nothing
+	}
+
+	public ExportedProfileGroupFile(ProfileGroup theProfileGroup, TableFileList theTableFileList) throws IOException {
+
+		ExportedProfileGroupFile exported = new ExportedProfileGroupFile();
+		exported.setProfileGroup(theProfileGroup);
+
+		Set<String> profileIds = new HashSet<String>();
+		Set<String> tablesIds = new HashSet<String>();
+		for (Entry next : theProfileGroup.getEntries()) {
+			if (!profileIds.add(next.getProfileProxy().getId())) {
+				continue; // don't add the same profile twice
+			}
+
+			ProfileWithContents contents = new ProfileWithContents();
+			contents.setContents(next.getProfileProxy().getProfileAsString());
+			contents.setId(next.getProfileProxy().getId());
+			exported.getProfiles().add(contents);
+
+			String tablesId = next.getTablesId();
+			if (isNotBlank(tablesId) && tablesIds.add(tablesId)) {
+				TableFile tableFile = theTableFileList.getTableFile(tablesId);
+				exported.getTableFiles().add(tableFile);
+			}
+		}
+
+	}
 
 	/**
 	 * @return the profileGroup
@@ -126,8 +165,8 @@ public class ExportedProfileGroupFile {
 	}
 
 	/**
-	 * Replaces all IDs within this file with new ones (maintaining existing links but
-	 * with new IDs)
+	 * Replaces all IDs within this file with new ones (maintaining existing
+	 * links but with new IDs)
 	 */
 	public void renumberEverything() {
 		Map<String, String> ids = new HashMap<String, String>();
@@ -143,7 +182,7 @@ public class ExportedProfileGroupFile {
 			next.setId(mapId(ids, next.getId()));
 		}
 	}
-	
+
 	private static String mapId(Map<String, String> theIds, String theId) {
 		if (theId == null) {
 			return null;
@@ -161,13 +200,13 @@ public class ExportedProfileGroupFile {
 	 */
 	public void hydrate() throws IOException, ProfileException {
 		Map<String, RuntimeProfile> parsedProfiles = new HashMap<String, RuntimeProfile>();
-		
+
 		ProfileParser p = new ProfileParser(false);
 		for (ProfileWithContents next : getProfiles()) {
 			ourLog.info("Restoring runtime profile (conformance profile) with id: {}", next.getId());
 			parsedProfiles.put(next.getId(), p.parse(next.getContents()));
 		}
-		
+
 		for (Entry next : myProfileGroup.getEntries()) {
 			String id = next.getProfileProxy().getId();
 			RuntimeProfile profile = parsedProfiles.get(id);
@@ -176,5 +215,11 @@ public class ExportedProfileGroupFile {
 			}
 		}
 	}
-	
+
+	public CharSequence exportConfigToXm() {
+		StringWriter w = new StringWriter();
+		JAXB.marshal(this, w);
+		return w.toString();
+	}
+
 }

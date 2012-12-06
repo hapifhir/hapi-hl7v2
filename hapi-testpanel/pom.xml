@@ -351,7 +351,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>osxappbundle-maven-plugin</artifactId>
-						<version>1.0-alpha-1</version>
+						<version>1.0-alpha-3</version>
 						<configuration>
 							<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
 							<iconFile>${basedir}/src/main/resources/ca/uhn/hl7v2/testpanel/images/hapi_icon_osx.icns</iconFile>

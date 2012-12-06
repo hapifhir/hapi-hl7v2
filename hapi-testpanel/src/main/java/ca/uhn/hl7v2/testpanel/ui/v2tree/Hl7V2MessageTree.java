@@ -38,6 +38,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1626,7 +1627,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					// use datatype validation as well
 					String version = primitive.getMessage().getVersion();
 					String typeName = primitive.getName();
-					PrimitiveTypeRule[] rules = ourDefaultValidation.getPrimitiveRules(version, typeName, primitive);
+					Collection<PrimitiveTypeRule> rules = ourDefaultValidation.getPrimitiveRules(version, typeName, primitive);
 					for (PrimitiveTypeRule rule : rules) {
 						if (!rule.test(primitive.getValue())) {
 							addValidationExceptions(new HL7Exception(rule.getDescription()));
@@ -1637,7 +1638,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 					String version = primitive.getMessage().getVersion();
 					String type = primitive.getName();
-					PrimitiveTypeRule[] rules = myMessages.getValidationContext().getPrimitiveRules(version, type, primitive);
+					Collection<PrimitiveTypeRule> rules = myMessages.getValidationContext().getPrimitiveRules(version, type, primitive);
 					for (PrimitiveTypeRule primitiveTypeRule : rules) {
 						boolean test = primitiveTypeRule.test(primitive.getValue());
 						if (!test) {

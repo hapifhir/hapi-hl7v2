@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +54,8 @@ import org.netbeans.swing.outline.RowModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.controller.ConformanceEditorController;
 import ca.uhn.hl7v2.testpanel.model.conf.Code;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
@@ -68,6 +67,7 @@ import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.ui.HoverButtonMouseAdapter;
 import ca.uhn.hl7v2.testpanel.ui.ImageFactory;
+import ca.uhn.hl7v2.testpanel.util.EventMapUtil;
 import ca.uhn.hl7v2.testpanel.util.SimpleDocumentListener;
 
 public class ConformanceEditorPanel {
@@ -1149,10 +1149,10 @@ public class ConformanceEditorPanel {
 		private List<String> getSortedStructures() {
 			ArrayList<String> retVal = new ArrayList<String>();
 			try {
-				for (Object next : Parser.getMessageStructures(Version.latestVersion().getVersion()).keySet()) {
-					retVal.add(next.toString());
+				for (String next : EventMapUtil.getEventMap(Version.latestVersion().getVersion()).keySet()) {
+					retVal.add(next);
 				}
-			} catch (IOException e) {
+			} catch (HL7Exception e) {
 				ourLog.error("Failed to load structures", e);
 			}
 
