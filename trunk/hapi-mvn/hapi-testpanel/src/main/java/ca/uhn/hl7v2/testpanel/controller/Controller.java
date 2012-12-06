@@ -124,8 +124,7 @@ public class Controller {
 
 	public Controller() {
 		myTableFileList = new TableFileList();
-
-		myProfileFileList = new ProfileFileList();
+		myProfileFileList = new ProfileFileList(myTableFileList);
 
 		myMessagesList = new MessagesList(this);
 		try {

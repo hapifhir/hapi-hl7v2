@@ -31,7 +31,11 @@ public class ProfileFileList extends AbstractModelClass {
 
 	private List<ProfileGroup> myProfileGroups = new ArrayList<ProfileGroup>();
 
-	public ProfileFileList() {
+	private TableFileList myTableFileList;
+
+	public ProfileFileList(TableFileList theTableFileList) {
+		myTableFileList = theTableFileList;
+		
 		myProfileGroups = Prefs.getOpenProfiles();
 		for (ProfileGroup nextGroup : myProfileGroups) {
 			for (Entry nextEntry : nextGroup.getEntries()) {
@@ -99,7 +103,7 @@ public class ProfileFileList extends AbstractModelClass {
 
 	public void updatePrefs() {
 		ourLog.info("Flushing profile files to preferences");
-		Prefs.getInstance().setOpenProfiles(myProfileGroups);
+		Prefs.getInstance().setOpenProfiles(myProfileGroups, myTableFileList);
 	}
 
 	public void importFile(ProfileGroup theProfileGroup) {

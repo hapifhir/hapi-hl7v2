@@ -41,6 +41,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -59,11 +60,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.hoh.util.IOUtils;
+import ca.uhn.hl7v2.testpanel.model.conf.ExportedProfileGroupFile;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
+import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection.XmlFormat;
 import ca.uhn.hl7v2.testpanel.util.CharsetUtils;
+import ca.uhn.hl7v2.testpanel.util.FileNameComparator;
 import ca.uhn.hl7v2.testpanel.util.FontUtil;
 import ca.uhn.hl7v2.testpanel.util.LineEndingsEnum;
 import ca.uhn.hl7v2.util.StringUtil;
@@ -620,7 +624,7 @@ public class Prefs {
 		sync();
 	}
 
-	public void setOpenProfiles(List<ProfileGroup> theProfiles) {
+	public void setOpenProfiles(List<ProfileGroup> theProfiles, TableFileList theTableFileList) {
 		int index = 0;
 		List<File> files = new ArrayList<File>();
 		try {
@@ -631,18 +635,16 @@ public class Prefs {
 				File fileName = createProfileGroupFileName(seq, profileGroup);
 				files.add(fileName);
 
-				if (isBlank(profileGroup.getSourceUrl())) {
-
-					profileGroup.dumpToFile(fileName);
-
+				FileOutputStream fos = new FileOutputStream(fileName);
+				Writer nextWriter = new OutputStreamWriter(fos, Charset.forName("UTF-8"));
+				if (isNotBlank(profileGroup.getSourceUrl())) {
+					ExportedProfileGroupFile exported = new ExportedProfileGroupFile(profileGroup, theTableFileList);
+					nextWriter.append(exported.exportConfigToXm());
 				} else {
-
-					Writer nextWriter;
-					nextWriter = new OutputStreamWriter(new FileOutputStream(fileName), Charset.forName("UTF-8"));
 					nextWriter.append(profileGroup.exportConfigToXml());
-					nextWriter.close();
 				}
 
+				nextWriter.close();
 			}
 
 			IOUtils.deleteAllFromDirectoryExcept(getProfileGroupFileDirectory(), files);
@@ -821,7 +823,10 @@ public class Prefs {
 		File dir = getProfileGroupFileDirectory();
 		dir.mkdirs();
 
-		for (File next : dir.listFiles()) {
+		ArrayList<File> files = new ArrayList<File>(Arrays.asList(dir.listFiles()));
+		Collections.sort(files, new FileNameComparator());
+		
+		for (File next : files) {
 			if (next.getName().toLowerCase().contains(".xml")) {
 				try {
 					retVal.add(ProfileGroup.readFromFile(next));

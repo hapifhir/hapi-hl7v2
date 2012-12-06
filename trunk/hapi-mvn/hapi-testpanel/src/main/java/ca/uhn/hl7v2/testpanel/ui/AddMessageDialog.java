@@ -33,12 +33,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -59,9 +57,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
+import ca.uhn.hl7v2.testpanel.util.EventMapUtil;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 
 public class AddMessageDialog extends JDialog {
@@ -294,10 +293,10 @@ public class AddMessageDialog extends JDialog {
 		}
 		myCurrentSelectedVersion = newVersion;
 
-		Properties structures;
+		Map<String, String> structures;
 		try {
-			structures = Parser.getMessageStructures(myCurrentSelectedVersion);
-		} catch (IOException e) {
+			structures = EventMapUtil.getEventMap(myCurrentSelectedVersion);
+		} catch (HL7Exception e) {
 			ourLog.error("Couldn't load structures", e);
 			return;
 		}
@@ -305,7 +304,7 @@ public class AddMessageDialog extends JDialog {
 		ArrayList<String> structureNames = new ArrayList<String>();
 		for (Object next : structures.keySet()) {
 			String nextType = next.toString();
-			String nextStructure = structures.getProperty(nextType);
+			String nextStructure = structures.get(nextType);
 
 			nextType = nextType.replace('_', '^');
 			structureNames.add(nextType);

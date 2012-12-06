@@ -2,7 +2,6 @@ package ca.uhn.hl7v2.testpanel.model.conf;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -82,11 +81,6 @@ public class ProfileGroup extends AbstractModelClass implements Cloneable {
 		throw new UnsupportedOperationException();
 	}
 
-	public void dumpToFile(File theFile) throws IOException {
-		FileWriter w = new FileWriter(theFile, false);
-		JAXB.marshal(this, w);
-		w.close();
-	}
 
 	@Override
 	public String exportConfigToXml() {

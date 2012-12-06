@@ -148,15 +148,15 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 
 			for (HL7Exception next : theValue.getIssues()) {
 				b.append("<li>");
-				if (StringUtils.isNotBlank(next.getSegmentName())) {
+				if (StringUtils.isNotBlank(next.getLocation().getSegmentName())) {
 					b.append("<b>");
-					b.append(next.getSegmentName());
-					if (next.getSegmentRepetition() > 1) {
-						b.append("(").append(next.getSegmentRepetition()).append(")");
+					b.append(next.getLocation().getSegmentName());
+					if (next.getLocation().getSegmentRepetition() > 1) {
+						b.append("(").append(next.getLocation().getSegmentRepetition()).append(")");
 					}
-					if (next.getFieldPosition() > 0) {
+					if (next.getLocation().getField() > 0) {
 						b.append("-");
-						b.append(next.getFieldPosition());
+						b.append(next.getLocation().getField());
 					}
 					b.append("</b>: ");
 				}

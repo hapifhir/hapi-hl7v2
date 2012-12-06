@@ -7,12 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.xml.bind.JAXB;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -21,10 +18,8 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.testpanel.model.conf.ExportedProfileGroupFile;
-import ca.uhn.hl7v2.testpanel.model.conf.ExportedProfileGroupFile.ProfileWithContents;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
-import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileProxy;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFile;
 import ca.uhn.hl7v2.testpanel.model.conf.TableFileList;
@@ -137,30 +132,9 @@ public class ConformanceEditorController {
 
 			try {
 
-				ExportedProfileGroupFile exported = new ExportedProfileGroupFile();
-				exported.setProfileGroup(theSelectedProfileGroupOrFile);
-
-				Set<String> profileIds = new HashSet<String>();
-				Set<String> tablesIds = new HashSet<String>();
-				for (Entry next : theSelectedProfileGroupOrFile.getEntries()) {
-					if (!profileIds.add(next.getProfileProxy().getId())) {
-						continue; // don't add the same profile twice
-					}
-
-					ProfileWithContents contents = new ProfileWithContents();
-					contents.setContents(next.getProfileProxy().getProfileAsString());
-					contents.setId(next.getProfileProxy().getId());
-					exported.getProfiles().add(contents);
-
-					String tablesId = next.getTablesId();
-					if (isNotBlank(tablesId) && tablesIds.add(tablesId)) {
-						TableFile tableFile = getTableFileList().getTableFile(tablesId);
-						exported.getTableFiles().add(tableFile);
-					}
-				}
-
+				ExportedProfileGroupFile exported = new  ExportedProfileGroupFile(theSelectedProfileGroupOrFile, getTableFileList());
 				FileWriter w = new FileWriter(file, false);
-				JAXB.marshal(exported, w);
+				w.append(exported.exportConfigToXm());
 				w.close();
 
 				myParentController.showDialogInfo("Exported conformance group to file:\n" + file.getName());
