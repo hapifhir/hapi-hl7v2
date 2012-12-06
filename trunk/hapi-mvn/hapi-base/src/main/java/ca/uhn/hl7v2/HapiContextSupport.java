@@ -49,7 +49,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * 
  * @author Christian Ohr
  */
-public class HapiContextSupport {
+public abstract class HapiContextSupport {
 
 	private HapiContext context;
 
