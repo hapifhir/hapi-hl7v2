@@ -41,6 +41,7 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.ArrayUtil;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
@@ -249,9 +250,17 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 		}
 		if (out == null) {
 			out = new GenericMessage.UnknownVersion(mcf);
-			out.addNonstandardSegment("MSA");
-			out.addNonstandardSegment("ERR");
 		}
+		
+		if (out instanceof GenericMessage) {
+			if (ArrayUtil.contains(out.getNames(), "MSA") == false) {
+				out.addNonstandardSegment("MSA");
+			}
+			if (ArrayUtil.contains(out.getNames(), "ERR") == false) {
+				out.addNonstandardSegment("ERR");
+			}
+		}
+		
 		return out;
 	}
 
