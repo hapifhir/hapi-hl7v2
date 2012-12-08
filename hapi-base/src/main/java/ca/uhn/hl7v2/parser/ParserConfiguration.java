@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
@@ -12,11 +13,12 @@ import ca.uhn.hl7v2.validation.ValidationContext;
 
 public class ParserConfiguration {
 
+	private boolean allowUnknownVersions;
+	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 	private String myDefaultObx2Type;
 	private boolean myEncodeEmptyMandatorySegments = true;
 	private Set<String> myForcedEncode = new HashSet<String>();
 	private String myInvalidObx2Type;
-	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 	private boolean validating = true;
 	private boolean escapeSubcomponentDelimiterInPrimitive = false;
 
@@ -93,20 +95,6 @@ public class ParserConfiguration {
 		myForcedEncode.add(theForcedEncode);
 	}
 
-	/**
-	 * Removes a forced encode entry
-	 * 
-	 * @see #addForcedEncode(String)
-	 * @since 1.3
-	 */
-	public void removeForcedEncode(String theForcedEncode) {
-		if (theForcedEncode == null) {
-			throw new NullPointerException("forced encode may not be null");
-		}
-		
-		myForcedEncode.remove(theForcedEncode);
-	}
-	
 	boolean determineForcedEncodeIncludesTerserPath(String theTerserPath) {
 		for (String next : getForcedEncode()) {
 			if (next.startsWith(theTerserPath)) {
@@ -115,7 +103,7 @@ public class ParserConfiguration {
 		}
 		return false;
 	}
-
+	
 	int determineForcedFieldNumForTerserPath(String theCurrentTerserPath) {
 		int forceUpToFieldNum = 0;
 		for (String nextPath : getForcedEncode()) {
@@ -155,12 +143,10 @@ public class ParserConfiguration {
 	}
 
 	/**
-	 * @return Returns <code>true</code> if empty segments should still be
-	 *         encoded if they are mandatory within their message structure.
-	 * @see #setEncodeEmptyMandatoryFirstSegments(boolean)
+	 * @return the ID Generator to be used for generating IDs for new messages
 	 */
-	public boolean isEncodeEmptyMandatorySegments() {
-		return myEncodeEmptyMandatorySegments;
+	public IDGenerator getIdGenerator() {
+		return idGenerator;
 	}
 
 	/**
@@ -173,6 +159,58 @@ public class ParserConfiguration {
 	 */
 	public String getInvalidObx2Type() {
 		return myInvalidObx2Type;
+	}
+
+	/**
+	 * If set to <code>true</code> (default is <code>false</code>) the parser will allow
+	 * messages to parse, even if they contain a version which is not known to the
+	 * parser. When operating in this mode, if a message arrives with an unknown
+	 * version string, the parser will attempt to parse it using a {@link GenericMessage Generic Message}
+	 * class instead of a specific HAPI structure class.
+	 */
+	public boolean isAllowUnknownVersions() {
+		return this.allowUnknownVersions;
+	}
+
+	/**
+	 * @return Returns <code>true</code> if empty segments should still be
+	 *         encoded if they are mandatory within their message structure.
+	 * @see #setEncodeEmptyMandatoryFirstSegments(boolean)
+	 */
+	public boolean isEncodeEmptyMandatorySegments() {
+		return myEncodeEmptyMandatorySegments;
+	}
+
+	/**
+     * @return <code>true</code> if the parser validates using a configured {@link ValidationContext}
+     */
+    public boolean isValidating() {
+        return validating;
+    }
+
+	/**
+	 * Removes a forced encode entry
+	 * 
+	 * @see #addForcedEncode(String)
+	 * @since 1.3
+	 */
+	public void removeForcedEncode(String theForcedEncode) {
+		if (theForcedEncode == null) {
+			throw new NullPointerException("forced encode may not be null");
+		}
+		
+		myForcedEncode.remove(theForcedEncode);
+	}
+
+	/**
+	 * If set to <code>true</code> (default is <code>false</code>) the parser will allow
+	 * messages to parse, even if they contain a version which is not known to the
+	 * parser. When operating in this mode, if a message arrives with an unknown
+	 * version string, the parser will attempt to parse it using a {@link GenericMessage Generic Message}
+	 * class instead of a specific HAPI structure class.
+	 */
+	public void setAllowUnknownVersions(boolean theAllowUnknownVersions) {
+		allowUnknownVersions = theAllowUnknownVersions;
 	}
 
 	/**
@@ -213,7 +251,7 @@ public class ParserConfiguration {
 		myDefaultObx2Type = theDefaultObx2Type;
 	}
 
-	/**
+    /**
 	 * <p>
 	 * If set to <code>true</code> (default is <code>true</code>), when encoding
 	 * a group using the PipeParser where the first segment is required, but no
@@ -257,6 +295,16 @@ public class ParserConfiguration {
 		myEncodeEmptyMandatorySegments = theEncodeEmptyMandatorySegments;
 	}
 
+    /**
+	 * @param idGenerator the {@link IDGenerator} to be used for generating IDs for new messages,
+	 * preferable initialized using the methods described in IDGeneratorFactory.
+	 * 
+	 * @see IDGeneratorFactory
+	 */
+	public void setIdGenerator(IDGenerator idGenerator) {
+		this.idGenerator = idGenerator;
+	}
+
 	/**
 	 * <p>
 	 * If this property is set, the value provides a default datatype ("ST",
@@ -297,30 +345,6 @@ public class ParserConfiguration {
 	}
 
 	/**
-	 * @return the ID Generator to be used for generating IDs for new messages
-	 */
-	public IDGenerator getIdGenerator() {
-		return idGenerator;
-	}
-
-	/**
-	 * @param idGenerator the {@link IDGenerator} to be used for generating IDs for new messages,
-	 * preferable initialized using the methods described in IDGeneratorFactory.
-	 * 
-	 * @see IDGeneratorFactory
-	 */
-	public void setIdGenerator(IDGenerator idGenerator) {
-		this.idGenerator = idGenerator;
-	}
-
-    /**
-     * @return <code>true</code> if the parser validates using a configured {@link ValidationContext}
-     */
-    public boolean isValidating() {
-        return validating;
-    }
-
-    /**
      * Determines whether the parser validates using a configured {@link ValidationContext}
      * or not. This allows to disable message validation although a validation context
      * is defined.
@@ -347,7 +371,6 @@ public class ParserConfiguration {
         this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;
     }
 	
-    
 	
 	
 

@@ -33,26 +33,67 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 
+/**
+ * <p>
+ * GenericModelClassFactory is a {@link ModelClassFactory} implementation 
+ * which always returns generic types:
+ * </p>
+ * <ul>
+ * 	<li>{@link GenericMessage}</li>
+ * 	<li>{@link GenericSegment}</li>
+ * 	<li>{@link GenericGroup}</li>
+ * 	<li>{@link GenericType}</li>
+ * </ul> 
+ * 
+ * <p>
+ * This can be used to run HAPI without any structure JARs, as the generic MCF
+ * has no structure dependencies. See the
+ * <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html">using multiple versions</a>
+ * example for more information.
+ * </p>
+ * 
+ * <p>
+ * In combination with {@link ParserConfiguration#setAllowUnknownVersions(boolean)}, the GenericModelClassFactory
+ * can be used to parse future versions of HL7 for which HAPI has no support.
+ * </p>
+ * 
+ * @author James Agnew
+ */
 public class GenericModelClassFactory extends AbstractModelClassFactory {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean theIsExplicit) throws HL7Exception {
 		return GenericMessage.getGenericMessageClass(theVersion);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
 		return GenericMessage.getGenericMessageClass(theVersion);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
 		return GenericGroup.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
 		return GenericSegment.class;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
 		return GenericComposite.class;
 	}
