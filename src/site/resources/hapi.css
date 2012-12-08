@@ -1,3 +1,6 @@
+#bodyColumn {
+		  margin-left: 180px !important;
+}
 
 #navcolumn {
 	background-color: white !important;
@@ -5,6 +8,7 @@
 
 #leftColumn {
 	border: none !important;
+    width: 180px !important;
 	margin: 0px;
 }
 
