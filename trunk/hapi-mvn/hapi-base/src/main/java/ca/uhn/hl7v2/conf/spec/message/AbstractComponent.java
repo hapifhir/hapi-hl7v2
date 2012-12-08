@@ -6,7 +6,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
  * An abstraction of the common features of Field, Component, and SubComponent.  
  * @author Bryan Tripp
  */
-public class AbstractComponent {
+public class AbstractComponent<T> {
     
     /** Creates a new instance of AbstractComponent */
     public AbstractComponent() {
