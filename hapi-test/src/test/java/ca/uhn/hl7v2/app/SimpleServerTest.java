@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.app;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -29,6 +30,26 @@ public class SimpleServerTest implements ConnectionListener {
 		disconnectLatch = new CountDownLatch(1);
 	}
 
+	@Test
+	public void testRejectAttemptToStartTwice() throws InterruptedException, IOException {
+		
+		int port = RandomServerPortProvider.findFreePort();
+		SimpleServer ss = new SimpleServer(port);
+		
+		ss.startAndWait();
+		
+		try {
+			ss.startAndWait();
+			fail();
+		} catch (Exception e) {
+			
+		} finally {
+			ss.stop();
+		}
+		
+	}
+	
+	
 	@Test
 	public void testShutdownCleanly() throws InterruptedException, IOException {
 		
