@@ -176,7 +176,10 @@ public abstract class Parser extends HapiContextSupport {
 		}
 
 		String version = getVersion(message);
-		assertVersionExists(version);
+		
+		if (!getParserConfiguration().isAllowUnknownVersions()) {
+			assertVersionExists(version);
+		}
 
 		assertMessageValidates(message, encoding, version);
 		Message result = doParse(message, version);
@@ -428,11 +431,19 @@ public abstract class Parser extends HapiContextSupport {
 		Segment msh = null;
 
 		try {
-			Message dummy = GenericMessage.getGenericMessageClass(version)
+			Class<? extends Message> genericMessageClass;
+			genericMessageClass = GenericMessage.getGenericMessageClass(version);
+			
+			Message dummy = genericMessageClass
 					.getConstructor(new Class[] { ModelClassFactory.class })
 					.newInstance(new Object[] { factory });
 
-			Class<? extends Segment> c = factory.getSegmentClass("MSH", version);
+			Class<? extends Segment> c = null;
+			
+			if (Version.supportsVersion(version)) {
+				c = factory.getSegmentClass("MSH", version);
+			}
+			
 			if (c != null) {
 				if (GenericSegment.class.isAssignableFrom(c)) {
 					Class<?>[] constructorParamTypes = { Group.class, String.class };
@@ -457,11 +468,13 @@ public abstract class Parser extends HapiContextSupport {
 
 	/**
 	 * Returns true if the given string represents a valid 2.x version. Valid versions include
-	 * "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", s"2.6"
+	 * "2.1", "2.2", "2.3", "2.3.1", "2.4", "2.5", "2.5.1", "2.6"
 	 *
 	 * @param version HL7 version string
 	 * @return <code>true</code> if version is known
+	 * @deprecated Use {@link Version#supportsVersion(String)}
 	 */
+	@Deprecated
 	public static boolean validVersion(String version) {
 		return Version.supportsVersion(version);
 	}

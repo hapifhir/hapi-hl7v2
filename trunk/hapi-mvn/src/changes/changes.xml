@@ -6,6 +6,15 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
+        	<action type="add" dev="James Agnew">
+            	HAPI is now able to work without any structure JARs for basic tasks, and can
+            	process unknown versions of HL7 (e.g. 2.99) if configured to allow this.
+            	See
+            	<![CDATA[
+            	<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/GenericModelClassFactory.html">GenerciModelClassFactory</a>
+            	]]>
+            	for more information.
+            </action>
         	<action type="fix" dev="Christian Ohr" issue="3590954">
             	Fixed incorrect trimming rule for TX. Thanks to Søren Therkildsen for reporting.
             </action>

@@ -24,6 +24,7 @@ package ca.uhn.hl7v2.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +39,8 @@ import ca.uhn.hl7v2.Version;
  * The directory can be set using {@link #setEventMapDirectory(String)} and defaults to
  * <code>ca/uhn/hl7v2/parser/eventmap/</code>. The file itself is a property file named after the
  * HL7 version (e.g. <code>2.4.properties</code>).
+ * </p>
+ * 
  * 
  * @author Christian Ohr
  */
@@ -47,7 +50,7 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	protected static final String DEFAULT_EVENT_MAP_DIRECTORY = "ca/uhn/hl7v2/parser/eventmap/";
 
 	private String eventMapDirectory = DEFAULT_EVENT_MAP_DIRECTORY;
-	private Map<Version, Properties> eventMap;
+	private Map<Version, Map<String, String>> eventMap;
 
 	/**
 	 * @return the directory where to read the eventmap file from
@@ -68,11 +71,23 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 *      ca.uhn.hl7v2.Version)
 	 */
 	public String getMessageStructureForEvent(String name, Version version) throws HL7Exception {
-		Properties p = getEventMap().get(version);
+		Map<String, String> p = getEventMapForVersion(version);
 		if (p == null)
 			throw new HL7Exception("No map found for version " + version
 					+ ". Only the following are available: " + getEventMap().keySet());
-		return p.getProperty(name);
+		return p.get(name);
+	}
+
+	/**
+	 * Returns the event map for a given HL7 version. In this map, the key is a message
+	 * type and trigger event in the form <code>[type]_[trigger]</code>, for example:
+	 * <code>ADT_A04</code>, and the values are the corresponding structure for this trigger,
+	 * for example: <code>ADT_A01</code>.
+	 * 
+	 * @return Returns <code>null</code> if no event map is found for the given version 
+	 */
+	public Map<String, String> getEventMapForVersion(Version version) throws HL7Exception {
+		return getEventMap().get(version);
 	}
 
 	/**
@@ -83,7 +98,7 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 * @return the event map
 	 * @throws HL7Exception
 	 */
-	synchronized Map<Version, Properties> getEventMap() throws HL7Exception {
+	synchronized Map<Version, Map<String, String>> getEventMap() throws HL7Exception {
 		if (eventMap == null) {
 			try {
 				eventMap = loadMessageStructures();
@@ -100,8 +115,8 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 * @return the event map
 	 * @throws IOException
 	 */
-	protected Map<Version, Properties> loadMessageStructures() throws IOException {
-		Map<Version, Properties> map = new HashMap<Version, Properties>();
+	protected Map<Version, Map<String, String>> loadMessageStructures() throws IOException {
+		Map<Version, Map<String, String>> map = new HashMap<Version, Map<String, String>>();
 		for (Version v : Version.values()) {
 			String resource = getEventMapDirectory() + v.getVersion() + ".properties";
 			InputStream in = getResource(resource);
@@ -109,7 +124,13 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 				try {
 					Properties structures = new Properties();
 					structures.load(in);
-					map.put(v, structures);
+					
+					Map<String, String> structureMap = new HashMap<String, String>();
+					for(Map.Entry<Object, Object> next : structures.entrySet()) {
+						structureMap.put((String)next.getKey(), (String)next.getValue());
+					}
+					
+					map.put(v, Collections.unmodifiableMap(structureMap));
 				} finally {
 					in.close();
 				}

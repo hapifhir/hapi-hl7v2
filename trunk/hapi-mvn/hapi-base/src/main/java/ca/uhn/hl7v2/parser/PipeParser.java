@@ -861,12 +861,22 @@ public class PipeParser extends Parser {
 			String[] procIDComps = split(fields[10], String.valueOf(compSep));
 
 			// fill MSH segment
-			String version = Version.lowestAvailableVersion().getVersion(); // default
+			String version = null;
 			try {
 				version = getVersion(message);
 			} catch (Exception e) { /* use the default */
 			}
 
+			if (version == null) {
+				Version lowestAvailableVersion = Version.lowestAvailableVersion();
+				if (lowestAvailableVersion != null) {
+					version = lowestAvailableVersion.getVersion();
+				}
+				if (version == null) {
+					version = "2.4"; // last resort!
+				}
+			}
+			
 			msh = Parser.makeControlMSH(version, getFactory());
 			Terser.set(msh, 1, 0, 1, 1, String.valueOf(fieldSep));
 			Terser.set(msh, 2, 0, 1, 1, encChars);
