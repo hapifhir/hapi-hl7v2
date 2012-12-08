@@ -18,17 +18,14 @@ Developing using HAPI - By Example
   Please note that this page assumes at least a basic familiarity 
   with {{{http://hl7.org}HL7}} and it's terminology.
 
-
-* HAPI Community Survey 2011
-
-  HAPI Community Survey! This year, HAPI will be ten years old! To celebrate, we are
-  launching our first survey on the HAPI user community. The survey takes less than five
-  minutes to fill out, as it is just 8 quick multiple choice questions. Please take
-  a few minutes to show your support!
-  
-  {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Access the survey here}}
-
-
+~~* HAPI Community Survey 2011
+~~
+~~  HAPI Community Survey! This year, HAPI will be ten years old! To celebrate, we are
+~~  launching our first survey on the HAPI user community. The survey takes less than five
+~~  minutes to fill out, as it is just 8 quick multiple choice questions. Please take
+~~  a few minutes to show your support!
+~~  
+~~  {{{https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&newtest=Y}Access the survey here}}
 
 * The Basics
 

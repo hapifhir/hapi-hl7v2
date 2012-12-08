@@ -259,6 +259,8 @@
 		<findbugs.maven.plugin.version>2.5.2</findbugs.maven.plugin.version>
 		<gpg.maven.plugin.version>1.4</gpg.maven.plugin.version>
 		<maven.assembly.plugin.version>2.3</maven.assembly.plugin.version>
+		<maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
+		<maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
 	</properties>
 
 	<reporting>
