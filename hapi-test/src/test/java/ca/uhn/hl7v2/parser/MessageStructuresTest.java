@@ -2,7 +2,7 @@ package ca.uhn.hl7v2.parser;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -35,13 +35,13 @@ public class MessageStructuresTest {
 	@Test
 	public void testAllMessages() throws Exception {
 
-		AbstractModelClassFactory amcf = new DefaultModelClassFactory();
-		Map<Version, Properties> map = amcf.getEventMap();
+		DefaultModelClassFactory amcf = new DefaultModelClassFactory();
+		Map<Version, Map<String, String>> map = amcf.getEventMap();
 		for (Version nextVersion : Version.values()) {
 
-			Properties structures = map.get(nextVersion);
-			for (Map.Entry<Object, Object> nextEntry : structures.entrySet()) {
-				String nextStructure = nextEntry.getValue().toString();
+			Map<String, String> structures = map.get(nextVersion);
+			for (Entry<String, String> nextEntry : structures.entrySet()) {
+				String nextStructure = nextEntry.getValue();
 				if ("?".equals(nextStructure)) {
 					continue;
 				}
