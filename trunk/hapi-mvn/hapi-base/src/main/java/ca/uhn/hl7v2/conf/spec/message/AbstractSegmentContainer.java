@@ -1,12 +1,15 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
  * An abstraction of SegGroup and MessageProfile (both are containers for segment specs).  
  * @author Bryan Tripp
  */
-public class AbstractSegmentContainer {
+public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
     
     private String description;
     private String reference;
@@ -164,5 +167,9 @@ public class AbstractSegmentContainer {
             this.children = newCopy;
         }        
     }
+
+	public Iterator<ProfileStructure> iterator() {
+		return Arrays.asList(this.children).iterator();
+	}
     
 }
