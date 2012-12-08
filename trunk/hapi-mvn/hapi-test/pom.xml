@@ -174,6 +174,8 @@
 	</dependencies>
 
 	<build>
+		<sourceDirectory>${basedir}/../hapi-base/src/main/java</sourceDirectory>
+		
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -187,11 +189,6 @@
 				<artifactId>hapi-sourcegen</artifactId>
 				<version>${hapi.version}</version>
 				<executions>
-					<!-- <execution> <id>json</id> <goals> <goal>confgen</goal> </goals> 
-						<configuration> <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory> 
-						<packageName>ca.uhn.hl7v2.test.json</packageName> <profile>${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml</profile> 
-						<generateDateTypes>SINGLE</generateDateTypes> <templatePackage>ca.uhn.hl7v2.sourcegen.templates.json</templatePackage> 
-						<structuresAsResources>true</structuresAsResources> </configuration> </execution> -->
 					<execution>
 						<id>no_data_types</id>
 						<goals>
@@ -292,17 +289,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.10</version>
+				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine> 
 					<forkMode>once</forkMode>
-					<!-- <parallel>classes</parallel>  -->
-					<!--<testFailureIgnore>true</testFailureIgnore>-->
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
+				<version>${maven.deploy.plugin.version}</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -340,6 +335,7 @@
 						<artifactId>maven-antrun-plugin</artifactId>
 						<version>1.7</version>
 						<executions>
+							<!-- 
 							<execution>
 								<id>copy_sources</id>
 								<phase>process-resources</phase>
@@ -364,6 +360,7 @@
 									<goal>run</goal>
 								</goals>
 							</execution>
+							-->
 							<execution>
 								<id>site</id>
 								<phase>post-site</phase>
