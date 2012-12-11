@@ -18,7 +18,7 @@ http://hl7api.sourceforge.net/hapi-hl7overhttp/relay_config.html
 	**** Listeners ****
 	-->
 
-    <bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="theListener">
+    <bean class="ca.uhn.hl7v2.hoh.relay.listener.RelayMllpListener" id="theListener">
         <property name="port" value="8079"/>
     </bean>
 
@@ -26,7 +26,7 @@ http://hl7api.sourceforge.net/hapi-hl7overhttp/relay_config.html
 	**** Senders ****
 	-->
     
-    <bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="theSender">
+    <bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
         <property name="urlString" value="http://localhost:8080/relayURI"/>
     </bean>
 

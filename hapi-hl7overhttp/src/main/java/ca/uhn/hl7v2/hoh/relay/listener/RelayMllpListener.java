@@ -17,9 +17,9 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
-public class MllpListener implements InitializingBean, DisposableBean, IListener, BeanNameAware {
+public class RelayMllpListener implements InitializingBean, DisposableBean, IRelayListener, BeanNameAware {
 
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(MllpListener.class);
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(RelayMllpListener.class);
 	private List<ReceivingApplication> myApplications = new ArrayList<ReceivingApplication>();
 	private List<AppRoutingData> myAppRoutingData = new ArrayList<AppRoutingData>();
 	private String myBeanName;

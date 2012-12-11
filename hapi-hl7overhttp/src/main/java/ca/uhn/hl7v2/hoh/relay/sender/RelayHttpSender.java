@@ -18,9 +18,9 @@ import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.Terser;
 
-public class HttpSender extends HohClientMultithreaded implements ISender, BeanNameAware, InitializingBean {
+public class RelayHttpSender extends HohClientMultithreaded implements IRelaySender, BeanNameAware, InitializingBean {
 
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HttpSender.class);
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(RelayHttpSender.class);
 	private String myBeanName;
 	
 	/**
