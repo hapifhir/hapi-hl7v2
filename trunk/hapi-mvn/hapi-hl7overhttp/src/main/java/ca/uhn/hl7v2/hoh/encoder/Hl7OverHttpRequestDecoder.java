@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
+import ca.uhn.hl7v2.hoh.util.StringUtils;
 
 public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 
@@ -16,8 +17,13 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 
 	protected void authorize() throws AuthorizationFailureException {
 		if (myAuthorizationCallback != null) {
-			if (!myAuthorizationCallback.authorize(getPath(), getUsername(), getPassword())) {
-				throw new AuthorizationFailureException("Authorization failed for user: " + getUsername());
+			String username = getUsername();
+			if (!myAuthorizationCallback.authorize(getPath(), username, getPassword())) {
+				if (StringUtils.isBlank(username)) {
+					throw new AuthorizationFailureException("Authorization failed: No username provided");
+				} else {
+					throw new AuthorizationFailureException("Authorization failed for user: " + getUsername());
+				}
 			}
 		} else {
 			if (isNotBlank(getUsername()) || isNotBlank(getPassword())) {

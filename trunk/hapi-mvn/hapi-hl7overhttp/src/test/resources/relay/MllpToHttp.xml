@@ -4,11 +4,11 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="listener">
+    <bean class="ca.uhn.hl7v2.hoh.relay.listener.RelayMllpListener" id="listener">
         <property name="port" value="#{ systemProperties['relay.port.in'] }"/>
     </bean>
     
-    <bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="sender">
+    <bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="sender">
         <property name="url" value="http://localhost:#{ systemProperties['relay.port.out'] }/relayURI"/>
         <property name=""></property>
     </bean>

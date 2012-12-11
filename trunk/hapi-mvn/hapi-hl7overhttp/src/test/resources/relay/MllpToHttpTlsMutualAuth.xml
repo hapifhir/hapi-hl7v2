@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="theListener">
+    <bean class="ca.uhn.hl7v2.hoh.relay.listener.RelayMllpListener" id="theListener">
         <property name="port" value="#{ systemProperties['relay.port.in'] }"/>
     </bean>
 
@@ -17,11 +17,18 @@
 	<!-- Create a socket factory bean -->    
     <bean class="ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory" id="theSocketFactory">
     	<property name="keystoreFilename" value="src/test/resources/truststore.jks"/>
-    	<!-- <property name="keystorePassphrase" value="trustpassword"/>  -->
+    	<property name="keystorePassphrase" value="changeit"/>
     </bean>
     
-    <bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="theSender">
+    <bean class="ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback" id="theAuthorizationCallback">
+    	<property name="username" value="hello"></property>
+    	<property name="password" value="hapiworld"></property>
+    </bean>
+    
+    <bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
         <property name="url" value="http://localhost:#{ systemProperties['relay.port.out'] }/relayURI"/>
+
+		<property name="authorizationCallback" ref="theAuthorizationCallback"/>
 
         <!-- Provide the socket factory to the sender -->
         <property name="socketFactory" ref="theSocketFactory"/>

@@ -2,8 +2,8 @@ package ca.uhn.hl7v2.hoh.relay;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import ca.uhn.hl7v2.hoh.relay.listener.IListener;
-import ca.uhn.hl7v2.hoh.relay.sender.ISender;
+import ca.uhn.hl7v2.hoh.relay.listener.IRelayListener;
+import ca.uhn.hl7v2.hoh.relay.sender.IRelaySender;
 import ca.uhn.hl7v2.hoh.util.Validate;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 
@@ -11,10 +11,10 @@ public class Binder implements InitializingBean {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Binder.class);
 
-	private IListener myListener;
+	private IRelayListener myRelayListener;
 	private String myMessageType = "*";
 	private String myProcessingId = "*";
-	private ISender mySender;
+	private IRelaySender myRelaySender;
 	private String myTriggerEvent = "*";
 	private String myVersionId = "*";
 
@@ -22,25 +22,25 @@ public class Binder implements InitializingBean {
 	 * {@inheritDoc}
 	 */
 	public void afterPropertiesSet() throws Exception {
-		Validate.propertySet(myListener, "listener");
-		Validate.propertySet(mySender, "sender");
+		Validate.propertySet(myRelayListener, "listener");
+		Validate.propertySet(myRelaySender, "sender");
 
-		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[MsgType:{} / MsgTrigger:{} / Version:{} / Processing:{}]", new Object[] { mySender.getBeanName(), myListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId });
+		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[MsgType:{} / MsgTrigger:{} / Version:{} / Processing:{}]", new Object[] { myRelaySender.getBeanName(), myRelayListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId });
 
 		AppRoutingDataImpl appRoutingData = new AppRoutingDataImpl(myMessageType, myTriggerEvent, myProcessingId, myVersionId);
-		myListener.registerApplication(appRoutingData, mySender);
+		myRelayListener.registerApplication(appRoutingData, myRelaySender);
 	}
 
-	public void setListener(IListener theListener) {
-		myListener = theListener;
+	public void setListener(IRelayListener theRelayListener) {
+		myRelayListener = theRelayListener;
 	}
 
 	/**
-	 * @param theSender
+	 * @param theRelaySender
 	 *            the sender to set
 	 */
-	public void setSender(ISender theSender) {
-		mySender = theSender;
+	public void setSender(IRelaySender theRelaySender) {
+		myRelaySender = theRelaySender;
 	}
 
 }

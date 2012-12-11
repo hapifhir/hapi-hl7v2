@@ -64,14 +64,14 @@
 					The following is a simple example of a listener bean which uses
 					MLLP to listen for incoming messages:
 				</p>
-				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.listener.MllpListener" id="theListener">
+				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.listener.RelayMllpListener" id="theListener">
    <property name="port" value="8079"/>
 </bean>]]></source>
 			
 				<p>
 					The <b>class</b> attribute indicates what type of listener should be used.
 					Listeners must be of type
-					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IListener.html">IListener</a>.
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IRelayListener.html">IRelayListener</a>.
 				</p>
 				
 				<p>
@@ -87,14 +87,14 @@
 					The following is a simple example of a sender bean which uses
 					HL7 over HTTP to transmit messages:
 				</p>
-				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.sender.HttpSender" id="theSender">
+				<source><![CDATA[<bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
    <property name="urlString" value="http://localhost:8080/relayURI"/>
 </bean>]]></source>
 			
 				<p>
 					The <b>class</b> attribute indicates what type of listener should be used.
 					Listeners must be of type
-					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IListener.html">IListener</a>.
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IRelayListener.html">IRelayListener</a>.
 				</p>
 				
 				<p>
@@ -126,6 +126,37 @@
 				
 			</subsection>
 
+		</section>
+		
+		<section name="Advanced HL7 over HTTP Sender">
+		
+			<p>
+				There are a several configuration options you can add to the HTTP Sender in
+				order to meet specific application requirements.
+			</p>
+		
+			<subsection name="Authorization">
+				
+				<p>
+					In order to add HTTP basic authorization (username/password) to each
+					request, use the following configuration on your sender bean: 
+				</p>
+				<source><![CDATA[<!-- First, create a credential callback, and provide it with the
+     username and password to be transmitted -->    
+<bean class="ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback" id="theAuthorizationCallback">
+   <property name="username" value="hello"></property>
+   <property name="password" value="hapiworld"></property>
+</bean>
+
+<bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
+   <!-- ... Add other properties to the sender ... -->
+
+   <!-- Add the authorization callback property, referencing your bean above -->
+   <property name="authorizationCallback" ref="theAuthorizationCallback"/>
+</bean>]]></source>
+				
+			</subsection>
+		
 		</section>
 								
 	</body>

@@ -63,38 +63,6 @@ public class HttpSenderTest {
 		myServerSocketThread = new ServerSocketThreadForTesting(myOutPort, ourServerCallback);
 	}
 
-	private class MyThread extends Thread {
-
-		@Override
-		public void run() {
-			
-			ServerSocket ss;
-			try {
-				ourLog.info("GOing to bind");				
-				ss = CustomCertificateTlsSocketFactoryTest.createTrustedServerSocketFactory().createServerSocket();
-				ss.bind(new InetSocketAddress((InetAddress)null, myOutPort), 50);
-				
-				ourLog.info("GOing to accept");				
-				Socket socket = ss.accept();
-				
-				ourLog.info("Going to read");
-				InputStream is = socket.getInputStream();
-				while (true) {
-					int next = is.read();
-					System.out.print((char)next);
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
-		
-		
-	}
-	
-	
 	@Test
 	public void testSenderWithTls() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
 		
@@ -125,7 +93,7 @@ public class HttpSenderTest {
 	@Test
 	public void testSetUrl() throws Exception {
 		
-		HttpSender s = new HttpSender();
+		RelayHttpSender s = new RelayHttpSender();
 		s.setUrlString("http://localhost:8888/path");
 		
 		assertEquals("localhost", s.getHost());
