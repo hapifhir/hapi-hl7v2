@@ -141,7 +141,7 @@ public class Escape {
                 break;
             }
         }
-        if (foundEscapeChar == false) {
+        if (!foundEscapeChar) {
             return text;
         }
 

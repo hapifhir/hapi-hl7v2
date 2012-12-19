@@ -41,7 +41,7 @@ import ca.uhn.hl7v2.model.Message;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 
-public class EncodingCharacters extends Object implements Cloneable {
+public class EncodingCharacters implements Cloneable {
     
     private char fieldSep;
     private char[] encChars;
@@ -160,15 +160,10 @@ public class EncodingCharacters extends Object implements Cloneable {
      * as a string.
      */
     public String toString() {
-        StringBuffer ret = new StringBuffer();
-        for (int i = 0; i < this.encChars.length; i++) {
-            ret.append(this.encChars[i]);
-        }
-        
-        return ret.toString();
+        return String.valueOf(encChars);
     }
     
-    public Object clone()
+    public Object clone() throws CloneNotSupportedException
     {
         return new EncodingCharacters(this);
     }
@@ -197,15 +192,11 @@ public class EncodingCharacters extends Object implements Cloneable {
     public boolean equals(Object o) {
         if (o instanceof EncodingCharacters) {
             EncodingCharacters other = (EncodingCharacters) o;
-            if (this.getFieldSeparator() == other.getFieldSeparator() 
+            return (this.getFieldSeparator() == other.getFieldSeparator()
                 && this.getComponentSeparator() == other.getComponentSeparator()
                 && this.getEscapeCharacter() == other.getEscapeCharacter() 
                 && this.getRepetitionSeparator() == other.getRepetitionSeparator()
-                && this.getSubcomponentSeparator() == other.getSubcomponentSeparator()) {
-                    return true;
-            } else {
-                return false;
-            }
+                && this.getSubcomponentSeparator() == other.getSubcomponentSeparator());
         } else {
             return false;
         }   

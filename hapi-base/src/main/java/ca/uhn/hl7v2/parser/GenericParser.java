@@ -125,18 +125,10 @@ public class GenericParser extends Parser {
 	 * thrown.
 	 */
 	private Parser getAppropriateParser(String message) throws HL7Exception {
-		String encoding = getEncoding(message);
-		if (encoding == null)
-			encoding = ""; // prevent null pointer exception
-		Parser appropriateParser = null;
-		if (encoding.equalsIgnoreCase("VB")) {
-			appropriateParser = pipeParser;
-		} else if (encoding.equalsIgnoreCase("XML")) {
-			appropriateParser = xmlParser;
-		} else {
-			throw new HL7Exception("Can't find appropriate parser - encoding not recognized");
-		}
-		return appropriateParser;
+	    String encoding = getEncoding(message);
+    	if ("VB".equalsIgnoreCase(encoding)) return pipeParser;
+    	if ("XML".equalsIgnoreCase(encoding)) return xmlParser;
+        throw new HL7Exception("Can't find appropriate parser - encoding not recognized");          
 	}
 
 	/**
@@ -204,9 +196,7 @@ public class GenericParser extends Parser {
 	 */
 	public String getEncoding(String message) {
 		String encoding = primaryParser.getEncoding(message);
-		if (encoding == null)
-			encoding = secondaryParser.getEncoding(message);
-		return encoding;
+		return (encoding == null ? secondaryParser.getEncoding(message) : encoding);
 	}
 
 	/**
@@ -230,8 +220,7 @@ public class GenericParser extends Parser {
 	 * Returns true if and only if the given encoding is supported by this Parser.
 	 */
 	public boolean supportsEncoding(String encoding) {
-		return (primaryParser.getDefaultEncoding().equalsIgnoreCase(encoding) || secondaryParser
-				.getDefaultEncoding().equalsIgnoreCase(encoding));
+		return (primaryParser.supportsEncoding(encoding) || secondaryParser.supportsEncoding(encoding));
 	}
 
 	/**

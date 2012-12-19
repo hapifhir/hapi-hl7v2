@@ -83,8 +83,8 @@ public interface ModelClassFactory extends Serializable {
 			throws HL7Exception;
 
 	/**
-	 * @param name
-	 * @param version
+	 * @param eventName event name
+	 * @param version HL7 version
 	 * @return message structure name for the eventName and version or <code>null</code> if none
 	 *         could be found
 	 * @throws HL7Exception if the version is unknown or the message structure list is inaccessible

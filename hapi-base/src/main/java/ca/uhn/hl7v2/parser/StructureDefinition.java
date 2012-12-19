@@ -245,7 +245,7 @@ public class StructureDefinition implements IStructureDefinition {
      * {@inheritDoc }
      */
     public boolean hasChildren() {
-        return myChildren.isEmpty() == false;
+        return !myChildren.isEmpty();
     }
 
 
@@ -265,13 +265,7 @@ public class StructureDefinition implements IStructureDefinition {
         if (myIsFinalChildOfParent != null) {
             return myIsFinalChildOfParent;
         }
-
-        if (myParent == null) {
-            myIsFinalChildOfParent = true;
-        } else {
-            myIsFinalChildOfParent = (myPosition == (myParent.getChildren().size() - 1));
-        }
-
+        myIsFinalChildOfParent = myParent == null || (myPosition == (myParent.getChildren().size() - 1));
         return myIsFinalChildOfParent;
     }
 

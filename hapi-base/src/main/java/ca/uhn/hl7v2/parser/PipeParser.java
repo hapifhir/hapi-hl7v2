@@ -109,7 +109,7 @@ public class PipeParser extends Parser {
 	 * the one returned.
 	 */
 	public String getEncoding(String message) {
-		return EncodingDetector.isEr7Encoded(message) ? getDefaultEncoding() : null;
+	    return EncodingDetector.isEr7Encoded(message) ? getDefaultEncoding() : null;
 	}
 
 	/**
@@ -121,23 +121,20 @@ public class PipeParser extends Parser {
 
 	/**
 	 * @deprecated this method should not be public
-	 * @param message
-	 * @return
+	 * @param message HL7 message
+	 * @return message structure
 	 * @throws HL7Exception
-	 * @throws EncodingNotSupportedException
 	 */
-	public String getMessageStructure(String message) throws HL7Exception,
-			EncodingNotSupportedException {
+	public String getMessageStructure(String message) throws HL7Exception {
 		return getStructure(message).messageStructure;
 	}
 
 	/**
-	 * @returns the message structure from MSH-9-3
+	 * @return the message structure from MSH-9-3
 	 */
-	private MessageStructure getStructure(String message) throws HL7Exception,
-			EncodingNotSupportedException {
+	private MessageStructure getStructure(String message) throws HL7Exception {
 		EncodingCharacters ec = getEncodingChars(message);
-		String messageStructure = null;
+		String messageStructure;
 		boolean explicityDefined = true;
 		String wholeFieldNine;
 		try {
@@ -203,8 +200,7 @@ public class PipeParser extends Parser {
 	 * @throws HL7Exception if the message is not correctly formatted.
 	 * @throws EncodingNotSupportedException if the message encoded is not supported by this parser.
 	 */
-	protected Message doParse(String message, String version) throws HL7Exception,
-			EncodingNotSupportedException {
+	protected Message doParse(String message, String version) throws HL7Exception {
 
 		// try to instantiate a message object of the right class
 		MessageStructure structure = getStructure(message);
@@ -222,7 +218,7 @@ public class PipeParser extends Parser {
 	 * {@inheritDoc}
 	 */
 	protected Message doParseForSpecificPackage(String message, String version, String packageName)
-			throws HL7Exception, EncodingNotSupportedException {
+			throws HL7Exception {
 
 		// try to instantiate a message object of the right class
 		MessageStructure structure = getStructure(message);
@@ -295,13 +291,12 @@ public class PipeParser extends Parser {
 	 * Parses a segment string and populates the given Segment object. Unexpected fields are added
 	 * as Varies' at the end of the segment.
 	 * 
-	 * @param theRepetition The repetition number of this segment within its group
 	 * @throws HL7Exception if the given string does not contain the given segment or if the string
 	 *             is not encoded properly
 	 */
 	public void parse(Segment destination, String segment, EncodingCharacters encodingChars)
 			throws HL7Exception {
-		parse(destination, segment, encodingChars, null);
+		parse(destination, segment, encodingChars, 0);
 	}
 
 	/**
@@ -313,7 +308,7 @@ public class PipeParser extends Parser {
 	 *             is not encoded properly
 	 */
 	public void parse(Segment destination, String segment, EncodingCharacters encodingChars,
-			Integer theRepetition) throws HL7Exception {
+			int theRepetition) throws HL7Exception {
 		int fieldOffset = 0;
 		if (isDelimDefSegment(destination.getName())) {
 			fieldOffset = 1;
@@ -345,7 +340,7 @@ public class PipeParser extends Parser {
 				} catch (HL7Exception e) {
 					// set the field location and throw again ...
 					e.setFieldPosition(i);
-					if (theRepetition != null && theRepetition > 1) {
+					if (theRepetition > 1) {
 						e.setSegmentRepetition(theRepetition);
 					}
 					e.setSegmentName(destination.getName());
@@ -355,7 +350,7 @@ public class PipeParser extends Parser {
 		}
 
 		// set data type of OBX-5
-		if (destination.getClass().getName().indexOf("OBX") >= 0) {
+		if (destination.getClass().getName().contains("OBX")) {
 			Varies.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
 		}
 
@@ -364,7 +359,7 @@ public class PipeParser extends Parser {
 	/**
 	 * @return true if the segment is MSH, FHS, or BHS. These need special treatment because they
 	 *         define delimiters.
-	 * @param theSegmentName
+	 * @param theSegmentName segment name
 	 */
 	private static boolean isDelimDefSegment(String theSegmentName) {
 		boolean is = false;
@@ -429,7 +424,7 @@ public class PipeParser extends Parser {
 
 		String[] ret = new String[components.size()];
 		for (int i = 0; i < components.size(); i++) {
-			ret[i] = (String) components.get(i);
+			ret[i] = components.get(i);
 		}
 
 		return ret;
@@ -552,8 +547,7 @@ public class PipeParser extends Parser {
 	 * @throws EncodingNotSupportedException if the requested encoding is not supported by this
 	 *             parser.
 	 */
-	protected String doEncode(Message source, String encoding) throws HL7Exception,
-			EncodingNotSupportedException {
+	protected String doEncode(Message source, String encoding) throws HL7Exception {
 		if (!this.supportsEncoding(encoding))
 			throw new EncodingNotSupportedException("This parser does not support the " + encoding
 					+ " encoding");
@@ -577,7 +571,7 @@ public class PipeParser extends Parser {
 			throw new HL7Exception("Can't encode message: MSH-1 (field separator) is missing");
 
 		char fieldSep = '|';
-		if (fieldSepString != null && fieldSepString.length() > 0)
+		if (fieldSepString.length() > 0)
 			fieldSep = fieldSepString.charAt(0);
 
 		String encCharString = Terser.get(msh, 2, 0, 1, 1);
@@ -592,7 +586,7 @@ public class PipeParser extends Parser {
 
 		// pass down to group encoding method which will operate recursively on
 		// children ...
-		return encode((Group) source, en, getParserConfiguration(), "");
+		return encode(source, en, getParserConfiguration(), "");
 	}
 
 	/**
@@ -620,9 +614,8 @@ public class PipeParser extends Parser {
 		boolean haveHadMandatorySegment = false;
 		boolean haveHadSegmentBeforeMandatorySegment = false;
 
-		for (int i = 0; i < names.length; i++) {
+		for (String nextName : names) {
 
-			String nextName = names[i];
 			source.get(nextName, 0);
 			Structure[] reps = source.getAll(nextName);
 			boolean nextNameIsRequired = source.isRequired(nextName);
@@ -639,11 +632,11 @@ public class PipeParser extends Parser {
 					+ nextName : nextName;
 
 			// Add all reps of the next segment/group
-			for (int rep = 0; rep < reps.length; rep++) {
+			for (Structure rep : reps) {
 
-				if (reps[rep] instanceof Group) {
+				if (rep instanceof Group) {
 
-					String encodedGroup = encode((Group) reps[rep], encodingChars,
+					String encodedGroup = encode((Group) rep, encodingChars,
 							parserConfiguration, nextTerserPath);
 					result.append(encodedGroup);
 
@@ -663,7 +656,7 @@ public class PipeParser extends Parser {
 					// Check if we are configured to force the encoding of this segment
 					boolean encodeEmptySegments = parserConfiguration
 							.determineForcedEncodeIncludesTerserPath(nextTerserPath);
-					String segString = encode((Segment) reps[rep], encodingChars,
+					String segString = encode((Segment) rep, encodingChars,
 							parserConfiguration, nextTerserPath);
 					if (segString.length() >= 4 || encodeEmptySegments) {
 						result.append(segString);
@@ -852,7 +845,6 @@ public class PipeParser extends Parser {
 		// get field array
 		String[] fields = split(mshString, String.valueOf(fieldSep));
 
-		Segment msh = null;
 		try {
 			// parse required fields
 			String encChars = fields[1];
@@ -877,12 +869,13 @@ public class PipeParser extends Parser {
 				}
 			}
 			
-			msh = Parser.makeControlMSH(version, getFactory());
+			Segment msh = Parser.makeControlMSH(version, getFactory());
 			Terser.set(msh, 1, 0, 1, 1, String.valueOf(fieldSep));
 			Terser.set(msh, 2, 0, 1, 1, encChars);
 			Terser.set(msh, 10, 0, 1, 1, messControlID);
 			Terser.set(msh, 11, 0, 1, 1, procIDComps[0]);
 			Terser.set(msh, 12, 0, 1, 1, version);
+            return msh;
 
 		} catch (Exception e) {
 			throw new HL7Exception("Can't parse critical fields from MSH segment ("
@@ -890,7 +883,7 @@ public class PipeParser extends Parser {
 					ErrorCode.REQUIRED_FIELD_MISSING, e);
 		}
 
-		return msh;
+
 	}
 
 	/**
@@ -959,7 +952,7 @@ public class PipeParser extends Parser {
 	 * {@inheritDoc }
 	 */
 	@Override
-	public Message parse(String message) throws HL7Exception, EncodingNotSupportedException {
+	public Message parse(String message) throws HL7Exception {
 		if (myLegacyMode != null && myLegacyMode) {
 
 			@SuppressWarnings("deprecation")
@@ -992,13 +985,7 @@ public class PipeParser extends Parser {
 	 * @deprecated This will be removed in HAPI 3.0
 	 */
 	public boolean isLegacyMode() {
-		if (myLegacyMode == null) {
-			if (Boolean.parseBoolean(System.getProperty(DEFAULT_LEGACY_MODE_PROPERTY))) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+		if (myLegacyMode == null) return (Boolean.parseBoolean(System.getProperty(DEFAULT_LEGACY_MODE_PROPERTY)));
 		return this.myLegacyMode;
 	}
 
@@ -1015,7 +1002,7 @@ public class PipeParser extends Parser {
 		if (endMSH < 0)
 			endMSH = message.length();
 		String msh = message.substring(startMSH, endMSH);
-		String fieldSep = null;
+		String fieldSep;
 		if (msh.length() > 3) {
 			fieldSep = String.valueOf(msh.charAt(3));
 		} else {
@@ -1025,7 +1012,7 @@ public class PipeParser extends Parser {
 
 		String[] fields = split(msh, fieldSep);
 
-		String compSep = null;
+		String compSep;
 		if (fields.length >= 2 && fields[1] != null && fields[1].length() == 4) {
 			compSep = String.valueOf(fields[1].charAt(0)); // get component
 															// separator as 1st
@@ -1035,7 +1022,7 @@ public class PipeParser extends Parser {
 					+ fields[1], ErrorCode.REQUIRED_FIELD_MISSING);
 		}
 
-		String version = null;
+		String version;
 		if (fields.length >= 12) {
 			String[] comp = split(fields[11], compSep);
 			if (comp.length >= 1) {

@@ -299,7 +299,7 @@ public class ParserConfiguration {
 	 * @param idGenerator the {@link IDGenerator} to be used for generating IDs for new messages,
 	 * preferable initialized using the methods described in IDGeneratorFactory.
 	 * 
-	 * @see IDGeneratorFactory
+	 * @see IDGenerator
 	 */
 	public void setIdGenerator(IDGenerator idGenerator) {
 		this.idGenerator = idGenerator;
@@ -332,7 +332,7 @@ public class ParserConfiguration {
 	 * {@link ParserConfiguration} takes priority over the system property.
 	 * </p>
 	 * 
-	 * @param theDefaultObx2Type
+	 * @param theInvalidObx2Type
 	 *            If this property is set, the value provides a default datatype
 	 *            ("ST", "NM", etc) for an OBX segment with an invalid OBX-2
 	 *            value. This is useful when parsing messages from systems which
@@ -364,8 +364,6 @@ public class ParserConfiguration {
 
     /**
      * Set to <code>true</code> if subcomponent delimiters in OBX-5 shall be ignored
-     * 
-     * @param escapeSubcomponentDelimiterInPrimitive
      */
     public void setEscapeSubcomponentDelimiterInPrimitive(boolean escapeSubcomponentDelimiterInPrimitive) {
         this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;

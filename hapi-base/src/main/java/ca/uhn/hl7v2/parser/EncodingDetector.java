@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  * Detects message encoding (ER7 / XML) without relying on any
  * external dependencies
  */
-public class EncodingDetector {
+public final class EncodingDetector {
 
 	/**
 	 * Non instantiable
@@ -42,20 +42,14 @@ public class EncodingDetector {
 		// nothing
 	}
 	
-	/**
-	 * Returns true if the message is ER7 (pipe-and-hat) encoded
-	 */
-    public static boolean isEr7Encoded(String theMessage) {
+	public static void assertEr7Encoded(String theMessage) {
         // quit if the string is too short
         if (theMessage.length() < 4)
-            return false;
-
-        // see if it looks like this message is | encoded ...
-        boolean ok = true;
+            throw new RuntimeException("The message is less than 4 characters long");
 
         // string should start with "MSH"
         if (!theMessage.startsWith("MSH"))
-            return false;
+            throw new RuntimeException("The message does not start with MSH");
 
         // 4th character of each segment should be field delimiter
         char fourthChar = theMessage.charAt(3);
@@ -66,7 +60,8 @@ public class EncodingDetector {
                 if (Character.isWhitespace(x.charAt(0)))
                     x = PipeParser.stripLeadingWhitespace(x);
                 if (x.length() >= 4 && x.charAt(3) != fourthChar)
-                    return false;
+                    throw new RuntimeException(String.format(
+                            "The 4th character should have been a %c, but it was a %c", x.charAt(3), fourthChar));
             }
         }
 
@@ -75,29 +70,46 @@ public class EncodingDetector {
         for (int i = 0; i < 11; i++) {
             nextFieldDelimLoc = theMessage.indexOf(fourthChar, nextFieldDelimLoc + 1);
             if (nextFieldDelimLoc < 0)
-                return false;
+                throw new RuntimeException("Expected to find required field MSH-12");
         }
-        
-        return ok;
+	    
+	}
+	
+	/**
+	 * Returns true if the message is ER7 (pipe-and-hat) encoded
+	 */
+    public static boolean isEr7Encoded(String theMessage) {
+        try {
+            assertEr7Encoded(theMessage);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 	}
 
     
-	/**
-	 * Returns true if the message is XML encoded. Note that this 
-	 * message does not perform a very robust check, and does not
-	 * validate for well-formedness. It is only intended to perform
-	 * a simple check for XML vs. ER7 messages.
-	 */
-	public static boolean isXmlEncoded(String theMessage) {
-        //check for a number of expected strings 
+    public static void assertXmlEncoded(String theMessage) {
         String[] expected = { "MSH.1>", "MSH.2>" };
         for (int i = 0; i < expected.length; i++) {
             if (theMessage.indexOf(expected[i]) < 0) {
-                return false;
+                throw new RuntimeException("Expected to find MSH.1 and MSH.2 tags");
             }
+        }        
+    }
+
+    /**
+     * Returns true if the message is XML encoded. Note that this 
+     * message does not perform a very robust check, and does not
+     * validate for well-formedness. It is only intended to perform
+     * a simple check for XML vs. ER7 messages.
+     */
+	public static boolean isXmlEncoded(String theMessage) {
+        try {
+            assertXmlEncoded(theMessage);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        
-        return true;
 	}
 
 	
