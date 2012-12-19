@@ -81,7 +81,7 @@ public abstract class Parser extends HapiContextSupport {
 	/**
 	 * Initialize parser with custom ModelClassFactory and default ValidationContext
 	 * 
-	 * @param theFactory custom factory to use for model class lookup
+	 * @param modelClassFactory custom factory to use for model class lookup
 	 */
 	public Parser(ModelClassFactory modelClassFactory) {
 		this(new DefaultHapiContext(modelClassFactory));
@@ -103,7 +103,7 @@ public abstract class Parser extends HapiContextSupport {
 	}
 
 	/**
-	 * @param theContext the set of validation rules to be applied to messages parsed or encoded by
+	 * @param context the set of validation rules to be applied to messages parsed or encoded by
 	 *            this parser (defaults to ValidationContextFactory.DefaultValidation)
 	 * 
 	 * @deprecated use a dedicated {@link HapiContext} and set its ValidationContext property
@@ -128,7 +128,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * contains configuration instructions relating to how a parser should be parsing or encoding
 	 * messages it deals with.
 	 * 
-	 * @param theParserConfiguration The parser configuration
+	 * @param configuration The parser configuration
 	 * 
 	 * @deprecated use a dedicated {@link HapiContext} and set its ParserConfiguration property
 	 */
@@ -168,7 +168,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * @throws HL7Exception if the message is not correctly formatted.
 	 * @throws EncodingNotSupportedException if the message encoded is not supported by this parser.
 	 */
-	public Message parse(String message) throws HL7Exception, EncodingNotSupportedException {
+	public Message parse(String message) throws HL7Exception {
 		String encoding = getEncoding(message);
 		if (!supportsEncoding(encoding)) {
 			throw new EncodingNotSupportedException("Can't parse message beginning "
@@ -199,8 +199,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * @throws HL7Exception if the message is not correctly formatted.
 	 * @throws EncodingNotSupportedException if the message encoded is not supported by this parser.
 	 */
-	protected abstract Message doParse(String message, String version) throws HL7Exception,
-			EncodingNotSupportedException;
+	protected abstract Message doParse(String message, String version) throws HL7Exception;
 
 	/**
 	 * Formats a Message object into an HL7 message string using the given encoding.
@@ -214,8 +213,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * @throws EncodingNotSupportedException if the requested encoding is not supported by this
 	 *             parser.
 	 */
-	public String encode(Message source, String encoding) throws HL7Exception,
-			EncodingNotSupportedException {
+	public String encode(Message source, String encoding) throws HL7Exception {
 		assertMessageValidates(source);
 		String result = doEncode(source, encoding);
 	    assertMessageValidates(result, encoding, source.getVersion());
@@ -234,15 +232,12 @@ public abstract class Parser extends HapiContextSupport {
 	 * @throws EncodingNotSupportedException if the requested encoding is not supported by this
 	 *             parser.
 	 */
-	protected abstract String doEncode(Message source, String encoding) throws HL7Exception,
-			EncodingNotSupportedException;
+	protected abstract String doEncode(Message source, String encoding) throws HL7Exception;
 
 	/**
 	 * Formats a Message object into an HL7 message string using this parser's default encoding.
 	 * 
 	 * @param source a Message object from which to construct an encoded message string
-	 * @param encoding the name of the encoding to use (eg "XML"; most implementations support only
-	 *            one encoding)
 	 * @return the encoded message
 	 * @throws HL7Exception if the data fields in the message do not permit encoding (e.g. required
 	 *             fields are null)
@@ -336,7 +331,6 @@ public abstract class Parser extends HapiContextSupport {
 	 * @param string The string to parse
 	 * @param type The type to encode
 	 * @param encodingCharacters The encoding characters
-	 * @return The encoded type
 	 * @throws HL7Exception If there is a problem encoding
 	 * @since 1.0
 	 */
@@ -351,8 +345,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * <b>WARNING: This method is only implemented in some parser implementations</b>. Currently it
 	 * will only work with the PipeParser parser implementation. Use with caution.
 	 */
-	public Message parseForSpecificPackage(String message, String packageName) throws HL7Exception,
-			EncodingNotSupportedException {
+	public Message parseForSpecificPackage(String message, String packageName) throws HL7Exception {
 		String encoding = getEncoding(message);
 		if (!supportsEncoding(encoding)) {
 			throw new EncodingNotSupportedException("Can't parse message beginning "
@@ -374,7 +367,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * Attempt the parse a message using a specific model package
 	 */
 	protected abstract Message doParseForSpecificPackage(String message, String version,
-			String packageName) throws HL7Exception, EncodingNotSupportedException;
+			String packageName) throws HL7Exception;
 
 	/**
 	 * Instantiate a message type using a specific package name
@@ -393,11 +386,10 @@ public abstract class Parser extends HapiContextSupport {
 
 	/**
 	 * Parses a particular segment and returns the encoded structure
-	 * 
-	 * @param string The string to parse
-	 * @param segment The segment to encode
+	 *
+     * @param segment The segment to encode
+     * @param string The string to parse
 	 * @param encodingCharacters The encoding characters
-	 * @return The encoded type
 	 * @throws HL7Exception If there is a problem encoding
 	 */
 	public abstract void parse(Segment segment, String string, EncodingCharacters encodingCharacters)
@@ -405,10 +397,9 @@ public abstract class Parser extends HapiContextSupport {
 
 	/**
 	 * Parses a particular message and returns the encoded structure
-	 * 
-	 * @param string The string to parse
-	 * @param message The message to encode
-	 * @return The encoded type
+	 *
+     * @param message The message to encode
+     * @param string The string to parse
 	 * @throws HL7Exception If there is a problem encoding
 	 * @since 1.0
 	 */
@@ -428,7 +419,7 @@ public abstract class Parser extends HapiContextSupport {
 	 */
 	public static Segment makeControlMSH(String version, ModelClassFactory factory)
 			throws HL7Exception {
-		Segment msh = null;
+		Segment msh;
 
 		try {
 			Class<? extends Message> genericMessageClass;
@@ -436,7 +427,7 @@ public abstract class Parser extends HapiContextSupport {
 			
 			Message dummy = genericMessageClass
 					.getConstructor(new Class[] { ModelClassFactory.class })
-					.newInstance(new Object[] { factory });
+					.newInstance(factory);
 
 			Class<? extends Segment> c = null;
 			
@@ -482,7 +473,7 @@ public abstract class Parser extends HapiContextSupport {
 	/**
 	 * Like {@link #validVersion(String)} but throws an HL7Exception instead
 	 * 
-	 * @param version
+	 * @param version HL7 version
 	 * @throws HL7Exception
 	 */
 	public static void assertVersionExists(String version) throws HL7Exception {
@@ -514,8 +505,8 @@ public abstract class Parser extends HapiContextSupport {
 	 * Note that the validation context of the resulting message is set to this parser's validation
 	 * context. The validation context is used within Primitive.setValue().
 	 * 
-	 * @param name name of the desired structure in the form XXX_YYY
-	 * @param version HL7 version (e.g. "2.3")
+	 * @param theName name of the desired structure in the form XXX_YYY
+	 * @param theVersion HL7 version (e.g. "2.3")
 	 * @param isExplicit true if the structure was specified explicitly in MSH-9-3, false if it was
 	 *            inferred from MSH-9-1 and MSH-9-2. If false, a lookup may be performed to find an
 	 *            alternate structure corresponding to that message type and event.

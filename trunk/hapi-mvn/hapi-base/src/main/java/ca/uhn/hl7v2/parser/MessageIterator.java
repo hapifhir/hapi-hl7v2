@@ -5,13 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Iterates over all defined nodes (ie segments, groups) in a message,
@@ -305,7 +304,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         }
 
         public String toString() {
-            StringBuffer ret = new StringBuffer();
+            StringBuilder ret = new StringBuilder();
 
             if (myStructureDefinition.getParent() != null) {
                 ret.append(myStructureDefinition.getParent().getName());
@@ -324,8 +323,6 @@ public class MessageIterator implements java.util.Iterator<Structure> {
 
     /**
      * Must be called after {@link #next()}
-     * 
-     * @return
      */
     public int getNextIndexWithinParent() {
         return getCurrentPosition().getStructureDefinition().getPosition();

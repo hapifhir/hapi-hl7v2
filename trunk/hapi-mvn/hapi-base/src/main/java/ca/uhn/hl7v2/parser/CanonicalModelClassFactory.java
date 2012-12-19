@@ -46,9 +46,7 @@ public class CanonicalModelClassFactory extends DefaultModelClassFactory
     private String myVersion;
 
     /**
-     * Constructor which selects the newest version of HAPI known to 
-     * 
-     * @param theVersion The version to always return (e.g. "2.6")
+     * Constructor which selects the newest version of HAPI known to
      */
     public CanonicalModelClassFactory() {
         myVersion = getHighestKnownVersion();

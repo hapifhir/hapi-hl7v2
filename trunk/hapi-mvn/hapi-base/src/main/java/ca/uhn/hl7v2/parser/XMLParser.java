@@ -30,14 +30,6 @@ package ca.uhn.hl7v2.parser;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -53,6 +45,13 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.XMLUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Parses and encodes HL7 messages in XML form, according to HL7's normative XML encoding
@@ -135,7 +134,7 @@ public abstract class XMLParser extends Parser {
 
 		if (keepAsOriginalNodes.length != 0) {
 			// initializes the
-			StringBuffer strBuf = new StringBuffer(keepAsOriginalNodes[0]);
+			StringBuilder strBuf = new StringBuilder(keepAsOriginalNodes[0]);
 			for (int i = 1; i < keepAsOriginalNodes.length; i++) {
 				strBuf.append("|");
 				strBuf.append(keepAsOriginalNodes[i]);
@@ -185,12 +184,11 @@ public abstract class XMLParser extends Parser {
 	 * the given String, and calls the abstract method <code>parse(Document XMLMessage)</code>
 	 * </p>
 	 */
-	protected Message doParse(String message, String version) throws HL7Exception,
-			EncodingNotSupportedException {
-		Message m = null;
+	protected Message doParse(String message, String version) throws HL7Exception {
+		Message m;
 
 		// parse message string into a DOM document
-		Document doc = null;
+		Document doc;
 		doc = parseStringIntoDocument(message);
 		m = parseDocument(doc, version);
 
@@ -220,8 +218,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws EncodingNotSupportedException if the requested encoding is not supported by this
 	 *             parser.
 	 */
-	protected String doEncode(Message source, String encoding) throws HL7Exception,
-			EncodingNotSupportedException {
+	protected String doEncode(Message source, String encoding) throws HL7Exception {
 		if (!encoding.equals("XML"))
 			throw new EncodingNotSupportedException("XMLParser supports only XML encoding");
 		return encode(source);
@@ -294,13 +291,13 @@ public abstract class XMLParser extends Parser {
 		}
 
 		// set data type of OBX-5
-		if (segmentObject.getClass().getName().indexOf("OBX") >= 0) {
+		if (segmentObject.getClass().getName().contains("OBX")) {
 			Varies.fixOBX5(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
 		}
 	}
 
 	private void parseReps(Segment segmentObject, Element segmentElement, String fieldName,
-			int fieldNum) throws DataTypeException, HL7Exception {
+			int fieldNum) throws HL7Exception {
 
 		NodeList reps = segmentElement.getElementsByTagName(fieldName);
 		for (int i = 0; i < reps.getLength(); i++) {
@@ -319,9 +316,9 @@ public abstract class XMLParser extends Parser {
 		for (int i = 1; i <= n; i++) {
 			String name = makeElementName(segmentObject, i);
 			Type[] reps = segmentObject.getField(i);
-			for (int j = 0; j < reps.length; j++) {
+			for (Type rep : reps) {
 				Element newNode = segmentElement.getOwnerDocument().createElement(name);
-				boolean componentHasValue = encode(reps[j], newNode);
+				boolean componentHasValue = encode(rep, newNode);
 				if (componentHasValue) {
 					try {
 						segmentElement.appendChild(newNode);
@@ -432,9 +429,7 @@ public abstract class XMLParser extends Parser {
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean keepAsOriginal(Node node) {
-		if (node.getNodeName() == null)
-			return false;
-		return concatKeepAsOriginalNodes.indexOf(node.getNodeName()) != -1;
+		return (node.getNodeName() != null) && concatKeepAsOriginalNodes.contains(node.getNodeName());
 	}
 
 	/**
@@ -453,7 +448,7 @@ public abstract class XMLParser extends Parser {
 			if (loc < 0) {
 				repeatedSpacesExist = false;
 			} else {
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append(s.substring(0, loc));
 				buf.append(" ");
 				buf.append(s.substring(loc + 2));
@@ -557,7 +552,7 @@ public abstract class XMLParser extends Parser {
 			try {
 				EncodingCharacters ec = EncodingCharacters.getInstance(datatypeObject.getMessage());
 				char esc = ec.getEscapeCharacter();
-				int pos = 0;
+				int pos;
 				int oldpos = 0;
 				boolean escaping = false;
 
@@ -707,7 +702,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws HL7Exception if the tag can not be found
 	 */
 	protected static String parseLeaf(String message, String tagName, int startAt) throws HL7Exception {
-		String value = null;
+		String value;
 
 		int tagStart = message.indexOf("<" + tagName, startAt);
 		if (tagStart < 0)
@@ -736,7 +731,7 @@ public abstract class XMLParser extends Parser {
 	/**
 	 * Throws unsupported operation exception
 	 * 
-	 * @throws Unsupported operation exception
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	public String doEncode(Segment structure, EncodingCharacters encodingCharacters)
@@ -747,18 +742,18 @@ public abstract class XMLParser extends Parser {
 	/**
 	 * Throws unsupported operation exception
 	 * 
-	 * @throws Unsupported operation exception
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion,
-			String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+			String thePackageName) throws HL7Exception {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**
 	 * Throws unsupported operation exception
 	 * 
-	 * @throws Unsupported operation exception
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
@@ -768,7 +763,7 @@ public abstract class XMLParser extends Parser {
 	/**
 	 * Throws unsupported operation exception
 	 * 
-	 * @throws Unsupported operation exception
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	public void parse(Type type, String string, EncodingCharacters encodingCharacters)
@@ -779,7 +774,7 @@ public abstract class XMLParser extends Parser {
 	/**
 	 * Throws unsupported operation exception
 	 * 
-	 * @throws Unsupported operation exception
+	 * @throws UnsupportedOperationException
 	 */
 	@Override
 	public void parse(Segment segment, String string, EncodingCharacters encodingCharacters)
@@ -791,7 +786,7 @@ public abstract class XMLParser extends Parser {
 	 * Returns the text encoding to be used in generating new messages. Note that this affects
 	 * encoding to string only, not parsing.
 	 * 
-	 * @return
+	 * @return text encoding
 	 */
 	public String getTextEncoding() {
 		return textEncoding;

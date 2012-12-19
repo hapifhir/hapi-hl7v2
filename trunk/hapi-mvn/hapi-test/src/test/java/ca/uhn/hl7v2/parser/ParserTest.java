@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import ca.uhn.hl7v2.model.GenericSegment;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,11 +39,8 @@ public class ParserTest
         assertTrue(msh instanceof ca.uhn.hl7v2.model.v24.segment.MSH);
         msh = Parser.makeControlMSH("2.2", factory);
         assertTrue(msh instanceof ca.uhn.hl7v2.model.v22.segment.MSH);
-        try {
-            msh = Parser.makeControlMSH("1", factory);
-            fail("should have thrown exception with version = 1");
-        } catch (Exception e) {
-        }
+        msh = Parser.makeControlMSH("1", factory);
+        assertTrue(msh instanceof GenericSegment);
     }
 
     @Test

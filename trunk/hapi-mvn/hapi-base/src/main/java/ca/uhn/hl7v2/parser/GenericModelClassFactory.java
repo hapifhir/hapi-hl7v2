@@ -42,7 +42,6 @@ import ca.uhn.hl7v2.model.Type;
  * 	<li>{@link GenericMessage}</li>
  * 	<li>{@link GenericSegment}</li>
  * 	<li>{@link GenericGroup}</li>
- * 	<li>{@link GenericType}</li>
  * </ul> 
  * 
  * <p>

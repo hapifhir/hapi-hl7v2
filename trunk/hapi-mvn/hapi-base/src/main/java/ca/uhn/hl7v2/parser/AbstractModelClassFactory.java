@@ -60,7 +60,7 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	}
 
 	/**
-	 * @param eventMapDirectory the directory where to read the eventmap file from
+	 * @param eventMapPrefix the directory where to read the eventmap file from
 	 */
 	public void setEventMapDirectory(String eventMapPrefix) {
 		this.eventMapDirectory = eventMapPrefix;

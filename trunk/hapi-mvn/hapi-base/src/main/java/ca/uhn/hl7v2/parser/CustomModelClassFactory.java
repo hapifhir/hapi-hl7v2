@@ -109,8 +109,8 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
     
     /**
      * Set an explicit {@link ModelClassFactory} is underlying delegate
-     * @param defaultFactory
-     * @param map
+     * @param defaultFactory default factory to be delegated to
+     * @param map custom model map
      */
     public CustomModelClassFactory(ModelClassFactory defaultFactory, Map<String, String[]> map) {
         this.delegate = defaultFactory;

@@ -194,8 +194,7 @@ public class DefaultXMLParser extends XMLParser {
         }
         
         //we're not too fussy about order here (all occurrences get parsed as repetitions) ... 
-        for (int i = 0; i < childNames.length; i++) {
-            String nextChildName = childNames[i];
+        for (String nextChildName : childNames) {
             String childName = nextChildName;
             if(groupObject.get(nextChildName) instanceof Group)
             	childName = makeGroupElementName(groupObject.getMessage().getName(), nextChildName);
@@ -211,8 +210,7 @@ public class DefaultXMLParser extends XMLParser {
             }
         }
         
-        for (int i = 0; i < unparsedElementList.size(); i++) {
-            String segName = (String) unparsedElementList.get(i);            
+        for (String segName : unparsedElementList) {
             String segIndexName = groupObject.addNonstandardSegment(segName);
             parseReps(groupElement, groupObject, messageName, segName, segIndexName);
         }
@@ -242,7 +240,7 @@ public class DefaultXMLParser extends XMLParser {
 //				}        			        			
 //			}
 			if (reps.size() > 1) {
-				String newIndexName = "";
+				String newIndexName;
 				int i=1;
 				try	{
 					for (i = 1; i < reps.size(); i++) {
@@ -306,7 +304,7 @@ public class DefaultXMLParser extends XMLParser {
      * If it looks like a segment name (i.e. has 3 characters), no change is made. 
      */
     protected static String makeGroupElementName(String messageName, String className) {
-        String ret = null;
+        String ret;
         
         if (className.length() > 4 || ourForceGroupNames.contains(className)) {
             StringBuilder elementName = new StringBuilder();

@@ -84,8 +84,8 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      * classes every parse.  This should be changed so that specific classes, rather 
      * than packages, are registered by name.</p>
      * 
-     * @param name name of the desired structure in the form XXX_YYY
-     * @param version HL7 version (e.g. "2.3")  
+     * @param theName name of the desired structure in the form XXX_YYY
+     * @param theVersion HL7 version (e.g. "2.3")
      * @param isExplicit true if the structure was specified explicitly in MSH-9-3, false if it 
      *      was inferred from MSH-9-1 and MSH-9-2.  If false, a lookup may be performed to find 
      *      an alternate structure corresponding to that message type and event.   
@@ -93,11 +93,10 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      */
     @SuppressWarnings("unchecked")
 	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean isExplicit) throws HL7Exception {
-        Class<? extends Message> mc = null;
         if (!isExplicit) {
         	theName = getMessageStructureForEvent(theName, Version.versionOf(theVersion));
-        } 
-        mc = (Class<? extends Message>) findClass(theName, theVersion, "message");
+        }
+        Class<? extends Message> mc = (Class<? extends Message>) findClass(theName, theVersion, "message");
         if (mc == null) 
             mc = GenericMessage.getGenericMessageClass(theVersion);
         return mc;
@@ -138,14 +137,12 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      * @since 1.3 
      */
 	@SuppressWarnings("unchecked")
-	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception { 
-        Class<? extends Message> mc = null;
-	    
+	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean isExplicit, String packageName) throws HL7Exception {
         if (!isExplicit) { 
         	theName = getMessageStructureForEvent(theName, Version.versionOf(theVersion));
-        } 
-        
-        mc = (Class<? extends Message>) findClassInASpecificPackage(theName, theVersion, "message", packageName); 
+        }
+
+        Class<? extends Message> mc = (Class<? extends Message>) findClassInASpecificPackage(theName, theVersion, "message", packageName);
         if (mc == null) {
             mc = GenericMessage.getGenericMessageClass(theVersion);
         }
@@ -159,20 +156,18 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 		if (packageName == null || packageName.length() == 0) { 
 			return findClass(name, version, type); 
 		}
-		
-		Class<?> compClass = null; 
+
 		String classNameToTry = packageName + "." + name; 
 		 
-		try { 
-			compClass = Class.forName(classNameToTry); 
+		try {
+            return Class.forName(classNameToTry);
 		} catch (ClassNotFoundException e) { 
 			if (log.isDebugEnabled()) {
 				log.debug("Unable to find class " + classNameToTry + ", using default", e);
 			}
 			return findClass(name, version, type); 
 		} 
-		 
-		return compClass; 
+
     } 
     
 
@@ -249,12 +244,10 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      * for that version and also user-defined packages (see packageList()). 
      */
     private static String[] loadPackages(String version) throws HL7Exception {
-        String[] retVal = null;
-        
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         
         String customPackagesResourceName = 
-            MessageFormat.format( CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE, new Object[] { version } );
+            MessageFormat.format( CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE, version);
         
         InputStream resourceInputStream = classLoader.getResourceAsStream( customPackagesResourceName );
         
@@ -282,9 +275,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 
         //add standard package
         packageList.add( getVersionPackageName(version) );
-        retVal = packageList.toArray(new String[]{});
-
-        return retVal;
+        return packageList.toArray(new String[packageList.size()]);
     }
 
     /**
@@ -305,10 +296,9 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
         
         //get subpackage for component type
         String types = "message|group|segment|datatype";
-        if (types.indexOf(type) < 0) 
+        if (!types.contains(type))
             throw new HL7Exception("Can't find " + name + " for version " + version 
                         + " -- type must be " + types + " but is " + type);
-        String subpackage = type;
         
         //try to load class from each package
         Class<?> compClass = null;
@@ -319,7 +309,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
                 String p = packageList[c];
                 if (!p.endsWith("."))
                     p = p + ".";
-                classNameToTry = p + subpackage + "." + name;
+                classNameToTry = p + type + "." + name;
 
                 if (log.isDebugEnabled()) {
                     log.debug("Trying to load: {}", classNameToTry);                    
