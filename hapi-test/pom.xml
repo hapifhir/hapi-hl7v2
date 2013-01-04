@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
-			<version>${project.version}</version>
+			<version>${hapi.version}</version>
 		</dependency>
 
 		<dependency>
