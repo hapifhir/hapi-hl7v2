@@ -86,6 +86,18 @@ public class Hl7InputStreamMessageIterator extends HapiContextSupport implements
 	}
 
 	/**
+	 * Factory method which returns an instance which reads from a file on the
+	 * classpath
+	 */
+	public static Hl7InputStreamMessageIterator getForClasspathResource(String theClasspath) {
+		InputStream is = Hl7InputStreamMessageIterator.class.getResourceAsStream(theClasspath);
+		if (is == null) {
+			throw new IllegalArgumentException("Can't find resource: " + theClasspath);
+		}
+		return new Hl7InputStreamMessageIterator(is);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public boolean hasNext() {

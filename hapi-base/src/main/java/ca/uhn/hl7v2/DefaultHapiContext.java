@@ -27,6 +27,7 @@ package ca.uhn.hl7v2;
 
 import java.util.concurrent.ExecutorService;
 
+import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
@@ -46,6 +47,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.StandardSocketFactory;
+import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.DefaultValidator;
 import ca.uhn.hl7v2.validation.ReportingValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -296,11 +298,17 @@ public class DefaultHapiContext implements HapiContext {
 
     @SuppressWarnings("unchecked")
     public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
+    	if (validationExceptionHandlerFactory == null) {
+    		validationExceptionHandlerFactory = new DefaultValidationExceptionHandler(this);
+    	}
         return (ValidationExceptionHandlerFactory<R>) validationExceptionHandlerFactory;
     }
 
     public <R> void setValidationExceptionHandlerFactory(
             ValidationExceptionHandlerFactory<R> factory) {
+    	if (factory == null) {
+    		throw new NullPointerException("ValidationExceptionHandlerFactory can not be null");
+    	}
         this.validationExceptionHandlerFactory = factory;
     }
 
@@ -320,14 +328,20 @@ public class DefaultHapiContext implements HapiContext {
         this.socketFactory = socketFactory;
     }
 
-    public SimpleServer getSimpleService(int port, boolean tls) {
-        return new SimpleServer(port, getLowerLayerProtocol(), getPipeParser(), tls,
-                getExecutorService());
+    public SimpleServer newServer(int port, boolean tls) {
+        return new SimpleServer(this, port, tls);
     }
 
-    public TwoPortService getTwoPortService(int port1, int port2, boolean tls) {
-        return new TwoPortService(getPipeParser(), getLowerLayerProtocol(), port1, port2, tls,
-                getExecutorService());
+    public TwoPortService newServer(int port1, int port2, boolean tls) {
+        return new TwoPortService(this, port1, port2, tls);
     }
+
+	public Connection newClient(String host, int port, boolean tls) throws HL7Exception {
+		return getConnectionHub().attach(this, host, port, tls);
+	}
+
+	public Connection newClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+		return getConnectionHub().attach(this, host, outboundPort, inboundPort, tls);
+	}
 
 }

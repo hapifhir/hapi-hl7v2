@@ -40,8 +40,10 @@ import java.util.TimeZone;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 
@@ -61,6 +63,9 @@ public class CommonTMTest {
 	static final String baseTimePrecisionOffset = baseTimePrecision + "-2345";
 
 	private static TimeZone tz;
+	
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -246,7 +251,7 @@ public class CommonTMTest {
 			.add("080005.1479+0340", "080005.1479+0340")
 			.add("080005.1479+0330", "080005.1479+0330")
 			.add("080005.1479+1234", "080005.1479+1234")
-			.executeTests();	
+			.executeTests(collector);	
 	}
 
     public static class SetHourPrecisionSpec extends TestSpec<Integer, String> {
@@ -268,7 +273,7 @@ public class CommonTMTest {
 			.add(13, "13")
 			.add(23, "23")
 			.add(24, DataTypeException.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
     public static class SetHourMinutePrecisionSpec extends TestSpec<int[], String> {
@@ -293,7 +298,7 @@ public class CommonTMTest {
 			.add(ints(8, 15), "0815")
 			.add(ints(13, 27), "1327")
 			.add(ints(24, 59), DataTypeException.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
     public static class SetHourMinuteSecondPrecisionSpec extends TestSpec<int[], String> {
@@ -323,7 +328,7 @@ public class CommonTMTest {
 			.add(ints(23, 60, 59), DataTypeException.class)
 			.add(ints(23, 59, 60), DataTypeException.class)
 			.add(ints(24, 60, 60), DataTypeException.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
     public static class SetOffsetSpec extends TestSpec<Integer, String> {
@@ -353,7 +358,7 @@ public class CommonTMTest {
 			.add(2300, baseTime + "+2300")
 			.add(2106, baseTime + "+2106")
 			.add(21064, DataTypeException.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
 	@Test

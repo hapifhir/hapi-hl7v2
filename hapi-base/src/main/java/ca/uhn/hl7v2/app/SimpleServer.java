@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.AcceptorThread.AcceptedSocket;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -82,7 +84,7 @@ public class SimpleServer extends HL7Service {
 	private boolean tls;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
-	private SocketFactory socketFactory;
+	private HapiContext hapiContext;
 
 	/**
 	 * Creates a new instance of SimpleServer that listens on the given port,
@@ -124,7 +126,8 @@ public class SimpleServer extends HL7Service {
 		super(parser, llp, executorService);
 		this.port = port;
 		this.tls = tls;
-		queue = new LinkedBlockingQueue<AcceptedSocket>(100);
+		this.hapiContext = new DefaultHapiContext();
+		this.queue = new LinkedBlockingQueue<AcceptedSocket>(100);
 	}
 
 	/**
@@ -135,21 +138,12 @@ public class SimpleServer extends HL7Service {
 	 * @since 2.1
 	 * @throws IllegalStateException If serverSocket is already bound
 	 */
-	public SimpleServer(SocketFactory socketFactory, int port, LowerLayerProtocol llp, Parser parser) {
-		this(socketFactory, port, llp, parser, false);
-	}
-
-	/**
-	 * Creates a new instance of SimpleServer that listens on a given server socket.
-	 * SimpleServer will bind the socket when it is started, so the server socket 
-	 * must not already be bound. 
-	 * 
-	 * @since 2.1
-	 * @throws IllegalStateException If serverSocket is already bound
-	 */
-	public SimpleServer(SocketFactory socketFactory, int port, LowerLayerProtocol llp, Parser parser, boolean tls) {
-		this(port, llp, parser, tls);
-		this.socketFactory = socketFactory;
+	public SimpleServer(HapiContext hapiContext, int port, boolean tls) {
+		super(hapiContext);
+		this.hapiContext = hapiContext;
+		this.port = port;
+		this.tls = tls;
+		this.queue = new LinkedBlockingQueue<AcceptedSocket>(100);
 	}
 
 	/**
@@ -162,7 +156,8 @@ public class SimpleServer extends HL7Service {
 		try {
 			super.afterStartup();
 			log.info("Starting SimpleServer running on port {}", port);
-			acceptor = new AcceptorThread(port, tls, getExecutorService(), queue, this.socketFactory);
+			SocketFactory ss = this.hapiContext.getSocketFactory();
+			acceptor = new AcceptorThread(port, tls, getExecutorService(), queue, ss);
 			acceptor.start();
 		} catch (Exception e) {
 			log.error("Failed starting SimpleServer on port", port);

@@ -14,12 +14,12 @@ public class HohClientSimple extends AbstractClient<HohRawClientSimple> implemen
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
+	 * @param theUriPath
 	 *            The URI being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 */
-	public HohClientSimple(String theHost, int thePort, String theUri) {
-		super(new HohRawClientSimple(theHost, thePort, theUri), null);
+	public HohClientSimple(String theHost, int thePort, String theUriPath) {
+		super(new HohRawClientSimple(theHost, thePort, theUriPath), null);
 	}
 
 	/**
@@ -29,15 +29,15 @@ public class HohClientSimple extends AbstractClient<HohRawClientSimple> implemen
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
+	 * @param theUriPath
 	 *            The URI being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 * @param theParser
 	 *            The Parser to use, or <code>null</code> in which case a
 	 *            PipeParser will be used
 	 */
-	public HohClientSimple(String theHost, int thePort, String theUri, Parser theParser) {
-		super(new HohRawClientSimple(theHost, thePort, theUri), theParser);
+	public HohClientSimple(String theHost, int thePort, String theUriPath, Parser theParser) {
+		super(new HohRawClientSimple(theHost, thePort, theUriPath), theParser);
 	}
 
 	/**

@@ -196,8 +196,9 @@ public class DefaultXMLParser extends XMLParser {
         //we're not too fussy about order here (all occurrences get parsed as repetitions) ... 
         for (String nextChildName : childNames) {
             String childName = nextChildName;
-            if(groupObject.get(nextChildName) instanceof Group)
+            if(groupObject.isGroup(nextChildName)) {
             	childName = makeGroupElementName(groupObject.getMessage().getName(), nextChildName);
+            }
 			unparsedElementList.remove(childName);
             
             // 4 char segment names are second occurrences of a segment within a single message

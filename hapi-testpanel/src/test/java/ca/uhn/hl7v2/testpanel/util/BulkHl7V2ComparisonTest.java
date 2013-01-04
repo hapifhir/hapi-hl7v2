@@ -26,7 +26,7 @@ public class BulkHl7V2ComparisonTest {
 		
 		String actual = 
 			"MSH|^~\\&|||||||ORD^ORU|||2.2\r"+
-			"OBX|||00350^Hb H Test^HDS||.|^^HDS||N|||F||||||1/5101/14\r";
+			"OBX|||00350^Hb H Test^HDS|||^^HDS||N|||F||||||1/5101/14\r";
 		 
 		String expected = 
 				"MSH|^~\\&|||||||ORD^ORU|||2.2\r"+

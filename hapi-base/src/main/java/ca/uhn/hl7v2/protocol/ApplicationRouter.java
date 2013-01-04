@@ -16,19 +16,19 @@ public interface ApplicationRouter {
 	 * {@link Transportable#getMetadata() Metadata} key: 
 	 * Charset (MSH-18)
 	 */
-	String METADATA_KEY_MESSAGE_CHARSET = "MSH-18";
+	String METADATA_KEY_MESSAGE_CHARSET = MetadataKeys.IN_MESSAGE_CHARSET;
 
 	/**
 	 * {@link Transportable#getMetadata() Metadata} key: 
 	 * Message control ID (MSH-10)
 	 */
-    String METADATA_KEY_MESSAGE_CONTROL_ID = "/MSH-10";
+    String METADATA_KEY_MESSAGE_CONTROL_ID = MetadataKeys.IN_MESSAGE_CONTROL_ID;
 	
     /**
 	 * {@link Transportable#getMetadata() Metadata} key: 
 	 * Provides the IP of the sending system for a given message
 	 */
-	String METADATA_KEY_SENDING_IP = "SENDING_IP";
+	String METADATA_KEY_SENDING_IP = MetadataKeys.IN_SENDING_IP;
 
     
     /** 

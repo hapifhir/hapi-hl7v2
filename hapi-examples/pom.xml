@@ -80,6 +80,11 @@
         
 	</dependencies>
 
+	<reporting>
+		<plugins>
+		</plugins>
+	</reporting>
+
 	<build>
 		<plugins>
             <plugin>
@@ -117,7 +122,7 @@
 						<id>ack</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>confgen</goal>
+							<!-- <goal>confgen</goal> -->
 						</goals>
 						<configuration>
 							
@@ -136,7 +141,7 @@
 						<id>a31</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>confgen</goal>
+							<!-- <goal>confgen</goal>  -->
 						</goals>
 						<configuration>
 							

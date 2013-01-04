@@ -6,12 +6,12 @@
 	</properties>
 	<body>
         <release version="2.1" date="TBD">
-        	<action type="add" dev="James Agnew">
+        	<action type="add" dev="James Agnew" issue="155" system="newbugs">
             	HAPI is now able to work without any structure JARs for basic tasks, and can
             	process unknown versions of HL7 (e.g. 2.99) if configured to allow this.
             	See
             	<![CDATA[
-            	<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/GenericModelClassFactory.html">GenerciModelClassFactory</a>
+            	<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/GenericModelClassFactory.html">GenericModelClassFactory</a>
             	]]>
             	for more information.
             </action>
@@ -62,13 +62,22 @@
 				Therefore, no external XML-related libraries are required anymore.
 				<![CDATA[<br><br>]]>
 				The default XML implementation can be overridden this by setting the system property 
-				org.w3c.dom.DOMImplementationSourceList to the external DOM implementation and
-				org.xml.sax.driver to an external SAX implementation. 
-				<![CDATA[<br>]]>
+				<![CDATA[<code>org.w3c.dom.DOMImplementationSourceList</code>]]> 
+				to the external DOM implementation and
+				<![CDATA[<code>org.xml.sax.driver</code>]]> 
+				to an external SAX implementation. 
+				<![CDATA[<br><br>]]>
 				When Xerces 2.11 is used as
-				external XML processor library, org.w3c.dom.DOMImplementationSourceList must be
-				set to org.apache.xerces.dom.DOMXSImplementationSourceImpl and org.xml.sax.driver must
-				be set to org.apache.xerces.parsers.SAXParser.
+				external XML processor library, 
+				<![CDATA[<code>org.w3c.dom.DOMImplementationSourceList</code>]]> 
+				must be
+				set to 
+				<![CDATA[<code>org.apache.xerces.dom.DOMXSImplementationSourceImpl</code>]]> 
+				and 
+				<![CDATA[<code>org.xml.sax.driver</code>]]>
+				must
+				be set to 
+				<![CDATA[<code>org.apache.xerces.parsers.SAXParser</code>]]>.
             </action>
             <action type="add" dev="Christian Ohr" issue="3515832">
             	Added a set of new message ID generators, to be centrally configured using the
@@ -135,6 +144,10 @@
             	Fix an issue parsing XML encoded messages where any segment groups with a four letter
             	name are ignored (e.g. the DIET group in an OMD_O01 message). Thanks to mmartin
             	for providing a test case demonstrating the issue!
+            </action>
+            <action type="fix" issue="169" system="newbugs" dev="DiGiT">
+            	Fix an issue where SegmentFinder can't find PID2 within an A24 message.
+            	Thanks to DiGiT for providing a working test case!
             </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">

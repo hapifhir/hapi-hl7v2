@@ -4,9 +4,14 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultTreeModel;
+
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.netbeans.swing.outline.DefaultOutlineModel;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.conf.ProfileException;
@@ -19,6 +24,7 @@ import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeRoot;
 import ca.uhn.hl7v2.testpanel.ui.v2tree.Hl7V2MessageTree.TreeNodeSegmentConf;
 import ca.uhn.hl7v2.testpanel.util.FileUtils;
 
+
 public class ConfProfileTest {
 
 	
@@ -26,6 +32,7 @@ public class ConfProfileTest {
 	private Hl7V2MessageTree tree;
 	private TreeNodeRoot treeNodeRoot;
 
+	@Ignore
 	@Test
 	public void testValidateConfProfile() throws HL7Exception, ProfileException, IOException, InterruptedException, InvocationTargetException {
         
@@ -55,6 +62,7 @@ public class ConfProfileTest {
 		
 	}
 	
+	@Ignore
 	@Test
 	public void testValidateSegNotSupported() throws HL7Exception, ProfileException, IOException, InterruptedException, InvocationTargetException {
         
@@ -117,6 +125,7 @@ public class ConfProfileTest {
 			public void run() {
 				tree = new Hl7V2MessageTree(null);
 				treeNodeRoot = tree.new TreeNodeRoot();
+				tree.setModel(new DefaultOutlineModel(new DefaultTreeModel(treeNodeRoot), new DefaultTableModel(), false, null) {});
 			}});
 	}
 	

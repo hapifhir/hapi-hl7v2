@@ -1,9 +1,9 @@
 package ca.uhn.hl7v2;
 
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,12 +12,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
+import ca.uhn.hl7v2.app.ConnectionHubTest;
 import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.app.ConnectionHubTest.MyApp;
+import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
+import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -59,6 +66,22 @@ public class DefaultHapiContextTest {
 		executor.shutdownNow();
 	}
 
+	/**
+	 * Creating a HAPI context shouldn't have the side effect of
+	 * creating a profiles directory
+	 */
+	@Test
+	public void testContextDoesntCreateProfileDirectory() {
+		String dir = ProfileStoreFactory.DEFAULT_PROFILE_STORE_DIRECTORY;
+		assertFalse('"' + dir + "\" exists! Remove this directory and try the unit test again (it should not be auto-created).", new File(dir).exists());
+	}
+
+	@AfterClass
+	public static void afterClass() {
+		String dir = ProfileStoreFactory.DEFAULT_PROFILE_STORE_DIRECTORY;
+		new File(dir).delete();
+	}
+	
 	@Test
 	public void testGetPipeParser() {
 		PipeParser p = context1.getPipeParser();
@@ -97,7 +120,7 @@ public class DefaultHapiContextTest {
 
 	@Test
 	public void testGetSimpleServer() {
-		HL7Service s = context1.getSimpleService(RandomServerPortProvider.findFreePort(), false);
+		HL7Service s = context1.newServer(RandomServerPortProvider.findFreePort(), false);
 		assertSame(executor, s.getExecutorService());
 	}
 
@@ -105,7 +128,7 @@ public class DefaultHapiContextTest {
 	public void testGetTwoPortServer() {
 		int port1 = RandomServerPortProvider.findFreePort();
 		int port2 = RandomServerPortProvider.findFreePort();
-		HL7Service s = context1.getTwoPortService(port1, port2, false);
+		HL7Service s = context1.newServer(port1, port2, false);
 		assertSame(executor, s.getExecutorService());
 	}
 
@@ -117,6 +140,53 @@ public class DefaultHapiContextTest {
 		assertNotSame(validation, v.getValidationContext());
 	}
 	
+	/**
+	 * Make sure that connection hub doesn't try to reuse a connection which is already closed
+	 * 
+	 * @throws IOException
+	 * @throws LLPException
+	 * @throws InterruptedException 
+	 */
+	@Test
+	public void testGetClient() throws HL7Exception, LLPException, IOException, InterruptedException {
+
+		int port1 = RandomServerPortProvider.findFreePort();
+		int port2 = RandomServerPortProvider.findFreePort();
+		HL7Service ss1 = context1.newServer(port1, false);
+		ss1.registerApplication("*", "*", new ConnectionHubTest.MyApp());
+		ss1.startAndWait();
+
+		try {
+			context1.newClient("localhost", port2, false);
+			fail("This should throw an exception, nothing listening on port " + port2);
+		} catch (HL7Exception e) {
+			
+		}
+		
+		Connection i1 = context1.newClient("localhost", port1, false);
+
+		String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
+				+ "EVN|A45|201004141020|\r"
+				+ "PID|1||7010226^^^4265^MR~0000000000^^^CANON^JHN^^^^^^GP~1736465^^^4265^VN||Park^Green^^^MS.^^L||19890812|F|||123 TestingLane^^TORONTO^CA-ON^M5G2C2^CAN^H^~^^^^^^^||^PRN^PH^^1^416^2525252^|^^^^^^^||||||||||||||||N\r"
+				+ "PV1|1|I||||^^^WP^1469^^^^^^^^|||||||||||^Derkach^Peter.^^^Dr.||20913000131|||||||||||||||||||||||||201004011340|201004141018";
+		ADT_A45 msg = new ADT_A45();
+		msg.setParser(context1.getPipeParser());
+		msg.parse(messageText);
+		i1.getInitiator().sendAndReceive(msg);
+		
+		Connection i1again = context1.newClient("localhost", port1, false);
+		assertThat(i1, is(i1again));
+		
+		i1.close(); // PROBLEM: connection still in hub table
+		System.out.println("Connection closed 1");
+
+		i1again = context1.newClient("localhost", port1, false);
+		assertThat(i1, not(i1again));
+		i1again.getInitiator().sendAndReceive(msg);
+		i1again.close();
+		System.out.println("Connection closed 2");
+	}
+
 	@Test
 	public void testConnectionHubUsesCorrectExecutorService() throws Exception {
 		int port = RandomServerPortProvider.findFreePort();

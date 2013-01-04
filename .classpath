@@ -1,45 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="hapi-base/src/main/java"/>
-	<classpathentry kind="src" path="hapi-base/src/main/resources"/>
-	<classpathentry kind="src" path="hapi-sourcegen/src/main/java"/>
-	<classpathentry kind="src" path="hapi-sourcegen/src/main/resources"/>
-	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-utils/1.5.1/plexus-utils-1.5.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.2.0/maven-settings-2.2.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-core/2.2.0/maven-core-2.2.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.2.0/maven-project-2.2.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar"/>
-	<classpathentry kind="var" path="M2_REPO/jboss/jboss-j2ee/4.0.2/jboss-j2ee-4.0.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0/hapi-structures-v22-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v22-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v231-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0/hapi-structures-v24-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0/hapi-structures-v24-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0/hapi-structures-v251-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0/hapi-structures-v251-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0/hapi-structures-v26-2.0.jar" sourcepath="/M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0/hapi-structures-v26-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-hl7overhttp/2.1-alpha1/hapi-hl7overhttp-2.1-alpha1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.0-FCS/jaxen-1.0-FCS.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit-addons/junit-addons/1.4/junit-addons-1.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-api/2.2.0/maven-plugin-api-2.2.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4.1/mail-1.4.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/velocity/velocity/1.6.3/velocity-1.6.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring/2.5.6/spring-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring/2.5.6/spring-2.5.6-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty/6.1.26/jetty-6.1.26.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-embedded/6.1.26/jetty-embedded-6.1.26.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-sslengine/6.1.26/jetty-sslengine-6.1.26.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api-2.5/6.1.5/servlet-api-2.5-6.1.5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.9.0/mockito-all-1.9.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.6.6/jcl-over-slf4j-1.6.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

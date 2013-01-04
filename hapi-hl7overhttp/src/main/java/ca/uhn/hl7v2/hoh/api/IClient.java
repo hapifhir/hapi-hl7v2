@@ -31,7 +31,7 @@ public interface IClient {
 	 * <code>http://somehost.com:8888/messaging/receiver.jsp</code>, the URI
 	 * path portion would be <code>/messaging/receiver.jsp</code>
 	 */
-	String getUri();
+	String getUriPath();
 
 	/**
 	 * Getter for the URL to send messages to. 
@@ -67,7 +67,7 @@ public interface IClient {
 	 * <code>http://somehost.com:8888/messaging/receiver.jsp</code>, the URI
 	 * path portion would be <code>/messaging/receiver.jsp</code>
 	 */
-	void setPath(String thePath);
+	void setUriPath(String thePath);
 
 	/**
 	 * Getter for the port (e.g. 80 for standard HTTP)
@@ -105,14 +105,14 @@ public interface IClient {
 	/**
 	 * Setter for the URL to send messages to. 
 	 * Note that invoking this method replaces any values that have been 
-	 * provided to {@link #setHost(String)}, {@link #setPort(int)}, or {@link #setPath(String)}
+	 * provided to {@link #setHost(String)}, {@link #setPort(int)}, or {@link #setUriPath(String)}
 	 */
 	void setUrl(URL theUrl);
 
 	/**
 	 * Setter for the URL to send messages to. 
 	 * Note that invoking this method replaces any values that have been 
-	 * provided to {@link #setHost(String)}, {@link #setPort(int)}, or {@link #setPath(String)}
+	 * provided to {@link #setHost(String)}, {@link #setPort(int)}, or {@link #setUriPath(String)}
 	 */
 	void setUrlString(String theString);
 

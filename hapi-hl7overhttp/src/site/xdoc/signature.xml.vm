@@ -59,7 +59,7 @@
 				</p>
 				<macro name="snippet">
 					<param name="id" value="client"/>
-					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
+					<param name="file" value="${project.parent.basedir}/hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
 				</macro>
 		        		        
 		        <p>
@@ -68,7 +68,7 @@
 				</p>
 				<macro name="snippet">
 					<param name="id" value="llp"/>
-					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
+					<param name="file" value="${project.parent.basedir}/hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureClient.java"/>
 				</macro>
 
 		    </subsection>
@@ -81,7 +81,7 @@
 				</p>
 				<macro name="snippet">
 					<param name="id" value="servlet"/>
-					<param name="file" value="../hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureServlet.java"/>
+					<param name="file" value="${project.parent.basedir}/hapi-examples/src/main/java/ca/uhn/hl7v2/examples/hoh/SignatureServlet.java"/>
 				</macro>
 		        		        
 		    </subsection>

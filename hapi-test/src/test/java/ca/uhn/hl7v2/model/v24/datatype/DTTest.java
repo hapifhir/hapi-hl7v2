@@ -5,8 +5,10 @@ import static ca.uhn.hl7v2.TestSpecBuilder.ints;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -30,6 +32,8 @@ public class DTTest {
     
     private static final ModelClassFactory MCF = new DefaultModelClassFactory();
     private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
 	 
     /**
@@ -89,7 +93,7 @@ public class DTTest {
     	    .add("20020121", "20020121")
     	    .add("20020131", "20020131")
     	    //new TestSpec("20020132", DataTypeException.class)
-    	    .executeTests();
+    	    .executeTests(collector);
     }
 
     public static class SetYearPrecisionSpec extends TestSpec<Integer, String> {
@@ -120,7 +124,7 @@ public class DTTest {
     	    .add(2001, "2001")
     	    .add(9999, "9999")
     	    .add(10000, DataTypeException.class)
-    	    .executeTests();
+    	    .executeTests(collector);
     }
     
     public static class SetYearMonthPrecisionSpec extends TestSpec<int[], String> {
@@ -155,7 +159,7 @@ public class DTTest {
     	    .add(ints(2001, 13), DataTypeException.class)
     	    .add(ints(9999, 1), "999901")
     	    .add(ints(10000, 1), DataTypeException.class)
-    	    .executeTests();
+    	    .executeTests(collector);
     }
 
     public static class SetYearMonthDayPrecisionSpec extends TestSpec<int[], String> {
@@ -193,7 +197,7 @@ public class DTTest {
     	    .add(ints(10000, 1, 1), DataTypeException.class)
     	    .add(ints(2001, 1, 1), "20010101")
     	    .add(ints(2001, -1, 21), DataTypeException.class)
-    	    .executeTests();
+    	    .executeTests(collector);
     }
 
     /**

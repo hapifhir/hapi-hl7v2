@@ -98,7 +98,7 @@ public class HttpSenderTest {
 		
 		assertEquals("localhost", s.getHost());
 		assertEquals(8888, s.getPort());
-		assertEquals("/path", s.getUri());
+		assertEquals("/path", s.getUriPath());
 		
 		s.afterPropertiesSet();
 		

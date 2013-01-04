@@ -8,6 +8,7 @@ import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories.ExcludeCategory;
 
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
@@ -27,7 +28,7 @@ public class HohRawClientSimpleTest {
 	private static Hl7OverHttpLowerLayerProtocol myLlp;
 	private static SingleCredentialServerCallback ourServerCallback;
 	private static ServerSocketThreadForTesting myServerSocketThread;
-	
+
 	// TODO: Client should respect the "close" header in a response
 
 	@Test
@@ -41,7 +42,7 @@ public class HohRawClientSimpleTest {
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
-		
+
 		ourLog.info("Received response");
 
 		assertEquals(message, myServerSocketThread.getMessage());
@@ -52,40 +53,32 @@ public class HohRawClientSimpleTest {
 
 	}
 
-	@Test
-	public void testRequestUriIsEncoded() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidUriRejected1() throws Exception {
+		new HohRawClientSimple("localhost", 9999, "/uri space");
+	}
 
-		String message = // -
-		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
-				"EVN||200803051509\r" + // -
-				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidUriRejected2() throws Exception {
+		new HohRawClientSimple("localhost", 9999, "uri_with_no_starting_slash");
+	}
 
-		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/uri space%percent");
-		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
-		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
-		
-		ourLog.info("Received response");
-
-		assertEquals(message, myServerSocketThread.getMessage());
-		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
-
-		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
-		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
-		assertEquals("/uri+space%25percent", myServerSocketThread.getRequestUri());
-
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidUriRejected3() throws Exception {
+		new HohRawClientSimple("localhost", 9999, "/uri_with_%_bad_char");
 	}
 
 	// TODO: add test with chunked encoding and additional trailing headers
-	
+
 	/**
-	 * Ensure that if chunked transfer encoding is used, and there is a pause
-	 * in the middle of transmission, the whole message is still read
+	 * Ensure that if chunked transfer encoding is used, and there is a pause in
+	 * the middle of transmission, the whole message is still read
 	 */
 	@Test
 	public void testSendMessageWithChunkedResponseAndPauseInMiddle() throws Exception {
 
 		myServerSocketThread.setSimulateOneSecondPauseInChunkedEncoding(true);
-		
+
 		String message = // -
 		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
 				"EVN||200803051509\r" + // -
@@ -95,7 +88,7 @@ public class HohRawClientSimpleTest {
 		client.setResponseTimeout(2000);
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
-		
+
 		ourLog.info("Received response");
 
 		assertEquals(message, myServerSocketThread.getMessage());
@@ -106,7 +99,6 @@ public class HohRawClientSimpleTest {
 
 	}
 
-	
 	@Test
 	public void testSendMessageSimpleXml() throws Exception {
 
@@ -119,7 +111,7 @@ public class HohRawClientSimpleTest {
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
-		
+
 		ourLog.info("Received response");
 
 		assertEquals(message, myServerSocketThread.getMessage());
@@ -133,29 +125,29 @@ public class HohRawClientSimpleTest {
 
 	@Test
 	public void testCreateUsingUrl() throws MalformedURLException {
-		
+
 		HohRawClientSimple c = new HohRawClientSimple(new URL("http://somehost/"));
 		assertEquals("somehost", c.getHost());
-		assertEquals("/", c.getUri());
+		assertEquals("/", c.getUriPath());
 		assertEquals(80, c.getPort());
 
 		c = new HohRawClientSimple(new URL("http://somehost:8888/"));
 		assertEquals("somehost", c.getHost());
-		assertEquals("/", c.getUri());
+		assertEquals("/", c.getUriPath());
 		assertEquals(8888, c.getPort());
 
 		c = new HohRawClientSimple(new URL("http://somehost:8888/someuri/path/test.jsp"));
 		assertEquals("somehost", c.getHost());
-		assertEquals("/someuri/path/test.jsp", c.getUri());
+		assertEquals("/someuri/path/test.jsp", c.getUriPath());
 		assertEquals(8888, c.getPort());
 
 		c = new HohRawClientSimple(new URL("https://somehost/someuri/path/test.jsp"));
 		assertEquals("somehost", c.getHost());
-		assertEquals("/someuri/path/test.jsp", c.getUri());
+		assertEquals("/someuri/path/test.jsp", c.getUriPath());
 		assertEquals(443, c.getPort());
 
 	}
-	
+
 	@After
 	public void after() throws InterruptedException {
 		ourLog.info("Marking done as true");
@@ -174,5 +166,5 @@ public class HohRawClientSimpleTest {
 		myServerSocketThread.start();
 		myServerSocketThread.getLatch().await();
 	}
-	
+
 }

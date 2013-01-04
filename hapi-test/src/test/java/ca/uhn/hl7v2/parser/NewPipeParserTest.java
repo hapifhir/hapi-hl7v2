@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.TestSpecBuilder;
 import ca.uhn.hl7v2.model.Composite;
@@ -59,6 +61,7 @@ public class NewPipeParserTest {
     private static final Parser parser = new PipeParser();
     private static final Logger ourLog = LoggerFactory.getLogger(NewPipeParserTest.class);
 
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
     public static class InvalidMessageSpec1 extends TestSpec<String, Message> {
 
@@ -102,7 +105,7 @@ public class NewPipeParserTest {
             .add("MS\r", c)
             .add("MSH\r", c)
             .add("MSH|\r", c)
-            .executeTests();
+            .executeTests(collector);
     }
     
     @Test
@@ -120,7 +123,7 @@ public class NewPipeParserTest {
             .add("MS\r", c)
             .add("MSH\r", c)
             .add("MSH|\r", c)
-            .executeTests();
+            .executeTests(collector);
     }    
 
     /**

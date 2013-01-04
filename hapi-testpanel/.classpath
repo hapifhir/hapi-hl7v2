@@ -8,7 +8,6 @@
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/textresources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hapi-hl7overhttp"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/hapi-mvn-svn"/>
 	<classpathentry kind="var" path="M2_REPO/com/apple/AppleJavaExtensions/1.5.4/applejavaextensions-1.5.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" sourcepath="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar">
 		<attributes>
@@ -128,5 +127,6 @@
 	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-hl7overhttp/2.1-alpha1/hapi-hl7overhttp-2.1-alpha1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hapi-base"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

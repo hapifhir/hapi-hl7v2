@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Upgrading from HAPI 2.0</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Upgrading from HAPI 2.0 or before">
+
+			<p>
+				This document describes some of the changes between the HAPI 2.0 API newer
+				versions of the API. Note that none of these changes are required yet. The
+				"old way" of doing things is deprecated but
+				still supported for the time being.
+			</p>
+
+		</section>
+
+		<section name="Upgrading HL7 Servers">
+
+			<p>
+				HAPI 2.0 contains two complete modules for creating an HL7 Server capable
+				of listening for connections from outside applications, receiving
+				messages and processing them:
+				<ul>
+					<a href="./apidocs/ca/uhn/hl7v2/app/package-summary.html">ca.uhn.hl7v2.app.*</a>
+				</ul>
+				<ul>
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/package-summary.html">ca.uhn.hl7v2.protocol.*</a>
+				</ul>
+			</p>
+
+			<p>
+				The
+				<code>.app.*</code>
+				package contains the original server implementation
+				and has always been the implenentation suggested by the HAPI documentation.
+				While it was very simplistic in its original implementation, it has
+				received
+				a good deal of improvement over the years from the HAPI community.
+			</p>
+
+			<p>
+				The
+				<code>.protocol.*</code>
+				package contains a newer server implementation, which
+				had a number of great ideas but was never completed and never received much
+				attention from the HAPI community in general. As such,
+				<code>.protocol.*</code>
+				is being largely deprecated, and its best parts are being merged into the
+				server implementations in
+				<code>.app.*</code>
+				.
+			</p>
+
+			<subsection name="Migrating Existing code which uses ca.uhn.hl7v2.protocol.impl.HL7Server">
+
+				<p>
+					If your code uses
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/impl/HL7Server.html">
+						<code>ca.uhn.hl7v2.protocol.impl.HL7Server</code>
+					</a>
+					to provide an HL7 server, as in the following example:
+				</p>
+
+				<macro name="snippet">
+					<param name="id" value="oldServer" />
+					<param name="file" value="hapi-examples/src/main/java/ca/uhn/hl7v2/examples/upgrade/UpgradeToHapi2_1.java" />
+				</macro>
+				
+				<p>
+					The migration is as simple as converting your code to
+					use
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/app/HL7Service.html">
+						<code>ca.uhn.hl7v2.protocol.app.HL7Service</code>
+					</a>
+					instead, as in the following example:
+				</p>
+
+				<macro name="snippet">
+					<param name="id" value="newServer" />
+					<param name="file" value="hapi-examples/src/main/java/ca/uhn/hl7v2/examples/upgrade/UpgradeToHapi2_1.java" />
+				</macro>
+
+			</subsection>
+			
+			<subsection name="Migrating Existing code which uses ca.uhn.hl7v2.Application">
+				
+				<p>
+					HAPI applications which use
+					<a href="./apidocs/ca/uhn/hl7v2/app/Application.html">
+						<code>ca.uhn.hl7v2.app.Application</code>
+					</a>
+					(which is provided to a SimpleService or TwoPortServer either directly
+					or using the newer HapiContext#getServer() methods)
+					should migrate to the newer
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/ReceivingApplication.html">
+						<code>ca.uhn.hl7v2.protocol.ReceivingApplication</code>
+					</a>.
+				</p>
+				
+				<p>
+					A typical old style Application looks like the following:
+				</p>
+				
+				<macro name="snippet">
+					<param name="id" value="oldApp" />
+					<param name="file" value="hapi-examples/src/main/java/ca/uhn/hl7v2/examples/upgrade/UpgradeToHapi2_1.java" />
+				</macro>
+				
+				<p>
+					Converting to a ReceivingApplication is as simple as changing
+					the interface implemented by your handling application, and
+					modifying the signature of the <code>processMessage</code> method to
+					add a metadata <code>Map&lt;String, Object&gt;</code> to the
+					parameter list, like so: 
+				</p>
+				
+				<macro name="snippet">
+					<param name="id" value="newApp" />
+					<param name="file" value="hapi-examples/src/main/java/ca/uhn/hl7v2/examples/upgrade/UpgradeToHapi2_1.java" />
+				</macro>
+
+				<p>
+					Once you've migrated to the ReceivingApplication interface, you
+					might want to take advantage of the new metadata keys available
+					in
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/MetadataKeys.html">
+						<code>MetadataKeys</code>
+					</a>
+				</p>
+				
+			</subsection>
+			
+		</section>
+
+
+	</body>
+</document>

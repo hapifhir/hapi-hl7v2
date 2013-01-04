@@ -145,10 +145,12 @@ public class MessageNavigator {
     
     /**
      * Moves to the sibling of the current location at the specified index.
+     * @return 
      */
-    public void toChild(int child) throws HL7Exception {
+    public String toChild(int child) throws HL7Exception {
         if (child >= 0 && child < this.childNames.length) {
             this.currentChild = child;
+            return this.childNames[child];
         } else {
             throw new HL7Exception("Can't advance to child " + child + " -- only " + this.childNames.length + " children");
         }
@@ -206,8 +208,9 @@ public class MessageNavigator {
      * @param segmentsOnly if true, only stops at segments (not groups)
      * @param loop if true, loops back to beginning when end of msg reached; if false,
      *      throws HL7Exception if end of msg reached
+     * @return Returns the name of the next item within its parent, or "" for the root (message)
      */
-    public void iterate(boolean segmentsOnly, boolean loop) throws HL7Exception { 
+    public String iterate(boolean segmentsOnly, boolean loop) throws HL7Exception { 
         Structure start = null;
         
         if (this.currentChild == -1) {
@@ -225,9 +228,10 @@ public class MessageNavigator {
         
         if (it.hasNext()) {
             Structure next = it.next();
-            drillHere(next);
+            return drillHere(next);
         } else if (loop) {
             this.reset();
+            return "";
         } else {
             throw new HL7Exception("End of message reached while iterating without loop");
         }
@@ -236,8 +240,9 @@ public class MessageNavigator {
     
     /**
      * Navigates to a specific location in the message
+     * @return 
      */
-    private void drillHere(Structure destination) throws HL7Exception {
+    private String drillHere(Structure destination) throws HL7Exception {
         Structure pathElem = destination;
         Stack<Structure> pathStack = new Stack<Structure>();
         Stack<MessageIterator.Index> indexStack = new Stack<MessageIterator.Index>();
@@ -253,6 +258,7 @@ public class MessageNavigator {
         }
         
         this.reset();
+        String retVal = null;
         while (!pathStack.isEmpty()) {
             Group parent = (Group) pathStack.pop();
             MessageIterator.Index index = indexStack.pop();
@@ -260,9 +266,11 @@ public class MessageNavigator {
             if (!pathStack.isEmpty()) {
                 this.drillDown(child, 0);
             } else {
-                this.toChild(child);
+                retVal= this.toChild(child);
             }
         }
+        
+        return retVal;
     }
     
     /** Like Arrays.binarySearch, only probably slower and doesn't require

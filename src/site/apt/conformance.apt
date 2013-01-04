@@ -4,11 +4,11 @@
                                     ------
                                     ------
 
-Conformance
+
 
   HAPI includes several tools which may be used to work with Conformance Profiles.
 
-* Conformance Class Generator v2
+Conformance Class Generator
 
   HAPI 1.1 introduced a new conformance class generator, which takes a conformance profile and generates a HAPI
   message definition. This is useful both to constrain/remove unwanted elements from a message type, as well as
@@ -30,7 +30,7 @@ Conformance
   * The new generator is only provided as a Maven plugin. Converting it to work with Ant or as a standalone application
     would be fairly easy, please get in touch if you would like to contribute.  
   
-** Usage
+* Usage
 
   First, generate a conformance profile using the 
   {{{http://www.hl7.org/documentcenter/public/wg/ictc/MWB%20Release%206.8.zip}Message Workbench}} tool.
@@ -44,33 +44,33 @@ Conformance
   Next, add the Maven plugin to your pom:
   
 +-------+
-	</plugins>
-		<plugin>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-sourcegen</artifactId>
-			<version>${hapi.version}</version>
-			<executions>
-				<execution>
-					<phase>generate-sources</phase>
-					<goals>
-						<goal>confgen</goal>
-					</goals>
-					<configuration>
-						
-						<!-- This is the conformance profile file to use -->
-						<profile>${basedir}/src/main/resources/example_ack.xml</profile>
-						
-					    <!-- Place generated Java source here -->
-						<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-						
-						<!-- Generated classes will be placed here -->
-						<packageName>com.foo</packageName>
-						
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-	</plugins>	
+<plugins>
+  <plugin>
+    <groupId>ca.uhn.hapi</groupId>
+    <artifactId>hapi-sourcegen</artifactId>
+    <version>${hapi.version}</version>
+    <executions>
+      <execution>
+        <phase>generate-sources</phase>
+        <goals>
+          <goal>confgen</goal>
+        </goals>
+        <configuration>
+
+          <!-- This is the conformance profile file to use -->
+          <profile>${basedir}/src/main/resources/example_ack.xml</profile>
+
+          <!-- Place generated Java source here -->
+          <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+
+          <!-- Generated classes will be placed here -->
+          <packageName>com.foo</packageName>
+
+       </configuration>
+      </execution>
+    </executions>
+  </plugin>
+</plugins>  
 +-------+
 
   You will now have a "com.foo" package containing your newly generated classes. If you are using
@@ -88,25 +88,25 @@ target/generated-sources/confgen
   * View the generated source classes {{{./xref/com/foo/a31/message/ADT_A05.html}HERE}}.
     
 
-* Message Validator
+Runtime Message Validator
 
   The {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/conf/check/DefaultValidator.html}Default Validator}} 
   accepts a conformance profile and validates a message against it at runtime. Example usage:
 
 +---------------+
-	// Load the profile from the classpath
-    ProfileParser parser = new ProfileParser(false);
-    RuntimeProfile profile = parser.parseClasspath("ca/uhn/hl7v2/conf/parser/example_ack.xml");
+// Load the profile from the classpath
+ProfileParser parser = new ProfileParser(false);
+RuntimeProfile profile = parser.parseClasspath("ca/uhn/hl7v2/conf/parser/example_ack.xml");
 
-    // Create a message to validate
-    String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
-    ACK msg = (ACK) (new PipeParser()).parse(message);
-	
-    // Validate
-	HL7Exception[] errors = new DefaultValidator().validate(msg, profile.getMessage());
-	
-	// Each exception is a validation error
-	System.out.println("Validation errors: " + Arrays.asList(errors));
+// Create a message to validate
+String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
+ACK msg = (ACK) (new PipeParser()).parse(message);
+
+// Validate
+HL7Exception[] errors = new DefaultValidator().validate(msg, profile.getMessage());
+
+// Each exception is a validation error
+System.out.println("Validation errors: " + Arrays.asList(errors));
 +----------------+
 
 

@@ -33,8 +33,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -57,6 +59,7 @@ public class CommonISTest {
     private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
     
     private IS commonIS;
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 	
 	
 	
@@ -107,7 +110,7 @@ public class CommonISTest {
 			.add("ISString", "ISString")
 			.add(getString(200, 'a'), getString(200, 'a'))
 			.add(getString(201, 'a'), DataTypeException.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
 	/**

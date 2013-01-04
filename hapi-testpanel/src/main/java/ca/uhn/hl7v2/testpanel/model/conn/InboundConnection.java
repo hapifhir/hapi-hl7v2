@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.BindException;
-import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,15 +49,9 @@ import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.HL7Service;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
-import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
-import ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory;
-import ca.uhn.hl7v2.hoh.util.HapiSocketTlsFactoryWrapper;
-import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
@@ -68,7 +61,6 @@ import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
-import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.Terser;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -133,8 +125,8 @@ public class InboundConnection extends AbstractConnection {
 		switch (getTransport()) {
 		case DUAL_PORT_MLLP: {
 			try {
-				myService = new TwoPortService(myParser, createLlp(), getIncomingOrSinglePort(), getOutgoingPort(), isTls());
-			} catch (LLPException e) {
+				myService = createHapiContext().newServer(getIncomingOrSinglePort(), getOutgoingPort(), isTls());
+			} catch (IOException e) {
 				ourLog.error("Failed to create server socket", e);
 				setStatus(StatusEnum.FAILED);
 				setStatusLine("Failed to create server socket: " + e.getMessage());
@@ -142,36 +134,11 @@ public class InboundConnection extends AbstractConnection {
 			}
 			break;
 		}
-		case SINGLE_PORT_MLLP: {
-			try {
-				myService = new SimpleServer(getIncomingOrSinglePort(), createLlp(), myParser, isTls());
-			} catch (LLPException e) {
-				ourLog.error("Failed to create server socket", e);
-				setStatus(StatusEnum.FAILED);
-				setStatusLine("Failed to create server socket: " + e.getMessage());
-				return;
-			}
-			break;
-		}
+		case SINGLE_PORT_MLLP:
 		case HL7_OVER_HTTP: {
-			SocketFactory serverSocket;
 			try {
-				if (!isTls()) {
-					serverSocket = new ca.uhn.hl7v2.util.StandardSocketFactory();
-				} else if (getTlsKeystore() == null) {
-					serverSocket = new HapiSocketTlsFactoryWrapper(new TlsSocketFactory());
-				} else {
-					serverSocket = new HapiSocketTlsFactoryWrapper(new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()));
-				}
-				
-				myService = new SimpleServer(serverSocket, getIncomingOrSinglePort(), createLlp(), myParser, isTls());
-				
-			} catch (KeyStoreException e) {
-				ourLog.error("Failed to load keystore", e);
-				setStatus(StatusEnum.FAILED);
-				setStatusLine("Failed to load keystore: " + e.getMessage());
-				return;
-			} catch (LLPException e) {
+				myService = createHapiContext().newServer(getIncomingOrSinglePort(), isTls());
+			} catch (IOException e) {
 				ourLog.error("Failed to create server socket", e);
 				setStatus(StatusEnum.FAILED);
 				setStatusLine("Failed to create server socket: " + e.getMessage());

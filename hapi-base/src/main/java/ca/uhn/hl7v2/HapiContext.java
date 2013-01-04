@@ -27,7 +27,9 @@ package ca.uhn.hl7v2;
 
 import java.util.concurrent.ExecutorService;
 
+import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
+import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
@@ -264,20 +266,58 @@ public interface HapiContext {
 	void setSocketFactory(SocketFactory socketFactory);
 
 	/**
-	 * @param port
-	 * @param tls
+	 * Construct a new HL7 Server which will listen for incoming connections
+	 * 
+	 * @param port The port on which to listen for new connections
+	 * @param tls Whether or not to use SSL/TLS
 	 * @return HL7 service running on the configured port using the default parser and executor
 	 *         service instances provided by this interface.
+	 * @see #setSocketFactory(SocketFactory)
 	 */
-	SimpleServer getSimpleService(int port, boolean tls);
+	HL7Service newServer(int port, boolean tls);
 
 	/**
-	 * @param port
-	 * @param tls
+	 * Construct a new HL7 Server which will listen for a pair of connections (one for
+	 * incoming messages, one for outgoing)
+	 * 
+	 * @param inboundPort The port on which to listen for connections for inbound messages
+	 * @param outboundPort The port on which to listen for connections for outgoing messages
+	 * @param tls Whether or not to use SSL/TLS
 	 * @return HL7 service running on the configured ports using the default parser and executor
 	 *         service instances provided by this interface.
+	 * @see #setSocketFactory(SocketFactory)
 	 */
-	TwoPortService getTwoPortService(int inbound, int outbound, boolean tls);
+	HL7Service newServer(int inboundPort, int outboundPort, boolean tls);
 	
+	/**
+	 * Construct a new HL7 Client which will connect to an external TCP server for
+	 * the purpose of sending messages (and receiving responses). Unless otherwise
+	 * stated, the connection should be established by the time this method
+	 * returns, or an exception should be thrown if the connection can not be
+	 * established.
+	 * 
+	 * @param host The host IP/hostname to connect to
+	 * @param port The port to connect to
+	 * @param tls Whether or not to use SSL/TLS
+	 * @return A connected 
+	 * @throws HL7Exception If the connection can not be initialized for any reason 
+	 */
+	Connection newClient(String host, int port, boolean tls) throws HL7Exception;
+
+	/**
+	 * Construct a new HL7 two-port client which will connect to an external TCP server for
+	 * the purpose of sending messages (and receiving responses). Unless otherwise
+	 * stated, the connection should be established by the time this method
+	 * returns, or an exception should be thrown if the connection can not be
+	 * established.
+	 * 
+	 * @param host The host IP/hostname to connect to
+	 * @param outbound The port to connect to for outgoing messages
+	 * @param inbound The port to connect to for inbound (response) messages
+	 * @param tls Whether or not to use SSL/TLS
+	 * @return A connected 
+	 * @throws HL7Exception If the connection can not be initialized for any reason 
+	 */
+	Connection newClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception;
 
 }

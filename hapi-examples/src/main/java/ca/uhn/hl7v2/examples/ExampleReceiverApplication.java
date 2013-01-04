@@ -27,20 +27,19 @@
 package ca.uhn.hl7v2.examples;
 
 import java.io.IOException;
+import java.util.Map;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
-import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v22.message.ACK;
-import ca.uhn.hl7v2.model.v22.segment.MSH;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
 /**
  * Application class for receiving ADT^A01 messages
  */
-public class ExampleReceiverApplication implements Application
+public class ExampleReceiverApplication implements ReceivingApplication
 {
 
     /**
@@ -54,13 +53,13 @@ public class ExampleReceiverApplication implements Application
     /**
      * {@inheritDoc}
      */
-    public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 
-        String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theIn);
+        String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theMessage);
         System.out.println("Received message:\n" + encodedMessage + "\n\n");
         // Now generate a simple acknowledgment message and return it
         try {
-        	return theIn.generateACK();
+        	return theMessage.generateACK();
         } catch (IOException e) {
             throw new HL7Exception(e);
         }

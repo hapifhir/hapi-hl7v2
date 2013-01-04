@@ -80,4 +80,21 @@ public class StringUtil {
         return result;
 	}
 
+	/**
+	 * Returns <code>true</code> if the string is null, or contains no non-whitespace characters
+	 */
+	public static boolean isBlank(String theString) {
+		if (theString == null) {
+			return true;
+		}
+		
+		for (int i = 0; i < theString.length(); i++) {
+			if (Character.isWhitespace(theString.charAt(i)) == false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 }

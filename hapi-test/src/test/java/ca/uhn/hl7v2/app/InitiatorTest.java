@@ -45,7 +45,7 @@ public class InitiatorTest {
 	public static void beforeClass() throws Exception {
 		port = RandomServerPortProvider.findFreePort();
 		context = new DefaultHapiContext();
-		ss = context.getSimpleService(port, false);
+		ss = context.newServer(port, false);
 		ss.startAndWait();
 	}
 

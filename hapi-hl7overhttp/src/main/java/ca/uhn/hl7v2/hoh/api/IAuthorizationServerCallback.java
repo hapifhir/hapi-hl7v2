@@ -8,6 +8,6 @@ public interface IAuthorizationServerCallback {
 	/**
 	 * Returns true if the username and password are accepted as valid for a given URI
 	 */
-	boolean authorize(String theUri, String theUsername, String thePassword);
+	boolean authorize(String theUriPath, String theUsername, String thePassword);
 	
 }

@@ -16,6 +16,7 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
 public class HohLlpExample {
 
@@ -43,7 +44,7 @@ SimpleServer server = new SimpleServer(port, llp, parser);
 
 // Register an application to the server, and start it
 // You are now ready to receive HL7 messages!
-server.registerApplication("*", "*", new DefaultApplication());
+server.registerApplication("*", "*", (ReceivingApplication)new DefaultApplication());
 server.start();
 // END SNIPPET: server 
 

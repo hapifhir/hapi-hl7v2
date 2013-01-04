@@ -61,11 +61,15 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
 import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
+import ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory;
+import ca.uhn.hl7v2.hoh.util.HapiSocketTlsFactoryWrapper;
 import ca.uhn.hl7v2.hoh.util.KeystoreUtils;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
 import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
@@ -87,6 +91,7 @@ import ca.uhn.hl7v2.testpanel.util.CollectionUtils;
 import ca.uhn.hl7v2.testpanel.util.llp.ByteCapturingMinLowerLayerProtocolWrapper;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 import ca.uhn.hl7v2.util.SocketFactory;
+import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -400,6 +405,35 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 		}
 
 		return llpClass;
+	}
+
+	protected HapiContext createHapiContext() throws IOException {
+		try {
+
+			SocketFactory serverSocket;
+			if (!isTls()) {
+				serverSocket = new ca.uhn.hl7v2.util.StandardSocketFactory();
+			} else if (getTlsKeystore() == null) {
+				serverSocket = new HapiSocketTlsFactoryWrapper(new TlsSocketFactory());
+			} else {
+				serverSocket = new HapiSocketTlsFactoryWrapper(new CustomCertificateTlsSocketFactory(getTlsKeystore(), getTlsKeystorePassword()));
+			}
+
+			HapiContext ctx = new DefaultHapiContext(new NoValidationBuilder());
+			ctx.setLowerLayerProtocol(createLlp());
+			ctx.setSocketFactory(serverSocket);
+			
+			if (getEncoding() == Hl7V2EncodingTypeEnum.ER_7) {
+				ctx.getGenericParser().setPipeParserAsPrimary();
+			} else {
+				ctx.getGenericParser().setXMLParserAsPrimary();
+			}
+
+			return ctx;
+
+		} catch (Exception e) {
+			throw new IOException(e.getMessage(), e);
+		}
 	}
 
 	protected Parser createParser() {

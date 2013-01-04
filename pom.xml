@@ -134,9 +134,9 @@
 
 
 	<scm>
-		<connection>scm:svn:https://hl7api.svn.sourceforge.net/svnroot/hl7api</connection>
-		<developerConnection>scm:svn:https://hl7api.svn.sourceforge.net/svnroot/hl7api</developerConnection>
-		<url>https://hl7api.svn.sourceforge.net/svnroot/hl7api</url>
+		<connection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</connection>
+		<developerConnection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</developerConnection>
+		<url>https://sourceforge.net/p/hl7api/code/764/tree/</url>
 		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
 	</scm>
 
@@ -192,6 +192,15 @@
 
 	<build>
 		<defaultGoal>install</defaultGoal>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven.resources.plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -207,20 +216,38 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.0</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<fork>true</fork>
+					<fork>false</fork>
 					<maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
+			<!-- 
 			<plugin>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
 				<version>1.9.0</version>
 				<configuration>
 					<header>${project.basedir}/src/license/header.txt</header>
+				</configuration>
+			</plugin>
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${maven.license.plugin.version}</version>
+				<inherited>true</inherited>
+				<configuration>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<licenseName>gplmpl</licenseName>
+					<licenseResolver>file://${project.parent.basedir}/src/license</licenseResolver>
+					<descriptionTemplate>${project.parent.basedir}/src/license/description-template.ftl</descriptionTemplate>
+					<failOnMissingHeader>true</failOnMissingHeader>
+					<includes>
+						<include>**/AbstractHL7Exception.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -236,31 +263,47 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
+		<root.basedir>${basedir}</root.basedir>
+		
 		
 		<!-- HAPI Versions -->
 		<hapi.version>2.1-alpha1</hapi.version>
 		<hapi.version.structures>2.0</hapi.version.structures>
+		<hapi.version.stable>2.0</hapi.version.stable>
 		<hapi.version.testpanel>2.0.1</hapi.version.testpanel>
 		
 		<!-- Dependency versions -->
-		<slf4j.version>1.6.6</slf4j.version>
-		<log4j.version>1.2.17</log4j.version>
-		<junit.version>4.10</junit.version>
 		<bouncycastle.version>1.46</bouncycastle.version>
-		<geronimo.jms.spec.version>1.1.1</geronimo.jms.spec.version>
 		<commons-cli.version>1.2</commons-cli.version>
+		<geronimo.jms.spec.version>1.1.1</geronimo.jms.spec.version>
 		<jetty.version>6.1.26</jetty.version>
+		<junit.version>4.11</junit.version>
+		<log4j.version>1.2.17</log4j.version>
+		<slf4j.version>1.6.6</slf4j.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
+
+		<!-- Renamed properties for use in *.vm site documentation -->
+		<log4j_version>${log4j.version}</log4j_version>
+		<slf4j_version>${slf4j.version}</slf4j_version>
+		<hapi_version_stable>${hapi.version.stable}</hapi_version_stable>
+		<project_parent_basedir>${project.parent.basedir}</project_parent_basedir>
 		
 		<!-- Build-time Maven plugin versions -->
+		<maven.assembly.plugin.version>2.3</maven.assembly.plugin.version>
+		<maven.changes.plugin.version>2.8</maven.changes.plugin.version>
+		<maven.cobertura.plugin.version>2.5.2</maven.cobertura.plugin.version>
+		<maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
+		<maven.findbugs.plugin.version>2.5.2</maven.findbugs.plugin.version>
+		<maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>2.8.1</maven.javadoc.plugin.version>
+        <!-- Temporary - We have a patch which has been accepted but not released -->
+		<maven.jxr.plugin.version>2.4-SNAPSHOT</maven.jxr.plugin.version>
+		<maven.license.plugin.version>1.3</maven.license.plugin.version>
+		<maven.resources.plugin.version>2.6</maven.resources.plugin.version>
 		<maven.site.plugin.version>3.1</maven.site.plugin.version>
 		<maven.source.plugin.version>2.2</maven.source.plugin.version>
-		<findbugs.maven.plugin.version>2.5.2</findbugs.maven.plugin.version>
-		<gpg.maven.plugin.version>1.4</gpg.maven.plugin.version>
-		<maven.assembly.plugin.version>2.3</maven.assembly.plugin.version>
-		<maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
 		<maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
+		<maven.surefire.report.plugin.version>2.12.4</maven.surefire.report.plugin.version>
 	</properties>
 
 	<reporting>
@@ -268,7 +311,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
+				<version>${maven.jxr.plugin.version}</version>
 				<inherited>false</inherited>
 				<configuration>
 					<aggregate>true</aggregate>
@@ -277,7 +320,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.11</version>
+				<version>${maven.surefire.report.plugin.version}</version>
 				<inherited>false</inherited>
 				<reportSets>
 					<reportSet>
@@ -287,7 +330,7 @@
 						</reports>
 						<configuration>
 							<reportsDirectories>
-								<reportsDirectory>hapi-test/target/surefire-reports</reportsDirectory>
+								<reportsDirectory>${project.basedir}/hapi-test/target/surefire-reports</reportsDirectory>
 							</reportsDirectories>
 						</configuration>
 					</reportSet>
@@ -296,7 +339,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.6</version>
+				<version>${maven.changes.plugin.version}</version>
 				<inherited>false</inherited>
 				<reportSets>
 					<reportSet>
@@ -306,7 +349,11 @@
 					</reportSet>
 				</reportSets>
 				<configuration>
-					<issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
+					<issueLinkTemplatePerSystem>
+						<default>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</default>
+						<newbugs>https://sourceforge.net/p/hl7api/bugs/%ISSUE%/</newbugs>
+						<newfeatures>https://sourceforge.net/p/hl7api/feature-requests/%ISSUE%/</newfeatures>
+					</issueLinkTemplatePerSystem>
 					<escapeHTML>false</escapeHTML>
 				</configuration>
 			</plugin>
@@ -342,6 +389,7 @@
 				<module>hapi-sourcegen</module>
 				<module>hapi-test</module>
 				<module>hapi-testmindeps</module>
+				<module>hapi-testnodeps</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-examples</module>
 			</modules>
@@ -360,7 +408,6 @@
 			<modules>
 				<module>hapi-base</module>
 				<module>hapi-sourcegen</module>
-				<module>hapi-examples</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
@@ -390,7 +437,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${gpg.maven.plugin.version}</version>
+						<version>${maven.gpg.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -438,7 +485,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${gpg.maven.plugin.version}</version>
+						<version>${maven.gpg.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>

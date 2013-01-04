@@ -56,6 +56,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	private String fileName = "id_file";
 	private boolean neverFail = true;
 	private boolean used = false;
+	private boolean minimizeReads = false;
 	private ReentrantLock lock = new ReentrantLock();
 
 	public FileBasedGenerator() {
@@ -67,13 +68,18 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	}
 
 	public String getID() throws IOException {
-		// If ID is 0, read initial value from file if possible
-		if (!used) {
-			set(readInitialValue(getFilePath()));
-			used = true;
-		}
 		try {
 			lock.lock();
+			
+			// If ID is 0, read initial value from file if possible
+			if (!minimizeReads || !used) {
+				long readInitialValue = readInitialValue(getFilePath());
+				if (readInitialValue >= 0) {
+					set(readInitialValue);
+				}
+				used = true;
+			}
+			
 			String id = super.getID();
 			// The id held in the file is always <increment> larger so that
 			// the ID is still unique after a restart.
@@ -115,10 +121,10 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 			if (!neverFail) {
 				throw e;
 			}
-			return 0;
+			return -1;
 		} catch (NumberFormatException e) {
 			LOG.info("ID {} read from file is not a number", id);
-			return 0;
+			return -1;
 		} finally {
 			if (br != null)
 				try {
@@ -148,6 +154,16 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	/**
+	 * If set to <code>true</code> (default is <code>false</code>) the generator
+	 * minimizes the number of disk reads by caching the last read value. This means
+	 * one less disk read per X number of IDs generated, but also means that multiple
+	 * instances of this generator may clobber each other's values.
+	 */
+	public void setMinimizeReads(boolean theMinimizeReads) {
+		minimizeReads = theMinimizeReads;
 	}
 
 	/**

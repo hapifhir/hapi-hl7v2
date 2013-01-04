@@ -32,7 +32,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.TimeZone;
 
+import org.junit.Rule;
 import org.junit.Test;
+
+import ca.uhn.hl7v2.IndexedErrorCollector;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.DataTypeUtil
@@ -42,6 +45,7 @@ import org.junit.Test;
 
 public class DataTypeUtilTest {
 
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
     public static class PreAppendZeroesSpec extends ca.uhn.hl7v2.TestSpec<int[], String> {
 
@@ -76,7 +80,7 @@ public class DataTypeUtilTest {
 			.add(ints(54321, 5), "54321")
 			.add(ints(54321, 6), "054321")
 			.add(ints(54321, 7), "0054321")
-			.executeTests(); 
+			.executeTests(collector); 
 	}
 
     @Test

@@ -43,9 +43,11 @@ import junit.framework.TestCase;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.DataTypeUtil;
@@ -67,6 +69,8 @@ public class CommonTSTest {
     static int minute;
     static int second;
     static float fractionalSecond;
+    
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();    
 
     private static TimeZone tz;
 
@@ -439,7 +443,7 @@ public class CommonTSTest {
                 .add("19840101000000.0+0059", "19840101000000.0+0059")
                 .add("19840101000000.0+0060", dte)
                 .add("19840101000000.0+11111", dte)
-                .executeTests();
+                .executeTests(collector);
     }
 
     public static class SetDatePrecisionSpec extends TestSpec<int[], String> {
@@ -478,7 +482,7 @@ public class CommonTSTest {
                 .add(ints(10000, 1, 1), dte)
                 .add(ints(2001, 1, 1), "20010101")
                 .add(ints(2001, -1, 21), dte)
-                .executeTests();
+                .executeTests(collector);
     }
 
     public static class SetDateMinutePrecisionSpec extends TestSpec<int[], String> {
@@ -524,7 +528,7 @@ public class CommonTSTest {
                 .add(ints(10000, 1, 1, 1, 1), dte)
                 .add(ints(2001, 1, 1, 1, 1), "200101010101")
                 .add(ints(2001, -1, 21, 1, 1), dte)
-                .executeTests();
+                .executeTests(collector);
     }
 
     static private class Params {
@@ -594,7 +598,7 @@ public class CommonTSTest {
                 .add(params(ints(10000, 1, 1, 1, 1), 1.0F), dte)
                 .add(params(ints(2001, 1, 1, 1, 1), 1.0F), "20010101010101")
                 .add(params(ints(2001, -1, 21, 1, 1), 1.0F), dte)
-                .executeTests();
+                .executeTests(collector);
     }
 
     public static class SetOffsetSpec extends TestSpec<Integer, String> {
@@ -626,7 +630,7 @@ public class CommonTSTest {
                 .add(1300, baseTime + "+1300")
                 // .add(24, DataTypeException.class)
                 .add(2300, baseTime + "+2300")
-                .executeTests();
+                .executeTests(collector);
     }
 
     /**

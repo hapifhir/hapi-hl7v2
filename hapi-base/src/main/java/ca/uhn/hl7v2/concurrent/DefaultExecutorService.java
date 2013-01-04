@@ -31,6 +31,8 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a global cached thread pool if Connections and Servers are not
@@ -40,17 +42,15 @@ public class DefaultExecutorService {
 
 	static ExecutorService defaultExecutorService;
 
-	public static synchronized ExecutorService getDefaultService() {
-		if (defaultExecutorService == null
-				|| defaultExecutorService.isShutdown()) {
-			defaultExecutorService = Executors.newCachedThreadPool();
-		}
-		return defaultExecutorService;
+	public static <V> CompletionService<V> completionService(ExecutorService executor) {
+		return new ExecutorCompletionService<V>(executor);
 	}
 
-	public static <V> CompletionService<V> completionService(
-			ExecutorService executor) {
-		return new ExecutorCompletionService<V>(executor);
+	public static synchronized ExecutorService getDefaultService() {
+		if (defaultExecutorService == null || defaultExecutorService.isShutdown()) {
+			defaultExecutorService = Executors.newCachedThreadPool(new MyThreadFactory());
+		}
+		return defaultExecutorService;
 	}
 
 	/**
@@ -59,19 +59,43 @@ public class DefaultExecutorService {
 	public static boolean isDefaultService(ExecutorService service) {
 		return service == defaultExecutorService;
 	}
-	
+
 	/**
 	 * @see {@link ExecutorService#shutdown()}
 	 */
 	public static void shutdown() {
 		defaultExecutorService.shutdown();
 	}
-	
+
 	/**
 	 * @see {@link ExecutorService#shutdownNow()}
 	 */
 	public static void shutdownNow() {
 		defaultExecutorService.shutdownNow();
-	}	
-	
+	}
+
+	private static class MyThreadFactory implements ThreadFactory {
+
+		private ThreadGroup group;
+		private AtomicInteger threadNum;
+
+		public MyThreadFactory() {
+			group = Thread.currentThread().getThreadGroup();
+			threadNum = new AtomicInteger(1);
+		}
+
+		public Thread newThread(Runnable theR) {
+			String name = "hapi-worker-" + threadNum.getAndIncrement();
+			Thread t = new Thread(group, theR, name, 0);
+			if (t.isDaemon()) {
+				t.setDaemon(false);
+			}
+			if (t.getPriority() != Thread.NORM_PRIORITY) {
+				t.setPriority(Thread.NORM_PRIORITY);
+			}
+			return t;
+		}
+
+	}
+
 }

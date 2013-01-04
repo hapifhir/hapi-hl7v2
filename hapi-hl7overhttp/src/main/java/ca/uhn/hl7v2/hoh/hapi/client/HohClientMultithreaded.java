@@ -34,12 +34,12 @@ public class HohClientMultithreaded extends AbstractClient<HohRawClientMultithre
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
+	 * @param theUriPath
 	 *            The URI being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 */
-	public HohClientMultithreaded(String theHost, int thePort, String theUri) {
-		super(new HohRawClientMultithreaded(theHost, thePort, theUri), null);
+	public HohClientMultithreaded(String theHost, int thePort, String theUriPath) {
+		super(new HohRawClientMultithreaded(theHost, thePort, theUriPath), null);
 	}
 
 	/**
@@ -49,15 +49,15 @@ public class HohClientMultithreaded extends AbstractClient<HohRawClientMultithre
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
+	 * @param theUriPath
 	 *            The URI being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 * @param theParser
 	 *            The Parser to use, or <code>null</code> in which case a
 	 *            PipeParser will be used
 	 */
-	public HohClientMultithreaded(String theHost, int thePort, String theUri, Parser theParser) {
-		super(new HohRawClientMultithreaded(theHost, thePort, theUri), theParser);
+	public HohClientMultithreaded(String theHost, int thePort, String theUriPath, Parser theParser) {
+		super(new HohRawClientMultithreaded(theHost, thePort, theUriPath), theParser);
 	}
 
 	/**

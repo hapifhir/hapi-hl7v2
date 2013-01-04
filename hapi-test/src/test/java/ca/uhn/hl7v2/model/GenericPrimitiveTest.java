@@ -32,9 +32,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 /**
@@ -47,6 +49,7 @@ public class GenericPrimitiveTest {
 	private static GenericPrimitive genericPrimitive;
 	private static GenericMessage message;
 	
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
 	public static void setUp() throws Exception {
@@ -93,7 +96,7 @@ public class GenericPrimitiveTest {
 			.add("1234aBCDerfgkyuy^asdflkasd|adsjkl","1234aBCDerfgkyuy^asdflkasd|adsjkl")
 			.add(" ", " ")
 			.add("", "")
-			.executeTests();
+			.executeTests(collector);
 
 	}
 

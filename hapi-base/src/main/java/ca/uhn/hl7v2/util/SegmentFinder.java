@@ -80,9 +80,9 @@ public class SegmentFinder extends MessageNavigator {
         Structure s = null;
         
         while (s == null) {
-            iterate(false, false);
+            String currentNameInParent = iterate(false, false);
             String currentName = getCurrentStructure(0).getName();
-            if (matches(namePattern, currentName)) {
+            if (matches(namePattern, currentName) || matches(namePattern, currentNameInParent)) {
                 s = getCurrentStructure(rep);
             }
         }

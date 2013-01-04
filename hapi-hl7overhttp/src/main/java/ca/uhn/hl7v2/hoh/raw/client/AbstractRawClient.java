@@ -1,18 +1,18 @@
 package ca.uhn.hl7v2.hoh.raw.client;
 
+import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
-
-import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -85,18 +85,14 @@ public abstract class AbstractRawClient implements IClient {
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
-	 *            The URI being requested (must either be blank or start with
+	 * @param thePath
+	 *            The path being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 */
-	public AbstractRawClient(String theHost, int thePort, String theUri) {
+	public AbstractRawClient(String theHost, int thePort, String thePath) {
 		setHost(theHost);
 		setPort(thePort);
-		try {
-			setUri(URLEncoder.encode(theUri, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new Error("UTF-8 encoding is not present. This is probably a result of a misconfigured JVM.");
-		}
+		setUriPath(thePath);
 	}
 
 	/**
@@ -134,7 +130,7 @@ public abstract class AbstractRawClient implements IClient {
 		return socket;
 	}
 
-	private IReceivable<String> doSendAndReceiveInternal(ISendable theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
+	private IReceivable<String> doSendAndReceiveInternal(ISendable<?> theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setPath(myPath);
 		enc.setHost(myHost);
@@ -209,7 +205,7 @@ public abstract class AbstractRawClient implements IClient {
 	 * 
 	 * @see ca.uhn.hl7v2.hoh.raw.client.IClient#getUri()
 	 */
-	public String getUri() {
+	public String getUriPath() {
 		return myPath;
 	}
 
@@ -262,7 +258,7 @@ public abstract class AbstractRawClient implements IClient {
 	 *             If a failure occurs while encoding the message into a
 	 *             sendable HTTP request
 	 */
-	public IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
+	public IReceivable<String> sendAndReceive(ISendable<?> theMessageToSend) throws DecodeException, IOException, EncodeException {
 
 		Socket socket = provideSocket();
 		try {
@@ -315,12 +311,6 @@ public abstract class AbstractRawClient implements IClient {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setPath(String thePath) {
-		myPath = thePath;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -367,18 +357,28 @@ public abstract class AbstractRawClient implements IClient {
 		mySocketFactory = theSocketFactory;
 	}
 
-	private void setUri(String theUri) {
-		myPath = theUri;
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setUriPath(String thePath) {
+		myPath = thePath;
 
-		if (isBlank(theUri)) {
+		if (isBlank(thePath)) {
 			myPath = "/";
 		}
-		if (!theUri.startsWith("/") || theUri.contains(" ")) {
-			// TODO check for other reserved chars, maybe also add this
-			// validation
-			// to encoder classes
-			throw new IllegalArgumentException("Invalid URI: " + theUri);
+		if (!thePath.startsWith("/")) {
+			throw new IllegalArgumentException("Invalid URI (must start with '/'): " + thePath);
+		} else if (thePath.contains(" ")) {
+			throw new IllegalArgumentException("Invalid URI: " + thePath);
 		}
+		
+		// Validate for syntax
+		try {
+			new URI("http://localhost" + thePath);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Invalid URI: " + thePath);
+		}
+		
 	}
 
 	/**
@@ -387,7 +387,7 @@ public abstract class AbstractRawClient implements IClient {
 	public void setUrl(URL theUrl) {
 		setHost(extractHost(theUrl));
 		setPort(extractPort(theUrl));
-		setUri(extractUri(theUrl));
+		setUriPath(extractUri(theUrl));
 
 		myUrl = theUrl;
 

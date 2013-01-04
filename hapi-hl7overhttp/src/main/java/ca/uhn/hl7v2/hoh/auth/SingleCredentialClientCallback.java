@@ -18,11 +18,11 @@ public class SingleCredentialClientCallback implements IAuthorizationClientCallb
 		myPassword = thePassword;
 	}
 
-	public String providePassword(String theUri) {
+	public String providePassword(String theUriPath) {
 		return myPassword;
 	}
 
-	public String provideUsername(String theUri) {
+	public String provideUsername(String theUriPath) {
 		return myUsername;
 	}
 
