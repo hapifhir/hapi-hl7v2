@@ -38,19 +38,19 @@ public class HohRawClientSimple extends AbstractRawClient implements IClientSimp
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
-	 *            The URI being requested (must either be blank or start with
+	 * @param theUriPath
+	 *            The URI path being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 */
-	public HohRawClientSimple(String theHost, int thePort, String theUri) {
-		super(theHost, thePort, theUri);
+	public HohRawClientSimple(String theHost, int thePort, String theUriPath) {
+		super(theHost, thePort, theUriPath);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized IReceivable<String> sendAndReceive(ISendable theMessageToSend) throws DecodeException, IOException, EncodeException {
+	public synchronized IReceivable<String> sendAndReceive(ISendable<?> theMessageToSend) throws DecodeException, IOException, EncodeException {
 		// **** Overridden to add synchronization
 		return super.sendAndReceive(theMessageToSend);
 	}
@@ -140,7 +140,7 @@ public class HohRawClientSimple extends AbstractRawClient implements IClientSimp
 		// The ISendable defines the object that provides the actual
 		// message to send
 		String message = "MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + "EVN||200803051509\r" + "PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r";
-		ISendable sendable = new RawSendable(message);
+		ISendable<?> sendable = new RawSendable(message);
 
 		try {
 			// sendAndReceive actually sends the message

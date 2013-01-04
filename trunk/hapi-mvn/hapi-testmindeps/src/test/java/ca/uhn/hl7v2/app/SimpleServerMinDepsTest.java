@@ -10,14 +10,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.HL7Writer;
-import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericModelClassFactory;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.RandomServerPortProvider;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
@@ -28,6 +28,7 @@ public class SimpleServerMinDepsTest {
 	private int myPort;
 
 	private SimpleServer mySs;
+	private DefaultHapiContext myCtx;
 
 	@After
 	public void after() {
@@ -37,8 +38,8 @@ public class SimpleServerMinDepsTest {
 	@Before
 	public void before() throws InterruptedException {
 		myPort = RandomServerPortProvider.findFreePort();
-		LowerLayerProtocol llp = new MinLowerLayerProtocol();
-		mySs = new SimpleServer(myPort, llp, new PipeParser(new GenericModelClassFactory()));
+		myCtx = new DefaultHapiContext(new GenericModelClassFactory());
+		mySs = myCtx.getSimpleService(myPort, false);
 		mySs.startAndWait();
 	}
 	
@@ -70,6 +71,7 @@ public class SimpleServerMinDepsTest {
 		ourLog.info("Response was:\n{}", resp.replace('\r', '\n'));
 		
 		assertTrue(resp, resp.contains("|2.5"));
+		assertTrue(resp, resp.contains("|AE|"));
 		assertTrue(resp, resp.contains("60491_4054_SC1"));
 		
 		
@@ -82,7 +84,8 @@ public class SimpleServerMinDepsTest {
 	 */
 	@Test
 	public void testSendAndReceiveV23Message() throws Exception {
-		
+		mySs.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
+				
 		Socket s = new Socket();
 		s.connect(new InetSocketAddress("localhost", myPort));
 		
@@ -103,6 +106,7 @@ public class SimpleServerMinDepsTest {
 		ourLog.info("Response was:\n{}", resp.replace('\r', '\n'));
 		
 		assertTrue(resp, resp.contains("|2.3"));
+		assertTrue(resp, resp.contains("|AA|"));
 		assertTrue(resp, resp.contains("60491_4054_SC1"));
 		
 		
@@ -114,6 +118,8 @@ public class SimpleServerMinDepsTest {
 	 */
 	@Test
 	public void testSendAndReceiveV299Message() throws Exception {
+		mySs.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
+		myCtx.getParserConfiguration().setAllowUnknownVersions(true);
 		
 		Socket s = new Socket();
 		s.connect(new InetSocketAddress("localhost", myPort));
@@ -134,7 +140,8 @@ public class SimpleServerMinDepsTest {
 		
 		ourLog.info("Response was:\n{}", resp.replace('\r', '\n'));
 		
-		assertTrue(resp, resp.contains("|2.3"));
+		assertTrue(resp, resp.contains("|2.9999"));
+		assertTrue(resp, resp.contains("|AA|"));
 		assertTrue(resp, resp.contains("60491_4054_SC1"));
 		
 		

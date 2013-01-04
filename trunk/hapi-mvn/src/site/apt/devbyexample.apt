@@ -45,7 +45,10 @@ Developing using HAPI - By Example
 
 * Sending and receiving
   
-  * Now, let's introduce some {{{./xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}.
+  * First, you will need a {{{./xref/ca/uhn/hl7v2/examples/TheHapiContext.html}HAPI Context}}.
+  
+  * Now, let's introduce some {{{./xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html}network operations}}
+    to send messages from a client and receive messages to a server.
 
   * Read messages from a file and 
     {{{./xref/ca/uhn/hl7v2/examples/SendLotsOfMessages.html}send multiple messages out}} using ConnectionHub.
@@ -53,10 +56,18 @@ Developing using HAPI - By Example
   * Handle different  
     {{{./xref/ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html}character encoding schemes}} (charsets), such
     as UTF-8, or ISO-8859/2.
+    
+  * Message encryption is possible using {{{./xref/ca/uhn/hl7v2/examples/UsingTls.html}SSL/TLS}}
 	
   * Configure   
     {{{./xref/ca/uhn/hl7v2/examples/CustomThreading.html} threading}} strategies by using custom ExecutorServices.
 
+
+* Sending and receiving using HL7 over HTTP
+
+ * See the {{{./hapi-hl7overhttp/doc_hapi.html}HL7 over HTTP}} page for information on how to
+   incorporate HL7-over-HTTP instead of MLLP for a more robust and secure communication method.
+  
 * Parsing Messages
 
   * Once we're parsing messages, we can 
@@ -76,7 +87,7 @@ Developing using HAPI - By Example
   * There are several ways to  
     {{{./xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html}handle multiple versions}}
     of HL7 within a single application.
-
+    
 
 * Advanced Parsing/Reading Messages
 
@@ -103,4 +114,6 @@ Developing using HAPI - By Example
 * Utility Classes
 
   * {{{./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html}Reading Messages from a File}}
+  
+  * The {{{./configuring_hapi.html}Configuring HAPI}} page explains several options for advanced configuration.
   

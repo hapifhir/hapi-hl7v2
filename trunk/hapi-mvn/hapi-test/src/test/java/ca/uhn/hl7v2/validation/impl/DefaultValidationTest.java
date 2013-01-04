@@ -6,10 +6,12 @@ package ca.uhn.hl7v2.validation.impl;
 import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.TestSpecBuilder;
 import ca.uhn.hl7v2.model.DataTypeException;
@@ -36,6 +38,9 @@ import ca.uhn.hl7v2.parser.PipeParser;
 public class DefaultValidationTest {
     
     private static Message myMessage;
+    
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -104,38 +109,38 @@ public class DefaultValidationTest {
     @Test
     public void testDT() throws Exception {
         
-        TestSpecBuilder.<String, String>buildSpecs(DTTestSpec.class)
-            .add((String)null, (String)null)
-            .add("", "")
-            .add("\"\"", "\"\"")
-            .add(" ", DataTypeException.class)
-            .add("2", DataTypeException.class)
-            .add("20", DataTypeException.class)
-            .add("200", DataTypeException.class)
-            .add("999", DataTypeException.class)
+        TestSpecBuilder.<String, String>buildSpecs(DTTestSpec.class, DataTypeException.class)
+            .accept((String)null, 
+                    "", 
+                    "\"\"")
+            .reject(" ",
+                    "2",
+                    "20",
+                    "200",
+                    "999")
             //year
-            .add("1000", "1000")
-            .add("1987", "1987")
-            .add("2002", "2002")
-            .add("9999", "9999")
-            .add("10000", DataTypeException.class)
+            .accept("1000", 
+                    "1987", 
+                    "2002", 
+                    "9999")
+            .reject("10000")
             //month
-            .add("20021", DataTypeException.class)
-            //.add("200200", DataTypeException.class)
-            .add("200201", "200201")
-            .add("200207", "200207")
-            .add("200211", "200211")
-            .add("200212", "200212")
-            //.add("200213", DataTypeException.class),
+            .reject("20021")
+            //.reject("200200")
+            .accept("200201",
+                    "200207",
+                    "200211",
+                    "200212")
+            //.reject("200213"),
             //day
-            .add("2002010", DataTypeException.class)
-            //.add("20020100", DataTypeException.class),
-            .add("20020101", "20020101")
-            .add("20020107", "20020107")
-            .add("20020121", "20020121")
-            .add("20020131", "20020131")
+            .reject("2002010")
+            //.reject("20020100"),
+            .accept("20020101",
+                    "20020107",
+                    "20020121",
+                    "20020131")
             //.add("20020132", DataTypeException.class),
-            .executeTests();
+            .executeTests(collector);
     }
     
     public static class TMTestSpec extends TestSpec<String, String> {
@@ -152,34 +157,34 @@ public class DefaultValidationTest {
     @Test
     public void testTM() throws Exception {
 
-        TestSpecBuilder.<String, String>buildSpecs(TMTestSpec.class)
-            .add((String)null, (String)null)
-            .add("\"\"", "\"\"")
-            .add("0", DataTypeException.class)
-            .add("08", "08")
-            .add("080", DataTypeException.class)
-            .add("0800", "0800")
-            .add("08000", DataTypeException.class)
-            .add("080005", "080005")
-            .add("0800051", DataTypeException.class)
-            .add("080005.1", "080005.1")
-            .add("080005.14", "080005.14")
-            .add("080005.147", "080005.147")
-            .add("080005.1479", "080005.1479")
-            .add("080005.14793", DataTypeException.class)
-            .add("0+0600", DataTypeException.class)
-            .add("08-0100", "08-0100")
-            .add("080-0500", DataTypeException.class)
-            .add("0800-0500", "0800-0500")
-            .add("080005-1300", "080005-1300")
-            .add("0800051", DataTypeException.class)
-            .add("080005.1+0100", "080005.1+0100")
-            .add("080005.14+1000", "080005.14+1000")
-            .add("080005.147-1200", "080005.147-1200")
-            .add("080005.1479+0340", "080005.1479+0340")
-            .add("080005.1479+0330", "080005.1479+0330")
-            .add("080005.1479+1234", "080005.1479+1234")
-            .executeTests();
+        TestSpecBuilder.<String, String>buildSpecs(TMTestSpec.class, DataTypeException.class)
+            .accept((String)null)
+            .accept("\"\"", "\"\"")
+            .reject("0")
+            .accept("08")
+            .reject("080")
+            .accept("0800", "0800")
+            .reject("08000")
+            .accept("080005")
+            .reject("0800051")
+            .accept("080005.1",
+                    "080005.14", 
+                    "080005.147", 
+                    "080005.1479")
+            .reject("080005.14793", 
+                    "0+0600")
+            .accept("08-0100")
+            .reject("080-0500")
+            .accept("0800-0500", 
+                    "080005-1300")
+            .reject("0800051")
+            .accept("080005.1+0100", 
+                    "080005.14+1000", 
+                    "080005.147-1200", 
+                    "080005.1479+0340", 
+                    "080005.1479+0330", 
+                    "080005.1479+1234")
+            .executeTests(collector);
     }
 
     public static class TSTestSpec extends TestSpec<String, String> {
@@ -196,10 +201,10 @@ public class DefaultValidationTest {
     @Test    
     public void testTS() throws Exception {
             
-        TestSpecBuilder.<String, String>buildSpecs(TSTestSpec.class)
-            .add(null, (String)null)
-            .add("", "")
-            .add("\"\"","\"\"")
+        TestSpecBuilder.<String, String>buildSpecs(TSTestSpec.class, DataTypeException.class)
+            .accept((String)null, 
+                    "",
+                    "\"\"")
             //year
             .add("0", DataTypeException.class)
             .add("1", DataTypeException.class)
@@ -329,7 +334,7 @@ public class DefaultValidationTest {
             .add("19840101000000.0+0059", "19840101000000.0+0059")
             //.add("19840101000000.0+0060", DataTypeException.class)
             .add("19840101000000.0+11111", DataTypeException.class)
-            .executeTests();
+            .executeTests(collector);
 
     }
     
@@ -446,7 +451,7 @@ public class DefaultValidationTest {
             .add("12 (705)267-2131X2345B1234C Test", "12 (705)267-2131X2345B1234C Test")
             //.add("123 (705)267-2131X2345B1234C Test", "123 (705)267-2131X2345B1234C Test")
             .add("1234 (705)267-2131X2345B1234C Test", DataTypeException.class)
-            .executeTests();
+            .executeTests(collector);
     }
 
     public static class NMTestSpec extends TestSpec<String, String> {
@@ -500,7 +505,7 @@ public class DefaultValidationTest {
                 .add("+1234567.8901", "+1234567.8901")
                 .add("-12.a34", DataTypeException.class)
                 .add("TEST", DataTypeException.class)
-                .executeTests();
+                .executeTests(collector);
     }
     
     public static class SITestSpec extends TestSpec<String, String> {
@@ -527,7 +532,7 @@ public class DefaultValidationTest {
         .add("1.1", DataTypeException.class)
         .add("-1.1", DataTypeException.class)
         .add("NaN", DataTypeException.class)
-        .executeTests();
+        .executeTests(collector);
     }
     
     

@@ -1,8 +1,6 @@
 package ca.uhn.hl7v2.examples.hoh;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -20,7 +18,7 @@ public class CustomCertificateClient {
 	 * @throws DecodeException 
 	 */
 	public static void main(String[] args) throws DecodeException, IOException, EncodeException {
-		ISendable sendable = null;
+		ISendable<?> sendable = null;
 
 // START SNIPPET: client 
 // Create a client

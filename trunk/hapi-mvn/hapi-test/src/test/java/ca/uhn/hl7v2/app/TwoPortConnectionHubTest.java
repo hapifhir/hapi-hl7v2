@@ -49,7 +49,7 @@ public class TwoPortConnectionHubTest {
 		context = new DefaultHapiContext();
 		port1 = RandomServerPortProvider.findFreePort();
 		port2 = RandomServerPortProvider.findFreePort();
-		tps = context.getTwoPortService(port1, port2, false);
+		tps = context.newServer(port1, port2, false);
 		tps.registerApplication("*", "*", new MyApp());
 		tps.startAndWait();
 		hub = context.getConnectionHub();

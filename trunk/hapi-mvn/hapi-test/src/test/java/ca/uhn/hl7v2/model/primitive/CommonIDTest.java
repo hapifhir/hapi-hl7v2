@@ -32,8 +32,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -54,6 +56,8 @@ public class CommonIDTest {
 
     private static final ModelClassFactory MCF = new DefaultModelClassFactory();
     private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
 	static private class Params {
 	    int table;
@@ -106,7 +110,7 @@ public class CommonIDTest {
 			.add(param(2, "IDString"), "IDString")
 			.add(param(2, getString(200, 'a')), getString(200, 'a'))
 			.add(param(2, getString(201, 'a')), DataTypeException.class)			
-			.executeTests();
+			.executeTests(collector);
 	}
 
 

@@ -1,24 +1,18 @@
 package ca.uhn.hl7v2.app;
 
-import static ca.uhn.hl7v2.app.TestUtils.fill;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static ca.uhn.hl7v2.app.TestUtils.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import org.hamcrest.number.OrderingComparison;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -62,10 +56,10 @@ public class ConnectionHubTest extends MockitoTest {
 		context = new DefaultHapiContext();
 		port1 = RandomServerPortProvider.findFreePort();
 		port2 = RandomServerPortProvider.findFreePort();
-		ss1 = context.getSimpleService(port1, false);
+		ss1 = context.newServer(port1, false);
 		ss1.registerApplication("*", "*", new MyApp());
 		ss1.startAndWait();
-		ss2 = context.getSimpleService(port2, false);
+		ss2 = context.newServer(port2, false);
 		ss2.registerApplication("*", "*", new MyApp());
 		ss2.startAndWait();
 		hub = context.getConnectionHub();
@@ -152,7 +146,7 @@ public class ConnectionHubTest extends MockitoTest {
 	@Test
 	public void testAttachSequentially() throws Exception {
 
-		int n = 3;
+		int n = 20;
 		long now = System.currentTimeMillis();
 		final int myfreePort = RandomServerPortProvider.findFreePort();
 
@@ -168,21 +162,22 @@ public class ConnectionHubTest extends MockitoTest {
 				return time;
 			}
 		};
-		List<Future<Long>> results = DefaultExecutorService.getDefaultService().invokeAll(
-				fill(t, n));
-		Future<Long> fastestResult = Collections.min(results, new Comparator<Future<Long>>() {
-
-			public int compare(Future<Long> o1, Future<Long> o2) {
-				try {
-					return o1.get().compareTo(o2.get());
-				} catch (Exception e) {
-					return 0; // should never happen
-				}
-			}
-		});
+				
+		List<Future<Long>> results = DefaultExecutorService.getDefaultService().invokeAll(fill(t, n));
+		long total = 0;
+		List<Long> resultsLongs = new ArrayList<Long>();
+		for (Future<Long> future : results) {
+			total += future.get();
+			resultsLongs.add(future.get());
+		}
+				
 		long elapsed = System.currentTimeMillis() - now;
 		// Due to synchronization, the threads are executed almost sequentially
-		assertTrue(elapsed > fastestResult.get() * (n - 1));
+
+		Collections.sort(resultsLongs);
+		ourLog.info("Elapsed: {}, Total: {}. Values: {}", new Object[] {elapsed, total, resultsLongs});
+		
+		assertThat(elapsed, OrderingComparison.lessThan(total));
 		assertEquals(0, hub.allConnections().size());
 	}
 

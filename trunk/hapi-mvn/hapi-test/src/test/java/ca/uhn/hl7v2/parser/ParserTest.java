@@ -6,22 +6,25 @@
 
 package ca.uhn.hl7v2.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import ca.uhn.hl7v2.model.GenericSegment;
+import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 
 /**
  * JUnit test harness for Parser
@@ -39,8 +42,9 @@ public class ParserTest
         assertTrue(msh instanceof ca.uhn.hl7v2.model.v24.segment.MSH);
         msh = Parser.makeControlMSH("2.2", factory);
         assertTrue(msh instanceof ca.uhn.hl7v2.model.v22.segment.MSH);
+
         msh = Parser.makeControlMSH("1", factory);
-        assertTrue(msh instanceof GenericSegment);
+        assertTrue(msh.getClass().getName(), msh instanceof GenericSegment);
     }
 
     @Test
@@ -180,4 +184,21 @@ public class ParserTest
         assertEquals(message, test);
     }    
 
+    @Test
+    public void testParserDoesntFailWithoutValidationExceptionHandlerFactory() throws HL7Exception, IOException {
+    	DefaultHapiContext ctx = new DefaultHapiContext(new NoValidationBuilder());
+
+    	ADT_A01 adt = new ADT_A01();
+    	adt.initQuickstart("ADT", "A01", "T");
+    	adt.setParser(ctx.getPipeParser());
+    	
+    	String msg = adt.encode();
+    	adt.parse(msg);
+    	
+    	adt.setParser(ctx.getXMLParser());
+    	msg = adt.encode();
+    	adt.parse(msg);
+    	
+    }
+    
 }

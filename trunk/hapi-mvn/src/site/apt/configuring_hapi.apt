@@ -13,6 +13,7 @@ Configuring HAPI
   to track this task.
   
 * HAPI Context
+
   HAPI can be configured by using one or more instances of 
   {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/HapiContext.html}HapiContext}}, particularly
   its default implementation {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/DefaultHapiContext.html}DefaultHapiContext}}.
@@ -20,11 +21,11 @@ Configuring HAPI
   server components. It furthermore provides factory methods that obtain parsers, validators etc. that
   are corresondingly configured:
   
-  +---------+
-  HapiContext context = new DefaultHapiContext();
-  context.setDefaultModelClassFactory(new MyOwnModelClassFactory());
-  PipeParser parser = context.getPipeParser();
-  +---------+
+---------
+HapiContext context = new DefaultHapiContext();
+context.setDefaultModelClassFactory(new MyOwnModelClassFactory());
+PipeParser parser = context.getPipeParser();
+---------
   
   This code snippet modifies the default configuration by using a custom 
   {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ModelClassFactory.html}ModelClassFactory}}.

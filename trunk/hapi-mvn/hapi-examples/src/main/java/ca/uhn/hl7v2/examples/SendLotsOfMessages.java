@@ -8,7 +8,6 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
@@ -33,12 +32,11 @@ public class SendLotsOfMessages {
 		// Create an iterator to iterate over all the messages
 		Hl7InputStreamMessageIterator iter = new Hl7InputStreamMessageIterator(reader);
 		
+		// Create a HapiContext
 		HapiContext context = new DefaultHapiContext();
-		ConnectionHub connectionHub = context.getConnectionHub();
-		Connection conn = null;
 		
+		Connection conn = null;
 		while (iter.hasNext()) {
-			
 			
 			/* If we don't already have a connection, create one.
 			 * Note that unless something goes wrong, it's very common
@@ -48,8 +46,10 @@ public class SendLotsOfMessages {
 			 * sent. This is good practice, as it is much faster than
 			 * creating a new connection each time. 
 			 */ 
-			if (conn != null) {
-				conn = connectionHub.attach("localhost", 8888, false);
+			if (conn == null) {
+				boolean useTls = false;
+				int port = 8888;
+				conn = context.newClient("localhost", port, useTls);
 			}
 			
 			try {
@@ -60,21 +60,12 @@ public class SendLotsOfMessages {
 				System.out.println("Didn't send out this message!");
 				e.printStackTrace();
 				
-				// Since we failed, return the connection to the ConnectionHub so that it can
-				// discard it, and make sure we're going to create a new one next time around
-				connectionHub.discard(conn);
+				// Since we failed, close the connection
+				conn.close();
 				conn = null;
-				continue;
+				
 			}
 			
-			
-			
-		}
-		
-		// When we're totally done, give the connection back. This allows the
-		// connection hub to either give it to someone else, or close it.
-		if (conn != null) {
-			connectionHub.detach(conn);
 		}
 		
 	}

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Getting Started</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Downloading HAPI">
+
+			<p>
+				If you aren't using Maven, HAPI can be downloaded at our
+				<a href="http://sourceforge.net/projects/hl7api/files/hl7api/">Sourceforge Download Site.</a>
+			</p>
+
+			<p>
+				Adding HAPI to your application requires one or more HAPI JARs
+				to be added to your application classpath.
+			</p>
+
+			<subsection name="HAPI Libraries">
+
+				<table>
+					<tr>
+						<td>
+							<span class="nobr">hapi-base-${hapi_version_stable}.jar</span>
+						</td>
+						<td>
+							This is the base HAPI library. It contains parsers, transports, validators, etc.
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span class="nobr">hapi-structures-v21-${hapi_version_stable}.jar</span>
+							<br />
+							<span class="nobr">hapi-structures-v22-${hapi_version_stable}.jar</span>
+							<br />
+							etc...
+						</td>
+						<td>
+							Each HL7 version (2.1, 2.2, etc) has a messsage library contained
+							within a structures JAR. If you are constructing messages of that
+							particular version of HL7, you should include the
+							appropriate JAR.
+						</td>
+						<td>
+							<span class="nobr">hapi-hl7overhttp-${hapi_version_stable}.jar</span>
+						</td>
+						<td>
+							If you are using
+							<a href="hapi-hl7overhttp/index.html">HL7 over HTTP</a>
+							in your
+							application, you must include the hl7overhttp JAR as well.
+						</td>
+					</tr>
+				</table>
+
+			</subsection>
+
+			<subsection name="HAPI Dependencies">
+
+				<p>
+					HAPI also requires the following JARs to function. Newer versions of these JARs *should* also work.
+					Note that these dependencies can be found in the "hapi-all" bundle available in the
+					Download
+					area.
+				</p>
+
+				<table>
+					<tr>
+						<td>
+							<span class="nobr">slf4j-api-${slf4j_version}.jar</span>
+						</td>
+						<td>
+							HAPI uses
+							<a href="http://www.slf4j.org/">SLF4J</a>
+							for logging.
+							SLF4J is a logging abstraction framework which generally uses
+							an underlying logger to write the logs to disk. At a minimum, you
+							must include the "slf4j-api" dependency JAR, but you
+							should also
+							include a binding to an underlying log system.
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span class="nobr">log4j-${log4j_version}.jar</span>
+							<br />
+							<span class="nobr">slf4j-log4j12-${slf4j_version}.jar</span>
+						</td>
+						<td>
+							<a href="http://logging.apache.org/log4j/">LOG4J</a>
+							is a good choice for an
+							underlying log system (the library which actually writes the logs to
+							disk). You may include these two JARs to use LOG4J (to
+							be clear, this
+							is optional. HAPI has no
+							dependencies on LOG4J but will take advantage
+							of its functionality through SLF4J's bridge.)
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span class="nobr">slf4j-api-${slf4j_version}.jar</span>
+							<br />
+							<span class="nobr">xml-apis-1.4.01.jar</span>
+							<br />
+							<span class="nobr">xml-resolver-1.2.jar</span>
+						</td>
+						<td>
+							When HAPI runs on older Java versions (particularly Java 1.4.x) and XML-related functions are used (including parsing XML messages and working with conformance profiles),
+							you have to add
+							these libraries.
+						</td>
+					</tr>
+				</table>
+
+			</subsection>
+
+		</section>
+
+		<section name="Using Maven">
+
+			<p>
+				To use HAPI in a
+				<a href="http://maven.apache.org">Maven</a>
+				based project,
+				add the hapi-base artifact to your dependencies section,
+				as well as any structure JAR versions you need.
+			</p>
+
+			<source><![CDATA[<!-- This is the core HAPI library -->
+<dependency>
+  <groupId>ca.uhn.hapi</groupId>
+  <artifactId>hapi-base</artifactId>
+  <version>${hapi_version_stable}</version>
+</dependency>       
+
+<!-- These are structure JARs for HL7 v2.1 and 2.5.1 (as an example) -->
+<dependency>
+  <groupId>ca.uhn.hapi</groupId>
+  <artifactId>hapi-structures-v21</artifactId>
+  <version>${hapi_version_stable}</version>
+</dependency>
+<dependency>
+  <groupId>ca.uhn.hapi</groupId>
+  <artifactId>hapi-structures-v251</artifactId>
+  <version>${hapi_version_stable}</version>
+</dependency>]]></source>
+
+			<p>
+				If you wish to use LOG4J, add the following as well:
+			</p>
+
+			<source><![CDATA[<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-log4j12</artifactId>
+  <version>${slf4j_version}</version>
+</dependency>
+<dependency>
+  <groupId>log4j</groupId>
+  <artifactId>log4j</artifactId>
+  <version>${log4j_version}</version>
+</dependency>
+]]></source>
+
+			<p>
+				If you are using HL7 over HTTP, include the "hapi-hl7overhttp"
+				dependency as well.
+			</p>
+
+			<source><![CDATA[<dependency>
+  <groupId>ca.uhn.hapi</groupId>
+  <artifactId>hapi-hl7overhttp</artifactId>
+  <version>${hapi_version_stable}</version>
+</dependency>]]></source>
+
+		</section>
+
+		<section name="What Next?">
+
+			<p>
+				Once you have the library downloaded and added to a project,
+				see the
+				<a href="devbyexample.html">HAPI By Example</a>
+				page for what to try
+				next.
+			</p>
+
+		</section>
+
+
+	</body>
+</document>

@@ -31,8 +31,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 
 /**
@@ -45,6 +47,8 @@ public class GenericCompositeTest  {
 	private static GenericComposite genericComposite;
 	private static Message message;
 	
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+
     @BeforeClass
 	public static void setUp() throws Exception {
         message = new GenericMessage.V25(new DefaultModelClassFactory());
@@ -82,7 +86,7 @@ public class GenericCompositeTest  {
 			.add(1, Varies.class)
 			.add(2, Varies.class)
 			.add(100, Varies.class)
-			.executeTests();
+			.executeTests(collector);
 	}
 
     public static class GetComponentsSpec extends ca.uhn.hl7v2.TestSpec<Integer, Integer> {
@@ -111,7 +115,7 @@ public class GenericCompositeTest  {
 			.add(1, 2)
 			.add(2, 3)
 			.add(100, 101)
-			.executeTests();
+			.executeTests(collector);
 	}
 
 	/**

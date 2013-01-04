@@ -35,7 +35,8 @@ import ca.uhn.hl7v2.HapiContext;
  * 
  * @author Christian Ohr
  */
-public class DefaultValidationExceptionHandler extends AbstractValidationExceptionHandler<Boolean> {
+public class DefaultValidationExceptionHandler extends AbstractValidationExceptionHandler<Boolean> 
+                     implements ValidationExceptionHandlerFactory<Boolean> {
 
 	private boolean result = true;
 
@@ -73,6 +74,10 @@ public class DefaultValidationExceptionHandler extends AbstractValidationExcepti
     public boolean hasFailed() {
         return !result;
     }
+
+	public ValidationExceptionHandler<Boolean> getNewInstance(HapiContext theContext) {
+		return new DefaultValidationExceptionHandler(theContext);
+	}
 	
 	
 }

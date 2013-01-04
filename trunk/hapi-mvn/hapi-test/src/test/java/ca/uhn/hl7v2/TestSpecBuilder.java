@@ -1,7 +1,5 @@
 package ca.uhn.hl7v2;
 
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,19 +13,25 @@ public class TestSpecBuilder<I, O> {
 
     private List<TestSpec<I, O>> specs = new ArrayList<TestSpec<I,O>>();
     private Class<? extends TestSpec<I, O>> resultClass;
+    private Class<? extends Throwable> defaultException;
     
     /**
      * Creates a builder instance
      * 
-     * @param resultClass
+     * @param resultClass resulting TestSpec class
      * @return a builder instance that builds TestSpec instances of the given type
      */
     public static <I, O> TestSpecBuilder<I, O> buildSpecs(Class<? extends TestSpec<I, O>> resultClass) {
-        return new TestSpecBuilder<I, O>(resultClass);
-        
+        return new TestSpecBuilder<I, O>(resultClass, Exception.class);        
     }
-    private TestSpecBuilder(Class<? extends TestSpec<I, O>> resultClass) {
+
+    public static <I, O> TestSpecBuilder<I, O> buildSpecs(Class<? extends TestSpec<I, O>> resultClass, Class<? extends Throwable> defaultException) {
+        return new TestSpecBuilder<I, O>(resultClass, defaultException);        
+    }
+    
+    private TestSpecBuilder(Class<? extends TestSpec<I, O>> resultClass, Class<? extends Throwable> defaultException) {
         this.resultClass = resultClass;
+        this.defaultException = defaultException;
     }
     
     private TestSpecBuilder<I, O> add(TestSpec<I, O> spec) {
@@ -37,8 +41,8 @@ public class TestSpecBuilder<I, O> {
 
     /**
      * Adds a new test with regular result to the list of tests to be executed
-     * @param input
-     * @param expected
+     * @param input input data
+     * @param expected output data
      * @return this builder to add more tests
      */
     public TestSpecBuilder<I, O> add(I input, O expected) {
@@ -47,11 +51,23 @@ public class TestSpecBuilder<I, O> {
         spec.setExpected(expected);
         return add(spec);
     }
+    
+    @SuppressWarnings("unchecked")
+    public TestSpecBuilder<I, O> accept(I input) {
+        return add(input, (O)input);
+    }
+    
+    public TestSpecBuilder<I, O> accept(I... input) {
+        for (I i : input) {
+            accept(i);
+        }
+        return this;
+    }     
 
     /**
      * Adds a new test with exceptional result to the list of tests to be executed
-     * @param input
-     * @param expected
+     * @param input input data
+     * @param expected expected exception
      * @return this builder to add more tests
      */
     public TestSpecBuilder<I, O> add(I input, Class<? extends Throwable> expected) {
@@ -60,6 +76,17 @@ public class TestSpecBuilder<I, O> {
         spec.setExpectedException(expected);
         return add(spec);           
     }
+    
+    public TestSpecBuilder<I, O> reject(I input) {
+        return add(input, defaultException);
+    }
+    
+    public TestSpecBuilder<I, O> reject(I... input) {
+        for (I i : input) {
+            reject(i);
+        }
+        return this;
+    }    
 
     private TestSpec<I, O> instance() {
         try {
@@ -68,24 +95,9 @@ public class TestSpecBuilder<I, O> {
             throw new RuntimeException(e);
         }
     }
-    
-    /**
-     * 
-     */
-    public void executeTests() {
-        StringBuilder builder = new StringBuilder();
-        int failedTests = 0;
-        for (int i = 0; i < specs.size(); i++) {
-            try {
-                specs.get(i).assertSpec();
-            } catch (Throwable t) {
-                builder.append("Test " + i + ": ").append(t.getMessage()).append("\n");
-                failedTests++;
-            }
-        }
-        if (failedTests > 0) {
-            fail(failedTests + " test(s) failed: \n" + builder.toString());
-        }
+
+    public void executeTests(IndexedErrorCollector collector) {
+        TestSpec.assertSpecs(collector, specs);
     }
     
     public static int[] ints(int... ints) {

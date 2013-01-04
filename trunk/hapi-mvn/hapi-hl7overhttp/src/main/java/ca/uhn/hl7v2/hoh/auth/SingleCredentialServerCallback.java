@@ -19,7 +19,7 @@ public class SingleCredentialServerCallback implements IAuthorizationServerCallb
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean authorize(String theUri, String theUsername, String thePassword) {
+	public boolean authorize(String theUriPath, String theUsername, String thePassword) {
 		return StringUtils.equals(myUsername, theUsername) && StringUtils.equals(myPassword, thePassword);
 	}
 

@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.AcceptorThread.AcceptedSocket;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -47,6 +49,7 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.SocketFactory;
 
 /**
  * A TCP/IP-based HL7 Service that uses separate ports for inbound and outbound
@@ -66,6 +69,7 @@ public class TwoPortService extends HL7Service {
 	private boolean tls;
 	private BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread inboundAcceptor, outboundAcceptor;
+	private final HapiContext hapiContext;
 
 	public TwoPortService(int inboundPort, int outboundPort) {
 		this(new PipeParser(), new MinLowerLayerProtocol(), inboundPort,
@@ -85,10 +89,33 @@ public class TwoPortService extends HL7Service {
 	}
 
 	/** Creates a new instance of TwoPortService */
+	public TwoPortService(HapiContext hapiContext, 
+			int inboundPort, int outboundPort, boolean tls) {
+		super(hapiContext);
+		this.hapiContext = hapiContext;
+		this.queue = new LinkedBlockingQueue<AcceptedSocket>();
+		this.inboundPort = inboundPort;
+		this.outboundPort = outboundPort;
+		this.tls = tls;
+		
+		if (inboundPort == outboundPort) {
+			throw new IllegalArgumentException("Inbound port and outbound port can not be the same");
+		}
+		if (inboundPort < 1) {
+			throw new IllegalArgumentException("Invalid inbound port");
+		}
+		if (outboundPort < 1) {
+			throw new IllegalArgumentException("Invalid outbound port");
+		}
+		
+	}
+
+	/** Creates a new instance of TwoPortService */
 	public TwoPortService(Parser parser, LowerLayerProtocol llp,
 			int inboundPort, int outboundPort, boolean tls,
 			ExecutorService executorService) {
 		super(parser, llp, executorService);
+		this.hapiContext = new DefaultHapiContext();
 		this.queue = new LinkedBlockingQueue<AcceptedSocket>();
 		this.inboundPort = inboundPort;
 		this.outboundPort = outboundPort;
@@ -195,7 +222,8 @@ public class TwoPortService extends HL7Service {
 
 	protected AcceptorThread createAcceptThread(int port)
 			throws SocketException, IOException {
-		return new AcceptorThread(port, tls, getExecutorService(), queue);
+		SocketFactory ss = this.hapiContext.getSocketFactory();
+		return new AcceptorThread(port, tls, getExecutorService(), queue, ss);
 	}
 
 	/**

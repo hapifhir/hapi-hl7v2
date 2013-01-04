@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="HAPI">
+<project xmlns="urn:site" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:site http://maven.apache.org/xsd/decoration-1.1.0.xsd" name="HAPI">
 
 	<bannerLeft>
 		<name>HAPI</name>
@@ -28,7 +28,7 @@
 			<item name="Introduction" href="index.html" />
 			<item name="Changelog" href="changes-report.html" />
 			<item name="Blog" href="http://onintegration.blogspot.com/" />
-
+			
 			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
 		</menu>
 
@@ -39,16 +39,26 @@
 		</menu>
 
 		<menu name="Download">
-			<item name="Download API" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
+			<item name="Download Java API" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
 			<item name="Download TestPanel" href="hapi-testpanel/install.html" />
-			<item name="Using Maven" href="using_maven.html" />
 		</menu>
 
-		<menu name="API Documentation">
+		<menu name="Documentation">
+			<item name="Getting Started" href="getting_started.html" />
 			<item name="HAPI By Example" href="devbyexample.html" />
-			<item name="FAQ" href="hapi-faq.html" />
-			<item name="Helpful Links" href="links.html" />
 			<item name="Conformance Tools" href="conformance.html" />
+			<item name="FAQ" href="hapi-faq.html" />
+			<item name="JavaDoc (API core)" href="base/apidocs/index.html" collapse="false">
+				<item name="v2.1 Messages" href="v21/apidocs/index.html" />
+				<item name="v2.2 Messages" href="v22/apidocs/index.html" />
+				<item name="v2.3 Messages" href="v23/apidocs/index.html" />
+				<item name="v2.3.1 Messages" href="v231/apidocs/index.html" />
+				<item name="v2.4 Messages" href="v24/apidocs/index.html" />
+				<item name="v2.5 Messages" href="v25/apidocs/index.html" />
+				<item name="v2.5.1 Messages" href="v251/apidocs/index.html" />
+				<item name="v2.6 Messages" href="v26/apidocs/index.html" />
+			</item>
+			<item name="Source XRef" href="xref/index.html" />
 		</menu>
 
 		<menu name="Get Help">
@@ -64,30 +74,20 @@
 
 		<!-- <menu name="HL7 Reference"> <item name="HL7 CrossRef" href="http://hapi-xref.appspot.com/"></item> </menu> -->
 
-		<menu name="JavaDocs">
-			<item name="HAPI Core" href="base/apidocs/index.html" />
-			<item name="v2.1 Messages" href="v21/apidocs/index.html" />
-			<item name="v2.2 Messages" href="v22/apidocs/index.html" />
-			<item name="v2.3 Messages" href="v23/apidocs/index.html" />
-			<item name="v2.3.1 Messages" href="v231/apidocs/index.html" />
-			<item name="v2.4 Messages" href="v24/apidocs/index.html" />
-			<item name="v2.5 Messages" href="v25/apidocs/index.html" />
-			<item name="v2.5.1 Messages" href="v251/apidocs/index.html" />
-			<item name="v2.6 Messages" href="v26/apidocs/index.html" />
-			<item name="Source XRef" href="xref/index.html" />
-		</menu>
-
-		<menu name="Older Documentation">
-			<item name="Parsing Messages" href="parsing.html" />
-			<item name="Installation" href="installation.html" />
-		</menu>
 
 		<menu name="Reports">
 			<item name="HAPI Developers" href="team-list.html" />
 			<item name="Unit Test Report" href="surefire-report.html" />
 			<item name="Source Tag List" href="taglist.html" />
 			<item name="Cobertura" href="cobertura/index.html" />
+			<item name="FindBugs" href="findbugs.html" />
 			<item name="License" href="license.html" />
+		</menu>
+
+		<menu name="Older Documentation">
+			<item name="Parsing Messages" href="parsing.html" />
+			<item name="Installation" href="installation.html" />
+			<item name="Helpful Links" href="links.html" />
 		</menu>
 
 		<head>

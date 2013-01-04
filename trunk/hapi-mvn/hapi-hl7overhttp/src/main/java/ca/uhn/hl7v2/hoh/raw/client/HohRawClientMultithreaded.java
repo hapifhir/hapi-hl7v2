@@ -67,7 +67,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 
 		setHost(theHost);
 		setPort(thePort);
-		setPath(thePath);
+		setUriPath(thePath);
 	}
 
 	/**
@@ -77,14 +77,14 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	 *            The HOST (name/address). E.g. "192.168.1.1"
 	 * @param thePort
 	 *            The PORT. E.g. "8080"
-	 * @param theUri
-	 *            The URI being requested (must either be blank or start with
+	 * @param theUriPath
+	 *            The URI path being requested (must either be blank or start with
 	 *            '/' and contain a path). E.g. "/Apps/Receiver.jsp"
 	 * @param theExecutorService
 	 *            The executor service to use for detecting stale sockets
 	 */
-	public HohRawClientMultithreaded(String theHost, int thePort, String theUri, ScheduledExecutorService theExecutorService) {
-		super(theHost, thePort, theUri);
+	public HohRawClientMultithreaded(String theHost, int thePort, String theUriPath, ScheduledExecutorService theExecutorService) {
+		super(theHost, thePort, theUriPath);
 		Validate.notNull(theExecutorService, "executorService");
 
 		myExecutorService = theExecutorService;

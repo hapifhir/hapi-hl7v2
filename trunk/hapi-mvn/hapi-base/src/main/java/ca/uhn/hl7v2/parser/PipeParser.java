@@ -860,13 +860,8 @@ public class PipeParser extends Parser {
 			}
 
 			if (version == null) {
-				Version lowestAvailableVersion = Version.lowestAvailableVersion();
-				if (lowestAvailableVersion != null) {
-					version = lowestAvailableVersion.getVersion();
-				}
-				if (version == null) {
-					version = "2.4"; // last resort!
-				}
+				Version availableVersion = Version.highestAvailableVersionOrDefault();
+				version = availableVersion.getVersion();
 			}
 			
 			Segment msh = Parser.makeControlMSH(version, getFactory());
@@ -1031,6 +1026,8 @@ public class PipeParser extends Parser {
 				throw new HL7Exception("Can't find version ID - MSH.12 is " + fields[11],
 						ErrorCode.REQUIRED_FIELD_MISSING);
 			}
+		} else if (getParserConfiguration().isAllowUnknownVersions()) {
+			return Version.highestAvailableVersionOrDefault().getVersion();
 		} else {
 			throw new HL7Exception("Can't find version ID - MSH has only " + fields.length
 					+ " fields.", ErrorCode.REQUIRED_FIELD_MISSING);

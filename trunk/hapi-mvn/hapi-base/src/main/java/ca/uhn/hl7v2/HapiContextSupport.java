@@ -27,9 +27,9 @@ package ca.uhn.hl7v2;
 
 import java.util.concurrent.ExecutorService;
 
+import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -96,31 +96,111 @@ public abstract class HapiContextSupport {
 			this.context = context;
 		}
 
+		public CodeStoreRegistry getCodeStoreRegistry() {
+            return context.getCodeStoreRegistry();
+        }
+
+		public ca.uhn.hl7v2.conf.check.Validator getConformanceValidator() {
+            return context.getConformanceValidator();
+        }
+
+		public ConnectionHub getConnectionHub() {
+			return context.getConnectionHub();
+		}
+
 		public ExecutorService getExecutorService() {
 			return context.getExecutorService();
 		}
 
-		public void setExecutorService(ExecutorService executorService) {
-			throw new UnsupportedOperationException("Read-only instance");
+		public GenericParser getGenericParser() {
+			return context.getGenericParser();
 		}
 
-		public ConnectionHub getConnectionHub() {
-			return context.getConnectionHub();
+		public LowerLayerProtocol getLowerLayerProtocol() {
+			return context.getLowerLayerProtocol();
+		}
+
+		public <R> Validator<R> getMessageValidator() {
+			return context.getMessageValidator();
+		}
+
+		public ModelClassFactory getModelClassFactory() {
+			return context.getModelClassFactory();
 		}
 
 		public ParserConfiguration getParserConfiguration() {
 			return context.getParserConfiguration();
 		}
 
-		public void setParserConfiguration(ParserConfiguration configuration) {
-			throw new UnsupportedOperationException("Read-only instance");
+		public PipeParser getPipeParser() {
+			return context.getPipeParser();
+		}
+
+		public ProfileStore getProfileStore() {
+            return context.getProfileStore();
+        }
+
+		public SocketFactory getSocketFactory() {
+			return context.getSocketFactory();
 		}
 
 		public ValidationContext getValidationContext() {
 			return context.getValidationContext();
 		}
 
-		public void setValidationContext(ValidationContext context) {
+		public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
+			return context.getValidationExceptionHandlerFactory();
+		}
+
+		public ValidationRuleBuilder getValidationRuleBuilder() {
+			return context.getValidationRuleBuilder();
+		}
+
+		public XMLParser getXMLParser() {
+			return context.getXMLParser();
+		}
+
+		public Connection newClient(String host, int port, boolean tls) throws HL7Exception {
+			return context.newClient(host, port, tls);
+		}
+
+        public Connection newClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+			return context.newClient(host, outboundPort, inboundPort, tls);
+		}
+
+		public HL7Service newServer(int port, boolean tls) {
+			return context.newServer(port, tls);
+		}
+
+        public HL7Service newServer(int inboundPort, int outboundPort, boolean tls) {
+			return context.newServer(inboundPort, outboundPort, tls);
+		}
+
+        public void setCodeStoreRegistry(CodeStoreRegistry store) {
+            throw new UnsupportedOperationException("Read-only instance");
+        }
+
+        public void setExecutorService(ExecutorService executorService) {
+			throw new UnsupportedOperationException("Read-only instance");
+		}
+        
+        public void setLowerLayerProtocol(LowerLayerProtocol llp) {
+			throw new UnsupportedOperationException("Read-only instance");
+		}
+
+		public void setModelClassFactory(ModelClassFactory modelClassFactory) {
+			throw new UnsupportedOperationException("Read-only instance");
+		}
+
+		public void setParserConfiguration(ParserConfiguration configuration) {
+			throw new UnsupportedOperationException("Read-only instance");
+		}
+
+		public void setProfileStore(ProfileStore store) {
+            throw new UnsupportedOperationException("Read-only instance");
+        }
+
+		public void setSocketFactory(SocketFactory socketFactory) {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
 
@@ -128,64 +208,8 @@ public abstract class HapiContextSupport {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
 
-		public ValidationRuleBuilder getValidationRuleBuilder() {
-			return context.getValidationRuleBuilder();
-		}
-
-		public void setValidationRuleBuilder(ValidationRuleBuilder ruleBuilder) {
+		public void setValidationContext(ValidationContext context) {
 			throw new UnsupportedOperationException("Read-only instance");
-		}
-
-		public void setValidationRuleBuilder(String builderClassName) {
-			throw new UnsupportedOperationException("Read-only instance");
-		}
-
-		public ModelClassFactory getModelClassFactory() {
-			return context.getModelClassFactory();
-		}
-
-		public void setModelClassFactory(ModelClassFactory modelClassFactory) {
-			throw new UnsupportedOperationException("Read-only instance");
-		}
-
-		public PipeParser getPipeParser() {
-			return context.getPipeParser();
-		}
-
-		public XMLParser getXMLParser() {
-			return context.getXMLParser();
-		}
-
-		public GenericParser getGenericParser() {
-			return context.getGenericParser();
-		}
-
-		public ca.uhn.hl7v2.conf.check.Validator getConformanceValidator() {
-            return context.getConformanceValidator();
-        }
-
-        public <R> Validator<R> getMessageValidator() {
-			return context.getMessageValidator();
-		}
-
-		public ProfileStore getProfileStore() {
-            return context.getProfileStore();
-        }
-
-        public void setProfileStore(ProfileStore store) {
-            throw new UnsupportedOperationException("Read-only instance");
-        }
-
-        public CodeStoreRegistry getCodeStoreRegistry() {
-            return context.getCodeStoreRegistry();
-        }
-
-        public void setCodeStoreRegistry(CodeStoreRegistry store) {
-            throw new UnsupportedOperationException("Read-only instance");
-        }
-        
-        public <R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory() {
-			return context.getValidationExceptionHandlerFactory();
 		}
 
 		public <R> void setValidationExceptionHandlerFactory(
@@ -193,27 +217,11 @@ public abstract class HapiContextSupport {
 			context.setValidationExceptionHandlerFactory(factory);
 		}
 
-		public SimpleServer getSimpleService(int port, boolean tls) {
-			return context.getSimpleService(port, tls);
-		}
-
-		public TwoPortService getTwoPortService(int inbound, int outbound, boolean tls) {
-			return context.getTwoPortService(inbound, outbound, tls);
-		}
-
-		public LowerLayerProtocol getLowerLayerProtocol() {
-			return context.getLowerLayerProtocol();
-		}
-
-		public void setLowerLayerProtocol(LowerLayerProtocol llp) {
+		public void setValidationRuleBuilder(String builderClassName) {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
 
-		public SocketFactory getSocketFactory() {
-			return context.getSocketFactory();
-		}
-
-		public void setSocketFactory(SocketFactory socketFactory) {
+		public void setValidationRuleBuilder(ValidationRuleBuilder ruleBuilder) {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
 		

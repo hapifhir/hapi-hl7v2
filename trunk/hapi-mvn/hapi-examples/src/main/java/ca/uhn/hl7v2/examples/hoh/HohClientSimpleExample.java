@@ -21,9 +21,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 public class HohClientSimpleExample {
 
 	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws HL7Exception 
+	 * Example of an HL7-over-HTTP client for sending messages 
 	 */
 	public static void main(String[] args) throws HL7Exception, IOException {
 		
@@ -40,7 +38,7 @@ public class HohClientSimpleExample {
 		// Create a client
 		HohClientSimple client = new HohClientSimple(host, port, uri, parser);
 
-		// Set the socket factory to use TLS
+		// Set the socket factory to use TLS (if this is desired)
 		client.setSocketFactory(new TlsSocketFactory());
 		
 		// Optionally, if credentials should be sent, they 
@@ -55,7 +53,7 @@ public class HohClientSimpleExample {
 		// .. set other values on the message ..
 		
 		// The MessageSendable provides the message to send 
-		ISendable sendable = new MessageSendable(adt);
+		ISendable<Message> sendable = new MessageSendable(adt);
 		
 		try {
 			// sendAndReceive actually sends the message

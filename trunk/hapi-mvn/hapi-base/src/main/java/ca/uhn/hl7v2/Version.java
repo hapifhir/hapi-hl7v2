@@ -195,5 +195,26 @@ public enum Version {
 			return null;
 		}
 	}
+
+	/**
+	 * <p>
+	 * Returns the highest version for which the structure classes are found
+	 * on the classes. For instance, if <code>hapi-structures-v24-[version].jar</code>
+	 * is the only structure JAR on the current JVM classpath, {@link Version#V24} will
+	 * be returned.
+	 * <p>
+	 * </>
+	 * If no structure JARs at all are found, returns a default value of
+	 * {@link Version#V25}
+	 * </p>
+	 */
+	public static Version highestAvailableVersionOrDefault() {
+		List<Version> availableVersions = availableVersions();
+		if (availableVersions.size() >0) {
+			return availableVersions.get(availableVersions.size() - 1);
+		} else {
+			return Version.V25;
+		}
+	}
 	
 }

@@ -28,12 +28,15 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
+import java.util.Map;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.DeepCopy;
 
 /**
@@ -44,9 +47,78 @@ import ca.uhn.hl7v2.util.DeepCopy;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-public class DefaultApplication implements Application {
+public class DefaultApplication implements Application, ReceivingApplication {
 
+	public static final String MSG_INTERNAL_ERROR = "Application internal error";
+	public static final String MSG_NO_APPROPRIATE_DEST = "No appropriate destination could be found to which this message could be routed.";
+	
+	private final AcknowledgmentCode myAcknowledgmentCode;
+	private final String myMessage;
+	
+	/**
+	 * New instance which always returns an acknowledgment code of {@link AcknowledgmentCode#AR} and
+	 * a message indicating that no appropriate handler could be found.
+	 * 
+	 * @see #MSG_NO_APPROPRIATE_DEST
+	 */
 	public DefaultApplication() {
+		this(AcknowledgmentCode.AR);
+	}
+
+	/**
+	 * <p>
+	 * New instance which always uses the given acknowledgment code, and generates an
+	 * appropriate message for the given code, according to the following rules:
+	 * </p>
+	 * <table>
+	 * <tr><th>Code</th><th>Message</th></tr>
+	 * <tr>
+	 * 		<td>{@link AcknowledgmentCode#AA}<br/>{@link AcknowledgmentCode#AA}</td>
+	 * 		<td><code>null</code> (no message)</td>
+	 * </tr>
+	 * <tr>
+	 * 		<td>{@link AcknowledgmentCode#AR}<br/>{@link AcknowledgmentCode#AR}</td>
+	 * 		<td>{@link #MSG_NO_APPROPRIATE_DEST}</td>
+	 * </tr>
+	 * <tr>
+	 * 		<td>{@link AcknowledgmentCode#AE}<br/>{@link AcknowledgmentCode#AE}</td>
+	 * 		<td>{@link #MSG_INTERNAL_ERROR}</td>
+	 * </tr>
+	 * </table>
+	 * 
+	 * @param theAcknowledgmentCode The code to always use (must not be null)
+	 */
+	public DefaultApplication(AcknowledgmentCode theAcknowledgmentCode) {
+		this(theAcknowledgmentCode, defaultMessage(theAcknowledgmentCode));
+	}
+
+	/**
+	 * New instance which always uses the given acknowledgment code and message
+	 *  
+	 * @param theAcknowledgmentCode The code to always use (must not be null)
+	 * @param theMessage The message (may be null, in which case no message will be given)
+	 */
+	public DefaultApplication(AcknowledgmentCode theAcknowledgmentCode, String theMessage) {
+		if (theAcknowledgmentCode == null) {
+			throw new NullPointerException("Acknowledgment code must not be null");
+		}
+		myAcknowledgmentCode = theAcknowledgmentCode;
+		myMessage = theMessage;
+	}
+
+	private static String defaultMessage(AcknowledgmentCode theAr) {
+		switch (theAr) {
+		case AA:
+		case CA:
+			return null;
+		case AR:
+		case CR:
+			return MSG_NO_APPROPRIATE_DEST;
+		case AE:
+		case CE:
+		default:
+			return MSG_INTERNAL_ERROR;
+		}
 	}
 
 	/**
@@ -61,13 +133,9 @@ public class DefaultApplication implements Application {
 	 */
 	public Message processMessage(Message in) throws ApplicationException {
 		try {
-			// get default ACK
-			return in.generateACK(
-					AcknowledgmentCode.AR, 
-					new HL7Exception("No appropriate destination could be found to which this message could be routed."));
-		} catch (Exception e) {
-			throw new ApplicationException("Couldn't create response message: "
-					+ e.getMessage());
+			return processMessage(in, null);
+		} catch (ReceivingApplicationException e) {
+			throw new ApplicationException(e.getMessage(), e);
 		}
 	}
 
@@ -102,6 +170,19 @@ public class DefaultApplication implements Application {
 		// Make sure that the referenced message is not just a dummy
 		DeepCopy.copy(inboundHeader, (Segment)inboundHeader.getMessage().get("MSH"));
 		return inboundHeader.getMessage().generateACK();
+	}
+
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException {
+		try {
+			if (myMessage != null) {
+				return theMessage.generateACK(myAcknowledgmentCode, new HL7Exception(myMessage));
+			} else {
+				return theMessage.generateACK(myAcknowledgmentCode, null);
+			}
+		} catch (Exception e) {
+			throw new ReceivingApplicationException("Couldn't create response message: "
+					+ e.getMessage());
+		}
 	}
 
 }

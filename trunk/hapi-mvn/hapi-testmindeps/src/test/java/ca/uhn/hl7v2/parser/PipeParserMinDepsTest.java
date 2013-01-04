@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.ApplicationException;
@@ -41,7 +42,7 @@ public class PipeParserMinDepsTest implements Application {
 		SimpleServer ss = new SimpleServer(port1);
 		ss.registerApplication("*", "*", this);
 
-		ss.start();
+		ss.startAndWait();
 		try {
 
 			String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5\r" //- 
@@ -79,10 +80,14 @@ public class PipeParserMinDepsTest implements Application {
 	public void testNoVersion() throws Exception {
 
 		int port1 = RandomServerPortProvider.findFreePort();
-		SimpleServer ss = new SimpleServer(port1);
+		
+		DefaultHapiContext ctx = new DefaultHapiContext();
+		ctx.getParserConfiguration().setAllowUnknownVersions(true);
+
+		SimpleServer ss = ctx.getSimpleService(port1, false);
 		ss.registerApplication("*", "*", this);
 
-		ss.start();
+		ss.startAndWait();
 		try {
 
 			String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|\r" //- 
@@ -122,7 +127,7 @@ public class PipeParserMinDepsTest implements Application {
 		SimpleServer ss = new SimpleServer(port1);
 		ss.registerApplication("*", "*", this);
 
-		ss.start();
+		ss.startAndWait();
 		try {
 
 			String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.6\r" //- 

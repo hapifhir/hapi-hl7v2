@@ -15,13 +15,13 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-	    <!-- 
+
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
-			<version>${hapi.version}</version>
+			<version>${project.version}</version>
 		</dependency>
-		 -->
+
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
@@ -125,7 +125,12 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.9</version>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -175,7 +180,7 @@
 
 	<build>
 		<sourceDirectory>${basedir}/../hapi-base/src/main/java</sourceDirectory>
-		
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -291,7 +296,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine> 
+					<argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
 					<forkMode>once</forkMode>
 				</configuration>
 			</plugin>
@@ -308,20 +313,34 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
+			<resource>
+				<directory>../hapi-base/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 	</build>
 
 	<reporting>
 		<plugins>
+			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.7.2</version>
+				<version>${maven.surefire.plugin.version}</version>
+				<reportSets>
+					<reportSet>
+						<id>failsafe</id>
+						<reports>
+							<report>failsafe-report-only</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>${maven.cobertura.plugin.version}</version>
 			</plugin>
 		</plugins>
 	</reporting>

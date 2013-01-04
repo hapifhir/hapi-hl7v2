@@ -8,17 +8,17 @@ public interface IAuthorizationClientCallback {
 	/**
  	 * Provides a username
 	 * 
-	 * @param theUri
+	 * @param theUriPath
 	 * @return
 	 */
-	String provideUsername(String theUri);
+	String provideUsername(String theUriPath);
 	
 	/**
 	 * Provides a password
 	 * 
-	 * @param theUri
+	 * @param theUriPath
 	 * @return
 	 */
-	String providePassword(String theUri);
+	String providePassword(String theUriPath);
 	
 }

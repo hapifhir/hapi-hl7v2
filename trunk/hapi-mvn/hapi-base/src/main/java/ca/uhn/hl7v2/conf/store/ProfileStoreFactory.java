@@ -9,9 +9,19 @@ import ca.uhn.hl7v2.util.Home;
  */
 public class ProfileStoreFactory {
 
-    private static ProfileStore instance;
+	/**
+	 * The default profile store directory
+	 */
+    public static final String DEFAULT_PROFILE_STORE_DIRECTORY = Home.getHomeDirectory().getAbsolutePath() + "/profiles";
+    
+	private static ProfileStore instance;
     private static CodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();
 
+    /** Non instantiable */
+    private ProfileStoreFactory() {
+    	super();
+    }
+    
     /**
      * Returns a single configurable instance of a ProfileStore. Configurable by calling setStore().
      * Defaults to FileProfileStore using the current <hapi.home>/profiles as a base directory Note:
@@ -20,7 +30,7 @@ public class ProfileStoreFactory {
      */
     public synchronized static ProfileStore getProfileStore() {
         if (instance == null)
-            instance = new FileProfileStore(Home.getHomeDirectory().getAbsolutePath() + "/profiles");
+            instance = new FileProfileStore(DEFAULT_PROFILE_STORE_DIRECTORY);
 
         return instance;
     }

@@ -1,7 +1,6 @@
 package ca.uhn.hl7v2.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -40,4 +39,5 @@ public class EncodedMessageComparatorTest {
         assertTrue(EncodedMessageComparator.equivalent(XMLA, XMLB));
         assertTrue(EncodedMessageComparator.equivalent(ER7A, XMLC));
     }
+    
 }

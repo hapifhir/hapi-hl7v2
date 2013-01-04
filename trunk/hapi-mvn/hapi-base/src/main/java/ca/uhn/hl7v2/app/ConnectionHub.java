@@ -118,7 +118,7 @@ public class ConnectionHub extends HapiContextSupport {
 			}
 			return conn;
 		} catch (Exception e) {
-			log.error("Failed to attach", e);
+			log.debug("Failed to attach", e);
 			throw new HL7Exception("Cannot open connection to " + data.getHost() + ":"
 					+ data.getPort() + "/" + data.getPort2(), e);
 		}
@@ -185,7 +185,21 @@ public class ConnectionHub extends HapiContextSupport {
 	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
 		return attach(new ConnectionData(host, port, 0, parser, llp, tls, socketFactory));
 	}
-	
+
+	/**
+	 * @since 2.1
+	 */
+	public Connection attach(DefaultHapiContext hapiContext, String host, int port, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, port, 0, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory()));
+	}
+
+	/**
+	 * @since 2.1
+	 */
+	public Connection attach(DefaultHapiContext hapiContext, String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory()));
+	}
+
 	/**
 	 * @since 1.2
 	 */

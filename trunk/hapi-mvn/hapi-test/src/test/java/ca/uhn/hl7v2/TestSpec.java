@@ -1,5 +1,9 @@
 package ca.uhn.hl7v2;
 
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.*;
+import org.junit.rules.ErrorCollector;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -20,8 +24,6 @@ public abstract class TestSpec<I, O> {
     private I input;
     private O expected;
     private Class<? extends Throwable> expectedException;
-    private Object result;
-    private Class<? extends Throwable> resultException;
 
     public TestSpec() {
     }
@@ -38,50 +40,19 @@ public abstract class TestSpec<I, O> {
         this.expectedException = expectedException;
     }
 
-    public I getInput() {
-        return input;
-    }
-
-    public O getExpected() {
-        return expected;
-    }
-
-    public Class<? extends Throwable> getExpectedException() {
-        return expectedException;
-    }
-
-    public Object getResult() {
-        return result;
-    }
-
-    public final void assertSpec() throws Throwable {
-        try {
-            result = transform(input);
-            assertExpectedResult();
-        } catch (AssertionError ae) {
-            throw new RuntimeException("For input <" + String.valueOf(input) + "> "
-                    + ae.getMessage(), ae);
-        } catch (Throwable e) {
-            resultException = e.getClass();
-            try {
-                assertExpectedFailure();
-            } catch (AssertionError ae) {
-                throw new RuntimeException("For input <" + String.valueOf(input) + "> "
-                        + ae.getMessage(), ae);
-            }
+    public static <I, O> void assertSpecs(IndexedErrorCollector collector, List<TestSpec<I, O>> specs) {
+        int i = 0;
+        for (TestSpec spec : specs) {
+            spec.assertSpec(collector, i++);
         }
     }
 
-    public Class<? extends Throwable> getResultException() {
-        return resultException;
-    }
-
-    protected void assertExpectedResult() {
-        assertEquals(expectedException != null ? expectedException : expected, result);
-    }
-
-    protected void assertExpectedFailure() {
-        assertEquals(expectedException != null ? expectedException : expected, resultException);
+    public final void assertSpec(IndexedErrorCollector collector, int i) {
+        try {
+            collector.checkThat(i, transform(input), equalTo(expectedException != null ? expectedException : expected));
+        } catch (Throwable e) {
+            collector.checkThat(i, e, instanceOf(expectedException != null ? expectedException : expected.getClass()));
+        }
     }
 
     protected abstract O transform(I input) throws Throwable;

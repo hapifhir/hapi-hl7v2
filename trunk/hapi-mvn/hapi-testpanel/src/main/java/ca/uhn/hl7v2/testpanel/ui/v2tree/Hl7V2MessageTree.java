@@ -39,6 +39,7 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.tree.AbstractLayoutCache;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -687,7 +689,8 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private Set<String> getOpenPaths() {
 		Set<String> retVal = new HashSet<String>();
 
-		AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
+		TableModel model = getModel();
+		AbstractLayoutCache layout = ((OutlineModel) model).getLayout();
 		int messageIndex = -1;
 		for (int i = 0; i < layout.getRowCount(); i++) {
 			TreePath path = layout.getPathForRow(i);

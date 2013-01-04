@@ -75,8 +75,8 @@ public abstract class AbstractClient<T extends AbstractRawClient> implements ICl
 		return myRawClient.getSocketFactory();
 	}
 
-	public String getUri() {
-		return myRawClient.getUri();
+	public String getUriPath() {
+		return myRawClient.getUriPath();
 	}
 
 	public URL getUrl() {
@@ -182,8 +182,8 @@ public abstract class AbstractClient<T extends AbstractRawClient> implements ICl
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setPath(String thePath) {
-		myRawClient.setPath(thePath);
+	public void setUriPath(String thePath) {
+		myRawClient.setUriPath(thePath);
 	}
 
 	/**

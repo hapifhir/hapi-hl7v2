@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.parser.GenericParser;
  */
 public class EncodedMessageComparator {
     
-    private static GenericParser parser = new GenericParser();  
+    static final GenericParser parser = new GenericParser();  
     
     /**
      * Returns a "standardized" equivalent of the given message string.  For delimited
@@ -147,6 +147,11 @@ public class EncodedMessageComparator {
      * @return true if given messages are semantically equivalent 
      */
     public static boolean equivalent(String message1, String message2) throws HL7Exception {
+    	Pair<String> messages = standardize(message1, message2);
+        return messages.getValue1().equals(messages.getValue2());
+    }
+    
+    static Pair<String> standardize(String message1, String message2) throws HL7Exception {
         String encoding1 = parser.getEncoding(message1);
         String encoding2 = parser.getEncoding(message2);
         
@@ -165,14 +170,15 @@ public class EncodedMessageComparator {
         } catch (SAXException e) {
             throw new HL7Exception("Equivalence check failed due to SAXException: " + e.getMessage());
         }
-        return std1.equals(std2);
-    }
-    
-    /** 
+        
+        return new Pair<String>(std1, std2);
+	}
+
+	/** 
      * Converts XML message to ER7, first checking integrity of parse and throwing 
      * an exception if parse not correct
      */
-    private static String safeER7Conversion(String xmlMessage) throws HL7Exception {
+    static String safeER7Conversion(String xmlMessage) throws HL7Exception {
         Message m = parser.parse(xmlMessage);
 
         String check = parser.encode(m, "XML");

@@ -27,20 +27,14 @@
 package ca.uhn.hl7v2.examples;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -67,7 +61,7 @@ public class CustomThreading {
 		int port = 1011; // The port to listen on
 		HapiContext context = new DefaultHapiContext();
         context.setExecutorService(executor);
-		SimpleServer server = context.getSimpleService(port, false);
+		HL7Service server = context.newServer(port, false);
         // server.startAndWait();
 
 		/*

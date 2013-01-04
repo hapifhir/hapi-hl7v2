@@ -43,6 +43,7 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.ArrayUtil;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.util.StringUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -298,7 +299,12 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 		}
 		Terser.set(mshOut, 10, 0, 1, 1, mshIn.getMessage().getParser().getParserConfiguration().getIdGenerator().getID());
 		Terser.set(mshOut, 11, 0, 1, 1, procID);
-		Terser.set(mshOut, 12, 0, 1, 1, Terser.get(mshIn, 12, 0, 1, 1));
+		
+		String versionId = Terser.get(mshIn, 12, 0, 1, 1);
+		if (StringUtil.isBlank(versionId)) {
+			versionId = Version.highestAvailableVersionOrDefault().getVersion();
+		}
+		Terser.set(mshOut, 12, 0, 1, 1, versionId);
 
 		// revert sender and receiver
 		Terser.set(mshOut, 3, 0, 1, 1, Terser.get(mshIn, 5, 0, 1, 1));

@@ -43,15 +43,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
-import ca.uhn.hl7v2.protocol.ApplicationWrapper;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
+import ca.uhn.hl7v2.protocol.impl.AppWrapper;
 import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 
 /**
@@ -78,6 +79,10 @@ public abstract class HL7Service extends Service {
 	private final ConnectionCleaner cleaner;
 	private final ApplicationRouterImpl applicationRouter;
 
+	public HL7Service(HapiContext theHapiContext) {
+		this(theHapiContext.getGenericParser(), theHapiContext.getLowerLayerProtocol(), theHapiContext.getExecutorService());
+	}
+
 	/** Creates a new instance of Server using a default thread pool */
 	public HL7Service(Parser parser, LowerLayerProtocol llp) {
 		this(parser, llp, DefaultExecutorService.getDefaultService());
@@ -87,8 +92,8 @@ public abstract class HL7Service extends Service {
 	public HL7Service(Parser parser, LowerLayerProtocol llp,
 			ExecutorService executorService) {
 		super("HL7 Server", executorService);
-		connections = new ArrayList<Connection>();
-		listeners = new ArrayList<ConnectionListener>();
+		this.connections = new ArrayList<Connection>();
+		this.listeners = new ArrayList<ConnectionListener>();
 		this.parser = parser;
 		this.llp = llp;
 		this.applicationRouter = new ApplicationRouterImpl(parser);
@@ -222,8 +227,20 @@ public abstract class HL7Service extends Service {
 	 */
 	public synchronized void registerApplication(String messageType,
 			String triggerEvent, Application handler) {
-		ReceivingApplication handlerWrapper = new ApplicationWrapper(handler);
+		ReceivingApplication handlerWrapper = new AppWrapper(handler);
 		applicationRouter.bindApplication(new AppRoutingDataImpl(messageType, triggerEvent, "*", "*"), handlerWrapper);
+	}
+
+	/**
+	 * Registers the given application to handle messages corresponding to the
+	 * given type and trigger event. Only one application can be registered for
+	 * a given message type and trigger event combination. A repeated
+	 * registration for a particular combination of type and trigger event
+	 * over-writes the previous one. Note that the wildcard "*" for messageType
+	 * or triggerEvent means any type or event, respectively.
+	 */
+	public void registerApplication(String messageType, String triggerEvent, ReceivingApplication handler) {
+		applicationRouter.bindApplication(new AppRoutingDataImpl(messageType, triggerEvent, "*", "*"), handler);
 	}
 
 	/**

@@ -37,6 +37,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import ca.uhn.hl7v2.IndexedErrorCollector;
+import org.junit.Rule;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -59,6 +61,7 @@ public class CommonDTTest {
     private static final int day = 24;
     private static final String dateString = "20020224";
 
+    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
     /**
      * Testing default constructor
@@ -135,7 +138,7 @@ public class CommonDTTest {
             .add("20020131", "20020131")
             .add("20020132", DataTypeException.class)
                 
-            .executeTests();
+            .executeTests(collector);
 
     }
 
@@ -192,7 +195,7 @@ public class CommonDTTest {
             .add(9999, "9999")
             .add(10000, DataTypeException.class)
             
-            .executeTests();
+            .executeTests(collector);
 
     }
 
@@ -228,7 +231,7 @@ public class CommonDTTest {
             .add(ints( 9999, 1 ), "999901")
             .add(ints( 10000, 1 ), DataTypeException.class)
                 
-            .executeTests();
+            .executeTests(collector);
     }
 
     public static class SetYMDSpec extends TestSpec<int[], String> {
@@ -267,7 +270,7 @@ public class CommonDTTest {
             .add(ints( 2001, 1, 1 ), "20010101")
             .add(ints( 2001, -1, 21 ), DataTypeException.class) 
             
-            .executeTests();
+            .executeTests(collector);
     }
 
     /**

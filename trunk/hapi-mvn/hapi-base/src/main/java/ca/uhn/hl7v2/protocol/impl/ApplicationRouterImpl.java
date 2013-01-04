@@ -20,6 +20,7 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
+import ca.uhn.hl7v2.protocol.MetadataKeys;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.Transportable;
@@ -40,7 +41,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * Key under which raw message text is stored in metadata Map sent to 
      * <code>ReceivingApplication</code>s. 
      */
-    public static String RAW_MESSAGE_KEY = "raw-message"; 
+    public static String RAW_MESSAGE_KEY = MetadataKeys.IN_RAW_MESSAGE; 
 
     private List<Binding> myBindings;
     private Parser myParser;
@@ -270,10 +271,15 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     //support method for matches(AppRoutingData theMessageData, AppRoutingData theReferenceData)
     private static boolean matches(String theMessageData, String theReferenceData) {
         boolean result = false;
-        // TODO may throw NPE!
-        if (theMessageData.equals(theReferenceData) || 
+
+        String messageData = theMessageData;
+        if (messageData == null) {
+        	messageData = "";
+        }
+        
+		if (messageData.equals(theReferenceData) || 
                 theReferenceData.equals("*") || 
-                Pattern.matches(theReferenceData, theMessageData)) {
+                Pattern.matches(theReferenceData, messageData)) {
             result = true;
         }
         return result;
@@ -290,8 +296,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         ReceivingApplication app = findDestination(theMessage, msgData);
         
         //have to send back an application reject if no apps available to process
-        if (app == null)
-            app = new AppWrapper(new DefaultApplication());
+        if (app == null) {
+            app = new DefaultApplication();
+        }
+        
         return app;
     }
     
