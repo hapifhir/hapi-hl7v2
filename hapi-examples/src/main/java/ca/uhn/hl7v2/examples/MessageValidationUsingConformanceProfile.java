@@ -13,6 +13,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.check.DefaultValidator;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
+import ca.uhn.hl7v2.conf.store.ClasspathProfileStore;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.MessageValidator;
@@ -34,7 +35,6 @@ public class MessageValidationUsingConformanceProfile {
 
 	/**
 	 * @param args
-	 * @throws HL7Exception
 	 * @throws IOException 
 	 * @throws ProfileException 
 	 * @throws HL7Exception 
@@ -52,6 +52,8 @@ public class MessageValidationUsingConformanceProfile {
 		 * PID|1||29^^CAISI_1-2^PI~""||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||
 		 */
 
+        // Build a conformance validation rule (referring to the file ADT_A31.xml)
+        // on top of the standard validation rules
         ValidationRuleBuilder builder = new DefaultValidationBuilder() {
 
             @Override
@@ -63,41 +65,31 @@ public class MessageValidationUsingConformanceProfile {
             }
 
         };
+
+        // Use this validation for our HapiContext, but disable validation during parsing
+        // and use a custom profile store that finds out conformance profile file.
         HapiContext context = new DefaultHapiContext();
         context.setValidationRuleBuilder(builder);
         context.getParserConfiguration().setValidating(false);
+        context.setProfileStore(new ClasspathProfileStore("/ca/uhn/hl7v2/examples/profiles"));
 
 		String validMessageString = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r\n"
 				+ "EVN|A31|200903230934\r\n"
 				+ "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
 		Message validMessage = context.getPipeParser().parse(validMessageString);
 
-        // Validate against profile
+        // Instantiate a simple validation handler that just collects the validation
         SimpleValidationExceptionHandler handler = new SimpleValidationExceptionHandler(context);
+
         Validator<Boolean> validator = context.getMessageValidator();
+
         if (!validator.validate(validMessage, handler)) {
             System.out.println("Found " + handler.getExceptions().size() + " problems");
             for (Exception e : handler.getExceptions()) {
                 System.out.println(e.getClass().getSimpleName() + " - " + e.getMessage());
             }
         }
-		
-		/*
-		 * Prints:
-		 * 
-		 * Found 10 problems
-		 * ProfileNotHL7CompliantException - HL7 datatype ST doesn't match profile datatype NM: Segment: MSH Field #7
-		 * ProfileNotHL7CompliantException - HL7 datatype MSG doesn't match profile datatype CM_MSG: Segment: MSH Field #9
-		 * ProfileNotHL7CompliantException - HL7 datatype ST doesn't match profile datatype NM: Segment: EVN Field #2
-		 * XElementPresentException - Field 1 in EVN appears in the message but not in the profile: Segment: EVN
-		 * XElementPresentException - Element code identifying the check digit scheme employed is present but specified as not used (X): Segment: PID Field #3
-		 * ProfileNotFollowedException - Required element identifier type code (ID) is missing: Segment: PID Field #3
-		 * ProfileNotFollowedException - Required element assigning authority is missing: Segment: PID Field #3
-		 * ProfileNotFollowedException - Required element identifier type code (ID) is missing: Segment: PID Field #3
-		 * ProfileNotHL7CompliantException - HL7 datatype ST doesn't match profile datatype NM: Segment: PID Field #7
-		 * XElementPresentException - Field 1 in PID appears in the message but not in the profile: Segment: PID
-		 */
-		
+
 	}
 
 }

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -354,26 +355,26 @@ public class DefaultValidatorTest extends TestCase {
         Seg mshProfile = (Seg) profile.getMessage().getChild(1);
         String profileID = "{ConfSig(1) CCO(1) 2.4(7) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(4) HL7 2.4(1) Sender(1)}";
 
-        HL7Exception[] e = v.testField(msg.getMSH().getCountryCode(), mshProfile.getField(17), false, profileID);
+        List<HL7Exception> e = v.testField(msg.getMSH().getCountryCode(), mshProfile.getField(17), false, profileID);
         printExceptions(e);
-        assertEquals(0, e.length);
+        assertEquals(0, e.size());
         
         //should return an exception saying that the code "wrong" is not found 
         e = v.testField(msg.getMSH().getCharacterSet(0), mshProfile.getField(18), false, profileID);
-        assertEquals(1, e.length);        
-        assertTrue(e[0].getMessage().indexOf("wrong") >= 0);
+        assertEquals(1, e.size());
+        assertTrue(e.get(0).getMessage().contains("wrong"));
         
         e = v.testField(msg.getMSH().getPrincipalLanguageOfMessage(), mshProfile.getField(19), false, profileID);
 
         printExceptions(e);
 
         //HEY!  this will fail if something unrelated goes wrong ... check output of the above to see what it is
-        assertEquals(0, e.length);
+        assertEquals(0, e.size());
     }
     
-    public void printExceptions(Exception[] e) {
-        for (int i = 0; i < e.length; i++) {
-            System.out.println(e[i].getClass().getName() + ": " + e[i].getMessage());
+    public void printExceptions(List<HL7Exception> exceptions) {
+        for (Exception e : exceptions) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }        
     }
     

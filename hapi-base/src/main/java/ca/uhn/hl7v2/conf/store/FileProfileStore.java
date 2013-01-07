@@ -42,7 +42,7 @@ public class FileProfileStore implements ProfileStore {
         
         String fileName = getFileName(theID);
 		File source = new File(fileName);
-        if (source.exists() == false) {
+        if (!source.exists()) {
         	log.debug("File for profile {} doesn't exist: {}", theID, fileName);
         } else if (source.isFile()) {
             BufferedReader in = new BufferedReader(new FileReader(source));

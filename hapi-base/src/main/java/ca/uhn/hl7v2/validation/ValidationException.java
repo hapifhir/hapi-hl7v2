@@ -37,40 +37,25 @@ import ca.uhn.hl7v2.HL7Exception;
  */
 @SuppressWarnings("serial")
 public class ValidationException extends AbstractHL7Exception {
-	
-	/**
-	 * Creates a new instance of <code>ValidationException</code> without detail message.
-	 */
+
 	public ValidationException() {
 		super();
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
 	public ValidationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	/**
-	 * @param cause
-	 */
 	public ValidationException(Throwable cause) {
 		super(cause);
 	}
 
-	/**
-	 * Constructs an instance of <code>ValidationException</code> with the specified detail message.
-	 * 
-	 * @param msg the detail message.
-	 */
 	public ValidationException(String msg) {
 		super(msg);
 	}
 	
 	public static ValidationException fromHL7Exception(HL7Exception e) {
-		ValidationException ve = new ValidationException(e.getMessage(), e);
+		ValidationException ve = new ValidationException(e.getMessageWithoutLocation(), e);
 		ve.setErrorCode(e.getErrorCode());
 		ve.setLocation(e.getLocation());
 		return ve;

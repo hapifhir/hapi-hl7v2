@@ -100,11 +100,11 @@ public class ConformanceProfileRule extends AbstractMessageRule {
                     log.debug("{} non-conformances", shortList.length);
                     problems.addAll(Arrays.asList(shortList));
                 } catch (ProfileException e) {
-                    problems.add(new ValidationException("Can't validate", e));
+                    problems.add(new ValidationException("Can't validate against profile: " + e.getMessage(), e));
                 }
             }            
         } catch (HL7Exception e) {
-            problems.add(new ValidationException("Can't validate", e));
+            problems.add(new ValidationException("Can't validate against profile: " + e.getMessage(), e));
         }
         
         return problems.toArray(new ValidationException[problems.size()]);
@@ -129,7 +129,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     }
     
     private ValidationException[] testAgainstProfile(Message message, String id) throws ProfileException, HL7Exception {
-        HL7Exception[] exceptions = null;
+        HL7Exception[] exceptions;
         HapiContext context = message.getParser().getHapiContext();
         Validator validator = context.getConformanceValidator();
         try {

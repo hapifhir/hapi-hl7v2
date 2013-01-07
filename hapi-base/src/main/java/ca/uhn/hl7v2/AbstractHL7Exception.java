@@ -30,8 +30,6 @@ package ca.uhn.hl7v2;
 import static ca.uhn.hl7v2.Version.V25;
 import static ca.uhn.hl7v2.Version.versionOf;
 
-import java.io.IOException;
-
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.util.Terser;
@@ -111,9 +109,8 @@ public abstract class AbstractHL7Exception extends Exception {
 	/**
 	 * Populates the generated response based on this exception.
 	 * 
-	 * @param response
+	 * @param response resposne message
 	 * @throws HL7Exception
-	 * @throws IOException
 	 */
 	public Message populateResponse(Message response, AcknowledgmentCode acknowledgmentCode, int repetition)
 			throws HL7Exception {
@@ -131,7 +128,8 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * ERR-3) containing details about the exception. ERR-1 is marked as obsolete.
 	 * 
 	 * @param response the raw response message
-	 * @param exceptions exceptions encountered during validation
+     * @param acknowledgmentCode acknowledgmentCode
+	 * @param repetition repetition of the ERR segment that shall be populated
 	 * @throws HL7Exception
 	 */
 	private Message populateResponseAsOf25(Message response, AcknowledgmentCode acknowledgmentCode,
@@ -167,7 +165,8 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * repeatable field (ERR-1) with components containing details about the exception.
 	 * 
 	 * @param response the raw response message
-	 * @param exceptions exceptions encountered during validation
+	 * @param acknowledgmentCode acknowledgment Code#
+     * @param repetition repetition of the ERR segment that shall be popualted
 	 * @throws HL7Exception
 	 */
 	private Message populateResponseBefore25(Message response, AcknowledgmentCode acknowledgmentCode,
@@ -191,13 +190,18 @@ public abstract class AbstractHL7Exception extends Exception {
 	}
 
 	public String getMessage() {
-		String message = super.getMessage();
-		if (message == null) message = "Exception";
+		String message = getMessageWithoutLocation();
 		StringBuilder msg = new StringBuilder(message);
 		if (getLocation() != null && !getLocation().isUnknown()) {
 			msg.append(" at ").append(getLocation().toString());
 		}
 		return msg.toString();
 	}
+
+    public String getMessageWithoutLocation() {
+        String message = super.getMessage();
+        if (message == null) message = "Exception";
+        return message;
+    }
 
 }
