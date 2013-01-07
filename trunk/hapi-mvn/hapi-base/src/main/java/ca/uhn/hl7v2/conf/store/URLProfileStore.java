@@ -44,11 +44,11 @@ public abstract class URLProfileStore extends ReadOnlyProfileStore {
     /** Retrieves profile from persistent storage (by ID).
      */
     public String getProfile(String ID) throws IOException {
-        String profile = null;
+        String profile;
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(getURL(ID).openStream()));
             StringBuffer buf = new StringBuffer();
-            int c = -1;
+            int c;
             while ( (c = in.read()) != -1) {
                 buf.append( (char) c );
             } 

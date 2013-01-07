@@ -48,7 +48,7 @@ public class MessageValidation {
 	 * @throws HL7Exception
 	 * @throws EncodingNotSupportedException
 	 */
-	public static void main(String[] args) throws EncodingNotSupportedException {
+	public static void main(String[] args) throws HL7Exception {
 
 		/*
 		 * In this example, we are looking at a few aspects of message

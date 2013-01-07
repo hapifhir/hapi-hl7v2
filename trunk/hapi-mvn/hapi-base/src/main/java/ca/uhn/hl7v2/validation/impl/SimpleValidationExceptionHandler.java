@@ -29,9 +29,11 @@ package ca.uhn.hl7v2.validation.impl;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
+import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 
 
-public class SimpleValidationExceptionHandler extends CollectingValidationExceptionHandler<Boolean> {
+public class SimpleValidationExceptionHandler extends CollectingValidationExceptionHandler<Boolean> implements ValidationExceptionHandlerFactory<Boolean> {
 
     public SimpleValidationExceptionHandler(HapiContext context) {
         super(context);
@@ -39,5 +41,9 @@ public class SimpleValidationExceptionHandler extends CollectingValidationExcept
 
     public Boolean result() throws HL7Exception {
         return getExceptions().isEmpty();
+    }
+
+    public ValidationExceptionHandler<Boolean> getNewInstance(HapiContext context) {
+        return new SimpleValidationExceptionHandler(context);
     }
 }
