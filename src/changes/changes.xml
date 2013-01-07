@@ -149,6 +149,22 @@
             	Fix an issue where SegmentFinder can't find PID2 within an A24 message.
             	Thanks to DiGiT for providing a working test case!
             </action>
+        	<action type="fix" dev="Christian Ohr" issue="162" system="newbugs">
+				Fix an issue that prevented the sample code for
+            	<![CDATA[
+            	<a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/CustomModelClasses.html">Custom Model Classes</a>
+            	]]>
+            	from working properly. Thanks to Michael Connor for reporting.
+            </action>
+        	<action type="fix" dev="James Agnew" issue="159" system="newbugs">
+				Allow messages which contain "choices" within their structures to 
+				parse correctly. For example, the ORM_O01 v2.5 message has a structure
+				called ORDER_DETAIL which can have any one of 6 different segments as
+				its first segment. Previously HAPI treated all as required and 
+				failed to correctly parse in many cases. 
+				
+				Thanks to Paulo Ferreira for reporting! 
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">

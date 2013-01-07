@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.parser;
 import java.util.List;
 import java.util.Set;
 
+import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Structure;
 
 /**
@@ -159,6 +160,13 @@ public interface IStructureDefinition {
      */
     Set<String> getAllChildNames();
 
+    /**
+     * Is this element a choice element?
+     * 
+     * @see Group#isChoiceElement(String)
+     */
+    boolean isChoiceElement();
+    
     /**
      * @return Is this a required structure within it's parent
      */

@@ -91,5 +91,8 @@ public interface Type extends Serializable {
 	 */
 	void clear();
 	
+	/**
+	 * Does this type have any actual content
+	 */
 	boolean isEmpty();
 } 

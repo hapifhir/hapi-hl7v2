@@ -81,6 +81,14 @@ public interface Group extends Structure {
   public boolean isRepeating(String name) throws HL7Exception;
 
   /**
+   * Returns true if the named structure is a "choice element". 
+   * Some HL7 structures (e.g. ORM_O01 in v2.5) have groups that have
+   * several possible first segments. In these structures, one of these
+   * "choice elements" must be present, but not more than one. 
+   */
+  public boolean isChoiceElement(String name) throws HL7Exception;
+
+  /**
    * Returns true if the named structure is a group.
    * 
    * @since 1.2 

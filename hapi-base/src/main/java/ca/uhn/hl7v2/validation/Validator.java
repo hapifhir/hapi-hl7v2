@@ -40,7 +40,7 @@ public interface Validator<R> {
 	/**
 	 * Validates a {@link Message}
 	 * 
-	 * @param message
+	 * @param message message to be validated
 	 * @return <code>true</code> if message is valid
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message is null
@@ -51,9 +51,9 @@ public interface Validator<R> {
 	 * 
 	 * Validates a String representing an encoded message
 	 * 
-	 * @param message
-	 * @param isXML
-	 * @param version
+	 * @param message message to be validated
+	 * @param isXML true if message is supposed to be XML
+	 * @param version message version
 	 * @return <code>true</code> if message is valid
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message is null
@@ -68,8 +68,8 @@ public interface Validator<R> {
 	 * <p>
 	 * As the handler usually maintains state, a new instance is required for every validation call.
 	 * 
-	 * @param message
-	 * @param handler
+	 * @param message message to be validated
+	 * @param handler message validation handler
 	 * @return <code>true</code> if message is valid
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message or handler is <code>null</code>
@@ -82,10 +82,10 @@ public interface Validator<R> {
 	 * Validates a String representing an encoded message. As the handler usually maintains state, a
 	 * new instance is required for every validation call.
 	 * 
-	 * @param message
-	 * @param isXML
-	 * @param version
-	 * @param handler
+	 * @param message message to be validated
+	 * @param isXML true if message is supposed to be XML
+	 * @param version message version
+	 * @param handler message validation handler
 	 * @return <code>true</code> if message is valid
 	 * @throws HL7Exception
 	 * @throws NullPointerException if the message or handler is <code>null</code>

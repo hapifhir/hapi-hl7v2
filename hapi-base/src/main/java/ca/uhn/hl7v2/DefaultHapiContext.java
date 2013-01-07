@@ -78,7 +78,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * </pre>
  * 
  */
-
 public class DefaultHapiContext implements HapiContext {
 
     private ExecutorService executorService;
@@ -91,7 +90,6 @@ public class DefaultHapiContext implements HapiContext {
     private SocketFactory socketFactory;
     private ProfileStore profileStore;
     private CodeStoreRegistry codeStoreRegistry;
-
     private PipeParser pipeParser;
     private XMLParser xmlParser;
     private GenericParser genericParser;

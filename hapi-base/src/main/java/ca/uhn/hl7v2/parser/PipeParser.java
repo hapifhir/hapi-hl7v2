@@ -272,6 +272,7 @@ public class PipeParser extends Parser {
 				structureDefinition.setNameAsItAppearsInParent(nextName);
 				structureDefinition.setRepeating(group.isRepeating(nextName));
 				structureDefinition.setRequired(group.isRequired(nextName));
+				structureDefinition.setChoiceElement(group.isChoiceElement(nextName));
 				structureDefinition.setPosition(index++);
 				structureDefinition.setParent(retVal);
 				retVal.addChild(structureDefinition);

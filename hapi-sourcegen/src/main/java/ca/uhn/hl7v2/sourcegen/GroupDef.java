@@ -228,6 +228,10 @@ public class GroupDef implements StructureDef {
 
 	public void setRepeating(boolean theB) {
 		repeating = theB;
+	}
+
+	public boolean isChoice() {
+		return false;
 	}    
     
 }

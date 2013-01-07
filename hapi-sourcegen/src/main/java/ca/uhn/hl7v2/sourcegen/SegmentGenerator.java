@@ -81,6 +81,12 @@ public class SegmentGenerator extends java.lang.Object {
 		for (int i = 0; i < segments.size(); i++) {
 			try {
 				String seg = (String) segments.get(i);
+				
+				String hapiTestGenSegment = System.getProperty("hapi.test.gensegment");
+				if (hapiTestGenSegment != null && !hapiTestGenSegment.contains(seg)) {
+					continue;
+				}
+				
 				makeSegment(seg, version, theTemplatePackage, targetDir, theFileExt);
 			} catch (Exception e) {
 				System.err.println("Error creating source code for all segments: " + e.getMessage());

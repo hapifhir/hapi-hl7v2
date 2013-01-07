@@ -4,18 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
 
+import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.conf.spec.message.Component;
 import ca.uhn.hl7v2.conf.spec.message.Field;
 import ca.uhn.hl7v2.conf.spec.message.Seg;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.conf.spec.message.SubComponent;
+import ca.uhn.hl7v2.mvnplugin.SourceGenMojo;
 
 /**
  * JUnit tests for conformance profile parser
@@ -24,10 +28,22 @@ import ca.uhn.hl7v2.conf.spec.message.SubComponent;
  */
 public class ProfileParserTest {
 
-	String profileString;
-
 	@Before
 	public void setUp() throws Exception {
+		// System.out.println(profileString);
+	}
+
+	@Test
+	public void testParseFailed() throws ProfileException, IOException {
+		
+		ProfileParser p = new ProfileParser(false);
+		RuntimeProfile prof = p.parseClasspath("ca/uhn/hl7v2/conf/parser/ADT_A01_with_problem.xml");
+		
+		
+	}
+	
+	@Test
+	public void testParse() throws Exception {
 		ClassLoader cl = ProfileParser.class.getClassLoader();
 		InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/example_ack.xml");
 		if (instream == null)
@@ -38,12 +54,8 @@ public class ProfileParserTest {
 		while ((tmp = in.read()) != -1) {
 			buf.append((char) tmp);
 		}
-		profileString = buf.toString();
-		// System.out.println(profileString);
-	}
-
-	@Test
-	public void testParse() throws Exception {
+		String profileString = buf.toString();
+		
 		ProfileParser pp = new ProfileParser(true);
 		RuntimeProfile rp = pp.parse(profileString);
 		assertEquals("2.4", rp.getHL7Version());

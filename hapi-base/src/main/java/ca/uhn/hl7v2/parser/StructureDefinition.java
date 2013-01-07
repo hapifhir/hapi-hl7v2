@@ -54,6 +54,7 @@ public class StructureDefinition implements IStructureDefinition {
     private IStructureDefinition myNextSibling;
     private IStructureDefinition myParent;
     private int myPosition;
+	private boolean myChoiceElement;
 
 
     /**
@@ -106,8 +107,18 @@ public class StructureDefinition implements IStructureDefinition {
     public HashSet<String> getAllPossibleFirstChildren() {
         if (myAllFirstLeafNames == null) {
             myAllFirstLeafNames = new HashSet<String>();
+            
+            boolean hasChoice = false;
             for (IStructureDefinition next : myChildren) {
                 myAllFirstLeafNames.addAll(next.getAllPossibleFirstChildren());
+                
+                if (next.isChoiceElement()) {
+                	hasChoice = true;
+                	continue;
+                } else if (hasChoice) {
+                	break;
+                }
+                
                 if (next.isRequired()) {
                     break;
                 }
@@ -365,5 +376,21 @@ public class StructureDefinition implements IStructureDefinition {
     public String toString() {
         return "StructureDefinition[" + getName() + "]";
     }
+
+
+	/**
+	 * @see Group#isChoiceElement()
+	 */
+	public void setChoiceElement(boolean theChoiceElement) {
+		myChoiceElement = theChoiceElement;
+	}
+
+
+	/**
+	 * @see Group#isChoiceElement()
+	 */
+	public boolean isChoiceElement() {
+		return myChoiceElement;
+	}
 
 }

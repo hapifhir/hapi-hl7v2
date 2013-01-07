@@ -49,17 +49,26 @@ public class SegmentDef implements StructureDef {
     private boolean repeating;
     private String myIndexName;
     private List<DatatypeDef> myFieldDefs = new ArrayList<DatatypeDef>();
+	private boolean choice;
     
     /** Creates new SegmentDef */
-    public SegmentDef(String name, String groupName, boolean required, boolean repeating, String description) {
+    public SegmentDef(String name, String groupName, boolean required, boolean repeating, boolean choice, String description) {
         this.name = name;
         this.groupName = groupName;
         this.required = required;
         this.repeating = repeating;
         this.description = StringUtils.defaultString(description);
+        this.choice = choice;
     }
 
-    public void addFieldDef(DatatypeDef theFieldDef) {
+    /**
+	 * @return the choice
+	 */
+	public boolean isChoice() {
+		return choice;
+	}
+
+	public void addFieldDef(DatatypeDef theFieldDef) {
         myFieldDefs.add(theFieldDef);
     }
     

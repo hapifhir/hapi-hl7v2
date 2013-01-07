@@ -49,7 +49,7 @@ public class ReportingValidationExceptionHandler implements ValidationExceptionH
     private ValidationException firstException;
 
     /**
-     * @param messageValidator
+     * @param throwFirstException true if first exception shall be thrown
      */
     public ReportingValidationExceptionHandler(boolean throwFirstException) {
         this.throwFirstException = throwFirstException;

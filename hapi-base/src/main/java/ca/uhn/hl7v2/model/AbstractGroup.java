@@ -52,12 +52,15 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
  */
 public abstract class AbstractGroup extends AbstractStructure implements Group {
 
-    private static final long serialVersionUID = 1772720246448224363L;
+    private static final int PS_INDENT = 3;
+
+	private static final long serialVersionUID = 1772720246448224363L;
 
     private List<String> names;
     private Map<String, List<Structure>> structures;
     private Map<String, Boolean> required;
     private Map<String, Boolean> repeating;
+    private Set<String> choiceElements;
     private Map<String, Class<? extends Structure>> classes;
     // protected Message message;
     private Set<String> nonStandardNames;
@@ -85,6 +88,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         required = new HashMap<String, Boolean>();
         repeating = new HashMap<String, Boolean>();
         classes = new HashMap<String, Class<? extends Structure>>();
+        choiceElements = new HashSet<String>();
     }
 
     /**
@@ -264,11 +268,27 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      *         there are duplicates in the same Group).
      */
     protected String add(Class<? extends Structure> c, boolean required, boolean repeating) throws HL7Exception {
-        String name = getName(c);
-        return insert(c, required, repeating, this.names.size(), name);
+    	return add(c, required, repeating, false);
     }
 
     /**
+     * Adds a new Structure (group or segment) to this Group. A place for the Structure is added to
+     * the group but there are initially zero repetitions. This method should be used by the
+     * constructors of implementing classes to specify which Structures the Group contains -
+     * Structures should be added in the order in which they appear. Note that the class is supplied
+     * instead of an instance because we want there initially to be zero instances of each structure
+     * but we want the AbstractGroup code to be able to create instances as necessary to support
+     * get(...) calls.
+     * 
+     * @return the actual name used to store this structure (may be appended with an integer if
+     *         there are duplicates in the same Group).
+     */
+    protected String add(Class<? extends Structure> c, boolean required, boolean repeating, boolean choiceElement) throws HL7Exception {
+        String name = getName(c);
+        return insert(c, required, repeating, choiceElement, this.names.size(), name);
+	}
+
+	/**
      * Adds a new Structure (group or segment) to this Group. A place for the Structure is added to
      * the group but there are initially zero repetitions. This method should be used by the
      * constructors of implementing classes to specify which Structures the Group contains -
@@ -317,6 +337,13 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
 
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isChoiceElement(String theName) throws HL7Exception {
+		return choiceElements.contains(theName);
+	}
 
     /**
      * Returns true if the named structure is a group
@@ -552,6 +579,11 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      */
     protected String insert(Class<? extends Structure> c, boolean required, boolean repeating, int index, String name)
             throws HL7Exception {
+    	return insert(c, required, repeating, false, index, name);
+    }
+
+    protected String insert(Class<? extends Structure> c, boolean required, boolean repeating, boolean choiceElement, 
+    		int index, String name) throws HL7Exception {
         // tryToInstantiateStructure(c, name); //may throw exception
 
         // see if there is already something by this name and make a new name if
@@ -574,11 +606,15 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         this.repeating.put(name, new Boolean(repeating));
         this.classes.put(name, c);
         this.structures.put(name, new ArrayList<Structure>());
+        
+        if (choiceElement) {
+        	this.choiceElements.add(name);
+        }
 
         return name;
-    }
+	}
 
-    /**
+	/**
      * Clears all data from this structure.
      */
     public void clear() {
@@ -627,13 +663,33 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             theStringBuilder.append(lineSeparator);
         }
 
+        boolean inChoice = false;
         for (String nextName : getNames()) {
 
             Class<? extends Structure> nextClass = classes.get(nextName);
 
             boolean nextOptional = !isRequired(nextName);
             boolean nextRepeating = isRepeating(nextName);
+            boolean nextChoice = isChoiceElement(nextName);
 
+            if (nextChoice && !inChoice) {
+            	theIndent += PS_INDENT;
+                indent(theStringBuilder, theIndent);
+                theStringBuilder.append("<");
+                theStringBuilder.append(lineSeparator);
+                inChoice = true;
+            } else if (!nextChoice && inChoice) {
+                indent(theStringBuilder, theIndent);
+                theStringBuilder.append(">");
+                theStringBuilder.append(lineSeparator);
+                inChoice = false;
+                theIndent -= PS_INDENT;
+            } else if (nextChoice && inChoice) {
+                indent(theStringBuilder, theIndent);
+                theStringBuilder.append("|");
+                theStringBuilder.append(lineSeparator);
+            }
+            
             if (AbstractGroup.class.isAssignableFrom(nextClass)) {
 
                 Structure[] nextChildren = getAll(nextName);
@@ -642,14 +698,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                     Structure structure = nextChildren[i];
                     boolean addStartName = (i == 0);
                     boolean addEndName = (i == (nextChildren.length - 1));
-                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + 3,
+                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + PS_INDENT,
                             nextOptional, nextRepeating, addStartName, addEndName);
 
                 }
 
                 if (nextChildren.length == 0) {
                     Structure structure = tryToInstantiateStructure(nextClass, nextName);
-                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + 3,
+                    ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + PS_INDENT,
                             nextOptional, nextRepeating, true, true);
                 }
 
@@ -658,7 +714,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                 int currentIndent = theStringBuilder.length();
 
                 StringBuilder structurePrefix = new StringBuilder();
-                indent(structurePrefix, theIndent + 3);
+                indent(structurePrefix, theIndent + PS_INDENT);
                 if (nextOptional) {
                     structurePrefix.append("[ ");
                 }
@@ -700,6 +756,13 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             }
         }
 
+        if (inChoice) {
+            indent(theStringBuilder, theIndent);
+            theStringBuilder.append(">");
+            theStringBuilder.append(lineSeparator);
+            theIndent -= PS_INDENT;
+        }
+        
         if (theOptional || theRepeating) {
             indent(theStringBuilder, theIndent);
             if (theRepeating) {

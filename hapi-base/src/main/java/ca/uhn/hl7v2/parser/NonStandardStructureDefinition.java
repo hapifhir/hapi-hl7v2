@@ -177,4 +177,11 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc }
+	 */
+	public boolean isChoiceElement() {
+		return false;
+	}
+
 }

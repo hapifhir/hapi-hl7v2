@@ -48,6 +48,7 @@ import ca.uhn.hl7v2.model.*;
  * This Group contains the following elements:  
  * </p>
  * <ul>
+#set ($hasChc = false)
 #foreach ( $group in $groups )
     #if (${group.isRequired()})
       #set ($reqd = "")
@@ -59,9 +60,21 @@ import ca.uhn.hl7v2.model.*;
     #else
       #set ($rept = "")
     #end                                                       
- * <li>${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept</b></li>
+    #if (${group.isChoice()})
+      #set ($chc = "choice")
+      #set ($hasChc = true)
+    #else
+      #set ($chc = "")
+    #end
+ * <li>${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept $chc</b></li>
 #end
  * </ul>
+#if ($hasChc)
+ * <p>
+ * Note that this structure has "choice" elements. This means that one of the 
+ * structures above marked as "choice" must be present, but no more than one.
+ * </p> 
+#end
  */
 @SuppressWarnings("unused")
 public class $groupName extends AbstractGroup {
@@ -87,7 +100,12 @@ public class $groupName extends AbstractGroup {
     #else
       #set ($rept = "false")
     #end
-          this.add(${group.name}.class, $reqd, $rept);
+    #if (${group.choice})
+      #set ($chc = "true")
+    #else
+      #set ($chc = "false")
+    #end
+          this.add(${group.name}.class, $reqd, $rept, $chc);
 #end
        } catch(HL7Exception e) {
           log.error("Unexpected error creating $groupName - this is probably a bug in the source code generator.", e);
