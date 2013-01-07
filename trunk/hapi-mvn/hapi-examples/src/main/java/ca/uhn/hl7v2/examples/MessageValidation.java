@@ -90,9 +90,11 @@ public class MessageValidation {
 			System.exit(-1);
 		}
 
-		// Next, let's set EVN-2 to a string that is longer than 200 chars.
-		// DefaultValidation specified that ID datatypes must not exceed this
-		// length
+		/*
+		 * Next, let's set EVN-2 to a string that is longer than 200 chars.
+		 * DefaultValidation specified that ID datatypes must not exceed this
+		 *length
+		 */
 		String invalidMessage = "MSH|^~\\&|MedSeries|CAISI_1-2|PLS|3910|200903230934||ADT^A31^ADT_A05|75535037-1237815294895|P^T|2.4\r\n"
 				+ "EVN|0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789|200903230934\r\n"
 				+ "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
@@ -112,8 +114,24 @@ public class MessageValidation {
 			 * Prints: 
 			 * As expected, the message did not validate: Failed validation rule: Maxumim size <= 200 characters: Segment: EVN (rep 0) Field #1
 			 */
-
 		}
+
+        /*
+         * The ValidationContext is used during parsing and well as during
+         * validation using {@link ca.uhn.hl7v2.validation.Validator} objects.
+         * Sometimes we want parsing without validation followed by a
+         * separate validation step. We can still use a single HapiContext.
+         */
+
+        context.getParserConfiguration().setValidating(false);
+        try {
+            parser.parse(invalidMessage);
+            System.out.println("Successfully parsed valid message");
+        } catch (HL7Exception e) {
+            // This shouldn't happen!
+            System.out.println("Something went wrong!");
+            System.exit(-1);
+        }
 
 		/*
 		 * Now, suppose we want to throw caution to the wind, and not do 
@@ -134,7 +152,8 @@ public class MessageValidation {
 		
 		/*
 		 * One important thing to note is that NoValidation still includes one
-		 * rule: A rule which strips leading space from FT, ST, and TX fields.
+		 * rule: A rule which strips leading space from FT, ST, and trailing
+		 * space from TX fields.
 		 * 
 		 * Let's add some leading space to MSH-10 (this isn't something you would 
 		 * want to do normally, but it does demonstrate leading space trimming from

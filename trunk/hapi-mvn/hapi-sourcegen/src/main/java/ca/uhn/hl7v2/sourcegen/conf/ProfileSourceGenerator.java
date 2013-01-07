@@ -286,7 +286,7 @@ public class ProfileSourceGenerator {
         boolean repeating = nextSeg.getMax() > 1 || nextSeg.getMax() == -1;
         String description = nextSeg.getLongName();
 
-        SegmentDef retVal = new SegmentDef(name, groupName, required, repeating, description);
+        SegmentDef retVal = new SegmentDef(name, groupName, required, repeating, false, description);
         ArrayList<SegmentElement> segmentElements = new ArrayList<SegmentElement>();
 
         // Extract fields from the segment definition

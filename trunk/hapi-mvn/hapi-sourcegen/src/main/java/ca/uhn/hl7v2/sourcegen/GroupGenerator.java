@@ -173,8 +173,8 @@ public class GroupGenerator extends java.lang.Object {
         // !"RESPONSE".equals(((SegmentDef)structures[5]).getGroupName())
         if (null == (groupName) && "2.5".equals(version) && "ORL_O34".equals(message) && !structuresContainsSegmentWithGroupName(structures, "RESPONSE")) {
         	List<StructureDef> tmpStructures = new java.util.ArrayList<StructureDef>(java.util.Arrays.asList(structures));
-        	tmpStructures.add(new SegmentDef("]", "RESPONSE", false, false, ""));
-        	tmpStructures.add(5, new SegmentDef("[", "RESPONSE", false, false, ""));
+        	tmpStructures.add(new SegmentDef("]", "RESPONSE", false, false, false, ""));
+        	tmpStructures.add(5, new SegmentDef("[", "RESPONSE", false, false, false, ""));
         	structures = (StructureDef[]) tmpStructures.toArray(new StructureDef[structures.length]);
         }
         

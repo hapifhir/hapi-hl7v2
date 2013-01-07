@@ -35,6 +35,7 @@ import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
+import ca.uhn.hl7v2.validation.builder.support.ChoiceElementsRespectedRule;
 import ca.uhn.hl7v2.validation.builder.support.OnlyKnownSegmentsRule;
 import ca.uhn.hl7v2.validation.builder.support.TerserMessageRule;
 import ca.uhn.hl7v2.validation.builder.support.WrongVersionRule;
@@ -80,6 +81,17 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 */
 	public MessageRuleBuilder onlyKnownSegments() {
 		return test(OnlyKnownSegmentsRule.ONLY_KNOWN_SEGMENTS);
+	}
+
+	/**
+	 * Builds a {@link MessageRule} that enforces choice elements. This means that
+	 * if several segments are listed as being a possible choice for the first segment
+	 * in a group, only one of them may have content.
+	 * 
+	 * @return this instance to build more rules
+	 */
+	public MessageRuleBuilder choiceElementsRespected() {
+		return test(ChoiceElementsRespectedRule.CHOICE_ELEMENTS_RESPECTED);
 	}
 
 	/**

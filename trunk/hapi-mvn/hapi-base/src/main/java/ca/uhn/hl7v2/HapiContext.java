@@ -146,7 +146,7 @@ public interface HapiContext {
 	 * has precedence over a default {@link ValidationContext} set with
 	 * {@link #setValidationContext(ValidationContext)} or {@link #setValidationContext(String)}
 	 * 
-	 * @param context {@link ValidationRuleBuilder} to be used by all parsers obtained from this
+	 * @param ruleBuilder {@link ValidationRuleBuilder} to be used by all parsers obtained from this
 	 *            class.
 	 */
 	void setValidationRuleBuilder(ValidationRuleBuilder ruleBuilder);
@@ -233,7 +233,7 @@ public interface HapiContext {
 	 * @return a MessageValidator instance initialized with the {@link ValidationContext} as set
 	 *         using {@link #setValidationContext(ValidationContext)}. For each validation it will
 	 *         use a new instance of {@link ValidationExceptionHandler} as obtained by
-	 *         {@link #getValidationExceptionHandler()}.
+	 *         {@link #getValidationExceptionHandlerFactory()}.
 	 */
 	<R> Validator<R> getMessageValidator();
 	
@@ -312,8 +312,8 @@ public interface HapiContext {
 	 * established.
 	 * 
 	 * @param host The host IP/hostname to connect to
-	 * @param outbound The port to connect to for outgoing messages
-	 * @param inbound The port to connect to for inbound (response) messages
+	 * @param outboundPort The port to connect to for outgoing messages
+	 * @param inboundPort The port to connect to for inbound (response) messages
 	 * @param tls Whether or not to use SSL/TLS
 	 * @return A connected 
 	 * @throws HL7Exception If the connection can not be initialized for any reason 

@@ -72,7 +72,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     
     /**
      * @param theProfileID the ID of a constant profile against which to test all messages
-     *      (instead of the profiles they declare in MSH-21). The ID dis evaluated in a way 
+     *      (instead of the profiles they declare in MSH-21). The ID is evaluated in a way
      *      that the corresponding profile file is expected to be BASEDIR/profiles/ID.xml.
      */
     public ConformanceProfileRule(String theProfileID) {
@@ -85,7 +85,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
      * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
      */
     public ValidationException[] apply(Message msg) {
-        List<ValidationException> problems = new ArrayList<ValidationException>(20);
+        List<ValidationException> problems = new ArrayList<ValidationException>();
         String[] ids = {myProfileID};
         
         try {
@@ -93,10 +93,10 @@ public class ConformanceProfileRule extends AbstractMessageRule {
                 ids = getDeclaredProfileIDs(msg);
             }
             
-            for (int i = 0; i < ids.length; i++) {
-                log.debug("Testing message against profile: {}", ids[i]);
+            for (String id : ids) {
+                log.debug("Testing message against profile: {}", id);
                 try {
-                    ValidationException[] shortList = testAgainstProfile(msg, ids[i]);
+                    ValidationException[] shortList = testAgainstProfile(msg, id);
                     log.debug("{} non-conformances", shortList.length);
                     problems.addAll(Arrays.asList(shortList));
                 } catch (ProfileException e) {
@@ -107,7 +107,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
             problems.add(new ValidationException("Can't validate", e));
         }
         
-        return (ValidationException[]) problems.toArray(new ValidationException[0]);
+        return problems.toArray(new ValidationException[problems.size()]);
     }
     
     private String[] getDeclaredProfileIDs(Message theMessage) throws HL7Exception {
@@ -125,7 +125,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
                 declaredProfiles.add(idRep);
             }
         }
-        return declaredProfiles.toArray(new String[0]);
+        return declaredProfiles.toArray(new String[declaredProfiles.size()]);
     }
     
     private ValidationException[] testAgainstProfile(Message message, String id) throws ProfileException, HL7Exception {

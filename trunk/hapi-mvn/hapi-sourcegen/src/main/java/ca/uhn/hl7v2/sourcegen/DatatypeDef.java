@@ -17,7 +17,7 @@ public class DatatypeDef {
         name = theDescription;
         
         if (StringUtils.isEmpty(theType)) {
-            throw new IllegalArgumentException("Missing type");
+            throw new IllegalArgumentException("Missing datatype");
         }
         if (StringUtils.isEmpty(theDescription)) {
             throw new IllegalArgumentException("Missing name in type:" + theType);

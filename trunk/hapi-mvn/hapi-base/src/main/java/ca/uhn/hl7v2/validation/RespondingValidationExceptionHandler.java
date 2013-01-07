@@ -66,8 +66,6 @@ public class RespondingValidationExceptionHandler extends
      * @see {@link #populateResponseMessage()}
      * 
      * @throws HL7Exception if no response could be generated
-     * @throws IOException if the response message could not be created due to
-     *             failures in the message id generation strategy
      */
     public final Message result() throws HL7Exception {
         Object validationSubject = getValidationSubject();

@@ -91,7 +91,14 @@ public class DataTypeGenerator extends Object {
         for (int i = 0; i < types.size(); i++) {
             try {
                 String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
-                make(targetDir, (String)types.get(i), version, basePackage, theTemplatePackage, theFileExt);
+                String dataType = (String)types.get(i);
+                
+				String hapiTestGenType = System.getProperty("hapi.test.gentype");
+				if (hapiTestGenType != null && !hapiTestGenType.contains(dataType)) {
+					continue;
+				}
+                
+				make(targetDir, dataType, version, basePackage, theTemplatePackage, theFileExt);
             } catch (DataTypeException dte) {
                 log.warn("{} - {}", dte.getClass().getName(), dte.getMessage());
             } catch (Exception e) {

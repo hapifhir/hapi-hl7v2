@@ -27,6 +27,8 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.sourcegen;
 
+import ca.uhn.hl7v2.model.Group;
+
 /**
  * Information about a structure within a message (eg group, segment) 
  * that is used in creating source for a Group class. 
@@ -49,6 +51,11 @@ public interface StructureDef {
      */ 
     public boolean isRequired();
 
+    /**
+     * @see Group#isChoiceElement(String)
+     */
+    boolean isChoice();
+    
     /**
      * Returns true if this structure is a segment.  
      */ 

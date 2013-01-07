@@ -88,7 +88,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * @required
 	 * @readonly
 	 */
-	private MavenProject project;
+	MavenProject project;
 
 	/**
 	 * The target directory for the generated source
@@ -96,7 +96,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private String targetDirectory;
+	String targetDirectory;
 
 	/**
 	 * The conformance profile (XML file path) to use
@@ -104,7 +104,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private String profile;
+	String profile;
 
 	/**
 	 * The package for the generated source
@@ -112,7 +112,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private String packageName;
+	String packageName;
 
 	/**
 	 * <p>
@@ -138,28 +138,28 @@ public class ConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter default-value="NONE"
 	 */
-	private String generateDataTypes = "NONE";
+	String generateDataTypes = "NONE";
 
 	/**
 	 * The package from which to load the templates
 	 * 
 	 * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
 	 */
-	private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
+	String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
 	/**
 	 * Should structures be treated as resources
 	 * 
 	 * @parameter default="false"
 	 */
-	private boolean structuresAsResources;
+	boolean structuresAsResources;
 
 	/**
 	 * Should structures be treated as resources
 	 * 
 	 * @parameter default="java"
 	 */
-	private String fileExt = "java";
+	String fileExt = "java";
 
 	/**
 	 * {@inheritDoc}

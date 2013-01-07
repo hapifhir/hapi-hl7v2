@@ -412,6 +412,39 @@ public class NewPipeParserTest {
 
     }
 
+    /**
+     * This message is invalid, it should fail
+     */
+    @Test
+    public void testInvalidMessageFails() throws EncodingNotSupportedException, HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+                + "OBX|8|ST|Test\r\r\rString||20090505||||||F\r";
+
+        ca.uhn.hl7v2.model.v231.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v231.message.ORU_R01();
+        msg.setParser(new PipeParser());
+        msg.parse(string);
+
+        assertEquals(string, msg.encode());
+
+    }
+
+    /**
+     * See
+     * https://sourceforge.net/p/hl7api/bugs/153/
+     */
+    @Test
+    public void testHelpfulErrorMessageWithBadLineEndings() throws EncodingNotSupportedException, HL7Exception {
+
+        String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
+                + "OBX|8|ST|Test\r\r\rString||20090505||||||F\r";
+
+        Message msg = new GenericParser().parse(string);
+
+        assertEquals(string, msg.encode());
+
+    }
+
     @Test
     public void testDTInObx2() throws EncodingNotSupportedException, HL7Exception {
 
