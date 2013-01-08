@@ -108,6 +108,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         String outgoingMessageCharset = null;
         try {
             incomingMessageObject = myParser.parse(incomingMessageString);
+            
+            Terser inTerser = new Terser(incomingMessageObject);
+            theMetadata.put(MetadataKeys.IN_MESSAGE_CONTROL_ID, inTerser.get("/.MSH-10"));
+            
         }
         catch (HL7Exception e) {
         	outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
@@ -137,12 +141,12 @@ public class ApplicationRouterImpl implements ApplicationRouter {
                 
                 Terser t = new Terser(response);
                 outgoingMessageCharset = t.get(METADATA_KEY_MESSAGE_CHARSET); 
-            }
-            catch (Exception e) {
-                outgoingMessageString = logAndMakeErrorMessage(e, (Segment) incomingMessageObject.get("MSH"), myParser, myParser.getEncoding(incomingMessageString));
-            	if (myExceptionHandler != null) {
-            		outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
-            	}
+            } catch (Exception e) {
+                outgoingMessageString = handleProcessMessageException(incomingMessageString, theMetadata, incomingMessageObject, e);
+            } catch (Error e) {
+            	log.debug("Caught runtime exception of type {}, going to wrap it as HL7Exception and handle it", e.getClass());
+            	HL7Exception wrapped = new HL7Exception(e);
+            	outgoingMessageString = handleProcessMessageException(incomingMessageString, theMetadata, incomingMessageObject, wrapped);
             }
         }
         
@@ -151,6 +155,15 @@ public class ApplicationRouterImpl implements ApplicationRouter {
         
         return new String[] {outgoingMessageString, outgoingMessageCharset};
     }
+
+	private String handleProcessMessageException(String incomingMessageString, Map<String, Object> theMetadata, Message incomingMessageObject, Exception e) throws HL7Exception {
+		String outgoingMessageString;
+		outgoingMessageString = logAndMakeErrorMessage(e, (Segment) incomingMessageObject.get("MSH"), myParser, myParser.getEncoding(incomingMessageString));
+		if (myExceptionHandler != null) {
+			outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
+		}
+		return outgoingMessageString;
+	}
     
 
     /**

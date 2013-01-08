@@ -13,11 +13,6 @@ public class MetadataKeys {
 	public static final String IN_RAW_MESSAGE = "raw-message";
 
 	/**
-	 * Charset (MSH-18)
-	 */
-	public static final String IN_MESSAGE_CHARSET = "MSH-18";
-
-	/**
 	 * Message control ID (MSH-10)
 	 */
 	public static final String IN_MESSAGE_CONTROL_ID = "/MSH-10";
