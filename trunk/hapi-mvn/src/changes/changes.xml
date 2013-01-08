@@ -149,6 +149,15 @@
             	Fix an issue where SegmentFinder can't find PID2 within an A24 message.
             	Thanks to DiGiT for providing a working test case!
             </action>
+        	<action type="add" dev="James Agnew" issue="166" system="newbugs">
+            	<![CDATA[
+            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml%28%29">AbstractTextPrimitive#getValueAsHtml()</a>
+            	]]>
+            	now properly escapes HTML reserved characters:
+            	<![CDATA[<br/>
+            	&lt; &gt; &amp;
+            	]]>
+            </action>
         	<action type="fix" dev="Christian Ohr" issue="162" system="newbugs">
 				Fix an issue that prevented the sample code for
             	<![CDATA[

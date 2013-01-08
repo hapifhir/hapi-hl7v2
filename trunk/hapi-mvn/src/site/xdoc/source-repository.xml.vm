@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Sources</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="HAPI Source Code">
+
+			<p>
+				HAPI is open source software, so naturally you have full access to
+				the source code.
+			</p>
+
+			<subsection name="Browsing">
+				
+				<p>
+					If you just want to browse the latest released
+					sources, the easiest way is to 
+					visit the JXR (Java XRef) viewer
+					<a href="./xref/index.html">here</a>.
+				</p>
+				
+				<p>
+					If you want to see the version control history, 
+					You may browse the HAPI source repository online using
+					Sourceforge's built in browser here:
+					<br/>
+					<a href="https://sourceforge.net/p/hl7api/code/764/tree/" target="_blank">https://sourceforge.net/p/hl7api/code/764/tree/</a>
+				</p>
+				
+			</subsection>
+
+			<subsection name="Checking out">
+				
+				<p>
+					HAPI uses Subversion as a version control system. You may check out the
+					source code using the following repository (you will need a Sourceforge username 
+					and password to access the source code this way):
+				</p>
+				
+				<p>
+					<a href="https://svn.code.sf.net/p/hl7api/code/trunk/hapi-mvn/">https://svn.code.sf.net/p/hl7api/code/trunk/hapi-mvn/</a>
+				</p>
+				
+			</subsection>
+
+		</section>
+
+
+	</body>
+</document>
