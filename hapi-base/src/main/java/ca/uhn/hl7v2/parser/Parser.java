@@ -178,8 +178,18 @@ public abstract class Parser extends HapiContextSupport {
 	public Message parse(String message) throws HL7Exception {
 		String encoding = getEncoding(message);
 		if (!supportsEncoding(encoding)) {
-			throw new EncodingNotSupportedException("Can't parse message beginning "
-					+ message.substring(0, Math.min(message.length(), 50)));
+			String startOfMessage = null;
+			if (message.startsWith("MSH")) {
+				int indexOfCR = message.indexOf('\r');
+				if (indexOfCR > 0) {
+					startOfMessage = message.substring(0, indexOfCR);
+				}
+			} 
+			if (startOfMessage == null) {
+				startOfMessage = message.substring(0, Math.min(message.length(), 50));
+			}
+			throw new EncodingNotSupportedException("Determine encoding for message. The following is the first 50 chars of the message for reference, although this may not be where the issue is: "
+					+ startOfMessage);
 		}
 
 		String version = getVersion(message);
