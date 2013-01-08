@@ -16,7 +16,7 @@ public interface ApplicationRouter {
 	 * {@link Transportable#getMetadata() Metadata} key: 
 	 * Charset (MSH-18)
 	 */
-	String METADATA_KEY_MESSAGE_CHARSET = MetadataKeys.IN_MESSAGE_CHARSET;
+	String METADATA_KEY_MESSAGE_CHARSET = "MSH-18";
 
 	/**
 	 * {@link Transportable#getMetadata() Metadata} key: 
