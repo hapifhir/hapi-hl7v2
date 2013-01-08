@@ -271,7 +271,10 @@ public interface HapiContext {
 	 * @param port The port on which to listen for new connections
 	 * @param tls Whether or not to use SSL/TLS
 	 * @return HL7 service running on the configured port using the default parser and executor
-	 *         service instances provided by this interface.
+	 *         service instances provided by this interface. Note that the returned service <b>will not
+	 *         be started</b>, and must manually be started using {@link HL7Service#start()} or
+	 *         {@link HL7Service#startAndWait()}
+	 * @see See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
 	 * @see #setSocketFactory(SocketFactory)
 	 */
 	HL7Service newServer(int port, boolean tls);
@@ -284,7 +287,10 @@ public interface HapiContext {
 	 * @param outboundPort The port on which to listen for connections for outgoing messages
 	 * @param tls Whether or not to use SSL/TLS
 	 * @return HL7 service running on the configured ports using the default parser and executor
-	 *         service instances provided by this interface.
+	 *         service instances provided by this interface. Note that the returned service <b>will not
+	 *         be started</b>, and must manually be started using {@link HL7Service#start()} or
+	 *         {@link HL7Service#startAndWait()}
+	 * @see See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
 	 * @see #setSocketFactory(SocketFactory)
 	 */
 	HL7Service newServer(int inboundPort, int outboundPort, boolean tls);
@@ -299,7 +305,10 @@ public interface HapiContext {
 	 * @param host The host IP/hostname to connect to
 	 * @param port The port to connect to
 	 * @param tls Whether or not to use SSL/TLS
-	 * @return A connected 
+	 * @return Returns a connection which can be used to transmit messages. Note that this method
+	 *         will attempt to connect to the specified address, and will throw an exception
+	 *         if it fails to connect.
+	 * @see See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
 	 * @throws HL7Exception If the connection can not be initialized for any reason 
 	 */
 	Connection newClient(String host, int port, boolean tls) throws HL7Exception;
@@ -315,7 +324,9 @@ public interface HapiContext {
 	 * @param outboundPort The port to connect to for outgoing messages
 	 * @param inboundPort The port to connect to for inbound (response) messages
 	 * @param tls Whether or not to use SSL/TLS
-	 * @return A connected 
+	 * @return Returns a connection which can be used to transmit messages. Note that this method
+	 *         will attempt to connect to the specified address, and will throw an exception
+	 *         if it fails to connect.
 	 * @throws HL7Exception If the connection can not be initialized for any reason 
 	 */
 	Connection newClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception;
