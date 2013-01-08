@@ -37,6 +37,14 @@ public class FormattedTextEncoder {
 		super();
 	}
 
+	private void addLt() {
+		myBuffer.append("&lt;");
+	}
+
+	private void addGt() {
+		myBuffer.append("&gt;");
+	}
+
 	private void addAmpersand() {
 		myBuffer.append("&amp;");
 	}
@@ -102,7 +110,8 @@ public class FormattedTextEncoder {
 			char nextChar = theInput.charAt(i);
 			boolean handled = true;
 
-			if (nextChar == '\\') {
+			switch (nextChar) {
+			case '\\':
 
 				int theStart = i + 1;
 				int numericArgument = Integer.MIN_VALUE;
@@ -219,7 +228,8 @@ public class FormattedTextEncoder {
 
 				}
 
-			} else {
+				break;
+			default:
 
 				handled = false;
 
@@ -247,12 +257,22 @@ public class FormattedTextEncoder {
 					}
 				}
 
-				if (nextChar == '&') {
+				switch (nextChar) {
+				case '&':
 					addAmpersand();
-				} else if (nextChar >= 160) {
-					addHighAscii(nextChar);
-				} else {
-					myBuffer.append(nextChar);
+					break;
+				case '<':
+					addLt();
+					break;
+				case '>':
+					addGt();
+					break;
+				default:
+					if (nextChar >= 160) {
+						addHighAscii(nextChar);
+					} else {
+						myBuffer.append(nextChar);
+					}
 				}
 
 				myAtStartOfLine = false;

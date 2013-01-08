@@ -10,6 +10,17 @@ import static org.junit.Assert.*;
 public class FormattedTextEncoderTest {
 
 	@Test
+	public void testEscapeHtmlReservedChars() throws DataTypeException {
+		ADT_A01 msg = new ADT_A01();
+		FT ft = new FT(msg);
+
+		String value = "< lt > gt & amp ";
+		ft.setValue(value);
+		assertEquals("&lt; lt &gt; gt &amp; amp ", ft.getValueAsHtml());
+
+	}
+
+	@Test
 	public void testGetValueAsHtmlHighAscii() throws DataTypeException {
 		ADT_A01 msg = new ADT_A01();
 		FT ft = new FT(msg);
