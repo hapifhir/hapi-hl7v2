@@ -46,8 +46,6 @@
 		<menu name="Documentation">
 			<item name="Getting Started" href="getting_started.html" />
 			<item name="HAPI By Example" href="devbyexample.html" />
-			<item name="Conformance Tools" href="conformance.html" />
-			<item name="FAQ" href="hapi-faq.html" />
 			<item name="JavaDoc (API core)" href="base/apidocs/index.html" collapse="false">
 				<item name="v2.1 Messages" href="v21/apidocs/index.html" />
 				<item name="v2.2 Messages" href="v22/apidocs/index.html" />
@@ -59,6 +57,8 @@
 				<item name="v2.6 Messages" href="v26/apidocs/index.html" />
 			</item>
 			<item name="Source XRef" href="xref/index.html" />
+			<item name="FAQ" href="hapi-faq.html" />
+			<item name="Conformance Tools" href="conformance.html" />
 		</menu>
 
 		<menu name="Get Help">

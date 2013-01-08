@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Issue Tracking</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Issue Tracking">
+
+			<p>
+				HAPI uses Sourceforge to track issues and feature requests.	
+			</p>
+			
+			<p>
+				To submit a ticket with regards to a problem, bug, or defect with
+				HAPI, please see the
+				<a href="https://sourceforge.net/p/hl7api/bugs/">bugs tracker</a>.
+				When submitting a new issue ticket, please try to include as much
+				details as you can. Sample messages, code reproducing the issue, etc
+				are all very useful and help us to fix the issue.
+			</p>
+			
+			<p>
+				To submit a request for a new feature or enhancement, please use
+				the
+				<a href="https://sourceforge.net/p/hl7api/feature-requests/">feature requests tracker</a>.
+			</p>
+			
+		</section>
+
+
+	</body>
+</document>
