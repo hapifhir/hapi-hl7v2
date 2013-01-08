@@ -115,9 +115,16 @@ public abstract class Parser extends HapiContextSupport {
 	}
 
 	/**
-	 * @return Returns the parser configuration. This is a bean which contains configuration
-	 *         instructions relating to how a parser should be parsing or encoding messages it deals
-	 *         with.
+	 * <p>
+	 * Returns the parser configuration. This is a bean which contains configuration
+	 * instructions relating to how a parser should be parsing or encoding messages it deals
+	 * with.
+	 * </p>
+	 * <p>
+	 * <b>Note that the parser configuration comes from the {@link getHapiContext HAPI Context}.</b>
+	 * Changes to the configuration for one parser will affect all parsers which share the same
+	 * context.
+	 * </p>
 	 */
 	public ParserConfiguration getParserConfiguration() {
 		return getHapiContext().getParserConfiguration();
@@ -537,6 +544,9 @@ public abstract class Parser extends HapiContextSupport {
         if (isValidating()) {
             Validator<R> validator = getHapiContext().getMessageValidator();
             ValidationExceptionHandlerFactory<R> factory  = getHapiContext().getValidationExceptionHandlerFactory();
+            if (factory == null) {
+            	throw new NullPointerException("Validation is enabled for this parser, but ValidationExceptionHandlerFactory is null");
+            }
             ValidationExceptionHandler<R> handler = factory.getNewInstance(getHapiContext());
             R result = validator.validate(message, handler);
             handleException(handler, result);
