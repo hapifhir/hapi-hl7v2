@@ -38,6 +38,8 @@ import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.preparser.PreParser;
 
 /**
@@ -107,21 +109,32 @@ public class ExtendedMinLLPReader implements HL7Reader
 				firstLine = bos.toString("US-ASCII");
 			}
 			
-			String[] fields = PreParser.getFields(firstLine, "MSH-18(0)");
+			String[] fields;
+			try {
+				fields = PreParser.getFields(firstLine, "MSH-18(0)");
+			} catch (HL7Exception e) {
+				log.warn("Failed to parse MSH segment. Defaulting to US-ASCII", e);
+				return Charset.forName("US-ASCII");
+			}
 			String charset = stripNonLowAscii(fields[0]);
-			Charset javaCs = CharSetUtil.convertHL7CharacterEncodingToCharSetvalue(charset);			
+			Charset javaCs;
+			try {
+				javaCs = CharSetUtil.convertHL7CharacterEncodingToCharSetvalue(charset);
+			} catch (EncodingNotSupportedException e) {
+				log.warn("Invalid or unsupported charset in MSH-18: \"{}\". Defaulting to US-ASCII", e);
+				return Charset.forName("US-ASCII");
+			}			
 			log.debug("Detected MSH-18 value \"{}\" so using charset {}", charset, javaCs.displayName());			
 			return javaCs;
 		}
-		catch(Exception e)
-		{
-			log.warn("Nonvalid charset - defaulting to US-ASCII", e);
-		}
+//		catch(Exception e)
+//		{
+//			log.warn("Nonvalid charset - defaulting to US-ASCII", e);
+//		}
 		finally
 		{
 			bos.close();
 		}
-		return Charset.forName("US-ASCII");
 	}
 
 	private String stripNonLowAscii(String theString) {

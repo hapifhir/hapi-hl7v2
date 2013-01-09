@@ -12,8 +12,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -27,9 +26,11 @@ import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TestUtils;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v21.segment.MSH;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
+import ca.uhn.hl7v2.testutil.LogCapturingAppender;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 
@@ -42,10 +43,12 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 	private static final Logger LOG = LoggerFactory.getLogger(ExtendedMinLowerLayerProtocol.class);
 
 	@Before
-	public void setup() {
+	public void setUp() {
+		LogCapturingAppender.ensureEnabled();
 		DefaultHapiContext ctx = new DefaultHapiContext(new NoValidationBuilder());
 		parser = ctx.getPipeParser();
 		xmlParser = ctx.getXMLParser();
+		myMsgCount = 0;
 	}
 
 	@Test
@@ -101,8 +104,8 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		byte[] actualBytes = new byte[actualBytesTemp.length - 3];
 		System.arraycopy(actualBytesTemp, 1, actualBytes, 0, actualBytesTemp.length - 3);
 
-		Assert.assertEquals(expectedBytes.length, actualBytes.length);
-		Assert.assertEquals(toList(expectedBytes), toList(actualBytes));
+		assertEquals(expectedBytes.length, actualBytes.length);
+		assertEquals(toList(expectedBytes), toList(actualBytes));
 	}
 
 	private List<Byte> toList(byte[] theActualBytes) {
@@ -113,6 +116,27 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		return retVal;
 	}
 
+	@Test
+	public void testReadBadMsh2() throws LLPException, IOException {
+		
+		String msg = "MSH|^÷\\&|PAMSimulator|IHE|PAMSimulator|IHE|20111219123224||ADT^A01^ADT_A01|20111219123224|P|2.5||||||UNICODE UTF-8\r" +//- 
+				"EVN||20111219123224||||20111219123224\r" + //-
+				"PID|||DDS-31223^^^DDS&1.3.6.1.4.1.12559.11.1.4.1.2&ISO^PI||Kiefer^Gisela^^^^^L|Endres^^^^^^M|19351005041238|F|||&Uhlandstra§e^^Marbach am Neckar^^71726^DEU||||||||||||||||||||N\r" + //- 
+				"PV1||I|1W^314^1^ITALIAN_HOSPITAL||||LOPEZ^GABRIELLA^^^DR|PRUST^RALPH^^^DR|||||||||||28^^^IHEPAM&1.3.6.1.4.1.12559.11.1.2.2.5&ISO^VN|||||||||||||||||||||||||20111219123200"; //-
+		
+		byte[] msgBytes = msg.getBytes("UTF-8");
+		msgBytes = ArrayUtils.addAll(new byte[] {MinLLPReader.START_MESSAGE}, msgBytes);
+		msgBytes = ArrayUtils.addAll(msgBytes, new byte[] {MinLLPReader.END_MESSAGE, MinLLPReader.LAST_CHARACTER});
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(msgBytes);
+		
+		HL7Reader prot = new ExtendedMinLowerLayerProtocol().getReader(bis);
+		String actual = prot.getMessage();
+		
+		assertTrue(actual, actual.contains("EVN||20111219123224||||20111219123224\r"));
+		assertTrue(LogCapturingAppender.getLastWarning(), LogCapturingAppender.getLastWarning().contains("Failed to parse MSH segment"));
+	}
+	
 	private void verifyReaderForCodeSystem(ADT_A01 a01, String hl7Cs, String javaCs, String theString) throws DataTypeException, HL7Exception, UnsupportedEncodingException, IOException, LLPException {
 		a01.getMSH().getMsh18_CharacterSet(0).setValue(hl7Cs);
 
@@ -227,11 +251,6 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 	}
 
 	private static final Logger ourLog = LoggerFactory.getLogger(ExtendedMinLowerLayerProtocolTest.class);
-
-	@Before
-	public void setUp() {
-		myMsgCount = 0;
-	}
 
 	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
 		try {
