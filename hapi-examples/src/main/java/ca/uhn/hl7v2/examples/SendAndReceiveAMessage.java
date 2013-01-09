@@ -220,7 +220,7 @@ public class SendAndReceiveAMessage {
        *            the exception which was received
        * @return The new outgoing message. This can be set to the value provided
        *         by HAPI in <code>outgoingMessage</code>, or may be replaced with
-       *         another message.
+       *         another message. <b>This method may not return <code>null</code></b>.
        */
       public String processException(String theIncomingMessage, Map<String, Object> theIncomingMetadata, String theOutgoingMessage, Exception theE) throws HL7Exception {
           

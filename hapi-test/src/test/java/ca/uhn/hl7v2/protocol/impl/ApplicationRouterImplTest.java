@@ -3,16 +3,22 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import java.io.IOException;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.Transportable;
 import ca.uhn.hl7v2.util.Terser;
 
@@ -22,26 +28,16 @@ import ca.uhn.hl7v2.util.Terser;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
  */
-public class ApplicationRouterImplTest extends TestCase {
+public class ApplicationRouterImplTest {
 
     private ApplicationRouterImpl myRouter;
     
-    /**
-     * Constructor for ApplicationRouterImplTest.
-     * @param arg0
-     */
-    public ApplicationRouterImplTest(String arg0) {
-        super(arg0);
-    }
-
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         myRouter = new ApplicationRouterImpl();
     }
 
+    @Test
     public void testProcessMessage() throws Exception {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A01", "P", "2.4");
         MockApplication app = new MockApplication();
@@ -66,6 +62,27 @@ public class ApplicationRouterImplTest extends TestCase {
         assertTrue(result.getMessage().indexOf("MSA|AE|a|") > 0);
     }
 
+    /**
+     * https://sourceforge.net/p/hl7api/bugs/123/
+     */
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testExceptionHandlerWorksCorrectlyWithInvalidMessage() throws HL7Exception {
+    	
+    	ReceivingApplicationExceptionHandler handler = mock(ReceivingApplicationExceptionHandler.class);
+    	
+    	String msg = "BAD MESSAGE";
+    	String respMsg = "BAD RESPONSE MESSAGE";
+    	
+    	when(handler.processException(eq(msg), any(Map.class), any(String.class), any(Exception.class))).thenReturn(respMsg);
+    	
+    	myRouter.setExceptionHandler(handler);
+    	myRouter.processMessage(new TransportableImpl(msg));
+    	
+    	verify(handler).processException(eq(msg), any(Map.class), any(String.class), any(Exception.class));
+    }
+    
+    @Test
     public void testHasActiveBinding() {
         AppRoutingDataImpl rdA = new AppRoutingDataImpl("ADT", "A01", "P", "2.4");
         ReceivingApplication appA = new MockApplication();
@@ -91,6 +108,7 @@ public class ApplicationRouterImplTest extends TestCase {
      * Tests that wildcards in routing data work.  This is largely tested by 
      * testMatches(), but we check it again quickly here.  
      */    
+    @Test
     public void testWildcards() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("*", "A01", "P", "2.4");
         ReceivingApplication app = new MockApplication();
@@ -104,6 +122,7 @@ public class ApplicationRouterImplTest extends TestCase {
      * Tests that regex in routing data work.  This is largely tested by 
      * testRegexMatches(), but we check it again quickly here.  
      */    
+    @Test
     public void testRegex() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
         ReceivingApplication app = new MockApplication();
@@ -113,6 +132,7 @@ public class ApplicationRouterImplTest extends TestCase {
         assertEquals(false, myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A14", "P", "2.4")));        
     }
     
+    @Test
     public void testRegexMatches() {
         AppRoutingDataImpl ref1 = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
         AppRoutingDataImpl ref2 = new AppRoutingDataImpl("ADT", "A0[12]", "P", "2.4");
@@ -135,6 +155,7 @@ public class ApplicationRouterImplTest extends TestCase {
         assertTrue(ApplicationRouterImpl.matches(msg1, ref5));
     }
     
+    @Test
     public void testMatches() {
         AppRoutingDataImpl one = new AppRoutingDataImpl("a", "b", "b", "d");
 
@@ -165,6 +186,7 @@ public class ApplicationRouterImplTest extends TestCase {
         assertEquals(false, ApplicationRouterImpl.matches(w4, one));        
     }
 
+    @Test
     public void testCanProcess() throws Exception {
     	
         AppRoutingDataImpl rd = new AppRoutingDataImpl("*", "*", "*", "*");
