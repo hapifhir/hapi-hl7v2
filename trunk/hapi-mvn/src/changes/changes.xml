@@ -178,9 +178,20 @@
         		v2.3 structure for ORC-14 is correctly set to XTN datatype (was previously TN)
             </action>
             <action type="fix" dev="James Agnew" issue="134" system="newbugs">
-            	Improve error message in ExtendedMinLowerLayerProtocol when an incoming
+            	Improve error message in
+            	<![CDATA[
+            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/llp/ExtendedMinLowerLayerProtocol.html">ExtendedMinLowerLayerProtocol</a>
+            	]]> 
+            	when an incoming
             	message can't be processed because it contains an invalid MSH segment.
             	Thanks to Jens Villadsen for reporting!
+            </action>
+            <action type="fix" dev="Nicolas Lefebvre" issue="123" system="newbugs">
+				Allow
+				<![CDATA[
+            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/protocol/ReceivingApplicationExceptionHandler.html">ReceivingApplicationExceptionHandler</a>
+            	]]> 
+				to process exceptions even when un-parseable messages are received.				            	
             </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">

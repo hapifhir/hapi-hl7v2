@@ -27,7 +27,7 @@ public interface ReceivingApplicationExceptionHandler {
 	 *            the exception which was received
 	 * @return The new outgoing message. This can be set to the value provided
 	 *         by HAPI in <code>outgoingMessage</code>, or may be replaced with
-	 *         another message.
+	 *         another message. <b>This method may not return <code>null</code></b>.
 	 */
 	// ********************************
 	// Note, if you update the JavaDoc here, also update it in the hapi-example

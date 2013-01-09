@@ -114,9 +114,16 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             
         }
         catch (HL7Exception e) {
-        	outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
+			try {
+				 outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));               
+			} catch (HL7Exception e2) {
+				 outgoingMessageString = null;
+			}
         	if (myExceptionHandler != null) {
         		outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
+        		if (outgoingMessageString == null) {
+        			throw new HL7Exception("Application exception handler may not return null");
+        		}
         	}
         }
         
