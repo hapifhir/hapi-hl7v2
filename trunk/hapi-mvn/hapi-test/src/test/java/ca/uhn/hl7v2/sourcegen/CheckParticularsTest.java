@@ -5,6 +5,8 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.v23.datatype.XTN;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.segment.PID;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
@@ -45,6 +47,14 @@ public class CheckParticularsTest extends TestCase {
 		assertEquals("2.5", msg.getVersion());
 	}
 
+	/**
+	 * https://sourceforge.net/p/hl7api/bugs/95/
+	 */
+	public void testOrc14() {
+		ca.uhn.hl7v2.model.v23.segment.ORC orc = new ORU_R01().getRESPONSE().getORDER_OBSERVATION().getORC();
+		assertEquals(XTN.class, orc.getOrc14_CallBackPhoneNumber(0).getClass());
+	}
+	
 	/**
 	 * This segment is invalid and shouldn't be generated.. The DB contains it
 	 * for some reason

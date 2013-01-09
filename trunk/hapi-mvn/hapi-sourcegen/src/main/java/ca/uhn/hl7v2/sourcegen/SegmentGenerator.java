@@ -210,9 +210,20 @@ public class SegmentGenerator extends java.lang.Object {
 					se.type = "NULLDT";
 				}
 				
+				/*
+				 * ***
+				 * index is 1-indexed here!!
+				 * ***
+				 */
+				
 				// 3454369
 				if (version.equals("2.3") && name.equals("MRG") && index == 7) {
 					se.type = "XPN";
+				}
+
+				// https://sourceforge.net/p/hl7api/bugs/95/
+				if (version.equals("2.3") && name.equals("ORC") && index == 14) {
+					se.type = "XTN";
 				}
 
 				// 2864817
