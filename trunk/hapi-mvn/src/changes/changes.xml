@@ -177,6 +177,11 @@
         	<action type="fix" dev="James Agnew" issue="95" system="newbugs">
         		v2.3 structure for ORC-14 is correctly set to XTN datatype (was previously TN)
             </action>
+            <action type="fix" dev="James Agnew" issue="134" system="newbugs">
+            	Improve error message in ExtendedMinLowerLayerProtocol when an incoming
+            	message can't be processed because it contains an invalid MSH segment.
+            	Thanks to Jens Villadsen for reporting!
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
