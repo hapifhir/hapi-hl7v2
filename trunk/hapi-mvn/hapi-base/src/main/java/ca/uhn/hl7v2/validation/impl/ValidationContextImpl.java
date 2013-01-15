@@ -71,8 +71,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	
 
 	/**
-	 * @see ca.uhn.hl7v2.validation.ValidationContext#getDataTypeRules(java.lang.String,
-	 *      java.lang.String)
+	 * @see ValidationContext#getPrimitiveRules(String, String, Primitive)
 	 * @param theType ignored
 	 */
 	public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
@@ -89,9 +88,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 		
 
 	/**
-	 * @see ca.uhn.hl7v2.validation.ValidationContext
-	 *      #getMessageRules(java.lang.String, java.lang.String,
-	 *      java.lang.String)
+	 * @see ValidationContext#getMessageRules(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
 		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent, MessageRule.class);

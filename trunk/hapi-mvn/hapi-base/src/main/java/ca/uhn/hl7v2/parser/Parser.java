@@ -38,6 +38,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
 import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.AbstractSuperMessage;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Group;
@@ -45,6 +46,8 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.util.StringUtil;
+import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
@@ -204,6 +207,8 @@ public abstract class Parser extends HapiContextSupport {
 
 		result.setParser(this);
 
+		applySuperStructureName(result);
+		
 		return result;
 	}
 
@@ -537,7 +542,30 @@ public abstract class Parser extends HapiContextSupport {
 		Class<? extends Message> messageClass = getFactory().getMessageClass(theName, theVersion, isExplicit);
 		if (messageClass == null)
 			throw new HL7Exception("Can't find message class in current package list: " + theName);
-		return ReflectionUtil.instantiateMessage(messageClass, getFactory());
+		Message retVal = ReflectionUtil.instantiateMessage(messageClass, getFactory());
+		
+		return retVal;
+	}
+	
+	protected void applySuperStructureName(Message theMessage) throws HL7Exception {
+        if (theMessage instanceof AbstractSuperMessage) {
+        	if (theMessage.getName() == null) {
+        		Terser t = new Terser(theMessage);
+        		String name = null;
+				try {
+					name = t.get("/MSH-9-3");
+				} catch (HL7Exception e) {
+					// ignore
+				}
+				
+				if (StringUtil.isBlank(name)) {
+					name = t.get("/MSH-9-1") + "_" + t.get("/MSH-9-2");
+				}
+				
+				((AbstractSuperMessage)theMessage).setName(name);
+        	}
+        }
+
 	}
 	
 	private <R> void assertMessageValidates(String message, String encoding, String version) throws HL7Exception {

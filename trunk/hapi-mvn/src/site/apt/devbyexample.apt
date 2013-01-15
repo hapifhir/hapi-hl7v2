@@ -70,6 +70,33 @@ Developing using HAPI - By Example
   
 * Parsing Messages
 
+  * There are several ways to  
+    {{{./xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html}handle multiple versions}}
+    of HL7 within a single application.
+
+  * Another way of reading and writing to message objects is to use 
+    a {{{./xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
+
+  * We can use a subclassed parser to {{{./xref/ca/uhn/hl7v2/examples/CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
+
+  * {{{./xref/ca/uhn/hl7v2/examples/ExampleSuperStructures.html}SuperStructures}} can be used
+    to write applications which deal with various different ADT structures
+    without writing different routines for each structure.
+
+  * Allow parsing of ORU^R01 (and other messages with OBX segments) which have
+    an invalid value in OBX-2, which specifies the type used to parse OBX-5 using 
+    {{{./xref/ca/uhn/hl7v2/examples/ParseInvalidObx2Values.html}ParserConfiguration}}.
+
+
+* Custom Segments and Structures
+
+  * {{{./xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
+  
+  * The {{{./conformance.html}Conformance}} page has information about the "confgen" maven plugin, which can be used to generate custom classes easily using HL7 conformance profiles.
+
+
+* Validating Messages
+
   * Once we're parsing messages, we can 
     {{{./xref/ca/uhn/hl7v2/examples/MessageValidation.html}validate messages}}
     to make sure they contain no invalid data.
@@ -83,37 +110,21 @@ Developing using HAPI - By Example
     using conformance profiles. Note that the conformance profile used in this
     example can be seen {{{./xref/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml}HERE}}. See the FAQ for 
     notes on using this in your own applications. 
-
-  * There are several ways to  
-    {{{./xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html}handle multiple versions}}
-    of HL7 within a single application.
     
-
-* Advanced Parsing/Reading Messages
-
-  * Another way of reading and writing to message objects is to use 
-    a {{{./xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html}Terser}}
-
-  * We can use a subclassed parser to {{{./xref/ca/uhn/hl7v2/examples/CorrectInvalidMessageBeforeParsing.html}correct invalid messages before parsing them}}.
-
-  * Use {{{./xref/ca/uhn/hl7v2/examples/ParseInvalidObx2Values.html}system properties}} to allow parsing of ORU^R01 (and other messages with OBX segments) which have
-    an invalid value in OBX-2, which specifies the type used to parse OBX-5.
-
-* Custom Segments and Structures
-
-  * {{{./xref/ca/uhn/hl7v2/examples/CustomModelClasses.html}Custom Model Classes}} and generic segments can be used to handle custom message types and Z-segments.
-  
-  * The {{{./conformance.html}Conformance}} page has information about the "confgen" maven plugin, which can be used to generate custom classes easily using HL7 conformance profiles.
-
 
 * Advanced Creating Messages
   
   * Alessandro Delprete submitted {{{./xref/ca/uhn/hl7v2/examples/EncapsulatedData.html}this example}} of 
     how to embed a CDA document as MIME content in an MDM^T02 message.
 
+
+* Configuring HAPI
+
+  * The {{{./configuring_hapi.html}Configuring HAPI}} page explains several options for advanced configuration.
+  
+  
 * Utility Classes
 
   * {{{./xref/ca/uhn/hl7v2/examples/ReadMessagesFromFile.html}Reading Messages from a File}}
   
-  * The {{{./configuring_hapi.html}Configuring HAPI}} page explains several options for advanced configuration.
   

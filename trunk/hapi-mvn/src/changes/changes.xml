@@ -193,6 +193,14 @@
             	]]> 
 				to process exceptions even when un-parseable messages are received.				            	
             </action>
+            <action type="fix" dev="James Agnew" issue="64" system="newfeatures">
+				New parser configuration option for customizing
+				<![CDATA[
+            		<a href="file:///Users/james/Documents/workspace/hapi-mvn/target/site/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setUnexpectedSegmentBehaviour(ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum)">Unexpected segment (e.g. Z-segment) behaviour</a>
+            	]]> 
+				in terms of where in the structure the segment gets placed. Thanks to Michael Connor for
+				suggesting this!				            	
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">

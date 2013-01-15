@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.DefaultApplication;
+import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.GenericParser;
@@ -165,7 +167,8 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 
 	private String handleProcessMessageException(String incomingMessageString, Map<String, Object> theMetadata, Message incomingMessageObject, Exception e) throws HL7Exception {
 		String outgoingMessageString;
-		outgoingMessageString = logAndMakeErrorMessage(e, (Segment) incomingMessageObject.get("MSH"), myParser, myParser.getEncoding(incomingMessageString));
+		Segment inHeader = incomingMessageObject != null ? (Segment) incomingMessageObject.get("MSH") : null;
+		outgoingMessageString = logAndMakeErrorMessage(e, inHeader, myParser, myParser.getEncoding(incomingMessageString));
 		if (myExceptionHandler != null) {
 			outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
 		}
@@ -346,7 +349,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 	 *            The encoding for the error message. If <code>null</code>, uses
 	 *            default encoding
 	 */
-	public static String logAndMakeErrorMessage(Exception e, Segment inHeader,
+	public String logAndMakeErrorMessage(Exception e, Segment inHeader,
 			Parser p, String encoding) throws HL7Exception {
 
 		log.error("Attempting to send error message to remote system.", e);
@@ -358,10 +361,20 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 		// create error message ...
 		String errorMessage = null;
 		try {
-			Message in = inHeader.getMessage();
-			// the message may be a dummy message, whose MSH segment is incomplete
-			DeepCopy.copy(inHeader, (Segment)in.get("MSH"));				
-			Message out = in.generateACK(AcknowledgmentCode.AE, hl7e);
+			
+			Message out;
+			Message in;
+			if (inHeader != null) {
+				in = inHeader.getMessage();
+				// the message may be a dummy message, whose MSH segment is incomplete
+				DeepCopy.copy(inHeader, (Segment)in.get("MSH"));				
+			} else {
+				in = Version.highestAvailableVersionOrDefault().newGenericMessage(myParser.getFactory());
+				((GenericMessage)in).initQuickstart("ACK", "", "");
+			}
+			
+			out = in.generateACK(AcknowledgmentCode.AE, hl7e);
+			
 			if (encoding != null) {
 				errorMessage = p.encode(out, encoding);
 			} else {

@@ -40,12 +40,10 @@ import java.util.Map;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.Transportable;
-import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 import ca.uhn.hl7v2.protocol.impl.TransportableImpl;
 
 /**
@@ -93,18 +91,18 @@ class Responder {
 		return response.getMessage();
 	}
 	
-	/**
-	 * Logs the given exception and creates an error message to send to the
-	 * remote system.
-	 * 
-	 * @param encoding
-	 *            The encoding for the error message. If <code>null</code>, uses
-	 *            default encoding
-	 */
-	public static String logAndMakeErrorMessage(Exception e, Segment inHeader,
-			Parser p, String encoding) throws HL7Exception {
-		return ApplicationRouterImpl.logAndMakeErrorMessage(e, inHeader, p, encoding);
-	}
+//	/**
+//	 * Logs the given exception and creates an error message to send to the
+//	 * remote system.
+//	 * 
+//	 * @param encoding
+//	 *            The encoding for the error message. If <code>null</code>, uses
+//	 *            default encoding
+//	 */
+//	public static String logAndMakeErrorMessage(Exception e, Segment inHeader,
+//			Parser p, String encoding) throws HL7Exception {
+//		return ApplicationRouterImpl.logAndMakeErrorMessage(e, inHeader, p, encoding);
+//	}
 
 	/**
 	 * Registers an Application with this Responder. The "Application", in this

@@ -45,6 +45,7 @@ public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 		
 		forAllVersions()
 			.message().all().choiceElementsRespected()
+			.message().all().onlyAllowableSegmentsInSuperStructure()
 			.primitive("FT").leftTrim(maxLength(32000))
 			.primitive("ST").leftTrim()
 			.primitive("TX").rightTrim()

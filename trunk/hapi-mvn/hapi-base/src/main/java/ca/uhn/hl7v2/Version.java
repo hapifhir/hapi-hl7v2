@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 
 public enum Version {
@@ -214,6 +216,32 @@ public enum Version {
 			return availableVersions.get(availableVersions.size() - 1);
 		} else {
 			return Version.V25;
+		}
+	}
+
+	/**
+	 * Construct and return a new {@link GenericMessage} for the given version
+	 */
+	public GenericMessage newGenericMessage(ModelClassFactory mcf) {
+		switch (this) {
+		case V21:
+			return new GenericMessage.V21(mcf);
+		case V22:
+			return new GenericMessage.V22(mcf);
+		case V23:
+			return new GenericMessage.V23(mcf);
+		case V231:
+			return new GenericMessage.V231(mcf);
+		case V24:
+			return new GenericMessage.V24(mcf);
+		case V25:
+			return new GenericMessage.V25(mcf);
+		case V251:
+			return new GenericMessage.V251(mcf);
+		case V26:
+			return new GenericMessage.V26(mcf);
+		default:
+			throw new Error("Unknown version (this is a HAPI bug): " + this.getVersion());
 		}
 	}
 	

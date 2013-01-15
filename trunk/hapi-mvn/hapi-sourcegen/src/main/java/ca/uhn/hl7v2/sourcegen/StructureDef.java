@@ -27,6 +27,8 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.sourcegen;
 
+import java.util.List;
+
 import ca.uhn.hl7v2.model.Group;
 
 /**
@@ -36,6 +38,11 @@ import ca.uhn.hl7v2.model.Group;
  */
 public interface StructureDef {
 
+	/**
+	 * For superstructures, returns the message structures this structure is associated with
+	 */
+	public List<String> getAssociatedStructures();
+	
     /**
      * Returns the name of the structure.
      */

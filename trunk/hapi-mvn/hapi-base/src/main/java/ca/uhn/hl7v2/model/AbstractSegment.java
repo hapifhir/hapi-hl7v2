@@ -58,6 +58,11 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 public abstract class AbstractSegment extends AbstractStructure implements
 		Segment {
 
+	/**
+	 * Do not use
+	 */
+	static final String ERROR_MSH_1_OR_2_NOT_SET = "Can not invoke parse(String) on a segment if the encoding characters (MSH-1 and MSH-2) are not already correctly set on the message";
+
 	private static final long serialVersionUID = -6686329916234746948L;
 	
 	private List<List<Type>> fields;
@@ -534,7 +539,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		try {
 			encodingCharacters = EncodingCharacters.getInstance(getMessage());
 		} catch (HL7Exception e) {
-			throw new HL7Exception("Can not invoke parse(String) on a segment if the encoding characters (MSH-1 and MSH-2) are not already correctly set on the message");
+			throw new HL7Exception(ERROR_MSH_1_OR_2_NOT_SET);
 		}
 		clear();
 		getMessage().getParser().parse(this, string, encodingCharacters);

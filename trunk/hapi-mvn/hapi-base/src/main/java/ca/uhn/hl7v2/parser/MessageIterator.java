@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Iterates over all defined nodes (ie segments, groups) in a message,
@@ -146,9 +147,26 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private void addNonStandardSegmentAtCurrentPosition() throws Error {
     	log.debug("Creating non standard segment {} on group: {}", 
     			myDirection, getCurrentPosition().getStructureDefinition().getParent().getName());
-        List<Position> parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
-        Group parentStructure = (Group) navigateToStructure(parentDefinitionPath);
-
+        
+    	List<Position> parentDefinitionPath;
+        Group parentStructure;
+        
+        switch (myMessage.getParser().getParserConfiguration().getUnexpectedSegmentBehaviour()) {
+        case ADD_INLINE:
+        default:
+        	parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
+        	parentStructure = (Group) navigateToStructure(parentDefinitionPath);
+        	break;
+        case DROP_TO_ROOT:
+        	parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, 1));
+        	parentStructure = myMessage;
+        	myCurrentDefinitionPath = myCurrentDefinitionPath.subList(0, 2);
+        	break;
+        case THROW_HL7_EXCEPTION:
+        	throw new Error(new HL7Exception("Found unknown segment: " + myDirection));
+        }
+        
+        
         // Current position within parent
         Position currentPosition = getCurrentPosition();
 		String nameAsItAppearsInParent = currentPosition.getStructureDefinition().getNameAsItAppearsInParent();

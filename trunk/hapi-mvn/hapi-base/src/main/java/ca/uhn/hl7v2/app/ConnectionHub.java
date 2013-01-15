@@ -282,9 +282,7 @@ public class ConnectionHub extends HapiContextSupport {
 	 * Returns the singleton instance of ConnectionHub
 	 * 
 	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub.
-	 *             See {@link http 
-	 *             ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html
-	 *             this example page} for an example of how to use ConnectionHub.
+	 *             See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">this example page</a> for an example of how to use ConnectionHub.
 	 */
 	public static ConnectionHub getInstance() {
 		return getInstance(DefaultExecutorService.getDefaultService());
@@ -294,9 +292,7 @@ public class ConnectionHub extends HapiContextSupport {
 	 * Returns the singleton instance of ConnectionHub.
 	 * 
 	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub.
-	 *             See {@link http 
-	 *             ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html
-	 *             this example page} for an example of how to use ConnectionHub.
+	 *             See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">this example page</a> for an example of how to use ConnectionHub.
 	 */
 	public synchronized static ConnectionHub getInstance(ExecutorService service) {
 		if (instance == null || service.isShutdown()) {
@@ -323,9 +319,8 @@ public class ConnectionHub extends HapiContextSupport {
 	 * service.
 	 * </p>
 	 * <p>
-	 * See {@link http 
-	 * ://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html this example
-	 * page} for an example of how to use ConnectionHub.
+	 * See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">this example page</a>
+	 * for an example of how to use ConnectionHub.
 	 * </p>
 	 */
 	public synchronized static ConnectionHub getNewInstance(HapiContext context) {

@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.model;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -100,7 +102,20 @@ public class AbstractSegmentTest {
 	@Test(expected=HL7Exception.class)
 	public void testParseMshWithNoContent() throws HL7Exception {
 		ADT_A01 msg = new ADT_A01();
-		msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");		
+		try {
+			msg.getMSH().parse("MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ADT^A01|20169838|T|2.3\r");
+		} catch (HL7Exception e) {
+			assertEquals(AbstractSegment.ERROR_MSH_1_OR_2_NOT_SET, e.getMessage());
+			throw e;
+		}
 	}
-	
+
+	@Test
+	public void testParseMshWithInvalidValue() throws HL7Exception, IOException {
+		ADT_A01 msg = new ADT_A01();
+		msg.initQuickstart("ADT", "A01", "T");
+		
+		msg.getMSH().parse("MSH|1");
+	}
+
 }

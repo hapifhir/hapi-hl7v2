@@ -91,4 +91,13 @@ public class MinLowerLayerProtocol extends LowerLayerProtocol {
 		charset = theCharset;
 	}
 
+    /**
+     * Provides a charset to use for character encoding
+     * @param theCharset The charset to use
+     * @since 2.1
+     */
+	public void setCharset(String charsetName) {
+		charset = Charset.forName(charsetName);
+	}
+
 }

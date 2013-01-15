@@ -4,7 +4,10 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
@@ -12,20 +15,30 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
+import ca.uhn.hl7v2.llp.HL7Reader;
+import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
+import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MinLLPReader;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.protocol.MetadataKeys;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
+import ca.uhn.hl7v2.testutil.LogCapturingAppender;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
 public class SimpleServerTest implements ConnectionListener {
@@ -33,6 +46,7 @@ public class SimpleServerTest implements ConnectionListener {
 	private CountDownLatch connectLatch;
 	private CountDownLatch disconnectLatch;
 	private int port;
+	private DefaultHapiContext ctx;
 
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleServerTest.class);
 
@@ -42,6 +56,47 @@ public class SimpleServerTest implements ConnectionListener {
 		disconnectLatch = new CountDownLatch(1);
 	}
 
+	/**
+	 * https://sourceforge.net/p/hl7api/bugs/136/
+	 */
+	@Test
+	public void testNoResponseBadMsh2() throws LLPException, IOException, InterruptedException {
+		
+		String msg = "MSHABCDEFGHIJ"; //-
+
+		port = RandomServerPortProvider.findFreePort();
+		ctx = new DefaultHapiContext();
+		ctx.setLowerLayerProtocol(new ExtendedMinLowerLayerProtocol());
+		
+		SimpleServer srv = ctx.newServer(port, false);
+		srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
+		srv.startAndWait();
+		
+		try {
+			
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress("localhost", port));
+			
+			MinLowerLayerProtocol mllp = new MinLowerLayerProtocol();
+			mllp.setCharset("UTF-8");
+			HL7Reader reader = mllp.getReader(socket.getInputStream());
+			HL7Writer writer = mllp.getWriter(socket.getOutputStream());
+			
+			writer.writeMessage(msg);
+			String resp = reader.getMessage();
+			
+			LOG.info("Response message:\n{}", resp);
+			
+		} finally {
+			srv.stop();
+		}
+	}
+
+	@After
+	public void after() {
+		// nothing
+	}
+	
 	@Test
 	public void testRejectAttemptToStartTwice() throws InterruptedException, IOException {
 

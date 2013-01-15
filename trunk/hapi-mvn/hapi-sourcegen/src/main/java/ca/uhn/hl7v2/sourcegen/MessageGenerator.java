@@ -38,6 +38,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -170,11 +173,11 @@ public class MessageGenerator extends Object {
 			if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
 				baseDirectory = baseDirectory + "/";
 			}
-			File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
+			File targetDir = determineTargetDir(baseDirectory, version);
 			System.out.println("Writing " + message + " to " + targetDir.getPath());
 			String fileName = targetDir.getPath() + "/" + message + "." + theFileExt;
 
-			writeMessage(fileName, contents, message, chapter, version, group, DefaultModelClassFactory.getVersionPackageName(version), true, theTemplatePackage);
+			writeMessage(fileName, contents, message, chapter, version, DefaultModelClassFactory.getVersionPackageName(version), true, theTemplatePackage, null);
 
 		} catch (SQLException e) {
 			throw new HL7Exception(e);
@@ -191,6 +194,11 @@ public class MessageGenerator extends Object {
 		// + ": "
 		// + e.getMessage());
 		// }
+	}
+
+	public static File determineTargetDir(String baseDirectory, String version) throws IOException, HL7Exception {
+		File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
+		return targetDir;
 	}
 
 	/**
@@ -338,7 +346,19 @@ public class MessageGenerator extends Object {
 		return source.toString();
 	}
 
-	public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, GroupDef group, String basePackageName, boolean haveGroups, String theTemplatePackage) throws Exception {
+	/**
+	 * @param fileName
+	 * @param contents
+	 * @param message
+	 * @param chapter
+	 * @param version
+	 * @param basePackageName
+	 * @param haveGroups
+	 * @param theTemplatePackage
+	 * @param theStructureNameToChildNames Only required for superstructure generation
+	 * @throws Exception
+	 */
+	public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, String basePackageName, boolean haveGroups, String theTemplatePackage, Map<String, List<String>> theStructureNameToChildNames) throws Exception {
 
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, false), SourceGenerator.ENCODING));
 
@@ -367,6 +387,7 @@ public class MessageGenerator extends Object {
 		ctx.put("haveGroups", haveGroups);
 		ctx.put("basePackageName", basePackageName);
 		ctx.put("segments", Arrays.asList(contents));
+		ctx.put("structureNameToChildNames", new TreeMap<String, List<String>>(theStructureNameToChildNames));
 		ctx.put("HASH", "#");
 		template.merge(ctx, out);
 

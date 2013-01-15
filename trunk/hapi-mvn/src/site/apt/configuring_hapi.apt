@@ -3,6 +3,8 @@ Configuring HAPI
   HAPI has a number of configurable properties which may be used to customize
   the way it operates.
   
+%{toc}
+  
 * System Properties
 
   A number of settings are set using system properties. A future release, hopefully 
@@ -76,6 +78,11 @@ parser.getParserConfiguration().setInvalidObx2Type("ST");
 ORU_R01 parsedMessage = (ORU_R01)parser.parse(someInvalidMessage);
 ------
   
+  See {{{./base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setDefaultObx2Type(java.lang.String)}the JavaDoc}}
+  for examples.
+  
+  
+  
 ** Forced Encoding
 
   By default, when encoding a message HAPI will not encode any segments
@@ -95,7 +102,7 @@ parser.getParserConfiguration().addForcedEncode("PATIENT_RESULT/ORDER_OBSERVATIO
 String encoded = parser.encode(message);
 ----
 
-  See {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setDefaultObx2Type%28java.lang.String%29}the JavaDoc}}
+  See {{{./base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#addForcedEncode(java.lang.String)}the JavaDoc}}
   for examples.
 
   
@@ -103,7 +110,7 @@ String encoded = parser.encode(message);
 
   Under some circumstances HAPI creates a HL7 message, e.g. an Acknowledgement message, 
   which is already populated with data. In this case, a unique message ID must be written into the MSH-10 field.
-  HAPI provides a number of {{{http://hl7api.sourceforge.net/base/apidocs/ca/.../IDGenerator.html}IDGenerator}}
+  HAPI provides a number of {{{./base/apidocs/ca/uhn/hl7v2/util/idgenerator/IDGenerator.html}IDGenerator}}
   implementations that can be used for this purpose. By default, a file serves as persistent storage of the ID,
   so that in case of restarts no duplicate IDs are assigned.
   
@@ -113,4 +120,14 @@ String encoded = parser.encode(message);
 parser.getParserConfiguration().setIdGenerator(new InMemoryIDGenerator())
 ----
   
+
+** Unexpected Segment Behaviour
+
+  If you are processing messages with nonstandard segments (e.g. Z-segments), the parser by
+  default will add them where it finds them. You can configure the parser to always add them
+  to the root message structure instead of inline in the current group: 
+  
+----
+parser.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
+----
   

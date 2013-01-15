@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.codehaus.plexus.util.StringUtils;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * Information about a message segment used in the creation of 
  * source code for a Group class.  SegmentDef is a slight misnomer because this 
@@ -50,8 +52,9 @@ public class SegmentDef implements StructureDef {
     private String myIndexName;
     private List<DatatypeDef> myFieldDefs = new ArrayList<DatatypeDef>();
 	private boolean choice;
+	private List<String> associatedStructures;
     
-    /** Creates new SegmentDef */
+	/** Creates new SegmentDef */
     public SegmentDef(String name, String groupName, boolean required, boolean repeating, boolean choice, String description) {
         this.name = name;
         this.groupName = groupName;
@@ -166,5 +169,23 @@ public class SegmentDef implements StructureDef {
         return true;
     }    
     
+    /**
+	 * @return the associatedStructures
+	 */
+	public List<String> getAssociatedStructures() {
+		if (associatedStructures == null) {
+			associatedStructures = new ArrayList<String>();
+		}
+		return associatedStructures;
+	}
+
+	/**
+	 * @param theAssociatedStructures the associatedStructures to set
+	 */
+	public void addAssociatedStructure(String theAssociatedStructure) {
+		getAssociatedStructures().add(theAssociatedStructure);
+		Collections.sort(getAssociatedStructures());
+	}
+
     
 }

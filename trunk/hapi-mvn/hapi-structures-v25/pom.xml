@@ -55,6 +55,39 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>
+				<version>${hapi.version}</version>
+				<executions>
+					<execution>
+						<id>superstructure_adt</id>
+						<goals>
+							<goal>superstructuregen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/superstructuregen</targetDirectory>
+							<targetStructureName>ADT_AXX</targetStructureName>
+							<version>${gen.version}</version>
+							<structures>
+								<structure>ADT_A[0-9]{2}</structure>
+							</structures>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-base</artifactId>
+						<version>${hapi.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-v25</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>

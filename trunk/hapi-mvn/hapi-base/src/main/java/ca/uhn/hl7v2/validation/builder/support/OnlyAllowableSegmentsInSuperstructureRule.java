@@ -26,41 +26,61 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.builder.support;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import ca.uhn.hl7v2.Location;
-import ca.uhn.hl7v2.model.GenericSegment;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.util.ReadOnlyMessageIterator;
+import ca.uhn.hl7v2.model.SuperStructure;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 
 /**
- * Validation rule for detecting unknown segments in a message
+ * Validation rule for detecting populated elements in a {@link SuperStructure}
+ * which do not belong to the given message type
  * 
- * @author Christian Ohr
+ * @author James Agnew
  */
 @SuppressWarnings("serial")
-public class OnlyKnownSegmentsRule extends AbstractMessageRule {
+public class OnlyAllowableSegmentsInSuperstructureRule extends AbstractMessageRule {
 
-	public static final MessageRule ONLY_KNOWN_SEGMENTS = new OnlyKnownSegmentsRule();
+	public static final MessageRule ONLY_ALLOWABLE_SEGMENTS = new OnlyAllowableSegmentsInSuperstructureRule();
 	
 	public ValidationException[] apply(Message msg) {
 		List<ValidationException> exceptions = new ArrayList<ValidationException>();
-
-		for (Iterator<Structure> iter = ReadOnlyMessageIterator
-				.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
-			String segmentName = iter.next().getName();
-			ValidationException ve = new ValidationException("Found unknown segment: " + segmentName);
-			Location location = new Location();
-			location.setSegmentName(segmentName);
-			ve.setLocation(location);
-			exceptions.add(ve);
+		
+		if (msg instanceof SuperStructure) {
+			checkStructure((SuperStructure)msg, exceptions);
 		}
+		
 		return exceptions.toArray(new ValidationException[exceptions.size()]);
+	}
+
+	private void checkStructure(SuperStructure theMsg, List<ValidationException> theExceptions) {
+		String messageStructure = theMsg.getMessage().getName();
+
+		FORNAME:
+		for (String name : theMsg.getNames()) {
+			
+			try {
+				for (Structure rep : theMsg.getAll(name)) {
+					
+					if (!rep.isEmpty()) {
+						if (!theMsg.getStructuresWhichChildAppliesTo(name).contains(messageStructure)) {
+							String msgSimpleName = theMsg.getMessage().getClass().getSimpleName();
+							theExceptions.add(new ValidationException("Message (superstructure " + msgSimpleName + ") of type " + messageStructure + " must not have content in " + name));
+						}
+						continue FORNAME;
+					}
+					
+				}
+			} catch (HL7Exception e) {
+				// should not happen
+				throw new Error("Can't get rep of structure " + name + ". This is probably a HAPI bug");
+			}
+			
+		}
 	}
 
 }

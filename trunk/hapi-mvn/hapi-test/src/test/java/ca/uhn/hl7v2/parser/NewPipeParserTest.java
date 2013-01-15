@@ -127,6 +127,164 @@ public class NewPipeParserTest {
     }    
 
     /**
+     * http://sourceforge.net/p/hl7api/feature-requests/64/ 
+     */
+    @Test
+    public void testUnexpectedSegmentHintsNone() throws HL7Exception {
+
+    	String msgS = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ADT^A01^ADT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.6\r\n" + //- 
+    			"EVN||20120701000000-0500\r\n" + //-
+    			"PID|1||397979797^^^SN^SN~4242^^^BKDMDM^PI~1000^^^YARDI^PI||Williams^Rory^H^^^^A||19641028000000-0600|M||||||||||31592^^^YARDI^AN\r\n" + //- 
+    			"NK1|1|Pond^Amelia^Q^^^^A|SPO|1234 Main St^^Sussex^WI^53089|^PRS^CP^^^^^^^^^555-1212||N\r\n" + //-
+    			"NK1|2|Smith^John^^^^^A~^The Doctor^^^^^A|FND|1234 S Water St^^New London^WI^54961||^WPN^PH^^^^^^^^^555-9999|C\r\n" + //- 
+    			"PV1|2|I||R\r\n" + //-
+    			"GT1|1||Doe^John^A^^^^A||5678 Maple Ave^^Sussex^WI^53089|^PRS^PH^^^^^^^^^555-9999|||||OTH\r\n" + //- 
+    			"IN1|1|CAP1000|YYDN|ACME HealthCare||||GR0000001|||||||HMO|||||||||||||||||||||PCY-0000042\r\n" + //-
+    			"IN1|2||||||||||||||Medicare|||||||||||||||||||||123-45-6789-A\r\n" + //-
+    			"IN1|3||||||||||||||Medicaid|||||||||||||||||||||987654321L\r\n" + //-
+    			"ZFA|6|31592|12345|YARDI|20120201000000-0600";//-
+    	
+    	DefaultHapiContext ctx = new DefaultHapiContext();
+    	PipeParser p = ctx.getPipeParser();
+    	
+    	ca.uhn.hl7v2.model.v26.message.ADT_A01 msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.getINSURANCE(2).get("ZFA");
+    	try {
+    		msg.get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+    	
+    	ctx.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
+    	
+    	msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.getINSURANCE(2).get("ZFA");
+    	try {
+    		msg.get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+    	
+    	ctx.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.DROP_TO_ROOT);
+    	
+    	msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.get("ZFA");
+    	try {
+    		msg.getINSURANCE(2).get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+
+    }
+
+    /**
+     * http://sourceforge.net/p/hl7api/feature-requests/64/ 
+     */
+    @Test
+    public void testUnexpectedSegmentHintsInline() throws HL7Exception {
+
+    	String msgS = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ADT^A01^ADT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.6\r\n" + //- 
+    			"EVN||20120701000000-0500\r\n" + //-
+    			"PID|1||397979797^^^SN^SN~4242^^^BKDMDM^PI~1000^^^YARDI^PI||Williams^Rory^H^^^^A||19641028000000-0600|M||||||||||31592^^^YARDI^AN\r\n" + //- 
+    			"NK1|1|Pond^Amelia^Q^^^^A|SPO|1234 Main St^^Sussex^WI^53089|^PRS^CP^^^^^^^^^555-1212||N\r\n" + //-
+    			"NK1|2|Smith^John^^^^^A~^The Doctor^^^^^A|FND|1234 S Water St^^New London^WI^54961||^WPN^PH^^^^^^^^^555-9999|C\r\n" + //- 
+    			"PV1|2|I||R\r\n" + //-
+    			"GT1|1||Doe^John^A^^^^A||5678 Maple Ave^^Sussex^WI^53089|^PRS^PH^^^^^^^^^555-9999|||||OTH\r\n" + //- 
+    			"IN1|1|CAP1000|YYDN|ACME HealthCare||||GR0000001|||||||HMO|||||||||||||||||||||PCY-0000042\r\n" + //-
+    			"IN1|2||||||||||||||Medicare|||||||||||||||||||||123-45-6789-A\r\n" + //-
+    			"IN1|3||||||||||||||Medicaid|||||||||||||||||||||987654321L\r\n" + //-
+    			"ZFA|6|31592|12345|YARDI|20120201000000-0600";//-
+    	
+    	DefaultHapiContext ctx = new DefaultHapiContext();
+    	PipeParser p = ctx.getPipeParser();
+    	
+    	ctx.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
+    	
+    	ca.uhn.hl7v2.model.v26.message.ADT_A01 msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.getINSURANCE(2).get("ZFA");
+    	try {
+    		msg.get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+    	
+    }
+
+    /**
+     * http://sourceforge.net/p/hl7api/feature-requests/64/ 
+     */
+    @Test(expected=HL7Exception.class)
+    public void testUnexpectedSegmentHintsException() throws HL7Exception {
+
+    	String msgS = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ADT^A01^ADT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.6\r\n" + //- 
+    			"EVN||20120701000000-0500\r\n" + //-
+    			"PID|1||397979797^^^SN^SN~4242^^^BKDMDM^PI~1000^^^YARDI^PI||Williams^Rory^H^^^^A||19641028000000-0600|M||||||||||31592^^^YARDI^AN\r\n" + //- 
+    			"NK1|1|Pond^Amelia^Q^^^^A|SPO|1234 Main St^^Sussex^WI^53089|^PRS^CP^^^^^^^^^555-1212||N\r\n" + //-
+    			"NK1|2|Smith^John^^^^^A~^The Doctor^^^^^A|FND|1234 S Water St^^New London^WI^54961||^WPN^PH^^^^^^^^^555-9999|C\r\n" + //- 
+    			"PV1|2|I||R\r\n" + //-
+    			"GT1|1||Doe^John^A^^^^A||5678 Maple Ave^^Sussex^WI^53089|^PRS^PH^^^^^^^^^555-9999|||||OTH\r\n" + //- 
+    			"IN1|1|CAP1000|YYDN|ACME HealthCare||||GR0000001|||||||HMO|||||||||||||||||||||PCY-0000042\r\n" + //-
+    			"IN1|2||||||||||||||Medicare|||||||||||||||||||||123-45-6789-A\r\n" + //-
+    			"IN1|3||||||||||||||Medicaid|||||||||||||||||||||987654321L\r\n" + //-
+    			"ZFA|6|31592|12345|YARDI|20120201000000-0600";//-
+    	
+    	DefaultHapiContext ctx = new DefaultHapiContext();
+    	PipeParser p = ctx.getPipeParser();
+    	
+    	ctx.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.THROW_HL7_EXCEPTION);
+    	
+    	ca.uhn.hl7v2.model.v26.message.ADT_A01 msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.getINSURANCE(2).get("ZFA");
+    	try {
+    		msg.get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+    	
+    }
+    
+    /**
+     * http://sourceforge.net/p/hl7api/feature-requests/64/ 
+     */
+    @Test
+    public void testUnexpectedSegmentHintsDropToRoot() throws HL7Exception {
+
+    	String msgS = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ADT^A01^ADT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.6\r\n" + //-
+    			"ZZA|1" + //-
+    			"EVN||20120701000000-0500\r\n" + //-
+    			"PID|1||397979797^^^SN^SN~4242^^^BKDMDM^PI~1000^^^YARDI^PI||Williams^Rory^H^^^^A||19641028000000-0600|M||||||||||31592^^^YARDI^AN\r\n" + //- 
+    			"NK1|1|Pond^Amelia^Q^^^^A|SPO|1234 Main St^^Sussex^WI^53089|^PRS^CP^^^^^^^^^555-1212||N\r\n" + //-
+    			"NK1|2|Smith^John^^^^^A~^The Doctor^^^^^A|FND|1234 S Water St^^New London^WI^54961||^WPN^PH^^^^^^^^^555-9999|C\r\n" + //- 
+    			"PV1|2|I||R\r\n" + //-
+    			"GT1|1||Doe^John^A^^^^A||5678 Maple Ave^^Sussex^WI^53089|^PRS^PH^^^^^^^^^555-9999|||||OTH\r\n" + //- 
+    			"IN1|1|CAP1000|YYDN|ACME HealthCare||||GR0000001|||||||HMO|||||||||||||||||||||PCY-0000042\r\n" + //-
+    			"IN1|2||||||||||||||Medicare|||||||||||||||||||||123-45-6789-A\r\n" + //-
+    			"IN1|3||||||||||||||Medicaid|||||||||||||||||||||987654321L\r\n" + //-
+    			"ZFA|6|31592|12345|YARDI|20120201000000-0600";//-
+    	
+    	DefaultHapiContext ctx = new DefaultHapiContext();
+    	PipeParser p = ctx.getPipeParser();
+    	    	
+    	ctx.getParserConfiguration().setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.DROP_TO_ROOT);
+    	
+    	ca.uhn.hl7v2.model.v26.message.ADT_A01 msg = (ca.uhn.hl7v2.model.v26.message.ADT_A01) p.parse(msgS);
+    	msg.get("ZZA");
+    	msg.get("ZFA");
+    	try {
+    		msg.getINSURANCE(2).get("ZFA");
+    		fail();
+    	} catch (HL7Exception e) {
+    		// good
+    	}
+
+    }
+
+    /**
      * See 1643780
      */
     @Test
@@ -508,7 +666,8 @@ public class NewPipeParserTest {
                 + "PV2||||||||||||||||||^||||N\r"
                 + "NK1|1|TEST^NKGuy^^^^|CHD^ Son|123 Fake Street^^Toronto^ON^M6J 3H2^Can^M|(416)123-4567|(416)123-4567|NK||||||\r"
                 + "IN1|1||0012343001|  OHIP||||||||||||^^^^^|||^^^^^^M|||||||||||||||||||||||||^^^^^^M\r"
-                + "IN2||||||2216\r" + "ZIN||||||||||||||||||";
+                + "IN2||||||2216\r" 
+                + "ZIN||||||||||||||||||";
 
         Parser parser = PipeParser.getInstanceWithNoValidation();
         parser.parse(messageText);
