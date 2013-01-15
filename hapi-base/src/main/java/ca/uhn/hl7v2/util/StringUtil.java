@@ -97,4 +97,11 @@ public class StringUtil {
 		return true;
 	}
 
+	/**
+	 * Inverse of {@link #isBlank(String)}
+	 */
+	public static boolean isNotBlank(String theString) {
+		return !isBlank(theString);
+	}
+
 }

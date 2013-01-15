@@ -113,6 +113,9 @@ public class Terser {
 
     /** Creates a new instance of Terser */
     public Terser(Message message) {
+    	if (message == null) {
+    		throw new NullPointerException("Message may not be null");
+    	}
         finder = new SegmentFinder(message);
     }
 

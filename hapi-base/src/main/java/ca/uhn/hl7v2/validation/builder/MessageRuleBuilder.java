@@ -32,10 +32,12 @@ import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericSegment;
+import ca.uhn.hl7v2.model.SuperStructure;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.builder.support.ChoiceElementsRespectedRule;
+import ca.uhn.hl7v2.validation.builder.support.OnlyAllowableSegmentsInSuperstructureRule;
 import ca.uhn.hl7v2.validation.builder.support.OnlyKnownSegmentsRule;
 import ca.uhn.hl7v2.validation.builder.support.TerserMessageRule;
 import ca.uhn.hl7v2.validation.builder.support.WrongVersionRule;
@@ -81,6 +83,17 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 */
 	public MessageRuleBuilder onlyKnownSegments() {
 		return test(OnlyKnownSegmentsRule.ONLY_KNOWN_SEGMENTS);
+	}
+
+	/**
+	 * Builds a {@link MessageRule} that disallows the existence of segments which
+	 * are not alowed in a given message type when the message is an instance
+	 * of {@link SuperStructure} (e.g. PID2 within an ADT^A01)
+	 * 
+	 * @return this instance to build more rules
+	 */
+	public MessageRuleBuilder onlyAllowableSegmentsInSuperStructure() {
+		return test(OnlyAllowableSegmentsInSuperstructureRule.ONLY_ALLOWABLE_SEGMENTS);
 	}
 
 	/**

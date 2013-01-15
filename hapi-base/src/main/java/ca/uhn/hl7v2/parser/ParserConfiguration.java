@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
@@ -11,16 +12,29 @@ import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
+/**
+ * Contains
+ * 
+ * @see HapiContext#getParserConfiguration()
+ * 
+ */
 public class ParserConfiguration {
 
+	/**
+	 * @link {@link UnexpectedSegmentBehaviourEnum#ADD_INLINE}
+	 */
+	// NB if you change the default, edit the javadoc for the enum itself
+	public static final UnexpectedSegmentBehaviourEnum DEFAULT_UNEXPECTED_SEGMENT_BEHAVIOUR = UnexpectedSegmentBehaviourEnum.ADD_INLINE;
+
 	private boolean allowUnknownVersions;
+	private boolean escapeSubcomponentDelimiterInPrimitive = false;
 	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 	private String myDefaultObx2Type;
 	private boolean myEncodeEmptyMandatorySegments = true;
 	private Set<String> myForcedEncode = new HashSet<String>();
 	private String myInvalidObx2Type;
+	private UnexpectedSegmentBehaviourEnum myUnexpectedSegmentBehaviour;
 	private boolean validating = true;
-	private boolean escapeSubcomponentDelimiterInPrimitive = false;
 
 	/**
 	 * <p>
@@ -36,30 +50,35 @@ public class ParserConfiguration {
 	 * could be added here, as well as the sample output for an otherwise empty
 	 * ORU^R01 message:
 	 * </p>
-	 * <table>
+	 * <table cellpadding="2" cellspacing="2" border="0">
 	 * <thead>
 	 * <tr>
-	 * <th>Forced Encode Path</th>
-	 * <th>Encode Output</th>
+	 * <th style="background: #FFA0FF;">Forced Encode Path</th>
+	 * <th style="background: #FFA0FF;">Encode Output</th>
 	 * </tr>
 	 * </thead>
 	 * <tr>
 	 * <td>None (for illustration purposes)</td>
-	 * <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4</td>
+	 * <td style=" font-family: monospace;">
+	 * MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4</td>
 	 * </tr>
 	 * <tr>
-	 * <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC</td>
-	 * <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
+	 * <td style="background: #E0E0E0;">PATIENT_RESULT/ORDER_OBSERVATION/ORC</td>
+	 * <td style="background: #E0E0E0; font-family: monospace;">
+	 * MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
 	 * ORC|</td>
 	 * </tr>
 	 * <tr>
 	 * <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC-4</td>
-	 * <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
+	 * <td style=" font-family: monospace;">
+	 * MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
 	 * ORC||||</td>
 	 * </tr>
 	 * <tr>
-	 * <td>PATIENT_RESULT/ORDER_OBSERVATION/ORC-4-2</td>
-	 * <td>MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
+	 * <td style="background: #E0E0E0;">PATIENT_RESULT/ORDER_OBSERVATION/ORC-4-2
+	 * </td>
+	 * <td style="background: #E0E0E0; font-family: monospace;">
+	 * MSH|^~\&amp;|||||||ORU^R01^ORU_R01||T|2.4<br>
 	 * ORC||||^</td>
 	 * </tr>
 	 * </table>
@@ -103,7 +122,7 @@ public class ParserConfiguration {
 		}
 		return false;
 	}
-	
+
 	int determineForcedFieldNumForTerserPath(String theCurrentTerserPath) {
 		int forceUpToFieldNum = 0;
 		for (String nextPath : getForcedEncode()) {
@@ -162,11 +181,24 @@ public class ParserConfiguration {
 	}
 
 	/**
-	 * If set to <code>true</code> (default is <code>false</code>) the parser will allow
-	 * messages to parse, even if they contain a version which is not known to the
-	 * parser. When operating in this mode, if a message arrives with an unknown
-	 * version string, the parser will attempt to parse it using a {@link GenericMessage Generic Message}
-	 * class instead of a specific HAPI structure class.
+	 * Returns the behaviour to use when parsing a message and a nonstandard
+	 * segment is found. Default is
+	 * {@link #DEFAULT_UNEXPECTED_SEGMENT_BEHAVIOUR}
+	 */
+	public UnexpectedSegmentBehaviourEnum getUnexpectedSegmentBehaviour() {
+		if (myUnexpectedSegmentBehaviour == null) {
+			myUnexpectedSegmentBehaviour = DEFAULT_UNEXPECTED_SEGMENT_BEHAVIOUR;
+		}
+		return myUnexpectedSegmentBehaviour;
+	}
+
+	/**
+	 * If set to <code>true</code> (default is <code>false</code>) the parser
+	 * will allow messages to parse, even if they contain a version which is not
+	 * known to the parser. When operating in this mode, if a message arrives
+	 * with an unknown version string, the parser will attempt to parse it using
+	 * a {@link GenericMessage Generic Message} class instead of a specific HAPI
+	 * structure class.
 	 */
 	public boolean isAllowUnknownVersions() {
 		return this.allowUnknownVersions;
@@ -182,11 +214,20 @@ public class ParserConfiguration {
 	}
 
 	/**
-     * @return <code>true</code> if the parser validates using a configured {@link ValidationContext}
-     */
-    public boolean isValidating() {
-        return validating;
-    }
+	 * @return <code>true</code> if subcomponent delimiters in OBX-5 shall be
+	 *         ignored
+	 */
+	public boolean isEscapeSubcomponentDelimiterInPrimitive() {
+		return escapeSubcomponentDelimiterInPrimitive;
+	}
+
+	/**
+	 * @return <code>true</code> if the parser validates using a configured
+	 *         {@link ValidationContext}
+	 */
+	public boolean isValidating() {
+		return validating;
+	}
 
 	/**
 	 * Removes a forced encode entry
@@ -198,16 +239,17 @@ public class ParserConfiguration {
 		if (theForcedEncode == null) {
 			throw new NullPointerException("forced encode may not be null");
 		}
-		
+
 		myForcedEncode.remove(theForcedEncode);
 	}
 
 	/**
-	 * If set to <code>true</code> (default is <code>false</code>) the parser will allow
-	 * messages to parse, even if they contain a version which is not known to the
-	 * parser. When operating in this mode, if a message arrives with an unknown
-	 * version string, the parser will attempt to parse it using a {@link GenericMessage Generic Message}
-	 * class instead of a specific HAPI structure class.
+	 * If set to <code>true</code> (default is <code>false</code>) the parser
+	 * will allow messages to parse, even if they contain a version which is not
+	 * known to the parser. When operating in this mode, if a message arrives
+	 * with an unknown version string, the parser will attempt to parse it using
+	 * a {@link GenericMessage Generic Message} class instead of a specific HAPI
+	 * structure class.
 	 */
 	public void setAllowUnknownVersions(boolean theAllowUnknownVersions) {
 		allowUnknownVersions = theAllowUnknownVersions;
@@ -251,7 +293,7 @@ public class ParserConfiguration {
 		myDefaultObx2Type = theDefaultObx2Type;
 	}
 
-    /**
+	/**
 	 * <p>
 	 * If set to <code>true</code> (default is <code>true</code>), when encoding
 	 * a group using the PipeParser where the first segment is required, but no
@@ -295,9 +337,19 @@ public class ParserConfiguration {
 		myEncodeEmptyMandatorySegments = theEncodeEmptyMandatorySegments;
 	}
 
-    /**
-	 * @param idGenerator the {@link IDGenerator} to be used for generating IDs for new messages,
-	 * preferable initialized using the methods described in IDGeneratorFactory.
+	/**
+	 * Set to <code>true</code> if subcomponent delimiters in OBX-5 shall be
+	 * ignored
+	 */
+	public void setEscapeSubcomponentDelimiterInPrimitive(boolean escapeSubcomponentDelimiterInPrimitive) {
+		this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;
+	}
+
+	/**
+	 * @param idGenerator
+	 *            the {@link IDGenerator} to be used for generating IDs for new
+	 *            messages, preferable initialized using the methods described
+	 *            in IDGeneratorFactory.
 	 * 
 	 * @see IDGenerator
 	 */
@@ -345,31 +397,27 @@ public class ParserConfiguration {
 	}
 
 	/**
-     * Determines whether the parser validates using a configured {@link ValidationContext}
-     * or not. This allows to disable message validation although a validation context
-     * is defined.
-     * 
-     * @param validating <code>true</code> if parser shall validate, <code>false</code> if not
-     */
-    public void setValidating(boolean validating) {
-        this.validating = validating;
-    }
+	 * Sets the behaviour to use when parsing a message and a nonstandard
+	 * segment is found
+	 */
+	public void setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum theUnexpectedSegmentBehaviour) {
+		if (theUnexpectedSegmentBehaviour == null) {
+			throw new NullPointerException("UnexpectedSegmentBehaviour can not be null");
+		}
+		myUnexpectedSegmentBehaviour = theUnexpectedSegmentBehaviour;
+	}
 
-    /**
-     * @return <code>true</code> if subcomponent delimiters in OBX-5 shall be ignored
-     */
-    public boolean isEscapeSubcomponentDelimiterInPrimitive() {
-        return escapeSubcomponentDelimiterInPrimitive;
-    }
-
-    /**
-     * Set to <code>true</code> if subcomponent delimiters in OBX-5 shall be ignored
-     */
-    public void setEscapeSubcomponentDelimiterInPrimitive(boolean escapeSubcomponentDelimiterInPrimitive) {
-        this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;
-    }
-	
-	
-	
+	/**
+	 * Determines whether the parser validates using a configured
+	 * {@link ValidationContext} or not. This allows to disable message
+	 * validation although a validation context is defined.
+	 * 
+	 * @param validating
+	 *            <code>true</code> if parser shall validate, <code>false</code>
+	 *            if not
+	 */
+	public void setValidating(boolean validating) {
+		this.validating = validating;
+	}
 
 }

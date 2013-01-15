@@ -16,6 +16,16 @@ public class ParseInvalidObx2Values {
 	public static void main(String[] args) throws HL7Exception {
 
 		/*
+		 * OBX is a special segment in HL7. The value in OBX-2
+		 * determines the data type of OBX-5. For example, in the
+		 * following segment the DT in OBX 2 tells the parser that
+		 * the value in OBX5 is a date (DT datatype):
+		 * OBX|1|DT|||20111231
+		 * 
+		 * For whatever reason, this is often implemented incorrectly
+		 * by systems that you will need to exchange data with. This
+		 * module demonstrates strategies for doing so.
+		 * 
 		 * The following is a message in which the OBX segment is missing the
 		 * mandatory OBX-2 value
 		 */
@@ -43,6 +53,7 @@ public class ParseInvalidObx2Values {
 			 * at ca.uhn.hl7v2.examples.ParseInvalidObx2Values.main(ParseInvalidObx2Values.java:28)
 			 */
 		}
+		
 		
 		/* 
 		 * Setting the following property allows you to specify a default

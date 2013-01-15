@@ -43,13 +43,22 @@ import java.util.List;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.model.AbstractMessage;
+import ca.uhn.hl7v2.model.*;
 
 /**
  * <p>Represents a $message message structure (see chapter ${chapter}). This structure contains the 
  * following elements: </p>
  * <ul>
 #foreach ( $segment in $segments )
+	#if ( $segment.getAssociatedStructures().size() > 0 )
+	#set ( $associatedStructures = "<ul><li>Used for the following structures: " + $segment.getAssociatedStructures() + "</li></ul>" )
+	#set ( $haveAssociatedStructures = true )
+	#set ( $baseClass = "AbstractSuperMessage" )
+	#else
+	#set ( $associatedStructures = "" )
+	#set ( $haveAssociatedStructures = false )
+	#set ( $baseClass = "AbstractMessage" )
+	#end
     #if (${segment.isRequired()})
       #set ($reqd = "")
     #else
@@ -60,12 +69,12 @@ import ca.uhn.hl7v2.model.AbstractMessage;
     #else
       #set ($rept = "")
     #end
- * <li>${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b></li>
+ * <li>${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b> $associatedStructures</li>
 #end
  * </ul>
  */
 @SuppressWarnings("unused")
-public class $message extends AbstractMessage  {
+public class $message extends $baseClass  {
 
     /**
      * Creates a new $message message with DefaultModelClassFactory. 
@@ -96,11 +105,28 @@ public class $message extends AbstractMessage  {
       #set ($rept = "false")
     #end
           this.add(${segment.name}.class, $reqd, $rept);
+	#foreach ( $nextStruct in $segment.getAssociatedStructures() )
+          this.addSuperstructureApplication("$segment.indexName", "$nextStruct"); 
+	#end          
 #end
        } catch(HL7Exception e) {
           log.error("Unexpected error creating $message - this is probably a bug in the source code generator.", e);
        }
     }
+
+#if ( $haveAssociatedStructures == true )
+	public java.util.List<String> getChildNamesForStructure(String theStructure) {
+		java.util.ArrayList<String> retVal = new java.util.ArrayList<String>();
+	#foreach ( $nextEntry in $structureNameToChildNames.entrySet() )
+		if ( "$nextEntry.getKey()".equals(theStructure) ) {
+		#foreach ( $nextName in $nextEntry.getValue() )
+			retVal.add("$nextName"); 
+		#end
+		}
+	#end
+		return retVal;
+	}
+#end
 
     /** 
      * Returns "${specVersion}"
@@ -112,12 +138,22 @@ public class $message extends AbstractMessage  {
 
 #foreach ( $segment in $segments )
 
+#if ( $segment.getAssociatedStructures().size() > 0 )
+#set ( $associatedStructures = "     * Used for the following structures: " + $segment.getAssociatedStructures() )
+#else
+#set ( $associatedStructures = "     * " )
+#end
+
     /**
+     * <p>
      * Returns
 #if ($segment.repeating)
      * the first repetition of 
 #end      
      * $segment.indexName (${segment.description}) - creates it if necessary
+     * </p>
+$associatedStructures
+     *
      */
     public $segment.name get${segment.indexName}() { 
        return getTyped("${segment.indexName}", ${segment.name}.class);
@@ -126,8 +162,11 @@ public class $message extends AbstractMessage  {
 
 #if ($segment.repeating)
     /**
+     * <p>
      * Returns a specific repetition of
      * $segment.indexName (${segment.description}) - creates it if necessary
+     * </p>
+$associatedStructures
      *
      * @param rep The repetition index (0-indexed, i.e. the first repetition is at index 0)
      * @throws HL7Exception if the repetition requested is more than one 
@@ -138,7 +177,10 @@ public class $message extends AbstractMessage  {
     }
 
     /** 
+     * <p>
      * Returns the number of existing repetitions of ${segment.indexName} 
+     * </p>
+$associatedStructures
      */ 
     public int get${segment.indexName}Reps() { 
     	return getReps("${segment.indexName}");
@@ -152,13 +194,18 @@ public class $message extends AbstractMessage  {
      * Note that unlike {@link ${HASH}get${segment.indexName}()}, this method will not create any reps
      * if none are already present, so an empty list may be returned.
      * </p>
+$associatedStructures
      */ 
     public List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
     	return getAllAsList("${segment.indexName}", ${segment.name}.class);
     } 
 
     /**
+     * <p>
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
+     * </p>
+$associatedStructures
+     *
      * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public void insert${segment.indexName}(${segment.name} structure, int rep) throws HL7Exception { 
@@ -167,7 +214,11 @@ public class $message extends AbstractMessage  {
 
 
     /**
+     * <p>
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
+     * </p>
+$associatedStructures
+     *
      * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
      */
     public ${segment.name} insert${segment.indexName}(int rep) throws HL7Exception { 
@@ -176,7 +227,11 @@ public class $message extends AbstractMessage  {
 
 
     /**
+     * <p>
      * Removes a specific repetition of ${segment.indexName} (${segment.description})
+     * </p>
+$associatedStructures
+     *
      * @see AbstractGroup${HASH}removeRepetition(String, int) 
      */
     public ${segment.name} remove${segment.indexName}(int rep) throws HL7Exception { 

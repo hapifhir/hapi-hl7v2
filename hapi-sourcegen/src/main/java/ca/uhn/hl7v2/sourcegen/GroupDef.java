@@ -31,6 +31,7 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Contains the information needed to create source code for a Group (a 
@@ -48,6 +49,7 @@ public class GroupDef implements StructureDef {
     private boolean repeating;
     private HashMap<String, String> existingNames;
     private String myIndexName;
+	private List<String> associatedStructures;
     
     
     /** Creates new GroupDef */
@@ -233,5 +235,23 @@ public class GroupDef implements StructureDef {
 	public boolean isChoice() {
 		return false;
 	}    
+	
+    /**
+	 * @return the associatedStructures
+	 */
+	public List<String> getAssociatedStructures() {
+		if (associatedStructures == null) {
+			associatedStructures = new ArrayList<String>();
+		}
+		return associatedStructures;
+	}
+
+	/**
+	 * @param theAssociatedStructures the associatedStructures to set
+	 */
+	public void addAssociatedStructure(String theAssociatedStructure) {
+		getAssociatedStructures().add(theAssociatedStructure);
+	}
+
     
 }

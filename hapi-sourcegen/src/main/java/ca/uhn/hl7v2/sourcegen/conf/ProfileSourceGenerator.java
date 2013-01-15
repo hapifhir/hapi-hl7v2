@@ -130,7 +130,7 @@ public class ProfileSourceGenerator {
             FileUtils.forceMkdir(new File(parent));
 			String fileName = parent + staticDef.getMsgStructID() + "." + myFileExt;
             ourLog.debug("Writing Message file: " + fileName);
-            MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, group, myBasePackage, haveGroups, myTemplatePackage);
+            MessageGenerator.writeMessage(fileName, group.getStructures(), myMessageName, chapter, version, myBasePackage, haveGroups, myTemplatePackage, null);
         }
 
         for (GroupDef next : myGroupDefs) {

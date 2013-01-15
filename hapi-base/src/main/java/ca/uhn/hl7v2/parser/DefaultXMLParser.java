@@ -40,10 +40,12 @@ import org.w3c.dom.NodeList;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.AbstractSuperMessage;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.SuperStructure;
 import ca.uhn.hl7v2.util.XMLUtils;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
@@ -374,6 +376,8 @@ public class DefaultXMLParser extends XMLParser {
 	public void parse(Message theMessage, String theString) throws HL7Exception {
 		Document doc = parseStringIntoDocument(theString);
         parse(theMessage, doc.getDocumentElement());
+
+        applySuperStructureName(theMessage);
 	}
 
     /**

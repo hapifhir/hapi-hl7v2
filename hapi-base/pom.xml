@@ -124,6 +124,12 @@
 							<tasks>
 								<echo message="Copying resources" />
 								<copy todir="../target/site/base/apidocs">
+									<!--
+									NB On Sourceforge /apidocs is a symlink to
+									/base/apidocs since we have accidentally used
+									each so people may have direct links to 
+									either.
+									-->
 									<fileset dir="target/site/apidocs">
 										<include name="**/*" />
 									</fileset>

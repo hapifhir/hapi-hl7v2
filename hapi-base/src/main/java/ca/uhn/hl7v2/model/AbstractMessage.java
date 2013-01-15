@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.model;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -375,11 +376,20 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         
         // Add structure information if version is 2.4 or better
         if (!Version.V24.isGreaterThan(Version.versionOf(getVersion()))) {
-        	String className = getClass().getName();
-        	int lastIndexOf = className.lastIndexOf('.');
-			className = className.substring(lastIndexOf + 1);
-			if (className.matches("[A-Z]{3}_[A-Z0-9]{3}")) {
-		        Terser.set(msh, 9, 0, 3, 1, className);
+        	if (this instanceof SuperStructure) {
+        		Version version = Version.versionOf(getVersion());
+        		Map<String, String> eventMap = new DefaultModelClassFactory().getEventMapForVersion(version);
+        		if (StringUtil.isNotBlank(messageCode) && StringUtil.isNotBlank(messageTriggerEvent)) {
+        			String structure = eventMap.get(messageCode + "_" + messageTriggerEvent);
+			        Terser.set(msh, 9, 0, 3, 1, structure);
+        		}        		
+        	} else {
+	        	String className = getClass().getName();
+	        	int lastIndexOf = className.lastIndexOf('.');
+				className = className.substring(lastIndexOf + 1);
+				if (className.matches("[A-Z]{3}_[A-Z0-9]{3}")) {
+			        Terser.set(msh, 9, 0, 3, 1, className);
+	        	}
         	}
         }
         

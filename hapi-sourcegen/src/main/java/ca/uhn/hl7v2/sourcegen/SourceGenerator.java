@@ -162,7 +162,7 @@ public class SourceGenerator extends Object {
     public static File makeDirectory(String directory) throws IOException {
         StringTokenizer tok = new StringTokenizer(directory, "\\/", false);
         
-        File currDir = null;
+        File currDir = directory.startsWith("/") ? new File("/") : null;
         while (tok.hasMoreTokens()) {
             String thisDirName = tok.nextToken();
             

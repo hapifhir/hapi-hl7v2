@@ -30,22 +30,27 @@ public class HandlingCharacterEncodings {
 		 * in the English alphabet.
 		 */
 		HapiContext ctx = new DefaultHapiContext();
-		
-		// this is already the default
-		ctx.setLowerLayerProtocol(new MinLowerLayerProtocol());
-		
-		HL7Service s = ctx.newServer(123, false);
+				
+      /*
+       * Using MinLowerLayerProtocol, it is possible to set the use of a specific character set by
+       * specifying it to the MLLP. For example, if you wanted to receive Central and Eastern
+       * European characters, you probably need the ISO-8859-2 charset.
+       */
+		MinLowerLayerProtocol mllp = new MinLowerLayerProtocol();
+		mllp.setCharset("ISO-8859-2");
+		ctx.setLowerLayerProtocol(mllp);
 
-		/*
-		 * Using MinLowerLayerProtocol, it is possible to set the use of a specific character set by
-		 * using a system property. For example, if you wanted to receive Central and Eastern
-		 * European characters, you probably need the ISO-8859-2 charset. Setting the following
-		 * system property before using MinLowerLayerProtocol tells the LLP that incoming messages
-		 * should be received using this encoding. Note that you can not change this value after a
-		 * connection is established.
-		 */
-		System.setProperty(MinLLPReader.CHARSET_KEY, "ISO-8859-2");
-		s = ctx.newServer(123, false);
+	   /*
+	    * It is also possible to set the charset globally using a system property. Setting the following
+       * system property before using MinLowerLayerProtocol tells the LLP that incoming messages
+       * should be received using this encoding. Note that you can not change this value after a
+       * connection is established. Also note that this setting does not override individual instances 
+       * where the charset has been explicitly set (such as the lines above)
+       */
+      System.setProperty(MinLLPReader.CHARSET_KEY, "ISO-8859-2");
+
+      // Create an HL7 Server
+		HL7Service s = ctx.newServer(123, false);
 
 		/*
 		 * If you want to transmit using the same encoding all of the time, you may use default
