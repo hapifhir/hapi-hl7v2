@@ -163,7 +163,7 @@ public class DefaultHapiContext implements HapiContext {
         return executorService;
     }
 
-    public void setExecutorService(ExecutorService executorService) {
+    public synchronized void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
