@@ -64,7 +64,7 @@ import ca.uhn.hl7v2.util.SocketFactory;
  */
 public class ConnectionHub extends HapiContextSupport {
 
-	private static ConnectionHub instance = null;
+	private static volatile ConnectionHub instance = null;
 	private static final Logger log = LoggerFactory.getLogger(ConnectionHub.class);
 	/**
 	 * Set a system property with this key to a string containing an integer larger than the default
@@ -304,7 +304,8 @@ public class ConnectionHub extends HapiContextSupport {
 	/**
 	 * Returns the singleton instance of ConnectionHub.
 	 * 
-	 * @param context
+	 * @deprecated Use {@link HapiContext#getConnectionHub()} to get an instance of ConnectionHub.
+	 *             See <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">this example page</a> for an example of how to use ConnectionHub.
 	 */
 	public static ConnectionHub getInstance(HapiContext context) {
 		if (instance == null || context.getExecutorService().isShutdown()) {
