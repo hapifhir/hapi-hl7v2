@@ -35,6 +35,39 @@
 			<plugin>
 				<groupId>ca.uhn.hapi</groupId>
 				<artifactId>hapi-sourcegen</artifactId>
+				<version>${hapi.version}</version>
+				<executions>
+					<execution>
+						<id>superstructure_adt</id>
+						<goals>
+							<goal>superstructuregen</goal>
+						</goals>
+						<configuration>
+							<targetDirectory>${basedir}/target/generated-sources/superstructuregen</targetDirectory>
+							<targetStructureName>ADT_AXX</targetStructureName>
+							<version>${gen.version}</version>
+							<structures>
+								<structure>ADT_A[0-9]{2}</structure>
+							</structures>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-base</artifactId>
+						<version>${hapi.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>ca.uhn.hapi</groupId>
+						<artifactId>hapi-structures-${gen.version.short}</artifactId>
+						<version>${hapi.version.structures}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>ca.uhn.hapi</groupId>
+				<artifactId>hapi-sourcegen</artifactId>
 				<executions>
 					<execution>
 						<id>${gen.version}</id>
@@ -93,9 +126,8 @@
 				<inherited>true</inherited>
 				<configuration>
 					<minmemory>128m</minmemory>
-					<maxmemory>1g</maxmemory>
+					<maxmemory>${plugin.javadoc.maxmemory}</maxmemory>
 					<linksource>true</linksource>
-					<detectLinks>true</detectLinks>
 					<verbose>true</verbose>
 					<links>
 					   <link>http://hl7api.sourceforge.net/base/apidocs/</link>

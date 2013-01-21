@@ -112,6 +112,12 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>${maven.plugin.plugin.version}</version>
+				<configuration>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -126,14 +132,14 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>2.5</version>
+				<version>${maven.plugin.plugin.version}</version>
 				<configuration>
 				</configuration>
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.1.2</version>
+				<version>${maven.project.info.plugin.version}</version>
                 <reportSets>
                     <reportSet>
                         <reports>

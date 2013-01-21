@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,9 +41,15 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.AbstractType;
+import ca.uhn.hl7v2.model.GenericComposite;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -53,6 +58,7 @@ import ca.uhn.hl7v2.sourcegen.GroupGenerator;
 import ca.uhn.hl7v2.sourcegen.MessageGenerator;
 import ca.uhn.hl7v2.sourcegen.SegmentDef;
 import ca.uhn.hl7v2.sourcegen.StructureDef;
+import ca.uhn.hl7v2.sourcegen.util.ResourceLoader;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 
 /**
@@ -72,7 +78,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	/**
 	 * The maven project.
 	 * 
-	 * @parameter expression="${project}"
+	 * @parameter property="project"
 	 * @required
 	 * @readonly
 	 */
@@ -141,18 +147,29 @@ public class SuperStructureMojo extends AbstractMojo {
 				throw new MojoExecutionException("Unknown version: " + version);
 			}
 
-			Map<String, String> eventMap = mcf.getEventMapForVersion(versionOf);
-			if (eventMap == null) {
-				throw new MojoExecutionException("Failed to load structures for version " + version + ". Do you have the right dependencies configured for this plugin?");
+//			Map<String, String> eventMap = mcf.getEventMapForVersion(versionOf);
+//			if (eventMap == null) {
+//				throw new MojoExecutionException("Failed to load structures for version " + version + ". Do you have the right dependencies configured for this plugin?");
+//			}
+//
+//			Set<String> allStructuresSet = new HashSet<String>();
+//			allStructuresSet.addAll(eventMap.values());
+//			allStructures.addAll(allStructuresSet);
+//			Collections.sort(allStructures);
+
+			ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
+			DefaultResourceLoader resourceLoader = new DefaultResourceLoader(GenericComposite.class.getClassLoader());
+			scanner.setResourceLoader(resourceLoader);
+			scanner.addIncludeFilter(new AssignableTypeFilter(Message.class));
+			Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/" + versionOf.getPackageVersion() + "/message");
+			for (BeanDefinition beanDefinition : components) {
+				String nextName = Class.forName(beanDefinition.getBeanClassName()).getSimpleName();
+				allStructures.add(nextName);
 			}
-
-			Set<String> allStructuresSet = new HashSet<String>();
-			allStructuresSet.addAll(eventMap.values());
-			allStructures.addAll(allStructuresSet);
-			Collections.sort(allStructures);
-
+			
 			List<Message> messagesToMerge = new ArrayList<Message>();
 
+			Collections.sort(allStructures);
 			for (String nextStructure : allStructures) {
 				for (String nextStructureToMerge : structures) {
 					if (nextStructure.matches(nextStructureToMerge)) {
@@ -413,7 +430,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	}
 
 	public static void main(String[] args) throws MojoExecutionException, MojoFailureException {
-
+		
 		SuperStructureMojo m = new SuperStructureMojo();
 		m.structures = new ArrayList<String>();
 		m.structures.add("ADT_A01");

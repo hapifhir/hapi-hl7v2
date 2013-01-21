@@ -82,7 +82,7 @@
 					</dependency>
 					<dependency>
 						<groupId>ca.uhn.hapi</groupId>
-						<artifactId>hapi-structures-v25</artifactId>
+						<artifactId>hapi-structures-${gen.version.short}</artifactId>
 						<version>${hapi.version.structures}</version>
 					</dependency>
 				</dependencies>
@@ -126,9 +126,8 @@
 				<inherited>true</inherited>
 				<configuration>
 					<minmemory>128m</minmemory>
-					<maxmemory>1g</maxmemory>
+					<maxmemory>${plugin.javadoc.maxmemory}</maxmemory>
 					<linksource>true</linksource>
-					<detectLinks>true</detectLinks>
 					<verbose>true</verbose>
 					<links>
 					   <link>http://hl7api.sourceforge.net/base/apidocs/</link>

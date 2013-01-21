@@ -37,8 +37,7 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.1-alpha1/hapi-structures-v231-2.1-alpha1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.1-alpha1/hapi-structures-v231-2.1-alpha1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0-javadoc.jar!/"/>
 		</attributes>
