@@ -59,6 +59,7 @@
 			<item name="Source XRef" href="xref/index.html" />
 			<item name="FAQ" href="hapi-faq.html" />
 			<item name="Conformance Tools" href="conformance.html" />
+			<item name="Maven Structures Plugin" href="confgen-usage.html" />
 		</menu>
 
 		<menu name="Get Help">

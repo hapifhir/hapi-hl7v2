@@ -42,35 +42,9 @@ import ca.uhn.hl7v2.sourcegen.conf.GenerateDataTypesEnum;
 import ca.uhn.hl7v2.sourcegen.conf.ProfileSourceGenerator;
 
 /**
- * <p>
- * Maven Plugin Mojo for generating HAPI message structure classes which are based on
- * an HL7 conformance profile file. For more information on this plugin, see
- * <a href="http://hl7api.sourceforge.net/conformance.html">here</a>.
- * </p>
- * <p> 
- * Usage is as follows:
- * </p>
- * <pre>
- * 			&lt;plugin&gt;
- * 				&lt;groupId&gt;ca.uhn.hapi&lt;/groupId&gt;
- * 				&lt;artifactId&gt;hapi-sourcegen&lt;/artifactId&gt;
- * 				&lt;version&gt;2.0&lt;/version&gt;
- * 				&lt;executions&gt;
- * 					&lt;execution&gt;
- * 						&lt;id&gt;build&lt;/id&gt;
- * 						&lt;goals&gt;
- * 							&lt;goal&gt;confgen&lt;/goal&gt;
- * 						&lt;/goals&gt;
- * 						&lt;configuration&gt;
- * 							&lt;targetDirectory&gt;${basedir}/target/generated-sources/confgen&lt;/targetDirectory&gt;
- * 							&lt;packageName&gt;ca.uhn.hl7v2.test.nodt.conf&lt;/packageName&gt;
- * 							&lt;profile&gt;${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml&lt;/profile&gt;
- * 							&lt;generateDateTypes&gt;NONE&lt;/generateDateTypes&gt;
- * 						&lt;/configuration&gt;
- * 					&lt;/execution&gt;
- * 				&lt;/execution&gt;
- * 			&lt;/plugin&gt;
- * </pre>
+ * Maven Plugin for generating HAPI message structure classes which are based on
+ * an HL7 conformance profile file. For more information on using this plugin, see
+ * the <a href="confgen-usage.html">Confgen Usage</a> page.
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
  * @goal confgen
@@ -84,7 +58,7 @@ public class ConfGenMojo extends AbstractMojo {
 	/**
 	 * The maven project.
 	 * 
-	 * @parameter expression="${project}"
+	 * @parameter property="project"
 	 * @required
 	 * @readonly
 	 */
@@ -107,7 +81,7 @@ public class ConfGenMojo extends AbstractMojo {
 	String profile;
 
 	/**
-	 * The package for the generated source
+	 * The package for the generated source, e.g. "com.acme.hl7structure.adt"
 	 * 
 	 * @parameter
 	 * @required
@@ -115,9 +89,7 @@ public class ConfGenMojo extends AbstractMojo {
 	String packageName;
 
 	/**
-	 * <p>
 	 * Should data types be generated. Valid options are:
-	 * </p>
 	 * <ul>
 	 * <li><b>NONE</b>: Do not generate custom data types, use HAPI's normal
 	 * data type classes for the HL7 version that the profile corresponds to
@@ -149,17 +121,13 @@ public class ConfGenMojo extends AbstractMojo {
 
 	/**
 	 * Should structures be treated as resources
-	 * 
-	 * @parameter default="false"
 	 */
-	boolean structuresAsResources;
+	private boolean structuresAsResources;
 
 	/**
-	 * Should structures be treated as resources
-	 * 
-	 * @parameter default="java"
+	 * File extension for the generated source files.
 	 */
-	String fileExt = "java";
+	private String fileExt = "java";
 
 	/**
 	 * {@inheritDoc}

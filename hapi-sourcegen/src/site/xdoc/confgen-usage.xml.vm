@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE confgen-usage [
+  <!ENTITY rarr "&#8594;" >
+]>
+
+<!-- 
+*************
+Don't format this document using eclipse XML formatter!
+It will mess up the indenting in a few spots
+*************
+-->
+
+
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>Confgen Usage</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="Confgen Plugin - Usage">
+			
+			<macro name="toc">
+			</macro>
+
+			<p>
+				The confgen plugin is used to create a set of HAPI structure classes
+				based on an HL7 conformance profile. These structure classes replace the
+				built-in message structures that come with HAPI.
+			</p>
+			<p> 
+				For instance, suppose you are processing an HL7 v2.6 ADT^A01 message. Normally 
+				you would take advantage of the HAPI built in type:
+				<code>ca.uhn.hl7v2.model.v25.message.ADT_A01</code>
+			</p>
+			<p>
+				If you have special requirements however, such as wanting to add
+				custom Z-segments to your message, or remove parts of the structure
+				that you aren't using, you can use this plugin to create your
+				own structures. 
+			</p>
+			
+			<subsection name="Generating a Conformance Profile">
+			
+				<p>
+					Generating a conformance profile requires a free tool
+					called Message Workbench. Message Workbench is free, and can be downloaded
+					from the <a href="http://www.hl7.org/participate/toolsandresources.cfm">HL7 tools page</a>
+					(look for "<b>Messaging Workbench</b>" under "<b>V2 Tools</b>"). Note
+					that this tool is Windows only.  
+				</p>
+				
+				<p>
+					When you first start the tool, you will see an empty window:
+					<br/>
+					<a href="images/ss_mwb_init.png" target="_blank"><!-- 
+						--><img src="images/ss_mwb_init.png" width="114" height="100" alt="starting window" border="0"/><!--
+					--></a>
+				</p>
+				
+				<p>
+					Hit "<b>File &rarr; New</b>" to create a new blank structure. 
+					Hit "<b>File &rarr; Change Structure List</b>" and choose the HL7 version you
+					are using. Then hit "<b>File &rarr; Load Message Structure...</b>" and then choose the base message type you
+					want to base your message off of:
+					<br/>
+					<a href="images/ss_mwb_loadstructure.png" target="_blank"><!-- 
+						--><img src="images/ss_mwb_loadstructure.png" width="50" height="100" alt="starting window" border="0"/><!--
+					--></a>
+				</p>
+
+				<p>
+					You now have a standard HL7 structure you may 
+					customize. First, give your specification a name (under Specification), an
+					Organization and an HL7 version. You need to fill these out (even if just with
+					placeholders) or you will get errors later:
+					<br/>
+					<a href="images/ss_mwb_base.png" target="_blank"><!-- 
+						--><img src="images/ss_mwb_base.png" width="114" height="100" alt="starting window" border="0"/><!--
+					--></a>
+				</p>
+
+				<p>
+					You may navigate the structure using the "<b>message tree</b>" on the lower left
+					of the screen. Next, let's add a custom segment (Z-segment). For this example, we
+					will be adding a segment called ZPV right after the PID segment. First, right
+					click on the "<b>PID</b>" segment in the message tree and hit "<b>Add Seg</b>". Then
+					give your segment a name and description. You might also want to check off "repeatable"
+					if you want your segment to repeat. Click "<b>add</b>" when you are done. Then click "<b>close</b>":
+					<br/>
+					<a href="images/ss_mwb_newseg.png" target="_blank"><!-- 
+						--><img src="images/ss_mwb_newseg.png" width="114" height="100" alt="starting window" border="0"/><!--
+					--></a>
+				</p>
+
+				<p>
+					If you expand the new "<b>ZPV</b>" element in the message tree you can see that
+					MWB has automatically added one field to the segment: "<b>Set ID</b>". If you right click
+					on the Set ID field, you can hit "<b>Add Field</b>" add field to add a new field to the segment.
+					You might also want to delete the Set ID if you don't need it. Enter a name in the text box and
+					select a datatype for the field in the "<b>Select Field Data type</b>". You might also
+					want to check off "<b>repeatable</b>". When you are done, hit "<b>add</b>" and then "<b>done</b>".
+					<br/>
+					<a href="images/ss_mwb_addfield.png" target="_blank"><!-- 
+						--><img src="images/ss_mwb_addfield.png" width="114" height="100" alt="starting window" border="0"/><!--
+					--></a>
+				</p>
+
+				<p>
+					When you have customized the structure to your desired specifications,
+					you will want to save it. (In fact, <b>you should really be saving quite often</b> as
+					the MWB tool can be a bit flaky.) It is important to note that there are two
+					file formats generated by MWB. The first is a native format called "<b>.mwb</b>" which
+					is generated when you hit "<b>File &rarr; Save</b>". If you plan on updating your
+					profile in the future, you should always save a copy in this format. 
+				</p>
+				
+				<p>
+					MWB can also generate an XML based conformance profile, which is the format
+					required by HAPI. To generate one, hit "File &rarr; Export HL7 Conformance Profile". If
+					this option is <b>greyed out</b> you just need to save your profile as an MWB
+					file, close it, and reopen it (this is a quirk of MWB version 2.8).
+				</p>
+				
+			</subsection>
+			
+			<subsection name="Using the Plugin">
+			
+				<p>
+					Usage of the plusing is as follows:
+				</p>
+				
+<source>
+&lt;plugin&gt;
+   &lt;groupId&gt;ca.uhn.hapi&lt;/groupId&gt;
+   &lt;artifactId&gt;hapi-sourcegen&lt;/artifactId&gt;
+   &lt;version&gt;${hapi_version_stable}&lt;/version&gt;
+   &lt;executions&gt;
+      &lt;execution&gt;
+         &lt;id&gt;build&lt;/id&gt;
+         &lt;goals&gt;
+            &lt;goal&gt;confgen&lt;/goal&gt;
+         &lt;/goals&gt;
+         &lt;configuration&gt;
+            
+            &lt;!--
+            Generated structure classes will be placed in the
+            following directory. The plugin adds this to your project
+            compilation path. If you are using eclise, you may also want
+            to manually add this path to your eclipse source list.  
+            --&gt;
+            &lt;targetDirectory&gt;${basedir}/target/generated-sources/confgen&lt;/targetDirectory&gt;
+            
+            &lt;!--
+            Generated structure classes will be placed in this package.  
+            --&gt;
+            &lt;packageName&gt;com.acme.hl7.adt&lt;/packageName&gt;
+            
+            &lt;!--
+            This is the path to the profile itself.  
+            --&gt;
+            &lt;profile&gt;${basedir}/src/main/hl7profiles/ADT_A01_FUN.xml&lt;/profile&gt;
+            
+            &lt;!--
+            This parameter configures whether or not to generate datatypes. In most
+            cases you will want to use NONE, which means that instead of generating
+            custom datatype classes the built in HAPI ones will be used. This can
+            save a lot of space if you aren't customizing the individual datatypes.
+            See the "Confgen Goal" page for more information.  
+            --&gt;
+            &lt;generateDateTypes&gt;NONE&lt;/generateDateTypes&gt;
+            
+         &lt;/configuration&gt;
+      &lt;/execution&gt;
+   &lt;/executions&gt;
+&lt;/plugin&gt;
+</source>
+				
+			</subsection>
+			
+			
+		</section>
+
+		<section name="Using the Generated Sources">
+			
+			<p>
+				Once you have completed the source generation, you have
+				a set of classes you can use in your application.
+			</p>
+			
+			<p>
+				The following examples assume you have created a custom
+				structure called "ZDT_A01" and generated classes using
+				the confgen plugin.
+			</p>
+			
+			<subsection name="Sending Custom Structures">
+			
+				<p>
+					To send messages out using your custom structures:
+				</p>
+				
+				<source>// Create a new instance of the message and initialize it
+ZDT_A01 outMsg = new ZDT_A01();
+outMsg.initQuickstart("ZDT", "A01", "T");
+
+// .. populate other segments ..
+// e.g. outMsg.getPID().getPid3_PatientIdentifierList(0).......
+
+// Create a hapi context and send the message
+DefaultHapiContext ctx = new DefaultHapiContext();
+Connection conn = ctx.newClient("someserver.com", 8888, false);
+
+// Send the message
+Message response = conn.getInitiator().sendAndReceive(outMsg);</source>
+		
+			</subsection>
+			
+			<subsection name="Receiving Custom Structures">
+			
+				<p>
+					The easiest way to receive messages and have them
+					parsed into a custom structure is to use a
+					CanonicalModelClassFactory
+					and configure it to always use your custom 
+					structure.					
+				</p>
+				
+				<source>DefaultHapiContext ctx = new DefaultHapiContext();
+ModelClassFactory mcf = new CanonicalModelClassFactory(ZDT_A01.class);
+ctx.setModelClassFactory(mcf);
+
+HL7Service server = ctx.newServer(8888, false);
+server.start();</source>
+
+			</subsection>		
+		
+		</section>
+
+	</body>
+</document>

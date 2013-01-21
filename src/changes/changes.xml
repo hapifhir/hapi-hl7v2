@@ -201,6 +201,12 @@
 				in terms of where in the structure the segment gets placed. Thanks to Michael Connor for
 				suggesting this!				            	
             </action>
+            <action type="fix" dev="James Agnew" issue="67" system="newbugs">
+				Prevent eventmap from containing structure mappings that shouldn't exist
+				because the source structure exists. For example, in v2.3.1 there should not
+				be a mapping from ADT_A34 to ADT_A30, because there is a structure for
+				ADT_A34 itself. Thanks to hirion86 for reporting this! 				            	
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
@@ -368,7 +374,7 @@
         		passed in contained a field delimiter (generally "^") this would lead to an IllegalArgumentException
         		in some cases. Thanks to Diederik Muylwyk for reporting this and providing a test case!
         	</action>
-        	<action dev="Eric Poiseau" type="add">
+        	<action dev="Eric Poiseau" type="add" issue="124" system="newbugs">
         		Allow conformance profile structure generator to handle ID and IS type definitions with namespaced 
         		table numbers (e.g. IHE0155). These are now generated as special subclasses of 
         		ID 
@@ -380,7 +386,6 @@
         		ISWithNamespace 
         		respectively. These types have a method, getTableNamespace() which retrieves the non
         		numeric part of the table name.
-        		
         	</action>
         	<action dev="Nicolas Lefebvre" type="add">
         		Add a new method to 
