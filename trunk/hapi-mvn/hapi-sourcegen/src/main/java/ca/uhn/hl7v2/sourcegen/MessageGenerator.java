@@ -38,6 +38,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,6 +53,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Creates source code for HL7 Message objects, using the normative DB. HL7
@@ -62,6 +64,8 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
  */
 public class MessageGenerator extends Object {
 
+	private static final Logger log = LoggerFactory.getLogger(MessageGenerator.class);
+
 	/**
 	 * If the system property by this name is true, groups are generated to use
 	 * a ModelClassFactory for segment class lookup. This makes segment creation
@@ -69,57 +73,13 @@ public class MessageGenerator extends Object {
 	 */
 	public static String MODEL_CLASS_FACTORY_KEY = "ca.uhn.hl7v2.sourcegen.modelclassfactory";
 
-	private static final Logger log = LoggerFactory.getLogger(MessageGenerator.class);
-
 	/** Creates new MessageGenerator */
 	public MessageGenerator() {
 	}
 
-	/**
-	 * Creates and writes source code for all Messages and Groups.
-	 */
-	public static void makeAll(String baseDirectory, String version, boolean failOnError, String theTemplatePackage, String theFileExt) throws Exception {
-		// get list of messages ...
-		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
-		Connection conn = normativeDatabase.getConnection();
-		Statement stmt = conn.createStatement();
-		String sql = getMessageListQuery(version);
-		ResultSet rs = stmt.executeQuery(sql);
-		ArrayList<String> messages = new ArrayList<String>();
-		ArrayList<String> chapters = new ArrayList<String>();
-		while (rs.next()) {
-			String name = rs.getString(1);
-			if ("0".equals(name)) {
-				continue;
-			}
-			messages.add(name);
-			chapters.add(rs.getString(2));
-		}
-		stmt.close();
-		normativeDatabase.returnConnection(conn);
-
-		if (messages.size() == 0) {
-			log.warn("No version {} messages found in database {}", version, System.getProperty("ca.on.uhn.hl7.database.url"));
-		}
-
-		for (int i = 0; i < messages.size(); i++) {
-			String message = (String) messages.get(i);
-
-			String hapiTestGenMessage = System.getProperty("hapi.test.genmessage");
-			if (hapiTestGenMessage != null && !hapiTestGenMessage.contains(message)) {
-				continue;
-			}
-
-			try {
-				make(message, baseDirectory, (String) chapters.get(i), version, theTemplatePackage, theFileExt);
-			} catch (HL7Exception e) {
-				if (failOnError) {
-					throw e;
-				} else {
-					log.error("Failed to generate message" + message + ": ", e);
-				}
-			}
-		}
+	public static File determineTargetDir(String baseDirectory, String version) throws IOException, HL7Exception {
+		File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
+		return targetDir;
 	}
 
 	/**
@@ -147,6 +107,115 @@ public class MessageGenerator extends Object {
 																																																																				// allows
 																																																																				// "ACK"
 																																																																				// itself
+	}
+
+	public static MessageListAndChapterList getMessages(String theVersion) throws SQLException {
+		// get list of messages ...
+		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
+		Connection conn = normativeDatabase.getConnection();
+		Statement stmt = conn.createStatement();
+		String sql = getMessageListQuery(theVersion);
+		ResultSet rs = stmt.executeQuery(sql);
+		ArrayList<String> messages = new ArrayList<String>();
+		ArrayList<String> chapters = new ArrayList<String>();
+		while (rs.next()) {
+			String name = rs.getString(1);
+			if ("0".equals(name)) {
+				continue;
+			}
+			messages.add(name);
+			chapters.add(rs.getString(2));
+		}
+		stmt.close();
+		normativeDatabase.returnConnection(conn);
+
+		MessageListAndChapterList retVal = new MessageListAndChapterList();
+		retVal.chapters = chapters;
+		retVal.messages = messages;
+
+		return retVal;
+	}
+
+	/**
+	 * Returns an SQL query with which to get a list of the segments that are
+	 * part of the given message from the normative database. The query varies
+	 * with different versions. The fields returned are as follows:
+	 * segment_code, repetitional, optional, description
+	 */
+	private static String getSegmentListQuery(String message, String version) {
+		String sql = null;
+
+		sql = "SELECT HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname " + "FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN HL7EventMessageTypeSegments ON (HL7Segments.version_id = HL7EventMessageTypeSegments.version_id) "
+				+ "AND (HL7Segments.seg_code = HL7EventMessageTypeSegments.seg_code)) " + "ON HL7Segments.version_id = HL7Versions.version_id " + "WHERE (((HL7Versions.hl7_version)= '" + version + "') "
+				// ACCESS + "AND (([message_type]+'_'+[event_code])='"
+				+ "AND ((message_type + '_' + event_code)='" + message + "')) order by seq_no UNION "
+				// + "')) UNION "
+				+ "select HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname  " + "from HL7Versions RIGHT JOIN (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
+				+ "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) " + "ON HL7Segments.version_id = HL7Versions.version_id " + "where HL7Versions.hl7_version = '" + version + "' and message_structure = '" + message + "' order by seq_no";
+		return sql;
+	}
+
+	/**
+	 * Queries the normative database for a list of segments comprising the
+	 * message structure. The returned list may also contain strings that denote
+	 * repetition and optionality. Choice indicators (i.e. begin choice, next
+	 * choice, end choice) for alternative segments are ignored, so that the
+	 * class structure allows all choices. The matter of enforcing that only a
+	 * single choice is populated can't be handled by the class structure, and
+	 * should be handled elsewhere.
+	 * 
+	 * @param theJdbcUrl
+	 */
+	private static SegmentDef[] getSegments(String message, String version) throws SQLException {
+		/*
+		 * String sql =
+		 * "select HL7Segments.seg_code, repetitional, optional, description " +
+		 * "from (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
+		 * + "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) "
+		 * + "where HL7Segments.version_id = 6 and message_structure = '" +
+		 * message + "' order by seq_no";
+		 */
+		String sql = getSegmentListQuery(message, version);
+		// System.out.println(sql.toString());
+		SegmentDef[] segments = new SegmentDef[200]; // presumably there won't
+														// be more than 200
+		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
+		Connection conn = normativeDatabase.getConnection();
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		int c = -1;
+		boolean inChoice = false;
+		while (rs.next()) {
+			String name = SegmentGenerator.altSegName(rs.getString(1));
+			boolean repeating = rs.getBoolean(2);
+			boolean optional = rs.getBoolean(3);
+			String desc = rs.getString(4);
+
+			// group names are defined in DB for 2.3.1 but not used in the
+			// schema
+			String groupName = version.equalsIgnoreCase("2.3.1") ? null : rs.getString(6);
+
+			if (groupName != null) {
+				// Don't allow spaces in the names
+				groupName = groupName.replaceAll(" ", "_");
+				groupName = groupName.replaceAll("/", "_");
+			}
+
+			if (name.equals("<")) {
+				inChoice = true;
+			} else if (name.equals(">")) {
+				inChoice = false;
+			} else if (!name.equals("|")) {
+				c++;
+				segments[c] = new SegmentDef(name, groupName, !optional, repeating, inChoice, desc);
+			}
+		}
+		SegmentDef[] ret = new SegmentDef[c + 1];
+		System.arraycopy(segments, 0, ret, 0, c + 1);
+
+		normativeDatabase.returnConnection(conn);
+
+		return ret;
 	}
 
 	/**
@@ -196,92 +265,36 @@ public class MessageGenerator extends Object {
 		// }
 	}
 
-	public static File determineTargetDir(String baseDirectory, String version) throws IOException, HL7Exception {
-		File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
-		return targetDir;
-	}
-
 	/**
-	 * Queries the normative database for a list of segments comprising the
-	 * message structure. The returned list may also contain strings that denote
-	 * repetition and optionality. Choice indicators (i.e. begin choice, next
-	 * choice, end choice) for alternative segments are ignored, so that the
-	 * class structure allows all choices. The matter of enforcing that only a
-	 * single choice is populated can't be handled by the class structure, and
-	 * should be handled elsewhere.
-	 * 
-	 * @param theJdbcUrl
+	 * Creates and writes source code for all Messages and Groups.
 	 */
-	private static SegmentDef[] getSegments(String message, String version) throws SQLException {
-		/*
-		 * String sql =
-		 * "select HL7Segments.seg_code, repetitional, optional, description " +
-		 * "from (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
-		 * + "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) "
-		 * + "where HL7Segments.version_id = 6 and message_structure = '" +
-		 * message + "' order by seq_no";
-		 */
-		String sql = getSegmentListQuery(message, version);
-		// System.out.println(sql.toString());
-		SegmentDef[] segments = new SegmentDef[200]; // presumably there won't
-														// be more than 200
-		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
-		Connection conn = normativeDatabase.getConnection();
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);
-		int c = -1;
-		boolean inChoice = false;
-		while (rs.next()) {
-			String name = SegmentGenerator.altSegName(rs.getString(1));
-			boolean repeating = rs.getBoolean(2);
-			boolean optional = rs.getBoolean(3);
-			String desc = rs.getString(4);
+	public static void makeAll(String baseDirectory, String version, boolean failOnError, String theTemplatePackage, String theFileExt) throws Exception {
+		MessageListAndChapterList mac = getMessages(version);
+		ArrayList<String> messages = mac.messages;
+		ArrayList<String> chapters = mac.chapters;
+		
+		if (messages.size() == 0) {
+			log.warn("No version {} messages found in database {}", version, System.getProperty("ca.on.uhn.hl7.database.url"));
+		}
 
-			// group names are defined in DB for 2.3.1 but not used in the
-			// schema
-			String groupName = version.equalsIgnoreCase("2.3.1") ? null : rs.getString(6);
+		for (int i = 0; i < messages.size(); i++) {
+			String message = (String) messages.get(i);
 
-			if (groupName != null) {
-				// Don't allow spaces in the names
-				groupName = groupName.replaceAll(" ", "_");
-				groupName = groupName.replaceAll("/", "_");
+			String hapiTestGenMessage = System.getProperty("hapi.test.genmessage");
+			if (hapiTestGenMessage != null && !hapiTestGenMessage.contains(message)) {
+				continue;
 			}
 
-
-			if (name.equals("<")) {
-				inChoice = true;
-			} else if (name.equals(">")) {
-				inChoice = false;
-			} else if (!name.equals("|")) {
-				c++;
-				segments[c] = new SegmentDef(name, groupName, !optional, repeating, inChoice, desc);
+			try {
+				make(message, baseDirectory, (String) chapters.get(i), version, theTemplatePackage, theFileExt);
+			} catch (HL7Exception e) {
+				if (failOnError) {
+					throw e;
+				} else {
+					log.error("Failed to generate message" + message + ": ", e);
+				}
 			}
 		}
-		SegmentDef[] ret = new SegmentDef[c + 1];
-		System.arraycopy(segments, 0, ret, 0, c + 1);
-
-		normativeDatabase.returnConnection(conn);
-
-		return ret;
-	}
-
-	/**
-	 * Returns an SQL query with which to get a list of the segments that are
-	 * part of the given message from the normative database. The query varies
-	 * with different versions. The fields returned are as follows:
-	 * segment_code, repetitional, optional, description
-	 */
-	private static String getSegmentListQuery(String message, String version) {
-		String sql = null;
-
-		sql = "SELECT HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname " + "FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN HL7EventMessageTypeSegments ON (HL7Segments.version_id = HL7EventMessageTypeSegments.version_id) "
-				+ "AND (HL7Segments.seg_code = HL7EventMessageTypeSegments.seg_code)) " + "ON HL7Segments.version_id = HL7Versions.version_id " + "WHERE (((HL7Versions.hl7_version)= '" + version + "') "
-				// ACCESS + "AND (([message_type]+'_'+[event_code])='"
-				+ "AND ((message_type + '_' + event_code)='" + message + "')) order by seq_no UNION "
-				// + "')) UNION "
-				+ "select HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname  " + "from HL7Versions RIGHT JOIN (HL7MsgStructIDSegments inner join HL7Segments on HL7MsgStructIDSegments.seg_code = HL7Segments.seg_code "
-				+ "and HL7MsgStructIDSegments.version_id = HL7Segments.version_id) " + "ON HL7Segments.version_id = HL7Versions.version_id " + "where HL7Versions.hl7_version = '" + version + "' and message_structure = '" + message + "' order by seq_no";
-		return sql;
 	}
 
 	/**
@@ -355,7 +368,8 @@ public class MessageGenerator extends Object {
 	 * @param basePackageName
 	 * @param haveGroups
 	 * @param theTemplatePackage
-	 * @param theStructureNameToChildNames Only required for superstructure generation
+	 * @param theStructureNameToChildNames
+	 *            Only required for superstructure generation
 	 * @throws Exception
 	 */
 	public static void writeMessage(String fileName, StructureDef[] contents, String message, String chapter, String version, String basePackageName, boolean haveGroups, String theTemplatePackage, Map<String, List<String>> theStructureNameToChildNames) throws Exception {
@@ -379,6 +393,12 @@ public class MessageGenerator extends Object {
 		//
 		// Template template = new Template();
 
+		if (theStructureNameToChildNames != null && theStructureNameToChildNames.size() > 0) {
+			theStructureNameToChildNames = new TreeMap<String, List<String>>(theStructureNameToChildNames);
+		} else {
+			theStructureNameToChildNames = new HashMap<String, List<String>>();
+		}
+		
 		Template template = VelocityFactory.getClasspathTemplateInstance(template2);
 		Context ctx = new VelocityContext();
 		ctx.put("message", message);
@@ -387,12 +407,17 @@ public class MessageGenerator extends Object {
 		ctx.put("haveGroups", haveGroups);
 		ctx.put("basePackageName", basePackageName);
 		ctx.put("segments", Arrays.asList(contents));
-		ctx.put("structureNameToChildNames", new TreeMap<String, List<String>>(theStructureNameToChildNames));
+		ctx.put("structureNameToChildNames", theStructureNameToChildNames);
 		ctx.put("HASH", "#");
 		template.merge(ctx, out);
 
 		out.flush();
 		out.close();
+	}
+
+	public static class MessageListAndChapterList {
+		ArrayList<String> chapters;
+		ArrayList<String> messages;
 	}
 
 }
