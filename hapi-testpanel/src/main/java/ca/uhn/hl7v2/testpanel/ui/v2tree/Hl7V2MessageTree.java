@@ -39,7 +39,6 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,10 +122,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7V2MessageTree.class);
 	private static final String TABLE_NAMESPACE_HL7 = "HL7";
 	private static final String TBL = " ";
-	private boolean myShowRep0 = true;
 	private Controller myController;
 	private boolean myCurrentlyEditing;
 	private PropertyChangeListener myHighlitedPathListener;
+	private PropertyChangeListener myMessageEncodingListener;
 	private Hl7V2MessageCollection myMessages;
 	private PropertyChangeListener myParsedMessagesListener;
 	private PipeParser myPipeParser;
@@ -135,21 +134,21 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 	private boolean mySelectionHandlingDisabled;
 	private boolean myShouldOpenDefaultPaths = true;
 
+	private boolean myShowRep0 = true;
+
 	private TreeRowModel myTableModel;
 
 	private TreeNodeRoot myTop;
 
 	private DefaultTreeModel myTreeModel;
 
+	private ShowEnum myUnitTestShowMode;
+
 	private UpdaterThread myUpdaterThread;
 
 	private PropertyChangeListener myValidationContextListener;
 
 	private IWorkingListener myWorkingListener;
-
-	private PropertyChangeListener myMessageEncodingListener;
-
-	private ShowEnum myUnitTestShowMode;
 
 	/** Creates new TreePanel */
 	public Hl7V2MessageTree(Controller theController) {
@@ -225,7 +224,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				myUpdaterThread.scheduleUpdate();
 			}
 		};
-		
+
 		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		myUpdaterThread = new UpdaterThread();
@@ -380,14 +379,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				ourLog.error("Failed to add group to tree", e);
 			}
 		}
-	}
-
-	private ShowEnum getShowMode() {
-		if (myUnitTestShowMode != null) {
-			return myUnitTestShowMode;
-		}
-		ShowEnum showMode = myMessages != null ? myMessages.getEditorShowMode() : ShowEnum.POPULATED;
-		return showMode;
 	}
 
 	void addChildren(List<AbstractMessage<?>> theMessages, TreeNodeRoot theTop, String theTerserPath) throws InterruptedException, InvocationTargetException {
@@ -559,6 +550,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		return theIndex + 1;
 	}
+
 
 	public void collapseAll() {
 		AbstractLayoutCache layout = ((OutlineModel) getModel()).getLayout();
@@ -745,6 +737,14 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		return null;
 	}
 
+	private ShowEnum getShowMode() {
+		if (myUnitTestShowMode != null) {
+			return myUnitTestShowMode;
+		}
+		ShowEnum showMode = myMessages != null ? myMessages.getEditorShowMode() : ShowEnum.POPULATED;
+		return showMode;
+	}
+
 	private void handleKeyPress(KeyEvent theE) {
 		int row = getSelectedRow();
 		if (row == -1) {
@@ -822,11 +822,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			myCurrentlyEditing = true;
 		}
 		super.setEditingRow(theARow);
-	}
-	
-	public void setUnitTestShowMode(ShowEnum theUnitTestShowMode) {
-		myUnitTestShowMode = theUnitTestShowMode;
-		myUpdaterThread.scheduleUpdateNow();
 	}
 
 	public void setEditorShowModeAndUpdateAccordingly(ShowEnum theValue) {
@@ -907,6 +902,11 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 	void setRuntimeProfileValidator(DefaultValidator theRuntimeProfileValidator) {
 		myRuntimeProfileValidator = theRuntimeProfileValidator;
+	}
+
+	public void setUnitTestShowMode(ShowEnum theUnitTestShowMode) {
+		myUnitTestShowMode = theUnitTestShowMode;
+		myUpdaterThread.scheduleUpdateNow();
 	}
 
 	/**
@@ -1096,6 +1096,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			myRepeating = theRepeating;
 			myRequired = theRequired;
 			myTerserPath = theTerserPath;
+		}
+
+		public void addValidationExceptions(List<HL7Exception> theProblems) {
+			addValidationExceptions(theProblems.toArray(new HL7Exception[theProblems.size()]));
 		}
 
 		public void addValidationExceptions(HL7Exception... theExceptions) {
@@ -1400,7 +1404,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 
 			String encoded = PipeParser.encode(getComposite(), enc);
-			HL7Exception[] problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, "");
+			List<HL7Exception> problems = myRuntimeProfileValidator.testType(getComposite(), getComposite().getConfDefinition(), encoded, "");
 			addValidationExceptions(problems);
 		}
 
@@ -1509,7 +1513,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		@Override
 		public void doValidate() {
 			try {
-				HL7Exception[] problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), "");
+				List<HL7Exception> problems = myRuntimeProfileValidator.testGroup(getGroup(), getGroup().getConfDefinition(), "");
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
@@ -1735,7 +1739,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				encoded = primitive.getValue();
 			}
 
-			HL7Exception[] problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, "");
+			List<HL7Exception> problems = myRuntimeProfileValidator.testType(getPrimitive(), getPrimitive().getConfDefinition(), encoded, "");
 			addValidationExceptions(problems);
 
 			if (myMessages.getRuntimeProfile() != null) {
@@ -1904,7 +1908,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		@Override
 		public void doValidate() {
 			try {
-				HL7Exception[] problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), "");
+				List<HL7Exception> problems = myRuntimeProfileValidator.testSegment(getSegment(), getSegment().getConfDefinition(), "");
 				addValidationExceptions(problems);
 			} catch (ProfileException e) {
 				addValidationExceptions(new HL7Exception(e));
@@ -2018,7 +2022,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 		public SegmentAndComponentPath getSegmentAndComponentPath() {
-			return new SegmentAndComponentPath(mySegment, myComponentPath, getRepNum()+1);
+			return new SegmentAndComponentPath(mySegment, myComponentPath, getRepNum() + 1);
 		}
 
 		public Type getType() {
