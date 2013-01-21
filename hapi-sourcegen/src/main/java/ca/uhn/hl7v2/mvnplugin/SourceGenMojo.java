@@ -61,7 +61,7 @@ public class SourceGenMojo extends AbstractMojo
     /**
      * The maven project.
      * 
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
