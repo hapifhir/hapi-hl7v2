@@ -104,25 +104,11 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return name;
 	}
 
-	public Segment getNonStandardSegmentIfNameExists(String theName, int theIndex) throws HL7Exception {
-		List<Segment> segments = myNamesToNonStandardSegments.get(theName);
-		if (segments == null) {
-			return null;
-		}
-		if (theIndex > segments.size()) {
-			throw new HL7Exception("Invalid index " + theIndex + ", must be <= " + segments.size());
-		}
-		if (segments.size() == theIndex) {
-			segments.add(new GenericSegment(myGroup, theName));
-		}
-		return segments.get(theIndex);
-	}
-	
-	
 	public Structure get(String theName) throws HL7Exception {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	
 	public Structure get(String theName, int theRep) throws HL7Exception {
 		int index = getIndex(theName);
 		Structure retVal;
@@ -138,6 +124,14 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 
 	public Structure[] getAll(String theName) throws HL7Exception {
 		throw new UnsupportedOperationException();
+	}
+
+	public Structure[] getAllNonStandardSegmentsIfNameExists(String theName) {
+		List<Segment> segments = myNamesToNonStandardSegments.get(theName);
+		if (segments == null) {
+			return null;
+		}
+		return segments.toArray(new Structure[segments.size()]);
 	}
 
 	public int getChildCount() {
@@ -180,6 +174,20 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return myNamesToNonStandardSegments;
 	}
 
+	public Segment getNonStandardSegmentIfNameExists(String theName, int theIndex) throws HL7Exception {
+		List<Segment> segments = myNamesToNonStandardSegments.get(theName);
+		if (segments == null) {
+			return null;
+		}
+		if (theIndex > segments.size()) {
+			throw new HL7Exception("Invalid index " + theIndex + ", must be <= " + segments.size());
+		}
+		if (segments.size() == theIndex) {
+			segments.add(new GenericSegment(myGroup, theName));
+		}
+		return segments.get(theIndex);
+	}
+
 	public Group getParent() {
 		throw new UnsupportedOperationException();
 	}
@@ -196,6 +204,16 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 
 		return retVal;
 	}
+
+	@Override
+	public boolean isChoiceElement(String theArg0) throws HL7Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+    public boolean isEmpty() throws HL7Exception {
+	    return myGroup.isEmpty();
+    }
 
 	public boolean isGroup(String theName) throws HL7Exception {
 		throw new UnsupportedOperationException();
@@ -214,18 +232,5 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 	private boolean nameExists(String theName) {
 		return myNameToIndex.containsKey(theName);
 	}
-
-	public Structure[] getAllNonStandardSegmentsIfNameExists(String theName) {
-		List<Segment> segments = myNamesToNonStandardSegments.get(theName);
-		if (segments == null) {
-			return null;
-		}
-		return segments.toArray(new Structure[segments.size()]);
-	}
-
-	@Override
-    public boolean isEmpty() throws HL7Exception {
-	    return myGroup.isEmpty();
-    }
 
 }
