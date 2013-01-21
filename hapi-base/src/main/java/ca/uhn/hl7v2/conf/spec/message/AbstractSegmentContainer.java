@@ -1,7 +1,9 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 
@@ -14,7 +16,7 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
     private String description;
     private String reference;
     private String impNote;    
-    private ProfileStructure[] children;
+    private List<ProfileStructure> children = new ArrayList<ProfileStructure>();
     
     /** Utility field used by bound properties. */
     private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
@@ -24,7 +26,10 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
     
     /** Creates a new instance of AbstractSegmentContainer */
     public AbstractSegmentContainer() {
-        children = new ProfileStructure[0];
+    }
+    
+    public List<ProfileStructure> getChildrenAsList() {
+    	return (children);
     }
     
     /** Adds a PropertyChangeListener to the listener list.
@@ -130,7 +135,7 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
      * @return Value of the property at <CODE>index</CODE>.
      */
     public ProfileStructure getChild(int index) {
-        return this.children[index - 1];
+        return this.children.get(index - 1);
     }
     
     /** Indexed setter for property structure.  Lengthens child list if necessary.  
@@ -141,14 +146,16 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
      */
     public void setChild(int index, ProfileStructure structure) throws ProfileException {
         index--;
-        extendChildList(index);
-        ProfileStructure oldStructure = this.children[index];
-        this.children[index] = structure;
+        while (children.size() <= index) {
+        	children.add(null);
+        }
+        ProfileStructure oldStructure = this.children.get(index);
+        this.children.set(index, structure);
         try {
             vetoableChangeSupport.fireVetoableChange("structure", null, null );
         }
         catch(java.beans.PropertyVetoException vetoException ) {
-            this.children[index] = oldStructure;
+            this.children.set(index, oldStructure);
             throw new ProfileException(null, vetoException);
         }
         propertyChangeSupport.firePropertyChange("structure", null, null );
@@ -156,20 +163,11 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
     
     /** Returns the number of children */
     public int getChildren() {
-        return this.children.length;
+        return this.children.size();
     }
     
-    /** Makes child list long enough to accommodate setter.  */
-    private void extendChildList(int index) {
-        if (index >= this.children.length) {
-            ProfileStructure[] newCopy = new ProfileStructure[index + 1];
-            System.arraycopy(this.children, 0, newCopy, 0, this.children.length);
-            this.children = newCopy;
-        }        
-    }
-
 	public Iterator<ProfileStructure> iterator() {
-		return Arrays.asList(this.children).iterator();
+		return (this.children).iterator();
 	}
     
 }

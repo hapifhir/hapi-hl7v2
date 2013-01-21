@@ -1,5 +1,8 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
@@ -19,7 +22,7 @@ public class Seg implements ProfileStructure {
     private String description;
     private String reference;
     private String predicate;
-    private Field[] fields;
+    private final List<Field> fields = new ArrayList<Field>();
     private String name;
     private String longName;
     private String usage;
@@ -28,7 +31,6 @@ public class Seg implements ProfileStructure {
     
     /** Creates a new instance of Segment */
     public Seg() {
-        this.fields = new Field[0];
     }
     
     /** Adds a PropertyChangeListener to the listener list.
@@ -156,7 +158,7 @@ public class Seg implements ProfileStructure {
      * @return Value of the property at <CODE>index</CODE>.
      */
     public Field getField(int index) {
-        return this.fields[index - 1];
+        return this.fields.get(index - 1);
     }
     
     /** Indexed setter for property field (index starts at 1 following HL7 convention).
@@ -167,14 +169,16 @@ public class Seg implements ProfileStructure {
      */
     public void setField(int index, Field field) throws ProfileException {
         index--;
-        extendChildList(index);
-        Field oldField = this.fields[index];
-        this.fields[index] = field;
+        while (fields.size() <= index) {
+        	fields.add(null);
+        }
+        Field oldField = this.fields.get(index);
+        this.fields.set(index,field);
         try {
             vetoableChangeSupport.fireVetoableChange("fields", null, null );
         }
         catch(java.beans.PropertyVetoException vetoException ) {
-            this.fields[index] = oldField;
+            this.fields.set(index, oldField);
             throw new ProfileException(null, vetoException);
         }
         propertyChangeSupport.firePropertyChange("fields", null, null );
@@ -295,18 +299,20 @@ public class Seg implements ProfileStructure {
         propertyChangeSupport.firePropertyChange("max", new Short(oldMax), new Short(max));
     }
     
-    /** Makes child list long enough to accommodate setter.  */
-    private void extendChildList(int index) {
-        if (index >= this.fields.length) {
-            Field[] newCopy = new Field[index + 1];
-            System.arraycopy(this.fields, 0, newCopy, 0, this.fields.length);
-            this.fields = newCopy;
-        }        
-    }    
 
     /** Returns the number of fields in the segment */
     public int getFields() {
-        return this.fields.length;
+        return this.fields.size();
     }
-    
+
+    /** Returns the number of fields in the segment */
+    public List<Field> getFieldsAsList() {
+        return (this.fields);
+    }
+
+    /** Returns the number of fields in the segment */
+    public List<Field> getChildrenAsList() {
+        return (this.fields);
+    }
+
 }

@@ -343,9 +343,9 @@ public class ProfileParser {
 	}
 
 	/** Parses a component profile */
-	private AbstractComponent parseComponentProfile(Element elem, boolean isSubComponent)
+	private AbstractComponent<?> parseComponentProfile(Element elem, boolean isSubComponent)
 			throws ProfileException {
-		AbstractComponent comp = null;
+		AbstractComponent<?> comp = null;
 		if (isSubComponent) {
 			log.debug("      Parsing subcomp profile: " + elem.getAttribute("Name"));
 			comp = new SubComponent();

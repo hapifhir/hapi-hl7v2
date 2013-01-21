@@ -25,7 +25,15 @@ public class SegGroup extends AbstractSegmentContainer implements ProfileStructu
     public SegGroup() {
     }
     
-    /** Adds a PropertyChangeListener to the listener list.
+    /**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "SegGroup[" + getName() + "]";
+	}
+
+	/** Adds a PropertyChangeListener to the listener list.
      * @param l The listener to add.
      */
     public void addPropertyChangeListener(java.beans.PropertyChangeListener l) {

@@ -1,5 +1,8 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
@@ -10,7 +13,6 @@ public class AbstractComponent<T> {
     
     /** Creates a new instance of AbstractComponent */
     public AbstractComponent() {
-        dataValues = new DataValue[0];
     }
     
     
@@ -24,7 +26,7 @@ public class AbstractComponent<T> {
     private String description;
     private String reference;
     private String predicate;
-    private DataValue[] dataValues;
+    private final List<DataValue> dataValues = new ArrayList<DataValue>();
     private String name;
     private String usage;
     private String datatype;
@@ -157,7 +159,7 @@ public class AbstractComponent<T> {
      * @return Value of the property at <CODE>index</CODE>.
      */
     public DataValue getDataValues(int index) {
-        return this.dataValues[index];
+        return this.dataValues.get(index);
     }
     
     /** Indexed setter for property dataValues.
@@ -167,27 +169,21 @@ public class AbstractComponent<T> {
      * @throws ProfileException
      */
     public void setDataValues(int index, DataValue dataValue) throws ProfileException {
-        extendDataValuesList(index);
-        DataValue oldDataValues = this.dataValues[index];
-        this.dataValues[index] = dataValue;
+        while (dataValues.size() <= index) {
+        	dataValues.add(null);
+        }
+        DataValue oldDataValues = this.dataValues.get(index);
+        this.dataValues.set(index, dataValue);
         try {
             vetoableChangeSupport.fireVetoableChange("dataValues", null, null );
         }
         catch(java.beans.PropertyVetoException vetoException ) {
-            this.dataValues[index] = oldDataValues;
+            this.dataValues.set(index, oldDataValues);
             throw new ProfileException(null, vetoException);
         }
         propertyChangeSupport.firePropertyChange("dataValues", null, null );
     }
     
-    /** Makes data value list long enough to accommodate setter.  */
-    private void extendDataValuesList(int index) {
-        if (index >= this.dataValues.length) {
-            DataValue[] newCopy = new DataValue[index + 1];
-            System.arraycopy(this.dataValues, 0, newCopy, 0, this.dataValues.length);
-            this.dataValues = newCopy;
-        }        
-    }
     
     
     

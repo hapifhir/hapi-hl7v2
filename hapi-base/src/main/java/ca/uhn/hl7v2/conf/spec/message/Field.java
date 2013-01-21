@@ -1,5 +1,9 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
@@ -18,11 +22,10 @@ public class Field extends AbstractComponent {
     private short max;
     private short itemNo;
 
-    private Component[] components;
+    private final List<Component> components = new ArrayList<Component>();
     
     /** Creates a new instance of Field */
     public Field() {
-        this.components = new Component[0];
     }
     
     /** Adds a PropertyChangeListener to the listener list.
@@ -127,7 +130,7 @@ public class Field extends AbstractComponent {
      * @return Value of the property at <CODE>index</CODE>.
      */
     public Component getComponent(int index) {
-        return this.components[index - 1];
+        return this.components.get(index - 1);
     }
     
     /** Indexed setter for property components (index starts at 1 following HL7 convention).
@@ -138,31 +141,30 @@ public class Field extends AbstractComponent {
      */
     public void setComponent(int index, Component component) throws ProfileException {
         index--;
-        extendChildList(index);
-        Component oldComponent = this.components[index];
-        this.components[index] = component;
+        while (components.size() <= index) {
+        	components.add(null);
+        }
+        Component oldComponent = this.components.get(index);
+        this.components.set(index, component);
         try {
             vetoableChangeSupport.fireVetoableChange("components", null, null );
         }
         catch(java.beans.PropertyVetoException vetoException ) {
-            this.components[index] = oldComponent;
+            this.components.set(index, oldComponent);
             throw new ProfileException(null, vetoException);
         }
         propertyChangeSupport.firePropertyChange("components", null, null );
     }    
 
-    /** Makes child list long enough to accommodate setter.  */
-    private void extendChildList(int index) {
-        if (index >= this.components.length) {
-            Component[] newCopy = new Component[index + 1];
-            System.arraycopy(this.components, 0, newCopy, 0, this.components.length);
-            this.components = newCopy;
-        }        
-    }        
     
     /** Returns the number of components */
     public int getComponents() {
-        return this.components.length;
+		return this.components.size();
+    }
+
+    /** Returns the number of components */
+    public List<Component> getChildrenAsList() {
+        return (this.components);
     }
     
 }
