@@ -196,7 +196,7 @@
             <action type="fix" dev="James Agnew" issue="64" system="newfeatures">
 				New parser configuration option for customizing
 				<![CDATA[
-            		<a href="file:///Users/james/Documents/workspace/hapi-mvn/target/site/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setUnexpectedSegmentBehaviour(ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum)">Unexpected segment (e.g. Z-segment) behaviour</a>
+            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setUnexpectedSegmentBehaviour(ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum)">Unexpected segment (e.g. Z-segment) behaviour</a>
             	]]> 
 				in terms of where in the structure the segment gets placed. Thanks to Michael Connor for
 				suggesting this!				            	
