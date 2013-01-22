@@ -48,7 +48,7 @@ public class MessageRuleBinding extends RuleBinding<MessageRule> {
      * @param theVersion see {@link RuleBinding#getVersion()}
      * @param theMessageType a value valid for MSH-9-1 or * for all
      * @param theTriggerEvent a value valid for MSH-9-2 or * for all
-     * @param theRule 
+     * @param theRule rule to be used for binding
      */
     public MessageRuleBinding(String theVersion, String theMessageType, String theTriggerEvent, MessageRule theRule) {
         super(theVersion, theMessageType + "^" + theTriggerEvent, theRule);

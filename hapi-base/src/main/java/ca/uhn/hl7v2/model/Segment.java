@@ -37,12 +37,18 @@ public interface Segment extends Structure {
 
     /**
      * Encodes this message using the parser returned by {@link Message#getParser() }
+     *
+     * @return the string-encoded segment
+     * @throws HL7Exception if errors occurred during encoding
      */
     public String encode() throws HL7Exception;
 
     /**
      * Returns the array of Fields at the specified index.  The array will be of length 1 for
      * non-repeating fields, and >1 for repeating fields.  Fields are numbered from 1.
+     *
+     * @param number field number (starting at 1)
+     * @return the array of Fields at the specified field number
      * @throws HL7Exception if field index is out of range.
      */
     public Type[] getField(int number) throws HL7Exception;
@@ -56,6 +62,7 @@ public interface Segment extends Structure {
      * <code>Type t = getField(x, 2);</code>
      * @param number the field number (starting at 1)
      * @param rep the repetition number (starting at 0)
+     * @return field at the specified field number and repetition
      * @throws HL7Exception if field index is out of range, or if the specified
      *    repetition is more than 1 greater than the highest index of existing repetitions.
      *    NOTE: to facilitate local extensions, no exception is thrown if
@@ -65,6 +72,8 @@ public interface Segment extends Structure {
 
     /**
      * Returns the maximum length of the field at the given index, in characters.
+     * @param number field number starting at 1
+     * @return maximum length of the field
      * @throws HL7Exception if field index is out of range.
      */
     public int getLength(int number) throws HL7Exception;
@@ -73,12 +82,15 @@ public interface Segment extends Structure {
      * Returns the maximum number of repetitions of this field that are allowed.
      * The current cardinality can be obtained by checking the length
      * of the array returned by getLength(n).
+     * @param number field number starting at 1
+     * @return maximum number of repetitions of this field
      * @throws HL7Exception if field index is out of range.
      */
     public int getMaxCardinality(int number) throws HL7Exception;
 
     /**
      * Returns the names of the fields in this segment.
+     * @return array of names
      *
      * @since 1.0 - Note that if user defined types are being used, there is a possibility that some entries may be null. All official hapi structures will have all entries populated, but older user defined structures may not have populated all values, since this feature did not exist prior to release 1.0.
      */
@@ -86,6 +98,9 @@ public interface Segment extends Structure {
 
     /**
      * Returns true if the field at the given index is required, false otherwise.
+     *
+     * @param number field number starting at 1
+     * @return true if the field is required
      * @throws HL7Exception if field index is out of range.
      */
     public boolean isRequired(int number) throws HL7Exception;
@@ -94,12 +109,15 @@ public interface Segment extends Structure {
     /**
      * Returns the number of fields defined by this segment (repeating
      * fields are not counted multiple times).
+     * @return number of fields
      */
     public int numFields();
 
 
     /**
      * Parses the string into this segment using the parser returned by {@link Message#getParser() }
+     * @param string encoded segment
+     * @throws HL7Exception if errors occurred during parsing
      */
     public void parse(String string) throws HL7Exception;
 

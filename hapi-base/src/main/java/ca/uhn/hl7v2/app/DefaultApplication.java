@@ -32,7 +32,6 @@ import java.util.Map;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
@@ -149,12 +148,8 @@ public class DefaultApplication implements Application, ReceivingApplication {
 	 * inbound MSH if there is a generic ACK for that version, otherwise a
 	 * version 2.4 ACK is returned. MSA-1 is set to AA by default.
 	 * 
-	 * @param inboundHeader
+	 * @param message message
 	 *            the MSH segment if the inbound message
-	 * @throws IOException
-	 *             if there is a problem reading or writing the message ID file
-	 * @throws DataTypeException
-	 *             if there is a problem setting ACK values
 	 * 
 	 * @deprecated use {@link Message#generateACK()}
 	 */

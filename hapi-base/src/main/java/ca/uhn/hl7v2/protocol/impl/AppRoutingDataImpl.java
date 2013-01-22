@@ -21,12 +21,7 @@ public class AppRoutingDataImpl implements ApplicationRouter.AppRoutingData {
      
     /**
      * Creates a new instance with args used as values that will be returned 
-     * by the corresponding getters.  
-     *  
-     * @param theMessageType
-     * @param theTriggerEvent
-     * @param theProcessingId
-     * @param theVersionId
+     * by the corresponding getters.
      */
     public AppRoutingDataImpl(String theMessageType, String theTriggerEvent, 
                 String theProcessingId, String theVersionId) {
@@ -63,27 +58,33 @@ public class AppRoutingDataImpl implements ApplicationRouter.AppRoutingData {
     public String getVersion() {
         return myVersionId;
     }
-    
+
+    @Override
     public boolean equals(Object o) {
-        boolean result = false;
-        if (o instanceof AppRoutingDataImpl) {
-            AppRoutingDataImpl that = (AppRoutingDataImpl) o;
-            if (this.getMessageType() == that.getMessageType()
-                && this.getTriggerEvent() == that.getTriggerEvent()
-                && this.getProcessingId() == that.getProcessingId()
-                && this.getVersion() == that.getVersion()) {
-                
-                result = true;
-            }
-        }
-        return result;
+        if (this == o) return true;
+        if (!(o instanceof AppRoutingDataImpl)) return false;
+
+        AppRoutingDataImpl that = (AppRoutingDataImpl) o;
+
+        if (myMessageType != null ? !myMessageType.equals(that.myMessageType) : that.myMessageType != null)
+            return false;
+        if (myProcessingId != null ? !myProcessingId.equals(that.myProcessingId) : that.myProcessingId != null)
+            return false;
+        if (myTriggerEvent != null ? !myTriggerEvent.equals(that.myTriggerEvent) : that.myTriggerEvent != null)
+            return false;
+        if (myVersionId != null ? !myVersionId.equals(that.myVersionId) : that.myVersionId != null)
+            return false;
+
+        return true;
     }
-    
+
+    @Override
     public int hashCode() {
-        return getMessageType().hashCode() 
-            + getTriggerEvent().hashCode() 
-            + getProcessingId().hashCode() 
-            + getVersion().hashCode();
+        int result = myMessageType != null ? myMessageType.hashCode() : 0;
+        result = 31 * result + (myTriggerEvent != null ? myTriggerEvent.hashCode() : 0);
+        result = 31 * result + (myProcessingId != null ? myProcessingId.hashCode() : 0);
+        result = 31 * result + (myVersionId != null ? myVersionId.hashCode() : 0);
+        return result;
     }
 
     /**

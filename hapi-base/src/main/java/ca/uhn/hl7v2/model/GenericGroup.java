@@ -13,8 +13,14 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 public class GenericGroup extends AbstractGroup {
     
     private String name;
-    
-    /** Creates a new instance of GenericGroup */
+
+    /**
+     * Creates a generic group
+     *
+     * @param parent parent group
+     * @param name name of the group
+     * @param factory ModelClassFactory to be used
+     */
     public GenericGroup(Group parent, String name, ModelClassFactory factory) {
         super(parent, factory);
         this.name = name;

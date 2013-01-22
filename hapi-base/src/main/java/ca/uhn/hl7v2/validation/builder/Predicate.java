@@ -36,8 +36,16 @@ import ca.uhn.hl7v2.validation.ValidationException;
  */
 public interface Predicate extends Serializable {
 
+    /**
+     * @param data object to be evaluated by this predicate
+     * @return true if predicate matches, false if not
+     * @throws ValidationException
+     */
 	boolean evaluate(Object data) throws ValidationException;
-	
+
+    /**
+     * @return description of the predicate
+     */
 	String getDescription();
 
 }

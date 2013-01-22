@@ -75,7 +75,7 @@ public abstract class IS extends AbstractPrimitive {
      */
     public IS(Message theMessage, Integer theTable) {
         super(theMessage);
-        myTable = theTable.intValue();
+        myTable = theTable;
     }
     
     /**

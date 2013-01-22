@@ -76,7 +76,7 @@ public abstract class Service implements Runnable {
 	 * Sets the time in milliseconds how long {@link #stopAndWait()} should wait
 	 * for the thread to terminate. Defaults to 3000ms.
 	 * 
-	 * @param shutdownTimeout
+	 * @param shutdownTimeout timout in milliseconds
 	 */
 	public void setShutdownTimeout(long shutdownTimeout) {
 		this.shutdownTimeout = shutdownTimeout;
@@ -137,14 +137,11 @@ public abstract class Service implements Runnable {
 	 * yielding or pausing the thread when it's idle. The method must also not
 	 * block indefinitely so that a call to {@link #stop()} is able to
 	 * gracefully terminate the thread.
-	 * 
-	 * @throws Throwable
-	 *             any exception thrown will terminate the thread.
 	 */
 	protected abstract void handle();
 
 	/**
-	 * Advises the thread to leave its main loop. {@link #beforeTermination()} is
+	 * Advises the thread to leave its main loop. {@link #prepareTermination()} is
 	 * called before this method returns. {@link #afterTermination()} is
 	 * called after the thread has left its main loop.
 	 */
@@ -159,12 +156,14 @@ public abstract class Service implements Runnable {
 			try {
 				thread.get(shutdownTimeout, TimeUnit.MILLISECONDS);
 			} catch (ExecutionException ee) {
+                // empty
 			} catch (TimeoutException te) {
 				log.warn(
 						"Thread did not stop after {} milliseconds. Now cancelling.",
 						shutdownTimeout);
 				thread.cancel(true);
 			} catch (InterruptedException e) {
+                // empty
 			}
 	}
 
@@ -172,9 +171,6 @@ public abstract class Service implements Runnable {
 	 * Stops the thread by leaving its main loop. {@link #afterTermination()} is
 	 * called before the thread is terminated. The method waits until the thread
 	 * has stopped.
-	 * 
-	 * @throws Exception
-	 *             if the thread has not finished within shutdownTimeout
 	 */
 	public final void stopAndWait() {
 		stop();
@@ -185,7 +181,7 @@ public abstract class Service implements Runnable {
 	 * Clean up any resources initialized in {@link #afterStartup()}.
 	 */
 	protected void afterTermination() {
-	};
+	}
 	
 	/**
 	 * Prepare thread to leave its main loop. By default sets {@link #keepRunning}
@@ -194,7 +190,7 @@ public abstract class Service implements Runnable {
 	protected void prepareTermination() {
 		log.debug("Prepare to stop thread {}", name);
 		keepRunning = false;
-	};	
+	}
 
 	/**
 	 * Runs the thread.

@@ -47,14 +47,20 @@ public interface Group extends Structure {
    * an MSH segment and "MSH" is supplied then this call would return a 1-element array 
    * containing the MSH segment.  Multiple elements are returned when the segment or 
    * group repeats.  The array may be empty if no repetitions have been accessed
-   * yet using the get(...) methods. 
+   * yet using the get(...) methods.
+   *
+   * @param name of the structure
+   * @return array of Structure objects
    * @throws HL7Exception if the named Structure is not part of this Group. 
    */
   public Structure[] getAll(String name) throws HL7Exception;
 
   /**
    * Returns the named structure.  If this Structure is repeating then the first 
-   * repetition is returned.  Creates the Structure if necessary.  
+   * repetition is returned.  Creates the Structure if necessary.
+   *
+   * @param name of the structure
+   * @return first (or only) structure object
    * @throws HL7Exception if the named Structure is not part of this Group. 
    */
   public Structure get(String name) throws HL7Exception;
@@ -62,7 +68,11 @@ public interface Group extends Structure {
   /**
    * Returns a particular repetition of the named Structure. If the given repetition
    * number is one greater than the existing number of repetitions then a new  
-   * Structure is created.  
+   * Structure is created.
+   *
+   * @param name name of the structure
+   * @param rep repetition (zero-based)
+   * @return particular repetition of the named structure
    * @throws HL7Exception if the named Structure is not part of this group,
    *    if the structure is not repeatable and the given rep is > 0,  
    *    or if the given repetition number is more than one greater than the 
@@ -71,12 +81,20 @@ public interface Group extends Structure {
   public Structure get(String name, int rep) throws HL7Exception;
   
   /**
-   * Returns true if the named structure is required. 
+   * Returns true if the named structure is required.
+   *
+   * @param name name of the structure nested in this group
+   * @return true if structure is required
+   * @throws HL7Exception if the named Structure is not part of this group
    */
   public boolean isRequired(String name) throws HL7Exception;
   
   /**
-   * Returns true if the named structure is repeating. 
+   * Returns true if the named structure is repeating.
+   *
+   * @param name name of the structure nested in this group
+   * @return true if structure is repeating
+   * @throws HL7Exception if the named Structure is not part of this group
    */
   public boolean isRepeating(String name) throws HL7Exception;
 
@@ -84,26 +102,38 @@ public interface Group extends Structure {
    * Returns true if the named structure is a "choice element". 
    * Some HL7 structures (e.g. ORM_O01 in v2.5) have groups that have
    * several possible first segments. In these structures, one of these
-   * "choice elements" must be present, but not more than one. 
+   * "choice elements" must be present, but not more than one.
+   *
+   * @param name name of the structure nested in this group
+   * @return true if structure is a choice element
+   * @throws HL7Exception if the named Structure is not part of this group
+   *
    */
   public boolean isChoiceElement(String name) throws HL7Exception;
 
   /**
    * Returns true if the named structure is a group.
-   * 
-   * @since 1.2 
+   *
+   * @param name name of the structure nested in this group
+   * @return true if structure is a choice element
+   * @throws HL7Exception if the named Structure is not part of this group
+   * @since 1.2
    */
   public boolean isGroup(String name) throws HL7Exception;
   
   /**
    * Returns an ordered array of the names of the Structures in this 
    * Group.  These names can be used to iterate through the group using 
-   * repeated calls to <code>get(name)</code>. 
+   * repeated calls to <code>get(name)</code>.
+   *
+   * @return an ordered array of the names of the Structures in this Group
    */
   public String[] getNames();
   
   /**
    * Returns the Class of the Structure at the given name index.  
+   * @param name name of the structure nested in this group
+   * @return class of the structure or null if the class does not exist
    */
   public Class<? extends Structure> getClass(String name);
   
@@ -127,28 +157,26 @@ public interface Group extends Structure {
      * The new segment is slotted at the end of the group.  Thenceforward if 
      * such a segment is encountered it will be parsed into this location. 
      * If the segment name is unrecognized a GenericSegment is used.  The 
-     * segment is defined as repeating and not required.  
+     * segment is defined as repeating and not required.
+     *
+     * @param name name of the segment
+     * @return the final name of the segment (may be renamed if a segment of this
+     * name already exists.
+     * @throws HL7Exception if the segment could not be added
      */
     public String addNonstandardSegment(String name) throws HL7Exception;
 
     /**
      * Expands the group definition to include a segment that is not 
      * defined by HL7 to be part of this group (eg an unregistered Z segment).
-     * 
-     * @param The index (zero-indexed) at which to insert this segment
+     *
+     * @param name name of the segment
+     * @param theIndex index (zero-based) at which to insert this segment
+     * @return the name used to index the structure (may be appended with a number if
+     *        name already used)
+     * @throws HL7Exception if the segment could not be added
      */
     public String addNonstandardSegment(String name, int theIndex) throws HL7Exception;
 
 }
 
-// sample code ... 
-/*Group m = new MessageImpl();
-try {
-    m.add(new MSH()); 
-    ((MSH)m.get("MSH")).getFieldSeparator().setValue("|");
-    m.getMSH().getFieldSeparator().setValue("|");
-    
-    m.getERR(0).getThing();
-} catch (HL7Exception e) {
-    
-}*/

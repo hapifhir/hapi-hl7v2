@@ -32,15 +32,21 @@ import ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 
-
+/**
+ * A very simple example of a validation handler that simply returns a boolean
+ * value as validation {@link #result() result}.
+ */
 public class SimpleValidationExceptionHandler extends CollectingValidationExceptionHandler<Boolean> implements ValidationExceptionHandlerFactory<Boolean> {
 
+    /**
+     * @param context Hapi context
+     */
     public SimpleValidationExceptionHandler(HapiContext context) {
         super(context);
     }
 
     public Boolean result() throws HL7Exception {
-        return getExceptions().isEmpty();
+        return hasFailed();
     }
 
     public ValidationExceptionHandler<Boolean> getNewInstance(HapiContext context) {

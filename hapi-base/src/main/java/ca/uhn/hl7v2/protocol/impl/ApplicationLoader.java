@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
 /**
- * A utility for loading <code>Applicaiton</code> and <code>ReceivingApplication</code> bindings 
+ * A utility for loading <code>Application</code> and <code>ReceivingApplication</code> bindings
  * from configuration files.  
  *  
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>

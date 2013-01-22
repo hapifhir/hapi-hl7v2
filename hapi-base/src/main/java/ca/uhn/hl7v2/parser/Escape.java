@@ -62,6 +62,11 @@ public class Escape {
     public Escape() {
     }
 
+    /**
+     * @param text string to be escaped
+     * @param encChars encoding characters to be used
+     * @return the escaped string
+     */
     public static String escape(String text, EncodingCharacters encChars) {
         EncLookup esc = getEscapeSequences(encChars);
         int textLength = text.length();
@@ -130,6 +135,11 @@ public class Escape {
         return result.toString();
     }
 
+    /**
+     * @param text string to be unescaped
+     * @param encChars encoding characters to be used
+     * @return the unescaped string
+     */
     public static String unescape(String text, EncodingCharacters encChars) {
 
         // If the escape char isn't found, we don't need to look for escape sequences
@@ -264,7 +274,7 @@ public class Escape {
             characters[5] = '\r';
             char[] codes = {'F', 'S', 'T', 'R', 'E'};
             for (int i = 0; i < codes.length; i++) {
-                StringBuffer seq = new StringBuffer();
+                StringBuilder seq = new StringBuilder();
                 seq.append(ec.getEscapeCharacter());
                 seq.append(codes[i]);
                 seq.append(ec.getEscapeCharacter());

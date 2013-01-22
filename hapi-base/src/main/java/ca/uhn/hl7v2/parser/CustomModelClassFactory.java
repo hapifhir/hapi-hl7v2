@@ -196,7 +196,11 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
 	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
 		return delegate.getMessageClassInASpecificPackage(theName, theVersion, theIsExplicit, thePackageName);
 	}
-	
+
+    /**
+     * Returns the configured custom model classes
+     * @return a map of custom model classes
+     */
     public Map<String, String[]> getCustomModelClasses() {
 		return customModelClasses;
 	}

@@ -126,18 +126,11 @@ public class RuleBinding<T extends Rule<?>> implements Serializable {
 	}
 
 	/**
-	 * An abstraction of appliesToVersion() and appliesToScope().
-	 * 
-	 * @param theBindingData
-	 * @param theItemData
-	 * @return
+	 * An abstraction of appliesToVersion() and appliesToScope(). Compares two values
+     * and returns true if they are equal or if the binding data is "*"
 	 */
-	protected boolean applies(String theBindingData, String theItemData) {
-		boolean applies = false;
-		if (theBindingData.equals(theItemData) || theBindingData.equals("*")) {
-			applies = true;
-		}
-		return applies;
+	protected static boolean applies(String theBindingData, String theItemData) {
+		return (theBindingData.equals(theItemData) || theBindingData.equals("*"));
 	}
 
 	@Override

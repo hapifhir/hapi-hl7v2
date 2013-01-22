@@ -25,7 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation;
 
-import ca.uhn.hl7v2.ExceptionHandler;
+import ca.uhn.hl7v2.HL7Exception;
 
 /**
  * Handler that is called for every violation during a message validation.
@@ -35,8 +35,25 @@ import ca.uhn.hl7v2.ExceptionHandler;
  * 
  * @author Christian Ohr
  */
-public interface ValidationExceptionHandler<R> extends ExceptionHandler<ValidationException, R> {
-	
+public interface ValidationExceptionHandler<R> {
+
+    /**
+     * Called in case of validation rule violations.
+     * @param exceptions the exceptions that describe the validatin errors
+     */
+    void onExceptions(ValidationException... exceptions);
+
+    /**
+     * Returns an overall validation result based on an aggregation of all
+     * exceptions thrown during the validation process. Often, this is a simple
+     * value indicating if any ValidationException has been thrown, but it can
+     * also be a complete response message that reflects the validation results.
+     *
+     * @return the validation result
+     * @throws HL7Exception if an error occurred during calculating the result
+     */
+    R result() throws HL7Exception;
+
 	/**
 	 * Should be called before validation starts. Some ValidationHandler implementations
 	 * may need context information of the subject being validated
@@ -44,7 +61,13 @@ public interface ValidationExceptionHandler<R> extends ExceptionHandler<Validati
 	 * @param subject subject to be validated
 	 */
 	void setValidationSubject(Object subject);
-	
+
+    /**
+     * Returns a boolean flag indicating whether a validation was successful or not.
+     * This is independent of {@link #result()} which may return a more complex
+     * object.
+     * @return true if the validation is considered to be failed.
+     */
 	boolean hasFailed();
 
 }

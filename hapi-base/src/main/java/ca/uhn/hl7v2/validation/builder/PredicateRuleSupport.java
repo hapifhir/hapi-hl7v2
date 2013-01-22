@@ -36,6 +36,9 @@ import ca.uhn.hl7v2.validation.Rule;
  */
 public interface PredicateRuleSupport<T> extends Rule<T> {
 
+    /**
+     * @return the predicate instance used to test
+     */
 	Predicate getPredicate();
 	
 }

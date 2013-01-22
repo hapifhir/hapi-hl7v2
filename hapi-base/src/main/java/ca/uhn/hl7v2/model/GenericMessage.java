@@ -38,7 +38,10 @@ public abstract class GenericMessage extends AbstractMessage {
     /**
      * Returns a subclass of GenericMessage corresponding to a certain version.  
      * This is needed so that version-specific segments can be added as the message
-     * is parsed.  
+     * is parsed.
+     *
+     * @param version the HL7 version
+     * @return the class of the generic message
      */
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Message> getGenericMessageClass(String version) {

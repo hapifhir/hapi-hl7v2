@@ -379,15 +379,16 @@ public class StructureDefinition implements IStructureDefinition {
 
 
 	/**
-	 * @see Group#isChoiceElement()
-	 */
+     * @param theChoiceElement true if the definition of this structure is a choice
+	 * @see ca.uhn.hl7v2.model.Group#isChoiceElement(String)
+     */
 	public void setChoiceElement(boolean theChoiceElement) {
 		myChoiceElement = theChoiceElement;
 	}
 
 
 	/**
-	 * @see Group#isChoiceElement()
+	 * @see ca.uhn.hl7v2.model.Group#isChoiceElement(String)
 	 */
 	public boolean isChoiceElement() {
 		return myChoiceElement;

@@ -19,8 +19,8 @@ public class CollectingValidationExceptionHandlerTest {
 		ValidationException ve1 = new ValidationException("test1");
 		ValidationException ve2 = new ValidationException("test2");
 		ValidationException ve3 = new ValidationException("test3");
-		handler.onExceptions(new ValidationException[] { ve1 });
-		handler.onExceptions(new ValidationException[] { ve2, ve3 });
+		handler.onExceptions(ve1);
+		handler.onExceptions(ve2, ve3);
 		assertEquals(3, handler.result().size());
 		assertSame(ve1, handler.result().get(0));
 		assertSame(ve2, handler.result().get(1));

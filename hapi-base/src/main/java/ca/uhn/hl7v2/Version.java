@@ -87,7 +87,7 @@ public enum Version {
 	}
 
 	/**
-	 * @param someVersions
+	 * @param someVersions set of versions to be tested
 	 * @return <code>true</code> if someVersions contain all supported HL7 versions
 	 */
 	public static boolean allVersions(Set<Version> someVersions) {

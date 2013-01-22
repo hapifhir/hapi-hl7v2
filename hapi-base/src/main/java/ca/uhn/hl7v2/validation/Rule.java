@@ -53,13 +53,17 @@ public interface Rule<T> extends Serializable {
 	 * Returns a text description of the rule. This description may be used as a
 	 * message in exceptions generated if validation against the rule fails, or
 	 * in a user interface for rule configuration.
+     *
+     * @return rule description
 	 */
 	public String getDescription();
 
 	/**
-	 * A string indicating the section of the HL7 standard from which this rule
+	 * Returns a string indicating the section of the HL7 standard from which this rule
 	 * is derived (if applicable). Like the description, this may be used in an
 	 * exception message or configuration UI.
+     *
+     * @return HL7 specification section reference
 	 */
 	public String getSectionReference();
 	
@@ -70,6 +74,5 @@ public interface Rule<T> extends Serializable {
 	 * @return an (potentially empty) array of ValidationExceptions
 	 */
 	public ValidationException[] apply(T value);
-		
 
 }

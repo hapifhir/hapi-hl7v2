@@ -35,8 +35,7 @@ public interface ModelClassFactory extends Serializable {
 			boolean isExplicit) throws HL7Exception;
 
 	/**
-	 * Retrieves and instantiates a message class by looking in a specific java package for the
-	 * message type.
+	 * Retrieves a message class by looking in a specific java package for the message type.
 	 * 
 	 * @param theName The message structure type (e.g. "ADT_A01")
 	 * @param theVersion The HL7 version (e.g. "2.3.1")
@@ -47,7 +46,8 @@ public interface ModelClassFactory extends Serializable {
 	 * @param packageName The package name to use. Note that if the message type can't be found in
 	 *            this package, HAPI will return the standard type returned by
 	 *            {@link #getMessageClass(String, String, boolean)}
-	 * @since 1.3
+     * @return message class
+	 * @since 2.0
 	 */
 	public Class<? extends Message> getMessageClassInASpecificPackage(String theName,
 			String theVersion, boolean isExplicit, String packageName) throws HL7Exception;

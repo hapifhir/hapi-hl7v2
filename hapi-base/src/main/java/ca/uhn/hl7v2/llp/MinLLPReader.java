@@ -147,11 +147,11 @@ public class MinLLPReader implements HL7Reader
      */
     public synchronized String getMessage() throws LLPException, IOException 
     {
-        StringBuffer s_buffer = new StringBuffer();
+        StringBuilder s_buffer = new StringBuilder();
 
         boolean end_of_message = false;
                         
-            int c = 0;
+            int c;
             try {
                 c = myReader.read();  
             } catch (SocketTimeoutException e) {
@@ -236,6 +236,7 @@ public class MinLLPReader implements HL7Reader
         		try {
 					s.close();
 				} catch (IOException e) {
+                    // empty
 				}
         	}
         }

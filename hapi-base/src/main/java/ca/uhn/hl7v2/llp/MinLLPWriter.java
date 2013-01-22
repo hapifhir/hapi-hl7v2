@@ -57,8 +57,6 @@ public class MinLLPWriter implements HL7Writer
     
     BufferedWriter myWriter; //reads from the input stream given in the
                              //constructor
-    boolean messageStarted = false; //whether or not the necessary characters to
-                            //initialize the message have already been buffered
 
     private OutputStream myOutputStream;
 

@@ -53,14 +53,25 @@ public enum ErrorCode {
 		this.message = message;
 	}
 
+    /**
+     * @return the integer error code
+     */
 	public int getCode() {
 		return code;
 	}
 
+    /**
+     * @return the error code message
+     */
 	public String getMessage() {
 		return message;
 	}
 
+    /**
+     * Returns the ErrorCode for the given integer
+     * @param errCode integer error code
+     * @return ErrorCode
+     */
 	public static ErrorCode errorCodeFor(int errCode) {
 		for (ErrorCode err : ErrorCode.values()) {
 			if (err.code == errCode) {
@@ -69,7 +80,10 @@ public enum ErrorCode {
 		}
 		return null;
 	}
-	
+
+    /**
+     * @return the HL7 table number
+     */
 	public static String codeTable() {
 		return HL70357;
 	}

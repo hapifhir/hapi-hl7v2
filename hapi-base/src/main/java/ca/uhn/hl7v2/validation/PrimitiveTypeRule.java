@@ -46,7 +46,7 @@ public interface PrimitiveTypeRule extends Rule<String> {
      * Tests the given string against the criteria defined by this 
      * rule -- returns true if it passes the test, false otherwise.
      * 
-     * @deprecated use {@link #apply(String)}
+     * @deprecated use {@link #apply(Object)}
      */
     public boolean test(String value);
     

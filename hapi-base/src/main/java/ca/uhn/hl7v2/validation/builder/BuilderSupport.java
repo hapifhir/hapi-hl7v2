@@ -41,13 +41,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
 @SuppressWarnings("serial")
 public abstract class BuilderSupport implements Serializable {
 
-	private Predicate predicate;
-
 	protected BuilderSupport() {	
-	}
-
-	protected Predicate getPredicate() {
-		return predicate;
 	}
 
 	/**
@@ -69,7 +63,6 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param expected expected value
 	 * @return a predicate that evaluates to <code>true</code> if the actual value is null, has zero
 	 *         length or is explicitly "empty" as HL7 defines it ("").
 	 */
@@ -78,7 +71,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicate
+	 * @param predicate the predicate to evaluate if not empty
 	 * @return a predicate that evaluates to <code>true</code> if the actual value is empty or the
 	 *         passed predicate evaluates to true.
 	 */
@@ -94,13 +87,19 @@ public abstract class BuilderSupport implements Serializable {
 	public Predicate matches(String regex) {
 		return new MatchesPredicate(regex);
 	}
-	
+
+    /**
+     * @param regex regular expression
+     * @param description custom descriptiom for this regex
+     * @return a predicate that evaluates to <code>true</code> if the actual value matches the
+     *         regular expression
+     */
     public Predicate matches(String regex, String description) {
         return new MatchesPredicate(regex, description);
     }	
 
 	/**
-	 * @param prefix
+	 * @param prefix prefix string
 	 * @return a predicate that evaluates to <code>true</code> if the actual value starts with the
 	 *         specified prefix.
 	 */
@@ -187,8 +186,8 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param regex
-	 * @param flags
+	 * @param regex regular expression
+	 * @param flags regular expression flags
 	 * @return a predicate that evaluates to <code>true</code> if the actual value matches the
 	 *         regular expression
 	 */
@@ -199,7 +198,7 @@ public abstract class BuilderSupport implements Serializable {
 	/**
 	 * Equivalent with allOf(isEqual(allowed[0]), ..., isEqual(allowed[n-1])
 	 * 
-	 * @param allowed
+	 * @param allowed allowed values
 	 * @return a predicate that evaluates to <code>true</code> if the actual value occurs in he
 	 *         specified array of objects
 	 */
@@ -208,7 +207,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param allowed
+	 * @param allowed allowed values
 	 * @return a predicate that evaluates to <code>true</code> if the actual value occurs in he
 	 *         specified collection of objects
 	 */
@@ -217,7 +216,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicates
+	 * @param predicates predicates of which one shall evaluate to true
 	 * @return a predicate that evaluates to <code>true</code> if any of the specified predicates
 	 *         evaluates to <code>true</code>
 	 */
@@ -226,7 +225,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicates
+	 * @param predicates predicates of which all shall evaluate to true
 	 * @return a predicate that evaluates to <code>true</code> if all of the specified predicates
 	 *         evaluate to <code>true</code>
 	 */
@@ -235,7 +234,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicates
+	 * @param predicates predicates of which one shall evaluate to true
 	 * @return a predicate that evaluates to <code>true</code> if any of the specified predicates
 	 *         evaluates to <code>true</code>
 	 */
@@ -244,7 +243,7 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicates
+	 * @param predicates predicates of which all shall evaluate to true
 	 * @return a predicate that evaluates to <code>true</code> if all of the specified predicates
 	 *         evaluate to <code>true</code>
 	 */
@@ -253,16 +252,16 @@ public abstract class BuilderSupport implements Serializable {
 	}
 
 	/**
-	 * @param predicate
+	 * @param predicate predicate to be negated
 	 * @return a predicate that evaluates to <code>true</code> if the specified predicate evaluate
 	 *         to <code>false</code>
 	 */
-	public Predicate not(Predicate delegate) {
-		return new NotPredicate(delegate);
+	public Predicate not(Predicate predicate) {
+		return new NotPredicate(predicate);
 	}
 
 	/**
-	 * @param maxSize
+	 * @param maxSize maximal length of the value
 	 * @return a predicate that evaluates to <code>true</code> if the length of the actual value is
 	 *         equal or shorter than the specified length
 	 */
@@ -490,7 +489,7 @@ public abstract class BuilderSupport implements Serializable {
 
 		public String getDescription() {
 			String or = " or ";
-			StringBuffer b = new StringBuffer();
+			StringBuilder b = new StringBuilder();
 			for (Predicate p : predicates) {
 				b.append(p.getDescription()).append(or);
 			}
@@ -519,7 +518,7 @@ public abstract class BuilderSupport implements Serializable {
 
 		public String getDescription() {
 			String and = " and ";
-			StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
 			for (Predicate p : predicates) {
 				b.append(p.getDescription()).append(and);
 			}

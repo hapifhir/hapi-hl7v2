@@ -65,7 +65,7 @@ public class MessageTypeRouter implements Application,
 	public boolean canProcess(Message in) {
 		try {
 			Application match = getMatchingApplication(in);
-			return match != null ? match.canProcess(in) : false;
+			return match != null && match.canProcess(in);
 		} catch (Exception e) {
 			return false;
 		}
@@ -91,6 +91,7 @@ public class MessageTypeRouter implements Application,
 
 	/**
 	 * Forwards the given exception to all Applications.
+     * TODO this may call itself leading to infinite loops
 	 */
 	public String processException(String incomingMessage,
 			String outgoingMessage, Exception e) throws HL7Exception {

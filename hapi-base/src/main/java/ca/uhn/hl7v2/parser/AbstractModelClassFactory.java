@@ -83,8 +83,10 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 * type and trigger event in the form <code>[type]_[trigger]</code>, for example:
 	 * <code>ADT_A04</code>, and the values are the corresponding structure for this trigger,
 	 * for example: <code>ADT_A01</code>.
-	 * 
-	 * @return Returns <code>null</code> if no event map is found for the given version 
+	 *
+     * @param version the HL7 version
+	 * @return Returns <code>null</code> if no event map is found for the given version
+     * @throws HL7Exception if the HL7 version is unknown
 	 */
 	public Map<String, String> getEventMapForVersion(Version version) throws HL7Exception {
 		return getEventMap().get(version);

@@ -131,7 +131,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 					+ e.getMessage(), e));
 		}
 
-		return validationErrors.toArray(new ValidationException[0]);
+		return validationErrors.toArray(new ValidationException[validationErrors.size()]);
 
 	}
 
@@ -141,9 +141,8 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 	 * xsi:schemaLocation, or as provided in the locations property or in a subdirectory of the
 	 * current dir.
 	 * 
-	 * @param doc
-	 * @param validationErrors
-	 * @return
+	 * @param doc the DOM document
+	 * @return the file name of the schema
 	 * @throws IOException
 	 */
 	private String getSchemaLocation(Document doc) throws IOException {
@@ -168,13 +167,13 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 			log.debug("Schema defined in document: {}", schemaLocation);
 			String schemaItems[] = schemaLocation.split(" ");
 			if (schemaItems.length == 2) {
-				File f = new File(schemaItems[1].toString());
+				File f = new File(schemaItems[1]);
 				if (f.exists()) {
-					schemaFileName = schemaItems[1].toString();
+					schemaFileName = schemaItems[1];
 					log.debug("Schema defined in document points to a valid file");
 				} else {
 					log.warn("Schema file defined in xml document not found on disk: {}",
-							schemaItems[1].toString());
+							schemaItems[1]);
 				}
 			}
 		} else {
@@ -184,10 +183,6 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 		return schemaFileName;
 	}
 
-	/**
-	 * @param doc
-	 * @return
-	 */
 	private String staticSchema(Document doc) {
 		String schemaFilename = null;
 		log.debug("Lookup HL7 version in MSH-12 to know which default schema to use");

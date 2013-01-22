@@ -129,7 +129,7 @@ public class Initiator {
 		rawOutbound.debug(outbound);
 		Future<String> inbound = null;
 		try {
-			String message = null;
+			String message;
 			inbound = conn.waitForResponse(messID, timeoutMillis);
 			conn.getSendWriter().writeMessage(outbound);
 			if (inbound != null && (message = inbound.get()) != null) {

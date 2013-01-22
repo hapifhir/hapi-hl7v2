@@ -65,8 +65,11 @@ import org.slf4j.LoggerFactory;
  * ")"]</code>
  * </p>
  * <p>
- * ... where rep has the same meaning as for fields. A leading "/" indicates that navigation to the
- * location begins at the root of the message; ommitting this indicates that navigation begins at
+ * ... where rep has the same meaning as for fields.
+ * </p>
+ * <p>
+ * A leading "/" indicates that navigation to the
+ * location begins at the root of the message; omitting this indicates that navigation begins at
  * the current location of the underlying SegmentFinder (see getFinder() -- this allows manual
  * navigation if desired). The syntax for group_spec is:
  * </p>
@@ -111,7 +114,10 @@ public class Terser {
     private SegmentFinder finder;
     private static Logger log = LoggerFactory.getLogger(Terser.class);
 
-    /** Creates a new instance of Terser */
+    /** Creates a new instance of Terser
+     *
+     * @param message message for which the Terser is created
+     */
     public Terser(Message message) {
     	if (message == null) {
     		throw new NullPointerException("Message may not be null");
@@ -127,6 +133,8 @@ public class Terser {
      * @param rep the field repetition (indexed from 0)
      * @param component the component number (indexed from 1, use 1 for primitive field)
      * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
+     * @return string value of the Primitive at the given location
+     * @throws HL7Exception if the primitive could not be obtained
      */
     public static String get(Segment segment, int field, int rep, int component, int subcomponent) throws HL7Exception {
         if (segment == null) {
@@ -156,6 +164,8 @@ public class Terser {
      * @param rep the field repetition (indexed from 0)
      * @param component the component number (indexed from 1, use 1 for primitive field)
      * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
+     * @param value value to be set
+     * @throws HL7Exception if the value could not be set
      */
     public static void set(Segment segment, int field, int rep, int component, int subcomponent, String value)
             throws HL7Exception {
@@ -196,6 +206,7 @@ public class Terser {
      * @param type the type from which to get the primitive
      * @param component the component number (indexed from 1, use 1 for primitive field)
      * @param subcomponent the subcomponent number (indexed from 1, use 1 for primitive component)
+     * @return the Primitive object at the given location
      */
     public static Primitive getPrimitive(final Type type, final int component, final int subcomponent) {
         if (type == null) {
@@ -293,6 +304,10 @@ public class Terser {
      * If a repetition is omitted for a repeating segment or field, the first rep is used. If the
      * component or subcomponent is not specified for a composite field, the first component is used
      * (this allows one to write code that will work with later versions of the HL7 standard).
+     *
+     * @param spec field specification
+     * @return string value of the specified field
+     * @throws HL7Exception if the primitive could not be obtained
      */
     public String get(String spec) throws HL7Exception {
         StringTokenizer tok = new StringTokenizer(spec, "-", false);
@@ -304,11 +319,15 @@ public class Terser {
 
     /**
      * Returns the segment specified in the given segment_path_spec.
+     *
+     * @param segSpec segment specification
+     * @return the segment specified
+     * @throws HL7Exception if the segment could not be obtained
      */
     public Segment getSegment(String segSpec) throws HL7Exception {
         Segment seg = null;
 
-        if (segSpec.substring(0, 1).equals("/")) {
+        if (segSpec.startsWith("/")) {
             getFinder().reset();
         }
 
@@ -317,26 +336,16 @@ public class Terser {
         while (tok.hasMoreTokens()) {
             String pathSpec = tok.nextToken();
             Terser.PathSpec ps = parsePathSpec(pathSpec);
-            if (tok.hasMoreTokens()) {
-                ps.isGroup = true;
-            } else {
-                ps.isGroup = false;
-            }
-
+            ps.isGroup = tok.hasMoreTokens();
             if (ps.isGroup) {
-                Group g = null;
-                if (ps.find) {
-                    g = finder.findGroup(ps.pattern, ps.rep);
-                } else {
-                    g = finder.getGroup(ps.pattern, ps.rep);
-                }
+                Group g = ps.find ?
+                        finder.findGroup(ps.pattern, ps.rep) :
+                        finder.getGroup(ps.pattern, ps.rep);
                 finder = new SegmentFinder(g);
             } else {
-                if (ps.find) {
-                    seg = finder.findSegment(ps.pattern, ps.rep);
-                } else {
-                    seg = finder.getSegment(ps.pattern, ps.rep);
-                }
+                seg = ps.find ?
+                        finder.findSegment(ps.pattern, ps.rep) :
+                        finder.getSegment(ps.pattern, ps.rep);
             }
         }
 
@@ -375,42 +384,38 @@ public class Terser {
     /**
      * Given a Terser path, returns an array containing field num, field rep, component, and
      * subcomponent.
+     *
+     * @param spec field specification
+     * @return an array containing field num, field rep, component, and subcomponent
+     * @throws HL7Exception if the field does not exist
      */
     public static int[] getIndices(String spec) throws HL7Exception {
         StringTokenizer tok = new StringTokenizer(spec, "-", false);
         tok.nextToken(); // skip over segment
         if (!tok.hasMoreTokens())
             throw new HL7Exception("Must specify field in spec " + spec);
-
-        int[] ret = null;
         try {
             StringTokenizer fieldSpec = new StringTokenizer(tok.nextToken(), "()", false);
             int fieldNum = Integer.parseInt(fieldSpec.nextToken());
-            int fieldRep = 0;
-            if (fieldSpec.hasMoreTokens()) {
-                fieldRep = Integer.parseInt(fieldSpec.nextToken());
-            }
-
-            int component = 1;
-            if (tok.hasMoreTokens()) {
-                component = Integer.parseInt(tok.nextToken());
-            }
-
-            int subcomponent = 1;
-            if (tok.hasMoreTokens()) {
-                subcomponent = Integer.parseInt(tok.nextToken());
-            }
-            int[] result = { fieldNum, fieldRep, component, subcomponent };
-            ret = result;
+            int fieldRep = fieldSpec.hasMoreTokens() ?
+                    Integer.parseInt(fieldSpec.nextToken()) : 0;
+            int component = tok.hasMoreTokens() ?
+                    Integer.parseInt(tok.nextToken()) : 1;
+            int subcomponent = tok.hasMoreTokens() ?
+                    Integer.parseInt(tok.nextToken()) : 1;
+            return new int[] { fieldNum, fieldRep, component, subcomponent };
         } catch (NumberFormatException e) {
             throw new HL7Exception("Invalid integer in spec " + spec);
         }
-
-        return ret;
     }
+
 
     /**
      * Sets the string value of the field specified. See class docs for location spec syntax.
+     *
+     * @param spec primitive path specification
+     * @param value value to be set
+     * @throws HL7Exception if the primitive does not exist
      */
     public void set(String spec, String value) throws HL7Exception {
         StringTokenizer tok = new StringTokenizer(spec, "-", false);
@@ -423,49 +428,31 @@ public class Terser {
     }
 
     /**
-     * Returns the number of components in the given field, i.e. the number of standard components
-     * (e.g. 6 for CE) plus any extra components that have been added at runtime. This may vary by
-     * repetition, as different reps may have different extra components.
-     */
-    /*
-     * public static int numComponents(Type field) throws HL7Exception { return
-     * numComponents(seg.getField(field, rep)); }
-     */
-
-    /**
      * Returns the number of sub-components in the specified component, i.e. the number of standard
      * sub-components (e.g. 6 for CE) plus any extra components that that have been added at
      * runtime.
-     * 
+     *
+     * @param type composite type
      * @param component numbered from 1
+     * @return number of sub-components in the specified component
      */
     public static int numSubComponents(Type type, int component) {
-        int n = -1;
         if (component == 1 && Primitive.class.isAssignableFrom(type.getClass())) {
             // note that getComponent(primitive, 1) below returns the primitive
             // itself -- if we do numComponents on it, we'll end up with the
             // number of components in the field, not the number of subcomponents
-            n = 1;
-        } else {
-            Type comp = getComponent(type, component);
-            n = numComponents(comp);
+            return 1;
         }
-        return n;
-        /*
-         * //Type t = seg.getField(field, rep); if (Varies.class.isAssignableFrom(type.getClass()))
-         * { return numSubComponents(((Varies) type).getData(), component); } else if
-         * (Primitive.class.isAssignableFrom(type.getClass()) && component == 1) { n = 1; } else if
-         * (Composite.class.isAssignableFrom(type.getClass()) && component <=
-         * numStandardComponents(t)) { n = numComponents(((Composite) type).getComponent(component -
-         * 1)); } else { //we're being asked about subcomponents of an extra component n =
-         * numComponents(t.getExtraComponents().getComponent(component - numStandardComponents(t) -
-         * 1)); } return n;
-         */
+        Type comp = getComponent(type, component);
+        return numComponents(comp);
     }
 
     /**
      * Returns the number of components in the given type, i.e. the number of standard components
      * (e.g. 6 for CE) plus any extra components that have been added at runtime.
+     *
+     * @param t composite type
+     * @return the number of components in the given type
      */
     public static int numComponents(Type t) {
         if (!(t instanceof Varies)) {
@@ -488,6 +475,8 @@ public class Terser {
      * Returns the segment finder used by this Terser. Navigating the finder will influence the
      * behaviour of the Terser accordingly. Ie when the full path of the segment is not specified
      * the segment will be sought beginning at the current location of the finder.
+     *
+     * @return the segment finder used by this Terser
      */
     public SegmentFinder getFinder() {
         return finder;

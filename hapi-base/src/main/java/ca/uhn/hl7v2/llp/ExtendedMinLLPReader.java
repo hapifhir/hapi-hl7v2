@@ -160,8 +160,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 
 	public synchronized String getMessage() throws LLPException, IOException
 	{
-		ByteArrayOutputStream baos = null;
-		baos = verifyAndCopyToOutputStream(this.inputStream);
+		ByteArrayOutputStream baos = verifyAndCopyToOutputStream(this.inputStream);
 
 		if(baos == null)
 			return null;
@@ -172,7 +171,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 		myReader = new InputStreamReader(new ByteArrayInputStream(byteArray), myLastCharset);
 		baos.close();
 
-		StringBuffer s_buffer = new StringBuffer();
+		StringBuilder s_buffer = new StringBuilder();
 
 		int c = myReader.read();
 		while(c != -1)
@@ -196,7 +195,7 @@ public class ExtendedMinLLPReader implements HL7Reader
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		boolean end_of_message = false;
 
-		int c = 0;
+		int c;
 		try
 		{
 			c = stream.read();

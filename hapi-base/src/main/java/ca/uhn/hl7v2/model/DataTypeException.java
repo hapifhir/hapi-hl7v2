@@ -67,26 +67,14 @@ public class DataTypeException extends HL7Exception {
 		super(message, error);
 	}    
 
-    /**
-     * @param message
-     * @param cause
-     */
     public DataTypeException(String message, Throwable cause) {
         super(message, cause);
     }
-    
-    /**
-     * @param message
-     * @param cause
-     */
+
     public DataTypeException( Throwable cause ) {
         super(cause);
     }
-    
 
-    /**
-     * @param message
-     */
     public DataTypeException(String message) {
         super(message);
     }

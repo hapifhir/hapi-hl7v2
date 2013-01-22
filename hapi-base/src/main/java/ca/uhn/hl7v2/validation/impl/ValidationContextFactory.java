@@ -95,7 +95,7 @@ public class ValidationContextFactory {
      * @param ruleBuilderClassName class name of a {@link ValidationRuleBuilder}
      *            subclass
      * @return a validation rule builder instance
-     * @throws ValidationException
+     * @throws HL7Exception if builder cannot be built
      */
     @SuppressWarnings("unchecked")
     public static ValidationRuleBuilder customBuilder(String ruleBuilderClassName)
@@ -121,7 +121,7 @@ public class ValidationContextFactory {
      * @param contextClassName class name of a {@link ValidationContext}
      *            subclass
      * @return instance of the ValidationContext
-     * @throws ValidationException
+     * @throws HL7Exception if context cannot be obtained
      */
     @SuppressWarnings("unchecked")
     public static ValidationContext customValidation(String contextClassName) throws HL7Exception {

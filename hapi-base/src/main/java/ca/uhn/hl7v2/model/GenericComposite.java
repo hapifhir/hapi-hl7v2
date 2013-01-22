@@ -15,8 +15,12 @@ public class GenericComposite extends AbstractComposite {
     
     private List<Type> components;
     private Message message;
-    
-    /** Creates a new instance of GenericComposite */
+
+    /**
+     * Creates a generic composite
+     *
+     * @param message message this object is linked to
+     */
     public GenericComposite(Message message) {
         super(message);
         this.message = message;

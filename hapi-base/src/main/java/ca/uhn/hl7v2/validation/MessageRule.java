@@ -38,7 +38,8 @@ public interface MessageRule extends Rule<Message> {
     
     /**
      * Tests the given (fully populated) message against the criteria 
-     * defined by this rule class.  
+     * defined by this rule class.
+     * @param msg message to be tested
      * @return a list of exceptions indicating points at which the given 
      *      message failed to validate (empty if validation succeeds; may 
      *      not be a complete list as testing may be aborted after failure).  

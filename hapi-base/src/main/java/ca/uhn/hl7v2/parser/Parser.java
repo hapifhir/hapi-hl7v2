@@ -75,7 +75,7 @@ public abstract class Parser extends HapiContextSupport {
 	 * Creates a new parser, using the {@link ModelClassFactory}, the {@link ParserConfiguration}
 	 * and the {@link ValidationContext} as defined in the context.
 	 * 
-	 * @param context
+	 * @param context HapiContext
 	 */
 	public Parser(HapiContext context) {
 		super(context);
@@ -124,10 +124,12 @@ public abstract class Parser extends HapiContextSupport {
 	 * with.
 	 * </p>
 	 * <p>
-	 * <b>Note that the parser configuration comes from the {@link getHapiContext HAPI Context}.</b>
+	 * <b>Note that the parser configuration comes from the {@link #getHapiContext() HAPI Context}.</b>
 	 * Changes to the configuration for one parser will affect all parsers which share the same
 	 * context.
 	 * </p>
+     *
+     * @return the current parser configuration
 	 */
 	public ParserConfiguration getParserConfiguration() {
 		return getHapiContext().getParserConfiguration();
@@ -155,18 +157,23 @@ public abstract class Parser extends HapiContextSupport {
 	 * this method returns a specific encoding does not guarantee that the message is correctly
 	 * encoded (e.g. well formed XML) - just that it is not encoded using any other encoding than
 	 * the one returned. Returns null if the encoding is not recognized.
+     *
+     * @param message message string
+     * @return string representing the encoding of the given message, i.e. "XML" or "ER7"
 	 */
 	public abstract String getEncoding(String message);
 
 	/**
 	 * Returns true if and only if the given encoding is supported by this Parser.
+     * @param encoding the encoding, "XML" or "ER7"
+     * @return true if this parser supports parsing message encoded this way
 	 */
 	public boolean supportsEncoding(String encoding) {
 		return getDefaultEncoding().equalsIgnoreCase(encoding);
 	}
 	
 	/**
-	 * @return the preferred encoding of this Parser
+	 * @return the preferred encoding of this Parser ("XML" or "ER7")
 	 */
 	public abstract String getDefaultEncoding();
 
@@ -298,8 +305,10 @@ public abstract class Parser extends HapiContextSupport {
 	 * some of the information in the inbound message. This method parses only that required
 	 * information, hopefully avoiding the condition that caused the original error.
 	 * </p>
-	 * 
+	 *
+     * @param message the message
 	 * @return an MSH segment
+     * @throws HL7Exception if no MSH segment could be created
 	 */
 	public abstract Segment getCriticalResponseData(String message) throws HL7Exception;
 
@@ -311,6 +320,9 @@ public abstract class Parser extends HapiContextSupport {
 	 * correct thread. Implementers of Parsers should take care to make the implementation of this
 	 * method very fast and robust. Returns null if MSA-2 can not be found (e.g. if the message is
 	 * not a response message).
+     *
+     * @param message the message
+     * @return the value of MSA-2
 	 */
 	public abstract String getAckID(String message);
 
@@ -318,7 +330,9 @@ public abstract class Parser extends HapiContextSupport {
 	 * Returns the version ID (MSH-12) from the given message, without fully parsing the message.
 	 * The version is needed prior to parsing in order to determine the message class into which the
 	 * text of the message should be parsed.
-	 * 
+	 *
+     * @param message the message
+     * @return the value of MSH-12
 	 * @throws HL7Exception if the version field can not be found.
 	 */
 	public abstract String getVersion(String message) throws HL7Exception;
@@ -366,6 +380,11 @@ public abstract class Parser extends HapiContextSupport {
 	 * 
 	 * <b>WARNING: This method is only implemented in some parser implementations</b>. Currently it
 	 * will only work with the PipeParser parser implementation. Use with caution.
+     *
+     * @param message message string
+     * @param packageName name of the package of the models
+     * @return parsed message
+     * @throws HL7Exception if an error occurred while parsing
 	 */
 	public Message parseForSpecificPackage(String message, String packageName) throws HL7Exception {
 		String encoding = getEncoding(message);
@@ -438,6 +457,11 @@ public abstract class Parser extends HapiContextSupport {
 	 * structure JAR is not found on the classpath), an instance of
 	 * {@link GenericSegment} is returned.
 	 * </p>
+     *
+     * @param version HL7 version
+     * @param factory model class factory to be used
+     * @return MSH segment for this version returned by the model class factory
+     * @throws HL7Exception if no matching segment could be found
 	 */
 	public static Segment makeControlMSH(String version, ModelClassFactory factory)
 			throws HL7Exception {
@@ -496,10 +520,10 @@ public abstract class Parser extends HapiContextSupport {
 	 * Like {@link #validVersion(String)} but throws an HL7Exception instead
 	 * 
 	 * @param version HL7 version
-	 * @throws HL7Exception
+	 * @throws HL7Exception if version is unknown
 	 */
 	public static void assertVersionExists(String version) throws HL7Exception {
-		if (!validVersion(version))
+		if (!Version.supportsVersion(version))
             throw new HL7Exception(
                     "The HL7 version " + version + " is not recognized",
                     ErrorCode.UNSUPPORTED_VERSION_ID);
@@ -542,9 +566,7 @@ public abstract class Parser extends HapiContextSupport {
 		Class<? extends Message> messageClass = getFactory().getMessageClass(theName, theVersion, isExplicit);
 		if (messageClass == null)
 			throw new HL7Exception("Can't find message class in current package list: " + theName);
-		Message retVal = ReflectionUtil.instantiateMessage(messageClass, getFactory());
-		
-		return retVal;
+		return ReflectionUtil.instantiateMessage(messageClass, getFactory());
 	}
 	
 	protected void applySuperStructureName(Message theMessage) throws HL7Exception {

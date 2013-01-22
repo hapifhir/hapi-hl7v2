@@ -84,7 +84,7 @@ public class PipeParserMinDepsTest implements Application {
 		DefaultHapiContext ctx = new DefaultHapiContext();
 		ctx.getParserConfiguration().setAllowUnknownVersions(true);
 
-		SimpleServer ss = ctx.getSimpleService(port1, false);
+		SimpleServer ss = ctx.newServer(port1, false);
 		ss.registerApplication("*", "*", this);
 
 		ss.startAndWait();

@@ -90,6 +90,10 @@ public abstract class XMLParser extends Parser {
 		super();
 	}
 
+    /**
+     *
+     * @param context the HAPI context
+     */
 	public XMLParser(HapiContext context) {
 		super(context);
 	}
@@ -128,6 +132,8 @@ public abstract class XMLParser extends Parser {
 	 * 
 	 * The nodes whose names match the <i>keepAsOriginalNodes<i> will be kept as original, meaning
 	 * that no white space treaming will occur on them
+     *
+     * @param keepAsOriginalNodes of the nodes to be kept as original
 	 */
 	public void setKeepAsOriginalNodes(String[] keepAsOriginalNodes) {
 		this.keepAsOriginalNodes = keepAsOriginalNodes;
@@ -171,11 +177,13 @@ public abstract class XMLParser extends Parser {
 	 * At the end of this process, your Message object should be populated with data from the XML
 	 * Document.
 	 * </p>
-	 * 
+	 *
+     * @param xmlMessage DOM message object to be parsed
+     * @param version HL7 version
 	 * @throws HL7Exception if the message is not correctly formatted.
 	 * @throws EncodingNotSupportedException if the message encoded is not supported by this parser.
 	 */
-	public abstract Message parseDocument(Document XMLMessage, String version) throws HL7Exception;
+	public abstract Message parseDocument(Document xmlMessage, String version) throws HL7Exception;
 
 	/**
 	 * <p>
@@ -260,12 +268,17 @@ public abstract class XMLParser extends Parser {
 	 * method <code>encode(Segment segmentObject, Element segmentElement)</code> using the Element
 	 * for that segment and the corresponding Segment object from the given Message.
 	 * </p>
+     *
+     * @param source message
+     * @return the DOM document object of the encoded message
 	 */
 	public abstract Document encodeDocument(Message source) throws HL7Exception;
 
 	/**
 	 * Populates the given Segment object with data from the given XML Element.
-	 * 
+	 *
+     * @param segmentObject the segment to parse into
+     * @param segmentElement the DOM element to be parsed
 	 * @throws HL7Exception if the XML Element does not have the correct name and structure for the
 	 *             given Segment, or if there is an error while setting individual field values.
 	 */
@@ -309,6 +322,11 @@ public abstract class XMLParser extends Parser {
 	 * Populates the given Element with data from the given Segment, by inserting Elements
 	 * corresponding to the Segment's fields, their components, etc. Returns true if there is at
 	 * least one data value in the segment.
+     *
+     * @param segmentObject the segment to be encoded
+     * @param segmentElement the DOM element to encode into
+     * @return true if there is at least one data value in the segment
+     * @throws HL7Exception if an erro occurred while encoding
 	 */
 	public boolean encode(Segment segmentObject, Element segmentElement) throws HL7Exception {
 		boolean hasValue = false;
@@ -334,6 +352,10 @@ public abstract class XMLParser extends Parser {
 
 	/**
 	 * Populates the given Type object with data from the given XML Element.
+     *
+     * @param datatypeObject the type to parse into
+     * @param datatypeElement the DOM element to be parsed
+     * @throws DataTypeException if the data did not match the expected type rules
 	 */
 	public void parse(Type datatypeObject, Element datatypeElement) throws DataTypeException {
 		if (datatypeObject instanceof Varies) {
