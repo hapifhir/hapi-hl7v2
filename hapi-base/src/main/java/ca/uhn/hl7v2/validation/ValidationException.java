@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.validation;
 
 import ca.uhn.hl7v2.AbstractHL7Exception;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Severity;
 
 /**
  * A failure to validate against a rule.
@@ -43,21 +44,37 @@ public class ValidationException extends AbstractHL7Exception {
 	}
 
 	public ValidationException(String message, Throwable cause) {
-		super(message, cause);
+		this(message, cause, Severity.ERROR);
 	}
+
+    public ValidationException(String message, Throwable cause, Severity severity) {
+        super(message, cause);
+        setSeverity(severity);
+    }
 
 	public ValidationException(Throwable cause) {
-		super(cause);
+		this(cause, Severity.ERROR);
 	}
 
+    public ValidationException(Throwable cause, Severity severity) {
+        super(cause);
+        setSeverity(severity);
+    }
+
 	public ValidationException(String msg) {
-		super(msg);
+		this(msg, Severity.ERROR);
 	}
+
+    public ValidationException(String msg, Severity severity) {
+        super(msg);
+        setSeverity(severity);
+    }
 	
 	public static ValidationException fromHL7Exception(HL7Exception e) {
 		ValidationException ve = new ValidationException(e.getMessageWithoutLocation(), e);
 		ve.setErrorCode(e.getErrorCode());
 		ve.setLocation(e.getLocation());
+        ve.setSeverity(e.getSeverity());
 		return ve;
 	}
 

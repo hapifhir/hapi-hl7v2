@@ -59,7 +59,7 @@ public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRuleBuilder, En
 	 * @return this instance to build more rules
 	 */
 	public EncodingRuleBuilder xsd() {
-		return test(new XMLSchemaRule());
+		return test(prepareRule(new XMLSchemaRule()));
 	}	
 	
 	// for tests only

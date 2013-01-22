@@ -41,9 +41,17 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 	private Predicate testPredicate;
 	private Expression<Message> testExpression;
 
+    /**
+     * Create a new message rule
+     * @param predicate the predicate to be used for the test
+     * @param expression the expression to be used to extract the message part
+     *                   to be tested
+     */
 	public PredicateMessageRule(Predicate predicate, Expression<Message> expression) {
 		this.testPredicate = predicate;
 		this.testExpression = expression;
+        setDescription(testExpression.getDescription() + " '%s' requires to be "
+                + testPredicate.getDescription());
 	}
 
 	public ValidationException[] apply(Message msg) {
@@ -60,10 +68,5 @@ public abstract class PredicateMessageRule extends AbstractMessageRule implement
 		return testPredicate;
 	}
 
-	@Override
-	public String getDescription() {
-		return testExpression.getDescription() + " '%s' requires to be "
-				+ testPredicate.getDescription();
-	}
 
 }

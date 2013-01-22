@@ -72,7 +72,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder terser(String spec, Predicate predicate) {
-		return test(new TerserMessageRule(spec, predicate));
+		return test(prepareRule(new TerserMessageRule(spec, predicate)));
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder onlyKnownSegments() {
-		return test(OnlyKnownSegmentsRule.ONLY_KNOWN_SEGMENTS);
+		return test(prepareRule(OnlyKnownSegmentsRule.ONLY_KNOWN_SEGMENTS));
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder onlyAllowableSegmentsInSuperStructure() {
-		return test(OnlyAllowableSegmentsInSuperstructureRule.ONLY_ALLOWABLE_SEGMENTS);
+		return test(prepareRule(OnlyAllowableSegmentsInSuperstructureRule.ONLY_ALLOWABLE_SEGMENTS));
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder choiceElementsRespected() {
-		return test(ChoiceElementsRespectedRule.CHOICE_ELEMENTS_RESPECTED);
+		return test(prepareRule(ChoiceElementsRespectedRule.CHOICE_ELEMENTS_RESPECTED));
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder wrongVersion() {
-		return test(WrongVersionRule.WRONG_VERSION);
+		return test(prepareRule(WrongVersionRule.WRONG_VERSION));
 	}
 
 	/**
@@ -141,12 +141,12 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	/**
 	 * Builds a {@link MessageRule} that evaluates the message against the Conformance Profile
 	 * referred to by the profileId parameter
-	 * 
+	 *
+     * @param profileId conformance profile id (file name)
 	 * @return this instance to build more rules
 	 */
 	public MessageRuleBuilder conformance(String profileId) {
-		return description("Unknown segments found in message").test(
-				new ConformanceProfileRule(profileId));
+		return test(prepareRule(new ConformanceProfileRule(profileId)));
 	}
 
 	// for tests only

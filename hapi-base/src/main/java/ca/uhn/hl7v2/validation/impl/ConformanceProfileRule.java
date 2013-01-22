@@ -66,8 +66,8 @@ public class ConformanceProfileRule extends AbstractMessageRule {
      */
     public ConformanceProfileRule() {
     	super();
-    	description = "Checks conformance to declared or predefined message profiles";
-    	sectionReference = "HL7 2.5 section 2.12";
+    	setDescription("Unknown segments found in message");
+    	setSectionReference("HL7 2.5 section 2.12");
     }
     
     /**

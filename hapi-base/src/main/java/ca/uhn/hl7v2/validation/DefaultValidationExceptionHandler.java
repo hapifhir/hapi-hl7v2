@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.HapiContext;
 
 /**
  * Simple implementation of a handler that just tracks if
- * {@link #onExceptions(ValidationException[])} has been called at least once.
+ * {@link #error(ValidationException)} has been called at least once.
  * 
  * @author Christian Ohr
  */
@@ -51,9 +51,9 @@ public class DefaultValidationExceptionHandler extends AbstractValidationExcepti
     /**
 	 * If the validation process encounters a violation, this method is called.
 	 * 
-	 * @param exceptions a non-empty array of {@link ValidationException}s.
+	 * @param exception a {@link ValidationException} of error severity.
 	 */
-	public void onExceptions(ValidationException... exceptions) {
+	public void error(final ValidationException exception) {
 		result = false;
 	}
 

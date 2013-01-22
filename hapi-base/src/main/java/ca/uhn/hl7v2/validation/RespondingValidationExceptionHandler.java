@@ -31,6 +31,7 @@ import java.util.List;
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Severity;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.util.DeepCopy;
@@ -53,6 +54,9 @@ public class RespondingValidationExceptionHandler extends
     private AcknowledgmentCode successAcknowledgementCode = AcknowledgmentCode.AA;
     private AcknowledgmentCode errorAcknowledgementCode = AcknowledgmentCode.AE;
 
+    /**
+     * @param context Hapi context
+     */
     public RespondingValidationExceptionHandler(HapiContext context) {
         super(context);
     }
@@ -61,11 +65,10 @@ public class RespondingValidationExceptionHandler extends
      * Returns the generated response message.
      * 
      * @return the generated response
-     * 
-     * @see {@link #generateResponseMessage()}
-     * @see {@link #populateResponseMessage()}
-     * 
      * @throws HL7Exception if no response could be generated
+     * @see {@link #generateResponseMessage(Object)}
+     * @see {@link #populateResponseMessage(ca.uhn.hl7v2.model.Message)}
+     * 
      */
     public final Message result() throws HL7Exception {
         Object validationSubject = getValidationSubject();
@@ -95,18 +98,23 @@ public class RespondingValidationExceptionHandler extends
         this.errorAcknowledgementCode = errorAcknowledgementCode;
     }
 
+    /**
+     * @return the acknowledgement code if validation has succeeded. Default is AA.
+     */
     public AcknowledgmentCode getSuccessAcknowledgementCode() {
         return successAcknowledgementCode;
     }
 
+    /**
+     * @return the acknowledgement code if validation has failed. Default is AE.
+     */
     public AcknowledgmentCode getErrorAcknowledgementCode() {
         return errorAcknowledgementCode;
     }
 
     /**
-     * Generates an empty response based on the {@link #getRequest() request}
-     * message. This class generates an ACKnowledgement using the code returned
-     * by {@link #getSuccessAcknowledgementCode()}.
+     * Generates an empty response message. This class generates an
+     * ACKnowledgement using the code returned by {@link #getSuccessAcknowledgementCode()}.
      * 
      * @param request request message, either a {@link String} or a
      *            {@link Message}
@@ -115,7 +123,7 @@ public class RespondingValidationExceptionHandler extends
      */
     protected Message generateResponseMessage(Object request) throws HL7Exception {
         try {
-            Message in = null;
+            Message in;
             if (request instanceof String) {
                 Segment s = getHapiContext().getGenericParser().getCriticalResponseData(
                         (String)request);
@@ -138,20 +146,19 @@ public class RespondingValidationExceptionHandler extends
      * {@link ValidationException}s. In case of exceptions, each exception will
      * cause an entry in one or more ERR segments.
      * 
-     * @param response
+     * @param response response message to be populated
      * @throws HL7Exception
-     * @throws IOException
      */
     protected void populateResponseMessage(Message response) throws HL7Exception {
         if (response == null)
             return;
         List<ValidationException> exceptions = getExceptions();
-        // No exceptions - just return response, MSA-1 is already set
-        if (exceptions.isEmpty()) {
-            return;
-        }
         for (int i = 0; i < exceptions.size(); i++) {
-            exceptions.get(i).populateResponse(response, getErrorAcknowledgementCode(), i);
+            ValidationException ve = exceptions.get(i);
+            // TODO respect minimumSeverity here?
+            if (ve.getSeverity() == Severity.ERROR) {
+               ve.populateResponse(response, getErrorAcknowledgementCode(), i);
+            }
         }
     }
 
