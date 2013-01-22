@@ -146,8 +146,8 @@ public class HL7Exception extends AbstractHL7Exception {
 	
 	/**
 	 * Creates an HL7Exception.
-	 * 
-	 * @param errorCondition a code describing the the error condition, from HL7 table 0357 (see
+	 * @param message error message
+	 * @param error a code describing the the error condition, from HL7 table 0357 (see
 	 *            section 2.16.8 of standard v 2.4)
 	 * 
 	 * @param cause The exception that caused this exception to be thrown.
@@ -172,8 +172,9 @@ public class HL7Exception extends AbstractHL7Exception {
 	
 	/**
 	 * Creates an HL7Exception.
-	 * 
-	 * @param errorCondition a code describing the the error condition, from HL7 table 0357 (see
+	 *
+     * @param message error message
+	 * @param error a code describing the the error condition, from HL7 table 0357 (see
 	 *            section 2.16.8 of standard v 2.4).
 	 */
 	public HL7Exception(String message, ErrorCode error) {
@@ -183,7 +184,8 @@ public class HL7Exception extends AbstractHL7Exception {
 
 	/**
 	 * Creates an HL7Exception with the code APPLICATION_INTERNAL_ERROR
-	 * 
+     *
+	 * @param message error message
 	 * @param cause The excption that caused this exception tobe thrown.
 	 */
 	public HL7Exception(String message, Throwable cause) {
@@ -201,6 +203,8 @@ public class HL7Exception extends AbstractHL7Exception {
 
 	/**
 	 * Creates an HL7Exception with the code APPLICATION_INTERNAL_ERROR
+     *
+     * @param message error message
 	 */
 	public HL7Exception(String message) {
 		super(message);

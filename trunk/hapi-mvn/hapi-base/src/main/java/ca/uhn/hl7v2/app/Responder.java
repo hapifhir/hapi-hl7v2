@@ -67,7 +67,7 @@ class Responder {
 	/**
 	 * Creates a new instance of Responder
 	 */
-	public Responder(Parser parser, Socket theInboundSocket) {
+	public Responder(Socket theInboundSocket) {
 		inboundSocket = theInboundSocket;
 	}
 

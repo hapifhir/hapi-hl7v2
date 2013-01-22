@@ -39,7 +39,7 @@ public class SimpleServerMinDepsTest {
 	public void before() throws InterruptedException {
 		myPort = RandomServerPortProvider.findFreePort();
 		myCtx = new DefaultHapiContext(new GenericModelClassFactory());
-		mySs = myCtx.getSimpleService(myPort, false);
+		mySs = myCtx.newServer(myPort, false);
 		mySs.startAndWait();
 	}
 	

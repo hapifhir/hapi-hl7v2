@@ -21,7 +21,7 @@ public class ClientSocketStreamSource extends SocketStreamSource {
     private Socket mySocket;
 
     /**
-     * @param theSharedAddress the address at which to connect sockets 
+     * @param theAddress the address at which to connect sockets
      * @throws TransportException
      */
     public ClientSocketStreamSource(SocketAddress theAddress) throws TransportException {

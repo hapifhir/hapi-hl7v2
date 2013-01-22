@@ -114,12 +114,13 @@ public interface IStructureDefinition {
      * of all valid children which may follow this one, at any level in the
      * hierarchy (including as later siblings of parent structures to
      * this one)
+     *
+     * @return the names of all valid children which may follow this one
      */
     Set<String> getNamesOfAllPossibleFollowingLeaves();
 
     /**
-     * May return null
-     * @return
+     * @return structure definition of first child of null if there is no child
      */
     IStructureDefinition getFirstChild();
 
@@ -152,6 +153,9 @@ public interface IStructureDefinition {
      *	                ORDER_OBSERVATION
      *	   </code>
      *
+     *
+     * @return the names of any possible children that could be the first
+     * required child of this group
      */
     Set<String> getAllPossibleFirstChildren();
 
@@ -161,14 +165,14 @@ public interface IStructureDefinition {
     Set<String> getAllChildNames();
 
     /**
-     * Is this element a choice element?
-     * 
+     * @return true if this element a choice element
+     *
      * @see Group#isChoiceElement(String)
      */
     boolean isChoiceElement();
     
     /**
-     * @return Is this a required structure within it's parent
+     * @return true if this a required structure within it's parent
      */
     boolean isRequired();
 

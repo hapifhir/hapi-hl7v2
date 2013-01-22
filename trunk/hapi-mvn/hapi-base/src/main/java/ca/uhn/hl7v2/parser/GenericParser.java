@@ -56,6 +56,9 @@ public class GenericParser extends Parser {
 		this(new DefaultHapiContext());
 	}
 
+    /**
+     * @param context the HapiContext to be used
+     */
 	public GenericParser(HapiContext context) {
 		super(context);
 		pipeParser = new PipeParser(context);
@@ -98,6 +101,8 @@ public class GenericParser extends Parser {
 
 	/**
 	 * Returns true if the pipe parser is primary
+     *
+     * @return true if the pipe parser is primary
 	 */
 	public boolean isPipeParserPrimary() {
 		return primaryParser == pipeParser;
@@ -236,18 +241,15 @@ public class GenericParser extends Parser {
 	 * @throws HL7Exception if the message is not correctly formatted.
 	 * @throws EncodingNotSupportedException if the message encoded is not supported by this parser.
 	 */
-	protected Message doParse(String message, String version) throws HL7Exception,
-			EncodingNotSupportedException {
-		Parser parser = getAppropriateParser(message);
-		Message retVal = parser.doParse(message, version);
-		return retVal;
+	protected Message doParse(String message, String version) throws HL7Exception {
+		return getAppropriateParser(message).doParse(message, version);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Message parse(String theMessage) throws HL7Exception, EncodingNotSupportedException {
+	public Message parse(String theMessage) throws HL7Exception {
 		Message retVal = super.parse(theMessage);
 		Parser parser = getAppropriateParser(theMessage);
 		retVal.setParser(parser);
@@ -304,13 +306,24 @@ public class GenericParser extends Parser {
 		primaryParser.parse(message, string);
 	}
 
+    /**
+     * Convenience factory method which returns an instance that has a {@link NoValidation
+     * NoValidation validation context}.
+     *
+     * @return instance of GenericParser without validation
+     */
+    public static GenericParser getInstanceWithNoValidation() {
+        return new GenericParser(
+                new DefaultHapiContext(ValidationContextFactory.noValidation()));
+    }
+
 	@Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion,
 			String thePackageName) throws HL7Exception, EncodingNotSupportedException {
 		return primaryParser.doParseForSpecificPackage(theMessage, theVersion, thePackageName);
 	}
 
-	public static void main(String[] args) throws EncodingNotSupportedException, HL7Exception {
+	public static void main(String[] args) throws HL7Exception {
 
 		String msgString = "MSH|^~\\&|RAMSOFT|SENDING FACILITY|RAMSOFT|RECEIVING FACILITY|20101223202939-0400||ADT^A08|101|P|2.3.1||||||||\r"
 				+ "EVN|A08|20101223202939-0400||||\r"
@@ -326,14 +339,6 @@ public class GenericParser extends Parser {
 
 	}
 
-	/**
-	 * Convenience factory method which returns an instance that has a {@link NoValidation
-	 * NoValidation validation context}.
-	 */
-	public static GenericParser getInstanceWithNoValidation() {
-		GenericParser retVal = new GenericParser(
-				new DefaultHapiContext(ValidationContextFactory.noValidation()));
-		return retVal;
-	}
+
 
 }

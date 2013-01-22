@@ -35,8 +35,7 @@ public class AppWrapper implements ReceivingApplication {
      */
     public Message processMessage(Message theMessage, Map<String, Object> theMetadata) 
             throws ReceivingApplicationException, HL7Exception {
-        Message result =  null;
-        
+        Message result;
         try {
             result = myApplication.processMessage(theMessage);
         } catch (ApplicationException e) {

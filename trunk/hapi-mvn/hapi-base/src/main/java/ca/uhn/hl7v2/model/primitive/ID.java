@@ -70,12 +70,12 @@ public abstract class ID extends AbstractPrimitive {
     }
     
     /**
-     * @param theMessage message to which this Type belongs
+     * @param message message to which this Type belongs
      * @param theTable HL7 table from which values are to be drawn 
      */
     public ID(Message message, Integer theTable) {
         super(message);
-        myTable = theTable.intValue();
+        myTable = theTable;
     }
     
     /**

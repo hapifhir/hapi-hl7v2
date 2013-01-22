@@ -75,7 +75,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 * @param theType ignored
 	 */
 	public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
-		return getRules(myPrimitiveRuleBindings, theVersion, theTypeName, PrimitiveTypeRule.class);
+		return getRules(myPrimitiveRuleBindings, theVersion, theTypeName);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 * @see ValidationContext#getMessageRules(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
-		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent, MessageRule.class);
+		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 *      java.lang.String)
 	 */
 	public Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding) {
-		return getRules(myEncodingRuleBindings, theVersion, theEncoding, EncodingRule.class);
+		return getRules(myEncodingRuleBindings, theVersion, theEncoding);
 	}
 
 	/**
@@ -116,8 +116,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 		return myEncodingRuleBindings;
 	}
 	
-	private <T extends Rule<?>> Collection<T> getRules(List<RuleBinding<T>> bindings, String version, String scope,
-			Class<T> ruleClass) {
+	private <T extends Rule<?>> Collection<T> getRules(List<RuleBinding<T>> bindings, String version, String scope) {
 		List<T> active = new ArrayList<T>(bindings.size());
 		for (RuleBinding<T> binding : bindings) {
 			if (applies(binding, version, scope))

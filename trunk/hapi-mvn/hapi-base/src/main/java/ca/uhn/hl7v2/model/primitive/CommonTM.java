@@ -520,7 +520,7 @@ public class CommonTM implements Serializable {
      * Note: Sets fields using precision up to the minute
      * Note: Date is timezone-agnostic, representing always GMT time
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values
      * @since 1.1 
      */
     public void setValueToMinute(Date theDate) throws DataTypeException {
@@ -608,7 +608,7 @@ public class CommonTM implements Serializable {
      * Note: Sets fields using precision up to the second
      * Note: Date is timezone-agnostic, representing always GMT time
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values
      * @since 1.1 
      */
     public void setValueToSecond(Date theDate) throws DataTypeException {

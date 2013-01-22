@@ -105,7 +105,7 @@ public class CommonDT implements Serializable {
      * 
      * Note: Sets fields using maximum possible precision
      * 
-     * @param theCalendar The calendar object from which to retrieve values 
+     * @param theDate The date object from which to retrieve values
      * @since 1.1 
      */
     public void setValue(Date theDate) throws DataTypeException {

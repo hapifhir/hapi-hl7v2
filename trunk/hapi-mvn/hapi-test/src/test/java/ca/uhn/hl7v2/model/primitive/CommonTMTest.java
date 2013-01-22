@@ -159,7 +159,7 @@ public class CommonTMTest {
         cal.set(Calendar.ZONE_OFFSET, 11 * 1000 * 60 * 60);
         commonTM.setValue(cal);
         value = commonTM.getValue();
-        assertEquals("124005.25+1100", value); // TODO fails       
+        assertEquals("124005.25+1100", value); 
         
         format = new SimpleDateFormat("HH:mm:ss");
         
@@ -222,7 +222,8 @@ public class CommonTMTest {
         }
 	    
 	}
-	
+
+    @Test
     public void testSetGet() {
 		buildSpecs(SetGetSpec.class)
 			.add(null, (String)null)

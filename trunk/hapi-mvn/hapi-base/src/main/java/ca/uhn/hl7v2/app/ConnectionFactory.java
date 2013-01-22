@@ -38,7 +38,7 @@ class ConnectionFactory {
 
 	public static Connection open(ConnectionData connectionData,
 			ExecutorService executorService) throws Exception {
-		Connection connection = null;
+		Connection connection;
 		if (connectionData.getPort2() == 0) {
 			connection = new Connection(connectionData.getParser(),
 					connectionData.getProtocol(), createSocket(connectionData.getSocketFactory(),

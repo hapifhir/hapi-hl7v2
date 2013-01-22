@@ -82,7 +82,7 @@ public class ReadOnlyMessageIterator implements Iterator<Structure> {
     /**
      * @param theRoot root of depth first iteration, which starts with the first child
      * @param structureName structure name to look for
-     * @return n iterator that skips all structures that do not match the parameter
+     * @return an iterator that skips all structures that do not match the parameter
      */
     public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, String structureName) {
         return createPopulatedStructureIterator(theRoot, new StructureNamePredicate(structureName));

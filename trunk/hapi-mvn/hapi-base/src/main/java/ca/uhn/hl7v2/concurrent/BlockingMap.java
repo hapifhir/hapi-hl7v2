@@ -9,8 +9,8 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	/**
 	 * Adds an entry only if there's already a consumer waiting for the value.
 	 * 
-	 * @param key
-	 * @param value
+	 * @param key key for the entry to be added
+	 * @param value entry to be added
 	 * @return true if entry was added and a consumer is already waiting for the
 	 *         value, false otherwise
 	 */
@@ -21,7 +21,7 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	 * May return null if the producer withdraws the entry without providing a
 	 * value.
 	 * 
-	 * @param key
+	 * @param key key for the entry
 	 * @return the value of the entry
 	 * @throws InterruptedException
 	 */
@@ -30,7 +30,7 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	/**
 	 * Waits for an entry in a background thread.
 	 * 
-	 * @param key
+	 * @param key key for the entry
 	 * @return Future the result
 	 * @throws InterruptedException
 	 */
@@ -42,10 +42,10 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	 * within the poll time. May return null if the producer withdraws the entry
 	 * without providing a value.
 	 * 
-	 * @param key
-	 * @param timeout
-	 * @param unit
-	 * @return
+	 * @param key key for the entry
+	 * @param timeout timeout before the methods returns
+	 * @param unit time unit used in conjunction with timout
+	 * @return the value of the entry
 	 * @throws InterruptedException
 	 */
 	V poll(K key, long timeout, TimeUnit unit) throws InterruptedException;
@@ -53,7 +53,7 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	/**
 	 * Polls for an entry in a background thread.
 	 * 
-	 * @param key
+	 * @param key key for the entry
 	 * @return Future the result
 	 * @throws InterruptedException
 	 */

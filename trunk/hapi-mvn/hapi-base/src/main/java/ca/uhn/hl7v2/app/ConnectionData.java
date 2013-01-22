@@ -155,7 +155,7 @@ class ConnectionData {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(getHost()).append(":").append(getPort());
 		if (port2 > 0)
 			buf.append(",").append(port2);

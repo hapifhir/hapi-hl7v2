@@ -130,8 +130,7 @@ public class PipeParser extends Parser {
 
 	/**
 	 * @deprecated this method should not be public
-	 * @param message
-	 *            HL7 message
+	 * @param message HL7 message
 	 * @return message structure
 	 * @throws HL7Exception
 	 */
@@ -328,7 +327,10 @@ public class PipeParser extends Parser {
 	/**
 	 * Parses a segment string and populates the given Segment object.
 	 * Unexpected fields are added as Varies' at the end of the segment.
-	 * 
+     *
+	 * @param destination segment to parse the segment string into
+     * @param segment encoded segment
+     * @param encodingChars encoding characters to be used
 	 * @throws HL7Exception
 	 *             if the given string does not contain the given segment or if
 	 *             the string is not encoded properly
@@ -340,9 +342,11 @@ public class PipeParser extends Parser {
 	/**
 	 * Parses a segment string and populates the given Segment object.
 	 * Unexpected fields are added as Varies' at the end of the segment.
-	 * 
-	 * @param theRepetition
-	 *            The repetition number of this segment within its group
+	 *
+     * @param destination segment to parse the segment string into
+     * @param segment encoded segment
+     * @param encodingChars encoding characters to be used
+	 * @param theRepetition the repetition number of this segment within its group
 	 * @throws HL7Exception
 	 *             if the given string does not contain the given segment or if
 	 *             the string is not encoded properly
@@ -438,6 +442,10 @@ public class PipeParser extends Parser {
 	/**
 	 * Splits the given composite string into an array of components using the
 	 * given delimiter.
+     *
+     * @param composite encoded composite string
+     * @param delim delimiter to split upon
+     * @return split string
 	 */
 	public static String[] split(String composite, String delim) {
 		ArrayList<String> components = new ArrayList<String>();
@@ -490,6 +498,10 @@ public class PipeParser extends Parser {
 	 * Encodes the given Type, using the given encoding characters. It is
 	 * assumed that the Type represents a complete field rather than a
 	 * component.
+     *
+     * @param source type to be encoded
+     * @param encodingChars encoding characters to be used
+     * @return encoded type
 	 */
 	public static String encode(Type source, EncodingCharacters encodingChars) {
 		return encode(source, encodingChars, null, null);
@@ -628,6 +640,11 @@ public class PipeParser extends Parser {
 	/**
 	 * Returns given group serialized as a pipe-encoded string - this method is
 	 * called by encode(Message source, String encoding).
+     *
+     * @param source group to be encoded
+     * @param encodingChars encoding characters to be used
+     * @throws HL7Exception if an error occurred while encoding
+     * @return encoded group
 	 */
 	public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
 		return encode(source, encodingChars, source.getMessage().getParser().getParserConfiguration(), "");
@@ -723,9 +740,11 @@ public class PipeParser extends Parser {
 	}
 
 	/**
-	 * Convenience factory method which returns an instance that has a
+	 * Convenience factory method which returns an instance that has a new
 	 * {@link DefaultHapiContext} initialized with a {@link NoValidation
 	 * NoValidation validation context}.
+     *
+     * @return PipeParser with disabled validation
 	 */
 	public static PipeParser getInstanceWithNoValidation() {
 		HapiContext context = new DefaultHapiContext();
@@ -733,6 +752,13 @@ public class PipeParser extends Parser {
 		return new PipeParser(context);
 	}
 
+    /**
+     * Returns given segment serialized as a pipe-encoded string.
+     *
+     * @param source segment to be encoded
+     * @param encodingChars encoding characters to be used
+     * @return encoded group
+     */
 	public static String encode(Segment source, EncodingCharacters encodingChars) {
 		return encode(source, encodingChars, null, null);
 	}
@@ -820,6 +846,9 @@ public class PipeParser extends Parser {
 	 * <ENTER> at the end of each segment, but this creates both a carriage
 	 * return and a line feed, so to the parser, the first character of the next
 	 * segment is the line feed.
+     *
+     * @param in input string
+     * @return string with leading whitespaces removed
 	 */
 	public static String stripLeadingWhitespace(String in) {
 		StringBuilder out = new StringBuilder();

@@ -93,7 +93,7 @@ public class MinLowerLayerProtocol extends LowerLayerProtocol {
 
     /**
      * Provides a charset to use for character encoding
-     * @param theCharset The charset to use
+     * @param charsetName The name of the charset to use
      * @since 2.1
      */
 	public void setCharset(String charsetName) {

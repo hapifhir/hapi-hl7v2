@@ -51,6 +51,7 @@ public class EncodingCharacters implements Cloneable {
      * values. If the encodingCharacters argument is null, the default
      * values are used.
      *
+     * @param fieldSeparator field seperator
      * @param encodingCharacters consists of the characters that appear in
      *      MSH-2 (see section 2.8 of the HL7 spec).  The characters are
      *      Component Separator, Repetition Separator, Escape Character, and
@@ -74,7 +75,9 @@ public class EncodingCharacters implements Cloneable {
 
     /**
      * Returns an instance using the MSH-1 and MSH-2 values of the given message
-     * 
+     *
+     * @param message the message
+     * @return the encoding characters for this message
      * @throws HL7Exception If either MSH-1 or MSH-2 are not populated
      * @since 1.0
      */
@@ -95,8 +98,8 @@ public class EncodingCharacters implements Cloneable {
 
     
     
-    public EncodingCharacters(char fieldSeparator, char componentSeparator, char repetitionSeparator, char escapeCharacter, char subcomponentSeparator)
-    {
+    public EncodingCharacters(char fieldSeparator, char componentSeparator, char repetitionSeparator,
+                              char escapeCharacter, char subcomponentSeparator) {
         this(fieldSeparator, String.valueOf(componentSeparator) + repetitionSeparator + escapeCharacter + subcomponentSeparator);
     }
     
@@ -104,8 +107,7 @@ public class EncodingCharacters implements Cloneable {
     
     /** copies contents of "other" */
     
-    public EncodingCharacters(EncodingCharacters other)
-    {
+    public EncodingCharacters(EncodingCharacters other) {
         this.fieldSep = other.getFieldSeparator();
         this.encChars = new char[4];
         this.encChars[0] = other.getComponentSeparator();
@@ -115,27 +117,27 @@ public class EncodingCharacters implements Cloneable {
     }
     
     /**
-     *
      * Returns the field separator.
      *
+     * @return the field separator
      */
     public char getFieldSeparator() {
         return this.fieldSep;
     }
     
     /**
-     *
      * Returns the component separator.
      *
+     * @return the component separator
      */
     public char getComponentSeparator() {
         return this.encChars[0];
     }
     
     /**
-     *
      * Returns the repetition separator.
      *
+     * @return the repetition separator
      */
     public char getRepetitionSeparator() {
         return this.encChars[1];
@@ -143,6 +145,8 @@ public class EncodingCharacters implements Cloneable {
     
     /**
      * Returns the escape character.
+     *
+     * @return the escape character
      */
     public char getEscapeCharacter() {
         return this.encChars[2];
@@ -150,6 +154,8 @@ public class EncodingCharacters implements Cloneable {
     
     /**
      * Returns the subcomponent separator.
+     *
+     * @return the subcomponent separator
      */
     public char getSubcomponentSeparator() {
         return this.encChars[3];
@@ -214,6 +220,8 @@ public class EncodingCharacters implements Cloneable {
     /**
      * Returns an instance of encoding characters with the standard ER7 encoding characters
      * defined: |^~\&
+     *
+     * @return a default instance of encoding characters
      */
 	public static EncodingCharacters defaultInstance() {
 		return new EncodingCharacters('|', null);

@@ -8,39 +8,23 @@ package ca.uhn.hl7v2.model;
  */
 @SuppressWarnings("serial")
 public class GenericPrimitive extends AbstractPrimitive implements Primitive {
-    
-//    String value = null;
-    
-    /** 
-     * Creates a new instance of GenericPrimitive 
+
+    /**
+     * Create a generic primitive
+     * @param message message to which the primitive is linked to
      */
     public GenericPrimitive(Message message) {
         super(message);
     }
-    
-//    /** 
-//     * Returns a String representation of the value of this field.
-//     */
-//    public String getValue() {
-//        return this.value;
-//    }
-    
-//    /** 
-//     * Sets the value of this field if the given value is legal in the context of the
-//     * implementing class.
-//     * @throws DataTypeException if the given value is not valid in this context.
-//     */
-//    public void setValue(String value) throws DataTypeException {
-//        this.value = value;
-//    }
-    
-    /** Returns the name of the type (used in XML encoding and profile checking)  */
+
     public String getName() {
         return "UNKNOWN";
     }
-    
+
     /**
-     * @see ca.uhn.hl7v2.model.Primitive#getVersion()
+     * As this is a generic primitive, this method returns <code>null</code> to
+     * inidicate that it is not associated with a dedicated HL7 version
+     * @return null
      */
     public String getVersion() {
         return null;

@@ -100,7 +100,7 @@ public abstract class HL7Service extends Service {
 		this.cleaner = new ConnectionCleaner(this);
 		
 		// 960101
-		assert this.cleaner.isRunning() == false;
+		assert !this.cleaner.isRunning();
 	}
 
 	/**
@@ -108,8 +108,6 @@ public abstract class HL7Service extends Service {
 	 * implementation launches a cleaner thread that removes stale connections
 	 * from the connection list. Override to initialize resources for the
 	 * running thread, e.g. opening {@link ServerSocket}s etc.
-	 * 
-	 * @throws IOException
 	 */
 	@Override
 	protected void afterStartup() {
@@ -174,7 +172,7 @@ public abstract class HL7Service extends Service {
 			int c = 0;
 			synchronized (this) {
 				while (conn == null && c < connections.size()) {
-					Connection nextConn = (Connection) connections.get(c);
+					Connection nextConn = connections.get(c);
 					if (nextConn.getRemoteAddress().getHostAddress().equals(IP))
 						conn = nextConn;
 					c++;
@@ -185,6 +183,7 @@ public abstract class HL7Service extends Service {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
+                    // don't care
 				}
 			}
 		}
@@ -311,11 +310,11 @@ public abstract class HL7Service extends Service {
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new FileReader(f));
-			String line = null;
+			String line;
 			while ((line = in.readLine()) != null) {
 				// parse application registration information
 				StringTokenizer tok = new StringTokenizer(line, "\t", false);
-				String type = null, event = null, className = null;
+				String type, event, className;
 	
 				if (tok.hasMoreTokens()) { // skip blank lines
 					try {
@@ -350,6 +349,7 @@ public abstract class HL7Service extends Service {
 				try {
 					in.close();
 				} catch (IOException e) {
+                    // don't care
 				}
 			}
 		}
@@ -368,7 +368,7 @@ public abstract class HL7Service extends Service {
 	 */
 	private class ConnectionCleaner extends Service {
 
-		HL7Service service;
+		private final HL7Service service;
 
 		public ConnectionCleaner(HL7Service service) {
 			super("ConnectionCleaner", service.getExecutorService());
@@ -399,6 +399,7 @@ public abstract class HL7Service extends Service {
 					}
 				}
 			} catch (InterruptedException e) {
+                // don't care
 			}
 		}
 

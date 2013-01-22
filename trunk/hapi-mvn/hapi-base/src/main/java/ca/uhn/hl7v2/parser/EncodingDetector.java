@@ -41,7 +41,13 @@ public final class EncodingDetector {
 	private EncodingDetector() {
 		// nothing
 	}
-	
+
+    /**
+     * Throws an exception if the message is not ER7 encoded
+     *
+     * @param theMessage message to be examined
+     * @throws RuntimeException if message is not ER7-encoded
+     */
 	public static void assertEr7Encoded(String theMessage) {
         // quit if the string is too short
         if (theMessage.length() < 4)
@@ -77,7 +83,10 @@ public final class EncodingDetector {
 	
 	/**
 	 * Returns true if the message is ER7 (pipe-and-hat) encoded
-	 */
+     *
+     * @param theMessage message to be examined
+     * @return true if message is ER7-encoded
+     */
     public static boolean isEr7Encoded(String theMessage) {
         try {
             assertEr7Encoded(theMessage);
@@ -87,14 +96,15 @@ public final class EncodingDetector {
         }
 	}
 
-    
+    /**
+     * Throws an exception if the message is not XML encoded
+     *
+     * @param theMessage message to be examined
+     * @throws RuntimeException if message is not XML-encoded
+     */
     public static void assertXmlEncoded(String theMessage) {
-        String[] expected = { "MSH.1>", "MSH.2>" };
-        for (int i = 0; i < expected.length; i++) {
-            if (theMessage.indexOf(expected[i]) < 0) {
-                throw new RuntimeException("Expected to find MSH.1 and MSH.2 tags");
-            }
-        }        
+        if (!theMessage.contains("MSH.1>")) throw new RuntimeException("Expected to find MSH.1");
+        if (!theMessage.contains("MSH.2>")) throw new RuntimeException("Expected to find MSH.2");
     }
 
     /**
@@ -102,6 +112,9 @@ public final class EncodingDetector {
      * message does not perform a very robust check, and does not
      * validate for well-formedness. It is only intended to perform
      * a simple check for XML vs. ER7 messages.
+     *
+     * @param theMessage message to be examined
+     * @return true if message is XML-encoded
      */
 	public static boolean isXmlEncoded(String theMessage) {
         try {

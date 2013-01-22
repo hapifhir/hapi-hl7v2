@@ -43,6 +43,10 @@ import ca.uhn.hl7v2.HapiContext;
  */
 public interface ValidationExceptionHandlerFactory<R> {
 
+    /**
+     * @param context HAPI context
+     * @return a new instance of a ValidationExceptionHandler
+     */
     ValidationExceptionHandler<R> getNewInstance(HapiContext context);
 
 }

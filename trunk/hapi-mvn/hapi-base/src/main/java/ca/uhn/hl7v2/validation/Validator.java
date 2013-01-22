@@ -42,7 +42,7 @@ public interface Validator<R> {
 	 * 
 	 * @param message message to be validated
 	 * @return <code>true</code> if message is valid
-	 * @throws HL7Exception
+	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message is null
 	 */
 	public R validate(Message message) throws HL7Exception;
@@ -55,7 +55,7 @@ public interface Validator<R> {
 	 * @param isXML true if message is supposed to be XML
 	 * @param version message version
 	 * @return <code>true</code> if message is valid
-	 * @throws HL7Exception
+	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message is null
 	 */
 	public R validate(String message, boolean isXML, String version) throws HL7Exception;
@@ -71,7 +71,7 @@ public interface Validator<R> {
 	 * @param message message to be validated
 	 * @param handler message validation handler
 	 * @return <code>true</code> if message is valid
-	 * @throws HL7Exception
+	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
 	public R validate(Message message, ValidationExceptionHandler<R> handler)
@@ -87,7 +87,7 @@ public interface Validator<R> {
 	 * @param version message version
 	 * @param handler message validation handler
 	 * @return <code>true</code> if message is valid
-	 * @throws HL7Exception
+	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
 	public R validate(String message, boolean isXML, String version,

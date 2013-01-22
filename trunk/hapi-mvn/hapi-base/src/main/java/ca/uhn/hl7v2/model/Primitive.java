@@ -38,12 +38,16 @@ public interface Primitive extends Type {
 
   /**
    * Returns a String representation of the value of this field.
+   *
+   * @return a String representation of the value of this field
    */
   public String getValue();
 
   /**
    * Sets the value of this field if the given value is legal in the context of the
    * implementing class.
+   *
+   * @param value the value to be set
    * @throws DataTypeException if the given value is not valid in this context.
    */
   public void setValue(String value) throws DataTypeException;

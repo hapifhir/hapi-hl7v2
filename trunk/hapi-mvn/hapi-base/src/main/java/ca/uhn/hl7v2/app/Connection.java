@@ -68,7 +68,6 @@ public class Connection {
 	private List<Receiver> receivers;
 	private boolean open = true;
 	private ExecutorService executorService;
-	boolean outbound;
 
 	/**
 	 * Creates a new instance of Connection, with inbound and outbound
@@ -131,7 +130,7 @@ public class Connection {
 		sockets = new ArrayList<Socket>();
 		responses = new BlockingHashMap<String, String>(executorService);
 		receivers = new ArrayList<Receiver>(2);
-		responder = new Responder(parser, inboundSocket);
+		responder = new Responder(inboundSocket);
 	}
 
 	/**
@@ -210,7 +209,7 @@ public class Connection {
 	}
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(getRemoteAddress().getHostName());
 		buf.append(":");
 		for (Iterator<Socket> iter = sockets.iterator(); iter.hasNext();) {

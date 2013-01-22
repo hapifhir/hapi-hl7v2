@@ -176,6 +176,10 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 	 * - e.g. "ca/uhn/hl7v2/model/v24/".
 	 * This package should have the packages datatype, segment, group, and message
 	 * under it. The path ends in with a slash.
+     *
+     * @param ver HL7 version
+     * @return package path of the version
+     * @throws HL7Exception if the HL7 version is unknown
 	 */
 	public static String getVersionPackagePath(String ver) throws HL7Exception {
 		Version v = Version.versionOf(ver);
@@ -191,7 +195,11 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 	 * "ca.uhn.hl7v2.model.v24.".  This method
 	 * is identical to <code>getVersionPackagePath(...)</code> except that path
 	 * separators are replaced with dots.
-	 */
+     *
+     * @param ver HL7 version
+     * @return package name of the version
+     * @throws HL7Exception if the HL7 version is unknown
+     */
 	public static String getVersionPackageName(String ver) throws HL7Exception {
 	    String path = DefaultModelClassFactory.getVersionPackagePath(ver);
 	    String packg = path.replace('/', '.');
@@ -232,7 +240,10 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      * (e.g. two ADT_A01 classes) the first one in the search order will always be used.  However, 
      * this restriction only applies to message classes, not segment classes, etc.  This is because 
      * classes representing parts of a message are referenced explicitly in the code for the message 
-     * class, rather than being looked up (using findMessageClass() ) based on the String value of MSH-9.<p>  
+     * class, rather than being looked up (using findMessageClass() ) based on the String value of MSH-9.<p>
+     *
+     * @param version HL7 version
+     * @return array of package prefix names
      */
     public static String[] packageList(String version) throws HL7Exception {
         //get package list for this version 
@@ -356,6 +367,8 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 	 * is determined by checking which structure JARs are available on the classpath, so if this release of
 	 * HAPI supports version 2.6, but only the hapi-structures-v23.jar is available on the classpath,
 	 * "2.3" will be returned
+     *
+     * @return the most recent HL7 version known to HAPI
 	 */
 	public static String getHighestKnownVersion() {
 	    if (ourVersions == null || ourVersions.size() == 0) {

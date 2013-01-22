@@ -7,7 +7,7 @@ import ca.uhn.hl7v2.model.Message;
  * Defines the behaviour to use when an unexpected
  * segment is discovered while parsing a message.
  * 
- * @see ParserConfiguration#setUnexpectedSegmentBehaviour()
+ * @see ParserConfiguration#setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum)
  */
 public enum UnexpectedSegmentBehaviourEnum {
 

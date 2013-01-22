@@ -52,7 +52,6 @@ public class CustomMessageValidation {
 
 	/**
 	 * @param args
-	 * @throws HL7Exception
 	 * @throws EncodingNotSupportedException
 	 */
 	public static void main(String[] args) throws EncodingNotSupportedException {

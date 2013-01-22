@@ -60,8 +60,6 @@ public abstract class HapiContextSupport {
 
 	/**
 	 * Returns a unmodifiable instance of HapiContext
-	 * 
-	 * @see ca.uhn.hl7v2.HapiContextAware#getHapiContext()
 	 */
 	public final HapiContext getHapiContext() {
 		return unmodifiableContext(context);
@@ -81,7 +79,7 @@ public abstract class HapiContextSupport {
 	 * Supports the intention that HapiContext instances should not be altered e.g. from within a
 	 * Parser instance, but only explicitly from where the HapiContext instance is actually owned.
 	 * 
-	 * @param context
+	 * @param context context to be made unmodifiable
 	 * @return an unmodifiable HapiContext
 	 */
 	private static HapiContext unmodifiableContext(HapiContext context) {

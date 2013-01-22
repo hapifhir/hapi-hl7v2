@@ -14,8 +14,12 @@ package ca.uhn.hl7v2.model;
 public class GenericSegment extends AbstractSegment {
     
     private String name;
-    
-    /** Creates a new instance of GenericSegment */
+
+    /**
+     * Creates a genric segment
+     * @param parent parent group
+     * @param name name of the segment
+     */
     public GenericSegment(Group parent, String name) {
         super(parent, null);
         this.name = name;

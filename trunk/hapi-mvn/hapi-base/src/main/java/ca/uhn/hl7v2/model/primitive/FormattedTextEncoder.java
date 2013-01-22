@@ -18,17 +18,9 @@ import java.util.regex.Pattern;
  */
 public class FormattedTextEncoder {
 
-	private boolean myAtStartOfLine;
-
 	private StringBuilder myBuffer;
-	private int myCurrentLineOffset;
 	private int myInBold;
 	private boolean myInCenter;
-	private int myIndent;
-	private boolean myInDiv;
-	private boolean myNeedBreakBeforeNextText;
-	private int myTemporaryIndent;
-	private boolean myWordWrap;
 
 	/**
 	 * Use factory methods to instantiate this class
@@ -95,14 +87,14 @@ public class FormattedTextEncoder {
 		}
 
 		myBuffer = new StringBuilder(theInput.length() + 20);
-		myAtStartOfLine = true;
+		boolean myAtStartOfLine = true;
 		myInCenter = false;
-		myWordWrap = true;
-		myCurrentLineOffset = 0;
-		myTemporaryIndent = 0;
-		myIndent = 0;
-		myNeedBreakBeforeNextText = false;
-		myInDiv = false;
+		boolean myWordWrap = true;
+		int myCurrentLineOffset = 0;
+		int myTemporaryIndent = 0;
+		int myIndent = 0;
+		boolean myNeedBreakBeforeNextText = false;
+		boolean myInDiv = false;
 		myInBold = 0;
 
 		for (int i = 0; i < theInput.length(); i++) {
@@ -134,7 +126,7 @@ public class FormattedTextEncoder {
 				if (nextFourChars.equals(".br\\")) {
 
 					closeCenterIfNeeded();
-					if (myNeedBreakBeforeNextText == true) {
+					if (myNeedBreakBeforeNextText) {
 						addBreak();
 					}
 					myNeedBreakBeforeNextText = true;

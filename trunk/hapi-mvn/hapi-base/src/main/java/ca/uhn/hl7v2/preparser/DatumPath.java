@@ -1,6 +1,8 @@
+
 package ca.uhn.hl7v2.preparser;
 
-import java.util.*;
+
+import java.util.ArrayList;
 
 /** An object of this class represents a variable-size path for identifying
 the location of a datum within an HL7 message, which we can use for
@@ -43,21 +45,15 @@ public class DatumPath implements Cloneable {
 	public DatumPath(DatumPath other)
 	{
 		this();
-
 		copy(other);
 	}
 
 	public boolean equals(Object otherObject)
 	{
-		boolean ret = false;
-		DatumPath other = (DatumPath)otherObject;
-		if(this.size() == other.size()) {
-			ret = true;
-			for(int i=0; i<this.size(); ++i)
-				ret &= this.get(i).equals(other.get(i));
-		}
-
-		return ret;
+        if (otherObject == null) return false;
+        if (!getClass().equals(otherObject.getClass())) return false;
+        DatumPath other = (DatumPath)otherObject;
+		return m_path.equals(other.m_path);
 	}
 
 	/** Works like String.startsWith: 
@@ -106,9 +102,9 @@ public class DatumPath implements Cloneable {
 		if((0 <= idx) && (idx < m_path.size())) {
 			if(new_value != null) {
 				if(idx == 0)
-					m_path.set(idx, (String)new_value);
+					m_path.set(idx, new_value);
 				else if(idx >= 1)
-					m_path.set(idx, (Integer)new_value);
+					m_path.set(idx, new_value);
 			}
 			else
 				throw new NullPointerException();
@@ -134,9 +130,9 @@ public class DatumPath implements Cloneable {
 	{
 		Object gottenObj = m_path.get(idx);
 		if(idx == 0)
-			return (String)gottenObj;
+			return gottenObj;
 		else
-			return (Object)gottenObj;
+			return gottenObj;
 	}
 
 	public int size() { return m_path.size(); }
@@ -161,7 +157,7 @@ public class DatumPath implements Cloneable {
 	public String toString()
 	{
 
-		StringBuffer strbuf = new StringBuffer(15);
+		StringBuilder strbuf = new StringBuilder();
 
 		if(m_path.size() >= 1) {
 			DatumPath extendedCopy = (DatumPath)this.clone();
@@ -169,17 +165,17 @@ public class DatumPath implements Cloneable {
 
 			for(int i=0; i<extendedCopy.size(); ++i) {
 				if(i == 0)
-					strbuf.append("" + ((String)extendedCopy.get(0)));
+					strbuf.append(extendedCopy.get(0));
 				else if((i == 1) || (i == 3))
-					strbuf.append("[" + ((Integer)extendedCopy.get(i)).intValue() + "]");
+					strbuf.append("[").append(extendedCopy.get(i)).append("]");
 				else if((i == 2) || (i == 4) || (i == 5))
-					strbuf.append("-" + (((Integer)extendedCopy.get(i)).intValue()));
+					strbuf.append("-").append(extendedCopy.get(i));
 			}
 		}
 		else 
 			throw new IndexOutOfBoundsException();	
 
-		return "" + strbuf;
+		return strbuf.toString();
 	}
 
 	/** add() grows this by 1, inserting newValue at the end.
@@ -251,7 +247,7 @@ public class DatumPath implements Cloneable {
 				if(i == 0)
 					set(i, "");
 				else
-					set(i, new Integer((i==1 || i==3) ? 0 : 1));
+					set(i, (i==1 || i==3) ? 0 : 1);
 			}
 		}
 
@@ -296,8 +292,8 @@ public class DatumPath implements Cloneable {
 
 		boolean lessThan = false;
 		for(int i=1; !lessThan && (i<s_maxSize); ++i) {
-			int this_i = ((Integer)extendedCopyThis.get(i)).intValue();
-			int other_i = ((Integer)extendedCopyOther.get(i)).intValue();
+			int this_i = ((Integer)extendedCopyThis.get(i));
+			int other_i = ((Integer)extendedCopyOther.get(i));
 			lessThan |= (this_i < other_i);
 		}
 
@@ -307,10 +303,10 @@ public class DatumPath implements Cloneable {
 	public static void main(String args[])
 	{
 		DatumPath dp = new DatumPath();
-		dp.add(new String("ZYX"));
+		dp.add("ZYX");
 		dp.add(new Integer(42));
 
-		DatumPath dp2 = (new DatumPath()).add(new String()).add(-42);
+		DatumPath dp2 = new DatumPath().add(-42);
 
 		System.out.println(dp);
 		System.out.println(dp2);

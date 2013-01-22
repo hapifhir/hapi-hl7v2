@@ -91,8 +91,9 @@ public class ParserConfiguration {
 	 * Note that this configuration item currently only applies to
 	 * {@link PipeParser}
 	 * </p>
-	 * 
-	 * @since 1.3
+	 *
+     * @param theForcedEncode path definition
+	 * @since 2.0
 	 */
 	public void addForcedEncode(String theForcedEncode) {
 		if (theForcedEncode == null) {
@@ -184,6 +185,8 @@ public class ParserConfiguration {
 	 * Returns the behaviour to use when parsing a message and a nonstandard
 	 * segment is found. Default is
 	 * {@link #DEFAULT_UNEXPECTED_SEGMENT_BEHAVIOUR}
+     *
+     * @return the behaviour to use when a nonstandard egment is found
 	 */
 	public UnexpectedSegmentBehaviourEnum getUnexpectedSegmentBehaviour() {
 		if (myUnexpectedSegmentBehaviour == null) {
@@ -198,15 +201,19 @@ public class ParserConfiguration {
 	 * known to the parser. When operating in this mode, if a message arrives
 	 * with an unknown version string, the parser will attempt to parse it using
 	 * a {@link GenericMessage Generic Message} class instead of a specific HAPI
-	 * structure class.
+	 * structure class. Default is <code>false</code>.
+     *
+     * @return true if parsing messages with unknown versions is allowed
 	 */
 	public boolean isAllowUnknownVersions() {
 		return this.allowUnknownVersions;
 	}
 
 	/**
-	 * @return Returns <code>true</code> if empty segments should still be
-	 *         encoded if they are mandatory within their message structure.
+     * Returns <code>true</code> if empty segments should still be encoded
+     * if they are mandatory within their message structure.  Default is <code>false</code>.
+	 * @return <code>true</code> if empty segments should still be encoded
+     *
 	 * @see #setEncodeEmptyMandatoryFirstSegments(boolean)
 	 */
 	public boolean isEncodeEmptyMandatorySegments() {
@@ -214,6 +221,8 @@ public class ParserConfiguration {
 	}
 
 	/**
+     * Returns code>true</code> if subcomponent delimiters in OBX-5 shall be
+     *         ignored. Default is <code>false</code>.
 	 * @return <code>true</code> if subcomponent delimiters in OBX-5 shall be
 	 *         ignored
 	 */
@@ -222,6 +231,8 @@ public class ParserConfiguration {
 	}
 
 	/**
+     * Returns <code>true</code> if the parser validates using a configured
+     *         {@link ValidationContext}. Default is <code>true</code>.
 	 * @return <code>true</code> if the parser validates using a configured
 	 *         {@link ValidationContext}
 	 */
@@ -231,7 +242,8 @@ public class ParserConfiguration {
 
 	/**
 	 * Removes a forced encode entry
-	 * 
+	 *
+     * @param theForcedEncode path definition to be removed
 	 * @see #addForcedEncode(String)
 	 * @since 1.3
 	 */
@@ -250,6 +262,8 @@ public class ParserConfiguration {
 	 * with an unknown version string, the parser will attempt to parse it using
 	 * a {@link GenericMessage Generic Message} class instead of a specific HAPI
 	 * structure class.
+     *
+     * @param theAllowUnknownVersions true if parsing unknown versions shall be allowed
 	 */
 	public void setAllowUnknownVersions(boolean theAllowUnknownVersions) {
 		allowUnknownVersions = theAllowUnknownVersions;
@@ -340,6 +354,7 @@ public class ParserConfiguration {
 	/**
 	 * Set to <code>true</code> if subcomponent delimiters in OBX-5 shall be
 	 * ignored
+     * @param escapeSubcomponentDelimiterInPrimitive boolean flag to enable or disable this behavior
 	 */
 	public void setEscapeSubcomponentDelimiterInPrimitive(boolean escapeSubcomponentDelimiterInPrimitive) {
 		this.escapeSubcomponentDelimiterInPrimitive = escapeSubcomponentDelimiterInPrimitive;
@@ -399,7 +414,9 @@ public class ParserConfiguration {
 	/**
 	 * Sets the behaviour to use when parsing a message and a nonstandard
 	 * segment is found
-	 */
+     *
+     * @param theUnexpectedSegmentBehaviour behaviour to use when a nonstandard segment is found
+     */
 	public void setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum theUnexpectedSegmentBehaviour) {
 		if (theUnexpectedSegmentBehaviour == null) {
 			throw new NullPointerException("UnexpectedSegmentBehaviour can not be null");

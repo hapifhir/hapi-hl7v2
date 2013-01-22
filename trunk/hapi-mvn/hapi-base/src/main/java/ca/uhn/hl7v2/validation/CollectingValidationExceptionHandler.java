@@ -31,26 +31,47 @@ import java.util.Collections;
 import java.util.List;
 
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Severity;
 
 /**
  * ValidationExceptionHandler that collects all {@link ValidationException}s in a list.
- * 
+ * Subclasses can then derive a overall {@link #result() result} from this list.
+ *
  * @author Christian Ohr
  * 
  */
 public abstract class CollectingValidationExceptionHandler<R> extends AbstractValidationExceptionHandler<R> {
 
 	private List<ValidationException> exceptions = new ArrayList<ValidationException>();
+    private Severity minimumSeverityToCollect = Severity.ERROR;
 
+    /**
+     * @param context Hapi context
+     */
     public CollectingValidationExceptionHandler(HapiContext context) {
         super(context);
     }
 
-    public void onExceptions(ValidationException... exceptions) {
-		this.exceptions.addAll(Arrays.asList(exceptions));
-	}
+    @Override
+    public void error(ValidationException exception) {
+        if (isSeverityAtLeast(Severity.ERROR)) exceptions.add(exception);
+    }
 
-	/**
+    @Override
+    public void info(ValidationException exception) {
+        if (isSeverityAtLeast(Severity.INFO)) exceptions.add(exception);
+    }
+
+    @Override
+    public void warning(ValidationException exception) {
+        if (isSeverityAtLeast(Severity.WARNING)) exceptions.add(exception);
+    }
+
+    private boolean isSeverityAtLeast(Severity s) {
+        return s.compareTo(getMinimumSeverityToCollect()) >= 0;
+    }
+
+    /**
 	 * @return unmodifiable list of collected exceptions. If none have occurred, the list is empty.
 	 */
 	public List<ValidationException> getExceptions() {
@@ -58,10 +79,28 @@ public abstract class CollectingValidationExceptionHandler<R> extends AbstractVa
 	}
 
     /**
+     * Set the minimum severity to be added to the list of exceptions. Default is ERROR.
+     * @param minimumSeverityToCollect the minimum severity to be added to the list of exceptions
+     */
+    public void setMinimumSeverityToCollect(Severity minimumSeverityToCollect) {
+        this.minimumSeverityToCollect = minimumSeverityToCollect;
+    }
+
+    /**
+     * @return the minimum severity to be added to the list of exceptions. Default is ERROR.
+     */
+    public Severity getMinimumSeverityToCollect() {
+        return minimumSeverityToCollect;
+    }
+
+    /**
      * @see ca.uhn.hl7v2.validation.ValidationExceptionHandler#hasFailed()
      */
     public boolean hasFailed() {
-        return !exceptions.isEmpty();
+        for (ValidationException ve : exceptions) {
+            if (ve.getSeverity() == Severity.ERROR) return true;
+        }
+        return false;
     }
 	
 	

@@ -29,14 +29,16 @@ public class ExtraComponents implements Serializable {
     
     private List<Varies> comps;
     private Message message;
-    
-    /** Creates a new instance of ExtraComponents */
+
     public ExtraComponents(Message message) {
         this.comps = new ArrayList<Varies>();
         this.message = message; 
     }
     
-    /** Returns the number of existing extra components */
+    /** Returns the number of existing extra components
+     *
+     * @return number of existing extra components
+     */
     public int numComponents() {
         return comps.size();
     }
@@ -48,9 +50,11 @@ public class ExtraComponents implements Serializable {
     
     /** 
      * Returns the component at the given location, creating it 
-     * and all preceeding components if necessary.  
+     * and all preceeding components if necessary.
+     *
      * @param comp the extra component number starting at 0 (i.e. 0 is the first 
      *      extra component)
+     * @return component at the given index
      */
     public Varies getComponent(int comp) {
         ensureComponentAndPredecessorsExist(comp);

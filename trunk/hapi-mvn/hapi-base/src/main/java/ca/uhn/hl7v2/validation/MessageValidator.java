@@ -32,7 +32,7 @@ import ca.uhn.hl7v2.HL7Exception;
 /**
  * Validation utilities for parsed and encoded messages. The
  * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and
- * throws a {@link HL7Exception} if {@link #throwOnError} has been set to
+ * throws a {@link HL7Exception} if {@link #theFailOnErrorFlag} has been set to
  * <code>true</code>.
  * <p>
  * This class is kept for backwards compatibility.
@@ -51,7 +51,7 @@ public class MessageValidator extends AbstractValidator<Boolean> {
 
 	/**
 	 * @param theContext context that determines which validation rules apply
-	 * @param theFailOnErrorFlag
+	 * @param theFailOnErrorFlag true if an exception shall be thrown on validation errors
 	 */
 	public MessageValidator(ValidationContext theContext, boolean theFailOnErrorFlag) {
 		super();

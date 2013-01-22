@@ -511,7 +511,7 @@ public class NewPipeParserTest {
      * message is re-encoded. This is based on an issue found by UHN
      */
     @Test
-    public void testAddExtraSegmentToEnd() throws EncodingNotSupportedException, HL7Exception {
+    public void testAddExtraSegmentToEnd() throws HL7Exception {
 
         String msgString = "MSH|^~\\&|REG|W|||201103230042||ADT^A06|32153168-A06|P|2.2\r"
                 + "PV2||F||||||||||||||||||||N||AI|Emergency||||||N|||||||OTH^Self^03ZBrInBy\r"
@@ -530,7 +530,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testTwoSegmentsWithSameName() throws EncodingNotSupportedException, HL7Exception {
+    public void testTwoSegmentsWithSameName() throws HL7Exception {
 
         String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1||||||\r"
                 + "EVN|A17|201002130003||||201002130003|G^4265^L\r"
@@ -550,7 +550,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testLotsOfExtraSegments() throws EncodingNotSupportedException, HL7Exception {
+    public void testLotsOfExtraSegments() throws HL7Exception {
 
         String messageText = "MSH|^~\\&|ULTRA|TML|TML||200903120021||ADT^A17|66239404|T|2.3.1\r"
                 + "EVN|A17|201002130003||||201002130003|G^4265^L\r" + "PID|1\r" + "ZZA|ZZAVALUE\r" + "ZZA|ZZAVALUE\r"
@@ -575,7 +575,7 @@ public class NewPipeParserTest {
      * 
      * Test disabled for now (it never passed, this is potential new validation)
      */
-    public void testInvalidMessageFails() throws EncodingNotSupportedException, HL7Exception {
+    public void testInvalidMessageFails() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "OBX|8|ST|Test\r\r\rString||20090505||||||F\r";
@@ -593,7 +593,7 @@ public class NewPipeParserTest {
      * https://sourceforge.net/p/hl7api/bugs/153/
      */
     @Test
-    public void testHelpfulErrorMessageWithBadLineEndings() throws EncodingNotSupportedException, HL7Exception {
+    public void testHelpfulErrorMessageWithBadLineEndings() throws HL7Exception {
 
         String msh = "MSH|^~\\&|SUPER_LONG_MSH_SEGMENT_00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3";
 		String obx = "OBX|8|ST|Test\r\r\rString||20090505||||||F";
@@ -610,7 +610,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testDTInObx2() throws EncodingNotSupportedException, HL7Exception {
+    public void testDTInObx2() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r"
                 + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
@@ -629,7 +629,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testInvalidLengthInObx2() throws EncodingNotSupportedException, HL7Exception {
+    public void testInvalidLengthInObx2() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.4\r"
                 + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"

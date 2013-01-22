@@ -40,7 +40,7 @@ public interface Expression<T extends Structure> {
 	/**
 	 * Applies this expression on the structure
 	 * 
-	 * @param structure
+	 * @param structure HL7 structure to be evaluated
 	 * @return the result value
 	 * @throws HL7Exception
 	 */
@@ -57,7 +57,7 @@ public interface Expression<T extends Structure> {
 	/**
 	 * Returns the location of the structure to which is expression is applied to
 	 * 
-	 * @param structure
+	 * @param structure HL7 structure to be located
 	 * @return the location of the structure
 	 * @throws HL7Exception if the structure refers to an invalid location
 	 */

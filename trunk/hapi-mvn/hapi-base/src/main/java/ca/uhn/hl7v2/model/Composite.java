@@ -38,11 +38,16 @@ public interface Composite extends Type {
 
   /**
    * Returns an array containing the components of this field.
+   *
+   * @return array of components of this composite type
    */
   public Type[] getComponents();
 
   /**
    * Returns the single component of this composite at the specified position (starting at 0).
+   *
+   * @param number index of the component to be retrieved (zero-based)
+   * @return component at this index
    */
   public Type getComponent(int number) throws DataTypeException;
 

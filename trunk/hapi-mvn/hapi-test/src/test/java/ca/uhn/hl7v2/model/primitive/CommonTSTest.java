@@ -61,7 +61,7 @@ public class CommonTSTest {
     static String offsetStr;
     static String timeStamp;
     static String baseTime;
-    static int offset;
+    static Integer offset;
     static int year;
     static int month;
     static int day;
@@ -705,7 +705,7 @@ public class CommonTSTest {
         CommonTS commonTS = new CommonTS(timeStamp);
         assertEquals("Should get GMT offset back", offset, commonTS.getGMTOffset());
         commonTS  = new CommonTS("19990909+0500");
-        assertEquals(500, commonTS.getGMTOffset());
+        assertEquals(500, commonTS.getGMTOffset().intValue());
     }
 
     @Test

@@ -166,12 +166,12 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 			rules.addAll(getValidationContext().getPrimitiveRules(m.getVersion(), p.getName(), p));
 		}
 		for (PrimitiveTypeRule rule : rules) {
-			ValidationException[] ex = rule.apply(p.getValue());
-			for (int i = 0; i < ex.length; i++) {
-				ex[i].setLocation(l);
+			ValidationException[] exceptions = rule.apply(p.getValue());
+			for (ValidationException ve : exceptions) {
+                ve.setLocation(l);
 			}
-			if (ex != null && ex.length > 0) {
-				handler.onExceptions(ex);
+			if (exceptions.length > 0) {
+				handler.onExceptions(exceptions);
 			}
 		}
 	}

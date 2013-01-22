@@ -44,6 +44,11 @@ import ca.uhn.hl7v2.validation.builder.PredicateMessageRule;
 @SuppressWarnings("serial")
 public class TerserMessageRule extends PredicateMessageRule {
 
+    /**
+     * Creates a new instance of a terser message rule
+     * @param terserExpression terser string like "PID-3-1"
+     * @param predicate predicate used for the test
+     */
 	public TerserMessageRule(String terserExpression, Predicate predicate) {
 		super(predicate, new TerserExpression(terserExpression));
 	}

@@ -63,7 +63,7 @@ public class PipeParserMinDepsTest implements Application {
 			ourLog.info("Response: " + response);
 			Assert.assertTrue(response.contains("MSH|"));
 			Assert.assertTrue(response.contains("|2.5"));
-			Assert.assertTrue(myGotMessage == true);
+			Assert.assertTrue(myGotMessage);
 
 		} finally {
 			ss.stop();
@@ -82,7 +82,7 @@ public class PipeParserMinDepsTest implements Application {
 		int port1 = RandomServerPortProvider.findFreePort();
 		
 		DefaultHapiContext ctx = new DefaultHapiContext();
-		SimpleServer ss = ctx.getSimpleService(port1, false);
+		SimpleServer ss = ctx.newServer(port1, false);
 		ctx.getParserConfiguration().setAllowUnknownVersions(true);
 		
 		ss.registerApplication("*", "*", this);
@@ -108,7 +108,7 @@ public class PipeParserMinDepsTest implements Application {
 			ourLog.info("Response: " + response);
 			Assert.assertTrue(response.contains("MSH|"));
 			Assert.assertTrue(response.contains("|2.5"));
-			Assert.assertTrue(myGotMessage == true);
+			Assert.assertTrue(myGotMessage);
 
 		} finally {
 			ss.stop();
@@ -147,7 +147,7 @@ public class PipeParserMinDepsTest implements Application {
 
 			ourLog.info("Response: " + response);
 			Assert.assertTrue(response.contains("MSH|"));
-			Assert.assertTrue(myGotMessage == true);
+			Assert.assertTrue(myGotMessage);
 			Assert.assertTrue(response.contains("|2.6"));
 
 		} finally {
