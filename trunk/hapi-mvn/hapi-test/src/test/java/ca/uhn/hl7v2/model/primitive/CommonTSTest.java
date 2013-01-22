@@ -703,9 +703,9 @@ public class CommonTSTest {
     @Test
     public void testGetGMTOffset() throws DataTypeException {
         CommonTS commonTS = new CommonTS(timeStamp);
-        assertEquals("Should get GMT offset back", offset, commonTS.getGMTOffset());
+        assertEquals("Should get GMT offset back", offset.intValue(), commonTS.getGMTOffset());
         commonTS  = new CommonTS("19990909+0500");
-        assertEquals(500, commonTS.getGMTOffset().intValue());
+        assertEquals(500, commonTS.getGMTOffset());
     }
 
     @Test

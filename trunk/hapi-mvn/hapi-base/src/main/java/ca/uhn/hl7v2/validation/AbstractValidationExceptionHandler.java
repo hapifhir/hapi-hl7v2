@@ -27,6 +27,7 @@ package ca.uhn.hl7v2.validation;
 
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
+import ca.uhn.hl7v2.Severity;
 
 /**
  * Abstract base class of a ValidationExceptionHandler that supports a validation subject. Concrete
@@ -39,14 +40,53 @@ public abstract class AbstractValidationExceptionHandler<R> extends HapiContextS
 
     private Object subject;
 
+    /**
+     * @param context Hapi Context
+     */
     public AbstractValidationExceptionHandler(HapiContext context) {
         super(context);
     }
 
+    public void onExceptions(ValidationException... exceptions) {
+        for (ValidationException ve : exceptions) {
+            if (ve.getSeverity() == Severity.ERROR) error(ve);
+            if (ve.getSeverity() == Severity.WARNING) warning(ve);
+            if (ve.getSeverity() == Severity.ERROR) info(ve);
+        }
+    }
+
+    /**
+     * Called on ValidationExceptions with error severity
+     * @param exception ValidationException
+     */
+    public void error(final ValidationException exception) {}
+
+    /**
+     * Called on ValidationExceptions with warning severity
+     * @param exception ValidationException
+     */
+    public void warning(final ValidationException exception) {}
+
+    /**
+     * Called on ValidationExceptions with info severity
+     * @param exception ValidationException
+     */
+    public void info(final ValidationException exception) {}
+
+    /**
+     * Sets the object that is the target of validation. This is helpful
+     * to be called to give this handler e.g. access to the original
+     * message that has been validated.
+     *
+     * @param subject subject to be validated
+     */
     public void setValidationSubject(Object subject) {
         this.subject = subject;
     }
 
+    /**
+     * @return the validation subject
+     */
     public Object getValidationSubject() {
         return subject;
     }

@@ -37,7 +37,9 @@ import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.Rule;
+import ca.uhn.hl7v2.Severity;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
+import ca.uhn.hl7v2.validation.impl.RuleSupport;
 
 /**
  * Defines the type of rule to be built.
@@ -56,6 +58,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	private String description;
 	private String sectionReference;
 	private boolean active = true;
+    private Severity severity = Severity.ERROR;
 
 	protected RuleTypeBuilder() {
 		super();
@@ -84,12 +87,22 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	
 	protected List<RuleBinding<? extends Rule<?>>> getRules() {
 		return rules;
-	}	
+	}
+
+    protected T prepareRule(T rule) {
+        if (rule instanceof RuleSupport) {
+            RuleSupport<?> rs = (RuleSupport<?>)rule;
+            if (description != null) rs.setDescription(description);
+            if (sectionReference != null) rs.setSectionReference(sectionReference);
+            rs.setSeverity(severity);
+        }
+        return rule;
+    }
 
 	/**
 	 * Adds a description to the rule
 	 * 
-	 * @param description
+	 * @param description description
 	 * @return this instance to build more rules
 	 */
 	public S description(String description) {
@@ -100,7 +113,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	/**
 	 * Adds a HL7 section reference to a rule
 	 * 
-	 * @param sectionReference
+	 * @param sectionReference the section in the HL7 specification
 	 * @return this instance to build more rules
 	 */
 	public S refersToSection(String sectionReference) {
@@ -108,10 +121,21 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 		return instance();
 	}
 
+    /**
+     * Sets the severity of the rule
+     *
+     * @param severity the the severity of the rule
+     * @return this instance to build more rules
+     */
+    public S severity(Severity severity) {
+        this.severity = severity;
+        return instance();
+    }
+
 	/**
 	 * Marks the rule as being active (default) or inactive
 	 * 
-	 * @param active
+	 * @param active true if this rule shall be active
 	 * @return this instance to build more rules
 	 */
 	public S active(boolean active) {
@@ -122,7 +146,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	/**
 	 * Adds the specified rule to the set of rules.
 	 * 
-	 * @param rule
+	 * @param rule the rule to be tested
 	 * @return this instance to build more rules
 	 */
 	public S test(T rule) {
@@ -154,6 +178,12 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 		return new MessageRuleBuilder(rules, versions, eventType, triggerEvent);
 	}
 
+    /**
+     * Builds {@link MessageRule}s for event types and triggers to be specified
+     * using the returned MessageExpressionBuilder.
+     *
+     * @return MessageExpressionBuilder instance to continue building rules
+     */
 	public MessageExpressionBuilder message() {
 		return new MessageExpressionBuilder();
 	}
@@ -168,18 +198,10 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 		return new EncodingRuleBuilder(rules, versions, encoding);
 	}
 
-	public String getRuleDescription() {
-		return description;
-	}
-
-	public String getSectionReference() {
-		return sectionReference;
-	}
-
 	/**
 	 * Add {@link RuleBinding}s for the rule that have been built
 	 * 
-	 * @param rule
+	 * @param rule the rule for which bindings shall be added
 	 */
 	protected void addRuleBindings(T rule) {
 		if (Version.allVersions(versions)) {
@@ -196,8 +218,8 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	 * Builder implementation must overwrite this method to return all {@link RuleBinding}s for
 	 * rules that have been built.
 	 * 
-	 * @param rule
-	 * @param version
+	 * @param rule the rule for which bindings shall be retrieved
+	 * @param version the HL7 version for which bindings shall be retrieved
 	 * @return a collection of {@link RuleBinding}s
 	 */
 	@SuppressWarnings("unchecked")
@@ -222,10 +244,19 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
 	 */
 	public class MessageExpressionBuilder {
 
+        /**
+         * Applies {@link MessageRule}s for all event types and trigger events
+         * @return rule builder
+         */
 		public MessageRuleBuilder all() {
 			return new MessageRuleBuilder(rules, versions, "*", "*");
 		}
 
+        /**
+         * Applies {@link MessageRule}s for all trigger events of a given event type
+         * @param eventType  event type, e.g. "ADT"
+         * @return rule builder
+         */
 		public MessageRuleBuilder allOfEventType(String eventType) {
 			return new MessageRuleBuilder(rules, versions, eventType, "*");
 		}

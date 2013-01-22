@@ -57,7 +57,12 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
         ALL {
             @Override public String trim(String source) { return source == null ? null : source.trim(); }                        
         };
-        
+
+        /**
+         * Trims a string
+         * @param source the string to be trimmed
+         * @return the trimmed string
+         */
         public abstract String trim(String source);
         
         protected String trimPattern(Pattern pattern, String source) {
@@ -70,21 +75,27 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
 	private Predicate predicate;
 	private Trimmer trimmer;
 
+    /**
+     * Creates a new primitive rule without trimming
+     * @param predicate predicate to be used
+     */
 	public PredicatePrimitiveTypeRule(Predicate predicate) {
 		this(predicate, Trimmer.NONE);
 	}
 
+    /**
+     * Creates a new primitive rule
+     * @param predicate predicate to be used
+     * @param trimmer trimming behavior
+     */
 	public PredicatePrimitiveTypeRule(Predicate predicate, Trimmer trimmer) {
 		this.predicate = predicate;
 		this.trimmer = trimmer;
+        setDescription("Primitive value '%s' requires to be " + predicate.getDescription());
 	}
 
 	public Predicate getPredicate() {
 		return predicate;
-	}
-
-	public String getDescription() {
-		return "Primitive value '%s' requires to be " + predicate.getDescription();
 	}
 
 	public String correct(String value) {

@@ -21,6 +21,7 @@ public class ChoiceElementsRespectedRuleTest {
 		
 	}
 	
+	// TODO seems to fail
 	@Test(expected=HL7Exception.class)
 	public void testMultipleWithContent() throws HL7Exception, IOException {
 		

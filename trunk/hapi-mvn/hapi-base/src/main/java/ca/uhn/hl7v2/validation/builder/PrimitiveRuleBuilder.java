@@ -62,7 +62,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
 	 * @return this instance to build more rules
 	 */
 	public PrimitiveRuleBuilder is(Predicate predicate) {
-		return test(new PredicatePrimitiveTypeRule(predicate));
+		return test(prepareRule(new PredicatePrimitiveTypeRule(predicate)));
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
 	 * @return this instance to build more rules
 	 */
 	public PrimitiveRuleBuilder leftTrim(Predicate predicate) {
-		return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.LEFT));
+		return test(prepareRule(new PredicatePrimitiveTypeRule(predicate, Trimmer.LEFT)));
 	}
 
     /**
@@ -106,7 +106,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
      * @return this instance to build more rules
      */
     public PrimitiveRuleBuilder rightTrim(Predicate predicate) {
-        return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.RIGHT));
+        return test(prepareRule(new PredicatePrimitiveTypeRule(predicate, Trimmer.RIGHT)));
     }
     
     /**
@@ -128,7 +128,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
      * @return this instance to build more rules
      */
     public PrimitiveRuleBuilder allTrim(Predicate predicate) {
-        return test(new PredicatePrimitiveTypeRule(predicate, Trimmer.ALL));
+        return test(prepareRule(new PredicatePrimitiveTypeRule(predicate, Trimmer.ALL)));
     }    
 
 	@Override

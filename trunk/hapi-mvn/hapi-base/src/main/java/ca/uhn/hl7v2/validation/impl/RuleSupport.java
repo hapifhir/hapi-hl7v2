@@ -28,12 +28,17 @@ package ca.uhn.hl7v2.validation.impl;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.validation.Rule;
+import ca.uhn.hl7v2.Severity;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 @SuppressWarnings("serial")
 public abstract class RuleSupport<T> implements Rule<T> {
 
 	private static final ValidationException[] PASSED = new ValidationException[0];
+    private Severity severity = Severity.ERROR;
+    private String description;
+    private String sectionReference;
+    private ErrorCode errorCode = ErrorCode.APPLICATION_INTERNAL_ERROR;
 
 	protected ValidationException[] result(boolean result, Object value) {
 		return result(result, value, Location.UNKNOWN);
@@ -59,7 +64,7 @@ public abstract class RuleSupport<T> implements Rule<T> {
 
 	
 	protected ValidationException[] failed(String msg, Location location) {
-		ValidationException ve = new ValidationException(msg);
+		ValidationException ve = new ValidationException(msg, severity);
 		ve.setError(getErrorCode());
 		ve.setLocation(location);
 		return new ValidationException[] { ve };
@@ -72,7 +77,7 @@ public abstract class RuleSupport<T> implements Rule<T> {
 	protected ValidationException[] failed(Exception e, Location location) {
 		if (e instanceof ValidationException)
 			return new ValidationException[] { (ValidationException) e };
-		ValidationException ve = new ValidationException(e.getMessage(), e);
+		ValidationException ve = new ValidationException(e.getMessage(), e, severity);
 		ve.setError(getErrorCode());
 		ve.setLocation(location);
 		return new ValidationException[] { ve };
@@ -82,13 +87,43 @@ public abstract class RuleSupport<T> implements Rule<T> {
 	 * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()
 	 */
 	public String getSectionReference() {
-		return null;
+		return sectionReference;
 	}
-	
-	/**
+
+    /**
+     * @see ca.uhn.hl7v2.validation.Rule#getDescription()
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @return the severity if this rule fails
+     */
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    /**
 	 * @return the error code to be used in case the validation failed
 	 */
 	public ErrorCode getErrorCode() {
 		return ErrorCode.APPLICATION_INTERNAL_ERROR;
 	}
+
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSectionReference(String sectionReference) {
+        this.sectionReference = sectionReference;
+    }
+
+    public void setErrorCode(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
 }

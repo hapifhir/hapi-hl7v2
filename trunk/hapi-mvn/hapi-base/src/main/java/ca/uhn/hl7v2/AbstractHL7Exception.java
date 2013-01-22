@@ -47,6 +47,7 @@ public abstract class AbstractHL7Exception extends Exception {
 
 	private Location location;
 	private ErrorCode errorCode = ErrorCode.APPLICATION_INTERNAL_ERROR;
+    private Severity severity = Severity.ERROR;
 
 	public AbstractHL7Exception() {
 		super();
@@ -106,11 +107,21 @@ public abstract class AbstractHL7Exception extends Exception {
 		this.errorCode = errorCode;
 	}
 
-	/**
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
+    }
+
+    /**
 	 * Populates the generated response based on this exception.
 	 * 
-	 * @param response resposne message
-	 * @throws HL7Exception
+	 * @param response response message
+     * @param acknowledgmentCode the acknowledgement code
+     * @return response message
+	 * @throws HL7Exception if populating the response fails
 	 */
 	public Message populateResponse(Message response, AcknowledgmentCode acknowledgmentCode, int repetition)
 			throws HL7Exception {
@@ -165,7 +176,7 @@ public abstract class AbstractHL7Exception extends Exception {
 	 * repeatable field (ERR-1) with components containing details about the exception.
 	 * 
 	 * @param response the raw response message
-	 * @param acknowledgmentCode acknowledgment Code#
+	 * @param acknowledgmentCode acknowledgment code
      * @param repetition repetition of the ERR segment that shall be popualted
 	 * @throws HL7Exception
 	 */

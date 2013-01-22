@@ -64,7 +64,11 @@ public class ReportingValidationExceptionHandler implements ValidationExceptionH
         if (firstException == null)
             firstException = exceptions[0];
         for (ValidationException ve : exceptions) {
-            LOG.error("Invalid message", ve);
+            switch (ve.getSeverity()) {
+                case ERROR : LOG.error("Invalid message", ve);
+                case WARNING: LOG.warn("Message with warnings", ve);
+                case INFO: LOG.info("Message with comments", ve);
+            }
         }
     }
 
