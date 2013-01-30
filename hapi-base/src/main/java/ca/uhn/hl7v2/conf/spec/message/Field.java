@@ -1,7 +1,6 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ca.uhn.hl7v2.conf.ProfileException;
@@ -10,7 +9,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
  * The specification for a specific field in a message profile.  
  * @author Bryan Tripp
  */
-public class Field extends AbstractComponent {
+public class Field extends AbstractComponent<Field> {
     
     /** Utility field used by bound properties. */
     private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);

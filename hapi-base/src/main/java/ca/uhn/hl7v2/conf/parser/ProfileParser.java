@@ -88,7 +88,6 @@ import ca.uhn.hl7v2.util.XMLUtils;
  */
 public class ProfileParser {
 
-	private static final String PROFILE_DTD = "ca/uhn/hl7v2/conf/parser/message_profile.dtd";
 	private static final String PROFILE_XSD = "ca/uhn/hl7v2/conf/parser/message_profile.xsd";
 
 	private static final Logger log = LoggerFactory.getLogger(ProfileParser.class);
@@ -375,7 +374,7 @@ public class ProfileParser {
 	/**
 	 * Parses common features of AbstractComponents (ie field, component, subcomponent)
 	 */
-	private void parseAbstractComponentData(AbstractComponent comp, Element elem)
+	private void parseAbstractComponentData(AbstractComponent<?> comp, Element elem)
 			throws ProfileException {
 		comp.setName(elem.getAttribute("Name"));
 		comp.setUsage(elem.getAttribute("Usage"));
