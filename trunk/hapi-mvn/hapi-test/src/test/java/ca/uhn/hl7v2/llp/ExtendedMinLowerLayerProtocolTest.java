@@ -26,7 +26,6 @@ import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TestUtils;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v21.segment.MSH;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
@@ -119,9 +118,9 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 	@Test
 	public void testReadBadMsh2() throws LLPException, IOException {
 		
-		String msg = "MSH|^÷\\&|PAMSimulator|IHE|PAMSimulator|IHE|20111219123224||ADT^A01^ADT_A01|20111219123224|P|2.5||||||UNICODE UTF-8\r" +//- 
+		String msg = "MSH|^ï¿½\\&|PAMSimulator|IHE|PAMSimulator|IHE|20111219123224||ADT^A01^ADT_A01|20111219123224|P|2.5||||||UNICODE UTF-8\r" +//- 
 				"EVN||20111219123224||||20111219123224\r" + //-
-				"PID|||DDS-31223^^^DDS&1.3.6.1.4.1.12559.11.1.4.1.2&ISO^PI||Kiefer^Gisela^^^^^L|Endres^^^^^^M|19351005041238|F|||&Uhlandstra§e^^Marbach am Neckar^^71726^DEU||||||||||||||||||||N\r" + //- 
+				"PID|||DDS-31223^^^DDS&1.3.6.1.4.1.12559.11.1.4.1.2&ISO^PI||Kiefer^Gisela^^^^^L|Endres^^^^^^M|19351005041238|F|||&Uhlandstraï¿½e^^Marbach am Neckar^^71726^DEU||||||||||||||||||||N\r" + //- 
 				"PV1||I|1W^314^1^ITALIAN_HOSPITAL||||LOPEZ^GABRIELLA^^^DR|PRUST^RALPH^^^DR|||||||||||28^^^IHEPAM&1.3.6.1.4.1.12559.11.1.2.2.5&ISO^VN|||||||||||||||||||||||||20111219123200"; //-
 		
 		byte[] msgBytes = msg.getBytes("UTF-8");

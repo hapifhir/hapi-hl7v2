@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,7 +21,6 @@ import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.ConnectionHubTest;
 import ca.uhn.hl7v2.app.HL7Service;
-import ca.uhn.hl7v2.app.ConnectionHubTest.MyApp;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
@@ -134,9 +134,9 @@ public class DefaultHapiContextTest {
 
 	@Test
 	public void testGetMessageValidator() {
-		DefaultValidator v = (DefaultValidator) context1.getMessageValidator();
+		DefaultValidator<?> v = (DefaultValidator<?>) context1.getMessageValidator();
 		assertSame(validation, v.getValidationContext());
-		v = (DefaultValidator) context2.getMessageValidator();
+		v = (DefaultValidator<?>) context2.getMessageValidator();
 		assertNotSame(validation, v.getValidationContext());
 	}
 	
@@ -192,6 +192,7 @@ public class DefaultHapiContextTest {
 		int port = RandomServerPortProvider.findFreePort();
 		ReceiveAndCloseImmediatelyThread t = new ReceiveAndCloseImmediatelyThread(port);
 		t.start();
+		t.awaitForStart();
 
 		try {
 
@@ -226,9 +227,14 @@ public class DefaultHapiContextTest {
 
 		private int myPort;
 		private boolean myDone;
+		private CountDownLatch myLatch = new CountDownLatch(1);
 
 		public ReceiveAndCloseImmediatelyThread(int thePort) {
 			myPort = thePort;
+		}
+
+		public void awaitForStart() throws InterruptedException {
+			myLatch.await();
 		}
 
 		public void finish() {
@@ -257,6 +263,8 @@ public class DefaultHapiContextTest {
 				} catch (IOException e) {
 					e.printStackTrace();
 					fail(e.getMessage());
+				} finally {
+					myLatch.countDown();
 				}
 			}
 		}

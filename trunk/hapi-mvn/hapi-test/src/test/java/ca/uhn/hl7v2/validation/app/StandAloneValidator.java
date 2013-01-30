@@ -6,7 +6,8 @@ import ca.uhn.hl7v2.parser.GenericParser;
 
 public class StandAloneValidator {
     
-    public static void main(String args[]) {
+    @SuppressWarnings("deprecation")
+	public static void main(String args[]) {
         SimpleServer s = new SimpleServer(8888, 
             new MinLowerLayerProtocol(), 
             new GenericParser());

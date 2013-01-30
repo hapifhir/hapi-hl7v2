@@ -3,11 +3,7 @@
  */
 package ca.uhn.hl7v2.preparser;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Properties;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
