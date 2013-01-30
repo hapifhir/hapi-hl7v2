@@ -101,6 +101,17 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             log.trace("hasNext() current position: {}", currentPosition);
 
             IStructureDefinition structureDefinition = currentPosition.getStructureDefinition();
+            
+            if (myMessage.getParser().getParserConfiguration().isNonGreedyMode()) {
+            	IStructureDefinition nonGreedyPosition = couldBeNotGreedy();
+            	if (nonGreedyPosition != null) {
+            		log.info("Found non greedy parsing choice, moving to {}", nonGreedyPosition.getName());
+            		while (getCurrentPosition().getStructureDefinition() != nonGreedyPosition) {
+            			myCurrentDefinitionPath.remove(myCurrentDefinitionPath.size() - 1);
+            		}
+            	}
+            }
+            
             if (structureDefinition.isSegment() && structureDefinition.getName().startsWith(myDirection) && (structureDefinition.isRepeating() || currentPosition.getRepNumber() == -1)) {
                 myNextIsSet = true;
                 currentPosition.incrementRep();
@@ -144,7 +155,26 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         return true;
     }
 
-    private void addNonStandardSegmentAtCurrentPosition() throws Error {
+    /**
+     * @see ParserConfiguration#setNonGreedyMode(boolean)
+     */
+    private IStructureDefinition couldBeNotGreedy() {
+    	for (int i = myCurrentDefinitionPath.size() - 1; i >= 1; i--) {
+    		Position position = myCurrentDefinitionPath.get(i);
+	    	IStructureDefinition curPos = position.getStructureDefinition();
+	    	if (curPos.getPosition() > 0) {
+	    		IStructureDefinition parent = curPos.getParent();
+				if (parent.isRepeating() && parent.getAllPossibleFirstChildren().contains(myDirection)) {
+	    			return parent;
+	    		}
+	    	}
+	    	
+    	}
+    	
+		return null;
+	}
+
+	private void addNonStandardSegmentAtCurrentPosition() throws Error {
     	log.debug("Creating non standard segment {} on group: {}", 
     			myDirection, getCurrentPosition().getStructureDefinition().getParent().getName());
         
