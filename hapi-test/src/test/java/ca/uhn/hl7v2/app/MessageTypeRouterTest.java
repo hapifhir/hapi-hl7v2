@@ -12,9 +12,10 @@ import ca.uhn.hl7v2.util.*;
  * JUnit test harness for MessageTypeRouter
  * @author Bryan Tripp
  */
+@SuppressWarnings("deprecation")
 public class MessageTypeRouterTest {
 
-    private MessageTypeRouter router;
+	private MessageTypeRouter router;
     
     @Before
     public void setUp() {

@@ -1,13 +1,8 @@
 package ca.uhn.hl7v2.app;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
@@ -15,7 +10,6 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +23,6 @@ import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
-import ca.uhn.hl7v2.llp.LowerLayerProtocol;
-import ca.uhn.hl7v2.llp.MinLLPReader;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
@@ -38,7 +30,6 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.protocol.MetadataKeys;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
-import ca.uhn.hl7v2.testutil.LogCapturingAppender;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
 public class SimpleServerTest implements ConnectionListener {
@@ -75,6 +66,7 @@ public class SimpleServerTest implements ConnectionListener {
 		try {
 			
 			Socket socket = new Socket();
+			socket.setSoTimeout(1000);
 			socket.connect(new InetSocketAddress("localhost", port));
 			
 			MinLowerLayerProtocol mllp = new MinLowerLayerProtocol();

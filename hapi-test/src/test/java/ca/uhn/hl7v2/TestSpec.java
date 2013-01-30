@@ -1,10 +1,8 @@
 package ca.uhn.hl7v2;
 
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.*;
-import org.junit.rules.ErrorCollector;
-import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 
 /**
  * Abstract class of a test specification, that transforms an input into an
@@ -42,7 +40,7 @@ public abstract class TestSpec<I, O> {
 
     public static <I, O> void assertSpecs(IndexedErrorCollector collector, List<TestSpec<I, O>> specs) {
         int i = 0;
-        for (TestSpec spec : specs) {
+        for (TestSpec<I, O> spec : specs) {
             spec.assertSpec(collector, i++);
         }
     }

@@ -1,7 +1,6 @@
 package ca.uhn.hl7v2.conf.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.io.InputStreamReader;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.ResourceUtils;
 
 import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
@@ -19,7 +17,6 @@ import ca.uhn.hl7v2.conf.spec.message.Field;
 import ca.uhn.hl7v2.conf.spec.message.Seg;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.conf.spec.message.SubComponent;
-import ca.uhn.hl7v2.mvnplugin.SourceGenMojo;
 
 /**
  * JUnit tests for conformance profile parser
@@ -37,7 +34,7 @@ public class ProfileParserTest {
 	public void testParseFailed() throws ProfileException, IOException {
 		
 		ProfileParser p = new ProfileParser(false);
-		RuntimeProfile prof = p.parseClasspath("ca/uhn/hl7v2/conf/parser/ADT_A01_with_problem.xml");
+		p.parseClasspath("ca/uhn/hl7v2/conf/parser/ADT_A01_with_problem.xml");
 		
 		
 	}
