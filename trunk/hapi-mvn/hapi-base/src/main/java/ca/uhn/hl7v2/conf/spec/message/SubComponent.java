@@ -7,7 +7,7 @@ import java.util.List;
  * The specification for a particular field sub-component in a message profile.  
  * @author Bryan Tripp
  */
-public class SubComponent extends AbstractComponent {
+xpublic class SubComponent extends AbstractComponent<SubComponent> {
     
     /** Creates a new instance of SubComponent */
     public SubComponent() {

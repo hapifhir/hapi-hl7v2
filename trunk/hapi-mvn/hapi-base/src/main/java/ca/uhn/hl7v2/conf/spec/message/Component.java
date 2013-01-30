@@ -1,7 +1,6 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ca.uhn.hl7v2.conf.ProfileException;
@@ -11,7 +10,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
  * 
  * @author Bryan Tripp
  */
-public class Component extends AbstractComponent {
+public class Component extends AbstractComponent<Component> {
 
 	private final List<SubComponent> components = new ArrayList<SubComponent>();
 
