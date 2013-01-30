@@ -207,6 +207,11 @@
 				be a mapping from ADT_A34 to ADT_A30, because there is a structure for
 				ADT_A34 itself. Thanks to hirion86 for reporting this! 				            	
             </action>
+            <action type="fix" dev="Giacomo Petronio" issue="75" system="newfeatures">
+            	Correct unhelpful error logging in HohRawServlet when the HL7 over HTTP
+            	servlet has an error decoding a request. Thanks to Giacomo Petronio for
+            	reporting and providing a fix! 
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
