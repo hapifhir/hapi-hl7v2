@@ -52,6 +52,7 @@ import ca.uhn.hl7v2.sourcegen.conf.ProfileSourceGenerator;
  * @requiresDependencyResolution runtime
  * @requiresProject
  * @inheritedByDefault false
+	 * @since 2.1
  */
 public class ConfGenMojo extends AbstractMojo {
 
@@ -61,6 +62,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * @parameter property="project"
 	 * @required
 	 * @readonly
+	 * @since 2.1
 	 */
 	MavenProject project;
 
@@ -69,6 +71,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	String targetDirectory;
 
@@ -77,6 +80,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	String profile;
 
@@ -85,6 +89,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	String packageName;
 
@@ -109,6 +114,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * </ul>
 	 * 
 	 * @parameter default-value="NONE"
+	 * @since 2.1
 	 */
 	String generateDataTypes = "NONE";
 
@@ -116,6 +122,7 @@ public class ConfGenMojo extends AbstractMojo {
 	 * The package from which to load the templates
 	 * 
 	 * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
+	 * @since 2.1
 	 */
 	String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 

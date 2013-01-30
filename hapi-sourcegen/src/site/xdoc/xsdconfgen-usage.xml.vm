@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE confgen-usage [
+  <!ENTITY rarr "&#8594;" >
+]>
+
+<!-- 
+*************
+Don't format this document using eclipse XML formatter!
+It will mess up the indenting in a few spots
+*************
+-->
+
+
+<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+	<properties>
+		<title>XsdConfGen Usage</title>
+		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
+	</properties>
+
+	<body>
+
+		<section name="XsdConfGen Plugin - Usage">
+			
+			<macro name="toc">
+			</macro>
+
+			<p>
+				The xsdconfgen plugin takes an XML conformance profile and
+				creates an equivalent XSD (XML Schema) document which can be
+				used to validate XML encoded messages conformant to that
+				profile.
+			</p>
+			<p>
+				This can be useful when using customized message structures
+				with toolsets that require a schema document in order
+				to function. 
+			</p>
+			
+			<subsection name="Using the Plugin">
+			
+				<p>
+					Usage of the plusing is as follows:
+				</p>
+				
+<source>&lt;plugin&gt;
+   &lt;groupId&gt;ca.uhn.hapi&lt;/groupId&gt;
+   &lt;artifactId&gt;hapi-sourcegen&lt;/artifactId&gt;
+   &lt;version&gt;${hapi_version_stable}&lt;/version&gt;
+   &lt;executions&gt;
+      &lt;execution&gt;
+         &lt;id&gt;xsdgen&lt;/id&gt;
+         &lt;goals&gt;
+            &lt;goal&gt;xsdconfgen&lt;/goal&gt;
+         &lt;/goals&gt;
+         &lt;configuration&gt;
+            
+            &lt;!-- The directory to put the generated XSD in --&gt;
+            &lt;targetDirectory&gt;${basedir}/target/generated-sources/xsdconfgen&lt;/targetDirectory&gt;
+            
+            &lt;!-- The filename of the generated XSD --&gt;
+            &lt;targetFile&gt;XSDGEN.xsd&lt;/targetFile&gt;
+            
+            &lt;!-- 
+            One or more XML conformance profiles. If more than one is used,
+            the contents will be combined. Note that this has the effect of 
+            merging the profiles in a specific way: When an element is found in
+            a profile for the first time (e.g. a definition for the PID segment),
+            that element is generated into the XSD. If the same element is found
+            in a subsequent profile, it is ignored and the definition from the first
+            profile is used.
+            
+            This is desirable if you want to process multiple message types in
+            certain toolsets and reuse modules for processing some structures.
+            
+            If completely separate definitions are desired, this can be accomplished
+            by configuring the xsdconfgen plugin to have multiple executions and 
+            to use only a single conformance profile for each execution.
+            --&gt;
+            &lt;profiles&gt;
+               &lt;profile&gt;${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/ADT_A01.xml&lt;/profile&gt;
+               &lt;profile&gt;${basedir}/src/test/resources/ca/uhn/hl7v2/conf/parser/example_ack.xml&lt;/profile&gt;
+            &lt;/profiles&gt;
+            
+            &lt;!-- 
+            Optional:
+            If set to true, elements in the profile with a usage of "X" 
+            meaning "not supported" will not be generated in the XSD 
+            --&gt;
+            &lt;constrain&gt;false&lt;/constrain&gt;
+            
+            &lt;!-- 
+            Optional:
+            This can be used to create additional message/structure types linked to
+            a structure defined by the conformance profile. In this example, we have
+            linked to a conformance profile above which profides the structure
+            of ADT_A01. The entries below give us message definitions in our XSD 
+            for messages ADT_A02 and ADT_A03 which use the ADT_A01 structure.  
+            --&gt;
+            &lt;linkTriggerToStructure&gt;
+               &lt;ADT_A02&gt;ADT_A01&lt;/ADT_A02&gt;
+               &lt;ADT_A03&gt;ADT_A01&lt;/ADT_A03&gt;
+            &lt;/linkTriggerToStructure&gt;
+            
+         &lt;/configuration&gt;
+      &lt;/execution&gt;
+   &lt;/executions&gt;				
+&lt;/plugin&gt;</source>
+				
+			</subsection>
+			
+		</section>
+
+	</body>
+</document>

@@ -83,7 +83,7 @@
 					<dependency>
 						<groupId>ca.uhn.hapi</groupId>
 						<artifactId>hapi-structures-${gen.version.short}</artifactId>
-						<version>${hapi.version.structures}</version>
+						<version>${hapi.version.stable}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

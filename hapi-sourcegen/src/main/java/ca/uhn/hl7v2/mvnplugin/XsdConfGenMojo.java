@@ -39,22 +39,49 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
 import ca.uhn.hl7v2.util.XMLUtils;
 
 /**
- * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
+ * The XsdConfGen tool takes an HL7 conformance profile and creates an XSD
+ * schema which matches the XML encoding for messages meeting that conformance
+ * profile. In addition, it is able to combine multiple profiles into a single
+ * schema.
+ * 
+ * See the <a href="./xsdconfgen-usage.html">usage page</a> for information on
+ * how to use this plugin.
+ * 
+ * This plugin was contributed as a part of the <a
+ * href="http://conftest.connectinggta.ca/">ConnectingGTA</a> project.
+ * 
+ * @author This plugin was contributed as a part of the <a
+ *         href="http://conftest.connectinggta.ca/">ConnectingGTA</a> project
  * @goal xsdconfgen
  * @phase generate-sources
  * @requiresDependencyResolution runtime
  * @requiresProject
  * @inheritedByDefault false
+	 * @since 2.1
  */
 public class XsdConfGenMojo extends AbstractMojo {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(XsdConfGenMojo.class);
 
 	/**
-	 * The conformance profiles (XML file paths) to use
+	 * One or more XML conformance profiles. If more than one is used, the
+	 * contents will be combined. Note that this has the effect of merging the
+	 * profiles in a specific way: When an element is found in a profile for the
+	 * first time (e.g. a definition for the PID segment), that element is
+	 * generated into the XSD. If the same element is found in a subsequent
+	 * profile, it is ignored and the definition from the first profile is used.
+	 * <p>
+	 * This is desirable if you want to process multiple message types in
+	 * certain toolsets and reuse modules for processing some structures.
+	 * </p><p>
+	 * If completely separate definitions are desired, this can be accomplished
+	 * by configuring the xsdconfgen plugin to have multiple executions and to
+	 * use only a single conformance profile for each execution.
+	 * </p>
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	private List<String> profiles;
 
@@ -63,6 +90,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter expression="${project}"
 	 * @required
+	 * @since 2.1
 	 * @readonly
 	 */
 	private MavenProject project;
@@ -72,17 +100,18 @@ public class XsdConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	private String targetDirectory;
 
 	/**
-	 * The Message Workbench tool generally creates segment groups as two
-	 * level structures, with an outer group which has only a single
-	 * child which is the actual group. If this is set to true (which is
-	 * the default), these "bogus" groups are filtered. 
+	 * The Message Workbench tool generally creates segment groups as two level
+	 * structures, with an outer group which has only a single child which is
+	 * the actual group. If this is set to true (which is the default), these
+	 * "bogus" groups are filtered.
 	 * 
-	 * @parameter
-	 * @required
+	 * @parameter default="true"
+	 * @since 2.1
 	 */
 	private boolean filterBogusGroups = true;
 
@@ -92,28 +121,37 @@ public class XsdConfGenMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 2.1
 	 */
 	private String targetFile;
 
 	/**
-	 * The file name for the generated file (file will be placed in the
-	 * targetDirectory)
+	 * If set to <code>true</code> (default is <code>false</code>), any elements
+	 * which are defined to have a usage of "X" (not supported) will not be
+	 * generated as elements in the schema.
 	 * 
-	 * @parameter
-	 * @required
+	 * @parameter default="false"
+	 * @since 2.1
 	 */
-	private boolean constrain;
-
-	private Map<String, String> linkTriggerToStructure;
+	private boolean constrain = false;
 
 	/**
-	 * The package from which to load the templates
+	 * If provided, created additional message types in the schema and links
+	 * them to a structure provided by any of the conformance profiles defined
+	 * by the &lt;profiles&gt; configuration element. For example, if you have a
+	 * conformance profile which defines a structure called ADT_A01, you may use
+	 * this parameter to create an additional message of ADT_A02 which also uses
+	 * the ADT_A01 structure. This is useful when you want to have a single
+	 * structure to use for a number of message types.
 	 * 
-	 * @parameter default="ca.uhn.hl7v2.sourcegen.templates.xsd"
+	 * @parameter
+	 * @since 2.1
 	 */
+	private Map<String, String> linkTriggerToStructure;
+
 	private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates.xsd";
 
-	private static final Set<String> ourConstrainedUsageTypes = new HashSet<String>(new ArrayList<String>(Arrays.asList(new String[] {"R", "RE", "O", "C" })));
+	private static final Set<String> ourConstrainedUsageTypes = new HashSet<String>(new ArrayList<String>(Arrays.asList(new String[] { "R", "RE", "O", "C" })));
 
 	/**
 	 * {@inheritDoc}
@@ -121,6 +159,11 @@ public class XsdConfGenMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		try {
+
+			if (!new File(targetDirectory).exists()) {
+				ourLog.info("Creating directory: {}", targetDirectory);
+				new File(targetDirectory).mkdirs();
+			}
 
 			List<RuntimeProfile> parsedProfiles = new ArrayList<RuntimeProfile>();
 			for (String nextProfile : profiles) {
@@ -152,7 +195,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 					StaticDef staticDef = runtimeProfile.getMessage();
 					filterBogusGroups(staticDef);
 				}
-				
+
 				parsedProfiles.add(runtimeProfile);
 			}
 
@@ -180,11 +223,14 @@ public class XsdConfGenMojo extends AbstractMojo {
 			template.merge(ctx, sw);
 			sw.close();
 
-			FileWriter w3 = new FileWriter(targetFileDef, false);
-			w3.write(sw.toString());
-			w3.close();
+			// FileWriter w3 = new FileWriter(targetFileDef, false);
+			// w3.write(sw.toString());
+			// w3.close();
 
-			ourLog.info("DOcument: " + sw.toString());
+			if (ourLog.isDebugEnabled()) {
+				ourLog.debug("DOcument: " + sw.toString());
+			}
+
 			String xml = XMLUtils.serialize(XMLUtils.parse(sw.toString()));
 
 			FileWriter w = new FileWriter(targetFileDef, false);
@@ -203,7 +249,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 
 	private void filterBogusGroups(AbstractSegmentContainer theParent) {
 		List<ProfileStructure> children = theParent.getChildrenAsList();
-		
+
 		for (int childIndex = 0; childIndex < children.size(); childIndex++) {
 			ProfileStructure nextChild = children.get(childIndex);
 			if (nextChild instanceof SegGroup) {
@@ -214,13 +260,12 @@ public class XsdConfGenMojo extends AbstractMojo {
 					nextChildSg = newNextChildSg;
 					children.set(childIndex, nextChildSg);
 				}
-				
+
 				filterBogusGroups(nextChildSg);
 			}
 		}
-		
+
 	}
-	
 
 	private void constrainSegGroup(SegGroup theNext) throws ProfileException {
 		for (int i = 0; i < theNext.getChildrenAsList().size(); i++) {
@@ -327,7 +372,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 		tst.profiles.add("/eclipse/workspace//CGTA_Input_Tester_gc/ConverterLibrary/src/main/resources/ca/cgta/input/conf/cgta-ras_o17.xml");
 
 		tst.templatePackage = "ca.uhn.hl7v2.sourcegen.templates.xsd";
-		
+
 		tst.constrain = true;
 		tst.execute();
 
