@@ -48,7 +48,6 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.hl7v2.model.GenericComposite;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
@@ -58,7 +57,6 @@ import ca.uhn.hl7v2.sourcegen.GroupGenerator;
 import ca.uhn.hl7v2.sourcegen.MessageGenerator;
 import ca.uhn.hl7v2.sourcegen.SegmentDef;
 import ca.uhn.hl7v2.sourcegen.StructureDef;
-import ca.uhn.hl7v2.sourcegen.util.ResourceLoader;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 
 /**
@@ -72,8 +70,6 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
  * @inheritedByDefault false
  */
 public class SuperStructureMojo extends AbstractMojo {
-
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(SuperStructureMojo.class);
 
 	/**
 	 * The maven project.
@@ -114,11 +110,6 @@ public class SuperStructureMojo extends AbstractMojo {
 	 */
 	private String targetStructureName;
 
-	/**
-	 * The package from which to load the templates
-	 * 
-	 * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
-	 */
 	private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
 	/**
@@ -185,7 +176,7 @@ public class SuperStructureMojo extends AbstractMojo {
 				throw new MojoExecutionException("No structures found matching structures to merge");
 			}
 
-			ourLog.info("Creating directory: {}", targetDirectory);
+			getLog().info("Creating directory: " + targetDirectory);
 			new File(targetDirectory).mkdirs();
 
 			boolean haveGroups = false;
@@ -197,7 +188,7 @@ public class SuperStructureMojo extends AbstractMojo {
 			}
 
 			String fileName = MessageGenerator.determineTargetDir(targetDirectory + "/", version) + "/" + targetStructureName + ".java";
-			ourLog.info("Filename will be: {}", fileName);
+			getLog().info("Filename will be: " + fileName);
 
 			StructureDef[] contents = structures.toArray(new StructureDef[structures.size()]);
 			String basePackageName = DefaultModelClassFactory.getVersionPackageName(version);
@@ -351,13 +342,13 @@ public class SuperStructureMojo extends AbstractMojo {
 		return retVal;
 	}
 
-	static ArrayList<String> mergeStringLists(List<List<String>> allNameLists) {
+	ArrayList<String> mergeStringLists(List<List<String>> allNameLists) {
 		ArrayList<String> baseList = new ArrayList<String>(allNameLists.remove(0));
-		ourLog.info("Base list is: {}", baseList);
+		getLog().debug("Base list is: "+ baseList);
 
 		for (List<String> nextCompareList : allNameLists) {
 
-			ourLog.info("Next compare list: {}", nextCompareList);
+			getLog().debug("Next compare list: "+ nextCompareList);
 
 			int baseIndex = 0;
 			int compareIndex = 0;
@@ -421,11 +412,11 @@ public class SuperStructureMojo extends AbstractMojo {
 				// break;
 				// }
 			}
-			ourLog.info("Base list is now: {}", baseList);
+			getLog().debug("Base list is now: "+ baseList);
 
 		}
 
-		ourLog.info("Merged name list: {}", baseList);
+		getLog().debug("Merged name list: "+ baseList);
 		return baseList;
 	}
 

@@ -36,8 +36,6 @@ package ${basePackageName}group;
 
 import ${basePackageName}segment.*;
 
-import java.util.List;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.model.*;
@@ -76,7 +74,7 @@ import ca.uhn.hl7v2.model.*;
  * </p> 
 #end
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class $groupName extends AbstractGroup {
 
     /** 
@@ -165,7 +163,7 @@ public class $groupName extends AbstractGroup {
      * if none are already present, so an empty list may be returned.
      * </p>
      */ 
-    public List<${group.name}> get${group.indexName}All() throws HL7Exception {
+    public java.util.List<${group.name}> get${group.indexName}All() throws HL7Exception {
     	return getAllAsList("${group.indexName}", ${group.name}.class);
     } 
 

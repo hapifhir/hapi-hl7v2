@@ -34,9 +34,13 @@
 			<item name="&larr; HAPI Home" href="../index.html" />
 		</menu>
 
-		<menu name="Maven Plugin">
+		<menu name="Maven Plugins">
 			<item name="Confgen Usage" href="confgen-usage.html"/>
 			<item name="Confgen Goal" href="confgen-mojo.html"/>
+			<item name="Superstructuregen Usage" href="superstructuregen-usage.html"/>
+			<item name="Superstructuregen Goal" href="superstructuregen-mojo.html"/>
+			<item name="Xsdconfgen Usage" href="xsdconfgen-usage.html"/>
+			<item name="Xsdconfgen Goal" href="xsdconfgen-mojo.html"/>
 		</menu>
 
 	</body>

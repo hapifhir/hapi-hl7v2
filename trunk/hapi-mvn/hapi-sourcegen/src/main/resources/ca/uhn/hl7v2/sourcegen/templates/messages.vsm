@@ -38,8 +38,6 @@ import ${basePackageName}group.*;
 #end
 import ${basePackageName}segment.*;
 
-import java.util.List;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -49,6 +47,8 @@ import ca.uhn.hl7v2.model.*;
  * <p>Represents a $message message structure (see chapter ${chapter}). This structure contains the 
  * following elements: </p>
  * <ul>
+#set ( $haveAssociatedStructures = false )
+#set ( $baseClass = "AbstractMessage" )
 #foreach ( $segment in $segments )
 	#if ( $segment.getAssociatedStructures().size() > 0 )
 	#set ( $associatedStructures = "<ul><li>Used for the following structures: " + $segment.getAssociatedStructures() + "</li></ul>" )
@@ -56,8 +56,6 @@ import ca.uhn.hl7v2.model.*;
 	#set ( $baseClass = "AbstractSuperMessage" )
 	#else
 	#set ( $associatedStructures = "" )
-	#set ( $haveAssociatedStructures = false )
-	#set ( $baseClass = "AbstractMessage" )
 	#end
     #if (${segment.isRequired()})
       #set ($reqd = "")
@@ -73,7 +71,7 @@ import ca.uhn.hl7v2.model.*;
 #end
  * </ul>
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class $message extends $baseClass  {
 
     /**
@@ -196,7 +194,7 @@ $associatedStructures
      * </p>
 $associatedStructures
      */ 
-    public List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
+    public java.util.List<${segment.name}> get${segment.indexName}All() throws HL7Exception {
     	return getAllAsList("${segment.indexName}", ${segment.name}.class);
     } 
 
