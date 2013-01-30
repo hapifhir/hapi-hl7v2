@@ -14,6 +14,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 
 public class ExampleUseConfGen {
 
+@SuppressWarnings("unused")
 public static void main(String[] args) throws HL7Exception, IOException, LLPException {
 // Sending a message
 

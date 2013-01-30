@@ -17,7 +17,8 @@ public class CustomCertificateClient {
 	 * @throws IOException 
 	 * @throws DecodeException 
 	 */
-	public static void main(String[] args) throws DecodeException, IOException, EncodeException {
+	@SuppressWarnings("unused")
+   public static void main(String[] args) throws DecodeException, IOException, EncodeException {
 		ISendable<?> sendable = null;
 
 // START SNIPPET: client 

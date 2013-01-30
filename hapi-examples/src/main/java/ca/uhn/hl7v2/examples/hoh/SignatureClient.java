@@ -6,9 +6,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
@@ -16,11 +16,8 @@ import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
 import ca.uhn.hl7v2.hoh.raw.client.HohRawClientSimple;
 import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
-import ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory;
 import ca.uhn.hl7v2.hoh.util.KeystoreUtils;
 import ca.uhn.hl7v2.hoh.util.ServerRoleEnum;
-import ca.uhn.hl7v2.llp.LowerLayerProtocol;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 public class SignatureClient {
 
@@ -35,9 +32,10 @@ public class SignatureClient {
 	 * @throws DecodeException 
 	 * @throws HL7Exception 
 	 */
-	public static void main(String[] args) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, DecodeException, EncodeException, HL7Exception {
+	@SuppressWarnings("unused")
+   public static void main(String[] args) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, DecodeException, EncodeException, HL7Exception {
 
-		ISendable sendable=null;
+		ISendable<?> sendable=null;
 		{
 // START SNIPPET: client 
 // Create a client
@@ -70,10 +68,13 @@ llp.setSigner(signer);
 // Create the ConnectionHub
 String host = "localhost";
 int port = 8080;
-PipeParser parser = PipeParser.getInstanceWithNoValidation();
 boolean tls = false;
-ConnectionHub connectionHub = ConnectionHub.getInstance();
-Connection connection = connectionHub.attach(host, port, parser, llp, tls);
+
+DefaultHapiContext ctx = new DefaultHapiContext();
+ctx.setLowerLayerProtocol(llp);
+
+// Connect
+Connection connection = ctx.newClient(host, port, tls);
 //END SNIPPET: llp
 
 
