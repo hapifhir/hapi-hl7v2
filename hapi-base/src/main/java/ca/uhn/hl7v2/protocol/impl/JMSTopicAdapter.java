@@ -54,7 +54,6 @@ public class JMSTopicAdapter implements JMSDestination {
     private TopicSubscriber mySubscriber;
     private TopicConnection myConnection;
     private Topic myTopic;
-    private String myMessageSelector;
     private boolean myIsConnected;
 
     /**
@@ -75,7 +74,6 @@ public class JMSTopicAdapter implements JMSDestination {
     public JMSTopicAdapter(TopicConnection theConnection, Topic theDestination, String theMessageSelector) {
         myConnection = theConnection;
         myTopic = theDestination;
-        myMessageSelector = theMessageSelector;
     }
 
     /** 
