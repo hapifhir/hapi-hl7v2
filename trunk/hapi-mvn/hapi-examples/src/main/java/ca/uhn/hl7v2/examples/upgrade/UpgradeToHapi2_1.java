@@ -6,10 +6,8 @@ import java.util.Map;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
@@ -26,6 +24,7 @@ public class UpgradeToHapi2_1 {
 
    }
 
+   @SuppressWarnings("unused")
    private void oldWay() throws IOException {
 
       // START SNIPPET: oldServer
@@ -46,6 +45,7 @@ public class UpgradeToHapi2_1 {
 
    }
 
+   @SuppressWarnings("unused")
    private void newWay() {
 
       // START SNIPPET: newServer

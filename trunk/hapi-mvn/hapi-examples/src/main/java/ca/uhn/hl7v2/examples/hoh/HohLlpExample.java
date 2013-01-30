@@ -2,11 +2,9 @@ package ca.uhn.hl7v2.examples.hoh;
 
 import java.io.IOException;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.DefaultApplication;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.hoh.llp.Hl7OverHttpLowerLayerProtocol;
@@ -51,7 +49,8 @@ server.start();
 		
 	}
 	
-	public void sendMessage() throws HL7Exception, IOException, LLPException {
+	@SuppressWarnings("unused")
+   public void sendMessage() throws HL7Exception, IOException, LLPException {
 		
 // START SNIPPET: client 
 /*
@@ -60,16 +59,17 @@ server.start();
  * the LLP class whether it will be used in a client
  * or a server.
  */
-LowerLayerProtocol llp;
-llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+DefaultHapiContext ctx = new DefaultHapiContext();
 
-// ConnectionHub may be used, as always:
+// Create an HoH LLP for the context
+LowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+ctx.setLowerLayerProtocol(llp);
+
+// Use the LLP in a HapiContext to get a client connection
 String host = "localhost";
 int port = 8080;
-PipeParser parser = PipeParser.getInstanceWithNoValidation();
 boolean tls = false;
-ConnectionHub connectionHub = ConnectionHub.getInstance();
-Connection connection = connectionHub.attach(host, port, parser, llp, tls);
+Connection connection = ctx.newClient(host, port, tls);
 
 // Create a message to send
 ADT_A01 message = new ADT_A01();

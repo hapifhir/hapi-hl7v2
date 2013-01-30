@@ -46,7 +46,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
 public class CustomThreading {
 
 
-	public static void main(String[] args) throws Exception {
+	@SuppressWarnings("unused")
+   public static void main(String[] args) throws Exception {
 
         // Instantiate a custom executor service to be used
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
