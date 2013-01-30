@@ -34,6 +34,7 @@ public class ParserConfiguration {
 	private Set<String> myForcedEncode = new HashSet<String>();
 	private String myInvalidObx2Type;
 	private UnexpectedSegmentBehaviourEnum myUnexpectedSegmentBehaviour;
+	private boolean nonGreedyMode = false;
 	private boolean validating = true;
 
 	/**
@@ -231,6 +232,16 @@ public class ParserConfiguration {
 	}
 
 	/**
+	 * Returns <code>true</code> if the parser should parse in non-greedy mode. Default
+	 * is <code>false</code>
+	 * 
+	 * @see #setNonGreedyMode(boolean) for an explanation of non-greedy mode
+	 */
+	public boolean isNonGreedyMode() {
+		return nonGreedyMode;
+	}
+
+	/**
      * Returns <code>true</code> if the parser validates using a configured
      *         {@link ValidationContext}. Default is <code>true</code>.
 	 * @return <code>true</code> if the parser validates using a configured
@@ -409,6 +420,58 @@ public class ParserConfiguration {
 	 */
 	public void setInvalidObx2Type(String theInvalidObx2Type) {
 		myInvalidObx2Type = theInvalidObx2Type;
+	}
+
+	/**
+	 * If set to <code>true</code> (default is <code>false</code>), pipe parser will be
+	 * put in non-greedy mode. This setting applies only to {@link PipeParser Pipe Parsers} and
+	 * will have no effect on {@link XMLParser XML Parsers}.
+	 * 
+	 * <p>
+	 * In non-greedy mode, if the message structure being parsed has an ambiguous
+	 * choice of where to put a segment because there is a segment matching the
+	 * current segment name in both a later position in the message, and
+	 * in an earlier position as a part of a repeating group, the earlier
+	 * position will be chosen.
+	 * </p>
+	 * <p>
+	 * This is perhaps best explained with an example. Consider the following structure:
+	 * </p>
+	 * <pre>
+	 * MSH
+	 * GROUP_1 (start)
+	 * {
+	 *    AAA
+	 *    BBB
+	 *    GROUP_2 (start)
+	 *    {
+	 *       AAA
+	 *    }
+	 *    GROUP_2 (end)
+	 * }
+	 * GROUP_1 (end)
+	 * </pre>
+	 * <p>
+	 * </p>
+	 * For the above example, consider a message containing the following segments:<br/>
+	 * <code>MSH<br/>
+	 * AAA<br/>
+	 * BBB<br/>
+	 * AAA</code>
+	 * </p>
+	 * <p>
+	 * In this example, when the second AAA segment is encountered, there are two
+	 * possible choices. It would be placed in GROUP_2, or it could be placed in 
+	 * a second repetition of GROUP_1. By default it will be placed in GROUP_2, but
+	 * in non-greedy mode it will be put in a new repetition of GROUP_1.
+	 * </p>
+	 * <p>
+	 * This mode is useful for example when parsing OML^O21 messages containing
+	 * multiple orders.
+	 * </p>
+	 */
+	public void setNonGreedyMode(boolean theNonGreedyMode) {
+		nonGreedyMode = theNonGreedyMode;
 	}
 
 	/**

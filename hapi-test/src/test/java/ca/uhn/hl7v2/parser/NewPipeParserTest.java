@@ -90,8 +90,11 @@ public class NewPipeParserTest {
 
 	}
 
+	/**
+	 * See http://sourceforge.net/p/hl7api/bugs/171/
+	 */
 	@Test
-	public void testRepeatingOmlMessage() throws HL7Exception, IOException {
+	public void testGreedyMode() throws HL7Exception, IOException {
 		OML_O21 msg = new OML_O21();
 		msg.initQuickstart("OML", "O21", "T");
 
@@ -106,7 +109,9 @@ public class NewPipeParserTest {
 		}
 
 		// Parse and encode
-		msg = (OML_O21) new PipeParser().parse(msg.encode());
+		PipeParser pp = new PipeParser();
+		pp.getParserConfiguration().setNonGreedyMode(true);
+		msg = (OML_O21) pp.parse(msg.encode());
 		
 		ourLog.info(msg.printStructure(false));
 		
@@ -118,6 +123,28 @@ public class NewPipeParserTest {
 			
 			actual = msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
 			assertEquals("STDIO1", actual);
+		}
+		
+		// Now turn off greedy mode
+		pp.getParserConfiguration().setNonGreedyMode(false);
+		msg = (OML_O21) pp.parse(msg.encode());
+		
+		{
+			String actual = msg.getORDER(0).getORC().getOrc1_OrderControl().getValue();
+			assertEquals("NW", actual);
+			
+			actual = msg.getORDER(0).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
+			assertEquals("STDIO1", actual);
+		}
+		
+		for (int i = 1; i < 5; i++) {
+			ourLog.info("Testing rep " + i);
+			
+			String actual = msg.getORDER(i).getORC().getOrc1_OrderControl().getValue();
+			assertEquals(null, actual);
+			
+			actual = msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
+			assertEquals(null, actual);
 		}
 		
 		
