@@ -644,7 +644,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * </p>
      */
     void appendStructureDescription(StringBuilder theStringBuilder, int theIndent, boolean theOptional,
-            boolean theRepeating, boolean theAddStartName, boolean theAddEndName) throws HL7Exception {
+            boolean theRepeating, boolean theAddStartName, boolean theAddEndName, boolean thePrintEmpty) throws HL7Exception {
         String lineSeparator = System.getProperty("line.separator");
 
         if (theAddStartName) {
@@ -664,7 +664,23 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
 
         boolean inChoice = false;
+        
         for (String nextName : getNames()) {
+        	
+        	if (!thePrintEmpty) {
+        		boolean hasContent = false;
+        		Structure[] allReps = getAll(nextName);
+        		for (Structure structure : allReps) {
+					if (!structure.isEmpty()) {
+						hasContent = true;
+						break;
+					}
+				}
+        		
+        		if (!hasContent) {
+        			continue;
+        		}
+        	}
 
             Class<? extends Structure> nextClass = classes.get(nextName);
 
@@ -699,14 +715,14 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                     boolean addStartName = (i == 0);
                     boolean addEndName = (i == (nextChildren.length - 1));
                     ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + PS_INDENT,
-                            nextOptional, nextRepeating, addStartName, addEndName);
+                            nextOptional, nextRepeating, addStartName, addEndName, thePrintEmpty);
 
                 }
 
                 if (nextChildren.length == 0) {
                     Structure structure = tryToInstantiateStructure(nextClass, nextName);
                     ((AbstractGroup) structure).appendStructureDescription(theStringBuilder, theIndent + PS_INDENT,
-                            nextOptional, nextRepeating, true, true);
+                            nextOptional, nextRepeating, true, true, thePrintEmpty);
                 }
 
             } else if (Segment.class.isAssignableFrom(nextClass)) {

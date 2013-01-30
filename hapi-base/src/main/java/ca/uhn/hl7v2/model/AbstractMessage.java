@@ -338,10 +338,20 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      */
     public String printStructure() throws HL7Exception {
         StringBuilder builder = new StringBuilder();    
-        appendStructureDescription(builder, 0, false, false, true, true);
+        appendStructureDescription(builder, 0, false, false, true, true, true);
         return builder.toString();
     }
     
+    /**
+     * Prints the message structure in a similar way to {@link #printStructure()} but
+     * optionally excludes elements with no contents.
+     */
+    public String printStructure(boolean includeEmptyElements) throws HL7Exception {
+        StringBuilder builder = new StringBuilder();    
+        appendStructureDescription(builder, 0, false, false, true, true, includeEmptyElements);
+        return builder.toString();
+    }
+
     /**
      * Quickly initializes this message with common values in the first (MSH) segment.
      * 
