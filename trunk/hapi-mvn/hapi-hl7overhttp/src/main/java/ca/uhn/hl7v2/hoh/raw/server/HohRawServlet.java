@@ -72,7 +72,7 @@ public class HohRawServlet extends HttpServlet {
 			HTTPUtils.write401Unauthorized(theResp.getOutputStream(), false);
 			return;
 		} catch (DecodeException e) {
-			ourLog.error("Request failure for " + theReq.getRequestURI(), e.getMessage(), e);
+			ourLog.error("Request failure for " + theReq.getRequestURI(), e);
 			theResp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			HTTPUtils.write400BadRequest(theResp.getOutputStream(), e.getMessage(), false);
 			return;
@@ -93,7 +93,7 @@ public class HohRawServlet extends HttpServlet {
 		try {
 			response = myMessageHandler.messageReceived(rawMessage);
 		} catch (MessageProcessingException e) {
-			ourLog.error("Processing problem for " + theReq.getRequestURI(), e.getMessage(), e);
+			ourLog.error("Processing problem for " + theReq.getRequestURI(), e);
 			theResp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			HTTPUtils.write500InternalServerError(theResp.getOutputStream(), e.getMessage(), false);
 			return;
