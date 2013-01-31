@@ -48,9 +48,13 @@ import ca.uhn.hl7v2.model.v25.message.REF_I12;
 import ca.uhn.hl7v2.model.v25.segment.PV1;
 import ca.uhn.hl7v2.model.v251.message.ADT_A17;
 import ca.uhn.hl7v2.model.v251.message.OML_O21;
+import ca.uhn.hl7v2.model.v251.message.ORL_O22;
+import ca.uhn.hl7v2.model.v251.message.ORL_O34;
+import ca.uhn.hl7v2.model.v251.message.OUL_R22;
 import ca.uhn.hl7v2.parser.testmodel.MessageWithGroupWithRequiredFinalSegment;
 import ca.uhn.hl7v2.parser.testmodel.MessageWithMandatorySegmentAfterSubgroup;
 import ca.uhn.hl7v2.parser.testmodel.MessageWithMandatorySegmentBeforeSubgroup;
+import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
@@ -112,42 +116,66 @@ public class NewPipeParserTest {
 		PipeParser pp = new PipeParser();
 		pp.getParserConfiguration().setNonGreedyMode(true);
 		msg = (OML_O21) pp.parse(msg.encode());
-		
+
 		ourLog.info(msg.printStructure(false));
-		
+
 		for (int i = 0; i < 5; i++) {
 			ourLog.info("Testing rep " + i);
-			
+
 			String actual = msg.getORDER(i).getORC().getOrc1_OrderControl().getValue();
 			assertEquals("NW", actual);
-			
+
 			actual = msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
 			assertEquals("STDIO1", actual);
 		}
-		
+
 		// Now turn off greedy mode
 		pp.getParserConfiguration().setNonGreedyMode(false);
 		msg = (OML_O21) pp.parse(msg.encode());
-		
+
 		{
 			String actual = msg.getORDER(0).getORC().getOrc1_OrderControl().getValue();
 			assertEquals("NW", actual);
-			
+
 			actual = msg.getORDER(0).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
 			assertEquals("STDIO1", actual);
 		}
-		
+
 		for (int i = 1; i < 5; i++) {
 			ourLog.info("Testing rep " + i);
-			
+
 			String actual = msg.getORDER(i).getORC().getOrc1_OrderControl().getValue();
 			assertEquals(null, actual);
-			
+
 			actual = msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
 			assertEquals(null, actual);
 		}
-		
-		
+
+	}
+
+	/**
+	 * See http://sourceforge.net/p/hl7api/bugs/171/
+	 */
+	@Test
+	public void testGreedyModeMore() throws HL7Exception, IOException {
+
+		DefaultHapiContext ctx = new DefaultHapiContext();
+		ctx.getParserConfiguration().setNonGreedyMode(false);
+
+		InputStream str = NewPipeParserTest.class.getResourceAsStream("/ca/uhn/hl7v2/parser/example_oml_o21.hl7");
+		Hl7InputStreamMessageIterator iter = new Hl7InputStreamMessageIterator(str, ctx);
+		while (iter.hasNext()) {
+			Message msg = iter.next();
+			if (msg instanceof OUL_R22) {
+			} else if (msg instanceof ORL_O34) {
+			} else if (msg instanceof ca.uhn.hl7v2.model.v251.message.ORU_R01) {
+			} else if (msg instanceof ca.uhn.hl7v2.model.v25.message.OML_O21) {
+			} else {
+				OML_O21 next = (OML_O21) msg;
+				assertTrue(next.getORDER().getOBSERVATION_REQUEST().getPRIOR_RESULTAll().size() == 0);
+			}
+		}
+
 	}
 
 	/**

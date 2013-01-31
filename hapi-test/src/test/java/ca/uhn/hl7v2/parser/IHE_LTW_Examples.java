@@ -1,6 +1,8 @@
 package ca.uhn.hl7v2.parser;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -189,171 +191,37 @@ public class IHE_LTW_Examples {
    /**
     * @param args
  * @throws HL7Exception 
+ * @throws IOException 
     */
-   public static void main(String[] args) throws HL7Exception
+   public static void main(String[] args) throws HL7Exception, IOException
    {
-      // Test crear OML_O21
-      OML_O21 msg = new OML_O21();
-      try
-      {
-         msg.initQuickstart("OML", "O21", "T");
-      
-         for (int i=0; i<5; i++)
-         {
-            msg.getORDER(i).getORC().getOrc1_OrderControl().setValue("NW");
-            msg.getORDER(i).getORC().getOrc2_PlacerOrderNumber().getEi1_EntityIdentifier().setValue("ORCID1");
-            msg.getORDER(i).getORC().getOrc2_PlacerOrderNumber().getEi2_NamespaceID().setValue("HCE");
-            msg.getORDER(i).getORC().getOrc4_PlacerGroupNumber().getEi1_EntityIdentifier().setValue("grupo");
-            
-            msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().setValue("STDIO1");
-            msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe3_NameOfCodingSystem().setValue("LOINC");
-            
-         }
-         
-         System.out.println(new PipeParser().encode(msg));
-         System.out.println("--------------------------------");
-         System.out.println(msg.printStructure(false));
-      }
-      catch (HL7Exception e)
-      {
-         e.printStackTrace();
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-      
-      Message message = parseMessage(ejemplo1);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo2);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo3);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo4);
-      if (message != null)
-      {
-    	  //System.out.println(message.printStructure());
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo5);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo6);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo7);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo8);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo9);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemplo10);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      message = parseMessage(ejemploOML);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      message = parseMessage(ejemploOML2);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      message = parseMessage(ejemploHL7v25);
-      if (message != null)
-      {
-         //showXML(message);
-      }
-      
-      
-   }
-   
-   private static Message parseMessage(String msg)
-   {
-      Parser p = new GenericParser();
-      
-      Message message;
-      try
-      {
-         message = p.parse(msg);
-      }
-      catch (EncodingNotSupportedException e)
-      {
-         e.printStackTrace();
-         return null;
-      }
-      catch (HL7Exception e)
-      {
-         e.printStackTrace();
-         return null;
-      }
-      
-      // Por si quiero acceder a los datos
-      // Va a depender del tipo de mensaje (eso se puede ver pidiendo el tipo en MSH
-      // OML_O21 msg = (OML_O21)message;
-      // ORL_O22 ...
-      // OUL_...
-      
-      return message;
-   }
-   
-   /**
-    * // Muestra mensaje en XML
-    * 
-    * @param message
-    */
-   private static void showXML(Message message)
-   {
-      XMLParser xmlParser = new DefaultXMLParser();
-      
-      //encode message in XML 
-      String xml = "no convirtio el mensaje a XML";
-      try
-      {
-         xml = xmlParser.encode(message);
-      }
-      catch (HL7Exception e)
-      {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-      
-      //print XML-encoded message to standard out
-      System.out.println(xml);
+	   Writer w = new FileWriter("src/test/resources/ca/uhn/hl7v2/parser/example_oml_o21.hl7");
+	   w.append(ejemplo1);
+	   w.append("\r\r\r");
+	   w.append(ejemplo2);
+	   w.append("\r\r\r");
+	   w.append(ejemplo3);
+	   w.append("\r\r\r");
+	   w.append(ejemplo4);
+	   w.append("\r\r\r");
+	   w.append(ejemplo5);
+	   w.append("\r\r\r");
+	   w.append(ejemplo6);
+	   w.append("\r\r\r");
+	   w.append(ejemplo7);
+	   w.append("\r\r\r");
+	   w.append(ejemplo8);
+	   w.append("\r\r\r");
+	   w.append(ejemplo9);
+	   w.append("\r\r\r");
+	   w.append(ejemplo10);
+	   w.append("\r\r\r");
+	   w.append(ejemploHL7v25);
+	   w.append("\r\r\r");
+	   w.append(ejemploOML);
+	   w.append("\r\r\r");
+	   w.append(ejemploOML2);
+	   w.append("\r\r\r");
+	   w.close();
    }
 }

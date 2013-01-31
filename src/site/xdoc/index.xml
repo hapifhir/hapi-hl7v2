@@ -80,6 +80,27 @@
 			
 		</section>
 
+		<section name="New Beta Released! (HAPI 2.1-beta1) - Jan 30, 2013">
+		
+			<p>
+				A new beta of HAPI (Core library, HL7 over HTTP, and Structures)
+				has been uploaded to Sourceforge.
+			</p>
+			
+			<p>
+				This new release is packed with new features. Read about them in
+				the <a href="changes-report.html">Changelog</a>.
+			</p>
+		
+			<p>
+				We are aiming to release this soon! Please help us out
+				by testing and reporting any issues.
+			</p>
+
+			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
+		
+		</section>
+
 		<section name="HL7 over HTTP Update - Aug 23, 2012">
 		
 			<p>
