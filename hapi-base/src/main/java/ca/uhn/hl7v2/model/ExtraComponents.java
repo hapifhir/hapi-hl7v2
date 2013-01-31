@@ -43,10 +43,6 @@ public class ExtraComponents implements Serializable {
         return comps.size();
     }
     
-    /** Returns the number of existing reps of a given extra component */
-    /*public int numReps(int comp) {
-        return ((ArrayList) this.comps.get(comp)).size();
-    }*/
     
     /** 
      * Returns the component at the given location, creating it 
@@ -69,10 +65,6 @@ public class ExtraComponents implements Serializable {
         for (int i = this.comps.size(); i <= comp; i++) {
             this.comps.add(new Varies(message));
         }
-        /*ArrayList reps = (ArrayList) this.comps.get(comp);
-        for (int j = reps.size(); j <= rep; j++) {
-            addRep(comp, j);
-        }*/
     }
 
 
@@ -90,13 +82,8 @@ public class ExtraComponents implements Serializable {
 	public String toString() {
 		return "ExtraComponents" + comps;
 	}
-	
 
-    /*private void addComp(int comp) {
-    }*/
-    
-    /*private void addRep(int comp, int rep) {
-        ArrayList l = (ArrayList) this.comps.get(comp);
-        l.add(rep, new Varies());
-    }*/
+	
+	
+	
 }

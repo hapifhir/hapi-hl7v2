@@ -533,12 +533,12 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	}
 
 	public List<HL7Exception> testField(Type type, Field profile, boolean escape, String profileID)
-			throws ProfileException {
+			throws ProfileException, HL7Exception {
 		return doTestField(type, profile, escape, profileID, true);
 	}
 
 	private List<HL7Exception> doTestField(Type type, Field profile, boolean escape, String profileID,
-			boolean theValidateChildren) throws ProfileException {
+			boolean theValidateChildren) throws ProfileException, HL7Exception {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 
 		// account for MSH 1 & 2 which aren't escaped
@@ -576,12 +576,12 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	}
 
 	public List<HL7Exception> testComponent(Type type, Component profile, String profileID)
-			throws ProfileException {
+			throws ProfileException, HL7Exception {
 		return doTestComponent(type, profile, profileID, true);
 	}
 
 	private List<HL7Exception> doTestComponent(Type type, Component profile, String profileID,
-			boolean theValidateChildren) throws ProfileException {
+			boolean theValidateChildren) throws ProfileException, HL7Exception {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		exList.addAll(testType(type, profile, null, profileID));
 

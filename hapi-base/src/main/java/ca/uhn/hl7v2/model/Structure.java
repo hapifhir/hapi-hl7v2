@@ -38,30 +38,31 @@ import ca.uhn.hl7v2.HL7Exception;
  *  
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-public interface Structure extends Serializable {
+public interface Structure extends Serializable, Visitable {
 
   /**
    * Returns the Message object to which this structure belongs.  This should normally be set at
    * construction time.  A Structure can only belong to a single Message.  This is primarily 
    * to avoid a situation where intended changes in one message cause unintended changes 
-   * in another that shares one of the same Structure objects.  
+   * in another that shares one of the same Structure objects.
+   *
+   * @return message the root message this structure is part of
    */
   public Message getMessage();
 
   /**
-   * Returns the structure's name. 
+   * Returns the structure's name.
+   *
+   * @return name of this structure
    */
   public String getName(); 
   
   /**
    * Returns the parent group within which this structure exists (may be root 
-   * message group).  
+   * message group).
+   *
+   * @return parent group of this structure
    */
   public Group getParent();
-  
-  /**
-   * @return <code>true</code> if the structure is not populated
-   */
-  public boolean isEmpty() throws HL7Exception;
   
 }

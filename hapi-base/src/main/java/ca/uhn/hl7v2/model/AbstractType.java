@@ -29,6 +29,7 @@
 package ca.uhn.hl7v2.model;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -99,8 +100,8 @@ public abstract class AbstractType implements Type {
 	/**
 	 * {@inheritDoc }
 	 */	
-	public boolean isEmpty() {
-		return extra.numComponents() > 0;
+	public boolean isEmpty() throws HL7Exception {
+		return extra.numComponents() == 0;
 	}
 
 	/**
@@ -126,7 +127,17 @@ public abstract class AbstractType implements Type {
 		return b.toString();
 	}
 
-
+    public Location provideLocation(Location location, int index, int repetition) {
+        if (location.getField() < 0)
+            return new Location(location)
+                .withField(index)
+                .withFieldRepetition(repetition);
+        if (location.getComponent() < 0)
+            return new Location(location)
+                .withComponent(index);
+        return new Location(location)
+            .withSubcomponent(index);
+    }
 	
 
 }

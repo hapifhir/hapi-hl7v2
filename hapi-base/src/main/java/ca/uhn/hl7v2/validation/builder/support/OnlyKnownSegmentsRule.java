@@ -55,8 +55,7 @@ public class OnlyKnownSegmentsRule extends AbstractMessageRule {
 				.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
 			String segmentName = iter.next().getName();
 			ValidationException ve = new ValidationException("Found unknown segment: " + segmentName);
-			Location location = new Location();
-			location.setSegmentName(segmentName);
+			Location location = new Location().withSegmentName(segmentName);
 			ve.setLocation(location);
 			exceptions.add(ve);
 		}

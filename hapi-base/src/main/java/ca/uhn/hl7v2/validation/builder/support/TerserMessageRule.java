@@ -75,9 +75,9 @@ public class TerserMessageRule extends PredicateMessageRule {
 			Terser t = new Terser(msg);
 			StringTokenizer tok = new StringTokenizer(expression, "-", false);
 			Segment segment = t.getSegment(tok.nextToken());
-			Location location = new Location();
-			location.setSegmentName(segment.getName());
-			location.setFieldIndizes(Terser.getIndices(expression));
+			Location location = new Location()
+			    .withSegmentName(segment.getName())
+			    .withFieldIndizes(Terser.getIndices(expression));
 			return location;
 		}
 

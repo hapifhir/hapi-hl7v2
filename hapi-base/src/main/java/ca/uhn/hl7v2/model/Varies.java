@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
@@ -115,13 +116,14 @@ public class Varies implements Type {
 
     /**
      * Returns the data contained by this instance of Varies.  Returns a GenericPrimitive unless 
-     * setData() has been called. 
+     * setData() has been called.
+     *
+     * @return the data contained by this instance of Varies
      */
     public Type getData() {
         return this.data;
     }
 
-    /** @see Type#getName */
     public String getName() {
         String name = "*";
         if (this.data != null) {
@@ -135,7 +137,10 @@ public class Varies implements Type {
      * then its values are copied to the incoming data object before the old one is replaced.  
      * For example, if getData() returns an ST with the value "19901012" and you call 
      * setData(new DT()), then subsequent calls to getData() will return the same DT, with the value 
-     * set to "19901012".   
+     * set to "19901012".
+     *
+     * @param data the data to be set for this Varies instance
+     * @throws DataTypeException if the data could not be set
      */
     public void setData(Type data) throws DataTypeException {
         if (this.data != null) {
@@ -145,8 +150,7 @@ public class Varies implements Type {
         }
         this.data = data;
     }
-    
-    /** Returns extra components from the underlying Type */
+
     public ExtraComponents getExtraComponents() {
         return this.data.getExtraComponents();
     }
@@ -168,7 +172,11 @@ public class Varies implements Type {
      * OBX-2, this method will throw an error. This behaviour can be corrected by using the 
      * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP},
      * or by using configuration in {@link ParserConfiguration} 
-     * </p>  
+     * </p>
+     *
+     * @param segment OBX segment instance to be modified
+     * @param factory ModelClassFactory to be used
+     * @throws HL7Exception if the operation fails
      */
     public static void fixOBX5(Segment segment, ModelClassFactory factory) throws HL7Exception {
         fixOBX5(segment, factory, segment.getMessage().getParser().getParserConfiguration());
@@ -184,15 +192,21 @@ public class Varies implements Type {
      * OBX-2, this method will throw an error. This behaviour can be corrected by using the 
      * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP} 
      * or by using configuration in {@link ParserConfiguration} 
-     * </p>  
+     * </p>
+     *
+     * @param segment OBX segment instance to be modified
+     * @param factory ModelClassFactory to be used
+     * @param parserConfiguration configuration that influences setting OBX-5
+     * @throws HL7Exception if the operation fails
      */
-	public static void fixOBX5(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration) throws HL7Exception {
+	public static void fixOBX5(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+            throws HL7Exception {
 		try {
             //get unqualified class name
             Primitive obx2 = (Primitive) segment.getField(2, 0);
             Type[] reps = segment.getField(5);
-            for (int i = 0; i < reps.length; i++) {
-                Varies v = (Varies)reps[i];
+            for (Type rep : reps) {
+                Varies v = (Varies)rep;
 
                 // If we don't have a value for OBX-2, a default
                 // can be supplied via a System property
@@ -249,9 +263,9 @@ public class Varies implements Type {
 
                     Type newTypeInstance;
                     try {
-                        newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class}).newInstance(new Object[]{v.getMessage()});
+                        newTypeInstance = c.getConstructor(new Class[]{Message.class}).newInstance(v.getMessage());
                     } catch (NoSuchMethodException e) {
-                        newTypeInstance = (Type) c.getConstructor(new Class[]{Message.class, Integer.class}).newInstance(new Object[]{v.getMessage(), 0});
+                        newTypeInstance = c.getConstructor(new Class[]{Message.class, Integer.class}).newInstance(v.getMessage(), 0);
                     }
                     
                     boolean escapeSubcomponentDelimInPrimitive = 
@@ -380,7 +394,7 @@ public class Varies implements Type {
 	/**
 	 * {@inheritDoc }
 	 */		
-	public boolean isEmpty() {
+	public boolean isEmpty() throws HL7Exception {
 		return data.isEmpty();
 	}
 
@@ -390,5 +404,13 @@ public class Varies implements Type {
 	public String toString() {
 		return AbstractType.toString(this);
 	}
-	
+
+    public boolean accept(MessageVisitor visitor, Location currentLocation) throws HL7Exception {
+        return data.accept(visitor, currentLocation);
+    }
+
+    public Location provideLocation(Location location, int index, int repetition) {
+        return data.provideLocation(location, index, repetition);
+    }
+    
 }

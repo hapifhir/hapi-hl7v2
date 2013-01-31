@@ -25,13 +25,16 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.util.Stack;
+
 /**
- * Location class to determine the location of an element that caused an exception
+ * Location class to determine the location of an element
  * 
  * @author Christian Ohr
  */
 public class Location {
 
+    private Stack<GroupLocation> groups = new Stack<GroupLocation>();
 	private String segmentName = null;
 	private int segmentRepetition = -1;
 	private int field = -1;
@@ -45,6 +48,8 @@ public class Location {
 	}
 
 	public Location(Location l) {
+        this.groups = new Stack<GroupLocation>();
+        groups.addAll(l.groups);
 		this.segmentName = l.segmentName;
 		this.segmentRepetition = l.segmentRepetition;
 		this.field = l.field;
@@ -57,52 +62,67 @@ public class Location {
 	    return this == UNKNOWN;
 	}
 
+    public Location pushGroup(String name, int rep) {
+        groups.push(new Location.GroupLocation(name, rep));
+        return this;
+    }
+
+    public void popGroup() {
+        groups.pop();
+    }
+
 	public String getSegmentName() {
 		return segmentName;
 	}
 
-	public void setSegmentName(String segmentName) {
+	public Location withSegmentName(String segmentName) {
 		this.segmentName = segmentName;
+		return this;
 	}
 
 	public int getSegmentRepetition() {
 		return segmentRepetition;
 	}
 
-	public void setSegmentRepetition(int segmentRepetition) {
+	public Location withSegmentRepetition(int segmentRepetition) {
 		this.segmentRepetition = segmentRepetition;
+		return this;
 	}
 
 	public int getField() {
 		return field;
 	}
 
-	public void setField(int field) {
+	public Location withField(int field) {
 		this.field = field;
+		return this;
 	}
 
 	public int getFieldRepetition() {
 		return fieldRepetition;
 	}
 
-	public void setFieldRepetition(int fieldRepetition) {
+	public Location withFieldRepetition(int fieldRepetition) {
 		this.fieldRepetition = fieldRepetition;
+		return this;
 	}
 
 	public int getComponent() {
 		return component;
 	}
 
-	public void setComponent(int component) {
+	public Location withComponent(int component) {
 		this.component = component;
+		return this;
 	}
 
 	public int getSubcomponent() {
 		return subcomponent;
 	}
 
-	public void setSubcomponent(int subcomponent) {
+	public Location withSubcomponent(int subcomponent) {
 		this.subcomponent = subcomponent;
+		return this;
 	}
 
 	/**
@@ -110,19 +130,34 @@ public class Location {
 	 * 
 	 * @param indices integer array as returned by Terser#getIndices
 	 */
-	public void setFieldIndizes(int[] indices) {
+	public Location withFieldIndizes(int[] indices) {
 		field = indices[0];
 		fieldRepetition = indices[1];
 		component = indices[2];
 		subcomponent = indices[3];
+		return this;
 	}
 
+
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+        if (!groups.isEmpty()) {
+            sb.append('/');
+            for (GroupLocation gl : groups) {
+                sb.append(gl.groupName);
+                if (gl.repetition >= 0) {
+                    sb.append('(')
+                    .append(gl.repetition)
+                    .append(")");
+                }
+                sb.append("/");
+            }
+        }
 		if (segmentName != null) {
 			sb.append(segmentName);
-			if (segmentRepetition >= 0) {
+			if (segmentRepetition > 0) {
 				sb.append("(").append(segmentRepetition).append(")");
 			}
 			if (field > 0) {
@@ -138,7 +173,7 @@ public class Location {
 				}
 			}
 		} else {
-			sb.append("unknown location");
+			if (sb.length() == 0) sb.append("unknown location");
 		}
 		return sb.toString();
 	}
@@ -147,6 +182,7 @@ public class Location {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+        result = prime * result + ((groups == null) ? 0 : groups.hashCode());
 		result = prime * result + component;
 		result = prime * result + field;
 		result = prime * result + fieldRepetition;
@@ -165,6 +201,11 @@ public class Location {
 		if (getClass() != obj.getClass())
 			return false;
 		Location other = (Location) obj;
+		if (groups == null) {
+		    if (other.groups != null)
+		        return false;
+		} else if (!groups.equals(other.groups))
+		    return false;
 		if (component != other.component)
 			return false;
 		if (field != other.field)
@@ -182,5 +223,15 @@ public class Location {
 			return false;
 		return true;
 	}
+
+    private class GroupLocation {
+        String groupName;
+        int repetition;
+
+        private GroupLocation(String groupName, int repetition) {
+            this.groupName = groupName;
+            this.repetition = repetition;
+        }
+    }
 
 }

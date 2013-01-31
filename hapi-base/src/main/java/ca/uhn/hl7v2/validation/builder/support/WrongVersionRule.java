@@ -49,9 +49,9 @@ public class WrongVersionRule extends AbstractMessageRule {
 		List<ValidationException> exceptions = new ArrayList<ValidationException>();
 
 		ValidationException ve = new ValidationException("Invalid version: " + msg.getVersion());
-		Location location = new Location();
-		location.setSegmentName("MSH");
-		location.setField(12);
+		Location location = new Location()
+		    .withSegmentName("MSH")
+		    .withField(12);
 		ve.setLocation(location);
 		ve.setError(ErrorCode.UNSUPPORTED_VERSION_ID);
 		exceptions.add(ve);
