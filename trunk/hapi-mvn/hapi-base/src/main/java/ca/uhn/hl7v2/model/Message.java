@@ -52,6 +52,7 @@ public interface Message extends Group {
 	/**
 	 * Returns the version number of the HL7 version in which this message structure is defined
 	 * (e.g. "2.4")
+     * @return version number of the HL7 version
 	 */
 	public abstract String getVersion();
 
@@ -104,22 +105,30 @@ public interface Message extends Group {
 	 * 
 	 * Note that not all parsers can be used. As of version 1.0, only {@link PipeParser} supports
 	 * this functionality
+     *
+     * @param parser the parser to be used when parse/encode methods are called on this Message
 	 */
 	public void setParser(Parser parser);
 
 	/**
 	 * Returns the parser to be used when parse/encode methods are called on this Message, as well
 	 * as its children. The default value is a new {@link PipeParser}
+     *
+     * @return the parser to be used when parse/encode methods are called on this Message
 	 */
 	public Parser getParser();
 
 	/**
 	 * Parses the string into this message using the parser returned by {@link #getParser() }
+     * @param string the message to be parsed
+     * @throws HL7Exception if errors occurred during parsing
 	 */
 	public void parse(String string) throws HL7Exception;
 
 	/**
 	 * Encodes this message using the parser returned by {@link #getParser() }
+     * @return the string-encoded message
+     * @throws HL7Exception if error occurred during encoding
 	 */
 	public String encode() throws HL7Exception;
 
@@ -138,7 +147,8 @@ public interface Message extends Group {
 	 * <li>Message version is invalid</li>
 	 * <li>First segment is not an MSH</li>
 	 * </p>
-	 * 
+	 *
+     * @return the acknowledgment message
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
 	 */
@@ -188,6 +198,7 @@ public interface Message extends Group {
 	 * @param theAcknowlegementCode If null, defaults to
 	 *            AcknowledgmentCode.AA. To generate a typical NAK, use AcknowledgmentCode.AE
 	 * @param theException The exceptions used to populate the ERR segment (if any)
+     * @return the acknoeldgement message
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
 	 */	

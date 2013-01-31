@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 
@@ -83,7 +84,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 *            classes, so we include it as an arg here to emphasize that
 	 *            fact ... AbstractSegment doesn't actually use it though
 	 */
-	public AbstractSegment(Group parent, ModelClassFactory factory) {
+	public AbstractSegment(Group parent, @SuppressWarnings("unused")ModelClassFactory factory) {
 		super(parent);
 		this.fields = new ArrayList<List<Type>>();
 		this.types = new ArrayList<Class<? extends Type>>();
@@ -94,7 +95,36 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		this.names = new ArrayList<String>();
 	}
 
-	/**
+    /**
+     * Iterates over the contained fields and calls the visitor for each
+     * of them.
+     *
+     * @param visitor MessageVisitor instance to be called back.
+     * @param index index of the group
+     * @param repetition repetition of the group
+     * @return true if visiting shall continue, false if not
+     * @throws HL7Exception
+     */
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+        if (visitor.start(this, location)) {
+            String[] names = getNames();
+            for (int i = 1; i <= names.length; i++) {
+                Field f = new Field(getField(i), getMaxCardinality(i));
+                Location nextLocation = f.provideLocation(location, i, -1);
+                if (!f.accept(visitor, nextLocation))
+                    break;
+            }
+        }
+        return visitor.end(this, location);
+    }
+
+	public Location provideLocation(Location location, int index, int repetition) {
+        return new Location(location)
+            .withSegmentName(getName())
+            .withSegmentRepetition(repetition);
+    }
+
+    /**
 	 * Returns an array of Field objects at the specified location in the
 	 * segment. In the case of non-repeating fields the array will be of length
 	 * one. Fields are numbered from 1.
@@ -124,11 +154,10 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * Returns an array of a specific type class
 	 */
 	protected <T extends Type> T[] getTypedField(int number, T[] array) {
-		List<Type> retVal;
 		try {
-			retVal = getFieldAsList(number);
+            List<Type> retVal = getFieldAsList(number);
 			@SuppressWarnings("unchecked")
-			List<T> cast = (List<T>) (List<?>) retVal;
+			List<T> cast = (List<T>) retVal;
 			return cast.toArray(array);
         } catch (ClassCastException cce) {
             log.error("Unexpected problem obtaining field value.  This is a bug.", cce);
@@ -258,7 +287,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		int number = field - 1;
 		Class<? extends Type> c = this.types.get(number);
 
-		Type newType = null;
+		Type newType;
 		try {
 			Object[] args = getArgs(number);
 			Class<?>[] argClasses = new Class[args.length];
@@ -290,7 +319,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 
 	// defaults to {this.getMessage}
 	private Object[] getArgs(int fieldNum) {
-		Object[] result = null;
+		Object[] result;
 
 		Object o = this.args.get(fieldNum);
 		if (o != null && o instanceof Object[]) {

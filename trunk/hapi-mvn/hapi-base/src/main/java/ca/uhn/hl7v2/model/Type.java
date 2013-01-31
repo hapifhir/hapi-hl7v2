@@ -34,15 +34,21 @@ import java.io.Serializable;
  * An HL7 datatype.  Datatypes normally implement either Composite or Primitive.    
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-public interface Type extends Serializable {
+public interface Type extends Serializable, Visitable {
 
-    /** Returns the name of the type (used in XML encoding and profile checking) */
+    /**
+     * Returns the name of the type (used in XML encoding and profile checking)
+     *
+     * @return the name of the type
+     */
     public String getName();
     
     /**
      * Returns an object containing any extra (non-standard) components that 
      * have been added to this type at run-time.  This object can also be used
-     * to add components.  
+     * to add components.
+     *
+     * @return an object containing any extra (non-standard) components
      */
     public ExtraComponents getExtraComponents();
     
@@ -76,12 +82,18 @@ public interface Type extends Serializable {
      * This method makes use of the parser which is stored within the enclosing {@link #getMessage() Message}.
      * At this time, only PipeParsers are supported. 
      * </p>
+     *
+     * @param string the message to be parsed
+     * @throws HL7Exception if errors occurred while parsing
      */
     public void parse(String string) throws HL7Exception;
 
 
     /**
      * Encodes this type using HL7 encoding.
+     *
+     * @return the encoded message
+     * @throws HL7Exception if errors occurred while encoding
      */
     public String encode() throws HL7Exception;
 
@@ -90,9 +102,5 @@ public interface Type extends Serializable {
 	 * Clears all data from this type
 	 */
 	void clear();
-	
-	/**
-	 * Does this type have any actual content
-	 */
-	boolean isEmpty();
+
 } 

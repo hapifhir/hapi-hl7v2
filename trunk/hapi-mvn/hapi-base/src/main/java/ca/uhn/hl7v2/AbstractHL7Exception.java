@@ -76,19 +76,19 @@ public abstract class AbstractHL7Exception extends Exception {
 	public void setFieldPosition(int pos) {
 		if (location == null)
 			location = new Location();
-		location.setField(pos);
+		location.withField(pos);
 	}
 
 	public void setSegmentName(String segmentName) {
 		if (location == null)
 			location = new Location();
-		location.setSegmentName(segmentName);
+		location.withSegmentName(segmentName);
 	}
 
 	public void setSegmentRepetition(int segmentRepetition) {
 		if (location == null)
 			location = new Location();
-		location.setSegmentRepetition(segmentRepetition);
+		location.withSegmentRepetition(segmentRepetition);
 	}
 
 	public int getErrorCode() {

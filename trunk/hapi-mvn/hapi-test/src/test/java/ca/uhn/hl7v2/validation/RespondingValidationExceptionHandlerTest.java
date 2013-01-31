@@ -107,9 +107,9 @@ public class RespondingValidationExceptionHandlerTest extends MockitoTest {
 		ValidationException[] exceptions = new ValidationException[locations.length];
 		for (int i = 0; i < locations.length; i++) {
 			String[] s = locations[i].split("-");
-			Location l = new Location();
-			l.setSegmentName(s[0]);
-			l.setField(Integer.parseInt(s[1]));
+			Location l = new Location()
+			    .withSegmentName(s[0])
+			    .withField(Integer.parseInt(s[1]));
 			ValidationException ve = new ValidationException();
 			ve.setLocation(l);
 			exceptions[i] = ve;

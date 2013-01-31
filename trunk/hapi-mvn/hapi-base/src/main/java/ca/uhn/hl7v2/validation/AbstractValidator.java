@@ -112,9 +112,10 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 				Type[] t = s.getField(field);
 				for (int rep = 0; rep < t.length; rep++) {
 					Location location = new Location();
-					location.setSegmentName(s.getName());
-					location.setField(field);
-					location.setFieldRepetition(rep);
+					location
+					    .withSegmentName(s.getName())
+					    .withField(field)
+					    .withFieldRepetition(rep);
 					testType(t[rep], handler, location);
 				}
 			}
@@ -125,8 +126,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 		if (type instanceof Composite) {
 			Type[] components = ((Composite) type).getComponents();
 			for (int comp = 0; comp < components.length; comp++) {
-				Location location = new Location(l);
-				location.setComponent(comp + 1);
+				Location location = new Location(l).withComponent(comp + 1);
 				testComponent(components[comp], handler, location);
 			}
 		} else if (type instanceof Varies) {
@@ -140,8 +140,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 		if (type instanceof Composite) {
 			Type[] component = ((Composite) type).getComponents();
 			for (int sub = 0; sub < component.length; sub++) {
-				Location location = new Location(l);
-				location.setSubcomponent(sub + 1);
+				Location location = new Location(l).withSubcomponent(sub + 1);
 				testSubComponent(component[sub], handler, location);
 			}
 		} else if (type instanceof Varies) {

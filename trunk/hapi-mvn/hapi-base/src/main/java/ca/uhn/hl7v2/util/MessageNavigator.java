@@ -128,19 +128,14 @@ public class MessageNavigator {
      * Returns true if there is a sibling following the current location.
      */
     public boolean hasNextChild() {
-        if (this.childNames.length > this.currentChild + 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this.childNames.length > this.currentChild + 1);
     }
     
     /**
      * Moves to the next sibling of the current location.
      */
     public void nextChild() throws HL7Exception {
-        int child = this.currentChild + 1;
-        toChild(child);
+        toChild(this.currentChild + 1);
     }
     
     /**
@@ -169,14 +164,11 @@ public class MessageNavigator {
      * If at root, always returns the root (the rep is ignored).  
      */
     public Structure getCurrentStructure(int rep) throws HL7Exception {
-        Structure ret = null;
         if (this.currentChild != -1) {
             String childName = this.childNames[this.currentChild];
-            ret = this.currentGroup.get(childName, rep);
-        } else { 
-            ret = this.currentGroup;
+            return this.currentGroup.get(childName, rep);
         }
-        return ret;
+        return this.currentGroup;
     }
     
     /** 

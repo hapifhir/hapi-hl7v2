@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.VersionLogger;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -235,6 +236,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     /**
      * Returns a Set containing the names of all non-standard structures which have been added to
      * this structure
+     *
+     * @return set of non-standard structures
      */
     public Set<String> getNonStandardNames() {
         if (nonStandardNames == null) {
@@ -380,6 +383,10 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
     /**
      * Returns the number of existing repetitions of the named structure.
+     *
+     * @param name structure name
+     * @return number of existing repetitions of the named structure
+     * @throws HL7Exception if the structure is unknown
      */
     public int currentReps(String name) throws HL7Exception {
         List<Structure> list = structures.get(name);
@@ -431,7 +438,9 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * 10 repititions an OBX segment and "OBX" is supplied with an index of 2, then this call would
      * remove the 3rd repetition. Note that in this case, the Set ID field in the OBX segments would
      * also need to be renumbered manually.
-     * 
+     *
+     * @param name structure name
+     * @param index repetition to remove the structure from
      * @return The removed structure
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
@@ -488,8 +497,10 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * example, if the Group contains 10 repititions an OBX segment and an OBX is supplied with an
      * index of 2, then this call would insert the new repetition at index 2. Note that in this
      * case, the Set ID field in the OBX segments would also need to be renumbered manually.
-     * 
-     * @return The removed structure
+     *
+     * @param name structure name
+     * @param index repetition to insert the structure
+     * @return The inserted structure
      * @throws HL7Exception if the named Structure is not part of this Group.
      */
     public Structure insertRepetition(String name, int index) throws HL7Exception {
@@ -512,6 +523,10 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     /**
      * Given a child structure name, returns the child index (which is 1-indexed, meaning that the
      * first child is at index 1
+     *
+     * @param name structure name
+     * @return position of the structure in this group
+     * @throws HL7Exception if the structure is unknown
      */
     public int getFieldNumForName(String name) throws HL7Exception {
         int retVal = names.indexOf(name);
@@ -602,8 +617,8 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
 
         this.names.add(index, name);
-        this.required.put(name, new Boolean(required));
-        this.repeating.put(name, new Boolean(repeating));
+        this.required.put(name, required);
+        this.repeating.put(name, repeating);
         this.classes.put(name, c);
         this.structures.put(name, new ArrayList<Structure>());
         
@@ -627,9 +642,43 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
     /**
      * Returns the {@link ModelClassFactory} associated with this structure
+     *
+     * @return the {@link ModelClassFactory} associated with this structure
      */
     public final ModelClassFactory getModelClassFactory() {
         return myFactory;
+    }
+
+    /**
+     * Iterates over the contained structures and calls the visitor for each
+     * of them.
+     *
+     * @param visitor MessageVisitor instance to be called back.
+     * @param index index of the group
+     * @param repetition repetition of the group
+     * @return true if visiting shall continue, false if not
+     * @throws HL7Exception
+     */
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+        if (visitor.start(this, location)) {
+            visitNestedStructures(visitor, location);
+        }
+        return visitor.end(this, location);
+    }
+    
+    public Location provideLocation(Location location, int index, int repetition) {
+        return new Location(location).pushGroup(getName(), repetition);
+    }    
+    
+    protected void visitNestedStructures(MessageVisitor visitor, Location location) throws HL7Exception {
+        for (String name : getNames()) {
+            Structure[] structures = getAll(name);
+            for (int j=0; j < structures.length; j++) {
+                int rep = isRepeating(name) ? j : -1;
+                Location nextLocation = structures[j].provideLocation(location, -1, rep);
+                if (!structures[j].accept(visitor, nextLocation)) break;
+            }
+        }        
     }
 
     /**

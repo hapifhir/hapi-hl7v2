@@ -112,7 +112,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      * always proceeds from group to first child). 
      */
     private void groupNext(Group current) {
-        next = new Position(current, ((Group) current).getNames()[0], 0);
+        next = new Position(current, current.getNames()[0], 0);
     }
     
     /**

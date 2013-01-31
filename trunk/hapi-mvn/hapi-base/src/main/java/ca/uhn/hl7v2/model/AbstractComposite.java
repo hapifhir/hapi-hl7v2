@@ -29,11 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 
-/**
- * @author i000161
- *
- */
+
 public abstract class AbstractComposite extends AbstractType implements
 		Composite {
 
@@ -65,13 +63,30 @@ public abstract class AbstractComposite extends AbstractType implements
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty() throws HL7Exception {
 		for (Type type : getComponents()) {
 			if (!type.isEmpty()) return false;
 		}
 		return super.isEmpty(); // for the ExtraComponents
 	}
-	
-	
 
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+        if (visitor.start(this, location)) {
+            Type[] types = getComponents();
+            for (int i = 0; i < types.length; i++) {
+                Type t = getComponent(i);
+                Location nextLocation = t.provideLocation(location, i+1, -1);
+                if (!t.accept(visitor, nextLocation)) break;
+            }
+            ExtraComponents ec = getExtraComponents();
+            for (int i = 0; i < ec.numComponents(); i++) {
+               Varies v = ec.getComponent(i);
+               Location nextLocation = v.provideLocation(location, i + types.length, -1);
+               if (!v.accept(visitor, nextLocation)) break;
+            }
+        }
+        return visitor.end(this, location);
+    }
+  
+    
 }

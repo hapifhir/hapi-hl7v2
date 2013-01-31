@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.model;
 import java.util.Collection;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Escape;
 import ca.uhn.hl7v2.parser.Parser;
@@ -184,9 +185,12 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
     }
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty() throws HL7Exception {
 		return (myValue == null || myValue.length() == 0) && super.isEmpty();
 	}
 
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+        return visitor.visit(this, location);
+    }  
     
 }

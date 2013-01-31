@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -85,7 +86,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * a custom message definition in your own package, or it will default.  
      * @see Message#getVersion()
      * 
-     * @returns lowest available version if not obvious from package name
+     * @return lowest available version if not obvious from package name
      */
     public String getVersion() {
     	if (myVersion != null) {
@@ -99,7 +100,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
             String verFolder = m.group(1);
             if (verFolder.length() > 0) {
                 char[] chars = verFolder.toCharArray();
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for (int i = 1; i < chars.length; i++) { //start at 1 to avoid the 'v'
                     buf.append(chars[i]);
                     if (i < chars.length - 1) buf.append('.');
@@ -229,7 +230,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */    
     public Message generateACK(AcknowledgmentCode theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
-		Message out = instantiateACK(theAcknowledgementCode);
+		Message out = instantiateACK();
 		out.setParser(getParser());
 		fillResponseHeader(out, theAcknowledgementCode);
         if (theException != null) {
@@ -238,7 +239,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         return out;
     }
 
-	private Message instantiateACK(AcknowledgmentCode theAcknowledgementCode) throws HL7Exception {
+	private Message instantiateACK() throws HL7Exception {
 		ModelClassFactory mcf = getParser() != null ? 
 				getParser().getFactory() : 
 				new DefaultModelClassFactory();
@@ -255,10 +256,10 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 		}
 		
 		if (out instanceof GenericMessage) {
-			if (ArrayUtil.contains(out.getNames(), "MSA") == false) {
+			if (!ArrayUtil.contains(out.getNames(), "MSA")) {
 				out.addNonstandardSegment("MSA");
 			}
-			if (ArrayUtil.contains(out.getNames(), "ERR") == false) {
+			if (!ArrayUtil.contains(out.getNames(), "ERR")) {
 				out.addNonstandardSegment("ERR");
 			}
 		}
@@ -272,6 +273,12 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 	 * used for the message time field, and <code>MessageIDGenerator</code> is
 	 * used to create a unique message ID. Version and message type fields are
 	 * not populated.
+     *
+     * @param out outgoing message to be populated
+     * @param code acknowledgment code
+     * @return outgoing message
+     * @throws HL7Exception if header cannot be filled
+     * @throws IOException if message ID could not be generated
 	 */
 	public Message fillResponseHeader(Message out, AcknowledgmentCode code)
 			throws HL7Exception, IOException {
@@ -404,5 +411,14 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         }
         
     }
-    
+
+    @Override
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+        if (visitor.start(this)) {
+            visitNestedStructures(visitor, location);
+        }
+        return visitor.end(this);
+    }
+
+
 }

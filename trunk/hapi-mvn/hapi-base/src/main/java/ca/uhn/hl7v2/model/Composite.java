@@ -48,6 +48,7 @@ public interface Composite extends Type {
    *
    * @param number index of the component to be retrieved (zero-based)
    * @return component at this index
+   * @throws DataTypeException
    */
   public Type getComponent(int number) throws DataTypeException;
 
