@@ -111,8 +111,10 @@ public class XMLUtils {
         LSSerializer serializer = impl.createLSSerializer();
         // document.normalizeDocument();
         DOMConfiguration config = serializer.getDomConfig();
-        config.setParameter("xml-declaration", true);
-        config.setParameter("format-pretty-print", true);
+        if (config.canSetParameter("format-pretty-print", Boolean.TRUE)) {
+            config.setParameter("format-pretty-print", true);
+        }
+        config.setParameter("xml-declaration", true);        
         LSOutput output = impl.createLSOutput();
         output.setEncoding("UTF-8");
         Writer writer = new StringWriter();
