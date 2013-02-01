@@ -475,6 +475,7 @@
 				<module>hapi-structures-v26</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-hl7overhttp</module>
+				<module>hapi-examples</module>
 				<module>hapi-dist</module>
 			</modules>
 		</profile>

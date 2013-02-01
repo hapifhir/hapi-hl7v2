@@ -27,6 +27,7 @@
 		<menu name="Welcome">
 			<item name="Introduction" href="index.html" />
 			<item name="Changelog" href="changes-report.html" />
+			<item name="Upgrading to 2.1" href="upgrade_to_hapi_2_1.html" />
 			<item name="Blog" href="http://onintegration.blogspot.com/" />
 			
 			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
@@ -59,7 +60,7 @@
 			<item name="Source XRef" href="xref/index.html" />
 			<item name="FAQ" href="hapi-faq.html" />
 			<item name="Conformance Tools" href="conformance.html" />
-			<item name="Maven Plugins" href="confgen-usage.html" />
+			<item name="Maven Plugins" href="hapi-sourcegen/confgen-usage.html" />
 		</menu>
 
 		<menu name="Get Help">

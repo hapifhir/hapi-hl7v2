@@ -25,28 +25,30 @@
 				HAPI 2.0 contains two complete modules for creating an HL7 Server capable
 				of listening for connections from outside applications, receiving
 				messages and processing them:
-				<ul>
-					<a href="./apidocs/ca/uhn/hl7v2/app/package-summary.html">ca.uhn.hl7v2.app.*</a>
-				</ul>
-				<ul>
-					<a href="./apidocs/ca/uhn/hl7v2/protocol/package-summary.html">ca.uhn.hl7v2.protocol.*</a>
-				</ul>
 			</p>
+
+			<ul>
+				<li>
+					<a href="./apidocs/ca/uhn/hl7v2/app/package-summary.html">ca.uhn.hl7v2.app.*</a>
+				</li>
+				<li>
+					<a href="./apidocs/ca/uhn/hl7v2/protocol/package-summary.html">ca.uhn.hl7v2.protocol.*</a>
+				</li>
+			</ul>
 
 			<p>
 				The
 				<code>.app.*</code>
 				package contains the original server implementation
-				and has always been the implenentation suggested by the HAPI documentation.
+				and has always been the implementation suggested by the HAPI documentation.
 				While it was very simplistic in its original implementation, it has
-				received
-				a good deal of improvement over the years from the HAPI community.
+				received a good deal of improvement over the years from the HAPI community.
 			</p>
 
 			<p>
 				The
 				<code>.protocol.*</code>
-				package contains a newer server implementation, which
+				package contains a more recent server implementation, which
 				had a number of great ideas but was never completed and never received much
 				attention from the HAPI community in general. As such,
 				<code>.protocol.*</code>
