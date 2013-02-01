@@ -226,6 +226,20 @@
             	]]> 
             	Thanks to Pablo Pazos for reporting and providing a test case!
             </action>
+            <action type="fix" dev="James Agnew">
+            	Improve the documentation on the
+            	<![CDATA[ 
+            		<a href="hapi-sourcegen/confgen-usage.html">Maven Plugins</a>
+            	]]>
+            	and introduce a new plugins for generating
+            	<![CDATA[ 
+            		<a href="hapi-sourcegen/superstructuregen-usage.html">Superstuctures</a>
+            	]]>
+            	and
+            	<![CDATA[ 
+            		<a href="hapi-sourcegen/xsdconfgen-usage.html">XSDs</a>
+            	]]>
+            </action>
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">

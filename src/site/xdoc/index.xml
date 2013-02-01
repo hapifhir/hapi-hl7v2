@@ -80,7 +80,7 @@
 			
 		</section>
 
-		<section name="New Beta Released! (HAPI 2.1-beta1) - Jan 30, 2013">
+		<section name="New Beta Released! (HAPI 2.1-beta1) - Jan 31, 2013">
 		
 			<p>
 				A new beta of HAPI (Core library, HL7 over HTTP, and Structures)
@@ -89,7 +89,12 @@
 			
 			<p>
 				This new release is packed with new features. Read about them in
-				the <a href="changes-report.html">Changelog</a>.
+				the <a href="changes-report.html">Changelog</a>. There are also
+				a number of upgrades to the base API. Some existing API elements
+				have been deprecated (although none have been removed) in an
+				effort to streamline things. Please see the
+				<a href="upgrade_to_hapi_2_1.html">Upgrading to 2.1</a> page
+				for more information.
 			</p>
 		
 			<p>
