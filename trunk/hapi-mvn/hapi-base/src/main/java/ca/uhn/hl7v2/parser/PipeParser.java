@@ -63,6 +63,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * with characters like |, ^, and ~) HL7 messages. Unexpected segments and
  * fields are parsed into generic elements that are added to the message.
  * 
+ * @see ParserConfiguration for configuration options which may affect parser encoding and decoding behaviour
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
 public class PipeParser extends Parser {

@@ -98,7 +98,7 @@ public class EncodedMessageComparator {
         try {
         	Document doc = XMLUtils.parse(message);
             clean(doc.getDocumentElement());
-            return XMLUtils.serialize(doc);
+            return XMLUtils.serialize(doc, true);
         } catch (Exception e) {
             throw new RuntimeException("Exception while standardizing XML ", e);
         }

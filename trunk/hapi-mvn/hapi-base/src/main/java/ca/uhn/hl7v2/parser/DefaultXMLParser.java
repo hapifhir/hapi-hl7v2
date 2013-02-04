@@ -62,6 +62,8 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * transformed prior to parsing (using XSLT) as a work-around.  Alternatively the group class names 
  * could be changed to reflect updates in the XML spec.  Ultimately, HAPI group classes will be 
  * changed to correspond with the official group names, once these are all assigned.  </p>
+ * 
+ * @see ParserConfiguration for configuration options which may affect parser encoding and decoding behaviour
  * @author Bryan Tripp
  */
 public class DefaultXMLParser extends XMLParser {

@@ -64,6 +64,7 @@ import org.w3c.dom.NodeList;
  * </code> as appropriate. XMLParser uses the Xerces parser, which must be installed in your
  * classpath.
  * 
+ * @see ParserConfiguration for configuration options which may affect parser encoding and decoding behaviour
  * @author Bryan Tripp, Shawn Bellina
  */
 public abstract class XMLParser extends Parser {
@@ -251,7 +252,7 @@ public abstract class XMLParser extends Parser {
 		// if (!documentElement.hasAttribute("xmlns"))
 		// documentElement.setAttribute("xmlns", "urn:hl7-org:v2xml");
 		try {
-			return XMLUtils.serialize(doc);
+			return XMLUtils.serialize(doc, getParserConfiguration().isPrettyPrintWhenEncodingXml());
 		} catch (Exception e) {
 			throw new HL7Exception("Exception serializing XML document to string", e);
 		}
