@@ -35,6 +35,7 @@ public class ParserConfiguration {
 	private String myInvalidObx2Type;
 	private UnexpectedSegmentBehaviourEnum myUnexpectedSegmentBehaviour;
 	private boolean nonGreedyMode = false;
+	private boolean prettyPrintWhenEncodingXml = true;
 	private boolean validating = true;
 
 	/**
@@ -239,6 +240,15 @@ public class ParserConfiguration {
 	 */
 	public boolean isNonGreedyMode() {
 		return nonGreedyMode;
+	}
+
+	/**
+	 * If set to <code>true</code> (which is the default), {@link XMLParser XML Parsers}
+	 * will attempt to pretty-print the XML they generate. This means the messages will look
+	 * nicer to humans, but may take up slightly more space/bandwidth.
+	 */
+	public boolean isPrettyPrintWhenEncodingXml() {
+		return prettyPrintWhenEncodingXml;
 	}
 
 	/**
@@ -472,6 +482,15 @@ public class ParserConfiguration {
 	 */
 	public void setNonGreedyMode(boolean theNonGreedyMode) {
 		nonGreedyMode = theNonGreedyMode;
+	}
+
+	/**
+	 * If set to <code>true</code> (which is the default), {@link XMLParser XML Parsers}
+	 * will attempt to pretty-print the XML they generate. This means the messages will look
+	 * nicer to humans, but may take up slightly more space/bandwidth.
+	 */
+	public void setPrettyPrintWhenEncodingXml(boolean thePrettyPrintWhenEncodingXml) {
+		prettyPrintWhenEncodingXml = thePrettyPrintWhenEncodingXml;
 	}
 
 	/**

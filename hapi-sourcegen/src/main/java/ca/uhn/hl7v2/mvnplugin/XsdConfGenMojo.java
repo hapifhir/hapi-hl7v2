@@ -231,7 +231,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 				ourLog.debug("DOcument: " + sw.toString());
 			}
 
-			String xml = XMLUtils.serialize(XMLUtils.parse(sw.toString()));
+			String xml = XMLUtils.serialize(XMLUtils.parse(sw.toString()), true);
 
 			FileWriter w = new FileWriter(targetFileDef, false);
 			w.write(xml);

@@ -60,7 +60,7 @@ import ca.uhn.hl7v2.util.Terser;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  * @deprecated
  */
-public class OldPipeParser extends Parser {
+class OldPipeParser extends Parser {
     
     private static final Logger log = LoggerFactory.getLogger(OldPipeParser.class);
     

@@ -106,12 +106,12 @@ public class XMLUtils {
         d.normalizeDocument();
     }
 
-    public static String serialize(Document document) {
+    public static String serialize(Document document, boolean prettyPrint) {
         DOMImplementationLS impl = getDOMImpl();
         LSSerializer serializer = impl.createLSSerializer();
         // document.normalizeDocument();
         DOMConfiguration config = serializer.getDomConfig();
-        if (config.canSetParameter("format-pretty-print", Boolean.TRUE)) {
+        if (prettyPrint && config.canSetParameter("format-pretty-print", Boolean.TRUE)) {
             config.setParameter("format-pretty-print", true);
         }
         config.setParameter("xml-declaration", true);        
