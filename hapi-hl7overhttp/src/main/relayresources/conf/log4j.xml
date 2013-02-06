@@ -30,8 +30,22 @@
         </layout>
     </appender>
     
+    <!--
+    Note: Uncomment the following appender to increase the
+    logging verbosity to DEBUG level, which will give more
+    information about what HoH is doing internally. You
+    may further increase by changing DEBUG to TRACE to
+    see even more detail.   
+    -->
+    <!-- 
+    <logger name="ca.uhn.hl7v2.hoh" additivity="false">
+    	<level value="DEBUG"></level>
+    	<appender-ref ref="stdout"/>
+    </logger>
+    -->
+     
     <root>
-        <priority value="info"></priority>
+        <priority value="INFO"></priority>
         <appender-ref ref="stdout"/>
     </root>
 </log4j:configuration>

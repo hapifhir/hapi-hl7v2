@@ -156,6 +156,98 @@
 </bean>]]></source>
 				
 			</subsection>
+				
+			<subsection name="TLS (SSL) Encryption">
+			
+				<p>
+					To enable encryption on an outgoing HTTP connection (aka HTTPS),
+					you simply need to provide a socket factory as a property to the sender.
+				</p>
+			
+				<source><![CDATA[<!-- 
+Define a SocketFactory bean. The TlsSocketFactory bean class creates standard
+encrypted sockets using built in trusted keys. This means that this will
+only work if the receiving system has a private key signed by a trusted
+certificate authority.
+ -->
+<bean class="ca.uhn.hl7v2.hoh.sockets.TlsSocketFactory" id="theSocketFactory">
+</bean>
+				
+<bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
+   <property name="url" value="http://localhost:8000/relayURI"/>
+
+   <!-- ...other properties go here... -->
+
+   <!-- Add a property for a SocketFactory -->
+   <property name="socketFactory" ref="theSocketFactory"/>
+</bean>]]></source>
+
+			</subsection>
+
+			<subsection name="TLS (SSL) Encryption With Explicit Certificate">
+			
+				<p>
+					To enable encryption on an outgoing HTTP connection (aka HTTPS)
+					using a specific certificate, the process is similar to regular
+					TLS (as above), but you must first put the certificate into 
+					a keystore and configure the Sender to use it.
+				</p>
+				
+				<p>
+					This mechanism is useful in several circumstances:
+				</p>
+				<ul>
+					<li>Sending messages to a recipient who is using a self-signed certificate</li>
+					<li>Sending messages to a recipient who wishes to us TLS Mutual Authentication</li>
+				</ul>
+
+				<p>
+					The following example requires that you have your trusted certificate
+					in a keystore. See 
+					<a href="./creating_a_client_keystore.html">Creating a Client Keystore</a>
+					for more information on how to do this. 
+				</p>
+							
+				<source><![CDATA[<!-- 
+Define the SocketFactory itself. Note that this example
+assumes that the keystore has been placed in the "conf" directory
+within the relay installation, and that the keystore has a passphrase
+of "changeit". Make sure the "id" matches the "ref" name in the
+property above.
+-->
+<bean class="ca.uhn.hl7v2.hoh.sockets.CustomCertificateTlsSocketFactory" id="theSocketFactory">
+   <property name="keystoreFilename" value="conf/keystore.jks"/>
+   <property name="keystorePassphrase" value="changeit"/>
+</bean>
+
+<bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="theSender">
+   <property name="url" value="http://localhost:8000/relayURI"/>
+
+   <!-- ...other properties go here... -->
+
+   <!-- Add a property for a SocketFactory -->
+   <property name="socketFactory" ref="theSocketFactory"/>
+</bean>]]></source>
+
+			</subsection>
+		
+		</section>
+		
+		<section name="Troubleshooting">
+		
+			<p>
+				In order to troubleshoot the relay if something isn't 
+				working correctly, the first thing to try is to
+				increase the verbosity on the log files.
+			</p>
+		
+			<p>
+				The HL7 over HTTP Relay uses log4j for its logging.
+				The log4j configuration is found in the "conf" directory
+				in a file called "log4j.xml". Open this file for examples
+				of how to increase logging verbosity (look for a tag
+				named "appender").
+			</p>
 		
 		</section>
 								
