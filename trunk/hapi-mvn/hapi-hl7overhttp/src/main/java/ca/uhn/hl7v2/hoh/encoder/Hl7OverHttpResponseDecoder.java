@@ -9,10 +9,13 @@ import ca.uhn.hl7v2.hoh.api.DecodeException;
 
 public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Hl7OverHttpResponseDecoder.class);
 	private String myActionLine;
 
 	@Override
 	protected String readActionLineAndDecode(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException {
+		ourLog.trace("Entering readActionLineAndDecode(InputStream)");
+
 		if (myActionLine == null) {
 			String firstLine = readFirstLine(theInputStream);
 			if (firstLine == null || isBlank(firstLine)) {
@@ -38,6 +41,10 @@ public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 
 			setResponseName(statusPart.substring(spaceIdx).trim());
 			myActionLine = firstLine;
+			ourLog.trace("Action line is {}", myActionLine);
+
+		} else {
+			ourLog.trace("Already have an action line");
 		}
 		
 		return myActionLine;

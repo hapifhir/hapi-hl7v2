@@ -46,9 +46,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private String myResponseName;
 	private Integer myResponseStatus;
 	private TransferEncoding myTransferEncoding;
-
 	private String mySignature;
-
 	private EncodingStyle myEncodingStyle;
 
 	private void addConformanceProblem(String theString) {
@@ -62,12 +60,16 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	protected abstract void authorize() throws AuthorizationFailureException;
 
 	public void decode() throws DecodeException, SignatureVerificationException {
+		ourLog.trace("Entering decode()");
+		
 		verifyNotUsed();
 
 		decodeHeaders();
 		authorize();
 		decodeBody();
 		verifySignature();
+
+		ourLog.trace("Exiting decode()");
 	}
 
 	private void decodeBody() throws DecodeException {
@@ -214,6 +216,8 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				throw new DecodeException("Failed to decode CHUNKED encoding", e);
 			}
 
+			ourLog.trace("Going to interpret CHUNKED size value: {}", nextSize);
+			
 			if (nextSize.length() == 0) {
 				break;
 			}
@@ -238,6 +242,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					int nextRead = Math.min(nextSizeInt, byteBuffer.length);
 					int bytesRead = theInputStream.read(byteBuffer, 0, nextRead);
 					if (bytesRead == -1) {
+						ourLog.debug("Exception in readBytesChunked(InputStream): Reached EOF. Buffer has {} bytes", bos.size());
 						throw new DecodeException("Reached EOF while reading in message chunk");
 					}
 					if (bytesRead == 0 && totalRead < nextSizeInt) {
@@ -417,7 +422,10 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	}
 
 	protected String readFirstLine(InputStream theInputStream) throws IOException, NoMessageReceivedException {
-		return readLine(theInputStream, true);
+		ourLog.trace("Entering readFirstLine(InputStream) with IS: {}", theInputStream);
+		String retVal = readLine(theInputStream, true);
+		ourLog.trace("Exiting readFirstLine(InputStream) with result: {}", retVal);
+		return retVal;
 	}
 
 	/**
@@ -496,8 +504,10 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				b = theInputStream.read();
 			} catch (SocketTimeoutException e) {
 				if (retVal.length() == 0 && theFirstLine) {
+					ourLog.trace("No message received, aborting readLine(InputStream, boolean)");
 					throw new NoMessageReceivedException();
 				}
+				ourLog.trace("No message received in readLine(InputStream, boolean), going to wait and continue");
 				pauseDuringTimedOutRead();
 				continue;
 			}
@@ -507,6 +517,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			} else if (b == 10) {
 				break;
 			} else if (b == -1) {
+				ourLog.debug("Current read line is: {}", retVal);
 				ourLog.info("Read -1 from input stream, closing it");
 				theInputStream.close();
 				if (retVal.length() == 0) {
@@ -520,12 +531,15 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			}
 		}
 
+		ourLog.debug("Current read line is: {}", retVal);
+
 		return WHITESPACE_PATTERN.matcher(retVal.toString()).replaceAll(" ").trim();
 	}
 
 	private void pauseDuringTimedOutRead() throws SocketTimeoutException {
 		long elapsed = System.currentTimeMillis() - myLastStartedReading;
 		if (elapsed > myReadTimeout) {
+			ourLog.trace("Elapsed time of {} exceeds max {}, throwing SocketTimeoutException", elapsed, myReadTimeout);
 			throw new SocketTimeoutException();
 		}
 		try {

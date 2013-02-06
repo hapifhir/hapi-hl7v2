@@ -186,6 +186,9 @@ abstract class AbstractHl7OverHttp {
 		myUsername = theUsername;
 	}
 
+	/**
+	 * Throws an {@link IllegalStateException} if called more than once 
+	 */
 	protected void verifyNotUsed() {
 		if (myUsed) {
 			throw new IllegalStateException(getClass().getSimpleName() + " may not be reused");

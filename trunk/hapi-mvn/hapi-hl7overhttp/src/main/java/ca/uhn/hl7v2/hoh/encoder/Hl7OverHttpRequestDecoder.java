@@ -34,6 +34,8 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 
 	@Override
 	protected String readActionLineAndDecode(InputStream theInputStream) throws DecodeException, IOException, NoMessageReceivedException {
+		ourLog.trace("Entering readActionLineAndDecode(InputStream)");
+		
 		if (myActionLine == null) {
 			String firstLine = readFirstLine(theInputStream);
 			if (firstLine == null || isBlank(firstLine)) {
@@ -61,6 +63,10 @@ public class Hl7OverHttpRequestDecoder extends AbstractHl7OverHttpDecoder {
 			}
 
 			myActionLine = firstLine;
+			ourLog.trace("Action line is {}", myActionLine);
+
+		} else {
+			ourLog.trace("Already have an action line");
 		}
 		
 		return myActionLine;
