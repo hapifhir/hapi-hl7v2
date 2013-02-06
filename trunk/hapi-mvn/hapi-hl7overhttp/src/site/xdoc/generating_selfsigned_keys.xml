@@ -33,24 +33,24 @@
 		   	<p>
 		   		First, the private key is created using an application called keytool. 
 		   		Note that in the example below:
-		   		<ul>
-		   			<li>
-		   				You must choose a password for the keystore. It is possible to store more than one public or private
-		   				key in a single keystore, but the same keystore password must be used each time.
-		   			</li>
-		   			<li>
-		   				The certificate is set to expire after	5 years (1826 days), according to the 
-		   				validity argument. You may wish to adjust this appropriately.
-		   			</li>
-		   			<li>
-		   				Every private or public key in a keystore has an alias. This alias will be needed
-		   				by the HL7 over HTTP client or server modules 
-		   				to specify which key in the keystore should be used. It is required even if only
-		   				one key is located in the keystore. It is generally a good idea to use a descriptive
-		   				alias which specifies what the key is for (e.g. adt_messages_to_fictitiouslab).
-		   			</li>
-		   		</ul>
 		   	</p>
+	   		<ul>
+	   			<li>
+	   				You must choose a password for the keystore. It is possible to store more than one public or private
+	   				key in a single keystore, but the same keystore password must be used each time.
+	   			</li>
+	   			<li>
+	   				The certificate is set to expire after	5 years (1826 days), according to the 
+	   				validity argument. You may wish to adjust this appropriately.
+	   			</li>
+	   			<li>
+	   				Every private or public key in a keystore has an alias. This alias will be needed
+	   				by the HL7 over HTTP client or server modules 
+	   				to specify which key in the keystore should be used. It is required even if only
+	   				one key is located in the keystore. It is generally a good idea to use a descriptive
+	   				alias which specifies what the key is for (e.g. adt_messages_to_fictitiouslab).
+	   			</li>
+	   		</ul>
 		   	<div style="background: #E0E0E0; padding: 20px;">
 					$ <span style="color: #E06060;">keytool -genkey -alias my_app_alias -keyalg RSA -keysize 2048 -validity 1826 -keystore privatekeystore.jks -storetype JKS</span><br/><br/>
 					Enter keystore password:  <span style="color: #E06060;">thepassword</span><br/>
@@ -110,31 +110,16 @@
 		   	</div>
 		   	
 		   </subsection>
-		   <subsection name="Importing the public key into a truststore">
 		   
-		   	
+		   <subsection name="What Next?">
+		   
 		   	<p>
-		   		To import the Public Key into a truststore (a keystore containing a public key),
-		   		you will once again use the keytool command.
+		   		You will now want to provide a copy of your public certificate to
+		   		the person who will be sending you messages. If they are using the
+		   		relay as well, they might want to see 
+		   		<a href="./creating_a_client_keystore.html">Creating a Client Keystore</a>
+		   		for information on what to do with it.
 		   	</p>
-		   	
-		   	<div style="background: #E0E0E0; padding: 20px;">
-					$ <span style="color: #E06060;">keytool -import -alias trust_app_alias -file public.cert -keystore truststore.jks -storetype JKS</span><br/>
-					Enter keystore password:  <span style="color: #E06060;">trustpassword</span><br/>
-					Re-enter new password: <span style="color: #E06060;">trustpassword</span><br/>
-					Owner: CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown<br/>
-					Issuer: CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown<br/>
-					Serial number: 50257625<br/>
-					Valid from: Fri Aug 10 16:59:17 EDT 2012 until: Thu Aug 10 16:59:17 EDT 2017<br/>
-					Certificate fingerprints:<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MD5:  B9:5B:43:34:CA:00:82:EE:1F:7B:24:14:B6:3E:56:09<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHA1: 98:56:ED:0B:E0:F2:A6:20:2D:DD:66:72:5F:DF:7D:CB:BC:98:C7:AE<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature algorithm name: SHA1withRSA<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version: 3<br/>
-					Trust this certificate? [no]:  <span style="color: #E06060;">yes</span><br/>
-					Certificate was added to keystore<br/>
-				</div>		   	
-		   	
 		   	
 		   </subsection>
 		   
