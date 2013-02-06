@@ -48,6 +48,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 	 * 
 	 */
 	public void encode() throws EncodeException {
+		ourLog.trace("Entering encode()");
 		verifyNotUsed();
 		
 		if (isBlank(getMessage()) && mySendable == null) {
@@ -95,6 +96,8 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 				throw new EncodeException(e);
 			}
 		}
+
+		ourLog.trace("Exiting encode()");
 	}
 
 
@@ -138,6 +141,8 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		w.write("\r\n");
 		
 		for (Map.Entry<String, String> next : getHeaders().entrySet()) {
+			ourLog.debug("Writing HTTP header- {}: {}", next.getKey(), next.getValue());
+
 			w.write(next.getKey());
 			w.write(": ");
 			w.write(next.getValue());
@@ -147,6 +152,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		w.write("\r\n");
 		w.flush();
 		
+		ourLog.debug("Writing {} bytes of actual data", getData().length);
 		theOutputStream.write(getData());
 		
 	}

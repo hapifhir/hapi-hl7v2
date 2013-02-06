@@ -5,10 +5,13 @@ import static org.junit.Assert.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
+import org.springframework.util.Log4jConfigurer;
 
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
@@ -28,11 +31,13 @@ public class HohRawClientSimpleTest {
 	private static Hl7OverHttpLowerLayerProtocol myLlp;
 	private static SingleCredentialServerCallback ourServerCallback;
 	private static ServerSocketThreadForTesting myServerSocketThread;
+	private Level myExistingLogLevel;
 
 	// TODO: Client should respect the "close" header in a response
 
 	@Test
 	public void testSendMessageSimple() throws Exception {
+		LogManager.getRootLogger().setLevel((Level)Level.TRACE);
 
 		String message = // -
 		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
@@ -152,10 +157,15 @@ public class HohRawClientSimpleTest {
 	public void after() throws InterruptedException {
 		ourLog.info("Marking done as true");
 		myServerSocketThread.done();
+		
+		// Restore the log level
+		LogManager.getRootLogger().setLevel(myExistingLogLevel);
 	}
 
 	@Before
 	public void before() throws InterruptedException {
+		myExistingLogLevel = LogManager.getRootLogger().getLevel();
+
 		myPort = RandomServerPortProvider.findFreePort();
 
 		myLlp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
@@ -166,5 +176,8 @@ public class HohRawClientSimpleTest {
 		myServerSocketThread.start();
 		myServerSocketThread.getLatch().await();
 	}
+	
+	
+
 
 }
