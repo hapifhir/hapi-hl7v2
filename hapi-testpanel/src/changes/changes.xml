@@ -5,7 +5,15 @@
 		<title>HAPI TestPanel</title>
 	</properties>
 	<body>
-		<release version="2.0.1" date="TBD">
+		<release version="2.1.0" date="TBD">
+            <action type="fix">
+            	Correct a NullPointerException when opening a message from a text file
+            </action>
+            <action type="fix">
+            	Prevent a failure to autosave messages when TestPanel is closing if the charset has not been selected
+            </action>
+      </release>
+		<release version="2.0.1" date="">
             <action type="fix" dev="Olaf Zevenboom">
             	Add a mode to send a message or a group of messages more than once in a row
             	(for load testing, stress testing, etc.)

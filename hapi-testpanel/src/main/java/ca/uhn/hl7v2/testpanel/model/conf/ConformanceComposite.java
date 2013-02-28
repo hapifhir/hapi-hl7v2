@@ -28,11 +28,16 @@ package ca.uhn.hl7v2.testpanel.model.conf;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.conf.spec.message.AbstractComponent;
 import ca.uhn.hl7v2.model.AbstractType;
 import ca.uhn.hl7v2.model.Composite;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.ExtraComponents;
+import ca.uhn.hl7v2.model.MessageVisitor;
 import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.model.Varies;
 
 
 public class ConformanceComposite extends AbstractType implements Composite, ConformanceType<ConformanceComposite> {
@@ -116,5 +121,9 @@ public class ConformanceComposite extends AbstractType implements Composite, Con
 		
 		return retVal;
 	}
+
+    public boolean accept(MessageVisitor visitor, Location location) throws HL7Exception {
+    	throw new UnsupportedOperationException();
+    }
 
 }

@@ -8,7 +8,7 @@
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/textresources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hapi-hl7overhttp"/>
-	<classpathentry kind="var" path="M2_REPO/com/apple/AppleJavaExtensions/1.5.4/applejavaextensions-1.5.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/apple/applejavaextensions/1.5.4/applejavaextensions-1.5.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" sourcepath="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2-javadoc.jar!/"/>
@@ -20,49 +20,44 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-base/2.1-alpha1/hapi-base-2.1-alpha1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-base/2.0/hapi-base-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.1-beta1/hapi-structures-v21-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.1-beta1/hapi-structures-v21-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-base/2.0/hapi-base-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v21/2.1-beta1/hapi-structures-v21-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.1-beta1/hapi-structures-v22-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.1-beta1/hapi-structures-v22-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v21/2.0/hapi-structures-v21-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v22/2.1-beta1/hapi-structures-v22-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0/hapi-structures-v22-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v22/2.0/hapi-structures-v22-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.1-beta1/hapi-structures-v23-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.1-beta1/hapi-structures-v23-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v22/2.0/hapi-structures-v22-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v23/2.1-beta1/hapi-structures-v23-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.1-beta1/hapi-structures-v231-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.1-beta1/hapi-structures-v231-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v23/2.0/hapi-structures-v23-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v231/2.1-beta1/hapi-structures-v231-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.1-beta1/hapi-structures-v24-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.1-beta1/hapi-structures-v24-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v231/2.0/hapi-structures-v231-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v24/2.1-beta1/hapi-structures-v24-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0/hapi-structures-v24-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v24/2.0/hapi-structures-v24-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.1-beta1/hapi-structures-v25-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.1-beta1/hapi-structures-v25-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v24/2.0/hapi-structures-v24-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v25/2.1-beta1/hapi-structures-v25-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.1-beta1/hapi-structures-v251-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.1-beta1/hapi-structures-v251-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v251/2.1-beta1/hapi-structures-v251-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0/hapi-structures-v251-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v251/2.0/hapi-structures-v251-2.0-sources.jar">
+	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.1-beta1/hapi-structures-v26-2.1-beta1.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.1-beta1/hapi-structures-v26-2.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v251/2.0/hapi-structures-v251-2.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0/hapi-structures-v26-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v26/2.0/hapi-structures-v26-2.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v26/2.0/hapi-structures-v26-2.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v26/2.1-beta1/hapi-structures-v26-2.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar" sourcepath="M2_REPO/org/jdom/jdom/1.1/jdom-1.1-sources.jar">
@@ -124,7 +119,6 @@
 	<classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" sourcepath="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="var" path="M2_REPO/jsyntaxpane/jsyntaxpane/0.9.6-hapi2/jsyntaxpane-0.9.6-hapi2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-hl7overhttp/2.1-alpha1/hapi-hl7overhttp-2.1-alpha1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hapi-base"/>

@@ -371,7 +371,14 @@ public class Controller {
 
 			File saveFile = new File(theSelectedValue.getSaveFileName());
 			FileOutputStream fos = new FileOutputStream(saveFile);
-			BufferedWriter w = new BufferedWriter(new OutputStreamWriter(fos, theSelectedValue.getSaveCharset()));
+			
+			Charset saveCharset = theSelectedValue.getSaveCharset();
+			BufferedWriter w;
+			if (saveCharset != null) {
+				w = new BufferedWriter(new OutputStreamWriter(fos, saveCharset));
+			} else {
+				w = new BufferedWriter(new OutputStreamWriter(fos));
+			}
 
 			boolean saveStripComments = theSelectedValue.isSaveStripComments();
 			LineEndingsEnum lineEndings = theSelectedValue.getSaveLineEndings();
