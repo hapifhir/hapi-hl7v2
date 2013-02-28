@@ -480,7 +480,11 @@ public class Prefs {
 		ArrayList<String> recentMessageXmlFilesSplit = new ArrayList<String>(Arrays.asList(defaultString(recentMessageXmlFiles).split("\\n")));
 		myRecentMessageXmlFiles = new ArrayList<Hl7V2MessageCollection.XmlFormat>();
 		for (String string : recentMessageXmlFilesSplit) {
-			myRecentMessageXmlFiles.add(JAXB.unmarshal(new StringReader(string), Hl7V2MessageCollection.XmlFormat.class));
+			try {
+				myRecentMessageXmlFiles.add(JAXB.unmarshal(new StringReader(string), Hl7V2MessageCollection.XmlFormat.class));
+			} catch (Exception e) {
+				ourLog.error("Failed to restore file \"" + string + "\": " + e.getMessage(), e);
+			}
 		}
 
 		mySaveLineEndings = ourPrefs.get(GET_SAVE_LINE_ENDINGS, LineEndingsEnum.HL7.name());

@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.Map;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer;
 import ca.uhn.hl7v2.conf.spec.message.SegGroup;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.model.GenericSegment;
 import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.MessageVisitor;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 
@@ -232,5 +234,15 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 	private boolean nameExists(String theName) {
 		return myNameToIndex.containsKey(theName);
 	}
+
+	@Override
+    public boolean accept(MessageVisitor theVisitor, Location theCurrentLocation) throws HL7Exception {
+    	throw new UnsupportedOperationException();
+    }
+
+	@Override
+    public Location provideLocation(Location theParentLocation, int theIndex, int theRepetition) {
+    	throw new UnsupportedOperationException();
+    }
 
 }

@@ -330,11 +330,13 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 			b.append(" in ");
 			b.append(delay);
 			b.append("ms");
-			b.append('\n');
-			b.append("Average: ");
-			b.append(delay / myTotalMessages);
-			b.append("ms / message");
-
+			if (mySentMessages > 0) {
+				b.append("<br/>");
+				b.append("Average: ");
+				b.append(delay / mySentMessages);
+				b.append("ms / message");
+			}
+			
 			addActivity(new ActivityInfo(new Date(), b.toString()));
 
 			if (myInitialStatus != StatusEnum.STARTED) {
@@ -388,7 +390,6 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 				i++;
 
 				if (abstractMessage instanceof Hl7V2MessageBase) {
-					mySentMessages++;
 
 					Message msg = ((Hl7V2MessageBase) abstractMessage).getParsedMessage();
 					ourLog.info("Sending message " + i + "/" + myTotalMessages + " of type " + msg.getClass());
@@ -399,6 +400,8 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 
 						long beforeSend = now;
 						Message response = myConnection.getInitiator().sendAndReceive(msg);
+
+						mySentMessages++;
 
 						long sendTime = now - beforeSend;
 						myResponseTimes.add((int) sendTime);

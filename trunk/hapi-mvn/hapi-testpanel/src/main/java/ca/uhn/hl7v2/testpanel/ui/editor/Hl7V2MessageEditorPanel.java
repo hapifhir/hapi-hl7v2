@@ -662,7 +662,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		String selected = (String) myOutboundInterfaceCombo.getSelectedItem();
 		if (selected == null || selected == NO_CONNECTIONS) {
 			mySendButton.setEnabled(false);
-			myMessage.setLastSendToInterfaceId(null);
+			if (myMessage != null) {
+				myMessage.setLastSendToInterfaceId(null);
+			}
 			return;
 		}
 
