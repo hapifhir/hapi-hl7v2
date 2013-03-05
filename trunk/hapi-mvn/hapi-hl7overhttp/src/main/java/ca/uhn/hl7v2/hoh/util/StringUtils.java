@@ -1,9 +1,13 @@
 package ca.uhn.hl7v2.hoh.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
 public class StringUtils {
 
 	public static final String LINE_SEP = System.getProperty("line.separator");
-	
+
 	/**
 	 * Null safe equals comparison
 	 */
@@ -33,12 +37,31 @@ public class StringUtils {
 		}
 		return true;
 	}
-	
+
 	public static String defaultString(String theString) {
 		if (theString == null) {
 			return "";
 		}
 		return theString;
+	}
+
+	public static String asciiEscape(byte[] theBytes, Charset theCharset) {
+		StringBuilder b = new StringBuilder();
+
+		try {
+			InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(theBytes), theCharset);
+			while (reader.ready()) {
+				char read = (char) reader.read();
+				if (read < 32) {
+					b.append('[').append((int) read).append(']');
+				} else {
+					b.append(read);
+				}
+			}
+		} catch (Exception e) {
+			b.append("ERROR: ").append(e.toString());
+		}
+		return b.toString();
 	}
 
 }
