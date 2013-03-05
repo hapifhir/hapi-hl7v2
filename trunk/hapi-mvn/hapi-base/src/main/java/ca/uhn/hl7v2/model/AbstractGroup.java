@@ -135,15 +135,34 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             Boolean repeats = this.repeating.get(name);
             if (!repeats && list.size() > 0)
                 throw new HL7Exception("Can't create repetition #" + rep + " of Structure " + name
-                        + " - this Structure is non-repeating");
+                        + " - this Structure is non-repeating so only rep 0 may be retrieved");
 
             // create a new Structure, add it to the list, and return it
             Class<? extends Structure> c = classes.get(name); // get class
             ret = tryToInstantiateStructure(c, name);
             list.add(ret);
         } else {
-            throw new HL7Exception("Can't return repetition #" + rep + " of " + name + " - there are only "
-                    + list.size() + " repetitions.");
+            StringBuilder b = new StringBuilder();
+			b.append("Can't return repetition #");
+			b.append(rep);
+			b.append(" of ");
+			b.append(name);
+			b.append(" - there are currently ");
+			if (list.size() == 0) {
+				b.append("no");
+			} else {
+				b.append("only ");
+				b.append(list.size());
+			}
+			b.append(" repetitions ");
+			b.append("so rep# must be ");
+			if (list.size() == 0) {
+				b.append("0");
+			} else {
+				b.append("between 0 and ");
+				b.append(list.size());
+			}
+			throw new HL7Exception(b.toString());
         }
         return ret;
     }
@@ -165,7 +184,12 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             T ret = (T) get(name, rep);
             return ret;
         } catch (HL7Exception e) {
-            log.error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+        	List<Structure> list = structures.get(name);
+        	if (list != null && list.size() < rep) {
+        		// This is programmer/user error so don't report that it's a bug in the generator
+        	} else {
+        		log.error("Unexpected error accessing data - this is probably a bug in the source code generator.", e);
+        	}
             throw new RuntimeException(e);
         }
     }

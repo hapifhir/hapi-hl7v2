@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.model;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -8,6 +9,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.ARQ;
 import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
+import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
 /**
@@ -31,6 +33,30 @@ public class AbstractGroupTest {
         Structure z = message.get("ZZZ");
         assertEquals(GenericSegment.class.getName(), z.getClass().getName());
     }
+    
+    @Test
+    public void testErrorMessage() {
+    	
+    	ACK ack = new ACK();
+    	try {
+    		ack.getERR(1);
+    	} catch (Exception e) {
+    		assertTrue(e.getMessage().contains("no repetitions"));
+    		assertTrue(e.getMessage().contains("must be 0"));
+    	}
+    	
+		ack.getERR(0);
+		ack.getERR(1);
+
+    	try {
+    		ack.getERR(3);
+    	} catch (Exception e) {
+    		assertTrue(e.getMessage().contains("only 2 repetitions"));
+    		assertTrue(e.getMessage().contains("must be between 0 and 2"));
+    	}
+
+    }
+    
 
     @Test
     public void testInsertNewRepetition() throws HL7Exception {
