@@ -85,7 +85,12 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		}
 
 		Charset charset = getCharset();
+		
 		ourLog.debug("Message is {} bytes with charset {}", bytes.length, charset.name());
+		if (ourLog.isTraceEnabled()) {
+			ourLog.trace("Raw message: {}", StringUtils.asciiEscape(bytes, charset));
+		}
+		
 		String messageString = new String(bytes, charset);
 		setMessage(messageString);
 	}
@@ -493,7 +498,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	}
 
 	private String readLine(InputStream theInputStream, boolean theFirstLine) throws IOException, NoMessageReceivedException {
-
+		
 		myLastStartedReading = System.currentTimeMillis();
 
 		StringBuilder retVal = new StringBuilder();
