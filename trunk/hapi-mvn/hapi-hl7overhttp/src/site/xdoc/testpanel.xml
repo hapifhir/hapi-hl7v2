@@ -9,16 +9,22 @@
 	<body>
 
 		<section name="TestPanel with HL7 over HTTP">
-			
-		    <p>
-		    	HAPI TestPanel may be used to send and receive messages via the
-		    	HL7 over HTTP transport.
-		    </p>
-		    
-		    <img src="images/TestPanel_Outgoing.png"/>
-		    
+
+			<p>
+				HAPI TestPanel may be used to send and receive messages via the
+				HL7 over HTTP transport.
+			</p>
+
+			<p>
+				For more information on the HAPI TestPanel (a free tool for editing,
+				validating, sending, and receiving HL7 messages),
+				<a href="../hapi-testpanel/index.html">click here</a>
+			</p>
+
+			<img src="images/TestPanel_Outgoing.png" alt="TestPanel Screenshot"/>
+
 		</section>
-								
+
 	</body>
 
 </document>
