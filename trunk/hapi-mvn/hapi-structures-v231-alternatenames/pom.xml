@@ -62,7 +62,7 @@
 					</dependency>
 					<dependency>
 						<groupId>ca.uhn.hapi</groupId>
-						<artifactId>hapi-structures-${gen.version.short}</artifactId>
+						<artifactId>hapi-structures-${gen.version.short}-alternatenames</artifactId>
 						<version>${hapi.version.stable}</version>
 					</dependency>
 				</dependencies>
