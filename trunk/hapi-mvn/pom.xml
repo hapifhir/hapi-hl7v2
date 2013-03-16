@@ -220,8 +220,13 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<fork>false</fork>
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
+					<!--
+					<verbose>true</verbose>
+					-->
+					<fork>true</fork>
 					<maxmem>1024m</maxmem>
+					<debug>true</debug>
 				</configuration>
 			</plugin>
 			<!-- 
@@ -424,6 +429,7 @@
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
 				<module>hapi-structures-v231</module>
+				<module>hapi-structures-v231-alternatenames</module>
 				<module>hapi-structures-v24</module>
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
