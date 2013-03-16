@@ -46,8 +46,14 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.AbstractSegment;
 import ca.uhn.hl7v2.model.Varies;
 
+#if ( ! ${typeDescription} )
+	#set ( $typeDescFmt = "" )
+#else
+	#set ( $typeDescFmt = " (" + ${typeDescription} + ")" )
+#end
+
 /**
- *<p>Represents an HL7 ${segmentName} message segment (${typeDescription}). 
+ *<p>Represents an HL7 ${segmentName} message segment${typeDescFmt}. 
  * This segment has the following fields:</p>
  * <ul>
 #foreach ( $element in $elements )
