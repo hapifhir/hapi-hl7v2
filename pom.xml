@@ -220,13 +220,12 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 					<!--
+					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 					<verbose>true</verbose>
-					-->
 					<fork>true</fork>
+					-->
 					<maxmem>1024m</maxmem>
-					<debug>true</debug>
 				</configuration>
 			</plugin>
 			<!-- 
