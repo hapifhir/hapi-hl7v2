@@ -91,6 +91,12 @@ public class SourceGenMojo extends AbstractMojo
      */
     private String version;
     
+    /**
+     * Should we use the default group names on v2.3.1
+     * 
+     * @parameter
+     */
+    private boolean forceGroupNames;
     
     /**
      * The JDBC URL for the HL7 database
@@ -142,6 +148,12 @@ public class SourceGenMojo extends AbstractMojo
 
         if (skip) {
             getLog().warn("Configured to skip");
+        }
+        
+        if (forceGroupNames) {
+        	System.setProperty("force.group", "true");
+        } else {
+        	System.setProperty("force.group", "false");
         }
 
     	if (new File(targetDirectory).exists()) {

@@ -193,8 +193,13 @@ public class MessageGenerator extends Object {
 
 			// group names are defined in DB for 2.3.1 but not used in the
 			// schema
-			String groupName = version.equalsIgnoreCase("2.3.1") ? null : rs.getString(6);
-
+			String groupName;
+			if (version.equalsIgnoreCase("2.3.1") && !"true".equals(System.getProperty("force.group"))) {
+				groupName = null;
+			} else {
+				groupName = rs.getString(6);
+			}
+			
 			if (groupName != null) {
 				// Don't allow spaces in the names
 				groupName = groupName.replaceAll(" ", "_");
