@@ -155,6 +155,9 @@ public class SuperStructureMojo extends AbstractMojo {
 			Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/" + versionOf.getPackageVersion() + "/message");
 			for (BeanDefinition beanDefinition : components) {
 				String nextName = Class.forName(beanDefinition.getBeanClassName()).getSimpleName();
+				if (nextName.equals(targetStructureName)) {
+					continue;
+				}
 				allStructures.add(nextName);
 			}
 			
