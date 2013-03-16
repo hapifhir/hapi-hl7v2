@@ -158,6 +158,8 @@ public class SuperStructureMojo extends AbstractMojo {
 				allStructures.add(nextName);
 			}
 			
+			getLog().info("Found " + allStructures.size() + " message classes for version: " + version);
+			
 			List<Message> messagesToMerge = new ArrayList<Message>();
 
 			Collections.sort(allStructures);
@@ -170,6 +172,10 @@ public class SuperStructureMojo extends AbstractMojo {
 				}
 			}
 
+			if (messagesToMerge.isEmpty()) {
+				throw new MojoFailureException("No messages match pattern(s): " + structures);
+			}
+			
 			ListOfStructureDefsAndMapOfStructreNames mergedMessages = mergeGroups(messagesToMerge, messagesToMerge);
 			List<StructureDef> structures = mergedMessages.myStructureDefs;
 			if (structures.isEmpty()) {
@@ -424,12 +430,11 @@ public class SuperStructureMojo extends AbstractMojo {
 		
 		SuperStructureMojo m = new SuperStructureMojo();
 		m.structures = new ArrayList<String>();
-		m.structures.add("ADT_A01");
-		m.structures.add("ADT_A17");
+		m.structures.add("ADT_A[0-9]{2}");
 
 		m.targetDirectory = "target/merge";
 		m.targetStructureName = "ADT_AXX";
-		m.version = "2.5";
+		m.version = "2.3.1";
 		m.execute();
 	}
 
