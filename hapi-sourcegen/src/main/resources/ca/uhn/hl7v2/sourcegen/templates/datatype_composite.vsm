@@ -37,8 +37,14 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.AbstractComposite;
 
+#if ( ! ${desc} )
+	#set ( $descFmt = "" )
+#else
+	#set ( $descFmt = " (" + ${desc} + ")" )
+#end
+
 /**
- * <p>Represents an HL7 ${datatypeName} (${desc}) data type. 
+ * <p>Represents an HL7 ${datatypeName}${descFmt} data type. 
  * This type consists of the following components:</p>
  * <ul>
 #foreach ( $component in $components )

@@ -43,8 +43,14 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.model.*;
 
+#if ( ! ${chapter} )
+	#set ( $chapterSee = "" )
+#else
+	#set ( $chapterSee = " (see chapter " + ${chapter} + ")" )
+#end
+
 /**
- * <p>Represents a $message message structure (see chapter ${chapter}). This structure contains the 
+ * <p>Represents a $message message structure${chapterSee}. This structure contains the 
  * following elements: </p>
  * <ul>
 #set ( $haveAssociatedStructures = false )
