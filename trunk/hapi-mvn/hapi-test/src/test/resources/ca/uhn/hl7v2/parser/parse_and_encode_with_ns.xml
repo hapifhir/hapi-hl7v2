@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ns0:ORU_R01 xmlns:ns0="urn:hl7-org:v2xml">
+	<ns0:MSH>
+		<ns0:MSH.1>|</ns0:MSH.1>
+		<ns0:MSH.2>^~\&amp;</ns0:MSH.2>
+		<ns0:MSH.3>LABMI1</ns0:MSH.3>
+		<ns0:MSH.5>DMCRES</ns0:MSH.5>
+		<ns0:MSH.7>
+			<ns0:TS.1>19951010134000</ns0:TS.1>
+		</ns0:MSH.7>
+		<ns0:MSH.9>
+			<ns0:CM_MSG.1>ORU</ns0:CM_MSG.1>
+			<ns0:CM_MSG.2>R01</ns0:CM_MSG.2>
+		</ns0:MSH.9>
+		<ns0:MSH.10>LABMI1199510101340007</ns0:MSH.10>
+		<ns0:MSH.11>D</ns0:MSH.11>
+		<ns0:MSH.12>2.2</ns0:MSH.12>
+		<ns0:MSH.15>AL</ns0:MSH.15>
+	</ns0:MSH>
+</ns0:ORU_R01>

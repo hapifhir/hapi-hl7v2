@@ -29,6 +29,8 @@ package ca.uhn.hl7v2.parser;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
@@ -72,6 +74,7 @@ public abstract class XMLParser extends Parser {
 	private static final String ESCAPE_ATTRNAME = "V";
 	private static final String ESCAPE_NODENAME = "escape";
 	private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
+    private static final Pattern NS_PATTERN = Pattern.compile("xmlns(.*)=\"urn:hl7-org:v2xml\"");
 
 	private String textEncoding;
 
@@ -725,14 +728,25 @@ public abstract class XMLParser extends Parser {
 	 * @throws HL7Exception if the tag can not be found
 	 */
 	protected static String parseLeaf(String message, String tagName, int startAt) throws HL7Exception {
-		String value;
 
-		int tagStart = message.indexOf("<" + tagName, startAt);
+        // Workaround #176: XML may include explicit namespaces. It would be more stable to use some
+        // kind of pull parser for this method instead of manually digging for tags in the XML structure.
+        String prefix = "";
+        Matcher m = NS_PATTERN.matcher(message);
+        if (m.find()) {
+            String ns = m.group(1);
+            if (ns != null && ns.length() > 0) {
+                prefix = ns.substring(1) + ":";
+            }
+        }
+
+		int tagStart = message.indexOf("<" + prefix + tagName, startAt);
 		if (tagStart < 0)
-			tagStart = message.indexOf("<" + tagName.toUpperCase(), startAt);
+			tagStart = message.indexOf("<" + prefix + tagName.toUpperCase(), startAt);
 		int valStart = message.indexOf(">", tagStart) + 1;
 		int valEnd = message.indexOf("<", valStart);
 
+        String value;
 		if (tagStart >= 0 && valEnd >= valStart) {
 			value = message.substring(valStart, valEnd);
 		} else {

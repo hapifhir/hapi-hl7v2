@@ -251,6 +251,10 @@
             	added to optionally disable pretty printing if desired. Thanks Steffan Rachner
             	for reporting! 
             </action>
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="176">
+            	XML Parsing now also works if the HL7v2 XML namespace is not the default namespace 
+				(i.e. tags have namespace prefixes). Thanks to Eugene Berman for reporting! 
+            </action>			
 		</release>
 		<release version="2.0" date="2012-07-16" description="This release contains a complete overhaul of the SimpleServer infrastructure, a move to SLF4J, a new LLP implementation, and many other enhancements and bugfixes!">
         	<action type="fix">
