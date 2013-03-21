@@ -115,6 +115,13 @@ public class XMLParserTest {
 		assertEquals("hello there", parser.removeWhitespace(" hello \t \rthere\r\n"));
 	}
 
+    @Test
+    public void testParseWithNamespaces() throws Exception {
+        String xmlMessage = loadFile("/ca/uhn/hl7v2/parser/parse_and_encode_with_ns.xml");
+        Message message = new DefaultXMLParser().parse(xmlMessage);
+        assertEquals("2.2", message.getVersion());
+    }
+
 	/**
 	 * -
 	 * 
