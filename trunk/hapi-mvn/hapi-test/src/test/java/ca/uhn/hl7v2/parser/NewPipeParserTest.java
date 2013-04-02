@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -1689,5 +1690,86 @@ public class NewPipeParserTest {
 		assertEquals("7005729^^^TML^MR", zpi.getField(3, 0).encode());
 
 	}
+
+    @Test
+    public void testEscapingEncodingCharactersWithFullSegmentCopy() throws HL7Exception, IOException {
+        ORU_R01 inputMessage = new ORU_R01();
+        inputMessage.initQuickstart("ORU", "R01", "T");
+
+        ORU_R01 outputMessage = new ORU_R01();
+        outputMessage.initQuickstart("ORU", "R01", "T");
+
+    	/**
+         * Scenario:
+         *
+         * 1 - Input PID is copied in its entirety to Output PID
+         * 2 - Input PID is encoded and ampersands ("&") are escaped ("\T\");
+         *     this is to account for unescaped encoding characters from the source
+         * 3 - This encoded/replaced String is parsed into Output PID
+         *
+         * Example of Input PID-5:                      B&pod^Terra^^^^^L^^^^^201103011128^^
+         * Example of expected Output PID-5:            B\T\pod^Terra^^^^^L^^^^^201103011128
+         * Example of actual, undesired Output PID-5:   B\T\pod&pod^Terra^^^^^L^^^^^201103011128
+         *
+         * If Step 1 is skipped, Output PID is populated as expected
+         * - See testEscapingEncodingCharacters()
+         */
+
+        String inputPID5 = "B&pod^Terra^^^^^L^^^^^201103011128^^";
+        String expectedOutputPID5 = "B\\T\\pod^Terra^^^^^L^^^^^201103011128";
+//        String undesiredOutputPID5 = "B\\T\\pod&pod^Terra^^^^^L^^^^^201103011128";
+
+        inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).parse(inputPID5);
+        ourLog.info("testEscapingEncodingCharactersWithFullSegmentCopy()\r\n\t" +
+                "inputPID after initial parse:\r\n\t\t[" + inputMessage.getPATIENT_RESULT().getPATIENT().getPID().encode() + "]");
+
+        outputMessage.getPATIENT_RESULT().getPATIENT().getPID().parse(inputMessage.getPATIENT_RESULT().getPATIENT().getPID().encode());
+        ourLog.info("testEscapingEncodingCharactersWithFullSegmentCopy()\r\n\t" +
+                "outputPID after parse/encode:\r\n\t\t[" + outputMessage.getPATIENT_RESULT().getPATIENT().getPID().encode() + "]");
+
+        ourLog.info("testEscapingEncodingCharactersWithFullSegmentCopy()\r\n\t" +
+                "inputPID-5 encoded/replaced:\r\n\t\t[" + inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode().replace("&", "\\T\\") + "]");
+
+        outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).parse(inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode().replace("&", "\\T\\"));
+        ourLog.info("testEscapingEncodingCharactersWithFullSegmentCopy()\r\n\t" +
+                "outputPID-5 after parsing encoded/replaced:\r\n\t\t[" + outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode() + "]");
+
+        Assert.assertEquals(expectedOutputPID5, outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode());
+
+    }
+
+    @Test
+    public void testEscapingEncodingCharacters() throws HL7Exception, IOException {
+        ORU_R01 inputMessage = new ORU_R01();
+        inputMessage.initQuickstart("ORU", "R01", "T");
+
+        ORU_R01 outputMessage = new ORU_R01();
+        outputMessage.initQuickstart("ORU", "R01", "T");
+
+        /**
+         * Scenario:
+         *
+         * 1 - Input PID is encoded and ampersands ("&") are escaped ("\T\");
+         *     this is to account for unescaped encoding characters from the source
+         * 2 - This encoded/replaced String is parsed into Output PID
+         *
+         * Example of Input PID-5:                      B&pod^Terra^^^^^L^^^^^201103011128^^
+         * Example of expected Output PID-5:            B\T\pod^Terra^^^^^L^^^^^201103011128
+         *
+         */
+
+        String inputPID5 = "B&pod^Terra^^^^^L^^^^^201103011128^^";
+        String expectedOutputPID5 = "B\\T\\pod^Terra^^^^^L^^^^^201103011128";
+
+        inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).parse(inputPID5);
+        ourLog.info("testEscapingEncodingCharacters()\r\n\tinputPID after initial parse:\r\n\t\t[" + inputMessage.getPATIENT_RESULT().getPATIENT().getPID().encode() + "]");
+
+        ourLog.info("testEscapingEncodingCharacters()\r\n\tinputPID-5 encoded/replaced:\r\n\t\t[" + inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode().replace("&", "\\T\\") + "]");
+
+        outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).parse(inputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode().replace("&", "\\T\\"));
+        ourLog.info("testEscapingEncodingCharacters()\r\n\toutputPID-5 after parsing encoded/replaced:\r\n\t\t[" + outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode() + "]");
+
+        Assert.assertEquals(expectedOutputPID5, outputMessage.getPATIENT_RESULT().getPATIENT().getPID().getPid5_PatientName(0).encode());
+    }
 
 }

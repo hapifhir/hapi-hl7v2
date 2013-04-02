@@ -123,17 +123,17 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 			myServerSocketFactory = ctx.getServerSocketFactory();
 
 		} catch (NoSuchAlgorithmException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		} catch (CertificateException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		} catch (FileNotFoundException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		} catch (UnrecoverableKeyException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		} catch (KeyStoreException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		} catch (KeyManagementException e) {
-			throw new IOException("Failed to initialize socket factory", e);
+			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		}
 
 	}
