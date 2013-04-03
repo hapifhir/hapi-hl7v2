@@ -402,7 +402,8 @@ public class CommonTS implements Serializable {
     } //end method
 
     /**
-     * Convenience setter which sets the value using a {@link Calendar} object. Passing in <code>null</code> clears any existing value.
+     * Convenience setter which sets the value using a {@link Calendar} object.
+     * Passing in <code>null</code> clears any existing value.
      * 
      * Note: Sets fields using precision up to the millisecond, including timezone offset
      * 
@@ -424,7 +425,7 @@ public class CommonTS implements Serializable {
         setDateSecondPrecision(yr, mnth, dy, hr, min, sec);
         
         // 3410095: care for integer overflow and timezones not at the full hour, e.g. India
-        int timeZoneOffset = theCalendar.get(Calendar.ZONE_OFFSET);
+        int timeZoneOffset = theCalendar.get(Calendar.ZONE_OFFSET) + theCalendar.get(Calendar.DST_OFFSET);
         int hourOffset= timeZoneOffset / (1000 * 60 * 60);   
         int minuteOffset = (timeZoneOffset / (1000 * 60)) % 60;
         int zoneOffset = hourOffset * 100 + minuteOffset;

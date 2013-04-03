@@ -28,7 +28,9 @@ package ca.uhn.hl7v2.validation.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,14 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     private static final Logger log = LoggerFactory.getLogger(ConformanceProfileRule.class);
     private static final ProfileParser PARSER = new ProfileParser(true);
     private String myProfileID;
+    private boolean enableCaching = true;
+
+    private static final LinkedHashMap<String, RuntimeProfile> PROFILE_CACHE = new LinkedHashMap<String, RuntimeProfile>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, RuntimeProfile> eldest) {
+            return true;
+        }
+    };
 
     /**
      * Creates an instance that tests messages against whatever profiles they declare in 
@@ -127,7 +137,16 @@ public class ConformanceProfileRule extends AbstractMessageRule {
         }
         return declaredProfiles.toArray(new String[declaredProfiles.size()]);
     }
-    
+
+    private synchronized RuntimeProfile getProfile(String profileString) throws ProfileException {
+        RuntimeProfile profile = PROFILE_CACHE.get(profileString);
+        if (profile == null) {
+            profile = PARSER.parse(profileString);
+            if (enableCaching) PROFILE_CACHE.put(profileString, profile);
+        }
+        return profile;
+    }
+
     private ValidationException[] testAgainstProfile(Message message, String id) throws ProfileException, HL7Exception {
         HL7Exception[] exceptions;
         HapiContext context = message.getParser().getHapiContext();
@@ -136,7 +155,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
             ProfileStore profileStore = context.getProfileStore();
             String profileString = profileStore.getProfile(id);
             if (profileString != null) {
-                RuntimeProfile profile = PARSER.parse(profileString);               
+                RuntimeProfile profile = getProfile(profileString);
                 exceptions = validator.validate(message, profile.getMessage());
             } else {
                 throw new ProfileException("Unable to find the profile " + id);
@@ -170,7 +189,8 @@ public class ConformanceProfileRule extends AbstractMessageRule {
 	public String getProfileID() {
 		return myProfileID;
 	}
-    
-    
 
+    public void setEnableCaching(boolean enableCaching) {
+        this.enableCaching = enableCaching;
+    }
 }

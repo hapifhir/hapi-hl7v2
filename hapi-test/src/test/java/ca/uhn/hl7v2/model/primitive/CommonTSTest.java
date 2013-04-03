@@ -15,7 +15,7 @@
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -255,14 +255,14 @@ public class CommonTSTest {
 
         commonTS = new CommonTS();
         cal.set(Calendar.MILLISECOND, 250);
-        cal.set(Calendar.ZONE_OFFSET, -4 * 1000 * 60 * 60);
+        cal.set(Calendar.ZONE_OFFSET, -5 * 1000 * 60 * 60);
         commonTS.setValue(cal);
         String value = commonTS.getValue();
         assertEquals("20100609124005.25-0400", value);
 
         // 3410095 : proof to avoid overflow
         commonTS = new CommonTS();
-        cal.set(Calendar.ZONE_OFFSET, 12 * 1000 * 60 * 60);
+        cal.set(Calendar.ZONE_OFFSET, 11 * 1000 * 60 * 60);
         commonTS.setValue(cal);
         value = commonTS.getValue();
         assertEquals("20100609124005.25+1200", value);
@@ -270,10 +270,10 @@ public class CommonTSTest {
         // 3410095-related : proof to cover time zones not at the full hour,
         // e.g. India
         commonTS = new CommonTS();
-        cal.set(Calendar.ZONE_OFFSET, (int) (5.5 * 1000 * 60 * 60));
+        cal.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
         commonTS.setValue(cal);
         value = commonTS.getValue();
-        assertEquals("20100609124005.25+0530", value);
+        assertEquals("20100609061005.25+0530", value);
 
         commonTS = new CommonTS();
         commonTS.setValue("201006091240");
@@ -292,6 +292,15 @@ public class CommonTSTest {
         assertEquals(250, cal.get(Calendar.MILLISECOND));
         assertEquals(-4 * 1000 * 60 * 60, cal.get(Calendar.ZONE_OFFSET));
 
+        // Check DST offset
+        commonTS = new CommonTS();
+        Date dt = new Date(1364857200035L);
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss.SSSZ");
+        fmt.setTimeZone(TimeZone.getTimeZone("Canada/Eastern"));
+        String dateString = fmt.format(dt);
+        commonTS.setValue(dt);
+        String tsString = commonTS.getValue();
+        assertEquals(dateString, tsString);
     }
 
     public static class SetGetSpec extends TestSpec<String, String> {

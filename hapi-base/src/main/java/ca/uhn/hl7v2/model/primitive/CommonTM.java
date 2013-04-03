@@ -636,7 +636,7 @@ public class CommonTM implements Serializable {
         retVal.set(Calendar.SECOND, getSecond());
         
         float fractSecond = getFractSecond();
-        retVal.set(Calendar.MILLISECOND, (int) (fractSecond * 1000.0));
+        retVal.set(Calendar.MILLISECOND, (int) Math.round(fractSecond * 1000.0));
         
         int gmtOff = getGMTOffset();
         if (gmtOff != GMT_OFFSET_NOT_SET_VALUE && !omitOffsetFg) {
