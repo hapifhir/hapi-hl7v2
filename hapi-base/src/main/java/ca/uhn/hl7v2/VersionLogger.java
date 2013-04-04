@@ -46,7 +46,7 @@ public class VersionLogger {
 				LOG.warn("DOM Level 3 (Load and Save) is NOT supported by the XML library found first on your classpath!");
 				LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOG.warn("Error occured while trying to retrieve a DOMImplementation.", e);
 			LOG.warn("XML parsing and encoding as well as working with Conformance Profiles will fail.");
 		}
