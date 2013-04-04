@@ -51,8 +51,9 @@
 		</menu>
 
 		<menu name="Documentation (Keys)">
-			<item name="Generating Self-Signed Keys" href="generating_selfsigned_keys.html"/>
-			<item name="Creating a Client Keystore" href="creating_a_client_keystore.html"/>
+			<item name="Cryptography 101" href="cryptography_and_keystores.html"/>
+			<item name="Creating Keys" href="generating_selfsigned_keys.html"/>
+			<item name="Importing Keys" href="creating_keystores_by_importing.html"/>
 		</menu>
 
 		<menu name="Testing">
