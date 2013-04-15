@@ -2,6 +2,8 @@ package ca.uhn.hl7v2.hoh.raw.client;
 
 import static org.junit.Assert.*;
 
+import java.net.SocketException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,6 +127,56 @@ public class HohRawClientMultithreadedTest {
 
 	}
 
+	@Test
+	public void testReconnectAutomaticallyAfterUnexpectedClose() throws Exception {
+		myServerSocketThread.setCloseUnexpectedlyAfterEachMessage();
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientMultithreaded client = new HohRawClientMultithreaded("localhost", myPort, "/theUri");
+		client.setSocketTimeout(1000);
+		
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+
+		/*
+		 * Send one message
+		 */
+		ourLog.info("*** Send message #1");
+		
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(1, myServerSocketThread.getConnectionCount());
+		
+		Thread.sleep(100);
+		
+		/*
+		 * Send a third message
+		 */
+		ourLog.info("*** Send message #2");
+		
+		try {
+			response = client.sendAndReceive(new RawSendable(message));
+		} catch (SocketException e) {
+			// We're allowed to fail once
+		}
+		
+		// This try should succeed again
+		response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(2, myServerSocketThread.getConnectionCount());
+
+	}
 	@After
 	public void after() throws InterruptedException {
 		ourLog.info("Marking done as true");

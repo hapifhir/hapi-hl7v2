@@ -127,6 +127,9 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 		} else {
 			retVal = myIdleSocketsToTimeBecameIdle.keySet().iterator().next();
 			myIdleSocketsToTimeBecameIdle.remove(retVal);
+			if (retVal.isClosed()) {
+				retVal = connect();
+			}
 		}
 		return retVal;
 	}
