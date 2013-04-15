@@ -41,6 +41,8 @@ public class ServerSocketThreadForTesting extends Thread {
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
 	private ISocketFactory mySocketFactory;
 
+	private boolean myCloseAfterEachMessage;
+
 	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
 		mySocketFactory = new StandardSocketFactory();
@@ -287,6 +289,12 @@ public class ServerSocketThreadForTesting extends Thread {
 						}
 					}
 
+					if (myCloseAfterEachMessage) {
+						ourLog.info("Slocking incoming socket...");
+						mySocket.close();
+						break;
+					}
+					
 				}
 			} catch (Exception e) {
 				ourLog.info("Failed!", e);
@@ -298,5 +306,9 @@ public class ServerSocketThreadForTesting extends Thread {
 		}
 
 	}
+
+	public void setCloseUnexpectedlyAfterEachMessage() {
+		myCloseAfterEachMessage = true;
+    }
 
 }
