@@ -11,9 +11,13 @@
 				(i.e. tags have namespace prefixes). Thanks to Eugene Berman for reporting! 
             </action>			
 			<action type="fix" dev="James Agnew" issue="180" system="newbugs">
-         	Fix issue where HohRawClientMultithreaded (HL7 over HTTP Multithreaded Client)
-         	fails to reconnect automatically when the server side unexpectedly closes
-         	the connection. 
+	         	Fix issue where HohRawClientMultithreaded (HL7 over HTTP Multithreaded Client)
+	         	fails to reconnect automatically when the server side unexpectedly closes
+	         	the connection. 
+			</action>
+			<action type="fix" dev="James Agnew" issue="182" system="newbugs">
+				Correct a crash when using CanonicalModelClassFactory with a fixed message class (not version)
+				and parsing a message containing unexpected/custom Z segments.
 			</action>
 		</release>
         <release version="2.1" date="TBD">
