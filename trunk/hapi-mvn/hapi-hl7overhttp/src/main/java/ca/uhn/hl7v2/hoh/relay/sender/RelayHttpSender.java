@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.hoh.relay.sender;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Map;
 
 import org.springframework.beans.factory.BeanNameAware;
@@ -12,6 +13,7 @@ import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.hapi.api.MessageSendable;
 import ca.uhn.hl7v2.hoh.hapi.client.HohClientMultithreaded;
+import ca.uhn.hl7v2.hoh.relay.Binder;
 import ca.uhn.hl7v2.hoh.util.Validate;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
@@ -62,11 +64,17 @@ public class RelayHttpSender extends HohClientMultithreaded implements IRelaySen
 			response = sendAndReceiveMessage(new MessageSendable(theMessage));
 			delay = System.currentTimeMillis() - delay;
 		} catch (DecodeException e) {
-			throw new HL7Exception(e);
+			ourLog.error("Failed to process HL7 over HTTP response from URL \"" + getUrl().toExternalForm() + "\"", e);
+			throw new HL7Exception(Binder.getProductname() + " - Failed to process HL7 over HTTP response from URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());
+		} catch (ConnectException e) {
+			ourLog.info("Failed to connect to URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());
+			throw new HL7Exception(Binder.getProductname() + " - Failed to connect to URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());
 		} catch (IOException e) {
-			throw new HL7Exception(e);
+			ourLog.error("IO Exception communicating with URL \"" + getUrl().toExternalForm() + "\"", e);
+			throw new HL7Exception(Binder.getProductname() + " - IO Exception communicating with URL URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());
 		} catch (EncodeException e) {
-			throw new HL7Exception(e);
+			ourLog.error("Failed to create HTTP request", e);
+			throw new HL7Exception(Binder.getProductname() + " - Failed to create HTTP request - Error was: " + e.getMessage());
 		}
 		
 		String responseControlId = new Terser(response.getMessage()).get("/MSH-10");

@@ -11,18 +11,25 @@ import org.slf4j.LoggerFactory;
  */
 public class VersionLogger {
 
-    private static boolean ourInitialized = false;
-	private static String ourVersion;
     private static final Logger LOG = LoggerFactory.getLogger(VersionLogger.class);
-    
+	private static boolean ourInitialized = false;
+    private static String ourVersion; 
     /**
      * Non-instantiable
      */
     private VersionLogger() {
         // nothing
     }
-    
+
     /**
+	 * @return Returns the current version of HAPI
+	 */
+	public static String getVersion() {
+		init();
+		return ourVersion;
+	}
+
+	/**
      * Logs the HAPI version on the first time this method is invoked, does nothing afterwards
      */
     public static void init() {
@@ -39,13 +46,5 @@ public class VersionLogger {
             ourInitialized = true;
         }
     }
-
-	/**
-	 * @return Returns the current version of HAPI
-	 */
-	public static String getVersion() {
-		init();
-		return ourVersion;
-	}
     
 }
