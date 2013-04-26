@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
@@ -41,54 +43,90 @@ public class SimpleServerTest implements ConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleServerTest.class);
 
+
 	@Before
 	public void setup() {
 		connectLatch = new CountDownLatch(1);
 		disconnectLatch = new CountDownLatch(1);
 	}
 
+
+	@Test
+	public void testStartAndWaitCatchesBusyPort() throws Exception {
+		port = RandomServerPortProvider.findFreePort();
+
+		ServerSocket ss = new ServerSocket(port);
+		SimpleServer srv = null;
+		try {
+			ss.setSoTimeout(50); // very short
+			ss.setReuseAddress(true);
+			try {
+				ss.accept();
+			} catch (SocketTimeoutException e) {
+				// ignore
+			}
+
+			ctx = new DefaultHapiContext();
+			srv = ctx.newServer(port, false);
+			srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
+			srv.startAndWait();
+			assertNotNull(srv.getServiceExitedWithException());
+
+			LOG.error("Wanted this:", srv.getServiceExitedWithException());
+			
+		} finally {
+			ss.close();
+			if (srv != null) {
+				srv.stop();
+			}
+		}
+	}
+
+
 	/**
 	 * https://sourceforge.net/p/hl7api/bugs/136/
 	 */
 	@Test
 	public void testNoResponseBadMsh2() throws LLPException, IOException, InterruptedException {
-		
-		String msg = "MSHABCDEFGHIJ"; //-
+
+		String msg = "MSHABCDEFGHIJ"; // -
 
 		port = RandomServerPortProvider.findFreePort();
 		ctx = new DefaultHapiContext();
 		ctx.setLowerLayerProtocol(new ExtendedMinLowerLayerProtocol());
-		
+
 		SimpleServer srv = ctx.newServer(port, false);
 		srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
 		srv.startAndWait();
-		
+
 		try {
-			
+
 			Socket socket = new Socket();
 			socket.setSoTimeout(1000);
 			socket.connect(new InetSocketAddress("localhost", port));
-			
+
 			MinLowerLayerProtocol mllp = new MinLowerLayerProtocol();
 			mllp.setCharset("UTF-8");
 			HL7Reader reader = mllp.getReader(socket.getInputStream());
 			HL7Writer writer = mllp.getWriter(socket.getOutputStream());
-			
+
 			writer.writeMessage(msg);
 			String resp = reader.getMessage();
-			
+
 			LOG.info("Response message:\n{}", resp);
-			
+
 		} finally {
 			srv.stop();
 		}
 	}
 
+
 	@After
 	public void after() {
 		// nothing
 	}
-	
+
+
 	@Test
 	public void testRejectAttemptToStartTwice() throws InterruptedException, IOException {
 
@@ -108,6 +146,7 @@ public class SimpleServerTest implements ConnectionListener {
 
 	}
 
+
 	@Test
 	public void testShutdownCleanly() throws InterruptedException, IOException {
 
@@ -125,6 +164,7 @@ public class SimpleServerTest implements ConnectionListener {
 		ss.stopAndWait();
 
 	}
+
 
 	@Test
 	public void testDetectConnectAndDisconnect() throws IOException, InterruptedException {
@@ -154,15 +194,18 @@ public class SimpleServerTest implements ConnectionListener {
 		LOG.info("done");
 	}
 
+
 	public void connectionReceived(Connection theC) {
 		LOG.info("Connection received by client");
 		connectLatch.countDown();
 	}
 
+
 	public void connectionDiscarded(Connection theC) {
 		LOG.info("Connection disposed by client");
 		disconnectLatch.countDown();
 	}
+
 
 	@Test
 	public void testMetadata() throws InterruptedException, HL7Exception, IOException, LLPException {
@@ -193,6 +236,7 @@ public class SimpleServerTest implements ConnectionListener {
 		}
 	}
 
+
 	@Test
 	public void testRecoverFromError() throws InterruptedException, HL7Exception, IOException, LLPException {
 		ADT_A01 a01 = new ADT_A01();
@@ -207,7 +251,7 @@ public class SimpleServerTest implements ConnectionListener {
 
 			Connection client = ctx.newClient("127.0.0.1", port, false);
 
-//			client.getInitiator().setTimeoutMillis(600 * 1000);
+			// client.getInitiator().setTimeoutMillis(600 * 1000);
 			ACK resp = (ACK) client.getInitiator().sendAndReceive(a01);
 
 			LOG.info("Received:\n" + resp.encode().replace('\r', '\n'));
@@ -226,10 +270,11 @@ public class SimpleServerTest implements ConnectionListener {
 		private Object myReceivedControlId;
 		private Object myRawMessage;
 
+
 		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
-			
+
 			LOG.info("Metadata keys: " + new TreeSet<String>(theMetadata.keySet()));
-			
+
 			myReceivedSendingIp = theMetadata.get(MetadataKeys.IN_SENDING_IP);
 			myReceivedControlId = theMetadata.get(MetadataKeys.IN_MESSAGE_CONTROL_ID);
 			myRawMessage = theMetadata.get(MetadataKeys.IN_RAW_MESSAGE);
@@ -240,6 +285,7 @@ public class SimpleServerTest implements ConnectionListener {
 				throw new HL7Exception(e);
 			}
 		}
+
 
 		public boolean canProcess(Message theMessage) {
 			return true;
@@ -252,6 +298,7 @@ public class SimpleServerTest implements ConnectionListener {
 		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 			throw new Error("ERROR MESSAGE");
 		}
+
 
 		public boolean canProcess(Message theMessage) {
 			return true;
