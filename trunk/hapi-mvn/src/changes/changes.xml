@@ -19,6 +19,12 @@
 				Correct a crash when using CanonicalModelClassFactory with a fixed message class (not version)
 				and parsing a message containing unexpected/custom Z segments.
 			</action>
+			<action type="fix" dev="Chris Stoten">
+				Modify ExtendedMinLLPWriter (a part of the ExtendedMinLowerLayerProtocol LLP implementation)
+				so that it doesn't flush the network buffer between the LLP start block and the 
+				actual message (causing issues transmitting messages to some Websphere implementations). 
+				Thanks to Chris Stoten of UHN for all of the hard work in getting this figured out.
+			</action>
 		</release>
         <release version="2.1" date="TBD">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
