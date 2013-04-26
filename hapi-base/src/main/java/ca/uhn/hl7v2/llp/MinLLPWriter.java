@@ -99,9 +99,10 @@ public class MinLLPWriter implements HL7Writer
      */
     public synchronized void writeMessage(String message) throws LLPException, IOException 
     {
-        myWriter.write('\u000b');
-        myWriter.write(message);
-        myWriter.write('\u001c' + "\r");
+    	if (message == null) {
+    		throw new NullPointerException("Message may not be null");
+    	}
+        myWriter.write('\u000b' + message + '\u001c' + "\r");
         myWriter.flush();            
     }
 
@@ -111,10 +112,11 @@ public class MinLLPWriter implements HL7Writer
      */
     public synchronized void writeMessage(String message, String charset) throws LLPException, IOException 
     {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(myOutputStream, charset));
-        writer.write('\u000b');
-        writer.write(message);
-        writer.write('\u001c' + "\r");
+    	if (message == null) {
+    		throw new NullPointerException("Message may not be null");
+    	}
+        OutputStreamWriter writer = new OutputStreamWriter(myOutputStream, charset);
+        writer.write('\u000b' + message + '\u001c' + "\r");
         writer.flush();
     }
 

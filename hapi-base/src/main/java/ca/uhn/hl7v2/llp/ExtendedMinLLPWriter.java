@@ -48,24 +48,18 @@ public class ExtendedMinLLPWriter implements HL7Writer {
 			javaCs = Charset.forName("US-ASCII");
 		}
 
-		OutputStreamWriter writer = new OutputStreamWriter(myOutputStream, javaCs);
-		
-//		writer.write(START_MESSAGE);
-//		writer.append(theMessage);
-//		writer.write(END_MESSAGE);
-//		writer.write(LAST_CHARACTER);
-//		writer.flush();
-
 		myOutputStream.write(START_MESSAGE);
-		myOutputStream.flush();
 		
-		writer.append(theMessage);
-		writer.flush();
+		/* 
+		 * NB: Use the Charset Name because #getBytes(Charset) is only available in 
+		 * JDK 6
+		 */
+		myOutputStream.write(theMessage.getBytes(javaCs.name()));
 		
 		myOutputStream.write(END_MESSAGE);
 		myOutputStream.write(LAST_CHARACTER);
 		myOutputStream.flush();
-		
+
 	}
 
 	/**
