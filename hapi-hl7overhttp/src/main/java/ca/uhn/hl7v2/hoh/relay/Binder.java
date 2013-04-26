@@ -5,19 +5,22 @@ import org.springframework.beans.factory.InitializingBean;
 import ca.uhn.hl7v2.hoh.relay.listener.IRelayListener;
 import ca.uhn.hl7v2.hoh.relay.sender.IRelaySender;
 import ca.uhn.hl7v2.hoh.util.Validate;
+import ca.uhn.hl7v2.hoh.util.VersionLogger;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 
 public class Binder implements InitializingBean {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Binder.class);
 
-	private IRelayListener myRelayListener;
+    private static final String ourProductName = "HAPI HL7 over HTTP Relay " + VersionLogger.getVersion();
+
 	private String myMessageType = "*";
 	private String myProcessingId = "*";
+	private IRelayListener myRelayListener;
 	private IRelaySender myRelaySender;
 	private String myTriggerEvent = "*";
 	private String myVersionId = "*";
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -41,6 +44,13 @@ public class Binder implements InitializingBean {
 	 */
 	public void setSender(IRelaySender theRelaySender) {
 		myRelaySender = theRelaySender;
+	}
+
+	/**
+	 * Returns the product name
+	 */
+	public static String getProductname() {
+		return ourProductName;
 	}
 
 }

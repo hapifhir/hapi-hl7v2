@@ -25,6 +25,12 @@
 				actual message (causing issues transmitting messages to some Websphere implementations). 
 				Thanks to Chris Stoten of UHN for all of the hard work in getting this figured out.
 			</action>
+			<action type="add" dev="James Agnew">
+				HL7 over HTTP relay now adds its own product name to any error messages it
+				returns in a NAK message, so that it is easier when troubleshooting to distinguish
+				a NAK which is coming back from the destination system vs. a NAK which is generated
+				by the relay itself (e.g. because the destination is unreachable).
+			</action>
 		</release>
         <release version="2.1" date="TBD">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
