@@ -27,6 +27,7 @@ package ca.uhn.hl7v2.validation.builder.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -67,7 +68,8 @@ public class OnlyAllowableSegmentsInSuperstructureRule extends AbstractMessageRu
 				for (Structure rep : theMsg.getAll(name)) {
 					
 					if (!rep.isEmpty()) {
-						if (!theMsg.getStructuresWhichChildAppliesTo(name).contains(messageStructure)) {
+						Set<String> structuresWhichChildAppliesTo = theMsg.getStructuresWhichChildAppliesTo(name);
+						if (!structuresWhichChildAppliesTo.contains(messageStructure)) {
 							String msgSimpleName = theMsg.getMessage().getClass().getSimpleName();
 							theExceptions.add(new ValidationException("Message (superstructure " + msgSimpleName + ") of type " + messageStructure + " must not have content in " + name));
 						}
