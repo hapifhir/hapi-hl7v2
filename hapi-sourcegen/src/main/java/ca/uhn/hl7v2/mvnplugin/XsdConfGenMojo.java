@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -242,7 +243,10 @@ public class XsdConfGenMojo extends AbstractMojo {
 		}
 
 		if (project != null) {
-			project.addCompileSourceRoot(targetDirectory);
+			Resource resource = new Resource();
+			resource.setDirectory(targetDirectory);
+			project.addResource(resource);
+//			project.addCompileSourceRoot(targetDirectory);
 		}
 
 	}
