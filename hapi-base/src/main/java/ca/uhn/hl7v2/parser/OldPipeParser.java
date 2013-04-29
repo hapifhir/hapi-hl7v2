@@ -725,7 +725,6 @@ class OldPipeParser extends Parser {
 	}
     
     public void parse(Message message, String string) throws HL7Exception {
-        //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
         MessageIterator messageIter = new MessageIterator(message, "MSH", true);
         FilterIterator.Predicate<Structure> segmentsOnly = new FilterIterator.Predicate<Structure>() {
             public boolean evaluate(Structure obj) {
