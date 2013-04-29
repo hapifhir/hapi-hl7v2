@@ -48,8 +48,6 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.primitive.CommonIS
- *
- * No TableRepository used yet
  * 
  * @author Leslie Mann
  */

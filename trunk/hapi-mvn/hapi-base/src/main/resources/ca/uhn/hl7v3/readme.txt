@@ -1,1 +1,0 @@
-The hl7v3 package contains experimental code related to the HL7 version 3 reference information model (RIM).  This code is not an integral part of HAPI at present, and can be safely ignored.  The purpose of this code is to create an EJB (Enterprise JavaBeans) representation of the HL7 RIM.  
