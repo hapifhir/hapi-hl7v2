@@ -6,7 +6,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "Initiator.java".  Description: 
+The Original Code is "ActiveInitiator.java".  Description:
 "Performs the initiation role of a message exchange accorging to HL7's original 
  mode rules." 
 
@@ -32,9 +32,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.TimeUnit;
 
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
@@ -47,6 +45,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 import ca.uhn.hl7v2.util.idgenerator.InMemoryIDGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -57,8 +57,9 @@ import ca.uhn.hl7v2.util.idgenerator.InMemoryIDGenerator;
  * <p>
  * The <code>sendAndReceive(...)</code> method blocks until either a response is
  * received with the matching message ID, or until a timeout period has passed.
- * The timeout defaults to 10000 ms (10 sec) but can be configured by setting
- * the system property "ca.uhn.hl7v2.app.initiator.timeout" to an integer value
+ * The timeout defaults to 10000 ms (10 sec) but can be configured using
+ * {@link #setTimeout(long, java.util.concurrent.TimeUnit)} or globally by setting
+ * the system property "ca.uhn.hl7v2.app.initiator.timeout" to an long value
  * representing the number of ms after which to time out.
  * </p>
  * <p>
@@ -68,35 +69,35 @@ import ca.uhn.hl7v2.util.idgenerator.InMemoryIDGenerator;
  * 
  * @author Bryan Tripp
  */
-public class Initiator {
+public class ActiveInitiator implements Initiator {
 
-	private static final Logger log = LoggerFactory.getLogger(Initiator.class);
+	private static final Logger log = LoggerFactory.getLogger(ActiveInitiator.class);
 	private static final Logger rawOutbound = LoggerFactory
 			.getLogger("ca.uhn.hl7v2.raw.outbound");
 	private static final Logger rawInbound = LoggerFactory
 			.getLogger("ca.uhn.hl7v2.raw.inbound");
-	private Connection conn;
-	private int timeoutMillis = 10000;
+	private ActiveConnection conn;
+	private long timeoutMillis = 10000;
 
 	/**
-	 * Creates a new instance of Initiator.
+	 * Creates a new instance of ActiveInitiator.
 	 * 
 	 * @param conn
-	 *            the Connection associated with this Initiator.
+	 *            the Connection associated with this ActiveInitiator.
 	 */
-	Initiator(Connection conn) throws LLPException {
+	ActiveInitiator(ActiveConnection conn) throws LLPException {
 		this.conn = conn;
 
-		// see if timeout has been set
+		// See if timeout has been set
 		String timeout = System
 				.getProperty("ca.uhn.hl7v2.app.initiator.timeout");
 		if (timeout != null) {
 			try {
-				timeoutMillis = Integer.parseInt(timeout);
+				timeoutMillis = Long.parseLong(timeout);
 				log.debug("Setting Initiator timeout to {} ms", timeout);
 			} catch (NumberFormatException e) {
 				log.warn(timeout
-						+ " is not a valid integer - Initiator is using default timeout");
+						+ " is not a valid long - Initiator is using default timeout");
 			}
 		}
 	}
@@ -154,21 +155,20 @@ public class Initiator {
 						+ messID);
 	}
 
-	/**
-	 * Sets the time (in milliseconds) that the initiator will wait for a
-	 * response for a given message before timing out and throwing an exception
-	 * (default is 10 seconds).
-	 */
 	public void setTimeoutMillis(int timeout) {
-		this.timeoutMillis = timeout;
+		setTimeout(timeout, TimeUnit.MILLISECONDS);
 	}
 
-	/**
+    public void setTimeout(long timeout, TimeUnit timeUnit) {
+        this.timeoutMillis = timeUnit.toMillis(timeout);
+    }
+
+    /**
 	 * Test harness
 	 */
 	public static void main(String args[]) {
 		if (args.length != 2) {
-			System.out.println("Usage: ca.uhn.hl7v2.app.Initiator host port");
+			System.out.println("Usage: ca.uhn.hl7v2.app.ActiveInitiator host port");
 		}
 
 		try {
@@ -179,7 +179,7 @@ public class Initiator {
 
 			final Parser parser = new PipeParser();
 			LowerLayerProtocol llp = new MinLowerLayerProtocol();
-			Connection connection = new Connection(parser, llp, new Socket(
+			Connection connection = new ActiveConnection(parser, llp, new Socket(
 					host, port));
 			final Initiator initiator = connection.getInitiator();
 			connection.activate();

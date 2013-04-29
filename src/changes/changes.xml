@@ -35,8 +35,13 @@
 				Fix the "xsdconfgen" Maven plugin so that it adds generated artifacts to the 
 				current build as resources instead of compile sources.
 			</action>
+            <action type="add" dev="Christian Ohr" issue="80" system="newfeatures">>
+                Added methods to HapiContext and ConnectionHub that allow to lazily create a
+                client connection, i.e. the physical connection is established only right
+                before the first message is sent over it.
+            </action>
 		</release>
-        <release version="2.1" date="TBD">
+        <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
             	HAPI is now able to work without any structure JARs for basic tasks, and can
             	process unknown versions of HL7 (e.g. 2.99) if configured to allow this.

@@ -51,7 +51,7 @@ public class ReceiverTest {
         
         Socket clientSocket = new Socket("localhost", port);
         final CountDownLatch latch = new CountDownLatch(1);
-        new Connection(new PipeParser(), new MinLowerLayerProtocol(), clientSocket) {
+        new ActiveConnection(new PipeParser(), new MinLowerLayerProtocol(), clientSocket) {
             public void close() {
                 super.close();
                 latch.countDown();
@@ -76,7 +76,7 @@ public class ReceiverTest {
 
         Socket clientSocket = new Socket("localhost", port);
         final CountDownLatch latch = new CountDownLatch(1);
-        new Connection(new PipeParser(), new MinLowerLayerProtocol(), clientSocket) {
+        new ActiveConnection(new PipeParser(), new MinLowerLayerProtocol(), clientSocket) {
             public void close() {
                 super.close();
                 latch.countDown();

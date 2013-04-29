@@ -169,7 +169,7 @@ public class TwoPortService extends HL7Service {
 		}
 		
 		try {
-			Connection conn = acceptConnection(queue.poll(2, TimeUnit.SECONDS));
+			ActiveConnection conn = acceptConnection(queue.poll(2, TimeUnit.SECONDS));
 			if (conn != null) {
 				log.info("Accepted connection from "
 						+ conn.getRemoteAddress().getHostAddress());
@@ -182,12 +182,12 @@ public class TwoPortService extends HL7Service {
 
 	/**
 	 * Helper method that checks whether the newSocket completes a two-port
-	 * connection or not. If yes, the {@link Connection} object is created and
+	 * connection or not. If yes, the {@link ActiveConnection} object is created and
 	 * returned.
 	 */
-	private Connection acceptConnection(AcceptedSocket newSocket)
+	private ActiveConnection acceptConnection(AcceptedSocket newSocket)
 			throws LLPException, IOException {
-		Connection conn = null;
+		ActiveConnection conn = null;
 		if (newSocket != null) {
 			String address = newSocket.socket.getInetAddress().getHostAddress();
 			AcceptedSocket otherSocket = waitingForSecondSocket.remove(address);
@@ -196,7 +196,7 @@ public class TwoPortService extends HL7Service {
 						newSocket.socket);
 				Socket in = getInboundSocket(newSocket, otherSocket);
 				Socket out = getOutboundSocket(newSocket, otherSocket);
-				conn = new Connection(getParser(), getLlp(), in, out,
+				conn = new ActiveConnection(getParser(), getLlp(), in, out,
 						getExecutorService());
 			} else {
 				log.debug(

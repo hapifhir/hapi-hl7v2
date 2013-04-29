@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import ca.uhn.hl7v2.model.v25.message.ACK;
 import org.hamcrest.number.OrderingComparison;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,7 +42,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  */
 public class ConnectionHubTest extends MockitoTest {
 
-	private static final Logger ourLog = LoggerFactory.getLogger(ConnectionHubTest.class);
+    private static final Logger ourLog = LoggerFactory.getLogger(ConnectionHubTest.class);
 	private static int port1;
 	private static int port2;
 	private static HL7Service ss1;
@@ -50,8 +51,12 @@ public class ConnectionHubTest extends MockitoTest {
 
 	private static HapiContext context;
 	private static Parser parser;
+    public static final String A45 = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
+            + "EVN|A45|201004141020|\r"
+            + "PID|1||7010226^^^4265^MR~0000000000^^^CANON^JHN^^^^^^GP~1736465^^^4265^VN||Park^Green^^^MS.^^L||19890812|F|||123 TestingLane^^TORONTO^CA-ON^M5G2C2^CAN^H^~^^^^^^^||^PRN^PH^^1^416^2525252^|^^^^^^^||||||||||||||||N\r"
+            + "PV1|1|I||||^^^WP^1469^^^^^^^^|||||||||||^Derkach^Peter.^^^Dr.||20913000131|||||||||||||||||||||||||201004011340|201004141018";
 
-	@BeforeClass
+    @BeforeClass
 	public static void beforeClass() throws Exception {
 		context = new DefaultHapiContext();
 		port1 = RandomServerPortProvider.findFreePort();
@@ -250,15 +255,50 @@ public class ConnectionHubTest extends MockitoTest {
 		assertEquals(1, hub.allConnections().size());
 	}
 
-	@Test
-	public void testAttachToNonexistingServer() throws Exception {
+	@Test(expected = HL7Exception.class)
+	public void testAttachToNonExistingServer() throws Exception {
 		int freePort = RandomServerPortProvider.findFreePort();
-		try {
-			hub.attach("localhost", RandomServerPortProvider.findFreePort(), false);
-			fail("Shouldn't be a service running at " + freePort);
-		} catch (Exception e) {
-		}
+        hub.attach("localhost", freePort, false);
 	}
+
+    @Test
+    public void testLazilyAttach() throws Exception {
+
+        // We can "open" a connection if the server does not run (yet)
+        int freePort = RandomServerPortProvider.findFreePort();
+        Connection c = hub.attachLazily("localhost", freePort, false);
+        assertTrue(c instanceof LazyConnection);
+        LazyConnection lc = (LazyConnection)c;
+        assertFalse(lc.isEstablished());
+
+        // We can also obtain an Initiator
+        Initiator initiator = c.getInitiator();
+        assertTrue(initiator instanceof LazyConnection.LazyInitiator);
+
+        // Now start the server side
+        HL7Service service = context.newServer(freePort, false);
+        service.registerApplication("*", "*", new MyApp());
+        service.startAndWait();
+        assertFalse(lc.isEstablished());
+
+        // Send a message. the physical connection is created on the fly
+        ADT_A45 msg = new ADT_A45();
+        msg.setParser(parser);
+        msg.parse(A45);
+        Message response = initiator.sendAndReceive(msg);
+        assertTrue(lc.isEstablished());
+        assertTrue(response instanceof ACK);
+
+        // Close the connection
+        c.close();
+        assertFalse(lc.isEstablished());
+
+        // Reopen transparently by sending a new message
+        response = initiator.sendAndReceive(msg);
+        assertTrue(lc.isEstablished());
+        assertTrue(response instanceof ACK);
+        c.close();
+    }
 
 	@Test
 	public void testDetachTooOften() throws Exception {
@@ -280,13 +320,9 @@ public class ConnectionHubTest extends MockitoTest {
 
 		Connection i1 = hub.attach("localhost", port1, false);
 
-		String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
-				+ "EVN|A45|201004141020|\r"
-				+ "PID|1||7010226^^^4265^MR~0000000000^^^CANON^JHN^^^^^^GP~1736465^^^4265^VN||Park^Green^^^MS.^^L||19890812|F|||123 TestingLane^^TORONTO^CA-ON^M5G2C2^CAN^H^~^^^^^^^||^PRN^PH^^1^416^2525252^|^^^^^^^||||||||||||||||N\r"
-				+ "PV1|1|I||||^^^WP^1469^^^^^^^^|||||||||||^Derkach^Peter.^^^Dr.||20913000131|||||||||||||||||||||||||201004011340|201004141018";
-		ADT_A45 msg = new ADT_A45();
+        ADT_A45 msg = new ADT_A45();
 		msg.setParser(parser);
-		msg.parse(messageText);
+		msg.parse(A45);
 		i1.getInitiator().sendAndReceive(msg);
 		i1.close(); // PROBLEM: connection still in hub table
 		System.out.println("Connection closed 1");

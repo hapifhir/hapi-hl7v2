@@ -152,8 +152,8 @@ class Responder {
 			PipedOutputStream respOutbound = new PipedOutputStream(initInbound);
 
 			/*
-			 * This code won't work with new changes: final Initiator init = new
-			 * Initiator(parser, new MinLowerLayerProtocol(), initInbound,
+			 * This code won't work with new changes: final ActiveInitiator init = new
+			 * ActiveInitiator(parser, new MinLowerLayerProtocol(), initInbound,
 			 * initOutbound); Responder resp = new Responder(respInbound,
 			 * respOutbound);
 			 * 

@@ -38,24 +38,34 @@ class ConnectionFactory {
 
 	public static Connection open(ConnectionData connectionData,
 			ExecutorService executorService) throws Exception {
-		Connection connection;
-		if (connectionData.getPort2() == 0) {
-			connection = new Connection(connectionData.getParser(),
-					connectionData.getProtocol(), createSocket(connectionData.getSocketFactory(),
-							connectionData.getHost(), connectionData.getPort(),
-							connectionData.isTls()), executorService);
-		} else {
-			Socket outbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
-					connectionData.getPort(), connectionData.isTls());
-			Socket inbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
-					connectionData.getPort2(), connectionData.isTls());
-			connection = new Connection(connectionData.getParser(),
-					connectionData.getProtocol(), inbound, outbound,
-					executorService);
-		}
-		connection.activate();
-		return connection;
+
+        return connectionData.isLazy() ?
+                new LazyConnection(connectionData, executorService) :
+                openEagerly(connectionData, executorService);
+
 	}
+
+    public static Connection openEagerly(ConnectionData connectionData,
+                                         ExecutorService executorService) throws Exception {
+        Connection connection;
+        if (connectionData.getPort2() == 0) {
+            connection = new ActiveConnection(connectionData.getParser(),
+                    connectionData.getProtocol(), createSocket(connectionData.getSocketFactory(),
+                    connectionData.getHost(), connectionData.getPort(),
+                    connectionData.isTls()), executorService);
+        } else {
+            Socket outbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
+                    connectionData.getPort(), connectionData.isTls());
+            Socket inbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
+                    connectionData.getPort2(), connectionData.isTls());
+            connection = new ActiveConnection(connectionData.getParser(),
+                    connectionData.getProtocol(), inbound, outbound,
+                    executorService);
+        }
+        connection.activate();
+        return connection;
+    }
+
 
 	private static Socket createSocket(ca.uhn.hl7v2.util.SocketFactory socketFactory, String host, int port, boolean tls) throws IOException {
 		Socket socket;

@@ -38,21 +38,10 @@ import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.DefaultXMLParser;
-import ca.uhn.hl7v2.parser.GenericParser;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.ParserConfiguration;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.parser.XMLParser;
+import ca.uhn.hl7v2.parser.*;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.StandardSocketFactory;
-import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
-import ca.uhn.hl7v2.validation.DefaultValidator;
-import ca.uhn.hl7v2.validation.ReportingValidationExceptionHandler;
-import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
-import ca.uhn.hl7v2.validation.Validator;
+import ca.uhn.hl7v2.validation.*;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
@@ -342,4 +331,11 @@ public class DefaultHapiContext implements HapiContext {
 		return getConnectionHub().attach(this, host, outboundPort, inboundPort, tls);
 	}
 
+    public Connection newLazyClient(String host, int port, boolean tls) throws HL7Exception {
+        return getConnectionHub().attachLazily(this, host, port, tls);
+    }
+
+    public Connection newLazyClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+        return getConnectionHub().attachLazily(this, host, outboundPort, inboundPort, tls);
+    }
 }

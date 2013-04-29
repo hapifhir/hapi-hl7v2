@@ -6,7 +6,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 specific language governing rights and limitations under the License. 
 
-The Original Code is "Connection.java".  Description: 
+The Original Code is "ActiveConnection.java".  Description:
 "A TCP/IP connection to a remote HL7 server." 
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C) 
@@ -54,9 +54,9 @@ import ca.uhn.hl7v2.parser.Parser;
  * 
  * @author Bryan Tripp
  */
-public class Connection {
+public class ActiveConnection implements Connection {
 
-	private static final Logger log = LoggerFactory.getLogger(Connection.class);
+	private static final Logger log = LoggerFactory.getLogger(ActiveConnection.class);
 
 	private Initiator initiator;
 	private Responder responder;
@@ -73,14 +73,14 @@ public class Connection {
 	 * Creates a new instance of Connection, with inbound and outbound
 	 * communication on a single port.
 	 */
-	public Connection(Parser parser, LowerLayerProtocol llp,
-			Socket bidirectional) throws LLPException, IOException {
+	public ActiveConnection(Parser parser, LowerLayerProtocol llp,
+                            Socket bidirectional) throws LLPException, IOException {
 		this(parser, llp, bidirectional, DefaultExecutorService
 				.getDefaultService());
 	}
 
-	public Connection(Parser parser, LowerLayerProtocol llp,
-			Socket bidirectional, ExecutorService executorService)
+	public ActiveConnection(Parser parser, LowerLayerProtocol llp,
+                            Socket bidirectional, ExecutorService executorService)
 			throws LLPException, IOException {
 		init(parser, executorService, bidirectional);
 		ackWriter = llp.getWriter(bidirectional.getOutputStream());
@@ -89,15 +89,15 @@ public class Connection {
 		sockets.add(bidirectional);
 		receivers.add(new Receiver(this, llp.getReader(bidirectional
 				.getInputStream())));
-		this.initiator = new Initiator(this);
+		this.initiator = new ActiveInitiator(this);
 	}
 
 	/**
 	 * Creates a new instance of Connection, with inbound communication on one
 	 * port and outbound on another.
 	 */
-	public Connection(Parser parser, LowerLayerProtocol llp, Socket inbound,
-			Socket outbound) throws LLPException, IOException {
+	public ActiveConnection(Parser parser, LowerLayerProtocol llp, Socket inbound,
+                            Socket outbound) throws LLPException, IOException {
 		this(parser, llp, inbound, outbound, DefaultExecutorService
 				.getDefaultService());
 	}
@@ -106,8 +106,8 @@ public class Connection {
 	 * Creates a new instance of Connection, with inbound communication on one
 	 * port and outbound on another.
 	 */
-	public Connection(Parser parser, LowerLayerProtocol llp, Socket inbound,
-			Socket outbound, ExecutorService executorService)
+	public ActiveConnection(Parser parser, LowerLayerProtocol llp, Socket inbound,
+                            Socket outbound, ExecutorService executorService)
 			throws LLPException, IOException {
 		init(parser, executorService, inbound);
 		ackWriter = llp.getWriter(inbound.getOutputStream());
@@ -119,7 +119,7 @@ public class Connection {
 				llp.getReader(inbound.getInputStream())));
 		receivers.add(new Receiver(this, llp.getReader(outbound
 				.getInputStream())));
-		this.initiator = new Initiator(this);
+		this.initiator = new ActiveInitiator(this);
 	}
 
 	/** Common initialization tasks */
