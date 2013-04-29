@@ -6,8 +6,8 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
 specific language governing rights and limitations under the License.
 
-The Original Code is "GroupPointer.java".  Description:
-"A GroupPointer is used when parsing traditionally encoded HL7 messages"
+The Original Code is "EncodingDetector.java".  Description:
+"Detects message encoding (ER7 / XML)"
 
 The Initial Developer of the Original Code is University Health Network. Copyright (C)
 2001.  All Rights Reserved.

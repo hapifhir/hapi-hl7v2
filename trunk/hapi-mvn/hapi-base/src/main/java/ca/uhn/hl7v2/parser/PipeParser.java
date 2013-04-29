@@ -1099,9 +1099,6 @@ public class PipeParser extends Parser {
 		}
 		
 		IStructureDefinition structureDef = getStructureDefinition(message);
-
-		// MessagePointer ptr = new MessagePointer(this, m,
-		// getEncodingChars(message));
 		MessageIterator messageIter = new MessageIterator(message, structureDef, "MSH", true);
 
 		String[] segments = split(string, SEGMENT_DELIMITER);
