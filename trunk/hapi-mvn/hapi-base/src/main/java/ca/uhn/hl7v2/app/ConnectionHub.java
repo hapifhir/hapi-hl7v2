@@ -33,9 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -45,6 +42,8 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.SocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -124,27 +123,50 @@ public class ConnectionHub extends HapiContextSupport {
 		}
 	}
 
+    /**
+     * Returns a Connection to the given address, opening this Connection if necessary. The given
+     * Parser will only be used if a new Connection is opened, so there is no guarantee that the
+     * Connection returned will be using the Parser you provide. If you need explicit access to the
+     * Parser the Connection is using, call <code>Connection.getParser()</code>.
+     *
+     * @since 2.1
+     */
+    public Connection attach(String host, int port, boolean tls) throws HL7Exception {
+        return attach(new ConnectionData(host, port, 0, getHapiContext().getGenericParser(),
+                getHapiContext().getLowerLayerProtocol(), tls, getHapiContext()
+                .getSocketFactory(), false));
+    }
+
 	/**
 	 * Returns a Connection to the given address, opening this Connection if necessary. The given
 	 * Parser will only be used if a new Connection is opened, so there is no guarantee that the
 	 * Connection returned will be using the Parser you provide. If you need explicit access to the
 	 * Parser the Connection is using, call <code>Connection.getParser()</code>.
 	 * 
-	 * @since 2.1
+	 * @since 2.2
 	 */
-	public Connection attach(String host, int port, boolean tls) throws HL7Exception {
+	public Connection attachLazily(String host, int port, boolean tls) throws HL7Exception {
 		return attach(new ConnectionData(host, port, 0, getHapiContext().getGenericParser(),
 				getHapiContext().getLowerLayerProtocol(), tls, getHapiContext()
-						.getSocketFactory()));
+						.getSocketFactory(), true));
 	}
 
+    /**
+     * @since 2.0
+     */
+    public Connection attach(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+        return attach(new ConnectionData(host, outboundPort, inboundPort, getHapiContext()
+                .getGenericParser(), getHapiContext().getLowerLayerProtocol(), tls,
+                getHapiContext().getSocketFactory(), false));
+    }
+
 	/**
-	 * @since 2.1
+	 * @since 2.2
 	 */
-	public Connection attach(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+	public Connection attachLazily(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
 		return attach(new ConnectionData(host, outboundPort, inboundPort, getHapiContext()
 				.getGenericParser(), getHapiContext().getLowerLayerProtocol(), tls,
-				getHapiContext().getSocketFactory()));
+				getHapiContext().getSocketFactory(), true));
 	}
 
 	/**
@@ -155,6 +177,14 @@ public class ConnectionHub extends HapiContextSupport {
 		return attach(host, outboundPort, inboundPort, parser, llpClass, false);
 	}
 
+    /**
+     * @since 2.0
+     */
+    public Connection attachLazily(String host, int outboundPort, int inboundPort, Parser parser,
+                             Class<? extends LowerLayerProtocol> llpClass) throws HL7Exception {
+        return attachLazily(host, outboundPort, inboundPort, parser, llpClass, false);
+    }
+
 	/**
 	 * @since 2.0
 	 */
@@ -164,41 +194,91 @@ public class ConnectionHub extends HapiContextSupport {
 		return attach(host, outboundPort, inboundPort, parser, llp, tls);
 	}
 
+    public Connection attachLazily(String host, int outboundPort, int inboundPort, Parser parser,
+                             Class<? extends LowerLayerProtocol> llpClass, boolean tls) throws HL7Exception {
+        LowerLayerProtocol llp = ReflectionUtil.instantiate(llpClass);
+        return attachLazily(host, outboundPort, inboundPort, parser, llp, tls);
+    }
+
 	/**
 	 * @since 2.0
 	 */
 	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser,
 			LowerLayerProtocol llp, boolean tls) throws HL7Exception {
-		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, null));
+		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, null, false));
 	}
+
+    /**
+     * @since 2.2
+     */
+    public Connection attachLazily(String host, int outboundPort, int inboundPort, Parser parser,
+                             LowerLayerProtocol llp, boolean tls) throws HL7Exception {
+        return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, null, true));
+    }
 
 	/**
 	 * @since 2.1
 	 */
-	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
-		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, socketFactory));
+	public Connection attach(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp,
+                             boolean tls, SocketFactory socketFactory) throws HL7Exception {
+		return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, socketFactory, false));
 	}
+
+    /**
+     * @since 2.1
+     */
+    public Connection attachLazily(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol llp,
+                             boolean tls, SocketFactory socketFactory) throws HL7Exception {
+        return attach(new ConnectionData(host, outboundPort, inboundPort, parser, llp, tls, socketFactory, true));
+    }
 
 	/**
 	 * @since 2.1
 	 */
-	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp, boolean tls, SocketFactory socketFactory) throws HL7Exception {
-		return attach(new ConnectionData(host, port, 0, parser, llp, tls, socketFactory));
+	public Connection attach(String host, int port, Parser parser, LowerLayerProtocol llp,
+                             boolean tls, SocketFactory socketFactory) throws HL7Exception {
+		return attach(new ConnectionData(host, port, 0, parser, llp, tls, socketFactory, false));
 	}
+
+    /**
+     * @since 2.1
+     */
+    public Connection attachLazily(String host, int port, Parser parser, LowerLayerProtocol llp,
+                             boolean tls, SocketFactory socketFactory) throws HL7Exception {
+        return attach(new ConnectionData(host, port, 0, parser, llp, tls, socketFactory, true));
+    }
 
 	/**
 	 * @since 2.1
 	 */
 	public Connection attach(DefaultHapiContext hapiContext, String host, int port, boolean tls) throws HL7Exception {
-		return attach(new ConnectionData(host, port, 0, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory()));
+		return attach(new ConnectionData(host, port, 0, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(),
+                tls, hapiContext.getSocketFactory(), false));
 	}
+
+    /**
+     * @since 2.2
+     */
+    public Connection attachLazily(DefaultHapiContext hapiContext, String host, int port, boolean tls) throws HL7Exception {
+        return attach(new ConnectionData(host, port, 0, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(),
+                tls, hapiContext.getSocketFactory(), true));
+    }
 
 	/**
 	 * @since 2.1
 	 */
 	public Connection attach(DefaultHapiContext hapiContext, String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
-		return attach(new ConnectionData(host, outboundPort, inboundPort, hapiContext.getGenericParser(), hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory()));
+		return attach(new ConnectionData(host, outboundPort, inboundPort, hapiContext.getGenericParser(),
+                hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory(), false));
 	}
+
+    /**
+     * @since 2.2
+     */
+    public Connection attachLazily(DefaultHapiContext hapiContext, String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+        return attach(new ConnectionData(host, outboundPort, inboundPort, hapiContext.getGenericParser(),
+                hapiContext.getLowerLayerProtocol(), tls, hapiContext.getSocketFactory(), true));
+    }
 
 	/**
 	 * @since 1.2
@@ -224,6 +304,14 @@ public class ConnectionHub extends HapiContextSupport {
 		return attach(host, port, 0, parser, llp, false);
 	}
 
+    /**
+     * @since 2.2
+     */
+    public Connection attachLazily(String host, int port, Parser parser, LowerLayerProtocol llp)
+            throws HL7Exception {
+        return attachLazily(host, port, 0, parser, llp, false);
+    }
+
 
 	/**
 	 * @since 2.0
@@ -232,6 +320,14 @@ public class ConnectionHub extends HapiContextSupport {
 			boolean tls) throws HL7Exception {
 		return attach(host, port, 0, parser, llp, tls);
 	}
+
+    /**
+     * @since 2.0
+     */
+    public Connection attachLazily(String host, int port, Parser parser, LowerLayerProtocol llp,
+                             boolean tls) throws HL7Exception {
+        return attachLazily(host, port, 0, parser, llp, tls);
+    }
 
 	/**
 	 * Informs the ConnectionHub that you are done with the given Connection - if no other code is

@@ -60,7 +60,7 @@ public class InitiatorTest {
 		Parser parser = context.getPipeParser();
 		MinLowerLayerProtocol protocol = new MinLowerLayerProtocol();
 		Socket socket = TestUtils.acquireClientSocket(port);
-		Connection conn = new Connection(parser, protocol, socket);
+		Connection conn = new ActiveConnection(parser, protocol, socket);
 		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
@@ -74,7 +74,7 @@ public class InitiatorTest {
 	public void testConcurrentSendAndReceive() throws Exception {
 		int n = 50; // TODO fails with 100
 		final Parser parser = context.getPipeParser();
-		final Connection conn = new Connection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
+		final Connection conn = new ActiveConnection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
 		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());
 		Callable<Boolean> t = new Callable<Boolean>() {

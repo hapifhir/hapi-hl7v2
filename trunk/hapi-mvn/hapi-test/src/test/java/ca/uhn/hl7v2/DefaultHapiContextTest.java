@@ -187,6 +187,44 @@ public class DefaultHapiContextTest {
 		System.out.println("Connection closed 2");
 	}
 
+    @Test
+    public void testGetLazyClient() throws HL7Exception, LLPException, IOException, InterruptedException {
+
+        int port1 = RandomServerPortProvider.findFreePort();
+        int port2 = RandomServerPortProvider.findFreePort();
+
+
+        Connection i1 = context1.newLazyClient("localhost", port1, false);
+        Connection i2 = context1.newLazyClient("localhost", port2, false);
+
+        HL7Service ss1 = context1.newServer(port1, false);
+        ss1.registerApplication("*", "*", new ConnectionHubTest.MyApp());
+        ss1.startAndWait();
+
+        String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
+                + "EVN|A45|201004141020|\r"
+                + "PID|1||7010226^^^4265^MR~0000000000^^^CANON^JHN^^^^^^GP~1736465^^^4265^VN||Park^Green^^^MS.^^L||19890812|F|||123 TestingLane^^TORONTO^CA-ON^M5G2C2^CAN^H^~^^^^^^^||^PRN^PH^^1^416^2525252^|^^^^^^^||||||||||||||||N\r"
+                + "PV1|1|I||||^^^WP^1469^^^^^^^^|||||||||||^Derkach^Peter.^^^Dr.||20913000131|||||||||||||||||||||||||201004011340|201004141018";
+        ADT_A45 msg = new ADT_A45();
+        msg.setParser(context1.getPipeParser());
+        msg.parse(messageText);
+        i1.getInitiator().sendAndReceive(msg);
+
+        Connection i1again = context1.newLazyClient("localhost", port1, false);
+        assertThat(i1, is(i1again));
+
+        // Returns the previous connection even if it's a lazy one
+        i1again = context1.newClient("localhost", port1, false);
+        assertThat(i1, is(i1again));
+
+        i1.close();
+
+        i1again = context1.newClient("localhost", port1, false);
+        assertThat(i1, not(i1again)); // Closed connection are discarded
+        i1again.getInitiator().sendAndReceive(msg);
+        i1again.close();
+    }
+
 	@Test
 	public void testConnectionHubUsesCorrectExecutorService() throws Exception {
 		int port = RandomServerPortProvider.findFreePort();

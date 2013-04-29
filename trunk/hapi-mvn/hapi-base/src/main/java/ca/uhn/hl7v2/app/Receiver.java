@@ -46,11 +46,11 @@ public class Receiver extends Service {
 
 	private static final Logger log = LoggerFactory.getLogger(Receiver.class);
 
-	private Connection conn;
+	private ActiveConnection conn;
 	private HL7Reader in;
 
 	/** Creates a new instance of Receiver, associated with the given Connection */
-	public Receiver(Connection c, HL7Reader in) {
+	public Receiver(ActiveConnection c, HL7Reader in) {
 		super("Receiver", c.getExecutorService());
 		this.conn = c;
 		this.in = in;
@@ -108,10 +108,10 @@ public class Receiver extends Service {
 	/** Independent thread for processing a single message */
 	private class Grunt implements Runnable {
 
-		private Connection conn;
+		private ActiveConnection conn;
 		private String m;
 
-		public Grunt(Connection conn, String message) {
+		public Grunt(ActiveConnection conn, String message) {
 			this.conn = conn;
 			this.m = message;
 		}

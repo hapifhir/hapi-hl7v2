@@ -153,7 +153,7 @@ public abstract class HL7Service extends Service {
 	 * Called by subclasses when a new Connection is made. Registers the
 	 * MessageTypeRouter with the given Connection and stores it.
 	 */
-	public synchronized void newConnection(Connection c) {
+	public synchronized void newConnection(ActiveConnection c) {
 		c.getResponder().setApplicationRouter(applicationRouter);
 		c.activate();
 		connections.add(c); // keep track of connections

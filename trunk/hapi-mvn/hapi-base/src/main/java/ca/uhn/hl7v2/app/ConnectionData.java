@@ -41,6 +41,7 @@ class ConnectionData {
 	private Parser parser;
 	private LowerLayerProtocol protocol;
 	private SocketFactory socketFactory;
+    private boolean lazy;
 
 	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol) {
 		this(host, port, parser, protocol, false);
@@ -53,11 +54,11 @@ class ConnectionData {
 
 	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
 			LowerLayerProtocol protocol, boolean tls) {
-		this(host, outboundPort, inboundPort, parser, protocol, tls, null);
+		this(host, outboundPort, inboundPort, parser, protocol, tls, null, false);
 	}
 
 	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
-			LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory) {
+			LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory, boolean lazy) {
 		this.host = host;
 		this.port = outboundPort;
 		this.port2 = inboundPort;
@@ -68,6 +69,7 @@ class ConnectionData {
 		if (this.socketFactory == null) {
 			this.socketFactory = new StandardSocketFactory();
 		}
+        this.lazy = lazy;
 	}
 
 	public String getHost() {
@@ -86,7 +88,11 @@ class ConnectionData {
 		return tls;
 	}
 
-	public Parser getParser() {
+    boolean isLazy() {
+        return lazy;
+    }
+
+    public Parser getParser() {
 		return parser;
 	}
 

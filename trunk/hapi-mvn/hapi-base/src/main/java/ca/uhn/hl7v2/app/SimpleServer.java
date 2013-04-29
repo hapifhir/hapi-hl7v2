@@ -180,7 +180,7 @@ public class SimpleServer extends HL7Service {
 			AcceptedSocket newSocket = queue.poll(AcceptorThread.TIMEOUT, TimeUnit.MILLISECONDS);
 			if (newSocket != null) {
 				log.info("Accepted connection from {} on port {}", newSocket.socket.getInetAddress().getHostAddress(), port);
-				Connection c = new Connection(getParser(), getLlp(), newSocket.socket,
+				ActiveConnection c = new ActiveConnection(getParser(), getLlp(), newSocket.socket,
 						getExecutorService());
 				newConnection(c);
 			}

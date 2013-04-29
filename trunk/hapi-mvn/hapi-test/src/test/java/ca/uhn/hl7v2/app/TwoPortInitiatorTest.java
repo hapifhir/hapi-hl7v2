@@ -74,7 +74,7 @@ public class TwoPortInitiatorTest implements Application {
 		Socket outsocket = TestUtils.acquireClientSocket(port1);
 		Socket insocket = TestUtils.acquireClientSocket(port2);
 		
-		Connection conn = new Connection(parser, protocol, insocket, outsocket);
+		Connection conn = new ActiveConnection(parser, protocol, insocket, outsocket);
 		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
@@ -91,7 +91,7 @@ public class TwoPortInitiatorTest implements Application {
 		final Parser parser = new PipeParser();
 		Socket outsocket = TestUtils.acquireClientSocket(port1);
 		Socket insocket = TestUtils.acquireClientSocket(port2);
-		final Connection conn = new Connection(parser,
+		final Connection conn = new ActiveConnection(parser,
 				new MinLowerLayerProtocol(), insocket, outsocket);
 		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());

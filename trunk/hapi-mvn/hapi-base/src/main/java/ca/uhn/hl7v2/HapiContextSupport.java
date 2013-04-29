@@ -33,11 +33,7 @@ import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
-import ca.uhn.hl7v2.parser.GenericParser;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.ParserConfiguration;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.parser.XMLParser;
+import ca.uhn.hl7v2.parser.*;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
@@ -166,7 +162,15 @@ public abstract class HapiContextSupport {
 			return context.newClient(host, outboundPort, inboundPort, tls);
 		}
 
-		public HL7Service newServer(int port, boolean tls) {
+        public Connection newLazyClient(String host, int port, boolean tls) throws HL7Exception {
+            return context.newLazyClient(host, port, tls);
+        }
+
+        public Connection newLazyClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
+            return context.newLazyClient(host, outboundPort, inboundPort, tls);
+        }
+
+        public HL7Service newServer(int port, boolean tls) {
 			return context.newServer(port, tls);
 		}
 
