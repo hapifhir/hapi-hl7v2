@@ -55,7 +55,7 @@ public class SendAndReceiveAMessage {
       /*
        * Before we can send, let's create a server to listen for incoming
        * messages. The following section of code establishes a server listening
-       * on port 1011 for new connections, and then "handles" them by
+       * on port 1011 for new connections.
        */
       int port = 1011; // The port to listen on
       boolean useTls = false; // Should we use TLS/SSL?
