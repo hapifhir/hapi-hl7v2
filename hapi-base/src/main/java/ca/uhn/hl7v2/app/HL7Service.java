@@ -58,7 +58,7 @@ import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 /**
  * <p>
  * An HL7 service. Accepts incoming TCP/IP connections and creates Connection
- * objects. Uses a single MessageTypeRouter object (for all Connections) to
+ * objects. Uses a single ApplicationRouter object (for all Connections) to
  * define the Applications to which message are sent. To configure, use
  * registerApplication() or loadApplicationsFromFile().
  * </p>
@@ -151,7 +151,7 @@ public abstract class HL7Service extends Service {
 	
 	/**
 	 * Called by subclasses when a new Connection is made. Registers the
-	 * MessageTypeRouter with the given Connection and stores it.
+	 * ApplicationRouter with the given Connection and stores it.
 	 */
 	public synchronized void newConnection(ActiveConnection c) {
 		c.getResponder().setApplicationRouter(applicationRouter);

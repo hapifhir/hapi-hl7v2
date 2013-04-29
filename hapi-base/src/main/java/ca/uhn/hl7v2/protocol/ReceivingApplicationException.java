@@ -26,6 +26,8 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.protocol;
 
+import java.util.Map;
+
 /**
  * Represents any problem encountered during processing of a message by a 
  * <code>ReceivingApplication</code>.
@@ -36,6 +38,10 @@ package ca.uhn.hl7v2.protocol;
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
  */
 public class ReceivingApplicationException extends Exception {
+
+    private String incomingMessage;
+    private String outgoingMessage;
+    private Map<String, Object> incomingMetadata;
 
     /**
      * Constructs an instance of <code>ReceivingApplicationException</code> with the specified detail message.
@@ -62,6 +68,26 @@ public class ReceivingApplicationException extends Exception {
      */
     public ReceivingApplicationException(String msg, Throwable cause) {
         super(msg, cause);
+    }
+
+    public ReceivingApplicationException(Throwable cause, String incomingMessage, String outgoingMessage, Map<String, Object> incomingMetadata) {
+        super(cause);
+        this.incomingMessage = incomingMessage;
+        this.outgoingMessage = outgoingMessage;
+        this.incomingMetadata = incomingMetadata;
+    }
+
+    public String getIncomingMessage() {
+        return incomingMessage;
+    }
+
+
+    public String getOutgoingMessage() {
+        return outgoingMessage;
+    }
+
+    public Map<String, Object> getIncomingMetadata() {
+        return incomingMetadata;
     }
 
 }
