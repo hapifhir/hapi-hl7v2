@@ -155,9 +155,19 @@ public enum Version {
 		Boolean retVal = ourIsOnClasspath.get(this);
 		if (retVal == null) {
 			String resource = "ca/uhn/hl7v2/parser/eventmap/" + getVersion() + ".properties";
-			InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
-			retVal = in != null;
-			ourIsOnClasspath.put(this, retVal);
+            InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
+            try {
+			    retVal = in != null;
+			    ourIsOnClasspath.put(this, retVal);
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (Exception e) {
+                        // Ignore
+                    }
+                }
+            }
 		}
 		return retVal;
 	}
