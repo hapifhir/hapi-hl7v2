@@ -158,12 +158,12 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				} else {
 					addConformanceProblem("Invalid authorization type. Only basic authorization is supported.");
 				}
-			} else if ("content-coding".equals(nextHeader)) {
+			} else if ("content-encoding".equals(nextHeader)) {
 				if (StringUtils.isNotBlank(nextValue)) {
 					if ("gzip".equals(nextValue)) {
 						myGzipCoding = true;
 					} else {
-						throw new DecodeException("Unknown content-coding: " + nextValue);
+						throw new DecodeException("Unknown Content-Encoding: " + nextValue);
 					}
 				}
 			} else if (HTTP_HEADER_HL7_SIGNATURE_LC.equals(nextHeader)) {

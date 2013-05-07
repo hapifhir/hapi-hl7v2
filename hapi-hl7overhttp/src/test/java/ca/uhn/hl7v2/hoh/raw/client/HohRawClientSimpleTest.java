@@ -58,6 +58,32 @@ public class HohRawClientSimpleTest {
 
 	}
 
+	@Test
+	public void testUnderstandsGzippedResponse() throws Exception {
+		LogManager.getRootLogger().setLevel((Level)Level.TRACE);
+
+		myServerSocketThread.setGZipResponse(true);
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
+
+		ourLog.info("Received response");
+
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+
+	}
+
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidUriRejected1() throws Exception {
 		new HohRawClientSimple("localhost", 9999, "/uri space");

@@ -11,8 +11,15 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Hl7OverHttpRequestEncoder.class);
 	private String myHost;
-
 	private int myPort;
+
+	public void setHost(String theHost) {
+		myHost = theHost;
+	}
+
+	public void setPort(int thePort) {
+		myPort = thePort;
+	}
 
 	@Override
 	protected void addSpecificHeaders() {
@@ -48,14 +55,6 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 	@Override
 	protected void setActionLineAppropriately() {
 		setActionLine("POST " + getPath() + " HTTP/1.1");
-	}
-
-	public void setHost(String theHost) {
-		myHost = theHost;
-	}
-
-	public void setPort(int thePort) {
-		myPort = thePort;
 	}
 
 }
