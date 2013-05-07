@@ -102,9 +102,6 @@ public class MessageValidation {
 		// Let's try parsing the valid message:
 		try {
 			parser.parse(invalidMessage);
-			// This shouldn't happen!
-			System.out.println("Something went wrong!");
-			System.exit(-1);
 		} catch (HL7Exception e) {
 			// This time, we are expecting an exception, because the message
 			// should fail validation.
@@ -177,8 +174,7 @@ public class MessageValidation {
 		} catch (HL7Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+				
 	}
 
 }
