@@ -40,6 +40,10 @@
                 client connection, i.e. the physical connection is established only right
                 before the first message is sent over it.
             </action>
+            <action type="add" dev="James Agnew" issue="183" system="newbugs">
+            	Correcting a bug in the HL7 over HTTP client code where GZipped
+            	HTTP responses are not properly interpreted as being GZipped. 
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
