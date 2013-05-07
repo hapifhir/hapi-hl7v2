@@ -27,10 +27,12 @@ import ca.uhn.hl7v2.parser.GenericParser;
 public class ServerSocketThreadForTesting extends Thread {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ServerSocketThreadForTesting.class);
 
+	private boolean myCloseAfterEachMessage;
 	private int myConnectionCount = 0;
 	private String myContentType;
 	private boolean myDone;
 	private EncodingStyle myEncoding;
+	private boolean myGZipResponse;
 	private CountDownLatch myLatch = new CountDownLatch(1);
 	private String myMessage;
 	private int myPort;
@@ -40,8 +42,6 @@ public class ServerSocketThreadForTesting extends Thread {
 	private ServerSocket myServerSocket;
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
 	private ISocketFactory mySocketFactory;
-
-	private boolean myCloseAfterEachMessage;
 
 	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
@@ -116,13 +116,13 @@ public class ServerSocketThreadForTesting extends Thread {
 		ourLog.info("Starting server on {}", myPort);
 
 		myConnectionCount = 0;
-		
+
 		Exception ex = null;
 		try {
 			myServerSocket = mySocketFactory.createServerSocket();
-			myServerSocket.bind(new InetSocketAddress((InetAddress)null, myPort), 50);
+			myServerSocket.bind(new InetSocketAddress((InetAddress) null, myPort), 50);
 
-//			myServerSocket = new ServerSocket(myPort);
+			// myServerSocket = new ServerSocket(myPort);
 			myServerSocket.setSoTimeout(1000);
 
 			while (!myDone) {
@@ -157,6 +157,18 @@ public class ServerSocketThreadForTesting extends Thread {
 			fail(ex.getMessage());
 		}
 
+	}
+
+	public void setCloseUnexpectedlyAfterEachMessage() {
+		myCloseAfterEachMessage = true;
+	}
+
+	/**
+	 * @param theGZipResponse
+	 *            the gZipResponse to set
+	 */
+	public void setGZipResponse(boolean theGZipResponse) {
+		myGZipResponse = theGZipResponse;
 	}
 
 	/**
@@ -203,14 +215,14 @@ public class ServerSocketThreadForTesting extends Thread {
 					try {
 						int nextChar = is.read();
 						ourLog.info("Read: " + nextChar);
-						if (nextChar > 0) { 
+						if (nextChar > 0) {
 							is.unread(nextChar);
 						}
-					
+
 					} catch (SocketTimeoutException e) {
 						// ignore
 					}
-					
+
 					if (is.available() > 0) {
 						ourLog.info("Socket reader has data");
 
@@ -232,6 +244,7 @@ public class ServerSocketThreadForTesting extends Thread {
 
 						Hl7OverHttpResponseEncoder e = new Hl7OverHttpResponseEncoder();
 						e.setMessage(myReply.encode());
+						e.setGzipData(myGZipResponse);
 
 						if (mySimulateOneSecondPauseInChunkedEncoding) {
 							e.encode();
@@ -294,7 +307,7 @@ public class ServerSocketThreadForTesting extends Thread {
 						mySocket.close();
 						break;
 					}
-					
+
 				}
 			} catch (Exception e) {
 				ourLog.info("Failed!", e);
@@ -306,9 +319,5 @@ public class ServerSocketThreadForTesting extends Thread {
 		}
 
 	}
-
-	public void setCloseUnexpectedlyAfterEachMessage() {
-		myCloseAfterEachMessage = true;
-    }
 
 }

@@ -11,12 +11,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
+import ca.uhn.hl7v2.hoh.util.GZipUtils;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
-
 
 /**
  * Base class that creates HL7 over HTTP requests. This class is intended to be
@@ -25,16 +26,16 @@ import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractHl7OverHttpEncoder.class);
-
-	private String myActionLine;
-
-	private ISendable mySendable;
 	private static DateFormat ourRfc1123DateFormat;
-	
+
 	static {
 		ourRfc1123DateFormat = new SimpleDateFormat("EEE, dd MMM yy HH:mm:ss z");
 	}
-	
+
+	private String myActionLine;
+	private boolean myGzipData;
+	private ISendable<?> mySendable;
+
 	/**
 	 * Constructor
 	 */
@@ -42,23 +43,41 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		super();
 	}
 
-
 	/**
-	 * @throws EncodeException 
+	 * @throws EncodeException
 	 * 
 	 */
 	public void encode() throws EncodeException {
 		ourLog.trace("Entering encode()");
 		verifyNotUsed();
-		
+
 		if (isBlank(getMessage()) && mySendable == null) {
 			throw new IllegalStateException("Either Message or Sendable must be set");
 		}
 		if (getMessage() != null) {
-			setData(getMessage().getBytes(getCharset()));
+			byte[] bytes = getMessage().getBytes(getCharset());
+			if (myGzipData) {
+				try {
+					bytes = GZipUtils.compress(bytes);
+				} catch (IOException e) {
+					throw new EncodeException("Failed to apply GZip coding", e);
+				}
+			}
+			setData(bytes);
 		} else {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			OutputStreamWriter w = new OutputStreamWriter(bos, getCharset());
+			OutputStream os;
+			if (myGzipData) {
+				try {
+					os = new GZIPOutputStream(bos);
+				} catch (IOException e) {
+					throw new EncodeException("Failed to create GZip encoder", e);
+				}
+			} else {
+				os = bos;
+			}
+
+			OutputStreamWriter w = new OutputStreamWriter(os, getCharset());
 			try {
 				mySendable.writeMessage(w);
 			} catch (IOException e) {
@@ -70,7 +89,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		setActionLineAppropriately();
 
 		setHeaders(new LinkedHashMap<String, String>());
-		
+
 		StringBuilder ctBuilder = new StringBuilder();
 		if (mySendable != null) {
 			ctBuilder.append(mySendable.getEncodingStyle().getContentType());
@@ -88,7 +107,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		synchronized (ourRfc1123DateFormat) {
 			getHeaders().put("Date", ourRfc1123DateFormat.format(new Date()));
 		}
-		
+
 		if (getSigner() != null) {
 			try {
 				getHeaders().put(HTTP_HEADER_HL7_SIGNATURE, getSigner().sign(getData()));
@@ -100,27 +119,61 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		ourLog.trace("Exiting encode()");
 	}
 
+	public void encodeToOutputStream(OutputStream theOutputStream) throws IOException, EncodeException {
+		encode();
 
-	protected abstract void addSpecificHeaders();
+		ourLog.debug("Writing HTTP action: {}", getActionLine());
 
+		OutputStreamWriter w = new OutputStreamWriter(theOutputStream, HTTPUtils.DEFAULT_CHARSET);
+		w.write(getActionLine());
+		w.write("\r\n");
 
-	protected abstract void setActionLineAppropriately();
+		for (Map.Entry<String, String> next : getHeaders().entrySet()) {
+			ourLog.debug("Writing HTTP header- {}: {}", next.getKey(), next.getValue());
+
+			w.write(next.getKey());
+			w.write(": ");
+			w.write(next.getValue());
+			w.write("\r\n");
+		}
+
+		w.write("\r\n");
+		w.flush();
+
+		ourLog.debug("Writing {} bytes of actual data", getData().length);
+		theOutputStream.write(getData());
+
+	}
 
 	/**
-	 * Provide the message to send with a {@link ISendable} instance. Either this method
-	 * OR {@link #setMessage(String)} must be called, but not both.
+	 * @return the actionLine
 	 */
-	public void setDataProvider(ISendable theSendable) {
+	public String getActionLine() {
+		return myActionLine;
+	}
+
+	/**
+	 * @param theActionLine
+	 *            the actionLine to set
+	 */
+	public void setActionLine(String theActionLine) {
+		myActionLine = theActionLine;
+	}
+
+	/**
+	 * Provide the message to send with a {@link ISendable} instance. Either
+	 * this method OR {@link #setMessage(String)} must be called, but not both.
+	 */
+	public void setDataProvider(ISendable<?> theSendable) {
 		if (getMessage() != null) {
 			throw new IllegalStateException("Message already provided");
 		}
 		mySendable = theSendable;
 	}
 
-
 	/**
-	 * Provide the message to send with a String. Either this method
-	 * OR {@link #setDataProvider(ISendable)} must be called, but not both.
+	 * Provide the message to send with a String. Either this method OR
+	 * {@link #setDataProvider(ISendable)} must be called, but not both.
 	 */
 	@Override
 	public void setMessage(String theData) {
@@ -130,47 +183,21 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 		super.setMessage(theData);
 	}
 
+	protected abstract void addSpecificHeaders();
 
-	public void encodeToOutputStream(OutputStream theOutputStream) throws IOException, EncodeException {
-		encode();
+	protected abstract void setActionLineAppropriately();
 
-		ourLog.debug("Writing HTTP action: {}", getActionLine());
-		
-		OutputStreamWriter w = new OutputStreamWriter(theOutputStream, HTTPUtils.DEFAULT_CHARSET);
-		w.write(getActionLine());
-		w.write("\r\n");
-		
-		for (Map.Entry<String, String> next : getHeaders().entrySet()) {
-			ourLog.debug("Writing HTTP header- {}: {}", next.getKey(), next.getValue());
-
-			w.write(next.getKey());
-			w.write(": ");
-			w.write(next.getValue());
-			w.write("\r\n");
-		}
-		
-		w.write("\r\n");
-		w.flush();
-		
-		ourLog.debug("Writing {} bytes of actual data", getData().length);
-		theOutputStream.write(getData());
-		
+	boolean isGzipData() {
+		return myGzipData;
 	}
 
-	
 	/**
-	 * @return the actionLine
+	 * Should the encoded data be GZipped? Note that this doesn't set any
+	 * headers indicating this fact, so it's up to callers of this method to
+	 * take care of that.
 	 */
-	public String getActionLine() {
-		return myActionLine;
-	}
-
-
-	/**
-	 * @param theActionLine the actionLine to set
-	 */
-	public void setActionLine(String theActionLine) {
-		myActionLine = theActionLine;
+	void setGzipData(boolean theGzipData) {
+		myGzipData = theGzipData;
 	}
 
 }
