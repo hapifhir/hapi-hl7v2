@@ -30,6 +30,7 @@ package ca.uhn.hl7v2.llp;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +41,15 @@ import org.slf4j.LoggerFactory;
  * implementation guide (appendix C) - this is implemented by the class 
  * MinLowerLayerProtocol.  Implementations should call the static method 
  * <code>logCharacterReceived()</code> when a character is read from a remote system.  
- * This method may or may not log receipt, as configured (see docs for this method).  
+ * This method may or may not log receipt, as configured (see docs for this method).
+ *
  * @author  Bryan Tripp
  */
 public abstract class LowerLayerProtocol {
 
     private static final Logger log = LoggerFactory.getLogger(LowerLayerProtocol.class);
-    
+    protected Charset charset;
+
     /** 
      * Returns a particular implementation of LowerLayerProtocol.
      * 
@@ -55,6 +58,15 @@ public abstract class LowerLayerProtocol {
      */
     public static LowerLayerProtocol makeLLP() {
         return new MinLowerLayerProtocol();
+    }
+
+    /**
+     * Returns a particular implementation of LowerLayerProtocol
+     * @param respectMSH18
+     * @return LowerLayerProtocol implementation
+     */
+    public static LowerLayerProtocol makeLLP(boolean respectMSH18) {
+        return new MinLowerLayerProtocol(respectMSH18);
     }
     
     /** 
@@ -84,6 +96,23 @@ public abstract class LowerLayerProtocol {
     public static void logCharacterReceived(int c) {
         log.trace("Char received: {} ({})", c, (char) c);
     }
-    
+
+    /**
+     * Provides a charset to use for character encoding
+     * @param theCharset The charset to use
+     * @since 1.3
+     */
+    public void setCharset(Charset theCharset) {
+        charset = theCharset;
+    }
+
+    /**
+     * Provides a charset to use for character encoding
+     * @param charsetName The name of the charset to use
+     * @since 2.1
+     */
+    public void setCharset(String charsetName) {
+        charset = Charset.forName(charsetName);
+    }
 }
 

@@ -27,7 +27,6 @@ package ca.uhn.hl7v2;
 
 /**
  * Error code table
- *
  */
 public enum ErrorCode {
 	MESSAGE_ACCEPTED(0, "Message accepted"), 

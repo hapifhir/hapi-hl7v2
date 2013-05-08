@@ -1,79 +1,61 @@
-package ca.uhn.hl7v2.llp;
+/*
+ The contents of this file are subject to the Mozilla Public License Version 1.1
+ (the "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ Software distributed under the License is distributed on an "AS IS" basis,
+ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
+ specific language governing rights and limitations under the License.
 
-import static ca.uhn.hl7v2.llp.MinLLPReader.END_MESSAGE;
-import static ca.uhn.hl7v2.llp.MinLLPReader.LAST_CHARACTER;
-import static ca.uhn.hl7v2.llp.MinLLPReader.START_MESSAGE;
+ The Original Code is "ExtendedMllpWriter.java".  Description:
+ "MinLLPWriter that uses a charset-aware encoder"
+
+ The Initial Developer of the Original Code is University Health Network. Copyright (C)
+ 2013.  All Rights Reserved.
+
+ Contributor(s): ______________________________________.
+
+ Alternatively, the contents of this file may be used under the terms of the
+ GNU General Public License (the "GPL"), in which case the provisions of the GPL are
+ applicable instead of those above.  If you wish to allow use of your version of this
+ file only under the terms of the GPL and not to allow others to use your version
+ of this file under the MPL, indicate your decision by deleting  the provisions above
+ and replace  them with the notice and other provisions required by the GPL License.
+ If you do not delete the provisions above, a recipient may use your version of
+ this file under either the MPL or the GPL.
+ */
+
+package ca.uhn.hl7v2.llp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.preparser.PreParser;
-
 /**
- * MLLP writer which uses the charset from the message being transmitted
+ * ExtendedMinLLPWriter uses a message-dependent encoder to obey a
+ * potentially populated field MSH-18.
+ *
+ * @author Christian Ohr
  */
-public class ExtendedMinLLPWriter implements HL7Writer {
+public class ExtendedMinLLPWriter extends HL7EncoderWriter<ExtendedMllpEncoder> {
 
-	private static final Logger ourLog = LoggerFactory.getLogger(ExtendedMinLLPWriter.class);
-	private OutputStream myOutputStream;
+    public ExtendedMinLLPWriter() {
+    }
 
-	public ExtendedMinLLPWriter(OutputStream theOut) {
-		myOutputStream = theOut;
-	}
+    public ExtendedMinLLPWriter(OutputStream out) throws IOException  {
+        super(out);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized void writeMessage(String theMessage) throws LLPException, IOException {
-		Charset javaCs;
-		String[] fields;
-		try {
-			fields = PreParser.getFields(theMessage, "MSH-18(0)");
-			String charset = fields[0];
-			try {
-				javaCs = CharSetUtil.convertHL7CharacterEncodingToCharSetvalue(charset);
-			} catch (EncodingNotSupportedException e) {
-				ourLog.warn("Nonvalid charset \"" + charset + "\"- defaulting to US-ASCII", e);
-				javaCs = Charset.forName("US-ASCII");
-			}
-		} catch (HL7Exception e1) {
-			ourLog.warn("Could not detect charset - defaulting to US-ASCII", e1);
-			javaCs = Charset.forName("US-ASCII");
-		}
+    public ExtendedMinLLPWriter(OutputStream out, Charset charset) throws IOException {
+        super(out, charset, false);
+    }
 
-		myOutputStream.write(START_MESSAGE);
-		
-		/* 
-		 * NB: Use the Charset Name because #getBytes(Charset) is only available in 
-		 * JDK 6
-		 */
-		myOutputStream.write(theMessage.getBytes(javaCs.name()));
-		
-		myOutputStream.write(END_MESSAGE);
-		myOutputStream.write(LAST_CHARACTER);
-		myOutputStream.flush();
+    public ExtendedMinLLPWriter(OutputStream out, Charset charset, boolean omitBOM) throws IOException {
+        super(out, charset, omitBOM);
+    }
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized void setOutputStream(OutputStream theOut) throws IOException {
-		myOutputStream = theOut;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized void close() throws IOException {
-		myOutputStream.close();
-	}
+    @Override
+    protected ExtendedMllpEncoder initEncoder() {
+        return new ExtendedMllpEncoder(getCharset(), omitBOM);
+    }
 
 }

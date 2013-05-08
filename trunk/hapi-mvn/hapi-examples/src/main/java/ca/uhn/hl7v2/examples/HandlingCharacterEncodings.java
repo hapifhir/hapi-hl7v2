@@ -9,6 +9,7 @@ import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLLPReader;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MllpConstants;
 
 public class HandlingCharacterEncodings {
 
@@ -47,7 +48,7 @@ public class HandlingCharacterEncodings {
        * connection is established. Also note that this setting does not override individual instances 
        * where the charset has been explicitly set (such as the lines above)
        */
-      System.setProperty(MinLLPReader.CHARSET_KEY, "ISO-8859-2");
+      System.setProperty(MllpConstants.CHARSET_KEY, "ISO-8859-2");
 
       // Create an HL7 Server
 		HL7Service s = ctx.newServer(123, false);

@@ -52,6 +52,8 @@ import java.io.OutputStream;
  * </p>
  * 
  * @author Jens Kristian Villadsen from Cetrea A/S
+ * @deprecated call {@link MinLowerLayerProtocol#MinLowerLayerProtocol(boolean)} and
+ * pass <code>true</code> as argument
  */
 public class ExtendedMinLowerLayerProtocol extends LowerLayerProtocol {
 
@@ -61,7 +63,7 @@ public class ExtendedMinLowerLayerProtocol extends LowerLayerProtocol {
 	@Override
 	public HL7Reader getReader(InputStream in) throws LLPException {
 		try {
-			return new ExtendedMinLLPReader(in);
+            return new ExtendedMinLLPReader(in);
 		} catch (IOException e) {
 			throw new LLPException("Can't create MinLLPReader with the given input stream: " + e.getMessage(), e);
 		}
@@ -72,6 +74,10 @@ public class ExtendedMinLowerLayerProtocol extends LowerLayerProtocol {
 	 */
 	@Override
 	public HL7Writer getWriter(OutputStream theOut) throws LLPException {
-		return new ExtendedMinLLPWriter(theOut);
+        try {
+            return new ExtendedMinLLPWriter(theOut, charset);
+        } catch (IOException e) {
+            throw new LLPException("Can't create ExtendedMllpWriter with the given output stream: " + e.getMessage(), e);
+        }
 	}
 }

@@ -26,33 +26,27 @@
  */
 package ca.uhn.hl7v2.llp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import junit.framework.TestCase;
-
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.*;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.app.TestUtils;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v26.message.ADT_A01;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.util.RandomServerPortProvider;
+import static ca.uhn.hl7v2.llp.MllpConstants.*;
+import static org.junit.Assert.*;
 
 /**
  * Unit test class for ca.uhn.hl7v2.llp.MinLowerLayerProtocol
@@ -61,14 +55,7 @@ import ca.uhn.hl7v2.util.RandomServerPortProvider;
  */
 public class MinLowerLayerProtocolTest implements Application {
 	private static final Logger ourLog = LoggerFactory.getLogger(MinLowerLayerProtocolTest.class);
-	
-    // NB: Per the minimal lower layer protocol.
-	// character indicating the termination of an HL7 message
-    private static final char END_MESSAGE = '\u001c'; 
-    // character indicating the start of an HL7 message
-    private static final char START_MESSAGE = '\u000b';
-     // the final character of a message: a carriage return
-    private static final char LAST_CHARACTER = 13;
+
 
 	private MinLowerLayerProtocol minLowerLayerProtocol;
 	private ByteArrayInputStream inputStream;
@@ -87,7 +74,7 @@ public class MinLowerLayerProtocolTest implements Application {
 		System.setProperty("ca.uhn.hl7v2.util.status.out", "");
 		minLowerLayerProtocol = new MinLowerLayerProtocol();
 		message = "This is a test HL7 message";
-		llpEncodedMessage = (START_MESSAGE + message + END_MESSAGE + LAST_CHARACTER).getBytes();
+		llpEncodedMessage = (START_BYTE + message + END_BYTE1 + END_BYTE2).getBytes();
 		inputStream = new ByteArrayInputStream(llpEncodedMessage);
 		outputStream = new ByteArrayOutputStream();
 		myMsgCount = 0;
@@ -140,33 +127,30 @@ public class MinLowerLayerProtocolTest implements Application {
 	@Test
 	public void testReceiveWithDelayInBetween() throws Exception {
 
+        HapiContext context = new DefaultHapiContext();
 		int port = RandomServerPortProvider.findFreePort();
-		SimpleServer server = new SimpleServer(port, new MinLowerLayerProtocol(), PipeParser.getInstanceWithNoValidation());
+		HL7Service server = context.newServer(port, false);
 		server.registerApplication("*", "*", this);
-		server.start();
-		
-		Socket socket = TestUtils.acquireClientSocket(port);
-		MinLLPWriter w = new MinLLPWriter(socket.getOutputStream());
-		MinLLPReader r = new MinLLPReader(socket.getInputStream());
-		
-		ADT_A01 msg = new ADT_A01();
-		msg.initQuickstart("ADT", "A01", "T");
-		w.writeMessage(msg.encode());
-		String resp = r.getMessage();
-		ourLog.info(resp.replace("\r", "\n"));
-		
-		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
-		
-		msg = new ADT_A01();
-		msg.initQuickstart("ADT", "A01", "T");
-		w.writeMessage(msg.encode());
-		resp = r.getMessage();
-		ourLog.info(resp.replace("\r", "\n"));
+		server.startAndWait();
+
+        Connection c = context.newClient("127.0.0.1", port, false);
+        Initiator initiator = c.getInitiator();
+
+        ADT_A01 msg = new ADT_A01();
+        msg.initQuickstart("ADT", "A01", "T");
+        Message resp = initiator.sendAndReceive(msg);
+        ourLog.info(resp.encode());
+
+        Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
+
+        msg.initQuickstart("ADT", "A01", "T");
+        resp = initiator.sendAndReceive(msg);
+        ourLog.info(resp.encode());
 		
 		assertEquals(2, myMsgCount);
 		assertFalse(server.getRemoteConnections().isEmpty());
 
-		socket.close();
+		c.close();
 		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
 		assertTrue(server.getRemoteConnections().isEmpty());
 	}
