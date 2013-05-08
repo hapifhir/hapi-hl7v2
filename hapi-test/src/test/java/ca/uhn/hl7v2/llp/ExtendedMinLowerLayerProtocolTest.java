@@ -124,8 +124,8 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 				"PV1||I|1W^314^1^ITALIAN_HOSPITAL||||LOPEZ^GABRIELLA^^^DR|PRUST^RALPH^^^DR|||||||||||28^^^IHEPAM&1.3.6.1.4.1.12559.11.1.2.2.5&ISO^VN|||||||||||||||||||||||||20111219123200"; //-
 		
 		byte[] msgBytes = msg.getBytes("UTF-8");
-		msgBytes = ArrayUtils.addAll(new byte[] {MinLLPReader.START_MESSAGE}, msgBytes);
-		msgBytes = ArrayUtils.addAll(msgBytes, new byte[] {MinLLPReader.END_MESSAGE, MinLLPReader.LAST_CHARACTER});
+		msgBytes = ArrayUtils.addAll(new byte[] {MllpConstants.START_BYTE}, msgBytes);
+		msgBytes = ArrayUtils.addAll(msgBytes, new byte[] {MllpConstants.END_BYTE1, MllpConstants.END_BYTE2});
 		
 		ByteArrayInputStream bis = new ByteArrayInputStream(msgBytes);
 		
@@ -151,9 +151,9 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		LOG.debug("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
 
 		byte[] llpWrappedBytes = new byte[encodedBytes.length + 3];
-		llpWrappedBytes[0] = MinLLPReaderTest.START_MESSAGE;
-		llpWrappedBytes[llpWrappedBytes.length - 2] = MinLLPReaderTest.END_MESSAGE;
-		llpWrappedBytes[llpWrappedBytes.length - 1] = MinLLPReaderTest.LAST_CHARACTER;
+		llpWrappedBytes[0] = MllpConstants.START_BYTE;
+		llpWrappedBytes[llpWrappedBytes.length - 2] = MllpConstants.END_BYTE1;
+		llpWrappedBytes[llpWrappedBytes.length - 1] = MllpConstants.END_BYTE2;
 		System.arraycopy(encodedBytes, 0, llpWrappedBytes, 1, encodedBytes.length);
 
 		InputStream is = new ByteArrayInputStream(llpWrappedBytes);
@@ -162,27 +162,9 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		String actual = reader.getMessage();
 		String originalValue = a01.getPID().getSetIDPID().getValue();
 		String expected = encodedString.replace(originalValue, theString);
-		assertEquals(expected, actual);
+		assertEquals("Different messages for " + hl7Cs, expected, actual);
 		assertEquals(Charset.forName(javaCs), reader.getLastCharset());
 
-		// Try with the endian reversed
-		if ("UTF-16".equals(javaCs)) {
-
-			for (int i = 1; i < llpWrappedBytes.length - 2; i += 2) {
-				byte b0 = llpWrappedBytes[i];
-				byte b1 = llpWrappedBytes[i + 1];
-				llpWrappedBytes[i] = b1;
-				llpWrappedBytes[i + 1] = b0;
-			}
-
-			is = new ByteArrayInputStream(llpWrappedBytes);
-			reader = new ExtendedMinLLPReader(is);
-
-			actual = reader.getMessage();
-			assertEquals(encodedString.replace("√á√ò¬ß", theString), actual);
-			assertEquals(Charset.forName(javaCs), reader.getLastCharset());
-
-		}
 
 		/*
 		 * Test using XML encoding
@@ -197,9 +179,9 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		LOG.debug("Encoded " + encodedString.length() + " chars in " + hl7Cs + " is " + encodedBytes.length + " bytes");
 
 		llpWrappedBytes = new byte[encodedBytes.length + 3];
-		llpWrappedBytes[0] = MinLLPReaderTest.START_MESSAGE;
-		llpWrappedBytes[llpWrappedBytes.length - 2] = MinLLPReaderTest.END_MESSAGE;
-		llpWrappedBytes[llpWrappedBytes.length - 1] = MinLLPReaderTest.LAST_CHARACTER;
+		llpWrappedBytes[0] = MllpConstants.START_BYTE;
+		llpWrappedBytes[llpWrappedBytes.length - 2] = MllpConstants.END_BYTE1;
+		llpWrappedBytes[llpWrappedBytes.length - 1] = MllpConstants.END_BYTE2;
 		System.arraycopy(encodedBytes, 0, llpWrappedBytes, 1, encodedBytes.length);
 
 		is = new ByteArrayInputStream(llpWrappedBytes);
@@ -220,8 +202,8 @@ public class ExtendedMinLowerLayerProtocolTest implements Application {
 		server.start();
 
 		Socket socket = TestUtils.acquireClientSocket(port);
-		MinLLPWriter w = new MinLLPWriter(socket.getOutputStream());
-		MinLLPReader r = new MinLLPReader(socket.getInputStream());
+        ExtendedMinLLPWriter w = new ExtendedMinLLPWriter(socket.getOutputStream());
+        ExtendedMinLLPReader r = new ExtendedMinLLPReader(socket.getInputStream());
 
 		ADT_A01 msg = new ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");

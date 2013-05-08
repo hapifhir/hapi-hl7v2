@@ -32,7 +32,8 @@ import java.io.*;
 
 /**
  * An HL7Writer implements writing to an output stream using a particular lower 
- * layer protocol.  
+ * layer protocol.
+ *
  * @author Bryan Tripp
  */
 public interface HL7Writer {

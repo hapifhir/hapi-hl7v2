@@ -6,8 +6,8 @@
  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  specific language governing rights and limitations under the License.
 
- The Original Code is "ExtendedMinLLPReader.java".  Description:
- "MinLLPReader that uses a charset-aware decoder"
+ The Original Code is "ExtendedMllpEncoder.java".  Description:
+ "Encodes a String into an OutputStream, but respects a potentially populated field MSH-18"
 
  The Initial Developer of the Original Code is University Health Network. Copyright (C)
  2013.  All Rights Reserved.
@@ -26,35 +26,37 @@
 
 package ca.uhn.hl7v2.llp;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * ExtendedMllpReader uses a message-dependent decoder to respect a
- * potentially populated MSH-18.
+ * ExtendedMllpEncoder encodes a String into an OutputStream, but obeys a potentially
+ * populated field MSH-18 to determine the character set. If the field is not populated
+ * or an unknown charset name is given or MSH-18 cannot be parsed at all, a log
+ * is written and the default charset is used instead.
  *
  * @author Christian Ohr
  */
-public class ExtendedMinLLPReader extends Hl7DecoderReader<ExtendedMllpDecoder> {
+class ExtendedMllpEncoder extends MllpEncoder {
 
-    public ExtendedMinLLPReader() throws IOException {
+    private static final Logger LOG = LoggerFactory.getLogger(ExtendedMllpEncoder.class);
+
+    public ExtendedMllpEncoder(Charset charset, boolean omitBOM) {
+        super(charset, omitBOM);
     }
 
-    public ExtendedMinLLPReader(InputStream in) throws IOException {
-        super(in);
-    }
-
-    public ExtendedMinLLPReader(InputStream in, Charset charset) throws IOException {
-        super(in, charset);
-    }
-
+    /**
+     * Use the charset as specified in MSH-18, fallback to configured charset
+     * or ASCII.
+     *
+     * @param message
+     * @return encoded message
+     */
     @Override
-    protected ExtendedMllpDecoder initDecoder() {
-        return new ExtendedMllpDecoder(getCharset());
-    }
-
-    Charset getLastCharset() {
-        return getDecoder().getLastCharset();
+    protected byte[] toByteArray(String message) {
+        Charset charset = CharSetUtil.checkCharset(message, this.charset);
+        return asByteArray(message, charset, omitBOM);
     }
 }

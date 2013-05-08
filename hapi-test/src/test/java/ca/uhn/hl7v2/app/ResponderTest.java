@@ -3,14 +3,8 @@
  */
 package ca.uhn.hl7v2.app;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.Socket;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -20,6 +14,11 @@ import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for responder

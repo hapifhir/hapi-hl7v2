@@ -113,7 +113,7 @@ public class DefaultHapiContext implements HapiContext {
         setParserConfiguration(parserConfiguration);
         setValidationContext(validationContext);
         setModelClassFactory(modelClassFactory);
-        setLowerLayerProtocol(new MinLowerLayerProtocol());
+        setLowerLayerProtocol(new MinLowerLayerProtocol(false));
         setSocketFactory(new StandardSocketFactory());
         setValidationExceptionHandlerFactory(new ReportingValidationExceptionHandler(true));
         setProfileStore(ProfileStoreFactory.getProfileStore());
@@ -126,7 +126,7 @@ public class DefaultHapiContext implements HapiContext {
         setParserConfiguration(parserConfiguration);
         setValidationRuleBuilder(builder);
         setModelClassFactory(modelClassFactory);
-        setLowerLayerProtocol(new MinLowerLayerProtocol());
+        setLowerLayerProtocol(new MinLowerLayerProtocol(false));
         setSocketFactory(new StandardSocketFactory());
         setProfileStore(ProfileStoreFactory.getProfileStore());
         setCodeStoreRegistry(new DefaultCodeStoreRegistry());

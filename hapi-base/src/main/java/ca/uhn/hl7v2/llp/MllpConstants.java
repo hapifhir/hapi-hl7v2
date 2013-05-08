@@ -6,8 +6,8 @@
  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  specific language governing rights and limitations under the License.
 
- The Original Code is "ExtendedMinLLPReader.java".  Description:
- "MinLLPReader that uses a charset-aware decoder"
+ The Original Code is "MllpConstants.java".  Description:
+ "Some constants for MLLP"
 
  The Initial Developer of the Original Code is University Health Network. Copyright (C)
  2013.  All Rights Reserved.
@@ -26,35 +26,32 @@
 
 package ca.uhn.hl7v2.llp;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-
 /**
- * ExtendedMllpReader uses a message-dependent decoder to respect a
- * potentially populated MSH-18.
+ * Some constants for MLLP
  *
  * @author Christian Ohr
  */
-public class ExtendedMinLLPReader extends Hl7DecoderReader<ExtendedMllpDecoder> {
+public interface MllpConstants {
 
-    public ExtendedMinLLPReader() throws IOException {
-    }
+    public static final char START_BYTE = 0x0b;
+    public static final char END_BYTE1 = 0x1c;
+    public static final char END_BYTE2 = 0x0d;
 
-    public ExtendedMinLLPReader(InputStream in) throws IOException {
-        super(in);
-    }
-
-    public ExtendedMinLLPReader(InputStream in, Charset charset) throws IOException {
-        super(in, charset);
-    }
-
-    @Override
-    protected ExtendedMllpDecoder initDecoder() {
-        return new ExtendedMllpDecoder(getCharset());
-    }
-
-    Charset getLastCharset() {
-        return getDecoder().getLastCharset();
-    }
+    /**
+     *<p>
+     * System property: If a value is set for this property, the value
+     * is interpreted as a character set, and this characterset is
+     * used. A possible example is "UTF-8" if you are receiving messages
+     * from a system that transmits in UTF-8.
+     * </p>
+     * <p>
+     * If the system property is set to a value of "default" (in other words, a
+     * string containing only the word default), then the platform default
+     * is used.
+     * </p>
+     * <p>
+     * If the system property is not set, US-ASCII encoding is used.
+     * </p>
+     */
+    public static final String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
 }
