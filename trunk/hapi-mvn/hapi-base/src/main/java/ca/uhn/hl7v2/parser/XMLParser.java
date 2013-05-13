@@ -74,7 +74,8 @@ public abstract class XMLParser extends Parser {
 	private static final String ESCAPE_ATTRNAME = "V";
 	private static final String ESCAPE_NODENAME = "escape";
 	private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
-    private static final Pattern NS_PATTERN = Pattern.compile("xmlns(.*)=\"urn:hl7-org:v2xml\"");
+    protected static final String NS = "urn:hl7-org:v2xml";
+    private static final Pattern NS_PATTERN = Pattern.compile("xmlns(.*)=\"" + NS + "\"");
 
 	private String textEncoding;
 
@@ -278,6 +279,13 @@ public abstract class XMLParser extends Parser {
 	 */
 	public abstract Document encodeDocument(Message source) throws HL7Exception;
 
+
+    protected void assertNamespaceURI(String ns) throws HL7Exception {
+        if (!NS.equals(ns)) {
+            throw new HL7Exception("Namespace URI must be " + NS);
+        }
+    }
+
 	/**
 	 * Populates the given Segment object with data from the given XML Element.
 	 *
@@ -292,7 +300,9 @@ public abstract class XMLParser extends Parser {
 		NodeList all = segmentElement.getChildNodes();
 		for (int i = 0; i < all.getLength(); i++) {
 			String elementName = all.item(i).getNodeName();
+
 			if (all.item(i).getNodeType() == Node.ELEMENT_NODE && !done.contains(elementName)) {
+                assertNamespaceURI(all.item(i).getNamespaceURI());
 				done.add(elementName);
 
 				int index = elementName.indexOf('.');
@@ -361,7 +371,7 @@ public abstract class XMLParser extends Parser {
      * @param datatypeElement the DOM element to be parsed
      * @throws DataTypeException if the data did not match the expected type rules
 	 */
-	public void parse(Type datatypeObject, Element datatypeElement) throws DataTypeException {
+	public void parse(Type datatypeObject, Element datatypeElement) throws HL7Exception {
 		if (datatypeObject instanceof Varies) {
 			parseVaries((Varies) datatypeObject, datatypeElement);
 		} else if (datatypeObject instanceof Primitive) {
@@ -377,7 +387,7 @@ public abstract class XMLParser extends Parser {
 	 * appropriate, and then calling parse again with the new Type object.
 	 */
 	private void parseVaries(Varies datatypeObject, Element datatypeElement)
-			throws DataTypeException {
+			throws HL7Exception {
 		// figure out what data type it holds
 		// short nodeType = datatypeElement.getFirstChild().getNodeType();
 		if (!hasChildElement(datatypeElement)) {
@@ -411,7 +421,7 @@ public abstract class XMLParser extends Parser {
 	 * contains escape elements, resolve them properly.
 	 */
 	private void parsePrimitive(Primitive datatypeObject, Element datatypeElement)
-			throws DataTypeException {
+			throws HL7Exception {
 		NodeList children = datatypeElement.getChildNodes();
 		StringBuilder builder = new StringBuilder();
 		for (int c = 0; c < children.getLength(); c++) {
@@ -428,7 +438,8 @@ public abstract class XMLParser extends Parser {
 					}
 					// Check for formatting elements
 				} else if (child.getNodeType() == Node.ELEMENT_NODE
-						&& ESCAPE_NODENAME.equals(child.getNodeName())) {
+						&& ESCAPE_NODENAME.equals(child.getLocalName())) {
+                    assertNamespaceURI(child.getNamespaceURI());
 					EncodingCharacters ec = EncodingCharacters.getInstance(datatypeObject
 							.getMessage());
 					Element elem = (Element) child;
@@ -489,7 +500,7 @@ public abstract class XMLParser extends Parser {
 	 * among the children of the given Element, and calling parse(Type, Element) for each.
 	 */
 	private void parseComposite(Composite datatypeObject, Element datatypeElement)
-			throws DataTypeException {
+			throws HL7Exception {
 		if (datatypeObject instanceof GenericComposite) { // elements won't be named
 															// GenericComposite.x
 			NodeList children = datatypeElement.getChildNodes();
@@ -497,6 +508,7 @@ public abstract class XMLParser extends Parser {
 			for (int i = 0; i < children.getLength(); i++) {
 				if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
 					Element nextElement = (Element) children.item(i);
+                    assertNamespaceURI(nextElement.getNamespaceURI());
 					String localName = nextElement.getLocalName();
 					int dotIndex = localName.indexOf(".");
 					if (dotIndex > -1) {
@@ -514,7 +526,7 @@ public abstract class XMLParser extends Parser {
 		} else {
 			Type[] children = datatypeObject.getComponents();
 			for (int i = 0; i < children.length; i++) {
-				NodeList matchingElements = datatypeElement.getElementsByTagName(makeElementName(
+				NodeList matchingElements = datatypeElement.getElementsByTagNameNS(NS, makeElementName(
 						datatypeObject, i + 1));
 				if (matchingElements.getLength() > 0) {
 					parse(children[i], (Element) matchingElements.item(0)); // components don't

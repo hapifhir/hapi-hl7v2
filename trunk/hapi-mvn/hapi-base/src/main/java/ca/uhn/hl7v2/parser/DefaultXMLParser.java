@@ -152,6 +152,7 @@ public class DefaultXMLParser extends XMLParser {
         }
     }
 
+
     /**
      * <p>Creates and populates a Message object from an XML Document that contains an XML-encoded HL7 message.</p>
      * <p>The easiest way to implement this method for a particular message structure is as follows:
@@ -167,13 +168,15 @@ public class DefaultXMLParser extends XMLParser {
      * @throws EncodingNotSupportedException if the message encoded
      *     is not supported by this parser.
      */
-    public Message parseDocument(Document XMLMessage, String version) throws HL7Exception {
-        String messageName = XMLMessage.getDocumentElement().getTagName();
-        Message message = instantiateMessage(messageName, version, true);
+    public Message parseDocument(Document xmlMessage, String version) throws HL7Exception {
+
+        assertNamespaceURI(xmlMessage.getDocumentElement().getNamespaceURI());
+
+        Message message = instantiateMessage(xmlMessage.getDocumentElement().getLocalName(), version, true);
     	// Note: this will change in future to reuse the Parser's/HapiContext's
     	// ValidationContext.
         message.setValidationContext(getValidationContext());
-        parse(message, XMLMessage.getDocumentElement());
+        parse(message, xmlMessage.getDocumentElement());
         return message;
     }
 
@@ -189,8 +192,9 @@ public class DefaultXMLParser extends XMLParser {
         List<String> unparsedElementList = new ArrayList<String>();
         for (int i = 0; i < allChildNodes.getLength(); i++) {
             Node node = allChildNodes.item(i);
-            String name = node.getNodeName();
+            String name = node.getLocalName();
             if (node.getNodeType() == Node.ELEMENT_NODE && !unparsedElementList.contains(name)) {
+                assertNamespaceURI(node.getNamespaceURI());
                 unparsedElementList.add(name);                
             }
         }
@@ -274,13 +278,14 @@ public class DefaultXMLParser extends XMLParser {
     }
     
     //includes direct children only
-    private List<Element> getChildElementsByTagName(Element theElement, String theName) {
+    private List<Element> getChildElementsByTagName(Element theElement, String theName) throws HL7Exception {
     	List<Element> result = new ArrayList<Element>(10);
     	NodeList children = theElement.getChildNodes();
     	
     	for (int i = 0; i < children.getLength(); i++) {
     		Node child = children.item(i);
-    		if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(theName)) {
+    		if (child.getNodeType() == Node.ELEMENT_NODE && child.getLocalName().equals(theName)) {
+                assertNamespaceURI(child.getNamespaceURI());
     			result.add((Element)child);
     		}
     	}

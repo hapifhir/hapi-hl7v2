@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import ca.uhn.hl7v2.util.Terser;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -120,6 +121,8 @@ public class XMLParserTest {
         String xmlMessage = loadFile("/ca/uhn/hl7v2/parser/parse_and_encode_with_ns.xml");
         Message message = new DefaultXMLParser().parse(xmlMessage);
         assertEquals("2.2", message.getVersion());
+        Terser t = new Terser(message);
+        assertEquals("19951010134000", t.get("MSH-7"));
     }
 
 	/**
