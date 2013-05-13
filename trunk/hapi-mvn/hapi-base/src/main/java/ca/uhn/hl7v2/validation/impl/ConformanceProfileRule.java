@@ -65,7 +65,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
     private static final LinkedHashMap<String, RuntimeProfile> PROFILE_CACHE = new LinkedHashMap<String, RuntimeProfile>(100, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, RuntimeProfile> eldest) {
-            return true;
+            return size() > 100;
         }
     };
 
