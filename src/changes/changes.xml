@@ -40,9 +40,17 @@
                 client connection, i.e. the physical connection is established only right
                 before the first message is sent over it.
             </action>
+            <action type="fix" dev="Christian Ohr" issue="179" system="newbugs">>
+                Close open stream in Version class.
+            </action>
             <action type="add" dev="James Agnew" issue="183" system="newbugs">
             	Correcting a bug in the HL7 over HTTP client code where GZipped
             	HTTP responses are not properly interpreted as being GZipped. 
+            </action>
+            <action type="add" dev="Christian Ohr" issue="76" system="newfeatures">>
+                Reimplemented MinLLP readers and writers. MSH-18 handling is configured by the
+                parameter in the constructor MinLowerLayerProtocol(boolean).
+                ExtendedMinLowerLayerProtocol has been deprecated.
             </action>
 		</release>
         <release version="2.1" date="2013-03-21">
