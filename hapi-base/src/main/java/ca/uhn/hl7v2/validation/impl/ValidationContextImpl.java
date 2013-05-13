@@ -26,9 +26,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.validation.EncodingRule;
@@ -51,10 +49,15 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	private List<RuleBinding<MessageRule>> myMessageRuleBindings;
 	private List<RuleBinding<EncodingRule>> myEncodingRuleBindings;
 
+    protected Map<String, Collection<PrimitiveTypeRule>> primitiveRuleCache;
+    protected Map<String, Collection<MessageRule>> messageRuleCache;
+    protected Map<String, Collection<EncodingRule>> encodingRuleCache;
+
 	public ValidationContextImpl() {
 		myPrimitiveRuleBindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
 		myMessageRuleBindings = new ArrayList<RuleBinding<MessageRule>>();
 		myEncodingRuleBindings = new ArrayList<RuleBinding<EncodingRule>>();
+        initCaches();
 	}
 	
 	ValidationContextImpl(ValidationRuleBuilder builder) {
@@ -68,14 +71,33 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 				myPrimitiveRuleBindings.add((PrimitiveTypeRuleBinding)ruleBinding);
 		}
 	}
-	
 
-	/**
+    /**
+     * Initializes caches for the three rule types. Used to accelerate the identification
+     * of the rules that apply to a message or primitive.
+     *
+     * @see #newRuleCache(int)
+     * @see #primitiveRuleCache
+     * @see #messageRuleCache
+     * @see #encodingRuleCache
+     */
+    protected void initCaches() {
+        primitiveRuleCache = newRuleCache(100);
+        messageRuleCache = newRuleCache(100);
+        encodingRuleCache = newRuleCache(10);
+    }
+
+    /**
 	 * @see ValidationContext#getPrimitiveRules(String, String, Primitive)
 	 * @param theType ignored
 	 */
 	public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType) {
-		return getRules(myPrimitiveRuleBindings, theVersion, theTypeName);
+        Collection<PrimitiveTypeRule> rules = primitiveRuleCache.get(theVersion + theTypeName);
+        if (rules == null) {
+            rules = getRules(myPrimitiveRuleBindings, theVersion, theTypeName);
+            primitiveRuleCache.put(theVersion + theTypeName, rules);
+        }
+        return rules;
 	}
 
 	/**
@@ -91,7 +113,12 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 * @see ValidationContext#getMessageRules(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent) {
-		return getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent);
+        Collection<MessageRule> rules = messageRuleCache.get(theVersion + theMessageType + theTriggerEvent);
+        if (rules == null) {
+            rules = getRules(myMessageRuleBindings, theVersion, theMessageType + "^" + theTriggerEvent);
+            messageRuleCache.put(theVersion + theMessageType + theTriggerEvent, rules);
+        }
+        return rules;
 	}
 
 	/**
@@ -106,7 +133,12 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	 *      java.lang.String)
 	 */
 	public Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding) {
-		return getRules(myEncodingRuleBindings, theVersion, theEncoding);
+        Collection<EncodingRule> rules = encodingRuleCache.get(theVersion + theEncoding);
+        if (rules == null) {
+            rules = getRules(myEncodingRuleBindings, theVersion, theEncoding);
+            encodingRuleCache.put(theVersion + theEncoding, rules);
+        }
+        return rules;
 	}
 
 	/**
@@ -130,4 +162,29 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	}
 
 
+    /**
+     * Simple cache implementation that keeps at most {@link #size} elements around
+     *
+     * @param <T>
+     */
+    private static class RuleCache<T extends Rule> extends LinkedHashMap<String, Collection<T>> {
+
+        private final int size;
+
+        private RuleCache(int size) {
+            super(size);
+            this.size = size;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > size;
+        }
+
+    }
+
+    protected static <T extends Rule> Map<String, Collection<T>> newRuleCache(int size) {
+        Map<String, Collection<T>> cache = new RuleCache<T>(size);
+        return Collections.synchronizedMap(cache);
+    }
 }
