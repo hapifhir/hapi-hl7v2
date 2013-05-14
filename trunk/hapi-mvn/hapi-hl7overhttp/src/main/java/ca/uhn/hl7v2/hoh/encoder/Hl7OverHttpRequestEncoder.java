@@ -20,6 +20,7 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 	public void setPort(int thePort) {
 		myPort = thePort;
 	}
+	private boolean myAcceptGzip = false;
 
 	@Override
 	protected void addSpecificHeaders() {
@@ -34,7 +35,9 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 			getHeaders().put("Authorization", "Basic " + encoded);
 		}
 
-		getHeaders().put("Accept-Encoding", "gzip");
+		if (myAcceptGzip) {
+			getHeaders().put("Accept-Encoding", "gzip");
+		}
 		getHeaders().put("User-Agent", "HAPI (HL7 over HTTP) Client " + VersionLogger.getVersion());
 
 		StringBuilder hostBuilder = new StringBuilder();

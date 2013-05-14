@@ -34,14 +34,7 @@ public enum EncodingStyle {
 	}
 
 	private String myContentType;
-	private static final Map<String, EncodingStyle> ourContentTypes = new HashMap<String, EncodingStyle>();
 
-	static {
-		for (EncodingStyle next : values()) {
-			ourContentTypes.put(next.getContentType(), next);
-		}
-	}
-	
 	EncodingStyle(String theContentType) {
 		myContentType = theContentType;
 	}
@@ -61,13 +54,6 @@ public enum EncodingStyle {
 		return ourContentTypeToEncodingStyles.get(theContentType.toLowerCase());
 	}
 
-	/**
-	 * @throws NullPointerException if the name is null
-	 */
-	public static EncodingStyle withNameCaseInsensitive(String theName) {
-		return ourContentTypes.get(theName.toLowerCase());
-	}
-	
 	/**
 	 * Detect the encoding style of a given message
 	 * 
