@@ -97,31 +97,34 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 
 	private void decodeHeaders() throws DecodeException {
 
-		ourLog.trace("Headers are: {}", getHeaders());
+		ourLog.trace("Header map contains: {}", getHeaders());
 
 		for (Map.Entry<String, String> nextEntry : getHeaders().entrySet()) {
 			String nextHeader = nextEntry.getKey().toLowerCase();
 			String nextValue = nextEntry.getValue();
 
+			ourLog.trace("Next header: {}={}", nextHeader, nextValue);
+			
 			if ("transfer-encoding".equals(nextHeader)) {
 				if ("chunked".equalsIgnoreCase(nextValue)) {
 					myTransferEncoding = TransferEncoding.CHUNKED;
+					ourLog.trace("Found chunked transfer encoding");
 				} else {
 					throw new DecodeException("Unknown transfer encoding: " + nextValue);
 				}
 			} else if ("content-length".equals(nextHeader)) {
 				try {
 					myContentLength = Integer.parseInt(nextValue);
+					ourLog.trace("Found content length: {}", myContentLength);
 				} catch (NumberFormatException e) {
 					addConformanceProblem("Could not parse Content-Length header value: " + nextHeader);
 				}
 			} else if ("content-type".equals(nextHeader)) {
 				int colonIndex = nextValue.indexOf(';');
 				if (colonIndex == -1) {
-					myContentType = nextValue;
+					myContentType = nextValue.trim();
 				} else {
-					myContentType = nextValue.substring(0, colonIndex);
-					myEncodingStyle = EncodingStyle.withNameCaseInsensitive(myContentType);
+					myContentType = nextValue.substring(0, colonIndex).trim();
 					String charsetDef = nextValue.substring(colonIndex + 1).trim();
 					if (charsetDef.startsWith("charset=")) {
 						String charsetName = charsetDef.substring(8);
@@ -136,7 +139,8 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					}
 				}
 
-				myContentType = myContentType.trim();
+				myEncodingStyle = EncodingStyle.getEncodingStyleForContentType(myContentType);
+				ourLog.trace("Found content type {} with resolves to encoding style {}", myContentType, myEncodingStyle);
 
 			} else if ("authorization".equals(nextHeader)) {
 				int spaceIndex = nextValue.indexOf(' ');
@@ -155,9 +159,13 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 						setUsername(credentialsString.substring(0, colonIndex));
 						setPassword(credentialsString.substring(colonIndex + 1));
 					}
+					
+					ourLog.trace("Found authorization header with username: {}", getUsername());
+					
 				} else {
 					addConformanceProblem("Invalid authorization type. Only basic authorization is supported.");
 				}
+				
 			} else if ("content-encoding".equals(nextHeader)) {
 				if (StringUtils.isNotBlank(nextValue)) {
 					if ("gzip".equals(nextValue)) {
@@ -166,11 +174,17 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 						throw new DecodeException("Unknown Content-Encoding: " + nextValue);
 					}
 				}
+				ourLog.trace("Found content coding: {}", nextValue);
 			} else if (HTTP_HEADER_HL7_SIGNATURE_LC.equals(nextHeader)) {
+				ourLog.trace("Found signature: {}", nextValue);
 				mySignature = nextValue;
+			} else {
+				ourLog.trace("Ignoring header {}={}", nextHeader, nextValue);
 			}
 
 		}
+
+		ourLog.trace("Done processing headers");
 
 	}
 
