@@ -121,33 +121,40 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		Terser t = new Terser(message);
 
-		// check msg type, event type, msg struct ID
-		String msgType = t.get("/MSH-9-1");
-		if (!msgType.equals(profile.getMsgType())) {
-			HL7Exception e = new ProfileNotFollowedException("Message type " + msgType
-					+ " doesn't match profile type of " + profile.getMsgType());
-			exList.add(e);
-		}
+        checkMessageType(t.get("/MSH-9-1"), profile, exList);
+        checkEventType(t.get("/MSH-9-2"), profile, exList);
+        checkMessageStructure(t.get("/MSH-9-3"), profile, exList);
 
-		String evType = t.get("/MSH-9-2");
-		if (!evType.equals(profile.getEventType())
-				&& !profile.getEventType().equalsIgnoreCase("ALL")) {
-			HL7Exception e = new ProfileNotFollowedException("Event type " + evType
-					+ " doesn't match profile type of " + profile.getEventType());
-			exList.add(e);
-		}
-
-		String msgStruct = t.get("/MSH-9-3");
-		if (msgStruct == null || !msgStruct.equals(profile.getMsgStructID())) {
-			HL7Exception e = new ProfileNotFollowedException("Message structure " + msgStruct
-					+ " doesn't match profile type of " + profile.getMsgStructID());
-			exList.add(e);
-		}
-
-		exList.addAll(doTestGroup(message, profile, profile.getIdentifier(),
+        exList.addAll(doTestGroup(message, profile, profile.getIdentifier(),
 				validateChildren));
 		return exList.toArray(new HL7Exception[exList.size()]);
 	}
+
+
+    protected void checkEventType(String evType, StaticDef profile, List<HL7Exception> exList) throws HL7Exception {
+        if (!evType.equals(profile.getEventType())
+                && !profile.getEventType().equalsIgnoreCase("ALL")) {
+            HL7Exception e = new ProfileNotFollowedException("Event type " + evType
+                    + " doesn't match profile type of " + profile.getEventType());
+            exList.add(e);
+        }
+    }
+
+    protected void checkMessageType(String msgType, StaticDef profile, List<HL7Exception> exList) throws HL7Exception {
+        if (!msgType.equals(profile.getMsgType())) {
+            HL7Exception e = new ProfileNotFollowedException("Message type " + msgType
+                    + " doesn't match profile type of " + profile.getMsgType());
+            exList.add(e);
+        }
+    }
+
+    protected void checkMessageStructure(String msgStruct, StaticDef profile, List<HL7Exception> exList) {
+        if (msgStruct == null || !msgStruct.equals(profile.getMsgStructID())) {
+            HL7Exception e = new ProfileNotFollowedException("Message structure " + msgStruct
+                    + " doesn't match profile type of " + profile.getMsgStructID());
+            exList.add(e);
+        }
+    }
 
 	/**
 	 * Tests a group against a group section of a profile.
@@ -157,7 +164,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		return doTestGroup(group, profile, profileID, true);
 	}
 
-	private List<HL7Exception> doTestGroup(Group group, AbstractSegmentContainer profile,
+	protected List<HL7Exception> doTestGroup(Group group, AbstractSegmentContainer profile,
 			String profileID, boolean theValidateChildren) throws ProfileException {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		List<String> allowedStructures = new ArrayList<String>();
@@ -176,16 +183,13 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 							instancesWithContent.add(instance);
 					}
 
-					HL7Exception ce = testCardinality(instancesWithContent.size(), struct.getMin(),
-							struct.getMax(), struct.getUsage(), struct.getName());
-					if (ce != null)
-						exList.add(ce);
+					testCardinality(instancesWithContent.size(), struct.getMin(),
+							struct.getMax(), struct.getUsage(), struct.getName(), exList);
 
 					// test children on instances with content
 					if (theValidateChildren) {
 						for (Structure s : instancesWithContent) {
-							List<HL7Exception> childExceptions = testStructure(s, struct, profileID);
-                            exList.addAll(childExceptions);
+                            exList.addAll(testStructure(s, struct, profileID));
 						}
 					}
 
@@ -197,7 +201,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		}
 
 		// complain about X structures that have content
-        exList.addAll(checkForExtraStructures(group, allowedStructures));
+       checkForExtraStructures(group, allowedStructures, exList);
 
 		return exList;
 	}
@@ -207,9 +211,8 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 * mentioned in the profile with usage other than X). Returns a list of exceptions representing
 	 * structures that appear in the message but are not supposed to.
 	 */
-	private List<HL7Exception> checkForExtraStructures(Group group, List<String> allowedStructures)
+	protected void checkForExtraStructures(Group group, List<String> allowedStructures, List<HL7Exception> exList)
 			throws ProfileException {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		for (String childName : group.getNames()) {
 			if (!allowedStructures.contains(childName)) {
 				try {
@@ -225,7 +228,6 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 				}
 			}
 		}
-		return exList;
 	}
 
 	/**
@@ -240,16 +242,17 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 * @param name the name of the repeating structure (used in exception msg)
 	 * @return null if cardinality OK, exception otherwise
 	 */
-	protected HL7Exception testCardinality(int reps, int min, int max, String usage, String name) {
+	protected HL7Exception testCardinality(int reps, int min, int max, String usage, String name, List<HL7Exception> exList) {
 		HL7Exception e = null;
 		if (reps < min && usage.equalsIgnoreCase("R")) {
-			e = new ProfileNotFollowedException(name + " must have at least " + min
+            e = new ProfileNotFollowedException(name + " must have at least " + min
 					+ " repetitions (has " + reps + ")");
 		} else if (max > 0 && reps > max) {
-			e = new ProfileNotFollowedException(name + " must have no more than " + max
+            e = new ProfileNotFollowedException(name + " must have no more than " + max
 					+ " repetitions (has " + reps + ")");
 		}
-		return e;
+        if (e != null) exList.add(e);
+        return e;
 	}
 
 	/**
@@ -286,7 +289,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		return doTestSegment(segment, profile, profileID, true);
 	}
 
-	private List<HL7Exception> doTestSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile,
+	protected List<HL7Exception> doTestSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile,
 			String profileID, boolean theValidateChildren) throws ProfileException {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		List<Integer> allowedFields = new ArrayList<Integer>();
@@ -308,19 +311,16 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 					}
 
 					HL7Exception ce = testCardinality(instancesWithContent.size(), field.getMin(),
-							field.getMax(), field.getUsage(), field.getName());
+							field.getMax(), field.getUsage(), field.getName(), exList);
 					if (ce != null) {
 						ce.setFieldPosition(i);
-						exList.add(ce);
 					}
 
 					// test field instances with content
 					if (theValidateChildren) {
 						for (Type s : instancesWithContent) {
-							boolean escape = true; // escape field value when checking length
-							if (profile.getName().equalsIgnoreCase("MSH") && i < 3) {
-								escape = false;
-							}
+							// escape field value when checking length
+                            boolean escape = !(profile.getName().equalsIgnoreCase("MSH") && i < 3);
                             List<HL7Exception> childExceptions = doTestField(s, field, escape,
 									profileID, validateChildren);
 							for (HL7Exception ex : childExceptions) {
@@ -339,7 +339,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		}
 
 		// complain about X fields with content
-		exList.addAll(checkForExtraFields(segment, allowedFields));
+		checkForExtraFields(segment, allowedFields, exList);
 
 		for (HL7Exception ex : exList) {
             ex.setSegmentName(profile.getName());
@@ -354,11 +354,10 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 * 
 	 * @param allowedFields an array of Integers containing field #s of allowed fields
 	 */
-	private List<HL7Exception> checkForExtraFields(Segment segment, List<Integer> allowedFields)
+	protected void checkForExtraFields(Segment segment, List<Integer> allowedFields, List<HL7Exception> exList)
 			throws ProfileException {
-		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
 		for (int i = 1; i <= segment.numFields(); i++) {
-			if (!allowedFields.contains(new Integer(i))) {
+			if (!allowedFields.contains(i)) {
 				try {
 					Type[] reps = segment.getField(i);
 					for (Type rep : reps) {
@@ -374,7 +373,6 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 				}
 			}
 		}
-		return exList;
 	}
 
 	/**
@@ -385,43 +383,50 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 */
 	public List<HL7Exception> testType(Type type, AbstractComponent<?> profile, String encoded,
 			String profileID) {
-		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
+		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		if (encoded == null)
 			encoded = PipeParser.encode(type, this.enc);
 
-		HL7Exception ue = testUsage(encoded, profile.getUsage(), profile.getName());
-		if (ue != null)
-			exList.add(ue);
+		testUsage(encoded, profile.getUsage(), profile.getName(), exList);
 
 		if (!profile.getUsage().equals("X")) {
-			// check datatype
-			String typeName = type.getName();
-			if (!typeName.equals(profile.getDatatype())) {
-				exList.add(new ProfileNotHL7CompliantException("HL7 datatype " + typeName
-						+ " doesn't match profile datatype " + profile.getDatatype()));
-			}
+            checkDataType(profile.getDatatype(), type, exList);
+            checkLength(profile.getLength(), profile.getName(), encoded, exList);
+            checkConstantValue(profile.getConstantValue(), encoded, exList);
 
-			// check length
-			if (encoded.length() > profile.getLength())
-				exList.add(new ProfileNotFollowedException("The type " + profile.getName()
-						+ " has length " + encoded.length() + " which exceeds max of "
-						+ profile.getLength()));
-
-			// check constant value
-			if (profile.getConstantValue() != null && profile.getConstantValue().length() > 0) {
-				if (!encoded.equals(profile.getConstantValue()))
-					exList.add(new ProfileNotFollowedException("'" + encoded
-							+ "' doesn't equal constant value of '" + profile.getConstantValue()
-							+ "'"));
-			}
-
-            exList.addAll(testTypeAgainstTable(type, profile, profileID));
+            testTypeAgainstTable(type, profile, profileID, exList);
 		}
 
 		return exList;
 	}
 
-	/**
+    protected void checkConstantValue(String value, String encoded, List<HL7Exception> exList) {
+        // check constant value
+        if (value != null && value.length() > 0) {
+            if (!encoded.equals(value))
+                exList.add(new ProfileNotFollowedException("'" + encoded
+                        + "' doesn't equal constant value of '" + value + "'"));
+        }
+    }
+
+    protected void checkLength(long length, String name, String encoded, List<HL7Exception> exList) {
+        // check length
+        if (encoded.length() > length)
+            exList.add(new ProfileNotFollowedException("The type " + name
+                    + " has length " + encoded.length() + " which exceeds max of "
+                    + length));
+    }
+
+    protected void checkDataType(String dataType, Type type, List<HL7Exception> exList) {
+        // check datatype
+        String typeName = type.getName();
+        if (!typeName.equals(dataType)) {
+            exList.add(new ProfileNotHL7CompliantException("HL7 datatype " + typeName
+                    + " doesn't match profile datatype " + dataType));
+        }
+    }
+
+    /**
 	 * Tests whether the given type falls within a maximum length.
 	 * 
 	 * @return null of OK, an HL7Exception otherwise
@@ -445,11 +450,10 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 * @param name the name of the element (for use in exception messages)
 	 * @return null if there is no problem, an HL7Exception otherwise
 	 */
-	private HL7Exception testUsage(String encoded, String usage, String name) {
-		HL7Exception e = null;
+	protected void testUsage(String encoded, String usage, String name, List<HL7Exception> exList) {
 		if (usage.equalsIgnoreCase("R")) {
 			if (encoded.length() == 0)
-				e = new ProfileNotFollowedException("Required element " + name + " is missing");
+				exList.add(new ProfileNotFollowedException("Required element " + name + " is missing"));
 		} else if (usage.equalsIgnoreCase("RE")) {
 			// can't test anything
 		} else if (usage.equalsIgnoreCase("O")) {
@@ -460,60 +464,49 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 			// can't test anything
 		} else if (usage.equalsIgnoreCase("X")) {
 			if (encoded.length() > 0)
-				e = new XElementPresentException("Element \"" + name
-						+ "\" is present but specified as not used (X)");
+				exList.add(new XElementPresentException("Element \"" + name
+						+ "\" is present but specified as not used (X)"));
 		} else if (usage.equalsIgnoreCase("B")) {
 			// can't test anything
 		}
-		return e;
 	}
 
 	/**
 	 * Tests table values for ID, IS, and CE types. An empty list is returned for all other types or
 	 * if the table name or number is missing.
 	 */
-	private List<HL7Exception> testTypeAgainstTable(Type type, AbstractComponent<?> profile,
-			String profileID) {
-		ArrayList<HL7Exception> exList = new ArrayList<HL7Exception>();
+    protected void testTypeAgainstTable(Type type, AbstractComponent<?> profile,
+			String profileID, List<HL7Exception> exList) {
 		if (profile.getTable() != null
 				&& (type.getName().equals("IS") || type.getName().equals("ID"))) {
-			String codeSystem = makeTableName(profile.getTable());
+			String codeSystem = String.format("HL7%1$4s", profile.getTable()).replace(" ", "0");
 			String value = ((Primitive) type).getValue();
-			addTableTestResult(exList, profileID, codeSystem, value);
+			addTableTestResult(profileID, codeSystem, value, exList);
 		} else if (type.getName().equals("CE")) {
 			String value = Terser.getPrimitive(type, 1, 1).getValue();
 			String codeSystem = Terser.getPrimitive(type, 3, 1).getValue();
-			addTableTestResult(exList, profileID, codeSystem, value);
+			addTableTestResult(profileID, codeSystem, value, exList);
 
 			value = Terser.getPrimitive(type, 4, 1).getValue();
 			codeSystem = Terser.getPrimitive(type, 6, 1).getValue();
-			addTableTestResult(exList, profileID, codeSystem, value);
-		}
-		return exList;
-	}
-
-	private void addTableTestResult(List<HL7Exception> exList, String profileID,
-			String codeSystem, String value) {
-		if (codeSystem != null && value != null) {
-			HL7Exception e = testValueAgainstTable(profileID, codeSystem, value);
-			if (e != null)
-				exList.add(e);
+			addTableTestResult(profileID, codeSystem, value, exList);
 		}
 	}
 
-	private HL7Exception testValueAgainstTable(String profileID, String codeSystem, String value) {
-		HL7Exception ret = null;
-		if (!validateChildren) {
-			return ret;
+	protected void addTableTestResult(String profileID, String codeSystem, String value, List<HL7Exception> exList) {
+		if (codeSystem != null && value != null && validateChildren) {
+			testValueAgainstTable(profileID, codeSystem, value, exList);
 		}
+	}
 
+	protected void testValueAgainstTable(String profileID, String codeSystem, String value, List<HL7Exception> exList) {
 		CodeStore store = codeStore;
 		if (codeStore == null) {
 			store = getHapiContext().getCodeStoreRegistry().getCodeStore(profileID, codeSystem);
 		}
 
 		if (store == null) {
-			log.warn(
+			log.info(
 					"Not checking value {}: no code store was found for profile {} code system {}",
 					new Object[] { value, profileID, codeSystem });
 		} else {
@@ -521,15 +514,11 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 				log.warn("Not checking value {}: Don't have a table for code system {}", value,
 						codeSystem);
 			} else if (!store.isValidCode(codeSystem, value)) {
-				ret = new ProfileNotFollowedException("Code '" + value + "' not found in table "
-						+ codeSystem + ", profile " + profileID);
+				exList.add(new ProfileNotFollowedException("Code '" + value + "' not found in table "
+						+ codeSystem + ", profile " + profileID));
 			}
 		}
-		return ret;
-	}
 
-	private String makeTableName(String hl7Table) {
-        return String.format("HL7%1$4s", hl7Table).replace(" ", "0");
 	}
 
 	public List<HL7Exception> testField(Type type, Field profile, boolean escape, String profileID)
@@ -537,7 +526,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		return doTestField(type, profile, escape, profileID, true);
 	}
 
-	private List<HL7Exception> doTestField(Type type, Field profile, boolean escape, String profileID,
+	protected List<HL7Exception> doTestField(Type type, Field profile, boolean escape, String profileID,
 			boolean theValidateChildren) throws ProfileException, HL7Exception {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 
@@ -564,7 +553,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 											+ de.getMessage()));
 						}
 					}
-					exList.addAll(checkExtraComponents(comp, profile.getComponents()));
+					checkExtraComponents(comp, profile.getComponents(), exList);
 				} else {
 					exList.add(new ProfileNotHL7CompliantException("A field has type primitive "
 							+ type.getClass().getName() + " but the profile defines components"));
@@ -580,7 +569,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		return doTestComponent(type, profile, profileID, true);
 	}
 
-	private List<HL7Exception> doTestComponent(Type type, Component profile, String profileID,
+	protected List<HL7Exception> doTestComponent(Type type, Component profile, String profileID,
 			boolean theValidateChildren) throws ProfileException, HL7Exception {
 		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 		exList.addAll(testType(type, profile, null, profileID));
@@ -604,7 +593,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 					}
 				}
 
-                exList.addAll(checkExtraComponents(comp, profile.getSubComponents()));
+                checkExtraComponents(comp, profile.getSubComponents(), exList);
 			} else {
 				exList.add(new ProfileNotFollowedException("A component has primitive type "
 						+ type.getClass().getName() + " but the profile defines subcomponents"));
@@ -615,11 +604,9 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	}
 
 	/** Tests for extra components (ie any not defined in the profile) */
-	private List<HL7Exception> checkExtraComponents(Composite comp, int numInProfile)
+	protected void checkExtraComponents(Composite comp, int numInProfile, List<HL7Exception> exList)
 			throws ProfileException {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
-
-		StringBuffer extra = new StringBuffer();
+		StringBuilder extra = new StringBuilder();
 		for (int i = numInProfile; i < comp.getComponents().length; i++) {
 			try {
 				String s = PipeParser.encode(comp.getComponent(i), enc);
@@ -631,12 +618,11 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 			}
 		}
 
-		if (extra.toString().length() > 0) {
+		if (extra.length() > 0) {
 			exList.add(new XElementPresentException(
 					"The following components are not defined in the profile: " + extra.toString()));
 		}
 
-		return exList;
 	}
 
 	public static void main(String args[]) {
