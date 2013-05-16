@@ -69,6 +69,13 @@
             <version>2.5.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.xsom</groupId>
+            <artifactId>xsom</artifactId>
+            <version>20110809</version>
+            <optional>true</optional>
+        </dependency>
+
 		<!-- Maven Deps -->		
 		<dependency>
 			<groupId>org.apache.maven</groupId>
