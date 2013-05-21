@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="src/main/binresources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hapi-base"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/3.1.2.RELEASE/spring-aop-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-asm/3.1.2.RELEASE/spring-asm-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/3.1.2.RELEASE/spring-beans-3.1.2.RELEASE.jar"/>
@@ -32,7 +33,6 @@
 	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar"/>
 	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty-sslengine/6.1.26/jetty-sslengine-6.1.26.jar"/>
 	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/hapi-base"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
