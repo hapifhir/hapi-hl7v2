@@ -35,13 +35,19 @@
 				Fix the "xsdconfgen" Maven plugin so that it adds generated artifacts to the 
 				current build as resources instead of compile sources.
 			</action>
+			<action type="fix" dev="Christian Ohr" issue="179" system="newbugs">
+				Fix a minor issue in the HAPI bootstrap process where a classpath inputstream
+				wasn't closed properly, leading to weird artifacts in logs when HAPI based applications
+				are redeployed on some application servers (e.g. Glassfish 3.x).
+			</action>
+			<action type="fix" dev="James Agnew">
+				Correct an issue in hapi-hl7overhttp where the HOH Server implementations incorrectly
+				fail to detect the content type if the charset isn't specified by the client.
+			</action>
             <action type="add" dev="Christian Ohr" issue="80" system="newfeatures">>
                 Added methods to HapiContext and ConnectionHub that allow to lazily create a
                 client connection, i.e. the physical connection is established only right
                 before the first message is sent over it.
-            </action>
-            <action type="fix" dev="Christian Ohr" issue="179" system="newbugs">>
-                Close open stream in Version class.
             </action>
             <action type="add" dev="James Agnew" issue="183" system="newbugs">
             	Correcting a bug in the HL7 over HTTP client code where GZipped
@@ -51,6 +57,10 @@
                 Reimplemented MinLLP readers and writers. MSH-18 handling is configured by the
                 parameter in the constructor MinLowerLayerProtocol(boolean).
                 ExtendedMinLowerLayerProtocol has been deprecated.
+            </action>
+            <action type="add" dev="Anthony Rakic" issue="186" system="newbugs">>
+                Correct an issue with the HL7 over HTTP Relay where concurrent messages
+                being relayed at the same time may result in misdirected ACK responses.
             </action>
 		</release>
         <release version="2.1" date="2013-03-21">
