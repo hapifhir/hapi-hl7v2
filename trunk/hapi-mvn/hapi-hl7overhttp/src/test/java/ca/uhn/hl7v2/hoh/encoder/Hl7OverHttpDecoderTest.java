@@ -183,7 +183,12 @@ public class Hl7OverHttpDecoderTest {
 		byte[] sampleMessage = GZipUtils.compress(ourSampleMessageWithMultibyte.getBytes("UTF-8"));
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=UTF-8\r\n" + "Content-Length: " + sampleMessage.length + "\r\n" + "Content-Coding: gzip\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		String msg = "POST /AppName HTTP/1.1\r\n" + 
+				"Content-Type: application/hl7-v2; charset=UTF-8\r\n" + 
+				"Content-Length: " + sampleMessage.length + "\r\n" + 
+				"Content-Encoding: gzip\r\n" + 
+				"Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		
 		bos.write(msg.getBytes("ISO-8859-1"));
 		bos.write(sampleMessage);
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
