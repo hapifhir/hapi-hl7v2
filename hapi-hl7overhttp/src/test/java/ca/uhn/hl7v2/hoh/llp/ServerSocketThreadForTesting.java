@@ -1,9 +1,8 @@
 package ca.uhn.hl7v2.hoh.llp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.net.InetAddress;
@@ -11,6 +10,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -42,7 +43,12 @@ public class ServerSocketThreadForTesting extends Thread {
 	private ServerSocket myServerSocket;
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
 	private ISocketFactory mySocketFactory;
+	private LinkedList<Long> myResponseDelays = new LinkedList<Long>();
 
+	public void setResponseDelays(Long... theResponseDelays) {
+		myResponseDelays = new LinkedList<Long>(Arrays.asList(theResponseDelays));
+	}
+	
 	public ServerSocketThreadForTesting(int thePort) {
 		myPort = thePort;
 		mySocketFactory = new StandardSocketFactory();
@@ -242,6 +248,14 @@ public class ServerSocketThreadForTesting extends Thread {
 						Message parsedMessage = GenericParser.getInstanceWithNoValidation().parse(myMessage);
 						myReply = parsedMessage.generateACK();
 
+						synchronized (myResponseDelays) {
+							if (myResponseDelays.size() > 0) {
+								Long millis = myResponseDelays.removeFirst();
+								ourLog.info("Sleeping for {}ms", millis);
+								Thread.sleep(millis);
+							}
+						}
+						
 						Hl7OverHttpResponseEncoder e = new Hl7OverHttpResponseEncoder();
 						e.setMessage(myReply.encode());
 						e.setGzipData(myGZipResponse);

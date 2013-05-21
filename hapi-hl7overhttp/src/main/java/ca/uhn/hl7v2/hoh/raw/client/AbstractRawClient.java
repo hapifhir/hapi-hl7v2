@@ -259,7 +259,7 @@ public abstract class AbstractRawClient implements IClient {
 	 *             If a failure occurs while encoding the message into a
 	 *             sendable HTTP request
 	 */
-	public IReceivable<String> sendAndReceive(ISendable<?> theMessageToSend) throws DecodeException, IOException, EncodeException {
+	public synchronized IReceivable<String> sendAndReceive(ISendable<?> theMessageToSend) throws DecodeException, IOException, EncodeException {
 
 		Socket socket = provideSocket();
 		try {
