@@ -59,6 +59,12 @@ import java.nio.charset.UnsupportedCharsetException;
  */
 public class Base64 {
 
+	public static void main(String[] args) {
+		
+		System.out.println("basic " + encodeBase64String("cgta:d@3r$@TTg2446yhhh2h4".getBytes()));
+		
+	}
+	
 	/**
 	 * BASE32 characters are 6 bits in length. They are formed by taking a block
 	 * of 3 octets to form a 24-bit string, which is converted into 4 BASE64
