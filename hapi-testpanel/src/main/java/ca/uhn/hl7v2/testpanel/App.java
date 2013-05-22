@@ -63,7 +63,8 @@ public class App {
 		myController = new Controller();
 		
 		// only do this setup if we know this is a Mac
-		if (System.getProperty("os.name").startsWith("Mac OS X")) {
+		String osName = System.getProperty("os.name");
+		if (osName.startsWith("Mac OS X")) {
 			try {
 				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.OSXInitializer");
 				Method runMethod = clazz.getMethod("run", Controller.class);
@@ -74,7 +75,7 @@ public class App {
 		}
 		
 		// only do this setup if we know this is Windows
-		if (System.getProperty("os.name").toLowerCase().contains("win")) {
+		if (osName.toLowerCase().contains("win")) {
 			try {
 				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.WindowsInitializer");
 				Method runMethod = clazz.getMethod("run", Controller.class);
@@ -84,6 +85,17 @@ public class App {
 			}
 		}
 		
+		// only do this setup if we know this is a Mac
+		if (osName.startsWith("Linux")) {
+			try {
+				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.LinuxInitializer");
+				Method runMethod = clazz.getMethod("run", Controller.class);
+				runMethod.invoke(clazz.newInstance(), myController);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		EventQueue.invokeLater(new Runnable() {
 
 			public void run() {
