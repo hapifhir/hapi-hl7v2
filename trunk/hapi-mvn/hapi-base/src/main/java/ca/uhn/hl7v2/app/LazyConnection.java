@@ -85,6 +85,13 @@ public class LazyConnection implements Connection {
         return null;
     }
 
+	public Integer getRemotePort() {
+        if (isEstablished()) {
+            return activeConnection.getRemotePort();
+        }
+        return null;
+	}
+
     boolean isEstablished() {
         return activeConnection != null && activeConnection.isOpen();
     }
@@ -126,4 +133,5 @@ public class LazyConnection implements Connection {
             setTimeout(timeout, TimeUnit.MILLISECONDS);
         }
     }
+
 }

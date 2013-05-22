@@ -58,7 +58,21 @@ public interface Connection {
      */
     boolean isOpen();
 
+    /**
+     * Returns the address on the remote end of this connection. Note that in the case
+     * of a {@link LazyConnection} this method may return <code>null</code>.
+     * 
+     * @see #getRemotePort()
+     */
     InetAddress getRemoteAddress();
 
     ExecutorService getExecutorService();
+
+    /**
+     * Returns the port on the remote end of this connection. Note that in the case
+     * of a {@link LazyConnection} this method may return <code>null</code>.
+     * 
+     * @see #getRemoteAddress()
+     */
+	Integer getRemotePort();
 }
