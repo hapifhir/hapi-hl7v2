@@ -164,7 +164,7 @@ public class ActiveConnection implements Connection {
 	 * connected. If separate inbound and outbound sockets are used, the port of
 	 * the outbound socket is returned.
 	 */
-	public int getRemotePort() {
+	public Integer getRemotePort() {
 		Socket s = sockets.get(0);
 		return s.getPort();
 	}
