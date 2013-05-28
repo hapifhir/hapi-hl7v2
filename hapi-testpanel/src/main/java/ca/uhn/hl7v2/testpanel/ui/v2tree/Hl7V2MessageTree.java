@@ -1895,7 +1895,9 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 		public boolean isNonStandard() {
 			AbstractGroup parent = (AbstractGroup) getSegment().getParent();
-			return parent.getNonStandardNames().contains(getSegment().getName());
+			Set<String> nonStandardNames = parent.getNonStandardNames();
+			String segmentName = getSegment().getName();
+			return nonStandardNames.contains(segmentName);
 		}
 
 	}
