@@ -39,7 +39,8 @@ public class VersionLogger {
                 Properties p = new Properties();
                 p.load(is);
                 ourVersion = p.getProperty("version");
-				LOG.info("HL7 over HTTP (HAPI) library version is: " + ourVersion);
+                String build = p.getProperty("build");
+				LOG.info("HL7 over HTTP (HAPI) library version " + ourVersion + " - Build " + build);
             } catch (Exception e) {
                 // ignore
             }
