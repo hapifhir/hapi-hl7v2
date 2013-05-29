@@ -584,6 +584,9 @@ public class Controller {
 	}
 
 	public void populateWithSampleMessageAndConnections() {
+
+		// Create a new messsage and add it to the list of messages
+		
 		Hl7V2MessageCollection col = new Hl7V2MessageCollection();
 		col.setValidationContext(new DefaultValidation());
 
@@ -596,8 +599,11 @@ public class Controller {
 		col.setSourceMessage(message);
 		myMessagesList.addMessage(col);
 
+		// FInd a free port
 		int port = PortUtil.findFreePort();
 
+		// Create two connections
+		
 		InboundConnection iCon = myInboundConnectionList.createDefaultConnection(port);
 		iCon.setPersistent(true);
 		myInboundConnectionList.addConnection(iCon);
@@ -606,6 +612,8 @@ public class Controller {
 		oCon.setPersistent(true);
 		myOutboundConnectionList.addConnection(oCon);
 
+		// Select the new message 
+		
 		setLeftSelectedItem(col);
 	}
 
