@@ -30,7 +30,7 @@ import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.Message;
 
 /**
- * Base class for a textual datatype such as FT, TX, ST.
+ * Base class for a textual primitive datatypes such as FT, TX, ST.
  * 
  * @author James Agnew
  */
@@ -91,9 +91,25 @@ public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 	 * Note that the returned value from this method is an HTML snippet, not a
 	 * complete HTML document.
 	 * </p>
+	 * 
+	 * @see FormattedTextEncoder
 	 */
 	public String getValueAsHtml() {
 		return FormattedTextEncoder.getInstanceHtml().encode(getValue());
 	}
 
+	/**
+	 * Returns the value of the datatype as returned by {@link #getValue()} but
+	 * returns an empty string ("") if the value is <code>null</code>. This
+	 * method is mostly provided as a convenience in code which maps from one
+	 * format to another, since it avoids the need for some null checks.
+	 */
+	public String getValueOrEmpty() {
+		String retVal = getValue();
+		if (retVal == null) {
+			retVal = "";
+		}
+		return retVal;
+	}
+	
 }

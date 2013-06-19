@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
  * 2.7) and other encoding schemes.
  * </p>
  * <p>
+ * For now, only {@link #getInstanceHtml() HTML encoding} is supported, but others may be added.
+ * </p>
+ * <p>
  * <b>Note that this class is not threadsafe!</b> Always use a new instance
  * (from a factory method) for each invocation.
  * </p>
