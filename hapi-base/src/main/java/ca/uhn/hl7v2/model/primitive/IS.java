@@ -27,7 +27,6 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
-import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.Message;
 
 /**
@@ -49,7 +48,7 @@ import ca.uhn.hl7v2.model.Message;
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:51 $ by $Author: jamesagnew $
  */
 @SuppressWarnings("serial")
-public abstract class IS extends AbstractPrimitive {
+public abstract class IS extends AbstractTextPrimitive {
 
     private int myTable = 0;
     

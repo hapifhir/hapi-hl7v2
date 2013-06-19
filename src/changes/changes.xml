@@ -44,7 +44,7 @@
 				Correct an issue in hapi-hl7overhttp where the HOH Server implementations incorrectly
 				fail to detect the content type if the charset isn't specified by the client.
 			</action>
-            <action type="add" dev="Christian Ohr" issue="80" system="newfeatures">>
+            <action type="add" dev="Christian Ohr" issue="80" system="newfeatures">
                 Added methods to HapiContext and ConnectionHub that allow to lazily create a
                 client connection, i.e. the physical connection is established only right
                 before the first message is sent over it.
@@ -53,14 +53,19 @@
             	Correcting a bug in the HL7 over HTTP client code where GZipped
             	HTTP responses are not properly interpreted as being GZipped. 
             </action>
-            <action type="add" dev="Christian Ohr" issue="76" system="newfeatures">>
+            <action type="add" dev="Christian Ohr" issue="76" system="newfeatures">
                 Reimplemented MinLLP readers and writers. MSH-18 handling is configured by the
                 parameter in the constructor MinLowerLayerProtocol(boolean).
                 ExtendedMinLowerLayerProtocol has been deprecated.
             </action>
-            <action type="add" dev="Anthony Rakic" issue="186" system="newbugs">>
+            <action type="add" dev="Anthony Rakic" issue="186" system="newbugs">
                 Correct an issue with the HL7 over HTTP Relay where concurrent messages
                 being relayed at the same time may result in misdirected ACK responses.
+            </action>
+            <action type="add" dev="James Agnew">
+                Add a new convenience method to text primitives (ST, TX, etc.) called "getValueOrEmpty()"
+                which returns an empty string instead of null, and modify ID and IS to use the
+                AbstractTextPrimitive base class so that they can take advantage.
             </action>
 		</release>
         <release version="2.1" date="2013-03-21">
