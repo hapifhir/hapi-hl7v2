@@ -67,6 +67,11 @@
                 which returns an empty string instead of null, and modify ID and IS to use the
                 AbstractTextPrimitive base class so that they can take advantage.
             </action>
+            <action type="fix" dev="Brennan O'Banion" issue="190" system="newbugs">
+                Fix a typo in AbstractValidationExceptionHandler, where "info" severity
+                exceptions aren't handled. Thanks to Brennan O'Banion for reporting and
+                submitting a fix.
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">

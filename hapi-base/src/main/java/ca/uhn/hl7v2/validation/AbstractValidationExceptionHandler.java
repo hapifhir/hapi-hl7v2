@@ -27,7 +27,6 @@ package ca.uhn.hl7v2.validation;
 
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.HapiContextSupport;
-import ca.uhn.hl7v2.Severity;
 
 /**
  * Abstract base class of a ValidationExceptionHandler that supports a validation subject. Concrete
@@ -49,9 +48,17 @@ public abstract class AbstractValidationExceptionHandler<R> extends HapiContextS
 
     public void onExceptions(ValidationException... exceptions) {
         for (ValidationException ve : exceptions) {
-            if (ve.getSeverity() == Severity.ERROR) error(ve);
-            if (ve.getSeverity() == Severity.WARNING) warning(ve);
-            if (ve.getSeverity() == Severity.ERROR) info(ve);
+        	switch (ve.getSeverity()) {
+			case ERROR:
+				error(ve);
+				break;
+			case INFO:
+				info(ve);
+				break;
+			case WARNING:
+				warning(ve);
+				break;
+        	}
         }
     }
 
