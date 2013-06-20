@@ -32,6 +32,12 @@ import java.nio.charset.Charset;
 
 public class MinLLPReader extends Hl7DecoderReader<MllpDecoder> {
 
+	/**
+	 * @deprecated Use {@link MllpConstants#CHARSET_KEY} instead
+	 */
+	@Deprecated()
+    public static final String CHARSET_KEY = MllpConstants.CHARSET_KEY;
+
     public MinLLPReader() throws IOException {
     }
 
