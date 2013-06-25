@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.NonHl7ResponseException;
 import ca.uhn.hl7v2.hoh.sign.SignatureFailureException;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
+import ca.uhn.hl7v2.hoh.util.ByteUtils;
 import ca.uhn.hl7v2.hoh.util.GZipUtils;
 import ca.uhn.hl7v2.hoh.util.IOUtils;
 import ca.uhn.hl7v2.hoh.util.StringUtils;
@@ -48,6 +49,8 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private TransferEncoding myTransferEncoding;
 	private String mySignature;
 	private EncodingStyle myEncodingStyle;
+
+	private boolean myConnectionCloseHeaderIsPresent;
 
 	private void addConformanceProblem(String theString) {
 		ourLog.debug("Conformance problem detected: {}", theString);
@@ -111,6 +114,10 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					ourLog.trace("Found chunked transfer encoding");
 				} else {
 					throw new DecodeException("Unknown transfer encoding: " + nextValue);
+				}
+			} else if ("connection".equals(nextHeader)) {
+				if ("close".equals(nextValue)) {
+					myConnectionCloseHeaderIsPresent = true;
 				}
 			} else if ("content-length".equals(nextHeader)) {
 				try {
@@ -186,6 +193,13 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 
 		ourLog.trace("Done processing headers");
 
+	}
+
+	/**
+	 * Protected because this doesn't make sense for a sender
+	 */
+	protected boolean isConnectionCloseHeaderPresent() {
+		return myConnectionCloseHeaderIsPresent;
 	}
 
 	/**
@@ -364,6 +378,8 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	protected abstract String readActionLineAndDecode(InputStream theInputStream) throws IOException, NoMessageReceivedException, DecodeException;
 
 	private byte[] readBytesNonChunked(InputStream theInputStream) throws IOException {
+		ourLog.debug("Decoding message bytes using non-chunked encoding style");
+
 		int length = myContentLength > 0 ? myContentLength : IOUtils.DEFAULT_BUFFER_SIZE;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 
@@ -373,6 +389,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			if (myContentLength < 0) {
 				try {
 					if (theInputStream.available() <= 0) {
+						ourLog.trace("No more bytes available");
 						break;
 					}
 				} catch (IOException e) {
@@ -389,7 +406,12 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				int bytesRead = theInputStream.read(buffer, 0, max);
 				myLastStartedReading = System.currentTimeMillis();
 				if (bytesRead == -1) {
+					ourLog.trace("Read end of stream");
 					break;
+				} else {
+					if (ourLog.isTraceEnabled()) {
+						ourLog.trace("Read {} bytes from stream:\n{}", bytesRead, ByteUtils.formatBytesForLogging(bytesRead, 0, buffer));
+					}
 				}
 				bos.write(buffer, 0, bytesRead);
 			} catch (SocketTimeoutException e) {
@@ -495,6 +517,9 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 
 				String key = nextLine.substring(0, colonIndex);
 				String value = nextLine.substring(colonIndex + 1).trim();
+				
+				ourLog.debug("Read header {}={}", key,value);
+				
 				getHeaders().put(key, value);
 			}
 		}
