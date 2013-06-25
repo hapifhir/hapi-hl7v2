@@ -132,6 +132,8 @@ public abstract class AbstractRawClient implements IClient {
 	}
 
 	private IReceivable<String> doSendAndReceiveInternal(ISendable<?> theMessageToSend, Socket socket) throws IOException, DecodeException, SignatureVerificationException, EncodeException {
+		ourLog.trace("Entering doSendAndReceiveInternal()");
+		
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
 		enc.setPath(myPath);
 		enc.setHost(myHost);
@@ -164,6 +166,11 @@ public abstract class AbstractRawClient implements IClient {
 				String hostAddress = remoteSocketAddress.getAddress() != null ? remoteSocketAddress.getAddress().getHostAddress() : null;
 				response.addMetadata(MessageMetadataKeys.REMOTE_HOST_ADDRESS.name(), hostAddress);
 
+				if (d.isConnectionCloseHeaderPresent()) {
+					ourLog.debug("Found Connection=close header, closing socket");
+					closeSocket(socket);
+				}
+				
 			} catch (NoMessageReceivedException ex) {
 				ourLog.debug("No message received yet");
 			} catch (IOException e) {
@@ -171,6 +178,7 @@ public abstract class AbstractRawClient implements IClient {
 			}
 		} while (response == null && System.currentTimeMillis() < endTime);
 
+		ourLog.trace("Leaving doSendAndReceiveInternal()");
 		return response;
 	}
 

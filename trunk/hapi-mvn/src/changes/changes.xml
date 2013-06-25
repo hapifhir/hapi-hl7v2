@@ -72,6 +72,9 @@
                 exceptions aren't handled. Thanks to Brennan O'Banion for reporting and
                 submitting a fix.
             </action>
+            <action type="add" dev="James Agnew">
+                HL7 over HTTP client now properly respects "Connection=close" header in responses
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">

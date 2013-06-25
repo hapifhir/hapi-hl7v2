@@ -45,6 +45,8 @@ public class ServerSocketThreadForTesting extends Thread {
 	private ISocketFactory mySocketFactory;
 	private LinkedList<Long> myResponseDelays = new LinkedList<Long>();
 
+	private boolean myCloseNormallyAfterEachMessage;
+
 	public void setResponseDelays(Long... theResponseDelays) {
 		myResponseDelays = new LinkedList<Long>(Arrays.asList(theResponseDelays));
 	}
@@ -260,6 +262,10 @@ public class ServerSocketThreadForTesting extends Thread {
 						e.setMessage(myReply.encode());
 						e.setGzipData(myGZipResponse);
 
+						if (myCloseNormallyAfterEachMessage) {
+							e.setAddConnectionCloseHeader(true);
+						}
+						
 						if (mySimulateOneSecondPauseInChunkedEncoding) {
 							e.encode();
 							e.getHeaders().remove("Content-Length");
@@ -317,11 +323,17 @@ public class ServerSocketThreadForTesting extends Thread {
 					}
 
 					if (myCloseAfterEachMessage) {
-						ourLog.info("Slocking incoming socket...");
+						ourLog.info("Closing incoming socket...");
 						mySocket.close();
 						break;
 					}
 
+					if (myCloseNormallyAfterEachMessage) {
+						ourLog.info("Closing incoming socket...");
+						mySocket.close();
+						break;
+					}
+					
 				}
 			} catch (Exception e) {
 				ourLog.info("Failed!", e);
@@ -332,6 +344,10 @@ public class ServerSocketThreadForTesting extends Thread {
 
 		}
 
+	}
+
+	public void setCloseNormallyWithHeaderAfterEachMessage() {
+		myCloseNormallyAfterEachMessage=true;
 	}
 
 }

@@ -128,7 +128,10 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 			retVal = myIdleSocketsToTimeBecameIdle.keySet().iterator().next();
 			myIdleSocketsToTimeBecameIdle.remove(retVal);
 			if (retVal.isClosed()) {
+				ourLog.trace("Found existing remote connection to {}:{} but it was closed, to going to open a new one", getHost(), getPort());
 				retVal = connect();
+			} else {
+				ourLog.trace("Returning existing remote connection to {}:{}", getHost(), getPort());
 			}
 		}
 		return retVal;

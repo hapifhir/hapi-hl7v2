@@ -25,8 +25,6 @@ public class HohRawClientMultithreadedTest {
 	private static SingleCredentialServerCallback ourServerCallback;
 	private static ServerSocketThreadForTesting myServerSocketThread;
 
-	// TODO: Client should respect the "close" header in a response
-
 	@Test
 	public void testSendMessageSimple() throws Exception {
 
@@ -81,6 +79,65 @@ public class HohRawClientMultithreadedTest {
 		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
 		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
 		assertEquals(2, myServerSocketThread.getConnectionCount());
+
+	}
+
+	@Test
+	public void testSendMessageAndRespectCloseHeaderInResponse() throws Exception {
+
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientMultithreaded client = new HohRawClientMultithreaded("localhost", myPort, "/theUri");
+		client.setSocketTimeout(500);
+		
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+
+		myServerSocketThread.setCloseNormallyWithHeaderAfterEachMessage();
+		
+		/*
+		 * Send one message
+		 */
+		ourLog.info("*** Send message #1");
+		
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(1, myServerSocketThread.getConnectionCount());
+		
+		
+		/*
+		 * Send a second message
+		 */
+		ourLog.info("*** Send message #2");
+		
+		response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(2, myServerSocketThread.getConnectionCount());
+
+		Thread.sleep(1000);
+		
+		/*
+		 * Send a third message
+		 */
+		ourLog.info("*** Send message #3");
+		
+		response = client.sendAndReceive(new RawSendable(message));
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+		assertEquals(3, myServerSocketThread.getConnectionCount());
 
 	}
 

@@ -55,4 +55,12 @@ public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 		// responses do not need authorization
 	}
 
+	/**
+	 * Returns true if the connection=close header was present in the response
+	 */
+	@Override
+	public boolean isConnectionCloseHeaderPresent() {
+		return super.isConnectionCloseHeaderPresent();
+	}
+
 }
