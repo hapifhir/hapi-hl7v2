@@ -398,10 +398,14 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				}
 			}
 
-			int max = buffer.length;
+			int max;
 			if (myContentLength > 0) {
 				max = myContentLength - bos.size();
+				max = Math.min(max, buffer.length);
+			} else {
+				max = buffer.length;
 			}
+			
 			try {
 				int bytesRead = theInputStream.read(buffer, 0, max);
 				myLastStartedReading = System.currentTimeMillis();

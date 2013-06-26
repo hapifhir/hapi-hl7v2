@@ -75,6 +75,10 @@
             <action type="add" dev="James Agnew">
                 HL7 over HTTP client now properly respects "Connection=close" header in responses
             </action>
+            <action type="fix" dev="Paul Schwartz" issue="191" system="newbugs">
+                Fix exception when HL7 over HTTP servlet receives message larger than 4K. Thanks to
+                Paul Schwartz for contributing a bug report and pinpointing the cause.             
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
