@@ -254,6 +254,79 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 	}
 
 	@Test
+	public void testLargeMessage() throws Exception {
+
+		StringBuilder b= new StringBuilder();
+		for (int a = 0; a < 100000; a++) {
+			b.append('a');
+		}
+		
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509\r" + // -
+				"PID|||" + b + "^^^SSN^SSN^^20070103\r"; // -
+		ADT_A05 msg = new ADT_A05();
+		msg.parse(message);
+
+		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		String charsetName = "ISO-8859-2";
+		llp.setPreferredCharset(Charset.forName(charsetName));
+
+		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
+		enc.setCharset(Charset.forName(charsetName));
+		enc.setUsername("hello");
+		enc.setPassword("world");
+		enc.setMessage(message);
+		enc.encode();
+
+		String urlString = "http://localhost:" + myPort + "/";
+		ourLog.info("URL: {}", urlString);
+		URL url = new URL(urlString);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+
+		for (Entry<String, String> next : enc.getHeaders().entrySet()) {
+			conn.setRequestProperty(next.getKey(), next.getValue());
+		}
+
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(enc.getData());
+		wr.flush();
+
+		// Get Response
+		InputStream is;
+		try {
+			is = conn.getInputStream();
+		} catch (IOException e) {
+			if (conn.getResponseCode() == 400 || conn.getResponseCode() == 500) {
+				is = conn.getErrorStream();
+			} else {
+				throw e;
+			}
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		String responseString = response.toString();
+		ourLog.info("Response:\n{}", responseString);
+
+		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
+		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals(200, conn.getResponseCode());
+		assertEquals(message, myMessage);
+		assertEquals(myResponse, responseString);
+
+	}
+
+	@Test
 	public void testServletAR() throws Exception {
 
 		String message = // -
