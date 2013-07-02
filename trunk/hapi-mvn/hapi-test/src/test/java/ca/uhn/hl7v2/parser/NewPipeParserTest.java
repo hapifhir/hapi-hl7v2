@@ -32,6 +32,7 @@ import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.message.ADT_A04;
 import ca.uhn.hl7v2.model.v23.message.SIU_S12;
+import ca.uhn.hl7v2.model.v23.message.SIU_S14;
 import ca.uhn.hl7v2.model.v231.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
@@ -732,7 +733,7 @@ public class NewPipeParserTest {
 				+ "AIP|2|2|33043^AUNE^KELLY|^1\r" + "RGS|3|3|abc\r" + "AIS|3|3|G014045^ANGIOPLASTY|20100406161000|||5\r" + "AIG|3|3|102694|STAFF|||||20100407214000\r" + "AIL|3|3|OR 4^OR 4|||||||0\r" + "AIP|3|3|102694^ANGELINI^MARK|^1\r" + "RGS|4|4|abc\r"
 				+ "AIS|4|4|G11045^BYPASS AORTOCORONARY LITA|20100406161000|||60\r" + "AIG|4|4|T1240UHN|STAFF|||||20100407214500\r" + "AIL|4|4|OR 4^OR 4|||||||0\r" + "AIP|4|4|T1240UHN^ASTA^JOHN|^1\r";
 
-		SIU_S12 parsed = (SIU_S12) parser.parse(messageText);
+		SIU_S14 parsed = (SIU_S14) parser.parse(messageText);
 		assertEquals("1", parsed.getRESOURCES(0).getRGS().getSetIDRGS().getValue());
 		assertEquals("2", parsed.getRESOURCES(1).getRGS().getSetIDRGS().getValue());
 		assertEquals("3", parsed.getRESOURCES(2).getRGS().getSetIDRGS().getValue());
