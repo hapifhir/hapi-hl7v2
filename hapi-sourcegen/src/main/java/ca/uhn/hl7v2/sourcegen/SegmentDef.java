@@ -183,6 +183,9 @@ public class SegmentDef implements StructureDef {
 	 * @param theAssociatedStructures the associatedStructures to set
 	 */
 	public void addAssociatedStructure(String theAssociatedStructure) {
+		if (getAssociatedStructures().contains(theAssociatedStructure)) {
+			return;
+		}
 		getAssociatedStructures().add(theAssociatedStructure);
 		Collections.sort(getAssociatedStructures());
 	}

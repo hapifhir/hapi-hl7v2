@@ -300,6 +300,7 @@ public class SuperStructureMojo extends AbstractMojo {
 					Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
 					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 						if (nextEntry.getValue().equals(next.getName())) {
+							seg.addAssociatedStructure(nextEntry.getValue());
 							seg.addAssociatedStructure(nextEntry.getKey());
 						}
 					}

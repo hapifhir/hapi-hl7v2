@@ -90,6 +90,14 @@
                 Fix exception when HL7 over HTTP servlet receives message larger than 4K. Thanks to
                 Paul Schwartz for contributing a bug report and pinpointing the cause.             
             </action>
+            <action type="fix" dev="James Agnew" issue="192" system="newbugs">
+            	Fix problem where Superstructures (such as 
+            	<![CDATA[
+            	<a href="./v25/apidocs/ca/uhn/hl7v2/model/v25/message/ADT_AXX.html">this one</a>
+            	]]>
+            	) do not support all of the types they should. For example, ADT_AXX would allow an
+            	ADT^A04 message to parse, but not an ADT^A01. This is now fixed.
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
