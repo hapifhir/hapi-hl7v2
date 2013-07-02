@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.app.ServerConfiguration;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -225,6 +226,10 @@ public abstract class HapiContextSupport {
 
 		public void setValidationRuleBuilder(ValidationRuleBuilder ruleBuilder) {
 			throw new UnsupportedOperationException("Read-only instance");
+		}
+
+		public ServerConfiguration getServerConfiguration() {
+			return context.getServerConfiguration();
 		}
 		
 		

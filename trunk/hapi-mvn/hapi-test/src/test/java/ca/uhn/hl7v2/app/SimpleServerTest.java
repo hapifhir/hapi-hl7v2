@@ -1,6 +1,9 @@
 package ca.uhn.hl7v2.app;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
+import ca.uhn.hl7v2.app.ServerConfiguration.ApplicationExceptionPolicy;
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.HL7Writer;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -93,15 +96,16 @@ public class SimpleServerTest implements ConnectionListener {
 
 		port = RandomServerPortProvider.findFreePort();
 		ctx = new DefaultHapiContext();
-		ctx.setLowerLayerProtocol(new ExtendedMinLowerLayerProtocol());
+		ctx.setLowerLayerProtocol(new MinLowerLayerProtocol(true));
 
 		SimpleServer srv = ctx.newServer(port, false);
 		srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
 		srv.startAndWait();
 
+		Socket socket=null;
 		try {
 
-			Socket socket = new Socket();
+			socket = new Socket();
 			socket.setSoTimeout(1000);
 			socket.connect(new InetSocketAddress("localhost", port));
 
@@ -117,6 +121,7 @@ public class SimpleServerTest implements ConnectionListener {
 
 		} finally {
 			srv.stop();
+			socket.close();
 		}
 	}
 
@@ -147,6 +152,7 @@ public class SimpleServerTest implements ConnectionListener {
 	}
 
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testShutdownCleanly() throws InterruptedException, IOException {
 
@@ -236,6 +242,67 @@ public class SimpleServerTest implements ConnectionListener {
 		}
 	}
 
+	@Test
+	public void testDontGenerateNakForError() throws InterruptedException, HL7Exception, IOException, LLPException {
+		ADT_A01 a01 = new ADT_A01();
+		a01.initQuickstart("ADT", "A01", "P");
+		a01.getMSH().getMsh18_CharacterSet(0).parse("ISO-8859-2");
+
+		port = RandomServerPortProvider.findFreePort();
+		DefaultHapiContext ctx = new DefaultHapiContext();
+		ctx.getServerConfiguration().setApplicationExceptionPolicy(ApplicationExceptionPolicy.DO_NOT_RESPOND);
+		SimpleServer server = ctx.newServer(port, false);
+		server.registerApplication(new ErrorThrowingApplication());
+		server.startAndWait();
+		try {
+
+			Connection client = ctx.newClient("127.0.0.1", port, false);
+
+			client.getInitiator().setTimeout(1000, TimeUnit.MILLISECONDS);
+			
+			try {
+				Message response = client.getInitiator().sendAndReceive(a01);
+				fail("Received response: "+response.encode());
+			} catch (HL7Exception e) {
+				assertTrue(e.getMessage(), e.getMessage().contains("Timeout"));
+				return;
+			}
+
+		} finally {
+			server.stopAndWait();
+		}
+	}
+
+	@Test
+	public void testDontGenerateNakForHl7Exception() throws InterruptedException, HL7Exception, IOException, LLPException {
+		ADT_A01 a01 = new ADT_A01();
+		a01.initQuickstart("ADT", "A01", "P");
+		a01.getMSH().getMsh18_CharacterSet(0).parse("ISO-8859-2");
+
+		port = RandomServerPortProvider.findFreePort();
+		DefaultHapiContext ctx = new DefaultHapiContext();
+		ctx.getServerConfiguration().setApplicationExceptionPolicy(ApplicationExceptionPolicy.DO_NOT_RESPOND);
+		SimpleServer server = ctx.newServer(port, false);
+		server.registerApplication(new HL7ExceptionThrowingApplication());
+		server.startAndWait();
+		try {
+
+			Connection client = ctx.newClient("127.0.0.1", port, false);
+
+			client.getInitiator().setTimeout(1000, TimeUnit.MILLISECONDS);
+			
+			try {
+				Message response = client.getInitiator().sendAndReceive(a01);
+				fail("Received response: "+response.encode());
+			} catch (HL7Exception e) {
+				assertTrue(e.getMessage(), e.getMessage().contains("Timeout"));
+				return;
+			}
+
+		} finally {
+			server.stopAndWait();
+		}
+	}
 
 	@Test
 	public void testRecoverFromError() throws InterruptedException, HL7Exception, IOException, LLPException {
@@ -263,6 +330,7 @@ public class SimpleServerTest implements ConnectionListener {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static class MyTestMetadataApplication implements ReceivingApplication {
 
 		private Object myReceivedSendingIp;
@@ -306,4 +374,17 @@ public class SimpleServerTest implements ConnectionListener {
 
 	}
 
+	private static class HL7ExceptionThrowingApplication implements ReceivingApplication {
+
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+			throw new HL7Exception("ERROR MESSAGE");
+		}
+
+
+		public boolean canProcess(Message theMessage) {
+			return true;
+		}
+
+	}
+	
 }
