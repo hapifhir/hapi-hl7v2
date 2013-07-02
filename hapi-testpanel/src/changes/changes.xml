@@ -12,6 +12,9 @@
             <action type="fix">
             	Prevent a failure to autosave messages when TestPanel is closing if the charset has not been selected
             </action>
+            <action type="fix">
+            	Fix formatting issue when displaying sent/received messages containing HTML fragments
+            </action>
       </release>
 		<release version="2.0.1" date="">
             <action type="fix" dev="Olaf Zevenboom">
