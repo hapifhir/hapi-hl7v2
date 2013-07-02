@@ -197,7 +197,7 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 					b.append("&nbsp;");
 				}
 				b.append("</nobr></td><td><nobr>");
-				b.append(bytesB.toString().replace("<", "&lt;"));
+				b.append(bytesB.toString());
 				b.append("</nobr></td></tr><tr>");
 				charsB.setLength(0);
 				bytesB.setLength(0);
@@ -206,6 +206,8 @@ public class ActivityDetailsCellRenderer extends ActivityCellRendererBase {
 			byte nextByte = bytes[i];
 			if (nextByte < 32) {
 				charsB.append("&nbsp;");
+			} else if ((char)nextByte == '<') {
+				charsB.append("&lt;");
 			} else {
 				charsB.append(new String(new byte[] { nextByte }));
 			}
