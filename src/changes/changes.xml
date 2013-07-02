@@ -75,6 +75,17 @@
             <action type="add" dev="James Agnew">
                 HL7 over HTTP client now properly respects "Connection=close" header in responses
             </action>
+            <action type="add" dev="James Agnew">
+                Add a new method to HapiContext, getServerConfiguration. This method returns
+                a configuration bean, much like getParserConfiguration() which can be used to
+                configure receiving servers created by the given context.
+            </action>
+            <action type="add" dev="James Agnew">
+           		Add a configuration option to the new ServerConfiguration bean which sets the policy
+           		for how to handle exceptions thrown by receiving applications. This can be used to 
+           		configure HAPI to not send a response message back, which can be useful when dealing
+           		with problematic legacy systems.
+            </action>
             <action type="fix" dev="Paul Schwartz" issue="191" system="newbugs">
                 Fix exception when HL7 over HTTP servlet receives message larger than 4K. Thanks to
                 Paul Schwartz for contributing a bug report and pinpointing the cause.             

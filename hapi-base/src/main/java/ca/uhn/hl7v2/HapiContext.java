@@ -104,6 +104,13 @@ public interface HapiContext {
 	ParserConfiguration getParserConfiguration();
 
 	/**
+	 * @return the {@link ServerConfiguration} to be used by all HL7 servers obtained from this class.
+	 * @see #newServer(int, boolean)
+	 * @see #newServer(int, int, boolean)
+	 */
+	ServerConfiguration getServerConfiguration();
+
+	/**
 	 * @param configuration {@link ParserConfiguration} to be used by all parsers obtained from this
 	 *            class.
 	 */

@@ -13,10 +13,10 @@ import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
 /**
- * Contains
+ * Contains configuration which will be applied to any parsers which are a part of the given
+ * HAPI Context.
  * 
  * @see HapiContext#getParserConfiguration()
- * 
  */
 public class ParserConfiguration {
 

@@ -119,7 +119,11 @@ public class Receiver extends Service {
 		public void run() {
 			try {
 				String response = conn.getResponder().processMessage(m);
-				conn.getAckWriter().writeMessage(response);
+				if (response != null) {
+					conn.getAckWriter().writeMessage(response);
+				} else {
+					log.debug("Not responding to incoming message");
+				}
 			} catch (Exception e) {
 				log.error("Error while processing message: ", e);
 			}

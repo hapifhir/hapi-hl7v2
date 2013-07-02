@@ -83,6 +83,11 @@ public class CustomCertificateTlsSocketFactoryTest {
 		return goodClient;
 	}
 
+	public static StandardSocketFactory createNonSslServerSocketFactory() {
+		StandardSocketFactory goodClient = new StandardSocketFactory();
+		return goodClient;
+	}
+	
 	public static CustomCertificateTlsSocketFactory createTrustedClientSocketFactory() {
 		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
 		goodClient.setKeystoreFilename("src/test/resources/truststore.jks");
@@ -131,9 +136,11 @@ public class CustomCertificateTlsSocketFactoryTest {
 				myServer.bind(new InetSocketAddress(myPort));
 				myServer.setSoTimeout(3000);
 
-				SSLServerSocket ss = (SSLServerSocket) myServer;
-				ourLog.info(Arrays.asList(ss.getEnabledCipherSuites()).toString());
-
+				if (myServer instanceof SSLServerSocket) {
+					SSLServerSocket ss = (SSLServerSocket) myServer;
+					ourLog.info(Arrays.asList(ss.getEnabledCipherSuites()).toString());
+				}
+				
 				Socket socket = myServer.accept();
 				socket.setSoTimeout(2000);
 

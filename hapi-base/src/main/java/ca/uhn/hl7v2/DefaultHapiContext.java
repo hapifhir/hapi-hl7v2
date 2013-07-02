@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
+import ca.uhn.hl7v2.app.ServerConfiguration;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
@@ -84,6 +85,7 @@ public class DefaultHapiContext implements HapiContext {
     private GenericParser genericParser;
     private Validator<?> validator;
     private ValidationExceptionHandlerFactory<?> validationExceptionHandlerFactory;
+	private ServerConfiguration serverConfiguration;
 
     public DefaultHapiContext() {
         this(new DefaultModelClassFactory());
@@ -118,6 +120,7 @@ public class DefaultHapiContext implements HapiContext {
         setValidationExceptionHandlerFactory(new ReportingValidationExceptionHandler(true));
         setProfileStore(ProfileStoreFactory.getProfileStore());
         setCodeStoreRegistry(new DefaultCodeStoreRegistry());
+        setServerConfiguration(new ServerConfiguration());
     }
 
     public DefaultHapiContext(ParserConfiguration parserConfiguration,
@@ -130,6 +133,7 @@ public class DefaultHapiContext implements HapiContext {
         setSocketFactory(new StandardSocketFactory());
         setProfileStore(ProfileStoreFactory.getProfileStore());
         setCodeStoreRegistry(new DefaultCodeStoreRegistry());
+        setServerConfiguration(new ServerConfiguration());
     }
 
     public DefaultHapiContext(HapiContext context) {
@@ -338,4 +342,15 @@ public class DefaultHapiContext implements HapiContext {
     public Connection newLazyClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception {
         return getConnectionHub().attachLazily(this, host, outboundPort, inboundPort, tls);
     }
+
+	public ServerConfiguration getServerConfiguration() {
+		return this.serverConfiguration;
+	}
+
+	public void setServerConfiguration(ServerConfiguration theServerConfiguration) {
+		if (theServerConfiguration==null) {
+			throw new NullPointerException("Server configuration can not be null");
+		}
+		serverConfiguration = theServerConfiguration;
+	}
 }

@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.DefaultApplication;
+import ca.uhn.hl7v2.app.ServerConfiguration.ApplicationExceptionPolicy;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -37,6 +39,12 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class ApplicationRouterImpl implements ApplicationRouter {
 
+	/**
+	 * The default acknowledgment code used in MSA-1 when generating a NAK (negative ACK) message
+	 * as a result of a processing exception. 
+	 */
+	public static final AcknowledgmentCode DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE = AcknowledgmentCode.AE;
+
 	private static final Logger log = LoggerFactory.getLogger(ApplicationRouterImpl.class);
     
     /**
@@ -47,15 +55,16 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 
     private List<Binding> myBindings;
     private Parser myParser;
-
 	private ReceivingApplicationExceptionHandler myExceptionHandler;
+	private HapiContext myContext;
     
 
     /**
-     * Creates an instance that uses a <code>GenericParser</code>. 
+     * Creates an instance that uses a <code>GenericParser</code>.
      */
+	@Deprecated
     public ApplicationRouterImpl() {
-        init(new GenericParser());
+        this(new GenericParser());
     }
     
     /**
@@ -64,9 +73,19 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      *      Transportable
      */
     public ApplicationRouterImpl(Parser theParser) {
-        init(theParser);
+        this(theParser.getHapiContext(), theParser);
     }
-    
+
+    /**
+     * Creates an instance that uses the specified <code>Parser</code>. 
+     * @param theParser the parser used for converting between Message and 
+     *      Transportable
+     */
+    public ApplicationRouterImpl(HapiContext theContext, Parser theParser) {
+        init(theParser);
+        myContext = theContext;
+    }
+
     private void init(Parser theParser) {
         myBindings = new ArrayList<Binding>(20);
         myParser = theParser;
@@ -123,9 +142,13 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 			}
         	if (myExceptionHandler != null) {
         		outgoingMessageString = myExceptionHandler.processException(incomingMessageString, theMetadata, outgoingMessageString, e);
-        		if (outgoingMessageString == null) {
+        		
+        		if (myContext.getServerConfiguration().getApplicationExceptionPolicy() == ApplicationExceptionPolicy.DO_NOT_RESPOND) {
+        			outgoingMessageString = null;
+        		} else if (outgoingMessageString == null) {
         			throw new HL7Exception("Application exception handler may not return null");
         		}
+        		
         	}
         }
         
@@ -151,11 +174,17 @@ public class ApplicationRouterImpl implements ApplicationRouter {
                 Terser t = new Terser(response);
                 outgoingMessageCharset = t.get(METADATA_KEY_MESSAGE_CHARSET); 
             } catch (Exception e) {
-                outgoingMessageString = handleProcessMessageException(incomingMessageString, theMetadata, incomingMessageObject, e);
+            	outgoingMessageString = handleProcessMessageException(incomingMessageString, theMetadata, incomingMessageObject, e);
+            	if (myContext.getServerConfiguration().getApplicationExceptionPolicy() == ApplicationExceptionPolicy.DO_NOT_RESPOND) {
+        			outgoingMessageString = null;
+        		}
             } catch (Error e) {
             	log.debug("Caught runtime exception of type {}, going to wrap it as HL7Exception and handle it", e.getClass());
             	HL7Exception wrapped = new HL7Exception(e);
             	outgoingMessageString = handleProcessMessageException(incomingMessageString, theMetadata, incomingMessageObject, wrapped);
+            	if (myContext.getServerConfiguration().getApplicationExceptionPolicy() == ApplicationExceptionPolicy.DO_NOT_RESPOND) {
+        			outgoingMessageString = null;
+        		}
             }
         }
         
@@ -352,7 +381,17 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 	public String logAndMakeErrorMessage(Exception e, Segment inHeader,
 			Parser p, String encoding) throws HL7Exception {
 
-		log.error("Attempting to send error message to remote system.", e);
+		switch (myContext.getServerConfiguration().getApplicationExceptionPolicy()) {
+		case DO_NOT_RESPOND:
+			log.error("Application exception detected, not going to send a response back to the client", e);
+			break;
+		case DEFAULT:
+		default:
+			log.error("Attempting to send error message to remote system.", e);
+			break;
+		}
+		
+		
 		
 		HL7Exception hl7e = e instanceof HL7Exception ? 
 				(HL7Exception) e :
@@ -373,7 +412,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 				((GenericMessage)in).initQuickstart("ACK", "", "");
 			}
 			
-			out = in.generateACK(AcknowledgmentCode.AE, hl7e);
+			out = in.generateACK(DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE, hl7e);
 			
 			if (encoding != null) {
 				errorMessage = p.encode(out, encoding);
