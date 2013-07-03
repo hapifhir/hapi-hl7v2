@@ -75,7 +75,7 @@ public interface MessageVisitor {
     /**
      * Enters a field. Note that a field is *not* a physical part of the HAPI
      * model class hierarchy; it merely encapsulates all repetitions of a specific
-     * fields along with its substructures. 
+     * field along with its substructures.
      * 
      * @param field field
      * @param location Location object describing the location within the message
@@ -87,7 +87,7 @@ public interface MessageVisitor {
     /**
      * Leaves a field. Note that a field is *not* a physical part of the HAPI
      * model class hierarchy; it merely encapsulates all repetitions of a specific
-     * fields along with its substructures. 
+     * field along with its substructures.
      * 
      * @param field field
      * @param location Location object describing the location within the message

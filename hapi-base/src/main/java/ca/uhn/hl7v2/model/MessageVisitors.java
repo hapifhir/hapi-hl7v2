@@ -80,7 +80,7 @@ public final class MessageVisitors {
         @Override
         public boolean start(Segment segment, Location location) throws HL7Exception {
             super.start(segment, location);
-            return false;
+            return false; // don't descend into fields
         }
 
         @Override

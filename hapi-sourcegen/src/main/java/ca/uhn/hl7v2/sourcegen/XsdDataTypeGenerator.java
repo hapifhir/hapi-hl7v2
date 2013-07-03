@@ -27,6 +27,7 @@
 package ca.uhn.hl7v2.sourcegen;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -70,11 +71,10 @@ public class XsdDataTypeGenerator {
     }
 
     public void parse(Version version) throws Exception {
-
         XSOMParser parser = new XSOMParser();
         String dir = String.format("/hl7v2xsd/%s/datatypes.xsd", version.getVersion());
-        InputStream is = getClass().getResourceAsStream(dir);
-        parser.parse(is);
+        URL url = getClass().getResource(dir);
+        parser.parse(url);
         XSSchemaSet result = parser.getResult();
         Iterator<XSSchema> iter = result.iterateSchema();
         while (iter.hasNext()) {
@@ -89,6 +89,7 @@ public class XsdDataTypeGenerator {
     private void parsePrimitives(XSSchema schema, Version version) throws Exception {
         List<DatatypeDef> primitiveTypes = new ArrayList<DatatypeDef>();
         Iterator<XSType> types = schema.iterateTypes();
+
         while (types.hasNext()) {
             XSType type = types.next();
             String dataTypeName = type.getName();
@@ -120,12 +121,14 @@ public class XsdDataTypeGenerator {
 
             if (isRealComposite(dataTypeName)) {
                 DatatypeDef compositeType = new DatatypeDef(dataTypeName, dataTypeName);
+                // Extract list of components from the composite type
                 XSParticle[] children = complexType
                         .getContentType()
                         .asParticle()
                         .getTerm()
                         .asModelGroup()
                         .getChildren();
+                // Iterate over all components
                 for (int i = 0; i < children.length; i++) {
                     XSAttGroupDecl attrGroup = children[i]
                             .getTerm()

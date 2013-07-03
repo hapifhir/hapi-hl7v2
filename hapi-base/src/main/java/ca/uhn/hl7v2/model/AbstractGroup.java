@@ -678,8 +678,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * of them.
      *
      * @param visitor MessageVisitor instance to be called back.
-     * @param index index of the group
-     * @param repetition repetition of the group
+     * @param Location location of the group
      * @return true if visiting shall continue, false if not
      * @throws HL7Exception
      */
