@@ -142,8 +142,10 @@ public enum Version {
 	}
 
 	public String modelPackageName() {
+        String classname = getClass().getName();
+        String p = classname.substring(0, classname.lastIndexOf("."));
 		return String
-				.format("%s.model.%s.", getClass().getPackage().getName(), getPackageVersion());
+				.format("%s.model.%s.", p, getPackageVersion());
 	}
 
 	/**
