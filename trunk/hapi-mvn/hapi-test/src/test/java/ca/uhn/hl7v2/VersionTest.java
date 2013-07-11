@@ -40,4 +40,8 @@ public class VersionTest {
 	@Test public void testLowestAvailableVersion() {
 		assertNotNull(Version.lowestAvailableVersion());
 	}
+
+    @Test public void testModelPackageName() {
+        assertEquals("ca.uhn.hl7v2.model.v24.", Version.V24.modelPackageName());
+    }
 }
