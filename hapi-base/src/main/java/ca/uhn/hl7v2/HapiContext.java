@@ -300,6 +300,11 @@ public interface HapiContext {
 	 * stated, the connection is established by the time this method
 	 * returns, or an exception should be thrown if the connection can not be
 	 * established. If a connection to this server already exists, it is reused.
+	 * <p>
+	 * Note that connections are pooled by the HapiContext by default. If multiple
+	 * concurrent connections to the same server are required, the easiest way
+	 * to accomplish this is currently to create multiple HapiContext instances.
+	 * </p>
 	 * 
 	 * @param host The host IP/hostname to connect to
 	 * @param port The port to connect to
@@ -316,6 +321,11 @@ public interface HapiContext {
      * Construct a new HL7 Client which will connect to an external TCP server for
      * the purpose of sending messages (and receiving responses). The connection
      * should be established by the time the first message is sent.
+	 * <p>
+	 * Note that connections are pooled by the HapiContext by default. If multiple
+	 * concurrent connections to the same server are required, the easiest way
+	 * to accomplish this is currently to create multiple HapiContext instances.
+	 * </p>
      *
      * @param host The host IP/hostname to connect to
      * @param port The port to connect to
@@ -332,6 +342,11 @@ public interface HapiContext {
      * stated, the connection is established by the time this method
      * returns, or an exception should be thrown if the connection can not be
      * established. If a connection to this server already exists, it is reused.
+	 * <p>
+	 * Note that connections are pooled by the HapiContext by default. If multiple
+	 * concurrent connections to the same server are required, the easiest way
+	 * to accomplish this is currently to create multiple HapiContext instances.
+	 * </p>
      *
      * @param host The host IP/hostname to connect to
      * @param outboundPort The port to connect to for outgoing messages
@@ -348,6 +363,11 @@ public interface HapiContext {
      * Construct a new HL7 two-port client which will connect to an external TCP server for
      * the purpose of sending messages (and receiving responses). The connection
      * should be established by the time the first message is sent.
+	 * <p>
+	 * Note that connections are pooled by the HapiContext by default. If multiple
+	 * concurrent connections to the same server are required, the easiest way
+	 * to accomplish this is currently to create multiple HapiContext instances.
+	 * </p>
      *
      * @param host The host IP/hostname to connect to
      * @param outboundPort The port to connect to for outgoing messages
