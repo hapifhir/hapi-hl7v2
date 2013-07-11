@@ -297,9 +297,9 @@ public interface HapiContext {
 	/**
 	 * Construct a new HL7 Client which will connect to an external TCP server for
 	 * the purpose of sending messages (and receiving responses). Unless otherwise
-	 * stated, the connection should be established by the time this method
+	 * stated, the connection is established by the time this method
 	 * returns, or an exception should be thrown if the connection can not be
-	 * established.
+	 * established. If a connection to this server already exists, it is reused.
 	 * 
 	 * @param host The host IP/hostname to connect to
 	 * @param port The port to connect to
@@ -316,14 +316,11 @@ public interface HapiContext {
      * Construct a new HL7 Client which will connect to an external TCP server for
      * the purpose of sending messages (and receiving responses). The connection
      * should be established by the time the first message is sent.
-     * An exception should be thrown if the connection can not be established.
      *
      * @param host The host IP/hostname to connect to
      * @param port The port to connect to
      * @param tls Whether or not to use SSL/TLS
-     * @return Returns a connection which can be used to transmit messages. Note that this method
-     *         will attempt to connect to the specified address, and will throw an exception
-     *         if it fails to connect.
+     * @return Returns a connection which can be used to transmit messages.
      * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
      * @throws HL7Exception If the connection can not be initialized for any reason
      */
@@ -332,9 +329,9 @@ public interface HapiContext {
     /**
      * Construct a new HL7 two-port client which will connect to an external TCP server for
      * the purpose of sending messages (and receiving responses). Unless otherwise
-     * stated, the connection should be established by the time this method
+     * stated, the connection is established by the time this method
      * returns, or an exception should be thrown if the connection can not be
-     * established.
+     * established. If a connection to this server already exists, it is reused.
      *
      * @param host The host IP/hostname to connect to
      * @param outboundPort The port to connect to for outgoing messages
@@ -351,15 +348,12 @@ public interface HapiContext {
      * Construct a new HL7 two-port client which will connect to an external TCP server for
      * the purpose of sending messages (and receiving responses). The connection
      * should be established by the time the first message is sent.
-     * An exception should be thrown if the connection can not be established.
      *
      * @param host The host IP/hostname to connect to
      * @param outboundPort The port to connect to for outgoing messages
      * @param inboundPort The port to connect to for inbound (response) messages
      * @param tls Whether or not to use SSL/TLS
-     * @return Returns a connection which can be used to transmit messages. Note that this method
-     *         will attempt to connect to the specified address, and will throw an exception
-     *         if it fails to connect.
+     * @return Returns a connection which can be used to transmit messages.
      * @throws HL7Exception If the connection can not be initialized for any reason
      */
     Connection newLazyClient(String host, int outboundPort, int inboundPort, boolean tls) throws HL7Exception;
