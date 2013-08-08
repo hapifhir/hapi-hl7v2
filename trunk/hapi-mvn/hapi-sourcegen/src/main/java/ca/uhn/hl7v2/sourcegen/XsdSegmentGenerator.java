@@ -41,6 +41,8 @@ import com.sun.xml.xsom.parser.XSOMParser;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create HAPI segment model classes from XML Schema files. Download the files from
@@ -53,6 +55,7 @@ import org.apache.velocity.context.Context;
  */
 public class XsdSegmentGenerator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(XsdSegmentGenerator.class);
     private static final String[] EXCLUDE_SEGMENTS = {"anyHL7Segment", "anyZSegment"};
 
     public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
@@ -63,8 +66,7 @@ public class XsdSegmentGenerator {
     public XsdSegmentGenerator(String dir, String templatePackage) throws IOException {
         File f = new File(dir);
         if (!f.isDirectory())
-            throw new IOException("Can't create file in " +
-                    dir.toString() + " - it is not a directory.");
+            throw new IOException("Can't create file in " + dir + " - it is not a directory.");
         this.targetDirectory = dir;
         this.templatePackage = templatePackage.replace(".", "/");
     }
@@ -102,6 +104,7 @@ public class XsdSegmentGenerator {
             XSElementDecl segmentDecl = segmentDecls.next();
             String segmentName = segmentDecl.getName();
             if (isRealSegment(segmentName)) {
+
                 List<SegmentElement> segmentsElements = new ArrayList<SegmentElement>();
                 XSComplexType complexType = segmentDecl.getType().asComplexType();
                 // Find and iterate over the fields of the segment
@@ -111,6 +114,7 @@ public class XsdSegmentGenerator {
                         .getTerm()
                         .asModelGroup()
                         .getChildren();
+                LOG.info("Creating segment {}, having {} children", segmentName, children.length);
                 for (int i = 0; i < children.length; i++) {
                     // Navigate to the attributes
                     if (!children[i].getTerm().isWildcard()) {
@@ -120,8 +124,13 @@ public class XsdSegmentGenerator {
                                 .getType()
                                 .asComplexType()
                                 .getAttGroups().iterator().next();
+                        LOG.info("Field {}", attrGroup.getName());
                         String fieldType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
                         String fieldDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
+                        XSAttributeUse fieldLength = attrGroup.getAttributeUse("", "maxLength");
+                        int maxLength = 0;
+                        if (fieldLength != null)
+                            maxLength = Integer.parseInt(fieldLength.getFixedValue().toString());
                         XSAttributeUse fieldTable = attrGroup.getAttributeUse("", "Table");
                         int table = 0;
                         if (fieldTable != null)
@@ -140,10 +149,11 @@ public class XsdSegmentGenerator {
                         se.table = table;
                         se.type = fieldType;
                         fixType(i + 1, version, se);
-                        se.length = 0; // Arghh. No length information in the XSDs!
+                        se.length = maxLength;
                         segmentsElements.add(se);
                     }
                 }
+                // need to add better segement description here, but nothing in XSD!
                 writeSegment(template, basePackageName, datatypePackages,
                         segmentName, segmentName, version, segmentsElements);
             }
@@ -234,10 +244,11 @@ public class XsdSegmentGenerator {
         try {
             XsdSegmentGenerator xdtg = new XsdSegmentGenerator("C:/temp", "/ca.uhn.hl7v2.sourcegen.templates");
             long start = System.currentTimeMillis();
-            for (Version version : Version.values()) {
-                System.out.println("Creating segments for " + version);
-                xdtg.parse(version);
-            }
+//            for (Version version : Version.values()) {
+//                System.out.println("Creating segments for " + version);
+//                xdtg.parse(version);
+//            }
+            xdtg.parse(Version.V25);
             System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
         } catch (Exception e) {
             e.printStackTrace();
