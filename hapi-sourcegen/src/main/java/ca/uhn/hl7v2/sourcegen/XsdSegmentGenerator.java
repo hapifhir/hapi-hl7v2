@@ -114,7 +114,7 @@ public class XsdSegmentGenerator {
                         .getTerm()
                         .asModelGroup()
                         .getChildren();
-                LOG.info("Creating segment {}, having {} children", segmentName, children.length);
+                LOG.debug("Creating segment {}, having {} children", segmentName, children.length);
                 for (int i = 0; i < children.length; i++) {
                     // Navigate to the attributes
                     if (!children[i].getTerm().isWildcard()) {
@@ -124,7 +124,7 @@ public class XsdSegmentGenerator {
                                 .getType()
                                 .asComplexType()
                                 .getAttGroups().iterator().next();
-                        LOG.info("Field {}", attrGroup.getName());
+                        LOG.debug("Field {}", attrGroup.getName());
                         String fieldType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
                         String fieldDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
                         XSAttributeUse fieldLength = attrGroup.getAttributeUse("", "maxLength");
