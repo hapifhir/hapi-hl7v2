@@ -260,7 +260,7 @@
 					</ul>
 				</p>
 				<p>
-				    <b>Response messages</b> being transmitted by a server MUST use the same
+				    <b>Non-error response messages</b> being transmitted by a server MUST use the same
 				    content type as the corresponding <b>request message</b>, if the response message
 				    payload is an HL7 v2.x message. In other words, if a request message uses XML
 				    encoding instead of ER7, the corresponding response message MUST also
@@ -296,10 +296,10 @@
 					obligated to do so.
 				</p>
 				<p>
-					An example follows which shows an ER7 encoded message being
-					transmitted.
+					An example follows which shows the Content-Type header used
+					to indicate that an ER7 encoded message is being transmitted.
 				</p>
-				<source>Content-Type: application/hl7-v2; charset=UTF-8</source>
+				<source>Content-Type: application/hl7-v2; charset=utf-8</source>
 			
 			</subsection>
 			<subsection name="2.6 Date">
@@ -315,10 +315,34 @@
 				<p><b>Implementation Consideration</b></p>
 				<p>				  
 				    Note that the HTTP Date header is not required to agree with the HL7 
-				    message timestamp found in the HL7 v2.x message within MSH-7. It is expected
+				    message timestamp found in the HL7 v2.x message within MSH-7. 
+				</p>
+				<p>
+				    The recommended use of these two dates is as follows:
+				</p>
+				<ul>
+					<li>
+						The HTTP Date header is an indication of the transmission time
+						associated with the message.	
+					</li>
+					<li>
+						The MSH-7 timestamp is an indication of the message creation time. This
+						means that if the message is created but not delivered immediately (as in 
+						the case of a guaranteed delivery queue), the MSH-7 timestamp would contain
+						an date which is earlier than the HTTP Date header.
+					</li>
+				</ul>
+
+<!-- 
+				    
+				    It is expected
 				    that these times may disagree under normal operation, such as in cases where
 				    a message sits in a guaranteed delivery queue for a period of time before 
-				    being transmitted.  
+				    being transmitted.
+
+ -->
+				<p>
+					 
 				</p>
 				
 				<p>
@@ -330,18 +354,21 @@
 			</subsection>
 									
 			<subsection name="2.7 HTTP Response Codes">
-			    
+
+				<!--			    
 			    <p>
 			    	The HL7 protocol requires that any time a message is successfully received by a 
 			    	<b>receiving application</b>, an acknowledgement message must be returned. For 
 			    	HL7 v2.x messaging, this is typically an ACK message, although other types may
 			    	apply to certain exchanges (RSP_xxx, etc.).
 			    </p>
-
+				-->
+				
 				<p>
 					If a <b>receiving application</b> is able to respond to a request by producing
 					an HL7 response payload, the HTTP status code returned MUST be a code of
-					<code>HTTP/1.1 200 OK</code>.
+					<code>HTTP/1.1 200 OK</code>. This response payload is typically an HL7 ACK message,
+					but other message types may apply to certain exchanges (e.g. RSP_xxx)
 				</p>
 			    
 			    <h4>Application Error Conditions</h4>
@@ -429,7 +456,7 @@
 			<p>
 				This specification defines three security profiles which offer various
 				levels of security. Each may be appropriate depending on the needs of the 
-				application. 
+				application.
 			</p>
 			
 			<subsection name="3.1 Intent">
@@ -457,7 +484,63 @@
 					These profiles are designed to have strict requirements, such that they
 					may be tested in a conformance environment to ensure compatibility.
 				</p>
+				
 			</subsection>			
+
+			<a name="SEC_L1"/>
+			<subsection name="3.2 Profile Matrix">
+				
+				<table>
+					<tr>
+						<td>Client Authentication</td>
+						<td>Server Authentication</td>
+						<td>Not Encrypted</td>
+						<td>TLS Encryption</td>
+					</tr>
+					<tr>
+						<td>None</td>
+						<td>None</td>
+						<td>Level 0</td>
+						<td>Level 2</td>
+					</tr>
+					<tr>
+						<td>Username/Password</td>
+						<td>None</td>
+						<td>Level 1</td>
+						<td>Level 2</td>
+					</tr>
+					<tr>
+						<td>X.509</td>
+						<td>None</td>
+						<td>N/A</td>
+						<td>Level 2</td>
+					</tr>
+					<tr>
+						<td>X.509</td>
+						<td>X.509</td>
+						<td>N/A</td>
+						<td>Level 3</td>
+					</tr>
+				</table>
+				
+			</subsection>
+
+			<a name="SEC_L1"/>
+			<subsection name="3.2 Security Profile Level 0">
+			
+				<p>
+					Security Profile Level 0 (referred to hereafter as "Level 0")
+					simply refers to any situations where the profiles below are not
+					used.  
+				</p>
+				<p>
+					Note that the use of these security profiles is not mandatory in order to
+					be conformant to the HL7 over HTTP specification. There are many situations
+					where the use of this type of transport encryption is not neccesary due to 
+					network design or other aspects of the solution design.
+				</p>
+			
+			</subsection>
 
 			<a name="SEC_L1"/>
 			<subsection name="3.2 Security Profile Level 1">
@@ -499,12 +582,12 @@
 			<subsection name="3.3 Security Profile Level 2">
 
 				<p>
-					Security Profile Level 2 (referred to hereafter as "Level 1")
+					Security Profile Level 2 (referred to hereafter as "Level 2")
 					consists of a security token used to authenticate the client
 					with the server, but additionally adds an encrypted connection.
 				</p>
 				<p>
-					<b>Sending applications</b> <b>receiving applications</b> implementing 
+					<b>Sending applications</b> and <b>receiving applications</b> implementing 
 					this profile MUST implement all functionality described in
 					<a href="#SEC_L1">Security Profile Level 1</a>.
 				</p>
@@ -521,22 +604,31 @@
 					TLS_RSA_WITH_AES_128_CBC_SHA, other ciphers MAY be chosen based on site-specific policies.
 				</p>
 				<p>
+					In addition, <b>sending applications</b> implementing this profile MUST be capable
+					of importing a public key in order to support the use of self-signed certificates.
+				</p>
+				<!-- 
+				<p>
 					To be conformant with Level 2, a <b>sending application</b> MUST be capable of negotiating
 					a TLS encrypted session with a <b>receiving application</b> which is employing a certificate
 					signed by a well-known Certificate Authority. In addition, a <b>sending application</b> MUST
 					be capable of using an exported public key from a private key in use in the 
 					<b>receiving application</b>  
 				</p>
+				-->
 				
 			</subsection>
 
 			<subsection name="3.4 Security Profile Level 3">
 			
 				<p>
-					Sending and receiving applications implementing this profile SHOULD support mutual
-					authentication as specified in the TLS specification. Here, the client additionally presents a
-					X.509 client certificate to the server in order to authenticate its access. In this case,
-					HTTP Basic Authentication SHOULD NOT be used.
+					<b>Sending applications</b> and <b>receiving applications</b> implementing this 
+					profile MUST support mutual	authentication as specified in the TLS specification. 
+					Here, the client additionally presents a X.509 client certificate to the server 
+					in order to authenticate its access. 
+				</p>
+				<p>
+					Where Level 3 is being used, HTTP Basic Authentication (specified in Level 1) MAY be omitted.
 				</p>
 				
 			</subsection>
@@ -558,7 +650,7 @@
 					will be processed in a different order than the one in which
 					they were generated. Because message sequence is often important
 					in HL7 v2.x transactional messaging, implementers should consider
-					enabling the HL7 Sequence Number Protocol in where possible.
+					enabling the HL7 Sequence Number Protocol where possible.
 				</p>
 			</subsection>
 		
