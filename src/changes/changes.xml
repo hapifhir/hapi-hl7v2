@@ -104,6 +104,10 @@
             	grab its contents. This is now corrected. Thanks to Ryan Baldwin for
             	the diagnosis.
             </action>
+            <action type="add" dev="James Agnew">
+            	HL7 over HTTP client now comes with several configuration options to
+            	set the socket properties (SO_timeout, Keepalive, etc.)
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">

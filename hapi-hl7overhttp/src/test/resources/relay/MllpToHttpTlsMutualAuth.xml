@@ -33,6 +33,16 @@
         <!-- Provide the socket factory to the sender -->
         <property name="socketFactory" ref="theSocketFactory"/>
         
+        <!-- Sets the socket SO timeout value (default is 5000, previously was 500) -->
+        <property name="soTimeout" value="10000" />
+
+        <!-- Enables TCP KeepAlive (default is true, previously was false) -->
+        <property name="keepAlive" value="true" />
+        
+        <!-- If set to 1+ (default is 0), messages will be retried up to 
+             N times before giving up in the case of IO failures -->
+        <property name="ioRetries" value="2" />
+
     </bean>
     
     <bean class="ca.uhn.hl7v2.hoh.relay.Binder">

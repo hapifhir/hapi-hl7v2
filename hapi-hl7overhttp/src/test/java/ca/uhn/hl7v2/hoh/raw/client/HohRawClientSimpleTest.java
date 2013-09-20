@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.hoh.raw.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,8 +11,6 @@ import org.apache.log4j.LogManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
-import org.springframework.util.Log4jConfigurer;
 
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
@@ -33,7 +32,6 @@ public class HohRawClientSimpleTest {
 	private static ServerSocketThreadForTesting myServerSocketThread;
 	private Level myExistingLogLevel;
 
-	// TODO: Client should respect the "close" header in a response
 
 	@Test
 	public void testSendMessageSimple() throws Exception {
@@ -57,7 +55,7 @@ public class HohRawClientSimpleTest {
 		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
 
 	}
-	
+
 	
 	@Test
 	public void testSendMessageAndRespectCloseHeaderInResponse() throws Exception {
@@ -175,6 +173,38 @@ public class HohRawClientSimpleTest {
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
 		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
+		client.setSoTimeout(500);
+		client.setResponseTimeout(2000);
+		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
+		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));
+
+		ourLog.info("Received response");
+
+		assertEquals(message, myServerSocketThread.getMessage());
+		assertEquals(myServerSocketThread.getReply().encode(), response.getMessage());
+
+		assertEquals(EncodingStyle.ER7.getContentType(), myServerSocketThread.getContentType());
+		assertEquals(EncodingStyle.ER7, myServerSocketThread.getEncoding());
+
+	}
+
+	/**
+	 * Ensure that if chunked transfer encoding is used, and there is a pause in
+	 * the middle of transmission, the whole message is still read
+	 */
+	@Test
+	public void testSendMessageWithChunkedResponseAndPauseInMiddleWithLongSoTimeout() throws Exception {
+
+		myServerSocketThread.setSimulateOneSecondPauseInChunkedEncoding(true);
+
+		String message = // -
+		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
+				"EVN||200803051509|||||||||||||||||||||||||||||||||||||||||\r" + // -
+				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
+
+		HohRawClientSimple client = new HohRawClientSimple("localhost", myPort, "/theUri");
+		client.setSoTimeout(980);
+		client.setKeepAlive(false);
 		client.setResponseTimeout(2000);
 		client.setAuthorizationCallback(new SingleCredentialClientCallback("hello", "hapiworld"));
 		IReceivable<String> response = client.sendAndReceive(new RawSendable(message));

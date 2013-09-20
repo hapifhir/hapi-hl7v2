@@ -230,7 +230,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 
 					for (Iterator<Map.Entry<Socket, Long>> iter = myIdleSocketsToTimeBecameIdle.entrySet().iterator(); iter.hasNext();) {
 						Entry<Socket, Long> nextEntry = iter.next();
-						if (nextEntry.getValue() < closeIfActiveBefore) {
+						if (nextEntry.getValue() <= closeIfActiveBefore) {
 							Socket key = nextEntry.getKey();
 							socketsToClose.add(key);
 							ourLog.info("Closing idle socket with local port {} because it has been idle since {}", key.getLocalPort(), new Date(nextEntry.getValue()));

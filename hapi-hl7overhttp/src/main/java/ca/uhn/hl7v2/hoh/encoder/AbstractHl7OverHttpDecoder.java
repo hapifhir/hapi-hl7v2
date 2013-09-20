@@ -268,6 +268,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				throw new DecodeException("Received invalid octet count in chunked transfer encoding: " + nextSize);
 			}
 
+			boolean trailing = false;
 			if (nextSizeInt > 0) {
 				int totalRead = 0;
 				myLastStartedReading = System.currentTimeMillis();
@@ -283,20 +284,29 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					}
 					totalRead += bytesRead;
 
-					ourLog.debug("Read {} byte chunk", bytesRead);
+					if (ourLog.isTraceEnabled()) {
+						ourLog.trace("Read {} byte chunk: {}", bytesRead, new String(byteBuffer, 0, bytesRead));
+					}else {
+						ourLog.debug("Read {} byte chunk", bytesRead);
+					}
+					
 					bos.write(byteBuffer, 0, bytesRead);
 
 				} while (totalRead < nextSizeInt);
+			} else {
+				trailing = true;
 			}
 
 			// Try to read a trailing CRLF
 			int nextChar;
 			boolean had13 = false;
 			boolean had10 = false;
-			boolean trailing = false;
 			while (true) {
 				try {
 					nextChar = theInputStream.read();
+					if (ourLog.isTraceEnabled()) {
+						ourLog.trace("Read byte: " + (char)nextChar + " (" + nextChar + ")");
+					}
 				} catch (SocketTimeoutException e) {
 					break;
 				}
@@ -318,7 +328,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 					if (had10) {
 						trailing = true;
 					}
-					continue;
+					break;
 				} else {
 					break;
 				}
@@ -550,6 +560,9 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			int b;
 			try {
 				b = theInputStream.read();
+				if (ourLog.isTraceEnabled()) {
+					ourLog.trace("Read byte: " + (char)b + " (" + b + ")");
+				}
 			} catch (SocketTimeoutException e) {
 				if (retVal.length() == 0 && theFirstLine) {
 					ourLog.trace("No message received, aborting readLine(InputStream, boolean)");

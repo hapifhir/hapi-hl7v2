@@ -299,7 +299,9 @@ public class ServerSocketThreadForTesting extends Thread {
 
 							String remChunkLength = Integer.toHexString(remaining);
 							ourLog.debug("Sending chunk length: {}", remaining);
-							tempOs.write(remChunkLength.getBytes("ISO-8859-1"));
+							byte[] bytesToSend = remChunkLength.getBytes("ISO-8859-1");
+							ourLog.debug("Sending bytes: {}", bytesToSend);
+							tempOs.write(bytesToSend);
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));
 							tempOs.write(bytes, halfLength, remaining);
 							tempOs.write("\r\n".getBytes("ISO-8859-1"));

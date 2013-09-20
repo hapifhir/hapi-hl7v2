@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.hoh.api;
 
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -59,6 +60,34 @@ public interface IClient {
 	 * Setter for the host (e.g. "10.0.0.111" or "localhost")
 	 */
 	void setHost(String theHost);
+
+	/**
+	 * Configures the TCP KeepAlive flag for new connections
+	 * 
+	 * @see Socket#getKeepAlive()
+	 */
+	void setKeepAlive(boolean theKeepAlive);
+
+	/**
+	 * Returns the TCP KeepAlive flag for new connections
+	 * 
+	 * @see Socket#getKeepAlive()
+	 */
+	boolean isKeepAlive();
+
+	/**
+	 * Sets the TCP SO Timeout setting for new connections
+	 * 
+	 * @see Socket#getSoTimeout()
+	 */
+	void setSoTimeout(int theSoTimeout);
+
+	/**
+	 * Returns the TCP SO Timeout setting for new connections
+	 * 
+	 * @see Socket#getSoTimeout()
+	 */
+	int getSoTimeout();
 
 	/**
 	 * Setter for the "Path" portion of the URL. This is the path portion which

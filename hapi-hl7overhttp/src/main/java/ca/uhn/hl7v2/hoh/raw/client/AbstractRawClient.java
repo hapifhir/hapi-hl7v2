@@ -1,6 +1,6 @@
 package ca.uhn.hl7v2.hoh.raw.client;
 
-import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
+import static ca.uhn.hl7v2.hoh.util.StringUtils.isBlank;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,31 +53,29 @@ public abstract class AbstractRawClient implements IClient {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientSimple.class);
 
-	/**
-	 * Socket so_timeout value for newly created sockets
-	 */
-	static final int SO_TIMEOUT = 500;
-
 	private IAuthorizationClientCallback myAuthorizationCallback;
 	private Charset myCharset = DEFAULT_CHARSET;
 	private int myConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 	private String myHost;
 	private BufferedInputStream myInputStream;
+	private boolean myKeepAlive = true;
 	private OutputStream myOutputStream;
 	private String myPath;
 	private int myPort;
 	private long myResponseTimeout = DEFAULT_RESPONSE_TIMEOUT;
 	private ISigner mySigner;
 	private ISocketFactory mySocketFactory = DEFAULT_SOCKET_FACTORY;
+	/**
+	 * Socket so_timeout value for newly created sockets
+	 */
+	private int mySoTimeout = 5000;
 	private URL myUrl;
-
 	/**
 	 * Constructor
 	 */
 	public AbstractRawClient() {
 		// nothing
 	}
-
 	/**
 	 * Constructor
 	 * 
@@ -95,7 +92,6 @@ public abstract class AbstractRawClient implements IClient {
 		setPort(thePort);
 		setUriPath(thePath);
 	}
-
 	/**
 	 * Constructor
 	 * 
@@ -124,7 +120,8 @@ public abstract class AbstractRawClient implements IClient {
 
 		Socket socket = mySocketFactory.createClientSocket();
 		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
-		socket.setSoTimeout(SO_TIMEOUT);
+		socket.setSoTimeout(mySoTimeout);
+		socket.setKeepAlive(myKeepAlive);
 		ourLog.trace("Connection established to {}:{}", myHost, myPort);
 		myOutputStream = new BufferedOutputStream(socket.getOutputStream());
 		myInputStream = new BufferedInputStream(socket.getInputStream());
@@ -209,6 +206,10 @@ public abstract class AbstractRawClient implements IClient {
 		return mySocketFactory;
 	}
 
+	public int getSoTimeout() {
+		return mySoTimeout;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -230,6 +231,10 @@ public abstract class AbstractRawClient implements IClient {
 	 */
 	public String getUrlString() {
 		return getUrl().toExternalForm();
+	}
+
+	public boolean isKeepAlive() {
+		return myKeepAlive;
 	}
 
 	boolean isSocketConnected(Socket socket) {
@@ -320,6 +325,12 @@ public abstract class AbstractRawClient implements IClient {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setKeepAlive(boolean theKeepAlive) {
+		myKeepAlive = theKeepAlive;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -331,6 +342,7 @@ public abstract class AbstractRawClient implements IClient {
 		}
 	}
 
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -341,29 +353,28 @@ public abstract class AbstractRawClient implements IClient {
 		myResponseTimeout = theResponseTimeout;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.uhn.hl7v2.hoh.raw.client.IClient#setSigner(ca.uhn.hl7v2.hoh.sign.ISigner
-	 * )
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setSigner(ISigner theSigner) {
 		mySigner = theSigner;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.uhn.hl7v2.hoh.raw.client.IClient#setSocketFactory(ca.uhn.hl7v2.hoh
-	 * .sockets.ISocketFactory)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setSocketFactory(ISocketFactory theSocketFactory) {
 		if (theSocketFactory == null) {
 			throw new NullPointerException("Socket factory can not be null");
 		}
 		mySocketFactory = theSocketFactory;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSoTimeout(int theSoTimeout) {
+		mySoTimeout = theSoTimeout;
 	}
 
 	/**
