@@ -231,6 +231,10 @@ public abstract class HapiContextSupport {
 		public ServerConfiguration getServerConfiguration() {
 			return context.getServerConfiguration();
 		}
+
+		public void setServerConfiguration(ServerConfiguration theServerConfiguration) {
+			throw new UnsupportedOperationException("Read-only instance");
+		}
 		
 		
 	}
