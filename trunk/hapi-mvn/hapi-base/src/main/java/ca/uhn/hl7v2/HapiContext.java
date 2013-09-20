@@ -27,11 +27,20 @@ package ca.uhn.hl7v2;
 
 import java.util.concurrent.ExecutorService;
 
-import ca.uhn.hl7v2.app.*;
+import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.ConnectionHub;
+import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.app.ServerConfiguration;
+import ca.uhn.hl7v2.app.SimpleServer;
+import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
-import ca.uhn.hl7v2.parser.*;
+import ca.uhn.hl7v2.parser.GenericParser;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
@@ -110,6 +119,14 @@ public interface HapiContext {
 	 */
 	ServerConfiguration getServerConfiguration();
 
+	/**
+	 * Sets the {@link ServerConfiguration} to be used by all HL7 servers obtained from this class.
+	 * 
+	 * @see #newServer(int, boolean)
+	 * @see #newServer(int, int, boolean)
+	 */
+	void setServerConfiguration(ServerConfiguration theServerConfiguration);
+	
 	/**
 	 * @param configuration {@link ParserConfiguration} to be used by all parsers obtained from this
 	 *            class.
