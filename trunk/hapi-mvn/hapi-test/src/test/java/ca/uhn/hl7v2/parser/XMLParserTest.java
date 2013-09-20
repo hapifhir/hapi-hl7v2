@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import junit.framework.Assert;
 import ca.uhn.hl7v2.util.Terser;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -81,6 +83,31 @@ public class XMLParserTest {
 
 	}
 
+	/**
+	 */
+	@Test
+	public void testParseExtraComponents() throws IOException, EncodingNotSupportedException,
+			HL7Exception {
+		InputStream stream = XMLParserTest.class.getClassLoader().getResourceAsStream(
+				"ca/uhn/hl7v2/parser/extracmp_xml.xml");
+		byte[] bytes = new byte[10000];
+		StringBuffer buffer = new StringBuffer();
+		int count;
+		while ((count = stream.read(bytes)) > 0) {
+			buffer.append(new String(bytes), 0, count);
+		}
+
+		String xmlMessage = buffer.toString();
+		Message message = new DefaultXMLParser().parse(xmlMessage);
+
+		String er7Message = new PipeParser().encode(message).replaceAll("\\r", "\r\n");
+		ourLog.info(er7Message);
+
+		// This string is contained in an extra component in the XML message
+		assertTrue(er7Message.contains("HD.4"));
+		
+	}
+	
 	@Test
 	public void testGetAckID() throws HL7Exception, IOException {
 		assertEquals(parser.getAckID("<MSA.2>12</MSA.2>"), "12");

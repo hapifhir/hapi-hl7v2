@@ -529,10 +529,23 @@ public abstract class XMLParser extends Parser {
 				NodeList matchingElements = datatypeElement.getElementsByTagNameNS(NS, makeElementName(
 						datatypeObject, i + 1));
 				if (matchingElements.getLength() > 0) {
-					parse(children[i], (Element) matchingElements.item(0)); // components don't
-																			// repeat - use 1st
+					parse(children[i], (Element) matchingElements.item(0));
 				}
 			}
+			
+			int nextExtraCmpIndex = 0;
+			boolean foundExtraComponent;
+			do {
+				foundExtraComponent = false;
+				NodeList matchingElements = datatypeElement.getElementsByTagNameNS(NS, makeElementName(datatypeObject, children.length + nextExtraCmpIndex + 1));
+				if (matchingElements.getLength() > 0) {
+					parse(datatypeObject.getExtraComponents().getComponent(nextExtraCmpIndex), (Element) matchingElements.item(0));
+					foundExtraComponent = true;
+				}
+				nextExtraCmpIndex++;
+			} while (foundExtraComponent);
+			
+			
 		}
 	}
 
