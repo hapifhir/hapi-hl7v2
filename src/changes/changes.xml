@@ -98,6 +98,12 @@
             	) do not support all of the types they should. For example, ADT_AXX would allow an
             	ADT^A04 message to parse, but not an ADT^A01. This is now fixed.
             </action>
+            <action type="fix" dev="Ryan Baldwin" issue="199" system="newbugs">
+            	Fix an issue where the XML parser ignores "extra components", unlike the Pipe parser.
+            	For example, if a CX.4 element is found within a CX field, the XML parser would not
+            	grab its contents. This is now corrected. Thanks to Ryan Baldwin for
+            	the diagnosis.
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
