@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.hapi.server;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
@@ -88,6 +89,7 @@ public class HohServletTest {
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response;
 		try {
+			conn.getInitiator().setTimeout(20000, TimeUnit.SECONDS);
 			response = conn.getInitiator().sendAndReceive(msg);
 		} catch (Exception e) {
 			throw e;

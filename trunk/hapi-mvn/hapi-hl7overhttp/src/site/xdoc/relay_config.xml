@@ -94,7 +94,9 @@
 				<p>
 					The <b>class</b> attribute indicates what type of listener should be used.
 					Listeners must be of type
-					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IRelayListener.html">IRelayListener</a>.
+					<a href="./apidocs/ca/uhn/hl7v2/hoh/relay/listener/IRelayListener.html">IRelayListener</a>. Configuration
+					properties suported by the chosen implementation (such as "socketTimeout" and "responseTimeout")
+					may also be set here.
 				</p>
 				
 				<p>

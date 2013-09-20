@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
+<!-- 
+
+> Hi James
+>
+> Some comments on the revised version of the spec:
+> * Section 2.4 - it seems to me that this doesn't go quite far enough.
+> Would it be acceptable to require parameters taken from the message? I
+> think not, but it doesn't explicitly say so. Given how tricky people are used to
+> being with http, might be a good idea
+> * Section 2.5 "Response messages being transmitted by a server MUST use
+> the same content type as the corresponding request message" - but not in
+> the case of an error (i.e. status code <> 200) - this is readdressed in 2.5, and a
+> forward reference to related rules might be appropriate
+> * then the section includes 2 SHALL clauses, followed by a SHALL that deals
+> with the case where the first 2 SHALLs are not followed. I think this is not a
+> good idea.
+> * Security Level 1 - I can't really get my head around this. No SSL?
+> why even bother - it's not like you achieved anything at all
+> * Level 2: "a sending application MUST be capable of using an exported public
+> key from a private key in use in the receiving application" - I don't know what
+> this means
+> * Security Level 2 ups the stakes on plain SSL by requiring a signed verified
+> server certificate. I think that level 1 should require plain SSL but allow self-
+> generated certificates. self generated certificates are prone to MITM attacks,
+> but prevent side channel casual inspection.
+> Within an institution, this is worthwhile and useful. Where as I would claim
+> that the existing level 1 never is. Which reminds me - it would seem
+> appropriate to at least provide some information about the threat profile
+> that each level is aiming to deal with
+> * Level 3 - does the client certificate have to be verified by a chain of trust? (if
+> not, what's the point?)
+> * typo in 4.1: implemnenters
+> * "implemnenters should consider enabling the HL7 Sequence Number
+> Protocol in where possible" - another typo "in where". Does anyone actually
+> use this? It's kind of a sledgehammer approach to the problem. I'd rather this
+> was phrased "implementers should consider how to ensure that messages
+> are processed sequentially. The HL7 sequence number protocol may be used
+> in this case"
+>
+> Generally - great document. I would expect significant adoption in the short
+> term
+>
+ -->
+
 	<properties>
 		<title>HL7 over HTTP</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
@@ -264,7 +308,8 @@
 				    content type as the corresponding <b>request message</b>, if the response message
 				    payload is an HL7 v2.x message. In other words, if a request message uses XML
 				    encoding instead of ER7, the corresponding response message MUST also
-				    use XML encoding.
+				    use XML encoding. See section <a href="#2_7_RESP_CODES">2.7 Response Codes</a>
+				    for more information about response codes for error handling.
 				</p>
 				
 				<h4>Character Set</h4>
@@ -282,10 +327,13 @@
 					The HL7 v2.x specification allows the character encoding to be
 					specified in MSH-18. When a message is received using HL7 over HTTP, this value SHALL
 					be ignored, and the character encoding specified in the HTTP 
-					"<code>Content-Type</code>" header MUST be observed instead. In the event that
+					"<code>Content-Type</code>" header MUST be observed instead. 
+					<!-- 
+					In the event that
 					a message is received with no character encoding specified in the "<code>Content-Type</code>"
 					header, the character encoding SHALL be assumed to be ISO-8859-1 as described
-					in section 3.7.1 of RFC 2616.  
+					in section 3.7.1 of RFC 2616.
+					 -->  
 				</p>
 				
 				<p><b>Implementation Consideration</b></p>
@@ -352,7 +400,8 @@
 				
 				
 			</subsection>
-									
+			
+			<a name="2_7_RESP_CODES"/>
 			<subsection name="2.7 HTTP Response Codes">
 
 				<!--			    
@@ -490,36 +539,63 @@
 			<a name="SEC_L1"/>
 			<subsection name="3.2 Profile Matrix">
 				
+				<p>
+					It is important to select a security model which
+					are appropriate to the specific application being used and
+					the network it is deployed to. The following table shows the 
+					security characteristics of the security profiles
+					described in this specification.
+				</p>
+				
+				<ul>
+					<li>
+						In most cases, it is desirable to use encryption in order to
+						prevent sensitive data from being intercepted.
+					</li>
+					<li>
+						Server authentication allows the system receiving data to ensure 
+						that the data being received is coming from a legitimate
+						source.
+					</li>
+					<li>
+						Client authentication allows the system sending data to ensure
+						that the data being transmitted is not disclosed to an 
+						unintended recipient. 
+					</li>
+				</ul>
+				<p>
+				</p>
+				
 				<table>
-					<tr>
-						<td>Client Authentication</td>
-						<td>Server Authentication</td>
-						<td>Not Encrypted</td>
-						<td>TLS Encryption</td>
+					<tr style="background: #AAF; font-weight: bold;">
+						<td style="background: #FFF;"></td>
+						<td>Encryption (Prevents Eavesdropping)</td>
+						<td>Server Authentication (Ensures Client Identity)</td>
+						<td>Client Authentication (Ensures Server Identity)</td>
 					</tr>
 					<tr>
-						<td>None</td>
-						<td>None</td>
-						<td>Level 0</td>
-						<td>Level 2</td>
+						<td style="background: #AAF; font-weight: bold;">Level 0</td>
+						<td style="background: #FAA;">No</td>
+						<td style="background: #FAA;">No</td>
+						<td style="background: #FAA;">No</td>
 					</tr>
 					<tr>
-						<td>Username/Password</td>
-						<td>None</td>
-						<td>Level 1</td>
-						<td>Level 2</td>
+						<td style="background: #AAF; font-weight: bold;">Level 1</td>
+						<td style="background: #FAA;">No</td>
+						<td style="background: #AFA;">Yes</td>
+						<td style="background: #FAA;">No</td>
 					</tr>
 					<tr>
-						<td>X.509</td>
-						<td>None</td>
-						<td>N/A</td>
-						<td>Level 2</td>
+						<td style="background: #AAF; font-weight: bold;">Level 2</td>
+						<td style="background: #AFA;">Yes</td>
+						<td style="background: #AFA;">Yes</td>
+						<td style="background: #AFA;">Possible</td>
 					</tr>
 					<tr>
-						<td>X.509</td>
-						<td>X.509</td>
-						<td>N/A</td>
-						<td>Level 3</td>
+						<td style="background: #AAF; font-weight: bold;">Level 3</td>
+						<td style="background: #AFA;">Yes</td>
+						<td style="background: #AFA;">Yes (Very strong)</td>
+						<td style="background: #AFA;">Possible</td>
 					</tr>
 				</table>
 				
@@ -649,8 +725,9 @@
 					in HTTP server implementations. This can present a risk that messages
 					will be processed in a different order than the one in which
 					they were generated. Because message sequence is often important
-					in HL7 v2.x transactional messaging, implementers should consider
-					enabling the HL7 Sequence Number Protocol where possible.
+					in HL7 v2.x transactional messaging, implementers should consider 
+					how to ensure that messages are processed sequentially. The HL7 
+					sequence number protocol may be used in this case.
 				</p>
 			</subsection>
 		

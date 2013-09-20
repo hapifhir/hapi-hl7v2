@@ -37,6 +37,34 @@ public abstract class AbstractClient<T extends AbstractRawClient> implements ICl
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public void setKeepAlive(boolean theKeepAlive) {
+		getRawClient().setKeepAlive(theKeepAlive);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isKeepAlive() {
+		return getRawClient().isKeepAlive();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSoTimeout(int theSoTimeout) {
+		getRawClient().setSoTimeout(theSoTimeout);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getSoTimeout() {
+		return getRawClient().getSoTimeout();
+	}
+
+	/**
 	 * Constructor
 	 * 
 	 * @param theRawClient
@@ -63,22 +91,37 @@ public abstract class AbstractClient<T extends AbstractRawClient> implements ICl
 		return myParser;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getPort() {
 		return myRawClient.getPort();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected T getRawClient() {
 		return myRawClient;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public ISocketFactory getSocketFactory() {
 		return myRawClient.getSocketFactory();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getUriPath() {
 		return myRawClient.getUriPath();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public URL getUrl() {
 		return myRawClient.getUrl();
 	}
