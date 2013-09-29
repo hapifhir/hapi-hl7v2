@@ -29,7 +29,17 @@ import java.io.IOException;
 
 /**
  * Default implementation of a HiLo ID generator that allows to use another
- * (non-HiLo) ID generator for generating the "hi" part of the ID.
+ * (non-HiLo) ID generator for generating the "hi" part of the ID. The delegate
+ * must increment its ID is discrete steps > 1, so that the gaps can be filled
+ * with "lo" IDs.
+ * <p>
+ *     Example:
+ * </p>
+ * <pre>
+ *     Hi IDs: 0, 100, 200, 300 (increment = 100)
+ *     Lo IDs: 1,2,3,...,100,1,2,3,....
+ *     Resulting ID (Hi + Lo): 1,2,3,99,100,101,102,...
+ * </pre>
  * 
  * @see FileBasedHiLoGenerator
  * @author Christian Ohr
@@ -64,6 +74,10 @@ public class DelegatingHiLoGenerator extends HiLoGenerator {
 		delegate.reset();
 	}
 
+    /**
+     * THe maximum "lo" ID is the increment of the hi ID.
+     * @return
+     */
 	@Override
 	public int getMaxLo() {
 		return delegate.getIncrement();

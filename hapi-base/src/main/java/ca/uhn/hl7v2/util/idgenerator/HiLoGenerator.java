@@ -64,21 +64,39 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
 		return base;
 	}
 
+    /**
+     * Returns the next Hi ID
+     * @return the next Hi ID
+     * @throws IOException
+     */
 	protected abstract int getNextHiId() throws IOException;
 
+    /**
+     * Resets the Hi ID
+     */
 	protected abstract void resetHiId();
 
+    /**
+     * Returns then next Lo ID
+     * @return
+     */
 	protected int getNextLoId() {
-		lo++;
-		return lo;
+		return ++lo;
 	}
 
+    /**
+     * Resets the generator
+     */
 	public void reset() {
 		lo = 0;
 		base = -1;
 		resetHiId();
 	}
 
+    /**
+     * Returns the maximum Lo ID (expect the Hi ID be incremented afterwards)
+     * @return the maximum Lo ID
+     */
 	abstract public int getMaxLo();
 
 }
