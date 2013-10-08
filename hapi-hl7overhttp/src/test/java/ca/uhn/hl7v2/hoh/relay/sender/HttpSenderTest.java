@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,6 +85,33 @@ public class HttpSenderTest {
 		}
 	}
 
+	
+
+	@Test
+	public void testErrorMessageReferencesRelay() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
+
+		ADT_A01 adt = new ADT_A01();
+		adt.initQuickstart("ADT", "A01", "T");
+
+		Launcher l = new Launcher("src/test/resources/relay/MllpToHttp.xml");
+
+		ConnectionHub hub = new DefaultHapiContext().getConnectionHub();
+		try {
+
+			Connection c = hub.attach("localhost", myInPort, false);
+			c.getInitiator().setTimeoutMillis(10000000);
+			Message response = c.getInitiator().sendAndReceive(adt);
+
+			ourLog.info("Response was:\n{}", response.encode().replace('\r', '\n'));
+
+			Assert.assertTrue(response.encode().contains("HAPI HL7 over HTTP Relay"));
+			
+		} finally {
+			l.shutdown();
+		}
+	}
+	
+	
 	@Test
 	public void testSetUrl() throws Exception {
 

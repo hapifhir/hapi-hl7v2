@@ -108,6 +108,11 @@
             	HL7 over HTTP client now comes with several configuration options to
             	set the socket properties (SO_timeout, Keepalive, etc.)
             </action>
+            <action type="add"  issue="77" system="newfeatures" dev="James Agnew">
+            	HL7 over HTTP relay now mentions itself in NAK messages it generates (which makes it
+            	easier to tell if a NAK is coming from the relay because it couldn't reach its target,
+            	or if the NAK is actually from the target)
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
