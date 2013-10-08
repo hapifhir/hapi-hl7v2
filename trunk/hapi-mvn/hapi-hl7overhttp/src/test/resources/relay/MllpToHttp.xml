@@ -10,7 +10,6 @@
     
     <bean class="ca.uhn.hl7v2.hoh.relay.sender.RelayHttpSender" id="sender">
         <property name="url" value="http://localhost:#{ systemProperties['relay.port.out'] }/relayURI"/>
-        <property name=""></property>
     </bean>
     
     <bean class="ca.uhn.hl7v2.hoh.relay.Binder">
