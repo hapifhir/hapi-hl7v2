@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><ERP_R09 xmlns="urn:hl7-org:v2xml">
+	<MSH>
+		<MSH.1>|</MSH.1>
+		<MSH.2>^~\&amp;</MSH.2>
+		<MSH.3>
+			<HD.2>OLIS</HD.2>
+			<HD.3>X500</HD.3>
+			<HD.4>HD.4</HD.4>			<HD.5>HD.5</HD.5>		</MSH.3>
+		<MSH.5>
+			<HD.2>2.16.840.1.113883.3.59.3:0947</HD.2>
+			<HD.3>ISO</HD.3>
+		</MSH.5>
+		<MSH.7>
+			<TS.1>20130819093140-0400</TS.1>
+		</MSH.7>
+		<MSH.9>
+			<MSG.1>ERP</MSG.1>
+			<MSG.2>Z99</MSG.2>
+			<MSG.3>ERP_R09</MSG.3>
+		</MSH.9>
+		<MSH.10>a9aa9d25-d4c0-4e1d-8e4f-b79d16ef5179</MSH.10>
+		<MSH.11>
+			<PT.1>T</PT.1>
+		</MSH.11>
+		<MSH.12>
+			<VID.1>2.3.1</VID.1>
+		</MSH.12>
+		<MSH.18>8859/1</MSH.18>
+	</MSH>
+</ERP_R09>
