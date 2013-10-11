@@ -1,0 +1,7 @@
+MSH|^~\&|^OLIS^X500||^2.16.840.1.113883.3.59.3:0947^ISO||20130926150434-0400||ERP^Z99^ERP_R09|bf3dd577-2108-47ad-abd2-4f06284f3b55|T|2.3.1||||||8859/1
+MSA|AA|212137
+QAK|212138|OK|
+ERQ||R09|@PID.3.1^1011848460~@PID.3.4.2~@PID.3.4.3~@PID.3.5^JHN~@PID.3.9.1^ON~@PID.3.9.3^HL70347~@PID.8^F~@PID.7^19740209~@ZRP.1.1^2.16.840.1.113883.3.59.3:0947~@ZRP.1.13^ISO~@ZRP.1.22.1^~@ZRP.1.22.3^~@ZRP.1.2^UNIVERSITY HEALTH NETWORK~@ZRP.1.3^~@ORC.4.1^CV04_001_03~@ORC.4.3^2.16.840.1.113883.3.59.1:4008~@ORC.4.4^ISO|
+PID|1||1011848460^^^^JHN^^^^ON&ONTARIO&HL70347^^||WXSSXY^MARIE^RHONDA^^^^U||19740209|F|||22 Marvell Blvd.^^OSHAWA^ON^L1G 2B0^CAN^H~10 Mailing Address Ave^^Toronto^ON^M1R 2B0^CAN^M||^PRN^PH^^1^905^5768294^12345~^ORN^CP^^^416^1234567^~^NET^Internet^email@address.com^^^^|^WPN^PH^^^416^2127924^12345~^WPN^FX^^^416^2127925^||||||||||||||||
+NTE|1|P|This lab report contains values in every field and segment of the HL7 message that is applicable for a chemistry lab report. Its purpose is to verify that a viewer can properly display all the appropriate information in a chemistry lab report. The data in this lab report is for testing purposes only and is not clinically relevant or accurate.|RE^REMARK^HL70364
+ZNT|^2.16.840.1.113883.3.59.1:4006^ISO|
