@@ -8,25 +8,17 @@ package ca.uhn.hl7v2.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hapi.on.olis.erp_z99.message.ERP_R09;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.helpers.DefaultHandler;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
@@ -34,9 +26,11 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.datatype.ED;
 import ca.uhn.hl7v2.model.v25.datatype.FT;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
+import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
+import ca.uhn.hl7v2.util.Terser;
 
 /**
  * JUnit test harness for XMLParser
@@ -89,6 +83,44 @@ public class XMLParserTest {
 
 	}
 
+	@Test
+	public void testDisableWhitespaceTrimming() throws HL7Exception {
+		
+		ERP_R09 response = new ERP_R09();
+		String erpr09xml = "<ERP_R09 xmlns=\"urn:hl7-org:v2xml\">\n" + 
+			"    <MSH>\n" + 
+			"        <MSH.1>|</MSH.1>\n" + 
+			"        <MSH.2>^~\\&amp;</MSH.2>\n" + 
+			"        <MSH.3>\n" + 
+			"            <HD.2>O   L    I    S</HD.2>\n" + 
+			"        </MSH.3>\n" + 
+			"        <MSH.9>\n" + 
+			"            <MSG.1>ERP</MSG.1>\n" + 
+			"            <MSG.2>Z99</MSG.2>\n" + 
+			"            <MSG.3>ERP_R09</MSG.3>\n" + 
+			"        </MSH.9>\n" + 
+			"    </MSH>" +
+			"</ERP_R09>";
+		
+		DefaultXMLParser fromParser = new DefaultXMLParser();
+		response.setParser(fromParser);
+		response.parse(erpr09xml );
+		assertEquals("O L I S", response.getMSH().getMsh3_SendingApplication().getHd2_UniversalID().getValue());
+		
+		fromParser = new DefaultXMLParser();
+		response.setParser(fromParser);
+		fromParser.getParserConfiguration().setXmlDisableWhitespaceTrimmingOnNodeNames("HD.2");
+		response.parse(erpr09xml );
+		assertEquals("O   L    I    S", response.getMSH().getMsh3_SendingApplication().getHd2_UniversalID().getValue());
+
+		fromParser = new DefaultXMLParser();
+		response.setParser(fromParser);
+		fromParser.getParserConfiguration().setXmlDisableWhitespaceTrimmingOnAllNodes(true);
+		response.parse(erpr09xml );
+		assertEquals("O   L    I    S", response.getMSH().getMsh3_SendingApplication().getHd2_UniversalID().getValue());
+
+	}
+	
 	
 	/**
 	 */
@@ -302,6 +334,40 @@ public class XMLParserTest {
 		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		p.parse(msg);
 	}
+
+	/**
+	 * Test for 202
+	 */
+	@Test
+	public void testEncodeMessageWithTrailingEncodedBackslash() throws EncodingNotSupportedException, HL7Exception, IOException {
+		ADT_A01 msg = new ADT_A01();
+		msg.initQuickstart("ADT", "A01", "T");
+		
+		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		String encoded;
+
+		msg.getMSH().getMessageControlID().setValue("1234");
+		encoded = p.encode(msg);
+		assertTrue(encoded, encoded.contains("<MSH.10>1234</MSH.10>"));
+
+		msg.getMSH().getMessageControlID().setValue("1234\\E\\1234");
+		encoded = p.encode(msg);
+		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\1234</MSH.10>"));
+
+		msg.getMSH().getMessageControlID().setValue("1234\\E\\");
+		encoded = p.encode(msg);
+		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\</MSH.10>"));
+
+		msg.getMSH().getMessageControlID().setValue("1234\\E\\\\E\\");
+		encoded = p.encode(msg);
+		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\\\E\\</MSH.10>"));
+
+		msg.getMSH().getMessageControlID().setValue("1234\\E\\\\.BR\\");
+		encoded = p.encode(msg);
+		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\<escape V=\".BR\"/>\n"));
+
+	}
+
 
 	@Test
 	public void testMessageParseMethodAndEncodeMethod() throws HL7Exception, IOException {

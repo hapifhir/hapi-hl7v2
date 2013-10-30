@@ -32,6 +32,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -47,13 +55,6 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.XMLUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Parses and encodes HL7 messages in XML form, according to HL7's normative XML encoding
@@ -79,16 +80,9 @@ public abstract class XMLParser extends Parser {
 
 	private String textEncoding;
 
-	/**
-	 * The nodes whose names match these strings will be kept as original, meaning that no white
-	 * space trimming will occur on them
-	 */
-	private String[] keepAsOriginalNodes;
+	
+	private boolean disableWhitespaceTrimming;
 
-	/**
-	 * All keepAsOriginalNodes names, concatenated by a pipe (|)
-	 */
-	private String concatKeepAsOriginalNodes = "";
 
 	/** Constructor */
 	public XMLParser() {
@@ -139,28 +133,21 @@ public abstract class XMLParser extends Parser {
 	 * that no white space treaming will occur on them
      *
      * @param keepAsOriginalNodes of the nodes to be kept as original
+     * @deprecated Use {@link ParserConfiguration#setXmlDisableWhitespaceTrimmingOnNodeNames(Set)} instead. That method works exactly the same as this one but has been renamed for a more clear meaning. 
 	 */
+	@Deprecated()
 	public void setKeepAsOriginalNodes(String[] keepAsOriginalNodes) {
-		this.keepAsOriginalNodes = keepAsOriginalNodes;
-
-		if (keepAsOriginalNodes.length != 0) {
-			// initializes the
-			StringBuilder strBuf = new StringBuilder(keepAsOriginalNodes[0]);
-			for (int i = 1; i < keepAsOriginalNodes.length; i++) {
-				strBuf.append("|");
-				strBuf.append(keepAsOriginalNodes[i]);
-			}
-			concatKeepAsOriginalNodes = strBuf.toString();
-		} else {
-			concatKeepAsOriginalNodes = "";
-		}
+		getParserConfiguration().setXmlDisableWhitespaceTrimmingOnNodeNames(keepAsOriginalNodes);
 	}
 
 	/**
 	 * Sets the <i>keepAsOriginalNodes<i>
+	 * 
+	 * @deprecated Use {@link ParserConfiguration#getXmlDisableWhitespaceTrimmingOnNodeNames()} instead
 	 */
+	@Deprecated
 	public String[] getKeepAsOriginalNodes() {
-		return keepAsOriginalNodes;
+		return getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().toArray(new String[getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().size()]);
 	}
 
 	/**
@@ -466,7 +453,10 @@ public abstract class XMLParser extends Parser {
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean keepAsOriginal(Node node) {
-		return (node.getNodeName() != null) && concatKeepAsOriginalNodes.contains(node.getNodeName());
+		if (getParserConfiguration().isXmlDisableWhitespaceTrimmingOnAllNodes()) {
+			return true;
+		}
+		return (node.getNodeName() != null) && getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().contains(node.getNodeName());
 	}
 
 	/**
@@ -475,6 +465,10 @@ public abstract class XMLParser extends Parser {
 	 * Carriage returns, line feeds, and tabs are replaced with spaces.
 	 */
 	protected String removeWhitespace(String s) {
+		if (this.disableWhitespaceTrimming) {
+			return s;
+		}
+		
 		s = s.replace('\r', ' ');
 		s = s.replace('\n', ' ');
 		s = s.replace('\t', ' ');
@@ -635,7 +629,7 @@ public abstract class XMLParser extends Parser {
 					oldpos = pos + 1;
 				}
 				// create text from the remainder
-				if (oldpos < value.length()) {
+				if (oldpos <= value.length()) {
 
 					StringBuilder sb = new StringBuilder();
 					// If we are in escaping mode, there appears no closing escape character,

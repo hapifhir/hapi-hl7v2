@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.parser;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +38,8 @@ public class ParserConfiguration {
 	private boolean nonGreedyMode = false;
 	private boolean prettyPrintWhenEncodingXml = true;
 	private boolean validating = true;
+	private boolean xmlDisableWhitespaceTrimmingOnAllNodes = false;
+	private Set<String> xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
 
 	/**
 	 * <p>
@@ -198,6 +201,13 @@ public class ParserConfiguration {
 	}
 
 	/**
+	 * @see #setXmlDisableWhitespaceTrimmingOnNodeNames(Set)
+	 */
+	public Set<String> getXmlDisableWhitespaceTrimmingOnNodeNames() {
+		return xmlDisableWhitespaceTrimmingOnNodeNames;
+	}
+
+	/**
 	 * If set to <code>true</code> (default is <code>false</code>) the parser
 	 * will allow messages to parse, even if they contain a version which is not
 	 * known to the parser. When operating in this mode, if a message arrives
@@ -259,6 +269,13 @@ public class ParserConfiguration {
 	 */
 	public boolean isValidating() {
 		return validating;
+	}
+
+	/**
+	 * @see #setXmlDisableWhitespaceTrimmingOnAllNodes(boolean)
+	 */
+	public boolean isXmlDisableWhitespaceTrimmingOnAllNodes() {
+		return xmlDisableWhitespaceTrimmingOnAllNodes;
 	}
 
 	/**
@@ -517,6 +534,51 @@ public class ParserConfiguration {
 	 */
 	public void setValidating(boolean validating) {
 		this.validating = validating;
+	}
+
+	/**
+	 * Configures the XML Parser to treat all whitespace within text nodes as literal, meaning that
+	 * line breaks, tabs, multiple spaces, etc. will be preserved. If set to <code>true</code>, any values
+	 * passed to {@link #setXmlDisableWhitespaceTrimmingOnNodeNames(Set)} will be superceded since all
+	 * whitespace will be treated as literal.
+	 * <p>
+	 * Default is <b>false</b>
+	 * </p> 
+	 */
+	public void setXmlDisableWhitespaceTrimmingOnAllNodes(boolean theXmlDisableWhitespaceTrimmingOnAllNodes) {
+		this.xmlDisableWhitespaceTrimmingOnAllNodes = theXmlDisableWhitespaceTrimmingOnAllNodes;
+	}
+
+	/**
+	 * Configures the XML Parser to treat all whitespace within the given nodes as literal, meaning that
+	 * line breaks, tabs, multiple spaces, etc. will be preserved. This method takes individual XML node names
+	 * as arguments (e.g. "HD.2", or "TX.1").
+	 * <p>
+	 * Default is <b>none</b>
+	 * </p> 
+	 */
+	public void setXmlDisableWhitespaceTrimmingOnNodeNames(Set<String> theXmlDisableWhitespaceTrimmingOnNodeNames) {
+		if (theXmlDisableWhitespaceTrimmingOnNodeNames==null) {
+			this.xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
+		} else {
+			this.xmlDisableWhitespaceTrimmingOnNodeNames = theXmlDisableWhitespaceTrimmingOnNodeNames;
+		}
+	}
+
+	/**
+	 * Configures the XML Parser to treat all whitespace within the given nodes as literal, meaning that
+	 * line breaks, tabs, multiple spaces, etc. will be preserved. This method takes individual XML node names
+	 * as arguments (e.g. "HD.2", or "TX.1").
+	 * <p>
+	 * Default is <b>none</b>
+	 * </p> 
+	 */
+	public void setXmlDisableWhitespaceTrimmingOnNodeNames(String... theKeepAsOriginalNodes) {
+		if (theKeepAsOriginalNodes==null) {
+			setXmlDisableWhitespaceTrimmingOnNodeNames((Set<String>)null);
+		} else {
+			setXmlDisableWhitespaceTrimmingOnNodeNames(new HashSet<String>(Arrays.asList(theKeepAsOriginalNodes)));
+		}
 	}
 
 }
