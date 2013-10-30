@@ -122,7 +122,7 @@
             </action>
             <action type="fix" issue="202" system="newbugs" dev="James Agnew">
             	Fix an issue where the XML parser incorrectly encodes text values which contain an
-            	escape sequence (e.g. \E\) at the very end of the value. 
+            	escape sequence (e.g. \E\) at the very end of the value. Thanks to Ioan Salau for reporting!
             </action>
 		</release>
         <release version="2.1" date="2013-03-21">
