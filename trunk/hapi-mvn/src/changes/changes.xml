@@ -113,6 +113,17 @@
             	easier to tell if a NAK is coming from the relay because it couldn't reach its target,
             	or if the NAK is actually from the target)
             </action>
+            <action type="add" dev="James Agnew">
+            	Add two new methods to ParserConfiguration which allow the disabling of
+            	whitespace trimming at the individual node level, and on a global level. This
+            	configuration replaces the "setKeepAsOriginalNodes" method on the XMLParser, which
+            	is somewhat confusingly named. Thanks to Ryan Baldwin for help in diagnosing the
+            	need for this. 
+            </action>
+            <action type="fix" issue="202" system="newbugs" dev="James Agnew">
+            	Fix an issue where the XML parser incorrectly encodes text values which contain an
+            	escape sequence (e.g. \E\) at the very end of the value. 
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
