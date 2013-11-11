@@ -31,8 +31,6 @@ import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.ServerConfiguration;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -43,7 +41,6 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
 import ca.uhn.hl7v2.validation.Validator;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
@@ -84,8 +81,8 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * <li>{@link GenericParser}
  * <li>{@link Validator}
  * <li>{@link ConnectionHub}
- * <li>{@link SimpleServer}
- * <li>{@link TwoPortService}
+ * <li>{@link ca.uhn.hl7v2.app.SimpleServer}
+ * <li>{@link ca.uhn.hl7v2.app.TwoPortService}
  * </ul>
  * 
  */
@@ -248,16 +245,16 @@ public interface HapiContext {
 	/**
 	 * @return a MessageValidator instance initialized with the {@link ValidationContext} as set
 	 *         using {@link #setValidationContext(ValidationContext)}. For each validation it will
-	 *         use a new instance of {@link ValidationExceptionHandler} as obtained by
+	 *         use a new instance of {@link ca.uhn.hl7v2.validation.ValidationExceptionHandler ValidationExceptionHandler} as obtained by
 	 *         {@link #getValidationExceptionHandlerFactory()}.
 	 */
 	<R> Validator<R> getMessageValidator();
 	
 	<R> ValidationExceptionHandlerFactory<R> getValidationExceptionHandlerFactory();
-	
+
 	/**
 	 * @param factory a {@link ValidationExceptionHandlerFactory} that is used to create
-	 * a {@link ValidationExceptionHandler} during message validation.
+	 * a {@link ca.uhn.hl7v2.validation.ValidationExceptionHandler ValidationExceptionHandler} during message validation.
 	 */
 	<R> void setValidationExceptionHandlerFactory(ValidationExceptionHandlerFactory<R> factory);
 

@@ -30,11 +30,8 @@ package ca.uhn.hl7v2.parser;
 import java.util.List;
 import java.util.Set;
 
-import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Structure;
-
 /**
- * Contains information about the composition of a given type of {@link Structure}.
+ * Contains information about the composition of a given type of {@link ca.uhn.hl7v2.model.Structure Structure}.
  * At runtime, parsers will use accessors provided by various structure types (messages, groups,
  * segments) to determine the structure of a messages. Structure definitions are used
  * to cache that information between parse calls.
@@ -167,7 +164,7 @@ public interface IStructureDefinition {
     /**
      * @return true if this element a choice element
      *
-     * @see Group#isChoiceElement(String)
+     * @see ca.uhn.hl7v2.model.Group#isChoiceElement(String)
      */
     boolean isChoiceElement();
     

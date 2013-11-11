@@ -27,13 +27,12 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import java.io.IOException;
+
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import java.io.IOException;
 
 /**
  * <p>
@@ -69,7 +68,7 @@ public interface Message extends Group {
 	 * 
 	 * @deprecated ValidationContext instances private for Message instances will be removed in the
 	 *             next release. Use
-	 *             {@link HapiContext#setValidationContext(ValidationContext)} then.
+	 *             {@link ca.uhn.hl7v2.HapiContext#setValidationContext(ValidationContext)} then.
 	 */
 	public void setValidationContext(ValidationContext theContext);
 
@@ -103,7 +102,7 @@ public interface Message extends Group {
 	 * supplied with the validation context wanted. Where possible, the parser should be reused for
 	 * best performance, unless thread safety is an issue.
 	 * 
-	 * Note that not all parsers can be used. As of version 1.0, only {@link PipeParser} supports
+	 * Note that not all parsers can be used. As of version 1.0, only PipeParser supports
 	 * this functionality
      *
      * @param parser the parser to be used when parse/encode methods are called on this Message
@@ -112,7 +111,7 @@ public interface Message extends Group {
 
 	/**
 	 * Returns the parser to be used when parse/encode methods are called on this Message, as well
-	 * as its children. The default value is a new {@link PipeParser}
+	 * as its children. The default value is a new PipeParser.
      *
      * @return the parser to be used when parse/encode methods are called on this Message
 	 */

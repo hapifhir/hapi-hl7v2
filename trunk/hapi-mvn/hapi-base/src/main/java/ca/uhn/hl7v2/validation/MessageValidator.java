@@ -27,12 +27,10 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.validation;
 
-import ca.uhn.hl7v2.HL7Exception;
-
 /**
  * Validation utilities for parsed and encoded messages. The
  * {@link ValidationExceptionHandler} logs all {@link ValidationException}s and
- * throws a {@link HL7Exception} if {@link #theFailOnErrorFlag} has been set to
+ * throws a {@link ca.uhn.hl7v2.HL7Exception HL7Exception} if {@link #theFailOnErrorFlag} has been set to
  * <code>true</code>.
  * <p>
  * This class is kept for backwards compatibility.

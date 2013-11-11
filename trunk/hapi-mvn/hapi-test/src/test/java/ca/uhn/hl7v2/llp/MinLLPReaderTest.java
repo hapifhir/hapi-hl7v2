@@ -139,7 +139,6 @@ public class MinLLPReaderTest {
     @Test
     public void testReadLibraryMessages() throws IOException, LLPException {
         minLLPReader.setInputStream(inputStream);
-        int mismatch = 0;
         MessageLibrary lib = MinLLPWriterTest.getMessageLib();
         for (int i = 0; i < 10; i++) {
             String recvMessage = minLLPReader.getMessage();

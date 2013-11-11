@@ -1,16 +1,15 @@
 package ca.uhn.hl7v2.model;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.segment.ARQ;
 import ca.uhn.hl7v2.model.v25.group.ORU_R01_OBSERVATION;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test cases for AbstractGroup

@@ -717,7 +717,7 @@ class OldPipeParser extends Parser {
     /**
      * Throws unsupported operation exception
      *
-     * @throws Unsupported operation exception
+     * @throws UnsupportedOperationException
      */
     @Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {

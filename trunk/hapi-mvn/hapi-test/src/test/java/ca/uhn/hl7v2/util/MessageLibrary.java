@@ -82,7 +82,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 * Library with no message encoding specified.
 	 * A GenericParser will be used for message parsing.
 	 * 
-	 * @param path path to HL7 message text file
+	 * @param messageFilePath path to HL7 message text file
 	 */
 	public MessageLibrary(String messageFilePath) {
 		super.addAll(setEntries(messageFilePath));
@@ -96,7 +96,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 * Parser appropriate to requested encoding 
 	 * will be used for all messages.
 	 * 
-	 * @param path path to HL7 message text file
+	 * @param messageFilePath path to HL7 message text file
 	 * @param encoding message encoding to use
 	 */
 	public MessageLibrary(String messageFilePath, String encoding) {

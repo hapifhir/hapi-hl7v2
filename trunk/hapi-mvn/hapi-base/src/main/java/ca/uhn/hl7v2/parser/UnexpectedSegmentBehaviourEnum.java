@@ -1,8 +1,5 @@
 package ca.uhn.hl7v2.parser;
 
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Message;
-
 /**
  * Defines the behaviour to use when an unexpected
  * segment is discovered while parsing a message.
@@ -14,7 +11,7 @@ public enum UnexpectedSegmentBehaviourEnum {
 	/**
 	 * <p>
 	 * Add the segment as a 
-	 * {@link Message#addNonstandardSegment(String) nonstandard segment}
+	 * {@link ca.uhn.hl7v2.model.Message#addNonstandardSegment(String) nonstandard segment}
 	 * at the current location, even if the current location is in a 
 	 * child group within the message.
 	 * </p>
@@ -27,12 +24,12 @@ public enum UnexpectedSegmentBehaviourEnum {
 	/**
 	 * Return the parser back to the root of the message (even if the last
 	 * segment was in a group) and add the unexpected segment as a
-	 * {@link Message#addNonstandardSegment(String) nonstandard segment}.
+	 * {@link ca.uhn.hl7v2.model.Message#addNonstandardSegment(String) nonstandard segment}.
 	 */
 	DROP_TO_ROOT,
 
 	/**
-	 * Throw an {@link HL7Exception}
+	 * Throw an {@link ca.uhn.hl7v2.HL7Exception}
 	 */
 	THROW_HL7_EXCEPTION
 }

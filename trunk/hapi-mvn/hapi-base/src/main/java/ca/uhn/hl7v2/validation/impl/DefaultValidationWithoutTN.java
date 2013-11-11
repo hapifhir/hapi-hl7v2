@@ -27,7 +27,6 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation.impl;
 
 import ca.uhn.hl7v2.validation.builder.support.DefaultValidationWithoutTNBuilder;
-import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 
 /**
  * A <code>ValidationContext</code> with a default set of rules initially
@@ -35,7 +34,7 @@ import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
  * validation.
  * <p>
  * Subclassing this class is discouraged. You should instead subclass
- * {@link NoValidationBuilder} and use this to instantiate an instance of
+ * {@link ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder NoValidationBuilder} and use this to instantiate an instance of
  * {@link ValidationContextImpl}.
  * 
  * @author Bryan Tripp

@@ -31,7 +31,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -107,7 +106,7 @@ public abstract class HL7Service extends Service {
 	 * Called after startup before the thread enters its main loop. This
 	 * implementation launches a cleaner thread that removes stale connections
 	 * from the connection list. Override to initialize resources for the
-	 * running thread, e.g. opening {@link ServerSocket}s etc.
+	 * running thread, e.g. opening {@link java.net.ServerSocket}s etc.
 	 */
 	@Override
 	protected void afterStartup() {
@@ -120,7 +119,7 @@ public abstract class HL7Service extends Service {
 	 * Called after the thread has left its main loop. This implementation stops
 	 * the connection cleaner thread and closes any open connections. Override
 	 * to clean up additional resources from the running thread, e.g. closing
-	 * {@link ServerSocket}s.
+	 * {@link java.net.ServerSocket}s.
 	 */
 	@Override
 	protected void afterTermination() {

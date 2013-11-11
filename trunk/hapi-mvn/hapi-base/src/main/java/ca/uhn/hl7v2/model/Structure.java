@@ -29,8 +29,6 @@ package ca.uhn.hl7v2.model;
 
 import java.io.Serializable;
 
-import ca.uhn.hl7v2.HL7Exception;
-
 /**
  * Part of an HL7 message: either a segment or group.  There are certain methods (e.g. Group.get())
  * that will always return either a segment or a group.  This interface allows methods like this
