@@ -167,7 +167,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
      *
      * @param <T>
      */
-    private static class RuleCache<T extends Rule> extends LinkedHashMap<String, Collection<T>> {
+    private static class RuleCache<T extends Rule<?>> extends LinkedHashMap<String, Collection<T>> {
 
         private final int size;
 
@@ -177,13 +177,13 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
         }
 
         @Override
-        protected boolean removeEldestEntry(Map.Entry eldest) {
+        protected boolean removeEldestEntry(Map.Entry<String, Collection<T>> eldest) {
             return size() > size;
         }
 
     }
 
-    protected static <T extends Rule> Map<String, Collection<T>> newRuleCache(int size) {
+    protected static <T extends Rule<?>> Map<String, Collection<T>> newRuleCache(int size) {
         Map<String, Collection<T>> cache = new RuleCache<T>(size);
         return Collections.synchronizedMap(cache);
     }
