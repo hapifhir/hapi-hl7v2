@@ -28,7 +28,6 @@ package ca.uhn.hl7v2.validation.impl;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
 import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;

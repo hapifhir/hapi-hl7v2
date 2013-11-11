@@ -1,14 +1,11 @@
 package ca.uhn.hl7v2.app;
 
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 
 /**
  * Contains configuration which will be applied to any servers which are created using the given
  * HAPI Context.
  * 
- * @see HapiContext#getServerConfiguration()
+ * @see ca.uhn.hl7v2.HapiContext#getServerConfiguration()
  */
 public class ServerConfiguration {
 
@@ -24,15 +21,15 @@ public class ServerConfiguration {
 	}
 
 	/**
-	 * Sets the server behaviour when a {@link ReceivingApplication} throws an exception while
+	 * Sets the server behaviour when a {@link ca.uhn.hl7v2.protocol.ReceivingApplication} throws an exception while
 	 * processing a message.
 	 * <p>
 	 * The {@link ApplicationExceptionPolicy#DEFAULT default} behaviour is to invoke the 
-	 * {@link ReceivingApplicationExceptionHandler exception handler} if one has been 
+	 * {@link ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler exception handler} if one has been
 	 * {@link HL7Service#setExceptionHandler(ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler) registered} 
 	 * with the server, and then return the ACK/NAK message it provides. If no exception handler has
 	 * been provided, HAPI will generate a NAK message using the default implementation and an
-	 * {@link ApplicationRouterImpl#DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE AE} acknowlegement code.
+	 * {@link ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl#DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE AE} acknowlegement code.
 	 * </p>
 	 * 
 	 * @see ApplicationExceptionPolicy For other possible values
@@ -54,11 +51,11 @@ public class ServerConfiguration {
 
 		/**
 		 * The <code>DEFAULT</code> behaviour is to invoke the 
-		 * {@link ReceivingApplicationExceptionHandler exception handler} if one has been 
+		 * {@link ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler exception handler} if one has been
 		 * {@link HL7Service#setExceptionHandler(ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler) registered} 
 		 * with the server, and then return the ACK/NAK message it provides. If no exception handler has
 		 * been provided, HAPI will generate a NAK message using the default implementation and an
-		 * {@link ApplicationRouterImpl#DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE AE} acknowlegement code.
+		 * {@link ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl#DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE AE} acknowlegement code.
 		 */
 		// NB: this javadoc is duplicated above! Keep in sync!
 		DEFAULT,

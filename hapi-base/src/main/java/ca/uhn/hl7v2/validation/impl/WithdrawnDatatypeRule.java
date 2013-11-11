@@ -1,7 +1,5 @@
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.validation.builder.BuilderSupport;
-
 /**
  * <p>
  * Validation Rule which will not accept any content (i.e. length must be 0).
@@ -18,7 +16,7 @@ import ca.uhn.hl7v2.validation.builder.BuilderSupport;
  * loaded (i.e. not at runtime). To disable for an individual parser at runtime,
  * call </p> <code>parser.setValidationContext(new NoValidation());</code>
  * 
- * @deprecated use {@link BuilderSupport#withdrawn()} instead
+ * @deprecated use {@link ca.uhn.hl7v2.validation.builder.BuilderSupport#withdrawn()} instead
  */
 @SuppressWarnings("serial")
 public class WithdrawnDatatypeRule extends SizeRule {

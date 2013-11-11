@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.model.GenericSegment;
-import ca.uhn.hl7v2.model.SuperStructure;
-import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.builder.support.ChoiceElementsRespectedRule;
@@ -64,7 +61,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	}
 	
 	/**
-	 * Builds a {@link MessageRule} that extracts a primitive value using a {@link Terser}
+	 * Builds a {@link MessageRule} that extracts a primitive value using a {@link ca.uhn.hl7v2.util.Terser}
 	 * expression and evaluates the specified {@link Predicate}.
 	 * 
 	 * @param spec Terser expression
@@ -76,7 +73,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	}
 
 	/**
-	 * Builds a {@link MessageRule} that disallows the existence of {@link GenericSegment}s, i.e.
+	 * Builds a {@link MessageRule} that disallows the existence of {@link ca.uhn.hl7v2.model.GenericSegment}s, i.e.
 	 * segments that are not defined in the structure of a message.
 	 * 
 	 * @return this instance to build more rules
@@ -88,7 +85,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	/**
 	 * Builds a {@link MessageRule} that disallows the existence of segments which
 	 * are not alowed in a given message type when the message is an instance
-	 * of {@link SuperStructure} (e.g. PID2 within an ADT^A01)
+	 * of {@link ca.uhn.hl7v2.model.SuperStructure} (e.g. PID2 within an ADT^A01)
 	 * 
 	 * @return this instance to build more rules
 	 */

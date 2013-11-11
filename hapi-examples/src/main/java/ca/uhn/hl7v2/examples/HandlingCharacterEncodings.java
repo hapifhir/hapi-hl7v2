@@ -7,7 +7,6 @@ import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
-import ca.uhn.hl7v2.llp.MinLLPReader;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MllpConstants;
 

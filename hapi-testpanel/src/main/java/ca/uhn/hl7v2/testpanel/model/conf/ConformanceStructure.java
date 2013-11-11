@@ -30,9 +30,9 @@ import ca.uhn.hl7v2.model.Structure;
 
 public interface ConformanceStructure<T extends ConformanceStructure<?>> extends Structure {
 
-	/**
-	 * Create a clone of this segment (for the same message)
-	 */
-	public T instantiateClone() throws HL7Exception;
-	
+    /**
+     * Create a clone of this segment (for the same message)
+     */
+    public T instantiateClone() throws HL7Exception;
+
 }

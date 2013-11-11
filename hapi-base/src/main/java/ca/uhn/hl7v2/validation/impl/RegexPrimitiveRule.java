@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.validation.ValidationException;
-import ca.uhn.hl7v2.validation.builder.BuilderSupport;
 
 /**
  * A <code>PrimitiveTypeRule</code> that validates primitive values using a regular expression.
@@ -37,7 +36,7 @@ import ca.uhn.hl7v2.validation.builder.BuilderSupport;
  * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  * 
- * @deprecated use {@link BuilderSupport#matches(String)} instead
+ * @deprecated use {@link ca.uhn.hl7v2.validation.builder.BuilderSupport#matches(String)} instead
  */
 @SuppressWarnings("serial")
 public class RegexPrimitiveRule extends AbstractPrimitiveTypeRule {

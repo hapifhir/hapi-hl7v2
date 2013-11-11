@@ -28,7 +28,6 @@ import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.SuperStructure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 
@@ -64,7 +63,7 @@ public class CanonicalModelClassFactory extends DefaultModelClassFactory {
 	 * Constructor for a model class factory which always returns the same
 	 * message type.
 	 * 
-	 * @see SuperStructure
+	 * @see ca.uhn.hl7v2.model.SuperStructure
 	 */
 	public CanonicalModelClassFactory(Class<? extends Message> theClass) {
 		if (theClass == null) {

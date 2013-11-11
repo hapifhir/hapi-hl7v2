@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -68,7 +68,7 @@ public class CustomThreading {
 		/*
 		 * Custom Threading without HapiContext (HAPI 2.0)
 		 */
-        server = new SimpleServer(port, new ExtendedMinLowerLayerProtocol(), new PipeParser(), false, executor);
+        server = new SimpleServer(port, new MinLowerLayerProtocol(true), new PipeParser(), false, executor);
         // server.startAndWait();
 
         executor.shutdown();

@@ -27,8 +27,8 @@ package ca.uhn.hl7v2.validation.impl;
 
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.Location;
-import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.Severity;
+import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
 @SuppressWarnings("serial")
@@ -108,7 +108,7 @@ public abstract class RuleSupport<T> implements Rule<T> {
 	 * @return the error code to be used in case the validation failed
 	 */
 	public ErrorCode getErrorCode() {
-		return ErrorCode.APPLICATION_INTERNAL_ERROR;
+		return errorCode;
 	}
 
     public void setSeverity(Severity severity) {

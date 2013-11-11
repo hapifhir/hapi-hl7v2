@@ -38,8 +38,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -85,9 +83,6 @@ public class CommonTSTest {
         TimeZone.setDefault(tz);
     }
 
-    /**
-     * @see TestCase#setUp()
-     */
     @BeforeClass
     public static void setUp() throws Exception {
         year = 2002;

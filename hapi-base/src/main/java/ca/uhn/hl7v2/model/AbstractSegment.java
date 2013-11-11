@@ -84,7 +84,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 *            classes, so we include it as an arg here to emphasize that
 	 *            fact ... AbstractSegment doesn't actually use it though
 	 */
-	public AbstractSegment(Group parent, @SuppressWarnings("unused")ModelClassFactory factory) {
+	public AbstractSegment(Group parent, ModelClassFactory factory) {
 		super(parent);
 		this.fields = new ArrayList<List<Type>>();
 		this.types = new ArrayList<Class<? extends Type>>();
@@ -100,8 +100,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
      * of them.
      *
      * @param visitor MessageVisitor instance to be called back.
-     * @param index index of the group
-     * @param repetition repetition of the group
+     * @param location location of the group
      * @return true if visiting shall continue, false if not
      * @throws HL7Exception
      */

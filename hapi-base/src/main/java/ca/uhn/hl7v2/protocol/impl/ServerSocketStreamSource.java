@@ -52,8 +52,6 @@ public class ServerSocketStreamSource extends SocketStreamSource {
     private ServerSocket myServerSocket;
     private String myExpectedAddress;
     private Socket mySocket;
-    private Acceptor myAcceptor;
-    private boolean myProceedWithConnect;
     
     /**
      * @param theServerSocket a ServerSocket at which to listen for incoming connections  

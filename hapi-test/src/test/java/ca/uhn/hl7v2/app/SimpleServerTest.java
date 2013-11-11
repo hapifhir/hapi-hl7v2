@@ -334,7 +334,6 @@ public class SimpleServerTest implements ConnectionListener {
 	private static class MyTestMetadataApplication implements ReceivingApplication {
 
 		private Object myReceivedSendingIp;
-		private Object myCharset;
 		private Object myReceivedControlId;
 		private Object myRawMessage;
 
