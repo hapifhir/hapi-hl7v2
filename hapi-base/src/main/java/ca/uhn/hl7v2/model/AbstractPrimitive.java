@@ -32,7 +32,6 @@ import java.util.Collection;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
-import ca.uhn.hl7v2.parser.Escape;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -168,7 +167,8 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
             
         } else {
         
-        	String escaped = Escape.unescape(string, encodingCharacters);
+        	String escaped = getMessage().getParser().getParserConfiguration()
+                .getEscaping().unescape(string, encodingCharacters);
             setValue(escaped);
         
         }
