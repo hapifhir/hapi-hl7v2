@@ -124,6 +124,9 @@
             	Fix an issue where the XML parser incorrectly encodes text values which contain an
             	escape sequence (e.g. \E\) at the very end of the value. Thanks to Ioan Salau for reporting!
             </action>
+            <action type="add" dev="Christian Ohr">
+                Make HL7 escaping strategy configurable over ParserConfiguration API
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">

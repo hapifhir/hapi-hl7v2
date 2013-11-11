@@ -21,21 +21,17 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 public class EscapeTest {
     
     private EncodingCharacters enc = new EncodingCharacters('|', null);
+    private Escaping esc = new DefaultEscaping();
     
 	@Test
     public void testUnescape() throws Exception {
         String uu = getUuencodedEscapedString();
-        Escape.unescape(uu, enc); 
-        //System.out.println(uu);
-        //System.out.println(result);
-        //BufferedWriter out = new BufferedWriter(new FileWriter("c:/hapi/foo.txt"));
-        //out.write(result);
-        //out.close();
+        esc.unescape(uu, enc);
     }
     
 	@Test
     public void testSimpleEscape() {
-        String actual = Escape.escape("GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN", enc);
+        String actual = esc.escape("GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN", enc);
         String expected = "GLUCOSE\\S\\1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN";
         assertEquals(expected, actual);
     }
@@ -49,7 +45,7 @@ public class EscapeTest {
         ClassLoader loader = this.getClass().getClassLoader();
         InputStream inStream = loader.getResourceAsStream("ca/uhn/hl7v2/parser/uuencoded_escaped.txt");
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
-        String line = null;
+        String line;
         StringBuffer content = new StringBuffer();
         while ( (line = in.readLine()) != null) {
             content.append(line);

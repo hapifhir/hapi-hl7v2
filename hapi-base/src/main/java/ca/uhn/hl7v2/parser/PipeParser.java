@@ -15,7 +15,7 @@
  * Contributor(s): Kenneth Beaton.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
+ * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
  * of this file under the MPL, indicate your decision by deleting  the provisions above
@@ -433,7 +433,7 @@ public class PipeParser extends Parser {
 			for (int j = 0; j < subcomponents.length; j++) {
 				String val = subcomponents[j];
 				if (val != null) {
-					val = Escape.unescape(val, encodingCharacters);
+					val = getParserConfiguration().getEscaping().unescape(val, encodingCharacters);
 				}
 				Terser.getPrimitive(destinationField, i + 1, j + 1).setValue(val);
 			}
@@ -521,7 +521,7 @@ public class PipeParser extends Parser {
 			StringBuilder comp = new StringBuilder();
 			for (int j = 1; j <= Terser.numSubComponents(source, i); j++) {
 				Primitive p = Terser.getPrimitive(source, i, j);
-				comp.append(encodePrimitive(p, encodingChars));
+				comp.append(encodePrimitive(p, parserConfig.getEscaping(), encodingChars));
 				comp.append(encodingChars.getSubcomponentSeparator());
 			}
 			field.append(stripExtraDelimiters(comp.toString(), encodingChars.getSubcomponentSeparator()));
@@ -555,12 +555,12 @@ public class PipeParser extends Parser {
 		return retVal;
 	}
 
-	private static String encodePrimitive(Primitive p, EncodingCharacters encodingChars) {
+	private static String encodePrimitive(Primitive p, Escaping escaping, EncodingCharacters encodingChars) {
 		String val = (p).getValue();
 		if (val == null) {
 			val = "";
 		} else {
-			val = Escape.escape(val, encodingChars);
+			val = escaping.escape(val, encodingChars);
 		}
 		return val;
 	}
@@ -807,7 +807,7 @@ public class PipeParser extends Parser {
 					// if this is MSH-2, then it shouldn't be escaped, so
 					// unescape it again
 					if (isDelimDefSegment(source.getName()) && i == 2)
-						fieldText = Escape.unescape(fieldText, encodingChars);
+						fieldText = parserConfig.getEscaping().unescape(fieldText, encodingChars);
 					result.append(fieldText);
 					if (j < reps.length - 1)
 						result.append(encodingChars.getRepetitionSeparator());

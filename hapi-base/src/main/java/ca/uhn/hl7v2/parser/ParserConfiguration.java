@@ -38,6 +38,7 @@ public class ParserConfiguration {
 	private boolean nonGreedyMode = false;
 	private boolean prettyPrintWhenEncodingXml = true;
 	private boolean validating = true;
+    private Escaping escaping = new DefaultEscaping();
 	private boolean xmlDisableWhitespaceTrimmingOnAllNodes = false;
 	private Set<String> xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
 
@@ -536,6 +537,20 @@ public class ParserConfiguration {
 		this.validating = validating;
 	}
 
+    public Escaping getEscaping() {
+        return escaping;
+    }
+
+    /**
+     * Sets an escaping strategy
+     * @param escaping escaping strategy instance
+     */
+    public void setEscaping(Escaping escaping) {
+        if (escaping == null) {
+            throw new NullPointerException("Escaping can not be null");
+        }
+        this.escaping = escaping;
+    }
 	/**
 	 * Configures the XML Parser to treat all whitespace within text nodes as literal, meaning that
 	 * line breaks, tabs, multiple spaces, etc. will be preserved. If set to <code>true</code>, any values
