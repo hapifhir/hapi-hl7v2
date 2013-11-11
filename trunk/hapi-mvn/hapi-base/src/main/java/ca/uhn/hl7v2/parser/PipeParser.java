@@ -484,7 +484,7 @@ public class PipeParser extends Parser {
 	 */
 	@Override
 	public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
-		return encode(structure, encodingCharacters);
+		return encode(structure, encodingCharacters, getParserConfiguration(), null);
 	}
 
 	/**
@@ -492,7 +492,7 @@ public class PipeParser extends Parser {
 	 */
 	@Override
 	public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
-		return encode(type, encodingCharacters);
+		return encode(type, encodingCharacters, getParserConfiguration(), null);
 	}
 
 	/**
@@ -505,7 +505,7 @@ public class PipeParser extends Parser {
      * @return encoded type
 	 */
 	public static String encode(Type source, EncodingCharacters encodingChars) {
-		return encode(source, encodingChars, null, null);
+		return encode(source, encodingChars, source.getMessage().getParser().getParserConfiguration(), null);
 	}
 
 	private static String encode(Type source, EncodingCharacters encodingChars, ParserConfiguration parserConfig, String currentTerserPath) {
@@ -761,7 +761,7 @@ public class PipeParser extends Parser {
      * @return encoded group
      */
 	public static String encode(Segment source, EncodingCharacters encodingChars) {
-		return encode(source, encodingChars, null, null);
+		return encode(source, encodingChars, source.getMessage().getParser().getParserConfiguration(), null);
 	}
 
 	private static String encode(Segment source, EncodingCharacters encodingChars, ParserConfiguration parserConfig, String currentTerserPath) {
