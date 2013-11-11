@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.Connection;
@@ -235,8 +236,11 @@ public abstract class HapiContextSupport {
 		public void setServerConfiguration(ServerConfiguration theServerConfiguration) {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
-		
-		
-	}
+
+        @Override
+        public void close() throws IOException {
+            context.close();
+        }
+    }
 
 }

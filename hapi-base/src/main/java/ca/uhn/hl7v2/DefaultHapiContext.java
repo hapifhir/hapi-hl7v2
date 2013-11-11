@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.Connection;
@@ -150,6 +151,14 @@ public class DefaultHapiContext implements HapiContext {
     public DefaultHapiContext(HapiContext context) {
         this(context.getParserConfiguration(), context.getValidationContext(), context
                 .getModelClassFactory());
+    }
+
+    @Override
+    public void close() throws IOException {
+        getConnectionHub().discardAll();
+        if (DefaultExecutorService.isDefaultService(executorService)) {
+            executorService.shutdownNow();
+        }
     }
 
     public synchronized ExecutorService getExecutorService() {

@@ -127,6 +127,9 @@
             <action type="add" dev="Christian Ohr">
                 Make HL7 escaping strategy configurable over ParserConfiguration API
             </action>
+            <action type="fix" issue="193" system="newbugs" dev="Christian Ohr">
+                HapiContext now implements Closeable
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
