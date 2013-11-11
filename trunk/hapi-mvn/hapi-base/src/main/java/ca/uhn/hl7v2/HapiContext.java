@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
 
 import ca.uhn.hl7v2.app.Connection;
@@ -86,7 +87,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * </ul>
  * 
  */
-public interface HapiContext {
+public interface HapiContext extends Closeable {
 
 	/**
 	 * @return the {@link ExecutorService} to be used by all services that spawn threads

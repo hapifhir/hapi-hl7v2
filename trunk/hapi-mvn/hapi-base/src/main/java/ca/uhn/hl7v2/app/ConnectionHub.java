@@ -351,6 +351,9 @@ public class ConnectionHub extends HapiContextSupport {
 			connections.removeAllOf(cd);
 	}
 
+    /**
+     * Closes and discards all connections.
+     */
 	public void discardAll() {
 		for (ConnectionData cd : allConnections()) {
 			connections.removeAllOf(cd);
