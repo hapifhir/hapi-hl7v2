@@ -11,7 +11,7 @@
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2-alpha1</version>
+	<version>2.2-beta1</version>
 	<name>HAPI - The Open Source Java HL7 Parser and API</name>
 	<url>http://hl7api.sourceforge.net/</url>
 	<description>
@@ -210,6 +210,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
 				<executions>
 					<execution>
 						<id>num</id>
@@ -297,9 +298,9 @@
 
 
 		<!-- HAPI Versions -->
-		<hapi.version>2.2-alpha1</hapi.version>
-		<hapi.version.structures>2.1</hapi.version.structures>
-		<hapi.version.stable>2.2-alpha1</hapi.version.stable>
+		<hapi.version>2.2-beta1</hapi.version>
+		<hapi.version.structures>2.2-beta1</hapi.version.structures>
+		<hapi.version.stable>2.1</hapi.version.stable>
 		<hapi.version.testpanel>2.0.1</hapi.version.testpanel>
 
 		<!-- Dependency versions -->
