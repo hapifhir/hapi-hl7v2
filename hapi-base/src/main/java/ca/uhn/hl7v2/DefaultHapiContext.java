@@ -153,7 +153,6 @@ public class DefaultHapiContext implements HapiContext {
                 .getModelClassFactory());
     }
 
-    @Override
     public void close() throws IOException {
         getConnectionHub().discardAll();
         if (DefaultExecutorService.isDefaultService(executorService)) {

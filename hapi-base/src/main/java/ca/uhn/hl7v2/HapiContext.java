@@ -102,6 +102,7 @@ public interface HapiContext extends Closeable {
 
 	/**
 	 * @return a new ConnectionHub instance
+     * @deprecated use {@link #newClient(String, int, boolean)}
 	 */
 	ConnectionHub getConnectionHub();
 

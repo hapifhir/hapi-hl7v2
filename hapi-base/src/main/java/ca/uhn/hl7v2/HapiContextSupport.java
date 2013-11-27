@@ -237,7 +237,6 @@ public abstract class HapiContextSupport {
 			throw new UnsupportedOperationException("Read-only instance");
 		}
 
-        @Override
         public void close() throws IOException {
             context.close();
         }
