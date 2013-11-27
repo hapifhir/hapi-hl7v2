@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.hl7v2.HL7Exception;
+
 /**
  * A set of "extra" components (sub-components) that are not a standard part 
  * of a field (component) but have been added at runtime.  The purpose is to allow 
@@ -35,12 +37,24 @@ public class ExtraComponents implements Serializable {
         this.message = message; 
     }
     
-    /** Returns the number of existing extra components
-     *
+    /**
+     * Returns the number of existing extra components
      * @return number of existing extra components
      */
     public int numComponents() {
         return comps.size();
+    }
+
+    /**
+     * Returns true if extra components are empty
+     * @return true if extra components are empty, false otherwise
+     * @throws HL7Exception
+     */
+    public boolean isEmpty() throws HL7Exception {
+        for (Varies varies : comps) {
+            if (!varies.isEmpty()) return false;
+        }
+        return true;
     }
     
     

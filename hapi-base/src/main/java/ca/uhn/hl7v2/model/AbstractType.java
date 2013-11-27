@@ -101,7 +101,7 @@ public abstract class AbstractType implements Type {
 	 * {@inheritDoc }
 	 */	
 	public boolean isEmpty() throws HL7Exception {
-		return extra.numComponents() == 0;
+		return extra.isEmpty();
 	}
 
 	/**
