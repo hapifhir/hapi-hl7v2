@@ -31,13 +31,10 @@ import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.MessageVisitorFactory;
 import ca.uhn.hl7v2.validation.MessageRule;
 import ca.uhn.hl7v2.validation.Rule;
-import ca.uhn.hl7v2.validation.builder.support.ChoiceElementsRespectedRule;
-import ca.uhn.hl7v2.validation.builder.support.OnlyAllowableSegmentsInSuperstructureRule;
-import ca.uhn.hl7v2.validation.builder.support.OnlyKnownSegmentsRule;
-import ca.uhn.hl7v2.validation.builder.support.TerserMessageRule;
-import ca.uhn.hl7v2.validation.builder.support.WrongVersionRule;
+import ca.uhn.hl7v2.validation.builder.support.*;
 import ca.uhn.hl7v2.validation.impl.ConformanceProfileRule;
 import ca.uhn.hl7v2.validation.impl.MessageRuleBinding;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
@@ -71,6 +68,20 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	public MessageRuleBuilder terser(String spec, Predicate predicate) {
 		return test(prepareRule(new TerserMessageRule(spec, predicate)));
 	}
+
+    /**
+     * Builds a {@link MessageRule} that runs a
+     * {@link ca.uhn.hl7v2.validation.builder.support.ValidatingMessageVisitor ValidatingMessageVisitor}
+     * over the message that collects {@link ca.uhn.hl7v2.validation.ValidationException ValidationExceptions}
+     * in a single pass.
+     *
+     * @param visitorFactory MessageVisitorFactory that creates ValidatingMessageVisitor instances
+     * @param predicate Predicate to evaluate against the value
+     * @return this instance to build more rules
+     */
+    public MessageRuleBuilder inspect(MessageVisitorFactory<? extends ValidatingMessageVisitor> visitorFactory) {
+        return test(prepareRule(new VisitorMessageRule(visitorFactory)));
+    }
 
 	/**
 	 * Builds a {@link MessageRule} that disallows the existence of {@link ca.uhn.hl7v2.model.GenericSegment}s, i.e.
