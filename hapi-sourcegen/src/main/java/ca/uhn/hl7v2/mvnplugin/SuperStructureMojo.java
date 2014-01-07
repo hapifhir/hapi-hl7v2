@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -297,9 +298,12 @@ public class SuperStructureMojo extends AbstractMojo {
 				 * "ADT_A01", "ADT_A04")
 				 */
 				for (Message next : associatedChildStructures) {
-					Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
+					seg.addAssociatedStructure(next.getName());
+					Map<String, String> evtMap = new TreeMap<String, String>(new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version)));
 					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
-						if (nextEntry.getValue().equals(next.getName())) {
+						String value = nextEntry.getValue();
+						String name = next.getName();
+						if (value.equals(name)) {
 							seg.addAssociatedStructure(nextEntry.getValue());
 							seg.addAssociatedStructure(nextEntry.getKey());
 						}
