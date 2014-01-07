@@ -135,7 +135,7 @@
                 letting a MessageVisitor traverse the message and collect potential problems
             </action>
 		</release>
-        <release version="2.1" date="2013-03-21">
+        <release version="2.1" date="2013-03-21" description="This release introduces the HapiContext and brings many new features">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
             	HAPI is now able to work without any structure JARs for basic tasks, and can
             	process unknown versions of HL7 (e.g. 2.99) if configured to allow this.

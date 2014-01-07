@@ -122,12 +122,14 @@ The survey will run until the fall.
     <frameset]]></replacevalue>
         </replace>        
       <echo>Customizing analytics token for testpanel</echo>
-		  <replace dir="target/site/hapi-testpanel" summary="true">
+		  <mkdir dir="target/site/hapi-testpanel"/>
+		  <replace dir="target/site/hapi-testpanel" summary="true" failOnNoReplacements="false">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
             <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
         </replace>
       <echo>Customizing analytics token for hl7overhttp</echo>
+		  <mkdir dir="target/site/hapi-hl7overhttp"/>
 		  <replace dir="target/site/hapi-hl7overhttp" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
