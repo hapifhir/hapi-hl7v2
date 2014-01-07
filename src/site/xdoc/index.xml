@@ -80,32 +80,41 @@
 			
 		</section>
 
-		<section name="New Beta Released! (HAPI 2.1-beta1) - Jan 31, 2013">
+		<section name="New Beta Released! (HAPI 2.2-beta1) - Nov 27, 2013">
 		
 			<p>
 				A new beta of HAPI (Core library, HL7 over HTTP, and Structures)
-				has been uploaded to Sourceforge.
+				has been uploaded to Sourceforge and the central Maven repo.
 			</p>
 			
 			<p>
 				This new release is packed with new features. Read about them in
 				the <a href="changes-report.html">Changelog</a>. There are also
-				a number of upgrades to the base API. Some existing API elements
-				have been deprecated (although none have been removed) in an
-				effort to streamline things. Please see the
-				<a href="upgrade_to_hapi_2_1.html">Upgrading to 2.1</a> page
-				for more information.
+				a number of upgrades to the base API.
 			</p>
 		
 			<p>
 				We are aiming to release this soon! Please help us out
-				by testing and reporting any issues.
+				by testing and reporting any issues. 
+				Download it <a href="http://sourceforge.net/projects/hl7api/files/hl7api-unstable/2.2-beta1/">here</a> or use version "2.2-beta1" in Maven. 
 			</p>
 
 			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
 		
 		</section>
 
+		<section name="HAPI 2.1 has been released - Mar 25, 2013">
+			
+<p>After a much-too-long wait, HAPI 2.1 has been released. Once again, this relasse is packed with new features. Most importantly it begins a transition to a simplified API where everything is centered around a&nbsp;<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/DefaultHapiContext.html">HapiContext</a>&nbsp;that acts as a kind of "gateway" into the whole API, and a start down the road to eventually merging the powerful parts of the <span style="font-family: Courier New, Courier, monospace;"><span style="color: #274e13;">.protocol.*</span> </span>hierarchy with the easy to use <span style="color: #274e13; font-family: Courier New, Courier, monospace;">.app.*</span> hierarchy.<br />
+<br />
+The API changes are non-breaking, so existing applications will work without modification, but we would encourage developers to migrate their code where possible to use the new APIs, since this will make code more readable. Information on how to migrate is found&nbsp;<a href="http://hl7api.sourceforge.net/upgrade_to_hapi_2_1.html">here.</a><br />
+<br />
+As always, a complete changelog is available&nbsp;<a href="http://hl7api.sourceforge.net/changes-report.html">here</a>. The website has also been enhanced with a new page outlining the&nbsp;<a href="http://hl7api.sourceforge.net/hapi-sourcegen/confgen-usage.html">Maven plugins</a>&nbsp;available. This means that we finally have a good document explaning how one might generate their own custom message structure classes using Message Workbench (something we have been doing for years at <a href="http://www.uhn.ca/">UHN</a>&nbsp;but have never documented).<br />
+<br />
+The new release has been uploaded to Sourceforge, and has also had time to synchronize to the global Maven repos, so it should be fully available now. Thanks to everyone who contributed!</p>
+
+		</section>
+		
 		<section name="HL7 over HTTP Update - Aug 23, 2012">
 		
 			<p>
