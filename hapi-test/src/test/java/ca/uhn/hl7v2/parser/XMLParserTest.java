@@ -8,7 +8,6 @@ package ca.uhn.hl7v2.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import hapi.on.olis.erp_z99.message.ERP_R09;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
+import ca.uhn.hl7v2.model.v251.message.ERP_R09;
 import ca.uhn.hl7v2.util.Terser;
 
 /**

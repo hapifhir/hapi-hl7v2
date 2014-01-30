@@ -127,12 +127,14 @@ public class HL7ServerTest implements ReceivingApplication {
         server.start(localhost);
         
 		Socket socket = TestUtils.acquireClientSocket(port);
+		
 		MinLLPWriter w = new MinLLPWriter(socket.getOutputStream());
 		MinLLPReader r = new MinLLPReader(socket.getInputStream());
 		
 		ADT_A01 msg = new ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");
 		w.writeMessage(msg.encode());
+		
 		String resp = r.getMessage();
 		ourLog.info(resp.replace("\r", "\n"));
 		
