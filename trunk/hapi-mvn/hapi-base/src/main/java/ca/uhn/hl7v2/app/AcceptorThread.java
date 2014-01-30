@@ -48,7 +48,12 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
  */
 class AcceptorThread extends Service {
 
+	/**
+	 * @deprecated See {@link StandardSocketFactory#DEFAULT_ACCEPTED_SOCKET_TIMEOUT}
+	 */
+	@Deprecated
 	static final int TIMEOUT = 500;
+	
 	private static final Logger log = LoggerFactory
 			.getLogger(AcceptorThread.class);
 	private int port;
@@ -96,7 +101,7 @@ class AcceptorThread extends Service {
 				ss = socketFactory.createServerSocket();
 			}
 			ss.bind(new InetSocketAddress(port));
-			ss.setSoTimeout(TIMEOUT);
+			ss.setSoTimeout(500);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -106,14 +111,14 @@ class AcceptorThread extends Service {
 	protected void handle() {
 		try {
 			Socket s = ss.accept();
-			s.setSoTimeout(TIMEOUT);
+			socketFactory.configureNewAcceptedSocket(s);
 			if (!queue.offer(new AcceptedSocket(s))) {
 				log.error("Denied enqueuing server-side socket {}", s);
 				s.close();
 			} else
 				log.debug("Enqueued server-side socket {}", s);
 		} catch (SocketTimeoutException e) { /* OK - just timed out */
-			log.trace("No connection established in recent {} ms.", TIMEOUT);
+			log.trace("No connection established while waiting");
 		} catch (IOException e) {
 			log.error("Error while accepting connections", e);
 		}
