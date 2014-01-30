@@ -134,6 +134,9 @@
                 Apply visitor pattern to message validation: a message can be validated by
                 letting a MessageVisitor traverse the message and collect potential problems
             </action>
+            <action type="add" dev="James Agnew">
+                Allow HL7 over HTTP Relay users to set the read timeout on connections
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21" description="This release introduces the HapiContext and brings many new features">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">

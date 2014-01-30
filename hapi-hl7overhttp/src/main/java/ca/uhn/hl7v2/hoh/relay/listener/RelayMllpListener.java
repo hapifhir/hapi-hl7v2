@@ -17,6 +17,7 @@ import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.GenericModelClassFactory;
 import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.util.StandardSocketFactory;
 
 public class RelayMllpListener implements InitializingBean, DisposableBean, IRelayListener, BeanNameAware {
 
@@ -27,6 +28,7 @@ public class RelayMllpListener implements InitializingBean, DisposableBean, IRel
 	private int myPort;
 	private SimpleServer myServer;
 	private AtomicInteger threadNum	= new AtomicInteger(1);
+	private DefaultHapiContext myContext;
 
 	/**
 	 * Fired automatically by the container when
@@ -37,11 +39,14 @@ public class RelayMllpListener implements InitializingBean, DisposableBean, IRel
 			throw new IllegalStateException("Port not set");
 		}
 		
-		DefaultHapiContext ctx = new DefaultHapiContext();
-		ctx.setExecutorService(Executors.newCachedThreadPool(new MyThreadFactory()));
-		ctx.setLowerLayerProtocol(new MinLowerLayerProtocol(true));
-		ctx.setModelClassFactory(new GenericModelClassFactory());
-		myServer = ctx.newServer(myPort, false);
+		myContext = new DefaultHapiContext();
+		StandardSocketFactory socketFactory = new StandardSocketFactory();
+		socketFactory.setAcceptedSocketTimeout(2000);
+		myContext.setSocketFactory(socketFactory);
+		myContext.setExecutorService(Executors.newCachedThreadPool(new MyThreadFactory()));
+		myContext.setLowerLayerProtocol(new MinLowerLayerProtocol(true));
+		myContext.setModelClassFactory(new GenericModelClassFactory());
+		myServer = myContext.newServer(myPort, false);
 
 		for (int i = 0; i < myAppRoutingData.size(); i++) {
 			myServer.registerApplication(myAppRoutingData.get(i), myApplications.get(i));
@@ -72,6 +77,10 @@ public class RelayMllpListener implements InitializingBean, DisposableBean, IRel
 		ourLog.info("Stopping listener on port {}", myPort);
 		myServer.stopAndWait();
 		ourLog.info("Listener on port {} has stopped", myPort);
+		
+		ourLog.info("Closing HAPI Context Object");
+		myContext.close();
+		ourLog.info("Done closing HAPI Context object");
 	}
 
 	public String getBeanName() {
