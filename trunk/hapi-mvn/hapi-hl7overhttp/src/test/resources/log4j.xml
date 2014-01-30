@@ -34,7 +34,7 @@
         </layout>
     </appender>
     <root>
-        <priority value="trace"></priority>
+        <priority value="info"></priority>
         <appender-ref ref="stdout"/>
     </root>
 </log4j:configuration>
