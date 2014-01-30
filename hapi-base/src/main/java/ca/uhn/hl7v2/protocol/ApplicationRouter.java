@@ -30,6 +30,12 @@ public interface ApplicationRouter {
 	 */
 	String METADATA_KEY_SENDING_IP = MetadataKeys.IN_SENDING_IP;
 
+    /**
+	 * {@link Transportable#getMetadata() Metadata} key: 
+	 * Provides the port of the sending system for a given message
+	 */
+	String METADATA_KEY_SENDING_PORT = MetadataKeys.IN_SENDING_PORT;
+
     
     /** 
      * Attempts to route the given message to the associated <code>Application</code>  

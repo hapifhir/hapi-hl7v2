@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 
 /**
@@ -40,7 +41,8 @@ import java.nio.charset.Charset;
 class MllpDecoder {
 
     protected Charset charset;
-
+    private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(MllpDecoder.class);
+    
     MllpDecoder(Charset charset) {
         this.charset = charset;
     }
@@ -55,9 +57,18 @@ class MllpDecoder {
      */
     public String getMessage(InputStream in) throws IOException, LLPException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MllpDecoderState state = MllpDecoderState.START;
-        while (state != MllpDecoderState.END) {
-            state = state.read(in, out);
+        try {
+	        MllpDecoderState state = MllpDecoderState.START;
+	        while (state != MllpDecoderState.END) {
+	        	state = state.read(in, out);
+	        }
+        } catch (SocketTimeoutException e) {
+        	if (out.size() == 0) {
+        		ourLog.debug("Got SocketTimeoutException while waiting for data");
+        	} else {
+        		ourLog.warn("Got SocketTimeoutException while waiting for data, discarding {} bytes", out.size());
+        	}
+        	return null;
         }
         return out.size() > 0 ? toString(out.toByteArray()) : null;
     }

@@ -22,4 +22,9 @@ public class MetadataKeys {
 	 */
 	public static final String IN_SENDING_IP = "SENDING_IP";
 
+    /**
+	 * Provides the port of the sending system for a given message
+	 */
+	public static final String IN_SENDING_PORT = "SENDING_PORT";
+
 }

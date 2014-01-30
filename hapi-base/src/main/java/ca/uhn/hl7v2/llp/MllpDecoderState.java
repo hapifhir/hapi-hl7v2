@@ -118,10 +118,11 @@ enum MllpDecoderState {
      * @param in  input
      * @param out recorded data
      * @return next decoder state
+     * @throws SocketTimeoutException If the socket times out
      * @throws IOException
      * @throws LLPException
      */
-    MllpDecoderState read(InputStream in, OutputStream out) throws IOException, LLPException {
+    MllpDecoderState read(InputStream in, OutputStream out) throws SocketTimeoutException, IOException, LLPException {
         int c;
         try {
             if ((c = in.read()) == -1) {
@@ -129,14 +130,17 @@ enum MllpDecoderState {
             } else {
                 LowerLayerProtocol.logCharacterReceived(c);
             }
-            if (c == nextStateByte) return proceed();
-            if (mustChangeState)
+            if (c == nextStateByte) {
+            	return proceed();
+            }
+            if (mustChangeState) {
                 throw new LLPException("MLLP protocol violation - Expected byte '" + nextStateByte +
                         "' in state " + this + " but was '" + c + "'");
+            }
             out.write(c);
         } catch (SocketTimeoutException e) {
-            LOG.debug("SocketTimeoutException on read() attempt in state {}", this);
-            return END;
+        	// Logged in the caller so we don't do it here
+            throw e;
         } catch (SocketException e) {
             LOG.info("SocketException on read() attempt.  Socket appears to have been closed: " + e.getMessage());
             throw e;

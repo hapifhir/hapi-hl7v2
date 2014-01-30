@@ -177,9 +177,10 @@ public class SimpleServer extends HL7Service {
 		
 		try {
 			// Wait some period of time for connections
-			AcceptedSocket newSocket = queue.poll(AcceptorThread.TIMEOUT, TimeUnit.MILLISECONDS);
+			AcceptedSocket newSocket = queue.poll(500, TimeUnit.MILLISECONDS);
 			if (newSocket != null) {
-				log.info("Accepted connection from {} on port {}", newSocket.socket.getInetAddress().getHostAddress(), port);
+				log.info("Accepted connection from {}:{} on local port {}", 
+						new Object[] { newSocket.socket.getInetAddress().getHostAddress(), newSocket.socket.getPort(), port });
 				ActiveConnection c = new ActiveConnection(getParser(), getLlp(), newSocket.socket,
 						getExecutorService());
 				newConnection(c);

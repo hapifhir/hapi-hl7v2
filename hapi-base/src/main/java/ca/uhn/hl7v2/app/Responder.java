@@ -86,6 +86,7 @@ class Responder {
 		Map<String, Object> metadata = new HashMap<String, Object>();
 		InetSocketAddress remoteSocketAddress = (InetSocketAddress) inboundSocket.getRemoteSocketAddress();
 		metadata.put(ApplicationRouter.METADATA_KEY_SENDING_IP, remoteSocketAddress.getAddress().getHostAddress());
+		metadata.put(ApplicationRouter.METADATA_KEY_SENDING_PORT, remoteSocketAddress.getPort());
 		
 		Transportable response = apps.processMessage(new TransportableImpl(incomingMessageString, metadata));
 		return response.getMessage();
