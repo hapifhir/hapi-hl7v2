@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -96,6 +98,29 @@ public class NewPipeParserTest {
 
 	}
 
+	/**
+	 * Bug 207
+	 */
+	@Test
+	public void testEnsureThatEncodeDoesntAffectStructure() throws HL7Exception, IOException
+	{
+	    String msgStr = FileUtils.readFileToString(new File("src/test/resources/ca/uhn/hl7v2/parser/adt_a03.txt"), "UTF-8");
+	    msgStr = msgStr.replace('\n', '\r').replace("\r\r", "\r");
+		PipeParser parser = new PipeParser();
+		parser.getHapiContext().getParserConfiguration().setValidating(false);
+		
+		ADT_A03 incoming = (ADT_A03) parser.parse(msgStr);
+
+	    String structureBeforeEncode = incoming.printStructure();
+	    
+//	    incoming.getAll("SFT");
+	    parser.encode(incoming);
+	    
+	    String structureAfterEncode = incoming.printStructure();
+	    Assert.assertEquals(structureBeforeEncode, structureAfterEncode);
+	}
+
+	
 	/**
 	 * See http://sourceforge.net/p/hl7api/bugs/171/
 	 */
