@@ -99,7 +99,11 @@ public class NewPipeParserTest {
 	}
 
 	/**
-	 * Bug 207
+	 * Bug 207 contributed by Jens Villadsen
+	 * 
+	 * This bug is caused by line 671 in PipeParser, but I don't yet
+	 * know what regressions would be caused by fixing it. Should be 
+	 * fixed however.
 	 */
 	@Test
 	public void testEnsureThatEncodeDoesntAffectStructure() throws HL7Exception, IOException
