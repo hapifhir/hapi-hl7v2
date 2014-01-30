@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -255,6 +256,11 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 			@Override
 			public ServerSocket createServerSocket() throws IOException {
 				return ServerSocketFactory.getDefault().createServerSocket();
+			}
+
+			@Override
+			public void configureNewAcceptedSocket(Socket theSocket) throws SocketException {
+				// nothing
 			}
 		};
 	}
