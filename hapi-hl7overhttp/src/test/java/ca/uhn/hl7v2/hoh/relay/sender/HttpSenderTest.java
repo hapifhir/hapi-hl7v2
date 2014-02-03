@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.relay.sender;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -58,6 +59,7 @@ public class HttpSenderTest {
 		myServerSocketThread = new ServerSocketThreadForTesting(myOutPort, ourServerCallback);
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testSenderWithTls() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
 
@@ -75,7 +77,7 @@ public class HttpSenderTest {
 		try {
 
 			Connection c = hub.attach("localhost", myInPort, false);
-			c.getInitiator().setTimeoutMillis(10000000);
+			c.getInitiator().setTimeout(10000000, TimeUnit.MILLISECONDS);
 			Message response = c.getInitiator().sendAndReceive(adt);
 
 			ourLog.info("Response was:\n{}", response.encode().replace('\r', '\n'));
@@ -87,6 +89,7 @@ public class HttpSenderTest {
 
 	
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testErrorMessageReferencesRelay() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
 
@@ -99,7 +102,7 @@ public class HttpSenderTest {
 		try {
 
 			Connection c = hub.attach("localhost", myInPort, false);
-			c.getInitiator().setTimeoutMillis(10000000);
+			c.getInitiator().setTimeout(10000000, TimeUnit.MILLISECONDS);
 			Message response = c.getInitiator().sendAndReceive(adt);
 
 			ourLog.info("Response was:\n{}", response.encode().replace('\r', '\n'));

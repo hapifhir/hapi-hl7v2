@@ -15,7 +15,7 @@ abstract class AbstractHl7OverHttp {
 	protected static final Charset ourDefaultCharset;
 
 	static {
-		ourDefaultCharset = Charset.forName("ISO-8859-1");
+		ourDefaultCharset = Charset.forName("UTF-8");
 		VersionLogger.init();
 	}
 	
@@ -112,8 +112,10 @@ abstract class AbstractHl7OverHttp {
 
 	/**
 	 * @param theCharset
-	 *            The encoding charset to use (default is ISO-8859-1)
+	 *            The encoding charset to use (default is UTF-8)
+	 * @deprecated The HL7 over HTTP specification now mandates the use of UTF-8. <b>Using this method to set a value other than UTF-8 will lead to a non-conformant application</b> 
 	 */
+	@Deprecated
 	public void setCharset(Charset theCharset) {
 		if (theCharset == null) {
 			throw new NullPointerException("Charset can not be null");

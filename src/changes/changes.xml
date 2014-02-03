@@ -142,6 +142,10 @@
                 to be processed as a complete message when the reading socket times out part way through the
                 message. This issue does not affect previous versions of HAPI.
             </action>
+            <action type="add" dev="James Agnew">
+                HL7 over HTTP implementation updated to match specification changes by HL7 ITS WG: 
+                HL7 responses always use HTTP 200, UTF-8 is default (and changing it is deprecated)
+            </action>
 		</release>
         <release version="2.1" date="2013-03-21" description="This release introduces the HapiContext and brings many new features">
         	<action type="add" dev="James Agnew" issue="155" system="newbugs">
