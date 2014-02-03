@@ -24,12 +24,16 @@ public enum ResponseCode {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ResponseCode.class);
 
 	static {
+		/*
+		 * As of a decision by the HL7 ITS working group, all HL7
+		 * response codes now map to HTTP 200.
+		 */
 		ourAckCodesToResponseCodes.put(AA, HTTP_200_OK);
 		ourAckCodesToResponseCodes.put(CA, HTTP_200_OK);
-		ourAckCodesToResponseCodes.put(AR, HTTP_400_BAD_REQUEST);
-		ourAckCodesToResponseCodes.put(CR, HTTP_400_BAD_REQUEST);
-		ourAckCodesToResponseCodes.put(AE, HTTP_500_INTERNAL_SERVER_ERROR);
-		ourAckCodesToResponseCodes.put(CE, HTTP_500_INTERNAL_SERVER_ERROR);
+		ourAckCodesToResponseCodes.put(AR, HTTP_200_OK);
+		ourAckCodesToResponseCodes.put(CR, HTTP_200_OK);
+		ourAckCodesToResponseCodes.put(AE, HTTP_200_OK);
+		ourAckCodesToResponseCodes.put(CE, HTTP_200_OK);
 	}
 
 	ResponseCode(int theCode, String theMessage) {
