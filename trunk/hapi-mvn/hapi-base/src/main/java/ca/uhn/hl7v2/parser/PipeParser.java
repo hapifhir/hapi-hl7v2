@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import ca.uhn.hl7v2.validation.ValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +110,12 @@ public class PipeParser extends Parser {
 		super(theFactory);
 	}
 
-	/**
+    @Override
+    public void setValidationContext(ValidationContext context) {
+        super.setValidationContext(context);
+    }
+
+    /**
 	 * Returns a String representing the encoding of the given message, if the
 	 * encoding is recognized. For example if the given message appears to be
 	 * encoded using HL7 2.x XML rules then "XML" would be returned. If the

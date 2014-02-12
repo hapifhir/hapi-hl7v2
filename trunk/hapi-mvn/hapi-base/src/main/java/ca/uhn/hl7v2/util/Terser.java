@@ -27,6 +27,7 @@
 
 package ca.uhn.hl7v2.util;
 
+import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.model.*;
 import ca.uhn.hl7v2.HL7Exception;
 import java.util.StringTokenizer;
@@ -177,15 +178,24 @@ public class Terser {
         }
         if (component < 1) {
             throw new IllegalArgumentException(
-                    "component must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+                    "component must be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
         }
         if (subcomponent < 1) {
             throw new IllegalArgumentException(
-                    "subcomponent must not be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
+                    "subcomponent must be 1 or more (note that this parameter is 1-indexed, not 0-indexed)");
         }
 
         Primitive prim = getPrimitive(segment, field, rep, component, subcomponent);
         prim.setValue(value);
+    }
+
+    public static void set(Segment segment, Location location, String value) throws HL7Exception {
+        set(segment,
+                location.getField(),
+                location.getFieldRepetition(),
+                location.getComponent(),
+                location.getSubcomponent(),
+                value);
     }
 
     /**
