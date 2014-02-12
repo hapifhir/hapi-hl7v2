@@ -618,6 +618,7 @@ public abstract class Parser extends HapiContextSupport {
         if (handler.hasFailed()) {
             HL7Exception e = new HL7Exception("Validation has failed");
             e.setDetail(result);
+            if (result instanceof Message) e.setResponseMessage((Message)result);
             throw e;
         }
     }

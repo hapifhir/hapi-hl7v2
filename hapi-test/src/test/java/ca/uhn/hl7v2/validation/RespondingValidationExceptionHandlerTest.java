@@ -6,14 +6,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import ca.uhn.hl7v2.*;
+import ca.uhn.hl7v2.parser.PipeParser;
 import org.junit.Test;
 
-import ca.uhn.hl7v2.AcknowledgmentCode;
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.Location;
-import ca.uhn.hl7v2.MockitoTest;
-import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
@@ -49,9 +45,8 @@ public class RespondingValidationExceptionHandlerTest extends MockitoTest {
 		handler.setErrorAcknowledgementCode(AcknowledgmentCode.AR);
 
 		Validator<Message> validator = context.getMessageValidator();
-		assertNotNull(validator.validate(a01, handler));
-		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) handler
-				.result();
+		Message message = validator.validate(a01, handler);
+		ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) message;
 		String messageId = a01.getMSH().getMessageControlID().getValue();
 		assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
 		assertEquals(AcknowledgmentCode.AR.name(), ack.getMSA().getAcknowledgmentCode().getValue());
@@ -63,6 +58,36 @@ public class RespondingValidationExceptionHandlerTest extends MockitoTest {
 		assertEquals("207", ack.getERR(1).getHL7ErrorCode().getIdentifier().getValue());
 		// System.out.println(ack.encode());
 	}
+
+    @Test
+    public void testResponseMessageForFailingHandlerDuringParsing() throws Exception {
+        ADT_A01 a01 = new ADT_A01();
+        a01.initQuickstart("ADT", "A01", "P");
+        String message = new PipeParser().encode(a01);
+
+        HapiContext context = new DefaultHapiContext();
+        context.setValidationContext(context(failingMessageRule("PID-1", "PV1-44"), "ADT", "A01",
+                Version.V26));
+        context.getParserConfiguration().setValidating(true);
+        RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler(context);
+        handler.setErrorAcknowledgementCode(AcknowledgmentCode.AR);
+        context.setValidationExceptionHandlerFactory(handler);
+
+        try {
+            context.getPipeParser().parse(message);
+        } catch (HL7Exception e) {
+            ca.uhn.hl7v2.model.v26.message.ACK ack = (ca.uhn.hl7v2.model.v26.message.ACK) e.getResponseMessage();
+            String messageId = a01.getMSH().getMessageControlID().getValue();
+            assertEquals(messageId, ack.getMSA().getMessageControlID().getValue());
+            assertEquals(AcknowledgmentCode.AR.name(), ack.getMSA().getAcknowledgmentCode().getValue());
+            assertEquals("PID", ack.getERR(0).getErrorLocation(0).getSegmentID().getValue());
+            assertEquals("1", ack.getERR(0).getErrorLocation(0).getFieldPosition().getValue());
+            assertEquals("207", ack.getERR(0).getHL7ErrorCode().getIdentifier().getValue());
+            assertEquals("PV1", ack.getERR(1).getErrorLocation(0).getSegmentID().getValue());
+            assertEquals("44", ack.getERR(1).getErrorLocation(0).getFieldPosition().getValue());
+            assertEquals("207", ack.getERR(1).getHL7ErrorCode().getIdentifier().getValue());
+        }
+    }
 
 	@Test
 	public void testFailingHandler23() throws Exception {

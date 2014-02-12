@@ -163,7 +163,11 @@ public class RespondingValidationExceptionHandler extends
     }
 
     public ValidationExceptionHandler<Message> getNewInstance(HapiContext context) {
-        return new RespondingValidationExceptionHandler(context);
+        RespondingValidationExceptionHandler handler = new RespondingValidationExceptionHandler(context);
+        handler.setErrorAcknowledgementCode(getErrorAcknowledgementCode());
+        handler.setSuccessAcknowledgementCode(getSuccessAcknowledgementCode());
+        handler.setMinimumSeverityToCollect(getMinimumSeverityToCollect());
+        return handler;
     }
 
 }
