@@ -88,12 +88,19 @@ public class ProcessorImpl implements Processor {
         if (isThreaded) {
             myResponseExecutorService = Executors.newSingleThreadExecutor(); 
 
+            TransportLayer local = theContext.getLocallyDrivenTransportLayer();
+            TransportLayer remote = theContext.getRemotelyDrivenTransportLayer();
+            
         	ackCycler = new Cycler(this, true);
             Thread ackThd = new Thread(ackCycler);
             ackThd.start();
-            nonAckCycler = new Cycler(this, false);
-            Thread nonAckThd = new Thread(nonAckCycler);
-            nonAckThd.start();            
+            
+            if (local != remote) {
+	            nonAckCycler = new Cycler(this, false);
+	            Thread nonAckThd = new Thread(nonAckCycler);
+	            nonAckThd.start();
+            }
+            
         }
     }
     
@@ -103,8 +110,10 @@ public class ProcessorImpl implements Processor {
     public void stop() {
         if (myThreaded) {
             ackCycler.stop();
-            nonAckCycler.stop();
-
+            if (nonAckCycler != null) {
+            	nonAckCycler.stop();
+            }
+            
             myResponseExecutorService.shutdownNow();
         }
     }
@@ -252,7 +261,7 @@ public class ProcessorImpl implements Processor {
      * @see ca.uhn.hl7v2.protocol.Processor#cycle(boolean)
      */
     public void cycle(boolean expectingAck) throws HL7Exception {
-        log.debug("In cycle()");
+        log.debug("In cycle({})", expectingAck);
     	
     	cleanReservations();
         cleanAcceptAcks();
