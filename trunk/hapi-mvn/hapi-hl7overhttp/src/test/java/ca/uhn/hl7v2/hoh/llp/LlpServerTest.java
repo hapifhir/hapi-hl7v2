@@ -226,7 +226,7 @@ public class LlpServerTest implements Application, ConnectionListener {
 
 		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
 		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
-		assertEquals(500, conn.getResponseCode());
+		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage.encode());
 		assertEquals(myResponse.encode(), responseString);
 
@@ -292,7 +292,7 @@ public class LlpServerTest implements Application, ConnectionListener {
 
 		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
 		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
-		assertEquals(400, conn.getResponseCode());
+		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage.encode());
 		assertEquals(myResponse.encode(), responseString);
 

@@ -179,7 +179,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		ourLog.info("Response:\n{}", responseString);
 
 		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
-		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
+		assertEquals("UTF-8", conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
 		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage);
 		assertEquals(myResponse, responseString);
@@ -389,7 +389,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 
 		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
 		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
-		assertEquals(400, conn.getResponseCode());
+		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage);
 		assertEquals(myResponse, responseString);
 
@@ -458,7 +458,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 
 		assertEquals(EncodingStyle.ER7.getContentType(), conn.getHeaderField("Content-Type").replaceAll(";.*", ""));
 		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
-		assertEquals(500, conn.getResponseCode());
+		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage);
 		assertEquals(myResponse, responseString);
 

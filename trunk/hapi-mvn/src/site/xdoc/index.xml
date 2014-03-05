@@ -80,10 +80,10 @@
 			
 		</section>
 
-		<section name="New Beta Released! (HAPI 2.2-beta1) - Nov 27, 2013">
+		<section name="HAPI 2.2 Released - March 4, 2014">
 		
 			<p>
-				A new beta of HAPI (Core library, HL7 over HTTP, and Structures)
+				A new release of HAPI (Core library, HL7 over HTTP, and Structures)
 				has been uploaded to Sourceforge and the central Maven repo.
 			</p>
 			
@@ -93,12 +93,6 @@
 				a number of upgrades to the base API.
 			</p>
 		
-			<p>
-				We are aiming to release this soon! Please help us out
-				by testing and reporting any issues. 
-				Download it <a href="http://sourceforge.net/projects/hl7api/files/hl7api-unstable/2.2-beta1/">here</a> or use version "2.2-beta1" in Maven. 
-			</p>
-
 			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
 		
 		</section>
