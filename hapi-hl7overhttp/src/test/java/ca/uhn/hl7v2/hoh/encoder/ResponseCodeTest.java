@@ -27,11 +27,11 @@ public class ResponseCodeTest {
 		
 		ack = a05.generateACK(AcknowledgmentCode.AE, null);
 		ackString = ack.encode();
-		assertEquals(ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR, ResponseCode.detect(ackString));
+		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 		
 		ack = a05.generateACK(AcknowledgmentCode.AR, null);
 		ackString = ack.encode();
-		assertEquals(ResponseCode.HTTP_400_BAD_REQUEST, ResponseCode.detect(ackString));
+		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 
 	}
 
@@ -55,11 +55,11 @@ public class ResponseCodeTest {
 		
 		ack = a05.generateACK(AcknowledgmentCode.AE, null);
 		ackString = ack.encode();
-		assertEquals(ResponseCode.HTTP_500_INTERNAL_SERVER_ERROR, ResponseCode.detect(ackString));
+		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 		
 		ack = a05.generateACK(AcknowledgmentCode.AR, null);
 		ackString = ack.encode();
-		assertEquals(ResponseCode.HTTP_400_BAD_REQUEST, ResponseCode.detect(ackString));
+		assertEquals(ResponseCode.HTTP_200_OK, ResponseCode.detect(ackString));
 
 	}
 

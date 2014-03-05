@@ -1,5 +1,5 @@
 
-VERSION="2.0"
+VERSION="2.2"
 
 rm -fvR scripts/staging/*
 mkdir scripts/staging

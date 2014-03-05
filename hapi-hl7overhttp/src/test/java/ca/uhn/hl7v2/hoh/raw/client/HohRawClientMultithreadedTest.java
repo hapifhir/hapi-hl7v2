@@ -2,12 +2,11 @@ package ca.uhn.hl7v2.hoh.raw.client;
 
 import static org.junit.Assert.*;
 
-import java.net.SocketException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
@@ -220,7 +219,7 @@ public class HohRawClientMultithreadedTest {
 		
 		try {
 			response = client.sendAndReceive(new RawSendable(message));
-		} catch (SocketException e) {
+		} catch (DecodeException e) {
 			// We're allowed to fail once
 		}
 		
