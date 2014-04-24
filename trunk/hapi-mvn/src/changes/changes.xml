@@ -4,7 +4,14 @@
 	<properties>
 		<title>HAPI</title>
 	</properties>
+
 	<body>
+            <release version="2.3" date="tbd." description="">
+                <action type="fix" dev="Christian Ohr" system="newbugs" issue="213">
+                    Fix CustomModelClassFactory implementation, returning the correct message structure
+                </action>
+            </release>
+
 			<release version="2.2" date="2014-03-04" description="This release contains a number of big fixes, a newly rewritten MLLP implementation and several API enhancements.">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="176">
             	XML Parsing now also works if the HL7v2 XML namespace is not the default namespace 

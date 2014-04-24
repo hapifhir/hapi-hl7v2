@@ -240,15 +240,9 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
 	@Override
 	public String getMessageStructureForEvent(String eventName, Version version) throws HL7Exception {
 		String structure = super.getMessageStructureForEvent(eventName, version);
-		if (structure == null) {
-			structure = delegate.getMessageStructureForEvent(eventName, version);
-		}
-		if (structure != null) {
-			structure = eventName;
-		}
-		return structure;
+        if (structure != null) return structure;
+		structure = delegate.getMessageStructureForEvent(eventName, version);
+		return structure != null ? structure : eventName;
 	}
-	
-	
 	
 }
