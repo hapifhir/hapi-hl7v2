@@ -1,50 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
-<!-- 
-
-> Hi James
->
-> Some comments on the revised version of the spec:
-> * Section 2.4 - it seems to me that this doesn't go quite far enough.
-> Would it be acceptable to require parameters taken from the message? I
-> think not, but it doesn't explicitly say so. Given how tricky people are used to
-> being with http, might be a good idea
-> * Section 2.5 "Response messages being transmitted by a server MUST use
-> the same content type as the corresponding request message" - but not in
-> the case of an error (i.e. status code <> 200) - this is readdressed in 2.5, and a
-> forward reference to related rules might be appropriate
-> * then the section includes 2 SHALL clauses, followed by a SHALL that deals
-> with the case where the first 2 SHALLs are not followed. I think this is not a
-> good idea.
-> * Security Level 1 - I can't really get my head around this. No SSL?
-> why even bother - it's not like you achieved anything at all
-> * Level 2: "a sending application MUST be capable of using an exported public
-> key from a private key in use in the receiving application" - I don't know what
-> this means
-> * Security Level 2 ups the stakes on plain SSL by requiring a signed verified
-> server certificate. I think that level 1 should require plain SSL but allow self-
-> generated certificates. self generated certificates are prone to MITM attacks,
-> but prevent side channel casual inspection.
-> Within an institution, this is worthwhile and useful. Where as I would claim
-> that the existing level 1 never is. Which reminds me - it would seem
-> appropriate to at least provide some information about the threat profile
-> that each level is aiming to deal with
-> * Level 3 - does the client certificate have to be verified by a chain of trust? (if
-> not, what's the point?)
-> * typo in 4.1: implemnenters
-> * "implemnenters should consider enabling the HL7 Sequence Number
-> Protocol in where possible" - another typo "in where". Does anyone actually
-> use this? It's kind of a sledgehammer approach to the problem. I'd rather this
-> was phrased "implementers should consider how to ensure that messages
-> are processed sequentially. The HL7 sequence number protocol may be used
-> in this case"
->
-> Generally - great document. I would expect significant adoption in the short
-> term
->
- -->
-
 	<properties>
 		<title>HL7 over HTTP</title>
 		<author email="jamesagnew@users.sourceforge.net">James Agnew</author>
@@ -108,8 +64,8 @@
 			<subsection name="1.1 Intent">
 			
 				<p>
-					HL7 over HTTP is intended as a successor to the traditional
-					Minimal Lower Layer Protocol (MLLP), but provides a number
+					HL7 over HTTP is intended as an alternative to the traditional
+					Minimal Lower Layer Protocol (MLLP), and provides a number
 					of key improvements:
 				</p>
 				<ul>
@@ -134,10 +90,8 @@
 
 			<subsection name="1.2 Scope">
 				<p>
-					HL7 over HTTP is initially intended as a transport mechanism for transactional
-					HL7 v2.x messaging between systems which support the HL7 v2 protocol. Future
-					releases of this specification may incorporate support for transactional 
-					messaging of other payload types (e.g. HL7 v3, FHIR, etc.)
+					HL7 over HTTP is intended as a <b>transport level protocol</b> for transactional
+					messaging between systems which support HL7 protocols.
 				</p>
 				<p>
 					HL7 over HTTP is <b>not</b> intended to provide a different messaging paradigm
@@ -145,14 +99,6 @@
 				</p>
 			</subsection>
 
-			<!-- <subsection name="Implementation Considerations">
-				<p>
-					This document is intended to provide a standard implementable specification
-					which application developers may use as a reference in order to 
-					build interoperable software. 
-				</p>
-			</subsection> -->
-					
 		</section>
 		
 		<section name="2.0 - Specification">
@@ -161,7 +107,7 @@
 				HL7 over HTTP uses the standard HTTP/1.1 protocol 
 				(<a href="http://www.ietf.org/rfc/rfc2616.txt">RFC 2616</a>)
 				as a mechanism to transfer
-				a raw HL7 message using either ER7 or XML encoding to a destination, and then
+				a raw HL7 message using standard HL7 encoding (i.e. "vertical bar" or XML) encoding to a destination, and then
 				to receive a response to that message.  
 			</p>
 
@@ -186,19 +132,7 @@
 				
 			</subsection>
 			
-			<subsection name="2.2 Scope">
-			
-				<p>
-					HL7 over HTTP is a <b>transport level protocol</b>. This means that it
-					does not impose any requirements on the message payload contained within. 
-					However, the scope of this specification is limited to the transport of
-					HL7 v2.x messages. A future revision may add support for other
-					payload types.
-				</p>
-			
-			</subsection>
-
-			<subsection name="2.3 Transport Messages">
+			<subsection name="2.2 Transport Messages">
 			
 				<p>
 					Every interaction consists of a <b>request message</b> and a <b>response message</b>.
@@ -217,7 +151,7 @@
 			
 			</subsection>
 			
-			<subsection name="2.4 Addressing">
+			<subsection name="2.3 Addressing">
 			
 				<p>
 					The <b>request message</b> SHALL include a universal resource identifier (URI), per the
@@ -277,7 +211,7 @@
 				 
 			</subsection>
 
-			<subsection name="2.5 Content Type and Character Set">
+			<subsection name="2.4 Content Type and Character Set">
 				
 				<p>
 					The <b>request message</b> and the <b>response message</b> SHALL include a
@@ -285,14 +219,29 @@
 					transferred. The following MIME types apply:
 					<ul>
 						<li>
-							If the message is an ER7 (vertical bar) encoded HL7 v2.x message, the
+							If the message is a "vertical bar" encoded HL7 v2.x message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+er7</code>
 						</li>
 						<li>
 							If the message is an XML encoded HL7 v2.x message, the
 							content type SHALL be:<br/>
 							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
+						</li>
+						<li>
+							If the message is an XML encoded HL7 v3 message, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v3+xml</code>
+						</li>
+						<li>
+							If the message is an XML encoded FHIR message, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/fhir+xml</code>
+						</li>
+						<li>
+							If the message is a JSON encoded FHIR message, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/fhir+json</code>
 						</li>
 						<li>
 							If the <b>response message</b> content is not an HL7 message
@@ -307,15 +256,15 @@
 				    <b>Non-error response messages</b> being transmitted by a server MUST use the same
 				    content type as the corresponding <b>request message</b>, if the response message
 				    payload is an HL7 v2.x message. In other words, if a request message uses XML
-				    encoding instead of ER7, the corresponding response message MUST also
-				    use XML encoding. See section <a href="#2_7_RESP_CODES">2.7 Response Codes</a>
+				    encoding, the corresponding response message MUST also
+				    use XML encoding. See section <a href="#2_6_RESP_CODES">2.6 Response Codes</a>
 				    for more information about response codes for error handling.
 				</p>
 				
 				<h4>Character Set</h4>
 				
 				<p>
-					HL7 v2.x message payloads SHALL use the UTF-8 character encoding
+					HL7 over HTTP message payloads SHALL use the UTF-8 character encoding
 					scheme. 
 				</p>
 				<p>
@@ -328,12 +277,6 @@
 					specified in MSH-18. When a message is received using HL7 over HTTP, this value SHALL
 					be ignored, and the character encoding specified in the HTTP 
 					"<code>Content-Type</code>" header MUST be observed instead. 
-					<!-- 
-					In the event that
-					a message is received with no character encoding specified in the "<code>Content-Type</code>"
-					header, the character encoding SHALL be assumed to be ISO-8859-1 as described
-					in section 3.7.1 of RFC 2616.
-					 -->  
 				</p>
 				
 				<p><b>Implementation Consideration</b></p>
@@ -345,12 +288,12 @@
 				</p>
 				<p>
 					An example follows which shows the Content-Type header used
-					to indicate that an ER7 encoded message is being transmitted.
+					to indicate that a "vertical bar" encoded message is being transmitted.
 				</p>
-				<source>Content-Type: application/hl7-v2; charset=utf-8</source>
+				<source>Content-Type: application/hl7-v2+er7; charset=utf-8</source>
 			
 			</subsection>
-			<subsection name="2.6 Date">
+			<subsection name="2.5 Date">
 				
 				<h4>Date</h4>
 				
@@ -401,8 +344,8 @@
 				
 			</subsection>
 			
-			<a name="2_7_RESP_CODES"/>
-			<subsection name="2.7 HTTP Response Codes">
+			<a name="2_6_RESP_CODES"/>
+			<subsection name="2.6 HTTP Response Codes">
 
 				<!--			    
 			    <p>
@@ -481,7 +424,7 @@
 			    
 			</subsection>
 
-			<subsection name="2.9 HL7 Query/Response Mode">
+			<subsection name="2.7 HL7 Query/Response Mode">
 				
 				<p>
 					HL7 defines a number of messages which are designed to be sent to a receiving system
@@ -582,7 +525,7 @@
 					<tr>
 						<td style="background: #AAF; font-weight: bold;">Level 1</td>
 						<td style="background: #FAA;">No</td>
-						<td style="background: #AFA;">Yes</td>
+						<td style="background: #AFA;">Yes (Very weak)</td>
 						<td style="background: #FAA;">No</td>
 					</tr>
 					<tr>
@@ -625,6 +568,13 @@
 					Security Profile Level 1 (referred to hereafter as "Level 1")
 					consists only of a security token which allows the receiving system to
 					verify the identity of the sending system. 
+				</p>
+				
+				<p>
+					Level 1 does not include any encryption mechanism, and therefore
+					does not protect messages in transit against eavesdropping or tampering.
+					This is an important consideration when choosing a security profile, and
+					Level 1 should therefore only be used within closed/protected networks.  
 				</p>
 			
 				<p>
@@ -670,8 +620,8 @@
 				<p>
 					<b>Sending applications</b> and <b>receiving applications</b> implementing this profile 
 					MUST additionally support the ability to communicate using HTTPS, i.e.
-					using Transport Layer Security (TLS), version 1.0 
-					(RFC 2246, <a href="http://www.ietf.org/rfc/rfc2246.txt">http://www.ietf.org/rfc/rfc2246.txt</a>) or later. 
+					using Transport Layer Security (TLS), version 1.2 
+					(RFC 5246, <a href="http://tools.ietf.org/html/rfc5246">http://www.ietf.org/rfc/rfc2246.txt</a>) or later. 
 					Transport Layer Security provides the possibility for end-to-end encryption.
 				</p>
 				<p>
