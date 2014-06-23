@@ -14,7 +14,7 @@
 			    SOCIALPLUGINSHEREAPI
 			</p>
 			<p>
-				This is the home page for the HAPI project. 
+				This is the home page for the HAPI project.
 				HAPI (HL7 application
 				programming interface;
 				pronounced "happy") is an open-source,
@@ -32,44 +32,53 @@
 				project was initiated by
 				<a href="http://www.uhn.ca">University Health Network</a>
 				(a large multi-site teaching hospital in Toronto, Canada).
-				
+
 			</p>
-			
+
 			<table border="0">
-				<tr>	
-					<td style="background: #FFFFFF;" width="50%">
-						<h3>HAPI Java API</h3>
-						A full featured Java API you can use to add HL7 capabilities to 
+				<tr>
+					<td style="background: #FFFFFF;">
+						<h3>HL7 v2 Java API</h3>
+						A full featured Java API you can use to add HL7 capabilities to
 						your applications.
-			<ul>
-				<li>
-					<b>Support HAPI:</b>
-					<a href="https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&amp;newtest=Y">Answer the 2011 HAPI Community Survey!</a>
-				</li>
-				<li>
-					<b>Use HAPI:</b>
-					Check out
-					<a href="devbyexample.html">HAPI by example</a>
-					or the
-					<a href="base/apidocs/index.html">JavaDocs</a>
-					to learn how to use HAPI in your application.
-				</li>
-				<li>
-					<b>Get Help:</b>
-					Subscribe or browse our
-					<a href="mail-lists.html">mailing list</a>
-					to ask questions and find answers.
-				</li>
-				<li>
-					<b>Help improve HAPI:</b>
-					Report an issue, submit an idea, or get started developing
-					new features
-					<a href="getinvolved.html">here</a>
-					.
-				</li>
-			</ul>
+						<ul>
+							<!--
+							<li>
+								<b>Support HAPI:</b>
+								<a href="https://sourceforge.net/apps/limesurvey/hl7api/index.php?sid=69291&amp;newtest=Y">Answer the 2011 HAPI Community Survey!</a>
+							</li>
+							-->
+							<li>
+								<b>Use HAPI:</b>
+								Check out
+								<a href="devbyexample.html">HAPI by example</a>
+								or the
+								<a href="base/apidocs/index.html">JavaDocs</a>
+								to learn how to use HAPI in your application.
+							</li>
+							<li>
+								<b>Get Help:</b>
+								Subscribe or browse our
+								<a href="mail-lists.html">mailing list</a>
+								to ask questions and find answers.
+							</li>
+							<li>
+								<b>Help improve HAPI:</b>
+								Report an issue, submit an idea, or get started developing
+								new features
+								<a href="getinvolved.html">here</a>
+								.
+							</li>
+						</ul>
 					</td>
-					<td style="background: #FFFFFF;" width="50%">
+					<td style="background: #FFFFFF;">
+						<h3>FHIR Java API</h3>
+						HAPI has now introduced an API for developing applications
+						based on the emerging HL7 FHIR specification.
+						See the
+						<a href="hapi-fhir/">HAPI FHIR</a> site to learn more.
+					</td>
+					<td style="background: #FFFFFF;">
 						<h3>HAPI TestPanel</h3>
 						A rich testing application which can be used to edit HL7 messages,
 						transmit them, validate them, and more.
@@ -77,28 +86,48 @@
 					</td>
 				</tr>
 			</table>
-			
+
+		</section>
+
+		<section name="HAPI 2.2 Released - May 12, 2014">
+
+			<p>
+				Just a quick note that the HAPI FHIR website has been
+				launched here:
+				<a href="hapi-fhir/">hapi-fhir</a>
+			</p>
+
+			<p>
+				HAPI FHIR is an attempt to provide an implementation of
+				the new HL7 FHIR specification that is as easy to use as
+				the HL7 v2 HAPI library.
+			</p>
+
+			<p>
+				Please give it a try!
+			</p>
+
 		</section>
 
 		<section name="HAPI 2.2 Released - March 4, 2014">
-		
+
 			<p>
 				A new release of HAPI (Core library, HL7 over HTTP, and Structures)
 				has been uploaded to Sourceforge and the central Maven repo.
 			</p>
-			
+
 			<p>
 				This new release is packed with new features. Read about them in
 				the <a href="changes-report.html">Changelog</a>. There are also
 				a number of upgrades to the base API.
 			</p>
-		
+
 			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
-		
+
 		</section>
 
 		<section name="HAPI 2.1 has been released - Mar 25, 2013">
-			
+
 <p>After a much-too-long wait, HAPI 2.1 has been released. Once again, this relasse is packed with new features. Most importantly it begins a transition to a simplified API where everything is centered around a&nbsp;<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/DefaultHapiContext.html">HapiContext</a>&nbsp;that acts as a kind of "gateway" into the whole API, and a start down the road to eventually merging the powerful parts of the <span style="font-family: Courier New, Courier, monospace;"><span style="color: #274e13;">.protocol.*</span> </span>hierarchy with the easy to use <span style="color: #274e13; font-family: Courier New, Courier, monospace;">.app.*</span> hierarchy.<br />
 <br />
 The API changes are non-breaking, so existing applications will work without modification, but we would encourage developers to migrate their code where possible to use the new APIs, since this will make code more readable. Information on how to migrate is found&nbsp;<a href="http://hl7api.sourceforge.net/upgrade_to_hapi_2_1.html">here.</a><br />
@@ -108,76 +137,76 @@ As always, a complete changelog is available&nbsp;<a href="http://hl7api.sourcef
 The new release has been uploaded to Sourceforge, and has also had time to synchronize to the global Maven repos, so it should be fully available now. Thanks to everyone who contributed!</p>
 
 		</section>
-		
+
 		<section name="HL7 over HTTP Update - Aug 23, 2012">
-		
+
 			<p>
 				A number of suggestions, comments, and other feedback have
 				been worked into the draft
 				<a href="hapi-hl7overhttp/specification.html">specification</a>
 				which has now been posted.
 			</p>
-			
+
 			<p>
 				In addition, a completely functional Java based implementation
 				of the specification has been developed and is now available for
-				download (in alpha form) and testing. 
+				download (in alpha form) and testing.
 			</p>
-		
+
 			<p>
 				<a href="hapi-hl7overhttp/index.html">See the HL7 over HTTP</a>
 				page for more information!
 			</p>
-			
-		
+
+
 		</section>
 
 		<section name="HAPI 2.0 and TestPanel 2.0 Released! Jul 17, 2012">
-		
+
 			<p>
 				Today marks a big milestone for HAPI, with the release of version 2.0 of both
 				the HAPI Java API and the HAPI TestPanel.
 			</p>
-		
+
 			<p>
 				The new release comes packed with tons of bugfixes, plenty of new features,
-				and improvements. See the <a href="changes-report.html">Changelog</a> for 
+				and improvements. See the <a href="changes-report.html">Changelog</a> for
 				information on everything that is new.
 			</p>
-			
+
 			<p>
 				One thing to note: Migrating to the new version of the Java API should be
 				very straightforward, but there is one notable difference to watch out for:
 				As of version 2.0 the logging abstraction layer has changes from commons-logging to
 				<a href="http://www.slf4j.org/">SLF4J</a>, so you will need to include the
-				SLf4J API JAR on your classpath. You will probably want to include an 
+				SLf4J API JAR on your classpath. You will probably want to include an
 				adaptor to an underlying logging framework as well. Maven users can copy the
 				updated POM dependency snippets from <a href="using_maven.html">here</a>. Non-Maven
-				users will find the new requirements in the "hapi-all" bundle on the 
+				users will find the new requirements in the "hapi-all" bundle on the
 				<a href="https://sourceforge.net/projects/hl7api/files/hl7api/2.0/">Download</a>
-				area. 
+				area.
 			</p>
-		
+
 			<p>
 				Thanks to everyone who contributed! In particular, this release features a huge
 				set of contributions from Christian Ohr, who cleaned up a lot of old codebase,
 				modernized the SimpleServer, and replaced the logging framework. It's great to
 				see that the HAPI community continues to gain traction after a decade!
 			</p>
-		
+
 		</section>
 
 		<section name="New Developments! Jan 22, 2012">
-		
+
 			<p>
 				The new year brings three new developments to HAPI!
 			</p>
-			
+
 			<subsection name="New Beta Release!">
 				<p>
 					First, a new beta release of HAPI has bee posted to the download pages,
 					as well as to the Maven central repo. HAPI 2.0-beta1 brings with it
-					a number of exciting new features, and a number of bug fixes, which you 
+					a number of exciting new features, and a number of bug fixes, which you
 					can read about in the
 					<a href="changes-report.html">Changelog</a>. In particular, a huge refactoring
 					of the .app package (containing ConnectionHub, SimpleServer, etc.) to overhaul
@@ -187,7 +216,7 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 					This release contains a number
 					of contributions from all over the world. Thanks to everyone who got
 					involved!
-				</p> 
+				</p>
 				<p>
 					Please be aware that this is still a beta release, and hasn't yet been
 					thoroughly tested. In particular, <a href="./surefire-report.html">several unit tests</a>
@@ -197,14 +226,14 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 					<a href="https://sourceforge.net/projects/hl7api/files/hl7api-unstable/2.0-beta1/">Download it here</a>
 				</p>
 			</subsection>
-					
+
 			<subsection name="New TestPanel!">
 				<p>
 					Secondly, hUnit and the HAPI TestPanel have been combined, to make
 					a fantastic new HL7 testing tool, "TestPanel 2.0". The new panel
 					is a full featured testing and editing suite with support for all
 					kinds of useful things including SSL, MLLP packet capture, validation,
-					conformance profiles, and more.   
+					conformance profiles, and more.
 				</p>
 				<p>
 					<a href="./hapi-testpanel/index.html">Learn More</a>
@@ -242,15 +271,15 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 			<p>
 				A few stats:
 			</p>
-			<!-- <ul> <li> <b>HAPI keeps growing.</b> Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow. The graph below shows the number of unique visitors 
-				to our online documentation each month between 2006 and 2011. <img src="images/10yr_visitors.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used all over the world.</b> 
-				Here are the top 100 cities this year in terms of visits to our online help. <img src="images/10yr_visitors_map.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used by all 
-				types of organizations.</b> Here are the responses from the 2011 community survey, to date. <table style="width: 500px;"> <thead> <tr> <td>Describe your Organization of Company</td> <td>Percentage of responses</td> 
-				</tr> </thead> <tbody> <tr> <td>None / not applicable</td> <td>1.11%</td> </tr> <tr> <td>University / college / other school</td> <td>12.22%</td> </tr> <tr> <td>Government Department, Agency, etc</td> 
-				<td>6.67%</td> </tr> <tr> <td>Public Hospital, Clinic, or other health provider</td> <td>12.22%</td> </tr> <tr> <td>Private Hospital, Clinic, or other health provider</td> <td>8.89%</td> </tr> <tr> <td>Insurer, 
-				HMO, etc.</td> <td>0</td> </tr> <tr> <td>Small software development company (under 20 developers)</td> <td>23.33%</td> </tr> <tr> <td>Medium software development company (21-100 developers)</td> <td>15.56%</td> 
-				</tr> <tr> <td>Large software development company (101+ developers)</td> <td>16.67%</td> </tr> <tr> <td>Other</td> <td>5.56%</td> </tr> </tbody> </table> <br /> <br /> <br /> </li> <li> <b>HAPI is widely 
-				deployed.</b> This is just a sample of the companies, hospitals, governments, and educational facilities who have let us know they are using HAPI over the years. Please <a href="mailto:jamesagnew@users.sourceforge.net">contact 
+			<!-- <ul> <li> <b>HAPI keeps growing.</b> Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow. The graph below shows the number of unique visitors
+				to our online documentation each month between 2006 and 2011. <img src="images/10yr_visitors.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used all over the world.</b>
+				Here are the top 100 cities this year in terms of visits to our online help. <img src="images/10yr_visitors_map.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used by all
+				types of organizations.</b> Here are the responses from the 2011 community survey, to date. <table style="width: 500px;"> <thead> <tr> <td>Describe your Organization of Company</td> <td>Percentage of responses</td>
+				</tr> </thead> <tbody> <tr> <td>None / not applicable</td> <td>1.11%</td> </tr> <tr> <td>University / college / other school</td> <td>12.22%</td> </tr> <tr> <td>Government Department, Agency, etc</td>
+				<td>6.67%</td> </tr> <tr> <td>Public Hospital, Clinic, or other health provider</td> <td>12.22%</td> </tr> <tr> <td>Private Hospital, Clinic, or other health provider</td> <td>8.89%</td> </tr> <tr> <td>Insurer,
+				HMO, etc.</td> <td>0</td> </tr> <tr> <td>Small software development company (under 20 developers)</td> <td>23.33%</td> </tr> <tr> <td>Medium software development company (21-100 developers)</td> <td>15.56%</td>
+				</tr> <tr> <td>Large software development company (101+ developers)</td> <td>16.67%</td> </tr> <tr> <td>Other</td> <td>5.56%</td> </tr> </tbody> </table> <br /> <br /> <br /> </li> <li> <b>HAPI is widely
+				deployed.</b> This is just a sample of the companies, hospitals, governments, and educational facilities who have let us know they are using HAPI over the years. Please <a href="mailto:jamesagnew@users.sourceforge.net">contact
 				us</a> if we can add (or remove) your company from this list! <img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img> <br /> <br /> <br /> </li> </ul> -->
 			<subsection name="HAPI keeps growing">
 				<p>

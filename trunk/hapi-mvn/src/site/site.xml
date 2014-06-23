@@ -33,6 +33,10 @@
 			<!-- <item name="What's New" href="whatsnew.html"/> <item name="Get Involved" href="getinvolved.html"/> <item name="Mailing List" href="mail-lists.html"/> -->
 		</menu>
 
+		<menu name="FHIR">
+			<item name="HAPI FHIR" href="hapi-fhir/" />
+		</menu>
+
 		<menu name="Tools">
 			<item name="TestPanel" href="hapi-testpanel/index.html" />
 			<item name="HL7 over HTTP" href="hapi-hl7overhttp/index.html" />
