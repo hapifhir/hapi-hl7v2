@@ -363,6 +363,9 @@ public class DefaultHapiContext implements HapiContext {
     }
 
 	public ServerConfiguration getServerConfiguration() {
+		if (this.serverConfiguration == null) {
+			serverConfiguration = new ServerConfiguration();
+		}
 		return this.serverConfiguration;
 	}
 
