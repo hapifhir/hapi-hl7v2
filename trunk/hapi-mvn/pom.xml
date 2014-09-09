@@ -141,11 +141,13 @@
 	</scm>
 
 	<repositories>
+		<!--
 		<repository>
 			<id>hapi-sf</id>
 			<name>HAPI Sourceforge Repository</name>
 			<url>http://hl7api.sourceforge.net/m2</url>
 		</repository>
+		-->
 	</repositories>
 
 	<organization>
