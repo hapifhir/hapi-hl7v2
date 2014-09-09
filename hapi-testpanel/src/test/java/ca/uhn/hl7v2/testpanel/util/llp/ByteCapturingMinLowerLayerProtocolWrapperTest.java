@@ -25,6 +25,7 @@
  */
 package ca.uhn.hl7v2.testpanel.util.llp;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,6 @@ import java.io.StringReader;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openide.util.io.ReaderInputStream;
 
 import ca.uhn.hl7v2.llp.HL7Reader;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -50,7 +50,7 @@ public class ByteCapturingMinLowerLayerProtocolWrapperTest {
 		
 		String expected = bos.toString();
 		
-		InputStream iis = new ReaderInputStream(new StringReader(expected));
+		InputStream iis = new ByteArrayInputStream(expected.getBytes());
 
 		ByteCapturingMinLowerLayerProtocolWrapper cap = new ByteCapturingMinLowerLayerProtocolWrapper(new MinLowerLayerProtocol());
 		HL7Reader reader = cap.getReader(iis);

@@ -388,7 +388,6 @@ public class Prefs {
 		for (XmlFormat string : savedVals) {
 			try {
 				Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
-				assert nextMsg.getSourceMessage() == null;
 				if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
 					retVal.add(nextMsg);
 				}
