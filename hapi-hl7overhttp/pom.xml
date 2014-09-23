@@ -2,7 +2,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.2</version>
+		<version>2.3-alpha1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -137,7 +137,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.3</version>
+				<version>1.8</version>
 				<configuration>
 					<repositoryLayout>flat</repositoryLayout>
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
@@ -147,9 +147,11 @@
 						<daemon>
 							<id>hl7overhttp-relay</id>
 							<mainClass>ca.uhn.hl7v2.hoh.relay.Launcher</mainClass>
+							<!-- <configurationSourceDirectory>${project.build.directory}/../src/main/config</configurationSourceDirectory>  -->
 							<commandLineArguments>
 										<!-- <commandLineArgument>start</commandLineArgument>  -->
 							</commandLineArguments>
+							<copyConfigurationDirectory>true</copyConfigurationDirectory>
 							<platforms>
 								<platform>jsw</platform>
 							</platforms>

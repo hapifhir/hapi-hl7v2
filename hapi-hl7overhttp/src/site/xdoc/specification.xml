@@ -138,7 +138,7 @@
 					Every interaction consists of a <b>request message</b> and a <b>response message</b>.
 					In a normal message exchange, the receiving system opens a server socket. The
 					sending system then connects to that socket and uses the HTTP POST action to 
-					transmit a message. The receiving system then replies with an HTTP 200 OK,
+					transmit a message. The receiving system then replies with an HTTP 2xx success,
 					and transmits the response message (typically an HL7 Acknowledgement/ACK message) 
 					in the body of the response.
 				</p>		
@@ -359,7 +359,7 @@
 				<p>
 					If a <b>receiving application</b> is able to respond to a request by producing
 					an HL7 response payload, the HTTP status code returned MUST be a code of
-					<code>HTTP/1.1 200 OK</code>. This response payload is typically an HL7 ACK message,
+					<code>HTTP/1.1 2xx</code>. This response payload is typically an HL7 ACK message,
 					but other message types may apply to certain exchanges (e.g. RSP_xxx)
 				</p>
 			    
@@ -378,13 +378,13 @@
 			    <p>
 			    	When a <b>receiving application</b> produces an HL7 response payload containing 
 			    	one of these status codes, this is considered a successful interaction at the
-			    	transport layer, and response code of "HTTP/1.1 200 OK" MUST be used. 
+			    	transport layer, and response code of "HTTP/1.1 2xx" MUST be used. 
 			    </p>
 			    
 			    <h4>Transport Error Conditions</h4>
 			    
 				<p>
-					Non 200 status codes are reserved for use in cases where the message was not 
+					Non 2xx status codes are reserved for use in cases where the message was not 
 					understood, could not be delivered to the receiving application layer, or the
 					receiving application layer failed to process the message due to an unexpected
 					error condition.
@@ -393,7 +393,7 @@
 				<h4>Content Type for Error Conditions</h4>
 
 				<p>
-					If the response status is not "HTTP/1.1 200 OK", the content type MUST NOT
+					If the response status is not HTTP 2xx, the content type MUST NOT
 					be an HL7 payload type. Instead, a textual representation of the transport level
 					error must be provided using an appropriate content type.
 				</p>
@@ -433,7 +433,7 @@
 				</p>
 				
 				<p>
-					When a <b>receiving system</b> responds to a query, a normal <code>HTTP 200 OK</code>
+					When a <b>receiving system</b> responds to a query, a normal <code>HTTP 2xx</code>
 					response code MUST be used in all cases where the application response is an HL7 message. 
 				</p>
 				<img src="images/HoH_Trace_Query.png" alt="Query message trace"/>

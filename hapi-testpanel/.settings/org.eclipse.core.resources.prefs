@@ -1,6 +1,8 @@
 eclipse.preferences.version=1
+encoding//src/launch4j=UTF-8
+encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
+encoding//src/main/textresources=UTF-8
 encoding//src/test/java=UTF-8
-encoding//src/test/java/ca/uhn/hl7v2/llp/ExtendedMinLowerLayerProtocolTest.java=UTF-8
 encoding//src/test/resources=UTF-8
 encoding/<project>=UTF-8
