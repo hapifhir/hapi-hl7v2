@@ -1,24 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>hapi-test</name>
-  <comment>HAPI (HL7 application programming interface; pronounced &quot;happy&quot;) is an open-source, 
+	<name>hapi-test</name>
+	<comment>HAPI (HL7 application programming interface; pronounced &quot;happy&quot;) is an open-source, 
 		object-oriented HL7 2.x parser for Java.  HL7 (http://hl7org)  is a messaging 
 		specification for healthcare information systems.  This project is not affiliated with 
 		the HL7 organization; we are just writing some software that conforms to their 
 		specification.  The project was initiated by University Health Network 
 		(a large multi-site teaching hospital in Toronto, Canada). NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>hapi-base</project>
-  </projects>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.maven.ide.eclipse.maven2Builder</name>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-    <nature>org.maven.ide.eclipse.maven2Nature</nature>
-  </natures>
+	<projects>
+		<project>hapi-base</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
+	</natures>
 </projectDescription>

@@ -135,9 +135,11 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             theMetadata.put(MetadataKeys.IN_MESSAGE_CONTROL_ID, inTerser.get("/.MSH-10"));
 
         } catch (HL7Exception e) {
+        	log.debug("Exception parsing incoming message", e);
             try {
                 outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
             } catch (HL7Exception e2) {
+            	log.error("Exception occurred while logging parse failure", e2);
                 outgoingMessageString = null;
             }
             if (myExceptionHandler != null) {
