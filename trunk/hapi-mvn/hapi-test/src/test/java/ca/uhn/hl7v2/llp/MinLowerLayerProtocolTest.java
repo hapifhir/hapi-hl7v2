@@ -61,7 +61,7 @@ import static org.junit.Assert.assertTrue;
  * 
  * @author Leslie Mann
  */
-public class MinLowerLayerProtocolTest implements Application {
+public class MinLowerLayerProtocolTest implements Application<Message> {
 	private static final Logger ourLog = LoggerFactory.getLogger(MinLowerLayerProtocolTest.class);
 
 
@@ -73,9 +73,6 @@ public class MinLowerLayerProtocolTest implements Application {
 	private int myMsgCount;
 
 
-	/**
-	 * @see TestCase#setUp()
-	 */
 	@Before
 	public void setUp() throws Exception {
 		System.setProperty("ca.uhn.hl7v2.llp.logBytesRead", "FALSE");
@@ -88,9 +85,6 @@ public class MinLowerLayerProtocolTest implements Application {
 		myMsgCount = 0;
 	}
 
-	/**
-	 * @see TestCase#tearDown()
-	 */
 	@After
 	public void tearDown() throws Exception {
 		minLowerLayerProtocol = null;

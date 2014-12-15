@@ -100,7 +100,7 @@ public class ResponderTest {
 	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by
 	 *          $Author: jamesagnew $
 	 */
-	public static class DummyApplication implements Application {
+	public static class DummyApplication implements Application<Message> {
 
 		/**
 		 * {@inheritDoc}
@@ -126,7 +126,7 @@ public class ResponderTest {
 	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by
 	 *          $Author: jamesagnew $
 	 */
-	public static class DummySuccessApplication implements Application {
+	public static class DummySuccessApplication implements Application<Message> {
 
 		/**
 		 * {@inheritDoc}

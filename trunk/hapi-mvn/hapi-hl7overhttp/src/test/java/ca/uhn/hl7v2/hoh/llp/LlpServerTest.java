@@ -33,7 +33,7 @@ import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
-public class LlpServerTest implements Application, ConnectionListener {
+public class LlpServerTest implements Application<Message>, ConnectionListener {
 
 	private int myPort;
 	private Hl7OverHttpLowerLayerProtocol myLlp;

@@ -35,7 +35,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 	/**
 	 * The application does the actual processing
 	 */
-	private class MyApplication implements ReceivingApplication
+	private class MyApplication implements ReceivingApplication<Message>
 	{
 
 		/**

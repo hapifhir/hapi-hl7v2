@@ -149,7 +149,7 @@ public class SimpleServerMinDepsTest {
 	}
 
 	
-	public class ExceptionThrowingApplication implements ReceivingApplication {
+	public class ExceptionThrowingApplication implements ReceivingApplication<Message> {
 
 		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 			throw new HL7Exception("exception message");

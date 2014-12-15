@@ -45,7 +45,7 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
 import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
-public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication {
+public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<Message> {
 
 	private static final Logger ourLog = LoggerFactory.getLogger(ExtendedMinLowerLayerProtocolTest.class);
 	private int myMsgCount;

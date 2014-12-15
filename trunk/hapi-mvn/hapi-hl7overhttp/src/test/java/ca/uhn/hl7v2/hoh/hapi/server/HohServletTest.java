@@ -192,7 +192,7 @@ public class HohServletTest {
 		ourConnectionHub = ourHapiContext.getConnectionHub();
 	}
 
-	public class MyReceivingApp implements ReceivingApplication {
+	public class MyReceivingApp implements ReceivingApplication<Message> {
 
 		public boolean canProcess(Message theMessage) {
 			return true;

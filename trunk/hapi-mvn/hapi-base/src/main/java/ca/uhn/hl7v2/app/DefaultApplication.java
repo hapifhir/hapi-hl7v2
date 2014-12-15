@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.util.DeepCopy;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-public class DefaultApplication implements Application, ReceivingApplication {
+public class DefaultApplication implements Application<Message>, ReceivingApplication<Message> {
 
 	public static final String MSG_INTERNAL_ERROR = "Application internal error";
 	public static final String MSG_NO_APPROPRIATE_DEST = "No appropriate destination could be found to which this message could be routed.";

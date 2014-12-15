@@ -27,6 +27,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.app;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
 
 /**
  * The Interface ApplicationExceptionHandler. Allow applications to handle
@@ -35,7 +36,7 @@ import ca.uhn.hl7v2.HL7Exception;
  * @author Gabriel Landais
  * @see Application
  */
-public interface ApplicationExceptionHandler extends Application {
+public interface ApplicationExceptionHandler<T extends Message> extends Application<T> {
 
 	/**
 	 * Process an exception.
