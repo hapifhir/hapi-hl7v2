@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+			<action type="add" dev="Christian Ohr" system="newfeatures" issue="85">
+				Add type parameter to ReceivingApplication. With thanks to Jens Villadsen.
+			</action>
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="216">
 				Improve exception message. Thanks to DiGiT for reporting.
 			</action>
