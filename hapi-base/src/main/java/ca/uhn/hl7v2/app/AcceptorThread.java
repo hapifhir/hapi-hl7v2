@@ -103,7 +103,8 @@ class AcceptorThread extends Service {
 			ss.bind(new InetSocketAddress(port));
 			ss.setSoTimeout(500);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			final String message = String.format("Unable to create ServerSocket on port %d", port);
+			throw new RuntimeException(message, e);
 		}
 	}
 

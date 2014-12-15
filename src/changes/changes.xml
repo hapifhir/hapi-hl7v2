@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+			<action type="fix" dev="Christian Ohr" system="newbugs" issue="216">
+				Improve exception message. Thanks to DiGiT for reporting.
+			</action>
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="213">
                     Fix CustomModelClassFactory implementation, returning the correct message structure
             </action>
