@@ -163,7 +163,7 @@ public class SimpleServerNoDepsTest {
 
 	}
 
-	public class ExceptionThrowingApplication implements ReceivingApplication {
+	public class ExceptionThrowingApplication implements ReceivingApplication<Message> {
 
 		public boolean canProcess(Message theMessage) {
 			return true;

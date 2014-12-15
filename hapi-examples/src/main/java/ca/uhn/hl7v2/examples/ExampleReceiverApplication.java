@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 /**
  * Application class for receiving ADT^A01 messages
  */
-public class ExampleReceiverApplication implements ReceivingApplication
+public class ExampleReceiverApplication implements ReceivingApplication<Message>
 {
 
     /**

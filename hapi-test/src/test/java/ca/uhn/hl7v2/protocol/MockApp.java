@@ -15,7 +15,7 @@ import ca.uhn.hl7v2.util.Terser;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
  */
-public class MockApp implements ReceivingApplication {
+public class MockApp implements ReceivingApplication<Message> {
 
     /** 
      * Returns a default message.  

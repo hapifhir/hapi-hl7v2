@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.model.Message;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
  */
-public interface ReceivingApplication {
+public interface ReceivingApplication<T extends Message> {
 
     /**
      * Uses the contents of the message for whatever purpose the application 
@@ -63,7 +63,7 @@ public interface ReceivingApplication {
      *      a database problem)
      * @throws HL7Exception if there is a problem with the message 
      */
-    public Message processMessage(Message theMessage, Map<String, Object> theMetadata) 
+    public Message processMessage(T theMessage, Map<String, Object> theMetadata)
             throws ReceivingApplicationException, HL7Exception;
     
     /** 
@@ -72,6 +72,6 @@ public interface ReceivingApplication {
      *      true, this Application declares itself the recipient of the message, accepts 
      *      responsibility for it, and must be able to respond appropriately to the sending system.  
      */
-    public boolean canProcess(Message theMessage);
+    public boolean canProcess(T theMessage);
 
 }

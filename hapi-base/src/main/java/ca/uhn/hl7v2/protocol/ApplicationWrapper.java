@@ -11,7 +11,7 @@ import ca.uhn.hl7v2.model.Message;
  * Wraps a legacy HAPI {@link Application} to convert it to a new
  * style {@link ReceivingApplication}
  */
-public class ApplicationWrapper implements ReceivingApplication {
+public class ApplicationWrapper implements ReceivingApplication<Message> {
 
 	private final Application application;
 

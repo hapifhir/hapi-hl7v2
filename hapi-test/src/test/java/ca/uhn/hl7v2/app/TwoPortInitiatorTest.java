@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.util.Terser;
  *          jamesagnew $
  */
 
-public class TwoPortInitiatorTest implements Application {
+public class TwoPortInitiatorTest implements Application<Message> {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(TwoPortInitiatorTest.class);
 	

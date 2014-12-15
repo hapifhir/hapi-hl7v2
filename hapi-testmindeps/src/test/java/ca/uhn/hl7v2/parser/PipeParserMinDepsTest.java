@@ -19,7 +19,7 @@ import ca.uhn.hl7v2.llp.MinLLPReader;
 import ca.uhn.hl7v2.llp.MinLLPWriter;
 import ca.uhn.hl7v2.model.Message;
 
-public class PipeParserMinDepsTest implements Application {
+public class PipeParserMinDepsTest implements Application<Message> {
 
 	private static final Logger ourLog = LoggerFactory.getLogger(PipeParserMinDepsTest.class);
 	private boolean myGotMessage;

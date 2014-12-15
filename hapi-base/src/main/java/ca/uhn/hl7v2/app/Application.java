@@ -44,19 +44,19 @@ import ca.uhn.hl7v2.HL7Exception;
  * @see DefaultApplication
  * 
  */
-public interface Application {
+public interface Application<T extends Message> {
 
     /**
      * Uses the contents of the message for whatever purpose the Application 
      * has for this message, and returns an appropriate response message.   
      */
-    public Message processMessage(Message in) throws ApplicationException, HL7Exception;
+    public Message processMessage(T in) throws ApplicationException, HL7Exception;
     
     /** 
      * Returns true if this Application wishes to accept the message.  By returning
      * true, this Application declares itself the recipient of the message, accepts 
      * responsibility for it, and must be able to respond appropriately to the sending system.  
      */
-    public boolean canProcess(Message in);
+    public boolean canProcess(T in);
 }
 

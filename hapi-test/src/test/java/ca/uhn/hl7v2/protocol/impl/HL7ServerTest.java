@@ -36,7 +36,7 @@ import ca.uhn.hl7v2.util.RandomServerPortProvider;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2010-04-25 16:22:52 $ by $Author: jamesagnew $
  */
-public class HL7ServerTest implements ReceivingApplication {
+public class HL7ServerTest implements ReceivingApplication<Message> {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HL7ServerTest.class);
 	private int myMsgCount;
 

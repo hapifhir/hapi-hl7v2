@@ -182,7 +182,7 @@ public class TwoPortConnectionHubTest {
 		assertEquals(0, hub.allConnections().size());
 	}
 
-	public static class MyApp implements Application {
+	public static class MyApp implements Application<Message> {
 
 		public boolean canProcess(Message theIn) {
 			return true;
