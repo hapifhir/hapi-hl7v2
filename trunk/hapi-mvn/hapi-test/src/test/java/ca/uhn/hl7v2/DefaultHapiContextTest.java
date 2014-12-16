@@ -66,6 +66,11 @@ public class DefaultHapiContextTest {
 		executor.shutdownNow();
 	}
 
+	@Test
+	public void testClose() throws IOException {
+		new DefaultHapiContext().close();
+	}
+
 	/**
 	 * Creating a HAPI context shouldn't have the side effect of
 	 * creating a profiles directory
