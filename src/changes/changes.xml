@@ -6,6 +6,21 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+			<action type="fix" dev="Christian Ohr" system="newbugs" issue="223">
+				Avoid NullPointerException using DefaultHapiContext close method. Thanks to Domingo Amado for reporting.
+			</action>
+			<action type="fix" dev="Christian Ohr" system="newbugs" issue="222">
+				CustomModelClassfactory should not check for valid versions. Thanks to Ambassador Software Works for reporting.
+			</action>
+			<action type="add" dev="Christian Ohr" system="newfeatures" issue="89">
+				Allow to unregister/unbind applications from ApplicationRouter. Thanks to Mathieu for the proposal
+			</action>
+			<action type="add" dev="Christian Ohr" system="newfeatures" issue="87">
+				Make default acknowledgement code configurable in ApplicationRouterImpl. With thanks to Jens Villadsen.
+			</action>
+			<action type="add" dev="Christian Ohr" system="newfeatures" issue="86">
+				Throw new TimeoutException (subclass of Hl7Exception) is HL7 server fails to answer. With thanks to Jens Villadsen.
+			</action>
 			<action type="add" dev="Christian Ohr" system="newfeatures" issue="85">
 				Add type parameter to ReceivingApplication. With thanks to Jens Villadsen.
 			</action>
