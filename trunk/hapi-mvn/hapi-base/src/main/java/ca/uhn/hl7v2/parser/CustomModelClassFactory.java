@@ -169,7 +169,6 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      */
     @SuppressWarnings("unchecked")
 	protected <T> Class<T> findClass(String subpackage, String name, String version) throws HL7Exception {
-        Parser.assertVersionExists(version);
         Class<T> classLoaded = null;
         if (customModelClasses != null) {
             if (customModelClasses.containsKey(version)) {

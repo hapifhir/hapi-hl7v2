@@ -9,6 +9,7 @@ import ca.uhn.hl7v2.hoh.api.IResponseSendable;
 import ca.uhn.hl7v2.hoh.api.MessageProcessingException;
 import ca.uhn.hl7v2.hoh.raw.api.RawSendable;
 import ca.uhn.hl7v2.hoh.raw.server.HohRawServlet;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.Transportable;
@@ -36,7 +37,7 @@ public class HohServlet extends HohRawServlet {
 	 * This method should not be called if {@link #setApplicationRouter(ApplicationRouter)} has been called
 	 * </p>
 	 */
-	public void setApplication(ReceivingApplication theApplication) {
+	public void setApplication(ReceivingApplication<? extends Message> theApplication) {
 		myApplicationRouter = new ApplicationRouterImpl();
 		myApplicationRouter.bindApplication(new AppRoutingDataImpl("*", "*", "*", "*"), theApplication);
 	}

@@ -30,6 +30,7 @@ import java.lang.reflect.Constructor;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 
@@ -53,7 +54,7 @@ public class ReflectionUtil {
         }
     }
 
-    public static <T extends Structure> T instantiateMessage(Class<T> theType,
+    public static <T extends Message> T instantiateMessage(Class<T> theType,
             ModelClassFactory theModelClassFactory) throws HL7Exception {
         try {
             Constructor<T> constructor = theType

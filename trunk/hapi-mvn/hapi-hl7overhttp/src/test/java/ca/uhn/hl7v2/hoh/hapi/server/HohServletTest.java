@@ -75,7 +75,7 @@ public class HohServletTest {
 
 	@Test
 	public void testServlet() throws Exception {
-		ReceivingApplication app = new MyReceivingApp();
+		ReceivingApplication<Message> app = new MyReceivingApp();
 		HohServlet servlet = new HohServlet();
 		servlet.setApplication(app);
 		startServer(servlet);
@@ -105,7 +105,7 @@ public class HohServletTest {
 
 	@Test
 	public void testServletAE() throws Exception {
-		ReceivingApplication app = new MyReceivingApp();
+		ReceivingApplication<Message> app = new MyReceivingApp();
 		HohServlet servlet = new HohServlet();
 		servlet.setApplication(app);
 		startServer(servlet);
@@ -130,7 +130,7 @@ public class HohServletTest {
 
 	@Test
 	public void testServletAR() throws Exception {
-		ReceivingApplication app = new MyReceivingApp();
+		ReceivingApplication<Message> app = new MyReceivingApp();
 		HohServlet servlet = new HohServlet();
 		servlet.setApplication(app);
 		startServer(servlet);
@@ -155,7 +155,7 @@ public class HohServletTest {
 
 	@Test
 	public void testServletXml() throws Exception {
-		ReceivingApplication app = new MyReceivingApp();
+		ReceivingApplication<Message> app = new MyReceivingApp();
 		HohServlet servlet = new HohServlet();
 		servlet.setApplication(app);
 		startServer(servlet);

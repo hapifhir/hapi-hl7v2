@@ -4,6 +4,7 @@
 package ca.uhn.hl7v2.protocol;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 
 /**
@@ -48,7 +49,7 @@ public class MockApplicationRouter implements ApplicationRouter {
     /** 
      * Does nothing.  
      */
-    public void bindApplication(AppRoutingData arg0, ReceivingApplication arg1) {
+    public void bindApplication(AppRoutingData arg0, ReceivingApplication<? extends Message> arg1) {
     }
 
     /** 
@@ -61,6 +62,20 @@ public class MockApplicationRouter implements ApplicationRouter {
      * Does nothing.  
      */
     public void enableBinding(AppRoutingData arg0) {
+    }
+
+    /**
+     * Does nothing.
+     */
+    public boolean unbindApplication(AppRoutingData theRoutingData) {
+        return false;
+    }
+
+    /**
+     * Does nothing.
+     */
+    public boolean unbindApplication(ReceivingApplication<? extends Message> theApplication) {
+        return false;
     }
 
     public Parser getParser() {

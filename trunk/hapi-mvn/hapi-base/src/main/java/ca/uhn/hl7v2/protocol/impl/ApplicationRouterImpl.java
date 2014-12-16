@@ -51,6 +51,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     private Parser myParser;
     private ReceivingApplicationExceptionHandler myExceptionHandler;
     private HapiContext myContext;
+    private AcknowledgmentCode defaultAcknowledgementMode = DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE;
 
 
     /**
@@ -81,6 +82,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * @param theContext HAPI context
      * @param theParser  the parser used for converting between Message and
      *                   Transportable
+     * @deprecated define parser over context
      */
     public ApplicationRouterImpl(HapiContext theContext, Parser theParser) {
         init(theParser);
@@ -90,6 +92,10 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     private void init(Parser theParser) {
         myBindings = new ArrayList<Binding>(20);
         myParser = theParser;
+    }
+
+    public void setDefaultAcknowledgementMode(AcknowledgmentCode defaultAcknowledgementMode) {
+        this.defaultAcknowledgementMode = defaultAcknowledgementMode;
     }
 
     /**
@@ -135,11 +141,11 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             theMetadata.put(MetadataKeys.IN_MESSAGE_CONTROL_ID, inTerser.get("/.MSH-10"));
 
         } catch (HL7Exception e) {
-        	log.debug("Exception parsing incoming message", e);
+            log.debug("Exception parsing incoming message", e);
             try {
                 outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
             } catch (HL7Exception e2) {
-            	log.error("Exception occurred while logging parse failure", e2);
+                log.error("Exception occurred while logging parse failure", e2);
                 outgoingMessageString = null;
             }
             if (myExceptionHandler != null) {
@@ -161,7 +167,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
 
                 //message validation (in terms of optionality, cardinality) would go here ***
 
-                ReceivingApplication app = findApplication(incomingMessageObject);
+                ReceivingApplication<Message> app = findApplication(incomingMessageObject);
                 theMetadata.put(RAW_MESSAGE_KEY, incomingMessageString);
 
                 log.debug("Sending message to application: {}", app.toString());
@@ -203,7 +209,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      */
     public boolean hasActiveBinding(AppRoutingData theRoutingData) {
         boolean result = false;
-        ReceivingApplication app = findDestination(null, theRoutingData);
+        ReceivingApplication<? extends Message> app = findDestination(null, theRoutingData);
         if (app != null) {
             result = true;
         }
@@ -215,14 +221,29 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * @param theRoutingData routing data
      * @return the application from the binding with a WILDCARD match, if one exists
      */
-    private ReceivingApplication findDestination(Message theMessage, AppRoutingData theRoutingData) {
-        ReceivingApplication result = null;
+    private <T extends Message> ReceivingApplication<T> findDestination(T theMessage, AppRoutingData theRoutingData) {
+        ReceivingApplication<? extends Message> result = null;
         for (int i = 0; i < myBindings.size() && result == null; i++) {
             Binding binding = myBindings.get(i);
             if (matches(theRoutingData, binding.routingData) && binding.active) {
-                if (theMessage == null || binding.application.canProcess(theMessage)) {
+                if (theMessage == null || ((ReceivingApplication<T>)binding.application).canProcess(theMessage)) {
                     result = binding.application;
                 }
+            }
+        }
+        return (ReceivingApplication<T>)result;
+    }
+
+    /**
+     * @param application receiving application
+     * @return the binding that forwards to the receiving application
+     */
+    private Binding findBinding(ReceivingApplication<? extends Message> application) {
+        Binding result = null;
+        for (int i = 0; i < myBindings.size() && result == null; i++) {
+            Binding binding = myBindings.get(i);
+            if (application == binding.application) {
+                result = binding;
             }
         }
         return result;
@@ -241,16 +262,33 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             }
         }
         return result;
-
     }
+
 
     /**
      * @see ca.uhn.hl7v2.protocol.ApplicationRouter#bindApplication(
      *ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData, ca.uhn.hl7v2.protocol.ReceivingApplication)
      */
-    public void bindApplication(AppRoutingData theRoutingData, ReceivingApplication theApplication) {
+    public void bindApplication(AppRoutingData theRoutingData, ReceivingApplication<? extends Message> theApplication) {
         Binding binding = new Binding(theRoutingData, true, theApplication);
         myBindings.add(binding);
+    }
+
+    /**
+     *
+     * @see ca.uhn.hl7v2.protocol.ApplicationRouter#unbindApplication(ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData)
+     */
+    public boolean unbindApplication(AppRoutingData theRoutingData) {
+        Binding b = findBinding(theRoutingData);
+        return b != null && myBindings.remove(b);
+    }
+
+    /**
+     * @see ca.uhn.hl7v2.protocol.ApplicationRouter#unbindApplication(ca.uhn.hl7v2.protocol.ReceivingApplication)
+     */
+    public boolean unbindApplication(ReceivingApplication<? extends Message> theApplication) {
+        Binding b = findBinding(theApplication);
+        return b != null && myBindings.remove(b);
     }
 
     /**
@@ -330,16 +368,16 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     /**
      * Returns the first Application that has been bound to messages of this type.
      */
-    private ReceivingApplication findApplication(Message theMessage) throws HL7Exception {
+    private <T extends Message> ReceivingApplication<T> findApplication(T theMessage) throws HL7Exception {
         Terser t = new Terser(theMessage);
         AppRoutingData msgData =
                 new AppRoutingDataImpl(t.get("/MSH-9-1"), t.get("/MSH-9-2"), t.get("/MSH-11-1"), t.get("/MSH-12"));
 
-        ReceivingApplication app = findDestination(theMessage, msgData);
+        ReceivingApplication<T> app = findDestination(theMessage, msgData);
 
         //have to send back an application reject if no apps available to process
         if (app == null) {
-            app = new DefaultApplication();
+            app = (ReceivingApplication<T>)new DefaultApplication();
         }
 
         return app;
@@ -351,9 +389,9 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     private static class Binding {
         public AppRoutingData routingData;
         public boolean active;
-        public ReceivingApplication application;
+        public ReceivingApplication<? extends Message> application;
 
-        public Binding(AppRoutingData theRoutingData, boolean isActive, ReceivingApplication theApplication) {
+        public Binding(AppRoutingData theRoutingData, boolean isActive, ReceivingApplication<? extends Message> theApplication) {
             routingData = theRoutingData;
             active = isActive;
             application = theApplication;
@@ -393,7 +431,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             Message out = hl7e.getResponseMessage();
             if (out == null) {
                 Message in = getInMessage(inHeader);
-                out = in.generateACK(DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE, hl7e);
+                out = in.generateACK(defaultAcknowledgementMode, hl7e);
             }
             return encoding != null ? p.encode(out, encoding) : p.encode(out);
 

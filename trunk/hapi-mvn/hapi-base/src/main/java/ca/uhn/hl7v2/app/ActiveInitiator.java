@@ -150,15 +150,26 @@ public class ActiveInitiator implements Initiator {
 		} catch (ExecutionException e) {
 		}
 
-		throw new HL7Exception(
-				"Timeout waiting for response to message with control ID "
-						+ messID);
+		throw new TimeoutException("Timeout waiting for response to message with control ID "
+						+ messID + " after " + timeoutMillis + " ms.");
 	}
 
+	/**
+	 * Sets the timeout to wait for a response from the server
+	 *
+	 * @param timeout time in milliseconds
+	 */
 	public void setTimeoutMillis(int timeout) {
 		setTimeout(timeout, TimeUnit.MILLISECONDS);
 	}
 
+	/**
+	 *
+	 * Sets the timeout to wait for a response from the server
+	 *
+	 * @param timeout  time duration
+	 * @param timeUnit time unit
+	 */
     public void setTimeout(long timeout, TimeUnit timeUnit) {
         this.timeoutMillis = timeUnit.toMillis(timeout);
     }
