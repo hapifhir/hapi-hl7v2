@@ -35,6 +35,7 @@ import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
@@ -78,11 +79,11 @@ public class ApplicationLoader {
         }
         
         BufferedReader in = new BufferedReader(new InputStreamReader(theSource.openStream()));
-        String line = null;
+        String line;
         while ((line = in.readLine()) != null) {
             //parse application registration information 
             StringTokenizer tok = new StringTokenizer(line, "\t", false);
-            String type = null, event = null, procId = null, verId = null, className = null;
+            String type, event, procId, verId, className;
 
             if (tok.hasMoreTokens()) { //skip blank lines 
                 try {
@@ -105,9 +106,9 @@ public class ApplicationLoader {
 
                 Class<?> appClass = Class.forName(className); //may throw ClassNotFoundException 
                 Object appObject = appClass.newInstance();
-                ReceivingApplication app = null;
+                ReceivingApplication<? extends Message> app;
                 if (appObject instanceof ReceivingApplication) {
-                    app = (ReceivingApplication) appObject;
+                    app = (ReceivingApplication<? extends Message>) appObject;
                 } else if (appObject instanceof Application) {
                     app = new AppWrapper((Application) appObject);
                 } else {

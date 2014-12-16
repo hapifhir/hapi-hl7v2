@@ -92,7 +92,7 @@ public class ApplicationRouterImplTest {
     @Test
     public void testHasActiveBinding() {
         AppRoutingDataImpl rdA = new AppRoutingDataImpl("ADT", "A01", "P", "2.4");
-        ReceivingApplication appA = new MockApplication();
+        ReceivingApplication<Message> appA = new MockApplication();
         assertEquals(false, myRouter.hasActiveBinding(rdA));
 
         myRouter.bindApplication(rdA, appA);
@@ -118,7 +118,7 @@ public class ApplicationRouterImplTest {
     @Test
     public void testWildcards() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("*", "A01", "P", "2.4");
-        ReceivingApplication app = new MockApplication();
+        ReceivingApplication<Message> app = new MockApplication();
         myRouter.bindApplication(rd, app);
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A01", "P", "2.4")));
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("foo", "A01", "P", "2.4")));
@@ -132,7 +132,7 @@ public class ApplicationRouterImplTest {
     @Test
     public void testRegex() {
         AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
-        ReceivingApplication app = new MockApplication();
+        ReceivingApplication<Message> app = new MockApplication();
         myRouter.bindApplication(rd, app);
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A01", "P", "2.4")));
         assertTrue(myRouter.hasActiveBinding(new AppRoutingDataImpl("ADT", "A02", "P", "2.4")));
@@ -213,6 +213,41 @@ public class ApplicationRouterImplTest {
         assertEquals(0, occApp.myCount);
         assertEquals(1, allApp.myCount);
 
+    }
+
+    @Test
+    public void testUnbindRouting() throws Exception {
+        AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
+        ReceivingApplication<Message> app = new MockApplication();
+        myRouter.bindApplication(rd, app);
+        assertTrue(myRouter.hasActiveBinding(rd));
+        assertTrue(myRouter.unbindApplication(rd));
+        assertFalse(myRouter.hasActiveBinding(rd));
+        assertFalse(myRouter.unbindApplication(rd));
+    }
+
+    @Test
+    public void testBindClassBasedApplication() throws Exception {
+        AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A01", "P", "*");
+        ReceivingApplication<ADT_A01> app = new A01v25Application();
+        myRouter.bindApplication(rd, app);
+
+        ADT_A01 adt = new ADT_A01();
+        adt.initQuickstart("ADT", "A01", "P");
+
+        String response = myRouter.processMessage(new TransportableImpl(adt.encode())).getMessage();
+        assertTrue(response.contains("ACK^A01"));
+    }
+
+    @Test
+    public void testUnbindApplication() throws Exception {
+        AppRoutingDataImpl rd = new AppRoutingDataImpl("ADT", "A0.", "P", "2.4");
+        ReceivingApplication<Message> app = new MockApplication();
+        myRouter.bindApplication(rd, app);
+        assertTrue(myRouter.hasActiveBinding(rd));
+        assertTrue(myRouter.unbindApplication(app));
+        assertFalse(myRouter.hasActiveBinding(rd));
+        assertFalse(myRouter.unbindApplication(rd));
     }
 
     @Test
@@ -327,19 +362,33 @@ public class ApplicationRouterImplTest {
     private class MockAlwaysApplication implements ReceivingApplication<Message> {
         int myCount = 0;
 
-        public Message processMessage(Message arg0, Map<String, Object> arg1) throws ReceivingApplicationException, HL7Exception {
+        public Message processMessage(Message message, Map<String, Object> metadata) throws ReceivingApplicationException, HL7Exception {
             myCount++;
             try {
-                return arg0.generateACK();
+                return message.generateACK();
             } catch (IOException e) {
                 throw new HL7Exception(e);
             }
         }
 
-        public boolean canProcess(Message arg0) {
+        public boolean canProcess(Message message) {
             return true;
         }
 
+    }
+
+    private class A01v25Application extends ClassBasedReceivingApplication<ADT_A01> {
+        public A01v25Application() {
+            super(ADT_A01.class);
+        }
+
+        public Message processMessage(ADT_A01 message, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+            try {
+                return message.generateACK();
+            } catch (IOException e) {
+                throw new HL7Exception(e);
+            }
+        }
     }
 
 }

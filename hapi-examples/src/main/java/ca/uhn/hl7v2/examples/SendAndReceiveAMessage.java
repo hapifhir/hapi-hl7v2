@@ -70,7 +70,7 @@ public class SendAndReceiveAMessage {
        * You might want to look at the source of ExampleReceiverApplication
        * (it's a nested class below) to see how it works.
        */
-      ReceivingApplication handler = new ExampleReceiverApplication();
+      ReceivingApplication<Message> handler = new ExampleReceiverApplication();
       server.registerApplication("ADT", "A01", handler);
 
       /*

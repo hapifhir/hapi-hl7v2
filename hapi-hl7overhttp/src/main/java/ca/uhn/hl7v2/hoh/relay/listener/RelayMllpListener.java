@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import ca.uhn.hl7v2.model.Message;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +23,7 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
 public class RelayMllpListener implements InitializingBean, DisposableBean, IRelayListener, BeanNameAware {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(RelayMllpListener.class);
-	private List<ReceivingApplication> myApplications = new ArrayList<ReceivingApplication>();
+	private List<ReceivingApplication<? extends Message>> myApplications = new ArrayList<ReceivingApplication<? extends Message>>();
 	private List<AppRoutingData> myAppRoutingData = new ArrayList<AppRoutingData>();
 	private String myBeanName;
 	private int myPort;
@@ -88,7 +89,7 @@ public class RelayMllpListener implements InitializingBean, DisposableBean, IRel
 	}
 
 
-	public void registerApplication(AppRoutingData theAppRouting, ReceivingApplication theReceivingApplication) {
+	public void registerApplication(AppRoutingData theAppRouting, ReceivingApplication<? extends Message> theReceivingApplication) {
 		Validate.notNull(theAppRouting, "appRouting");
 		Validate.notNull(theReceivingApplication, "receivingApplication");
 		

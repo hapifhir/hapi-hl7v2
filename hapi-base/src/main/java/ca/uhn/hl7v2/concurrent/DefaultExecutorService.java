@@ -54,10 +54,10 @@ public class DefaultExecutorService {
 	}
 
 	/**
-	 * @return true if the service was created by this class
+	 * @return true if the service is not null and was created by this class
 	 */
 	public static boolean isDefaultService(ExecutorService service) {
-		return service == defaultExecutorService;
+		return service != null && service == defaultExecutorService;
 	}
 
 	/**

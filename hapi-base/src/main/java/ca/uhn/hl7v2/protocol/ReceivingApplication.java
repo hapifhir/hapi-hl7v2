@@ -44,7 +44,6 @@ import ca.uhn.hl7v2.model.Message;
  * Note that this interface replaces ca.uhn.hl7v2.app.Application in HAPI 0.5.   
  *   
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
- * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
  */
 public interface ReceivingApplication<T extends Message> {
 
