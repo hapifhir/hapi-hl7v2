@@ -58,7 +58,8 @@
 				HL7 over HTTP is a transport mechanism which uses the
 				Hypertext Transfer Protocol (as defined in
 				<a href="http://tools.ietf.org/html/rfc2616">RFC 2616</a>)
-				to transmit HL7 messages.
+				to transmit HL7 artifacts (for example messages, documents, 
+				resources).
 			</p>
 			
 			<subsection name="1.1 Intent">
@@ -221,27 +222,32 @@
 						<li>
 							If the message is a "vertical bar" encoded HL7 v2.x message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+er7</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/hl7-v2+er7</code>
 						</li>
 						<li>
 							If the message is an XML encoded HL7 v2.x message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v2+xml</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/hl7-v2+xml</code>
 						</li>
 						<li>
 							If the message is an XML encoded HL7 v3 message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/hl7-v3+xml</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/hl7-v3+xml</code>
 						</li>
 						<li>
 							If the message is an XML encoded FHIR message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/fhir+xml</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/fhir+xml</code>
 						</li>
 						<li>
 							If the message is a JSON encoded FHIR message, the
 							content type SHALL be:<br/>
-							<code>&nbsp;&nbsp;&nbsp;&nbsp;application/fhir+json</code>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/fhir+json</code>
+						</li>
+						<li>
+							If the message is a CDA document, the
+							content type SHALL be:<br/>
+							<code>&nbsp;&nbsp;&nbsp;&nbsp;x-application/xml+cda</code>
 						</li>
 						<li>
 							If the <b>response message</b> content is not an HL7 message
@@ -273,10 +279,12 @@
 					for the message body.  
 				</p>
 				<p>
-					The HL7 v2.x specification allows the character encoding to be
-					specified in MSH-18. When a message is received using HL7 over HTTP, this value SHALL
-					be ignored, and the character encoding specified in the HTTP 
-					"<code>Content-Type</code>" header MUST be observed instead. 
+					The HL7 v2.x specification allows the character encoding to be specified in MSH-18. 
+					When a message is sent using HL7 over HTTP, this value shall be either UNICODE UTF-8 
+					(according to the designation in table 211), or shall not be present 
+					(indicating ASCII, a proper subset of UTF-8). When a message is received using HL7 over
+					HTTP, this value SHALL be ignored, and the character encoding specified in the 
+					HTTP "<code>Content-Type</code>" header MUST be observed instead.
 				</p>
 				
 				<p><b>Implementation Consideration</b></p>
@@ -664,9 +672,8 @@
 		<section name="4.0 - Implementation Considerations"  style="clear: both;">
 		
 			<p>
-				The following section of this specification is considered non-normative, 
-				and provides guidance for application designers adding support for HL7
-				over HTTP to their applications.
+				The following section of this specification provides further details
+				for specific implementation considerations.
 			</p>
 		
 			<subsection name="4.1 Sequencing and Threading">
@@ -676,8 +683,9 @@
 					will be processed in a different order than the one in which
 					they were generated. Because message sequence is often important
 					in HL7 v2.x transactional messaging, implementers should consider 
-					how to ensure that messages are processed sequentially. The HL7 
-					sequence number protocol may be used in this case.
+					how to ensure that messages are processed sequentially. In the 
+					event that conventional sequence management cannot be employed then 
+					the sequence number protocol SHALL be used.
 				</p>
 			</subsection>
 		
