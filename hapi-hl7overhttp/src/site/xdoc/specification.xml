@@ -260,8 +260,10 @@
 				</p>
 				<p>
 				    <b>Non-error response messages</b> being transmitted by a server MUST use the same
-				    content type as the corresponding <b>request message</b>, if the response message
-				    payload is an HL7 v2.x message. In other words, if a request message uses XML
+				    content type as the corresponding <b>request message</b>.
+					 <!--, if the response message
+					 payload is an HL7 v2.x message. -->
+					 In other words, if a request message uses XML
 				    encoding, the corresponding response message MUST also
 				    use XML encoding. See section <a href="#2_6_RESP_CODES">2.6 Response Codes</a>
 				    for more information about response codes for error handling.
