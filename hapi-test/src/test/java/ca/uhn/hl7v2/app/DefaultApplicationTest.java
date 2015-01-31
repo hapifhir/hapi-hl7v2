@@ -18,7 +18,7 @@ public class DefaultApplicationTest {
     public void testProcessMessage() throws Exception {
     	DefaultApplication app = new DefaultApplication();
     	Message in = new ca.uhn.hl7v2.model.v24.message.ACK();
-        Message out = app.processMessage(in);
+        Message out = app.processMessage(in, null);
         Terser t = new Terser(out);
         assertEquals(AcknowledgmentCode.AR.name(), t.get("/MSA-1"));
         assertEquals("207", t.get("/ERR-1(0)-4-1"));

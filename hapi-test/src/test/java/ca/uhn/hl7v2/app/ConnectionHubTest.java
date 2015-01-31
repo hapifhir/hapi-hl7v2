@@ -5,14 +5,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import ca.uhn.hl7v2.model.v25.message.ACK;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.hamcrest.number.OrderingComparison;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -352,13 +351,13 @@ public class ConnectionHubTest extends MockitoTest {
 		assertEquals(0, hub.allConnections().size());
 	}
 
-	public static class MyApp implements Application<Message> {
+	public static class MyApp implements ReceivingApplication<Message> {
 
 		public boolean canProcess(Message theIn) {
 			return true;
 		}
 
-		public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+		public Message processMessage(Message theIn, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 			ourLog.info("Received: " + theIn.encode());
 			try {
 				return theIn.generateACK();

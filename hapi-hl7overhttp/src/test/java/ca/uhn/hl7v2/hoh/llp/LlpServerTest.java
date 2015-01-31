@@ -10,8 +10,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +36,7 @@ import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
-public class LlpServerTest implements Application<Message>, ConnectionListener {
+public class LlpServerTest implements ReceivingApplication<Message>, ConnectionListener {
 
 	private int myPort;
 	private Hl7OverHttpLowerLayerProtocol myLlp;
@@ -404,7 +407,8 @@ public class LlpServerTest implements Application<Message>, ConnectionListener {
 		return true;
 	}
 
-	public Message processMessage(Message theArg0) throws ApplicationException, HL7Exception {
+	public Message processMessage(Message theArg0, Map<String, Object> metadata)
+            throws ReceivingApplicationException, HL7Exception {
 		myMessage = theArg0;
 		if (myResponse != null) {
 			return myResponse;

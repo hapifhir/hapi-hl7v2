@@ -3,25 +3,6 @@
  */
 package ca.uhn.hl7v2.app;
 
-import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.completionService;
-import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.getDefaultService;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
@@ -29,8 +10,26 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.Terser;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.completionService;
+import static ca.uhn.hl7v2.concurrent.DefaultExecutorService.getDefaultService;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for Initiator.
@@ -40,7 +39,7 @@ import ca.uhn.hl7v2.util.Terser;
  *          jamesagnew $
  */
 
-public class TwoPortInitiatorTest implements Application<Message> {
+public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(TwoPortInitiatorTest.class);
 	
@@ -132,7 +131,8 @@ public class TwoPortInitiatorTest implements Application<Message> {
 
 	}
 
-	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+	public Message processMessage(Message theIn, Map<String, Object> metadata)
+            throws ReceivingApplicationException, HL7Exception {
 		
 		ourLog.debug("Received message with ID {}", new Terser(theIn).get("/MSH-10"));
 		
