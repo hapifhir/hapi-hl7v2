@@ -277,6 +277,14 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
                 
             } catch (IOException e) {
                 log.error( "Can't load all the custom package list - user-defined classes may not be recognized", e );
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        throw new HL7Exception(e);
+                    }
+                }
             }
             
         }

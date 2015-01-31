@@ -63,7 +63,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     private Map<String, Boolean> repeating;
     private Set<String> choiceElements;
     private Map<String, Class<? extends Structure>> classes;
-    // protected Message message;
+
     private Set<String> nonStandardNames;
     private final ModelClassFactory myFactory;
 
@@ -678,7 +678,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
      * of them.
      *
      * @param visitor MessageVisitor instance to be called back.
-     * @param Location location of the group
+     * @param location location of the group
      * @return true if visiting shall continue, false if not
      * @throws HL7Exception
      */
