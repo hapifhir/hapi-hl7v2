@@ -22,7 +22,7 @@ public class MessageRuleBuilderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		b1 = new ValidationRuleBuilder().forVersion("2.5").message("ADT", "A01");
+		b1 = new ValidationRuleBuilder().forVersion("2.5").message("ADT", "A01", "A04");
 	}
 
 	@Test
@@ -36,13 +36,13 @@ public class MessageRuleBuilderTest {
 		a01.getPID().getPatientName(0).getGivenName().setValue("XX");
 		ValidationException[] exceptions = r.apply(a01);
 		assertEquals(1, exceptions.length);
-		exceptions[0].printStackTrace();
+		// exceptions[0].printStackTrace();
 	}
 
 	@Test
 	public void testOnlyKnownSegments() throws HL7Exception, IOException {
 		ADT_A01 a01 = new ADT_A01();
-		a01.initQuickstart("ADT", "A01", "P");
+		a01.initQuickstart("ADT", "A04", "P");
 		b1.onlyKnownSegments();
 		MessageRule r = ((MessageRule) b1.getRules().iterator().next().getRule());
 		assertEquals(0, r.apply(a01).length);

@@ -91,35 +91,33 @@ public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder
 			return new ValidationRuleBuilder(getRules(), Version.values());
 		}
 
-		public ValidationRuleBuilder asOf(
-				String version) {
+		public ValidationRuleBuilder asOf(String version) {
 			return asOf(Version.versionOf(version));
 		}
 
-		public ValidationRuleBuilder asOf(
-				Version version) {
+		public ValidationRuleBuilder asOf(Version version) {
 			return new ValidationRuleBuilder(getRules(), Version.asOf(version));
 		}
 
-		public ValidationRuleBuilder before(
-				String version) {
+		public ValidationRuleBuilder before(String version) {
 			return before(Version.versionOf(version));
 		}
 
-		public ValidationRuleBuilder before(
-				Version version) {
+		public ValidationRuleBuilder before(Version version) {
 			return new ValidationRuleBuilder(getRules(), Version.before(version));
 		}
 
-		public ValidationRuleBuilder except(
-				String version) {
-			return except(Version.versionOf(version));
-		}
+        public ValidationRuleBuilder except(String... versions) {
+            Version[] v = new Version[versions.length];
+            for (int i = 0; i < versions.length; i++) {
+                v[i] = Version.versionOf(versions[i]);
+            }
+            return except(v);
+        }
 
-		public ValidationRuleBuilder except(
-				Version version) {
-			return new ValidationRuleBuilder(getRules(), Version.except(version));
-		}
+        public ValidationRuleBuilder except(Version... versions) {
+            return new ValidationRuleBuilder(getRules(), Version.except(versions));
+        }
 
 	}
 

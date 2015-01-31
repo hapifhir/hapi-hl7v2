@@ -25,10 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.MessageVisitorFactory;
@@ -48,13 +45,13 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, MessageRule> {
 
 	private String messageType;
-	private String triggerEvent;
+	private String[] triggerEvents;
 
 	protected MessageRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
-			String messageType, String triggerEvent) {
+			String messageType, String... triggerEvents) {
 		super(rules, versions);
 		this.messageType = messageType;
-		this.triggerEvent = triggerEvent;
+		this.triggerEvents = triggerEvents;
 	}
 	
 	/**
@@ -76,7 +73,6 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
      * in a single pass.
      *
      * @param visitorFactory MessageVisitorFactory that creates ValidatingMessageVisitor instances
-     * @param predicate Predicate to evaluate against the value
      * @return this instance to build more rules
      */
     public MessageRuleBuilder inspect(MessageVisitorFactory<? extends ValidatingMessageVisitor> visitorFactory) {
@@ -163,15 +159,18 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 	}
 
 	// for tests only
-	String getTriggerEvent() {
-		return triggerEvent;
+	String[] getTriggerEvents() {
+		return triggerEvents;
 	}
 
 	@Override
 	protected Collection<RuleBinding<MessageRule>> getRuleBindings(MessageRule rule, String version) {
-		RuleBinding<MessageRule> binding = new MessageRuleBinding(version, messageType,
-				triggerEvent, rule);
-		return activate(Collections.singletonList(binding));
+        List<RuleBinding<MessageRule>> bindings = new ArrayList<RuleBinding<MessageRule>>();
+        for (String triggerEvent : triggerEvents) {
+            bindings.add(new MessageRuleBinding(version, messageType,
+                    triggerEvent, rule));
+        }
+		return activate(bindings);
 	}
 
 }

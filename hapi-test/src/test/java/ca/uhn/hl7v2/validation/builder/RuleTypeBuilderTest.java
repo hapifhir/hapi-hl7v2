@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.validation.Rule;
@@ -29,8 +30,9 @@ public class RuleTypeBuilderTest {
 	@Test
 	public void testMessage() {
 		assertEquals("ADT", b.message("ADT", "A01").getMessageType());
-		assertEquals("A01", b.message("ADT", "A01").getTriggerEvent());
-		assertEquals("*", b.message("ADT", "*").getTriggerEvent());
+		assertEquals("A01", b.message("ADT", "A01").getTriggerEvents()[0]);
+        assertEquals("A04", b.message("ADT", "A01", "A04").getTriggerEvents()[1]);
+		assertEquals("*", b.message("ADT", "*").getTriggerEvents()[0]);
 	}
 
 	@Test
@@ -43,6 +45,7 @@ public class RuleTypeBuilderTest {
 		assertTrue(b.getRuleBindings(new DummyRule(), "2.5").isEmpty());
 	}
 
+    @Ignore
 	public void testAddRuleBinding() {
 		DummyRule rule = new DummyRule();
 		b.addRuleBindings(rule);
