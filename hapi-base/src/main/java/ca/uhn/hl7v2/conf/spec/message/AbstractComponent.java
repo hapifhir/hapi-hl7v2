@@ -1,9 +1,9 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
+import ca.uhn.hl7v2.conf.ProfileException;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import ca.uhn.hl7v2.conf.ProfileException;
 
 /**
  * An abstraction of the common features of Field, Component, and SubComponent.  
@@ -164,7 +164,7 @@ public class AbstractComponent<T> {
     
     /** Indexed setter for property dataValues.
      * @param index Index of the property.
-     * @param dataValues New value of the property at <CODE>index</CODE>.
+     * @param dataValue New value of the property at <CODE>index</CODE>.
      *
      * @throws ProfileException
      */
@@ -271,7 +271,7 @@ public class AbstractComponent<T> {
     public void setLength(long length) throws ProfileException {
         long oldLength = this.length;
         try {
-            vetoableChangeSupport.fireVetoableChange("length", new Long(oldLength), new Long(length));
+            vetoableChangeSupport.fireVetoableChange("length", oldLength, length);
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }

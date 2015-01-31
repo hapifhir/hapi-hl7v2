@@ -171,6 +171,7 @@ public class EncodingCharacters implements Cloneable {
     
     public Object clone() throws CloneNotSupportedException
     {
+        super.clone();
         return new EncodingCharacters(this);
     }
     

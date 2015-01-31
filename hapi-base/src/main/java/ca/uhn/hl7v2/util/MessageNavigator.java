@@ -280,7 +280,7 @@ public class MessageNavigator {
      * one level of the message tree.  A stack of these
      * identifies the current location completely.
      */
-    private class GroupContext {
+    private static class GroupContext {
         public Group group;
         public int child;
         

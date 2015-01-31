@@ -238,7 +238,7 @@ public class Seg implements ProfileStructure {
     }
     
     /** Setter for property usage.
-     * @param optionality New value of property usage.
+     * @param usage New value of property usage.
      *
      * @throws ProfileException
      */
@@ -268,12 +268,12 @@ public class Seg implements ProfileStructure {
     public void setMin(short min) throws ProfileException {
         short oldMin = this.min;
         try {
-            vetoableChangeSupport.fireVetoableChange("min", new Short(oldMin), new Short(min));
+            vetoableChangeSupport.fireVetoableChange("min", oldMin, min);
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }            
         this.min = min;
-        propertyChangeSupport.firePropertyChange("min", new Short(oldMin), new Short(min));
+        propertyChangeSupport.firePropertyChange("min", oldMin, min);
     }
     
     /** Getter for property max.

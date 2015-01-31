@@ -70,12 +70,12 @@ public class Field extends AbstractComponent<Field> {
     public void setMin(short min) throws ProfileException {
         short oldMin = this.min;
         try {
-            vetoableChangeSupport.fireVetoableChange("min", new Short(oldMin), new Short(min));
+            vetoableChangeSupport.fireVetoableChange("min", oldMin, min);
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }
         this.min = min;
-        propertyChangeSupport.firePropertyChange("min", new Short(oldMin), new Short(min));
+        propertyChangeSupport.firePropertyChange("min", oldMin, min);
     }
     
     /** Getter for property max.
@@ -93,12 +93,12 @@ public class Field extends AbstractComponent<Field> {
     public void setMax(short max) throws ProfileException {
         short oldMax = this.max;
         try {
-            vetoableChangeSupport.fireVetoableChange("max", new Short(oldMax), new Short(max));
+            vetoableChangeSupport.fireVetoableChange("max", oldMax, max);
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }
         this.max = max;
-        propertyChangeSupport.firePropertyChange("max", new Short(oldMax), new Short(max));
+        propertyChangeSupport.firePropertyChange("max", oldMax, max);
     }
     
     /** Getter for property itemNo.
