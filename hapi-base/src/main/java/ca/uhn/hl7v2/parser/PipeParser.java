@@ -219,14 +219,8 @@ public class PipeParser extends Parser {
 		// try to instantiate a message object of the right class
 		MessageStructure structure = getStructure(message);
 		Message m = instantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
-		// Note: this will change in future to reuse the Parser's/HapiContext's
-		// ValidationContext.
-		m.setValidationContext(getValidationContext());
-		
 		m.setParser(this);
-		
 		parse(m, message);
-
 		return m;
 	}
 

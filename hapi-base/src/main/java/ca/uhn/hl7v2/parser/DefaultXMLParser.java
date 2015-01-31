@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -389,9 +390,9 @@ public class DefaultXMLParser extends XMLParser {
      * Convenience factory method which returns an instance that has a 
      * {@link NoValidation NoValidation validation context}. 
      */
-    public static DefaultXMLParser getInstanceWithNoValidation() {
-        DefaultXMLParser retVal = new DefaultXMLParser();
-        retVal.setValidationContext(ValidationContextFactory.noValidation());
+    public static XMLParser getInstanceWithNoValidation() {
+        HapiContext context = new DefaultHapiContext(ValidationContextFactory.noValidation());
+        XMLParser retVal = context.getXMLParser();
         return retVal;
     }
 

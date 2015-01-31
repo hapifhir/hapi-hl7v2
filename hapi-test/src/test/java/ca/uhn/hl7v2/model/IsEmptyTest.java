@@ -1,8 +1,10 @@
 package ca.uhn.hl7v2.model;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.model.v231.datatype.CE;
 import ca.uhn.hl7v2.model.v231.datatype.ST;
 import ca.uhn.hl7v2.model.v231.message.ADT_A08;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +22,7 @@ public class IsEmptyTest {
     @Before
     public void setup() throws Exception {
         hl7In = new ADT_A08();
+        hl7In.setParser(new DefaultHapiContext(ValidationContextFactory.noValidation()).getPipeParser());
     }
 
     @Test

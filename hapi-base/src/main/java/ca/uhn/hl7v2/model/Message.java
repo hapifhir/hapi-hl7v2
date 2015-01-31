@@ -56,14 +56,6 @@ public interface Message extends Group {
 	public abstract String getVersion();
 
 	/**
-	 * @return the set of validation rules that applies to this message
-	 * 
-	 * @deprecated ValidationContext instances private for Message instances will be removed in the
-	 *             next release. Use getParser().getValidationContext().
-	 */
-	public abstract ValidationContext getValidationContext();
-
-	/**
 	 * @param theContext the set of validation rules that are to apply to this message
 	 * 
 	 * @deprecated ValidationContext instances private for Message instances will be removed in the
