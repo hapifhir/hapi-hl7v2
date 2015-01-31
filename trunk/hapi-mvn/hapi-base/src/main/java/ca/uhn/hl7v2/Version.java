@@ -26,11 +26,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
@@ -123,14 +119,13 @@ public enum Version {
 		return versions.toArray(new Version[versions.size()]);
 	}
 
-	public static Version[] except(Version v) {
-		List<Version> versions = new ArrayList<Version>();
-		for (Version version : Version.values()) {
-			if (version.compareTo(v) != 0)
-				versions.add(version);
-		}
-		return versions.toArray(new Version[versions.size()]);
-	}
+    public static Version[] except(Version... v) {
+        Set<Version> versions = new HashSet<Version>(Arrays.asList(Version.values()));
+        for (Version version : v) {
+            versions.remove(version);
+        }
+        return versions.toArray(new Version[versions.size()]);
+    }
 
 	public static Version[] before(Version v) {
 		List<Version> versions = new ArrayList<Version>();

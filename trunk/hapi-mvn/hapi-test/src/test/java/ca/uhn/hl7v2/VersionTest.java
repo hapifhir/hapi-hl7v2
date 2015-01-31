@@ -31,7 +31,13 @@ public class VersionTest {
 			assertTrue(Version.supportsVersion(version.getVersion()));
 		}
 		assertFalse(Version.supportsVersion("3.0"));
-	}	
+	}
+
+    @Test public void testExcept() {
+        assertEquals(0, Version.except(Version.values()).length);
+        Version[] excepts = Version.except(Version.V231, Version.V25);
+        assertEquals(2, Version.values().length - excepts.length);
+    }
 	
 	@Test public void testAvailableVersions() {
 		assertTrue(Version.availableVersions().size() > 0);

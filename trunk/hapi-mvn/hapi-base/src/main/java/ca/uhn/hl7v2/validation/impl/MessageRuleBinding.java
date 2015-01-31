@@ -55,10 +55,10 @@ public class MessageRuleBinding extends RuleBinding<MessageRule> {
         myMessageType = theMessageType;
         myTriggerEvent = theTriggerEvent;
     }
-    
+
     /**
      * @param theScope must be in the form type^event (ie message type and trigger event separated
-     *      by a carat)
+     *      by a caret)
      */
     public boolean appliesToScope(String theScope) {
         
