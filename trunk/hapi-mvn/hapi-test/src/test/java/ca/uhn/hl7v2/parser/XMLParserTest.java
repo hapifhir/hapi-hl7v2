@@ -8,6 +8,7 @@ package ca.uhn.hl7v2.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+// import hapi.on.olis.erp_z99.message.ERP_R09;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,6 +84,7 @@ public class XMLParserTest {
 
 	}
 
+    /*
 	@Test
 	public void testDisableWhitespaceTrimming() throws HL7Exception {
 		
@@ -120,7 +122,7 @@ public class XMLParserTest {
 		assertEquals("O   L    I    S", response.getMSH().getMsh3_SendingApplication().getHd2_UniversalID().getValue());
 
 	}
-	
+	*/
 	
 	/**
 	 */

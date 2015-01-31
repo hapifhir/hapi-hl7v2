@@ -86,7 +86,7 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
         if (message != null) {
         	// Note: this will change in future to reuse the Parser's/HapiContext's
         	// ValidationContext.
-            ValidationContext context = message.getValidationContext();
+            ValidationContext context = message.getParser().getValidationContext();
             String version = message.getVersion();
 
             if (context != null) {

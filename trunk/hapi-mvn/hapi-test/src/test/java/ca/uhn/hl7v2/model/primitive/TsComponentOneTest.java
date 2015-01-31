@@ -78,7 +78,7 @@ public class TsComponentOneTest {
 	/**
 	 * This caused an exception at one point
 	 */
-	@Test
+	@Test(expected=DataTypeException.class)
 	public void testSetWithInvalid() throws HL7Exception {
 		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
 		dtm.setValue("HELP I'M A BUG");
