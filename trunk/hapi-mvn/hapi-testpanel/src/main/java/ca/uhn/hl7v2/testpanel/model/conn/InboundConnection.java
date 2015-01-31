@@ -25,27 +25,7 @@
  */
 package ca.uhn.hl7v2.testpanel.model.conn;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.BindException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.SwingUtilities;
-import javax.xml.bind.JAXB;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.HL7Service;
@@ -55,6 +35,8 @@ import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.testpanel.model.ActivityIncomingMessage;
 import ca.uhn.hl7v2.testpanel.model.ActivityInfoError;
 import ca.uhn.hl7v2.testpanel.model.ActivityOutgoingMessage;
@@ -62,6 +44,23 @@ import ca.uhn.hl7v2.testpanel.model.ActivityValidationOutcome;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup.Entry;
 import ca.uhn.hl7v2.util.Terser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.xml.bind.JAXB;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.BindException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InboundConnection")
@@ -206,7 +205,7 @@ public class InboundConnection extends AbstractConnection {
 	/**
 	 * Listens to the service for updates
 	 */
-	private class Handler implements Application, ConnectionListener {
+	private class Handler implements ReceivingApplication<Message>, ConnectionListener {
 
 		public boolean canProcess(Message theIn) {
 			return true;
@@ -234,7 +233,8 @@ public class InboundConnection extends AbstractConnection {
 			updateStatus(oldConnections);
 		}
 
-		public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+		public Message processMessage(Message theIn, Map<String, Object> metadata)
+                throws ReceivingApplicationException, HL7Exception {
 			try {
 				String controlId = new Terser(theIn).get("/MSH-10");
 				ourLog.info("Received message with control ID: {}", controlId);

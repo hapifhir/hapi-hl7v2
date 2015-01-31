@@ -64,7 +64,7 @@ public class UpgradeToHapi2_1 {
    }
 
 // START SNIPPET: newApp
-public class MyReceivingApplication implements ca.uhn.hl7v2.protocol.ReceivingApplication {
+public class MyReceivingApplication implements ca.uhn.hl7v2.protocol.ReceivingApplication<Message> {
 
    public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 

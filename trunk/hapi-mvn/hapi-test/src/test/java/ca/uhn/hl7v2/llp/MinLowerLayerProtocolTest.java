@@ -26,21 +26,17 @@
  */
 package ca.uhn.hl7v2.llp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import org.junit.After;
 import org.junit.Before;
@@ -48,20 +44,20 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static ca.uhn.hl7v2.llp.MllpConstants.END_BYTE1;
-import static ca.uhn.hl7v2.llp.MllpConstants.END_BYTE2;
-import static ca.uhn.hl7v2.llp.MllpConstants.START_BYTE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+
+import static ca.uhn.hl7v2.llp.MllpConstants.*;
+import static org.junit.Assert.*;
 
 /**
  * Unit test class for ca.uhn.hl7v2.llp.MinLowerLayerProtocol
  * 
  * @author Leslie Mann
  */
-public class MinLowerLayerProtocolTest implements Application<Message> {
+public class MinLowerLayerProtocolTest implements ReceivingApplication<Message> {
 	private static final Logger ourLog = LoggerFactory.getLogger(MinLowerLayerProtocolTest.class);
 
 
@@ -157,7 +153,8 @@ public class MinLowerLayerProtocolTest implements Application<Message> {
 		assertTrue(server.getRemoteConnections().isEmpty());
 	}
 	
-	public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+	public Message processMessage(Message theIn, Map<String, Object> metadata)
+            throws ReceivingApplicationException, HL7Exception {
 		try {
 			Message ack = theIn.generateACK();
 			myMsgCount++;

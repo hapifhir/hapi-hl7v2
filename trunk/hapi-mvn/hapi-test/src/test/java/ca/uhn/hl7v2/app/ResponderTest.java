@@ -5,6 +5,7 @@ package ca.uhn.hl7v2.app;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -13,6 +14,8 @@ import ca.uhn.hl7v2.llp.MinLLPWriter;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -100,7 +103,7 @@ public class ResponderTest {
 	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by
 	 *          $Author: jamesagnew $
 	 */
-	public static class DummyApplication implements Application<Message> {
+	public static class DummyApplication implements ReceivingApplication<Message> {
 
 		/**
 		 * {@inheritDoc}
@@ -112,39 +115,9 @@ public class ResponderTest {
 		/**
 		 * {@inheritDoc}
 		 */
-		public Message processMessage(Message theIn)
-				throws ApplicationException, HL7Exception {
+		public Message processMessage(Message theIn, Map<String, Object> metadata)
+				throws ReceivingApplicationException, HL7Exception {
 			throw new HL7Exception("Test error");
-		}
-
-	}
-
-	/**
-	 * Application which always throws an HL7 exception
-	 * 
-	 * @author <a href="mailto:james.agnew@uhn.on.ca">James Agnew</a>
-	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by
-	 *          $Author: jamesagnew $
-	 */
-	public static class DummySuccessApplication implements Application<Message> {
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public boolean canProcess(Message theIn) {
-			return true;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public Message processMessage(Message theIn)
-				throws ApplicationException, HL7Exception {
-			try {
-				return theIn.generateACK();
-			} catch (IOException e) {
-				throw new HL7Exception(e);
-			}
 		}
 
 	}

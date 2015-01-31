@@ -9,9 +9,12 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,11 +45,10 @@ public class TwoPortConnectionHubTest {
 	private static int port2;
 	private static HL7Service tps;
 	private static ConnectionHub hub;
-	private static HapiContext context;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		context = new DefaultHapiContext();
+        HapiContext context = new DefaultHapiContext();
 		port1 = RandomServerPortProvider.findFreePort();
 		port2 = RandomServerPortProvider.findFreePort();
 		tps = context.newServer(port1, port2, false);
@@ -182,13 +184,14 @@ public class TwoPortConnectionHubTest {
 		assertEquals(0, hub.allConnections().size());
 	}
 
-	public static class MyApp implements Application<Message> {
+	public static class MyApp implements ReceivingApplication<Message> {
 
 		public boolean canProcess(Message theIn) {
 			return true;
 		}
 
-		public Message processMessage(Message theIn) throws ApplicationException, HL7Exception {
+		public Message processMessage(Message theIn, Map<String, Object> metadata)
+                throws ReceivingApplicationException, HL7Exception {
 			ourLog.info("Received: " + theIn.encode());
 			try {
 				return theIn.generateACK();

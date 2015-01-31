@@ -27,28 +27,12 @@
 
 package ca.uhn.hl7v2.app;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import java.util.concurrent.ExecutorService;
-
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.GenericParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
@@ -56,6 +40,15 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 import ca.uhn.hl7v2.protocol.impl.AppWrapper;
 import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
  * <p>
@@ -250,6 +243,9 @@ public abstract class HL7Service extends Service {
      * registration for a particular combination of type and trigger event
      * over-writes the previous one. Note that the wildcard "*" for messageType
      * or triggerEvent means any type or event, respectively.
+     *
+     * @deprecated use {@link #registerApplication(String, String, ca.uhn.hl7v2.protocol.ReceivingApplication)} and
+     * {@link ca.uhn.hl7v2.protocol.impl.AppWrapper}
      */
     public synchronized void registerApplication(String messageType,
                                                  String triggerEvent, Application handler) {
@@ -305,7 +301,7 @@ public abstract class HL7Service extends Service {
     /**
      * Unregisteres the passed application
      *
-     * @param appRouting
+     * @param application receiving application
      * @return true if an application was unregistered, false otherwise
      */
     public synchronized boolean unregisterApplication(ReceivingApplication<? extends Message> application) {
@@ -390,7 +386,7 @@ public abstract class HL7Service extends Service {
                                 .forName(className); // may throw
                         // ClassNotFoundException
                         Application app = appClass.newInstance();
-                        registerApplication(type, event, app);
+                        registerApplication(type, event, new AppWrapper(app));
                     } catch (ClassCastException cce) {
                         throw new HL7Exception("The specified class, " + className
                                 + ", doesn't implement Application.");
@@ -420,7 +416,7 @@ public abstract class HL7Service extends Service {
      * Note: this could be started as daemon, so we don't need to care about
      * termination.
      */
-    private class ConnectionCleaner extends Service {
+    private static class ConnectionCleaner extends Service {
 
         private final HL7Service service;
 

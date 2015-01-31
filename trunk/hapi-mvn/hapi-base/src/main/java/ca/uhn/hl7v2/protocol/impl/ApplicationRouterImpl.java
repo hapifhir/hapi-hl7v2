@@ -45,7 +45,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * Key under which raw message text is stored in metadata Map sent to
      * <code>ReceivingApplication</code>s.
      */
-    public static String RAW_MESSAGE_KEY = MetadataKeys.IN_RAW_MESSAGE;
+    public static final String RAW_MESSAGE_KEY = MetadataKeys.IN_RAW_MESSAGE;
 
     private List<Binding> myBindings;
     private Parser myParser;
