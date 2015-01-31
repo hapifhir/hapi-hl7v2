@@ -77,7 +77,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 
 	private Map<String, String> locations;
 
-	private class ErrorHandler implements DOMErrorHandler {
+	private static class ErrorHandler implements DOMErrorHandler {
 		private List<ValidationException> validationErrors;
 
 		public ErrorHandler(List<ValidationException> validationErrors) {

@@ -112,7 +112,7 @@ public class Receiver extends Service {
 	}
 
 	/** Independent thread for processing a single message */
-	private class Grunt implements Runnable {
+	private static class Grunt implements Runnable {
 
 		private ActiveConnection conn;
 		private String m;

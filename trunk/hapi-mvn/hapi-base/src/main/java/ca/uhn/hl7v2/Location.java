@@ -224,7 +224,7 @@ public class Location {
 		return true;
 	}
 
-    private class GroupLocation {
+    private static class GroupLocation {
         String groupName;
         int repetition;
 

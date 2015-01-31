@@ -304,7 +304,7 @@ public abstract class BuilderSupport implements Serializable {
 		return sb.toString();
 	}
 
-	private class AlwaysPredicate implements Predicate {
+	private static class AlwaysPredicate implements Predicate {
 
 		private boolean b;
 
@@ -322,7 +322,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class MaxLengthPredicate implements Predicate {
+	private static class MaxLengthPredicate implements Predicate {
 
 		private int maxLength = Integer.MAX_VALUE;
 
@@ -340,7 +340,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class InPredicate implements Predicate {
+	private static class InPredicate implements Predicate {
 
 		private Collection<?> allowed;
 
@@ -358,7 +358,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class WithdrawnPredicate extends MaxLengthPredicate {
+	private static class WithdrawnPredicate extends MaxLengthPredicate {
 
 		public WithdrawnPredicate() {
 			super(0);
@@ -371,7 +371,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class NotPredicate implements Predicate {
+	private static class NotPredicate implements Predicate {
 
 		private Predicate delegate;
 
@@ -393,7 +393,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class EqualsPredicate implements Predicate {
+	private static class EqualsPredicate implements Predicate {
 
 		private Object expected;
 		private boolean ignoresCase;
@@ -421,7 +421,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class EmptyPredicate implements Predicate {
+	private static class EmptyPredicate implements Predicate {
 
 		public EmptyPredicate() {
 		}
@@ -436,7 +436,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class MatchesPredicate implements Predicate {
+	private static class MatchesPredicate implements Predicate {
 
 		private Pattern p;
 		private String description;
@@ -469,7 +469,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class AnyOfPredicate implements Predicate {
+	private static class AnyOfPredicate implements Predicate {
 
 		private Iterable<Predicate> predicates;
 
@@ -498,7 +498,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	}
 
-	private class AllOfPredicate implements Predicate {
+	private static class AllOfPredicate implements Predicate {
 
 		private Iterable<Predicate> predicates;
 
