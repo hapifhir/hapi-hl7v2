@@ -493,7 +493,7 @@ public class Terser {
     }
 
     /** Struct for information about a step in a segment path. */
-    private class PathSpec {
+    private static class PathSpec {
         public String pattern;
         public boolean isGroup;
         public boolean find;

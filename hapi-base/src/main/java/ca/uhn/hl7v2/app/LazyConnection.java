@@ -105,7 +105,7 @@ public class LazyConnection implements Connection {
     }
 
 
-    class LazyInitiator implements Initiator {
+    static class LazyInitiator implements Initiator {
 
         private LazyConnection connection;
         private long timeoutMillis = 10000;

@@ -80,7 +80,7 @@ public class FiniteList {
 	private Repeatable createRep(int rep) {
 		try {
 			Constructor<?> theCon = repType.getConstructors()[0];
-			Repeatable thisRep = (Repeatable) theCon.newInstance(new Object[] { underlyingObject, new Integer(rep)});
+			Repeatable thisRep = (Repeatable) theCon.newInstance(new Object[] { underlyingObject, rep});
 			return thisRep;
 		} catch (InvocationTargetException e) {
 			throw new ConformanceError("Error creating underlying repetition. This is a bug.\nError is: " + e.toString() + "\n" + e.getCause().toString());
