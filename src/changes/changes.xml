@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="224">
+                Fix isEmpty() and clear() in TSComponentOne. Thanks to Sebastian Tacke for reporting.
+            </action>
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="223">
 				Avoid NullPointerException using DefaultHapiContext close method. Thanks to Domingo Amado for reporting.
 			</action>
