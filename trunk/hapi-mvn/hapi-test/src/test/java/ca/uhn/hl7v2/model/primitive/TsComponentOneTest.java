@@ -280,5 +280,17 @@ public class TsComponentOneTest {
 		
 		
 	}
-	
+
+    @Test
+    public void testIsEmptyAndClear() throws HL7Exception {
+        DTM time = new DTM(myMsg);
+        Calendar cal = new GregorianCalendar();
+        time.setValueToMinute(cal.getTime());
+
+        assertFalse(time.isEmpty());
+
+        time.clear();
+        assertTrue(time.isEmpty());
+    }
+
 }

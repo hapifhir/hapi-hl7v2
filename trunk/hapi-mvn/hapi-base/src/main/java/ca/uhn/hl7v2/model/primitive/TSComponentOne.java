@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.model.primitive;
 import java.util.Calendar;
 import java.util.Date;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
@@ -311,11 +312,15 @@ public abstract class TSComponentOne extends AbstractPrimitive {
     public Date getValueAsDate() throws DataTypeException {
         return getDetail().getValueAsDate();
     }
-    
-    
-    /** Returns the name of the type (used in XML encoding and profile checking)  */
-//    public String getName() {
-//        return "NM"; //seems to be called an NM in XML representation prior to 2.5  
-//    }
-    
+
+    @Override
+    public boolean isEmpty() throws HL7Exception {
+        return super.isEmpty() && myDetail == null;
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        myDetail = null;
+    }
 }
