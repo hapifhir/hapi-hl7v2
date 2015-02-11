@@ -35,6 +35,7 @@ import ca.uhn.hl7v2.app.ServerConfiguration;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.*;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -100,6 +101,9 @@ public abstract class HapiContextSupport {
             return context.getConformanceValidator();
         }
 
+        /**
+         * @deprecated
+         */
 		public ConnectionHub getConnectionHub() {
 			return context.getConnectionHub();
 		}
@@ -179,6 +183,14 @@ public abstract class HapiContextSupport {
         public HL7Service newServer(int inboundPort, int outboundPort, boolean tls) {
 			return context.newServer(inboundPort, outboundPort, tls);
 		}
+
+        public Message newMessage(String eventType, String triggerEvent, Version version) throws HL7Exception {
+            return context.newMessage(eventType, triggerEvent, version);
+        }
+
+        public <T extends Message> T newMessage(Class<T> clazz) throws HL7Exception {
+            return context.newMessage(clazz);
+        }
 
         public void setCodeStoreRegistry(CodeStoreRegistry store) {
             throw new UnsupportedOperationException("Read-only instance");

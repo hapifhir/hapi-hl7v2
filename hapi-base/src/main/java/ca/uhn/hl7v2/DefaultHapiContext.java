@@ -34,12 +34,15 @@ import ca.uhn.hl7v2.app.ServerConfiguration;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TwoPortService;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
+import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.DefaultCodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+import ca.uhn.hl7v2.model.AbstractMessage;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.GenericParser;
@@ -47,6 +50,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
+import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.StandardSocketFactory;
 import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
@@ -80,7 +84,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * </pre>
  * 
  */
-public class DefaultHapiContext implements HapiContext {
+public class DefaultHapiContext implements HapiContext, Service.ServiceListener {
 
     private ExecutorService executorService;
     private ParserConfiguration parserConfiguration;
@@ -339,11 +343,15 @@ public class DefaultHapiContext implements HapiContext {
     }
 
     public SimpleServer newServer(int port, boolean tls) {
-        return new SimpleServer(this, port, tls);
+        SimpleServer server = new SimpleServer(this, port, tls);
+        server.getListeners().add(this);
+        return server;
     }
 
     public TwoPortService newServer(int port1, int port2, boolean tls) {
-        return new TwoPortService(this, port1, port2, tls);
+        TwoPortService server = new TwoPortService(this, port1, port2, tls);
+        server.getListeners().add(this);
+        return server;
     }
 
 	public Connection newClient(String host, int port, boolean tls) throws HL7Exception {
@@ -375,4 +383,33 @@ public class DefaultHapiContext implements HapiContext {
 		}
 		serverConfiguration = theServerConfiguration;
 	}
+
+    public Message newMessage(String eventType, String triggerEvent, Version version) throws HL7Exception {
+        try {
+            String structure = getModelClassFactory().getMessageStructureForEvent(eventType + "_" + triggerEvent, version);
+            Class<? extends Message> messageClass = getModelClassFactory().getMessageClass(structure, version.getVersion(), false);
+            Message msg = newMessage(messageClass);
+            ((AbstractMessage) msg).initQuickstart(eventType, triggerEvent, "P");
+            return msg;
+        } catch (IOException e) {
+            throw new HL7Exception(e);
+        }
+    }
+
+    public <T extends Message> T newMessage(Class<T> clazz) throws HL7Exception {
+        T msg = ReflectionUtil.instantiateMessage(clazz, getModelClassFactory());
+        msg.setParser(getGenericParser());
+        return msg;
+    }
+
+// ServiceListener
+
+
+    public void serviceStarted(Service service) {
+
+    }
+
+    public void serviceStopped(Service service) {
+
+    }
 }

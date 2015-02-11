@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="add" dev="Christian Ohr" system="newfeatures" issue="91">
+                Allow messages to be created from within an HapiContext.
+            </action>
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="224">
                 Fix isEmpty() and clear() in TSComponentOne. Thanks to Sebastian Tacke for reporting.
             </action>
