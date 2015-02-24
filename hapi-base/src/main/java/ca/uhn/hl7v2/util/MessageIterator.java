@@ -346,7 +346,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
                 try {
                     Structure[] reps = parent.getAll(names[i]);
                     for (int j = 0; j < reps.length; j++) {
-                        if (child == reps[j]) {
+                        if (child.equals(reps[j])) {
                             index = new Index(names[i], j);
                             break findChild; 
                         }
