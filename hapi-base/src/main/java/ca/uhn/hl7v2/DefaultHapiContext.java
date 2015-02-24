@@ -25,16 +25,8 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.app.ServerConfiguration;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.app.TwoPortService;
+import ca.uhn.hl7v2.app.*;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
-import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.conf.store.CodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.DefaultCodeStoreRegistry;
 import ca.uhn.hl7v2.conf.store.ProfileStore;
@@ -43,24 +35,16 @@ import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.DefaultXMLParser;
-import ca.uhn.hl7v2.parser.GenericParser;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.parser.ParserConfiguration;
-import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.parser.XMLParser;
+import ca.uhn.hl7v2.parser.*;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.util.StandardSocketFactory;
-import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
-import ca.uhn.hl7v2.validation.DefaultValidator;
-import ca.uhn.hl7v2.validation.ReportingValidationExceptionHandler;
-import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.ValidationExceptionHandlerFactory;
-import ca.uhn.hl7v2.validation.Validator;
+import ca.uhn.hl7v2.validation.*;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Default implementation for {@link HapiContext}.
@@ -84,7 +68,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * </pre>
  * 
  */
-public class DefaultHapiContext implements HapiContext, Service.ServiceListener {
+public class DefaultHapiContext implements HapiContext {
 
     private ExecutorService executorService;
     private ParserConfiguration parserConfiguration;
@@ -343,15 +327,11 @@ public class DefaultHapiContext implements HapiContext, Service.ServiceListener 
     }
 
     public SimpleServer newServer(int port, boolean tls) {
-        SimpleServer server = new SimpleServer(this, port, tls);
-        server.getListeners().add(this);
-        return server;
+        return new SimpleServer(this, port, tls);
     }
 
     public TwoPortService newServer(int port1, int port2, boolean tls) {
-        TwoPortService server = new TwoPortService(this, port1, port2, tls);
-        server.getListeners().add(this);
-        return server;
+        return new TwoPortService(this, port1, port2, tls);
     }
 
 	public Connection newClient(String host, int port, boolean tls) throws HL7Exception {
@@ -402,14 +382,4 @@ public class DefaultHapiContext implements HapiContext, Service.ServiceListener 
         return msg;
     }
 
-// ServiceListener
-
-
-    public void serviceStarted(Service service) {
-
-    }
-
-    public void serviceStopped(Service service) {
-
-    }
 }
