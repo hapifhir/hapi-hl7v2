@@ -273,7 +273,7 @@ public class DefaultHapiContextTest {
     public void testNewMessage() throws Exception {
         Message msg = context1.newMessage("ADT", "A04", Version.V25);
         ADT_A01 a04 = (ADT_A01)msg;
-        assertSame(context1.getPipeParser(), a04.getParser());
+        assertSame(context1.getGenericParser(), a04.getParser());
         Terser t = new Terser(a04);
         assertEquals("ADT", t.get("/MSH-9-1"));
         assertEquals("A04", t.get("/MSH-9-2"));
@@ -283,7 +283,7 @@ public class DefaultHapiContextTest {
     public void testNewMessageByClass() throws Exception {
         Message msg = context1.newMessage(ADT_A01.class);
         ADT_A01 a01 = (ADT_A01)msg;
-        assertSame(context1.getPipeParser(), a01.getParser());
+        assertSame(context1.getGenericParser(), a01.getParser());
     }
 
 	private static class ReceiveAndCloseImmediatelyThread extends Thread {
