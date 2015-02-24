@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import ca.uhn.hl7v2.parser.XMLParser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -80,7 +81,7 @@ public class LlpClientTest {
 			DefaultHapiContext context = new DefaultHapiContext();
 			context.setExecutorService(ourExecutor);
 			ConnectionHub connectionHub = context.getConnectionHub();
-			DefaultXMLParser parser = DefaultXMLParser.getInstanceWithNoValidation();
+			XMLParser parser = DefaultXMLParser.getInstanceWithNoValidation();
 			conn = connectionHub.attach("localhost", ourPort, parser, ourLlp, false);
 		} catch (Exception e) {
 			throw new Exception(e.getMessage() + " - " + RandomServerPortProvider.list().toString(), e);

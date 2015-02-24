@@ -29,7 +29,8 @@ package ca.uhn.hl7v2.app;
 
 /**
  * An object that wants to be notified of new remote connections.  ConnectionListeners
- * can be registered with an HL7Service in order to receive these notifications.  
+ * can be registered with an HL7Service in order to receive these notifications.
+ *
  * @author Bryan Tripp
  */
 public interface ConnectionListener {

@@ -314,7 +314,7 @@ public class ApplicationRouterImplTest {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.2 $ updated on $Date: 2009-03-20 22:21:14 $ by $Author: jamesagnew $
      */
-    private class MockApplication implements ReceivingApplication<Message> {
+    private static class MockApplication implements ReceivingApplication<Message> {
 
         private Message myNextResponse;
 
@@ -331,7 +331,7 @@ public class ApplicationRouterImplTest {
         }
     }
 
-    private class MockOccasionalApplication implements ReceivingApplication<Message> {
+    private static class MockOccasionalApplication implements ReceivingApplication<Message> {
 
         public static final String REJECT_CONTROL_ID = "012234";
         int myCount = 0;
@@ -359,7 +359,7 @@ public class ApplicationRouterImplTest {
 
     }
 
-    private class MockAlwaysApplication implements ReceivingApplication<Message> {
+    private static class MockAlwaysApplication implements ReceivingApplication<Message> {
         int myCount = 0;
 
         public Message processMessage(Message message, Map<String, Object> metadata) throws ReceivingApplicationException, HL7Exception {
@@ -377,7 +377,7 @@ public class ApplicationRouterImplTest {
 
     }
 
-    private class A01v25Application extends ClassBasedReceivingApplication<ADT_A01> {
+    private static class A01v25Application extends ClassBasedReceivingApplication<ADT_A01> {
         public A01v25Application() {
             super(ADT_A01.class);
         }

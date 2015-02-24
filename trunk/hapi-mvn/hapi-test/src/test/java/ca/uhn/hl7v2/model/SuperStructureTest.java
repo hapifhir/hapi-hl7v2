@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import ca.uhn.hl7v2.model.v25.segment.MSH;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
@@ -138,17 +139,15 @@ public class SuperStructureTest {
 			String[] split = nextStruct.split("_");
 			normalMsg.initQuickstart(split[0], split[1], "T");
 
-			int idx = 0;
 			for (String nextName : normalMsg.getNames()) {
-				idx++;
 
 				if (nextName.equals("MSH")) {
 					continue;
 				}
 				
-				if (normalMsg.isGroup(nextName) == false) {
+				if (!normalMsg.isGroup(nextName)) {
 					Segment seg = (Segment) normalMsg.get(nextName);
-					seg.parse(nextName.substring(0, 3) + "|" + idx);
+					seg.parse(nextName.substring(0, 3));
 				}
 			}
 
@@ -162,10 +161,8 @@ public class SuperStructureTest {
 			ourLog.info("Message:\n{}", encode.replace('\r', '\n'));
 
 			ourLog.info("Structure:\n{}", axx.printStructure());
-			
-			idx = 0;
+
 			for (String nextName : normalMsg.getNames()) {
-				idx++;
 
 				if (nextName.equals("MSH")) {
 					continue;
@@ -173,7 +170,7 @@ public class SuperStructureTest {
 
 				if (normalMsg.isGroup(nextName) == false) {
 					Segment seg = (Segment) axx.get(nextName);
-					String expected = (nextName.substring(0, 3) + "|" + idx);
+					String expected = (nextName.substring(0, 3));
 					String actual = seg.encode();
 					assertEquals(expected, actual);
 				}
