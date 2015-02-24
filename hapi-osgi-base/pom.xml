@@ -89,7 +89,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.0.0</version>
+				<version>2.3.7</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -102,6 +102,7 @@
 						<Export-Package>
 							ca.uhn.hl7v2*,
 							ca.uhn.hl7v2.app*,
+                            ca.uhn.hl7v2.concurrent*,
 							ca.uhn.hl7v2.conf*,
 							ca.uhn.hl7v2.conf.check*,
 							ca.uhn.hl7v2.conf.classes.abs*,
@@ -113,6 +114,7 @@
 							ca.uhn.hl7v2.conf.store*,
 							ca.uhn.hl7v2.llp*,
 							ca.uhn.hl7v2.model*,
+                            ca.uhn.hl7v2.model.composite*,
 							ca.uhn.hl7v2.model.primitive*,
 							ca.uhn.hl7v2.model.v21.datatype*,
 							ca.uhn.hl7v2.model.v22.datatype*,
@@ -123,19 +125,15 @@
 							ca.uhn.hl7v2.model.v251.datatype*,
 							ca.uhn.hl7v2.model.v26.datatype*,
 							ca.uhn.hl7v2.parser*,
-							ca.uhn.hl7v2.parser.ng*,
 							ca.uhn.hl7v2.preparser*,
 							ca.uhn.hl7v2.protocol*,
 							ca.uhn.hl7v2.protocol.impl*,
 							ca.uhn.hl7v2.util*,
+                            ca.uhn.hl7v2.util.idgenerator*,
 							ca.uhn.hl7v2.validation*,
-							ca.uhn.hl7v2.validation.app*,
-							ca.uhn.hl7v2.validation.impl*,
-							ca.uhn.hl7v2.view*,
-							ca.uhn.hl7v3.rim*,
-							ca.uhn.hl7v3.rim.datatype*,
-							ca.uhn.hl7v3.sourcegen*,
-							ca.uhn.log*,                  
+                            ca.uhn.hl7v2.validation.builder*,
+                            ca.uhn.hl7v2.validation.builder.support*,
+                            ca.uhn.hl7v2.validation.builder.impl*
                         </Export-Package>
 						<Import-Package>
 							ca.uhn.hl7v2.model.v21.datatype;resolution:=optional,
