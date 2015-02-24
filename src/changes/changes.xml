@@ -6,6 +6,12 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="207">
+                Avoid that empty segments are added during parsing. With thanks to Jens Villadsen.
+            </action>
+            <action type="add" dev="Christian Ohr" system="newfeatures" issue="92">
+                Allow messages to be wrapped as unmodifiable.
+            </action>
             <action type="add" dev="Christian Ohr" system="newfeatures" issue="91">
                 Allow messages to be created from within an HapiContext.
             </action>
