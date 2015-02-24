@@ -591,7 +591,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * @throws HL7Exception
 	 *             if the named Structure is not part of this Group.
 	 */
-	protected Type removeRepetition(int fieldNum, int index)
+    public Type removeRepetition(int fieldNum, int index)
 			throws HL7Exception {
 		if (fieldNum < 1 || fieldNum > fields.size()) {
 			throw new HL7Exception("The field " + fieldNum
@@ -621,7 +621,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * @throws HL7Exception
 	 *             if the named Structure is not part of this Group.
 	 */
-	protected Type insertRepetition(int fieldNum, int index)
+	public Type insertRepetition(int fieldNum, int index)
 			throws HL7Exception {
 		if (fieldNum < 1 || fieldNum > fields.size()) {
 			throw new HL7Exception("The field " + fieldNum
