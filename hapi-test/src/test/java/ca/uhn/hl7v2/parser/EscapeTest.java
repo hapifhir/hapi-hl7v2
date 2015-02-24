@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.junit.Test;
+ import ca.uhn.hl7v2.DefaultHapiContext;
+ import ca.uhn.hl7v2.HapiContext;
+ import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
@@ -77,8 +79,8 @@ public class EscapeTest {
 				"OBX|1|NM|Z049107^Cholesterol-serum^L||2.30|mmol/L|||||F|||200911231508|STP\r" +
 				"OBX|2|FT|Z101068^Tech Comment^L||Lab STP||||||F|||200911231508|STP";
 
-		ORU_R01 message = new ORU_R01();
-		message.setValidationContext(new ValidationContextImpl());
+        HapiContext context = new DefaultHapiContext(new ValidationContextImpl());
+		ORU_R01 message = context.newMessage(ORU_R01.class);
 
 		message.parse(msg);
 

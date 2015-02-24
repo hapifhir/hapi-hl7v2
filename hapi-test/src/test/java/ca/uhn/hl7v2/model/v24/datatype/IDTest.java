@@ -26,24 +26,24 @@
  */
 package ca.uhn.hl7v2.model.v24.datatype;
 
-import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
-
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.IndexedErrorCollector;
 import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.primitive.CommonID
@@ -54,10 +54,14 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  */
 public class IDTest {
 
-    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
-    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+    private static HapiContext context;
 
     @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+
+    @BeforeClass
+    public static void setupBefore() {
+        context = new DefaultHapiContext(ValidationContextFactory.defaultValidation());
+    }
 
 	static private class Params {
 	    int table;
@@ -90,8 +94,7 @@ public class IDTest {
 
         @Override
         protected String transform(Params input) throws Throwable {
-            Message message = new GenericMessage.V24(MCF);
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V24.class);
             ID id = new ca.uhn.hl7v2.model.v24.datatype.ID(message);
             id.setTable(input.table);
             id.setValue(input.value);
