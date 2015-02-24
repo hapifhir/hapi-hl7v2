@@ -52,7 +52,7 @@ public class GenericParserTest {
 		Message hMsg = p.parse(message.toString());
 
 		String enc = p.encode(hMsg);
-		assertTrue(enc, enc.contains("|WBCS: Adequate in number & normal in appearance|"));
+		assertTrue(enc, enc.contains("|WBCS: Adequate in number \\T\\ normal in appearance|"));
 	}
 
 }
