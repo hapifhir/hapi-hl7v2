@@ -1,22 +1,18 @@
 package ca.uhn.hl7v2.model.v24.datatype;
 
+import ca.uhn.hl7v2.*;
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+
 import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
 import static ca.uhn.hl7v2.TestSpecBuilder.ints;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import org.junit.Rule;
-import org.junit.Test;
-
-import ca.uhn.hl7v2.IndexedErrorCollector;
-import ca.uhn.hl7v2.TestSpec;
-import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.GenericMessage;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.validation.ValidationContext;
-import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.v24.datatype.DT
@@ -29,19 +25,22 @@ public class DTTest {
     private static int month = 2;
     private static int day = 24;
     private static String dateString = "20020224";
-    
-    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
-    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+
+    private static HapiContext context;
 
     @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 
+    @BeforeClass
+    public static void setupBefore() {
+        context = new DefaultHapiContext(ValidationContextFactory.defaultValidation());
+    }
 	 
     /**
      * Testing default constructor
      */
     @Test
-    public void testConstructor() {
-        DT dt = new DT(new GenericMessage.V24(MCF));
+    public void testConstructor() throws HL7Exception {
+        DT dt = new DT(context.newMessage(GenericMessage.V24.class));
         assertNotNull("Should have a valid DT object", dt);
     }
 
@@ -49,8 +48,7 @@ public class DTTest {
 
         @Override
         protected String transform(String input) throws Throwable {
-            Message message = new GenericMessage.V24(MCF);  
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V24.class);
             DT dt = new DT(message);
             dt.setValue(input);
             return dt.getValue();
@@ -100,8 +98,7 @@ public class DTTest {
 
         @Override
         protected String transform(Integer input) throws Throwable {
-            Message message = new GenericMessage.V24(MCF);  
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V24.class);
 
             DT dt = new DT(message);
             dt.setYearPrecision(input);
@@ -130,8 +127,7 @@ public class DTTest {
     public static class SetYearMonthPrecisionSpec extends TestSpec<int[], String> {
         @Override
         protected String transform(int[] input) throws Throwable {
-            Message message = new GenericMessage.V24(MCF);  
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V24.class);
     
             DT dt = new DT(message);
             dt.setYearMonthPrecision(input[0], input[1]);
@@ -165,8 +161,7 @@ public class DTTest {
     public static class SetYearMonthDayPrecisionSpec extends TestSpec<int[], String> {
         @Override
         protected String transform(int[] input) throws Throwable {
-            Message message = new GenericMessage.V24(MCF);  
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V24.class);
             DT dt = new DT(message);
             dt.setYearMonthDayPrecision(input[0], input[1], input[2]);
             return dt.getValue();           
@@ -216,8 +211,9 @@ public class DTTest {
      * Testing ability to retrieve year value
      */
     @Test
-    public void testGetYear() throws DataTypeException {
-    	DT dt = new DT(new GenericMessage.V24(MCF));
+    public void testGetYear() throws HL7Exception {
+        Message message = context.newMessage(GenericMessage.V24.class);
+        DT dt = new DT(message);
         dt.setValue(dateString);
     	assertEquals("Should get year back", year, dt.getYear());
     }
@@ -226,8 +222,8 @@ public class DTTest {
      * Testing ability to retrieve month value
      */
     @Test
-    public void testGetMonth() throws DataTypeException {
-        DT dt = new DT(new GenericMessage.V24(MCF));
+    public void testGetMonth() throws HL7Exception {
+        DT dt = new DT(context.newMessage(GenericMessage.V24.class));
         dt.setValue(dateString);
 	    assertEquals("Should get month back", month, dt.getMonth());
     }
@@ -236,8 +232,8 @@ public class DTTest {
      * Testing ability to retrieve day value
      */
     @Test
-    public void testGetDay() throws DataTypeException {
-        DT dt = new DT(new GenericMessage.V24(MCF));
+    public void testGetDay() throws HL7Exception {
+        DT dt = new DT(context.newMessage(GenericMessage.V24.class));
         dt.setValue(dateString);
         assertEquals("Should get day back", day, dt.getDay());
     }

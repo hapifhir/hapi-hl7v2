@@ -26,25 +26,21 @@
  */
 package ca.uhn.hl7v2.model.primitive;
 
-import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import ca.uhn.hl7v2.IndexedErrorCollector;
-import ca.uhn.hl7v2.TestSpec;
+import ca.uhn.hl7v2.*;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static ca.uhn.hl7v2.TestSpecBuilder.buildSpecs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test class for ca.uhn.hl7v2.model.primitive.CommonIS
@@ -53,17 +49,22 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  */
 public class CommonISTest {
 
-    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
-    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+    private static HapiContext context;
     
     private IS commonIS;
+
+    @BeforeClass
+    public static void setupBefore() {
+        context = new DefaultHapiContext(ValidationContextFactory.defaultValidation());
+    }
+
     @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
 	
 	
 	
 	@Before
 	public void setUp() throws Exception {
-		commonIS = new IS(new GenericMessage.V25(MCF), 2) {
+		commonIS = new IS(context.newMessage(GenericMessage.V25.class), 2) {
         };
 	}
 
@@ -85,8 +86,7 @@ public class CommonISTest {
 
         @Override
         protected String transform(String input) throws Throwable {
-            Message message = new GenericMessage.V25(MCF);
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V25.class);
             IS is = new ca.uhn.hl7v2.model.v25.datatype.IS(message, 0);
             is.setTable(2);
             is.setValue(input);
@@ -115,8 +115,8 @@ public class CommonISTest {
 	 * Testing ability to return the code value
 	 */
 	@Test
-	public void testGetValue() throws DataTypeException {
-		commonIS = new IS(new GenericMessage.V25(MCF), 2) {
+	public void testGetValue() throws HL7Exception {
+		commonIS = new IS(context.newMessage(GenericMessage.V25.class), 2) {
         };
         commonIS.setValue("Value");
 		assertEquals("Should get code value back.", "Value", commonIS.getValue());
@@ -126,8 +126,8 @@ public class CommonISTest {
 	 * Testing ability to return the number of the HL7 code table
 	 */
     @Test
-	public void testGetTable() throws DataTypeException {
-        commonIS = new IS(new GenericMessage.V25(MCF), 2) {
+	public void testGetTable() throws HL7Exception {
+        commonIS = new IS(context.newMessage(GenericMessage.V25.class), 2) {
         };
         commonIS.setValue("Value");
 		assertEquals("Should get table number back.", 2, commonIS.getTable());

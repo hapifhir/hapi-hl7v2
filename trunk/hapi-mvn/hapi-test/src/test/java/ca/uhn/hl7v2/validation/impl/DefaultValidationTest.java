@@ -5,15 +5,11 @@ package ca.uhn.hl7v2.validation.impl;
 
 import static org.junit.Assert.fail;
 
+import ca.uhn.hl7v2.*;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.IndexedErrorCollector;
-import ca.uhn.hl7v2.TestSpec;
-import ca.uhn.hl7v2.TestSpecBuilder;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
@@ -36,7 +32,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * @author Christian Ohr 
  */
 public class DefaultValidationTest {
-    
+
+    private static HapiContext context;
     private static Message myMessage;
     
     @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
@@ -44,8 +41,9 @@ public class DefaultValidationTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        myMessage = new GenericMessage.V25(new DefaultModelClassFactory());
-        myMessage.setValidationContext(new DefaultValidation());
+        context = new DefaultHapiContext(new DefaultValidation());
+        context.setModelClassFactory(new CanonicalModelClassFactory());
+        myMessage = context.newMessage(GenericMessage.V25.class);
     }
     
     
@@ -61,8 +59,7 @@ public class DefaultValidationTest {
     			"NK1|1|JONES^BARBARA^K|SPO|||||20011105\r"+
     			"NK1|1|JONES^MICHAEL^A|FTH\r";
 
-		CanonicalModelClassFactory c = new CanonicalModelClassFactory();
-		PipeParser p = new PipeParser(c);
+		PipeParser p = context.getPipeParser();
 
 		try {
 			p.parse(messageString);
@@ -547,7 +544,7 @@ public class DefaultValidationTest {
              + "EVN|A31|200903230934\r\n"
              + "PID|1||29^^CAISI_1-2^PI~\"\"||Test300^Leticia^^^^^L||19770202|M||||||||||||||||||||||";
         
-        PipeParser pipeParser = new DefaultHapiContext().getPipeParser();
+        PipeParser pipeParser = context.getPipeParser();
         pipeParser.parse(validMessage);
 
     }

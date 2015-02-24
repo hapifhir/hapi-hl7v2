@@ -32,6 +32,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -52,10 +55,14 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  */
 public class CommonIDTest {
 
-    private static final ModelClassFactory MCF = new DefaultModelClassFactory();
-    private static final ValidationContext VC = ValidationContextFactory.defaultValidation();
+    private static HapiContext context;
 
     @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+
+    @BeforeClass
+    public static void setupBefore() {
+        context = new DefaultHapiContext(ValidationContextFactory.defaultValidation());
+    }
 
 	static private class Params {
 	    int table;
@@ -88,8 +95,7 @@ public class CommonIDTest {
 
         @Override
         protected String transform(Params input) throws Throwable {
-            Message message = new GenericMessage.V25(MCF);
-            message.setValidationContext(VC);
+            Message message = context.newMessage(GenericMessage.V25.class);
             ID id = new ca.uhn.hl7v2.model.v25.datatype.ID(message);
             id.setTable(input.table);
             id.setValue(input.value);
