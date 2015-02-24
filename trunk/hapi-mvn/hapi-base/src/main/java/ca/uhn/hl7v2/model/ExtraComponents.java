@@ -29,11 +29,11 @@ public class ExtraComponents implements Serializable {
 
 	private static final long serialVersionUID = -2614683870975956395L;
     
-    private List<Varies> comps;
+    private List<Variable> comps;
     private Message message;
 
     public ExtraComponents(Message message) {
-        this.comps = new ArrayList<Varies>();
+        this.comps = new ArrayList<Variable>();
         this.message = message; 
     }
     
@@ -51,14 +51,17 @@ public class ExtraComponents implements Serializable {
      * @throws HL7Exception
      */
     public boolean isEmpty() throws HL7Exception {
-        for (Varies varies : comps) {
+        for (Variable varies : comps) {
             if (!varies.isEmpty()) return false;
         }
         return true;
     }
-    
-    
-    /** 
+
+    public Message getMessage() {
+        return message;
+    }
+
+    /**
      * Returns the component at the given location, creating it 
      * and all preceeding components if necessary.
      *
@@ -66,7 +69,7 @@ public class ExtraComponents implements Serializable {
      *      extra component)
      * @return component at the given index
      */
-    public Varies getComponent(int comp) {
+    public Variable getComponent(int comp) {
         ensureComponentAndPredecessorsExist(comp);
         return this.comps.get(comp);
     }

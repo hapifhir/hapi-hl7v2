@@ -395,7 +395,7 @@ public class PipeParser extends Parser {
 
 		// set data type of OBX-5
 		if (destination.getClass().getName().contains("OBX")) {
-			Varies.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
+			FixOBX5.fix(destination, getFactory(), getHapiContext().getParserConfiguration());
 		}
 
 	}
@@ -668,7 +668,7 @@ public class PipeParser extends Parser {
 
 		for (String nextName : names) {
 
-			source.get(nextName, 0);
+			// source.get(nextName, 0);
 			Structure[] reps = source.getAll(nextName);
 			boolean nextNameIsRequired = source.isRequired(nextName);
 

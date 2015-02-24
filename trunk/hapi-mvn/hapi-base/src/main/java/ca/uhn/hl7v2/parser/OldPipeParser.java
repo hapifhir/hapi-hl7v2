@@ -288,7 +288,7 @@ class OldPipeParser extends Parser {
         
         //set data type of OBX-5
         if (destination.getClass().getName().indexOf("OBX") >= 0) {
-            Varies.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
+            FixOBX5.fix(destination, getFactory(), getHapiContext().getParserConfiguration());
         }
         
     }
