@@ -410,11 +410,7 @@ public class XML
 						: true)
 				{
 					if(m_depthWithinUsefulElement >= 0) {
-						// TODO: remove!  or assert 
-						if(m_props.containsKey("" + m_curPath)) 
-							System.err.println("ALAAAARM: CLOBBERING PROPERTY in " + getClass());
-
-						m_props.setProperty("" + m_curPath, "" + m_chars);
+						m_props.setProperty(m_curPath.toString(), m_chars.toString());
 						m_lastDumpedPath.copy(m_curPath);
 						m_chars.delete(0, m_chars.length());
 					}

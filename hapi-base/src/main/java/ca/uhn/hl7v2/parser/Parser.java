@@ -470,10 +470,10 @@ public abstract class Parser extends HapiContextSupport {
 		try {
 			Class<? extends Message> genericMessageClass;
 			genericMessageClass = GenericMessage.getGenericMessageClass(version);
-			
-			Message dummy = genericMessageClass
-					.getConstructor(new Class[] { ModelClassFactory.class })
-					.newInstance(factory);
+
+            Constructor<? extends Message> constr = genericMessageClass
+                    .getConstructor(new Class[] { ModelClassFactory.class });
+            Message dummy = constr.newInstance(factory);
 
 			Class<? extends Segment> c = null;
 			

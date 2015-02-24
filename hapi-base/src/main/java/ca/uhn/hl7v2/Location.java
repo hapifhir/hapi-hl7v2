@@ -36,11 +36,13 @@ public class Location {
 
     private Stack<GroupLocation> groups = new Stack<GroupLocation>();
 	private String segmentName = null;
-	private int segmentRepetition = -1;
+	private int segmentRepetition = 0;
 	private int field = -1;
-	private int fieldRepetition = -1;
+	private int fieldRepetition = 0;
 	private int component = -1;
 	private int subcomponent = -1;
+
+    private boolean componentLevel;
 
 	public static final Location UNKNOWN = new Location();
 
@@ -57,6 +59,8 @@ public class Location {
 		this.component = l.component;
 		this.subcomponent = l.subcomponent;
 	}
+
+
 	
 	public boolean isUnknown() {
 	    return this == UNKNOWN;
@@ -71,6 +75,10 @@ public class Location {
         groups.pop();
     }
 
+    public GroupLocation getGroupLocation() {
+        return groups.peek();
+    }
+
 	public String getSegmentName() {
 		return segmentName;
 	}
@@ -79,6 +87,15 @@ public class Location {
 		this.segmentName = segmentName;
 		return this;
 	}
+
+    public boolean isComponentLevel() {
+        return componentLevel;
+    }
+
+    public Location atComponentLevel(boolean componentLevel) {
+        this.componentLevel = componentLevel;
+        return this;
+    }
 
 	public int getSegmentRepetition() {
 		return segmentRepetition;
@@ -231,6 +248,14 @@ public class Location {
         private GroupLocation(String groupName, int repetition) {
             this.groupName = groupName;
             this.repetition = repetition;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public int getRepetition() {
+            return repetition;
         }
     }
 

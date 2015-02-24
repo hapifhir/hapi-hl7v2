@@ -80,8 +80,7 @@ public abstract class XMLParser extends Parser {
 
 	private String textEncoding;
 
-	
-	private boolean disableWhitespaceTrimming;
+
 
 
 	/** Constructor */
@@ -306,7 +305,7 @@ public abstract class XMLParser extends Parser {
 
 		// set data type of OBX-5
 		if (segmentObject.getClass().getName().contains("OBX")) {
-			Varies.fixOBX5(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
+			FixOBX5.fix(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
 		}
 	}
 
@@ -465,9 +464,6 @@ public abstract class XMLParser extends Parser {
 	 * Carriage returns, line feeds, and tabs are replaced with spaces.
 	 */
 	protected String removeWhitespace(String s) {
-		if (this.disableWhitespaceTrimming) {
-			return s;
-		}
 		
 		s = s.replace('\r', ' ');
 		s = s.replace('\n', ' ');

@@ -34,55 +34,44 @@ import java.util.*;
  */
 
 public class DataTypeUtil {
-    
+
     public DataTypeUtil() {
-    }//end zero arg constructor
-    
-    
+    }
+
+
     /**
-     * This method will preappend the zeros to the beginning of num such that the total length
-     * equals totalDigitLength. It will also return the string representation of the new number.
+     * Preappend the zeros to the beginning of num such that the total length
+     * equals totalDigitLength and return the string representation of the new number
+     *
+     * @param num              number
+     * @param totalDigitLength number of digits
+     * @return string representation of the new number
      */
-    public static String preAppendZeroes(int num, int totalDigitLength){
-    /* preappend the zeros to the beginning of num such that the total length
-     equals totalDigitLength. Return the string representation of the new number*/
-        String a = String.valueOf(num);
-        if (a.length() >= totalDigitLength)
-            return a;
-        else {
-            int preAppendAmnt = totalDigitLength - a.length();
-            for (int j=0; j < preAppendAmnt; j++){
-                a = "0"+a;
-            }//end for
-            return a;
-        }//end else
-    }//end method
-    
-    
+    public static String preAppendZeroes(int num, int totalDigitLength) {
+        return (totalDigitLength == 0) ?
+                Integer.toString(num) :
+                String.format(String.format("%%0%dd", totalDigitLength), num);
+    }
+
+
     /**
-     * This method will return a signed four digit integer indicating the local
+     * Return a signed four digit integer indicating the local
      * GMT offset. This is the HL7 Offset format in integer representation.
+     *
+     * @return a signed four digit integer indicating the local GMT offset
      */
-    public static int getLocalGMTOffset(){
-        int offSet;
+    public static int getLocalGMTOffset() {
         GregorianCalendar currentTime = new GregorianCalendar();
         int gmtOffSet = currentTime.get(GregorianCalendar.ZONE_OFFSET);
-        int offSetSignInt;
-        if (gmtOffSet < 0 ){
-            offSetSignInt = -1;
-        }
-        else{
-            offSetSignInt = 1;
-        }
+        int offSetSignInt = gmtOffSet < 0 ? -1 : 1;
         //get the absolute value of the gmtOffSet
         int absGmtOffSet = Math.abs(gmtOffSet);
-        int gmtOffSetHours = absGmtOffSet/(3600*1000);
+        int gmtOffSetHours = absGmtOffSet / (3600 * 1000);
         int gmtOffSetMin = (absGmtOffSet / 60000) % (60);
-        //return the offset value HL7 format
-        offSet = ((gmtOffSetHours*100)+gmtOffSetMin) * offSetSignInt;
-        return offSet;        
-    }//end method
-    
-    
-}//end class
+        // return the offset value HL7 format
+        return ((gmtOffSetHours * 100) + gmtOffSetMin) * offSetSignInt;
+    }
+
+
+}
 

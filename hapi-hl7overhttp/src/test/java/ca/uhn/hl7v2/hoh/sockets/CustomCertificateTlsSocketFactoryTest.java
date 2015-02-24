@@ -1,23 +1,22 @@
 package ca.uhn.hl7v2.hoh.sockets;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
-
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLServerSocket;
 
+import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.security.SslSelectChannelConnector;
 
-import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CustomCertificateTlsSocketFactoryTest {
 

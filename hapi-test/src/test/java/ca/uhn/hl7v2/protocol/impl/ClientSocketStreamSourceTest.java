@@ -8,30 +8,17 @@ import java.net.ServerSocket;
 
 import ca.uhn.hl7v2.protocol.StreamSource;
 import ca.uhn.hl7v2.protocol.TransportException;
+import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
-public class ClientSocketStreamSourceTest extends TestCase {
+public class ClientSocketStreamSourceTest extends Assert {
 
-    /**
-     * Constructor for ClientSocketStreamSourceTest.
-     * @param arg0
-     */
-    public ClientSocketStreamSourceTest(String arg0) {
-        super(arg0);
-    }
-
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+    @Test
     public void testConnect() throws Exception {
         int port = 19876; 
         StreamSource source 

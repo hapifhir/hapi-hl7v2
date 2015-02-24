@@ -331,9 +331,9 @@ public class XMLParserTest {
 	}
 
 	@Test
-	public void testWeirdMessage() throws EncodingNotSupportedException, HL7Exception, IOException {
+	public void testWeirdMessage() throws HL7Exception, IOException {
 		String msg = loadFile("/ca/uhn/hl7v2/parser/weird_message.xml");
-		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		p.parse(msg);
 	}
 
@@ -345,7 +345,7 @@ public class XMLParserTest {
 		ADT_A01 msg = new ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");
 		
-		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		String encoded;
 
 		msg.getMSH().getMessageControlID().setValue("1234");
@@ -376,7 +376,7 @@ public class XMLParserTest {
 
 		String message = loadFile("/ca/uhn/hl7v2/parser/parse_and_encode.xml");
 		ca.uhn.hl7v2.model.v26.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v26.message.ORU_R01();
-		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		msg.setParser(p);
 
 		msg.parse(message);
@@ -394,7 +394,7 @@ public class XMLParserTest {
 	public void testMessageParseOMD_O03() throws HL7Exception, IOException {
 
 		String message = loadFile("/ca/uhn/hl7v2/parser/OMD_O03.xml");
-		DefaultXMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
 		OMD_O03 msg = (OMD_O03) p.parse(message);
 
 		ourLog.debug("Structure:\n{}", msg.printStructure());

@@ -94,6 +94,7 @@ class AcceptorThread extends Service {
 
 	@Override
 	protected void afterStartup() {
+		super.afterStartup();
 		try {
 			if (this.tls) {
 				ss = socketFactory.createTlsServerSocket();
@@ -127,6 +128,7 @@ class AcceptorThread extends Service {
 
 	@Override
 	protected void afterTermination() {
+		super.afterTermination();
 		try {
 			if (ss != null && !ss.isClosed())
 				ss.close();
