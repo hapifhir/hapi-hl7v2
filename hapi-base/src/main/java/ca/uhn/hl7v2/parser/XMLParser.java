@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.uhn.hl7v2.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -305,8 +306,13 @@ public abstract class XMLParser extends Parser {
 
 		// set data type of OBX-5
 		if (segmentObject.getClass().getName().contains("OBX")) {
-			FixOBX5.fix(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
+			FixFieldDataType.fixOBX5(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
 		}
+        // set data type of MFE-3
+        if (segmentObject.getClass().getName().contains("MFE") &&
+                Version.versionOf(segmentObject.getMessage().getVersion()).isGreaterThan(Version.V23)) {
+            FixFieldDataType.fixMFE3(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
+        }
 	}
 
 	private void parseReps(Segment segmentObject, Element segmentElement, String fieldName,
@@ -430,7 +436,7 @@ public abstract class XMLParser extends Parser {
 							.getMessage());
 					Element elem = (Element) child;
 					String attr = elem.getAttribute(ESCAPE_ATTRNAME).trim();
-					if (attr != null && attr.length() > 0) {
+					if (attr.length() > 0) {
 						builder.append(ec.getEscapeCharacter()).append(attr)
 								.append(ec.getEscapeCharacter());
 					}

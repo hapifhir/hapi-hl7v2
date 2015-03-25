@@ -176,7 +176,7 @@ public class DefaultXMLParser extends XMLParser {
         Message message = instantiateMessage(xmlMessage.getDocumentElement().getLocalName(), version, true);
     	// Note: this will change in future to reuse the Parser's/HapiContext's
     	// ValidationContext.
-        message.setValidationContext(getValidationContext());
+        // message.setValidationContext(getValidationContext());
         parse(message, xmlMessage.getDocumentElement());
         return message;
     }

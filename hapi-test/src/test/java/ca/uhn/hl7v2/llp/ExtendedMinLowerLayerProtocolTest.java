@@ -233,7 +233,7 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 
 		ADT_A01 msg = new ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");
-		msg.getPID().getSetIDPID().setValue(StringUtils.leftPad("", 1000, 'a')); // Long string!
+		msg.getPID().getPatientAddress(0).getStateOrProvince().setValue(StringUtils.leftPad("", 1000, 'a')); // Long string!
 
 		final Socket socket = TestUtils.acquireClientSocket(port);
 

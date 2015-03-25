@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
-			<version>${hapi.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -201,10 +201,11 @@
 					<siteDirectory>${baseDir}/../src/site</siteDirectory>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>ca.uhn.hapi</groupId>
 				<artifactId>hapi-sourcegen</artifactId>
-				<version>${hapi.version}</version>
+				<version>${project.version}</version>
 				<executions>
 					<execution>
 						<id>no_data_types</id>
@@ -259,7 +260,7 @@
 					<dependency>
 						<groupId>ca.uhn.hapi</groupId>
 						<artifactId>hapi-base</artifactId>
-						<version>${hapi.version.structures}</version>
+						<version>${project.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>ca.uhn.hapi</groupId>
@@ -303,6 +304,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
