@@ -55,8 +55,7 @@ import ca.uhn.hl7v2.validation.ValidationContext;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractMessage extends AbstractGroup implements Message {
-    
-    private ValidationContext myContext;
+
 	private static final Pattern ourVersionPattern = Pattern.compile("\\.(v2[0-9][0-9]?)\\.");
 	private String myVersion;
     private transient Parser myParser;
@@ -116,18 +115,16 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
     }
     
     /**
-     * @return the set of validation rules that applies to this message
+     * Returns the set of validation rules that applied to this message. If the parser
+     * was set to "not-validating", this method returns null
+     *
+     * @return the set of validation rules that applied to this message
      */
     public ValidationContext getValidationContext() {
-        return myContext;
+        if (getParser() == null || !getParser().getParserConfiguration().isValidating()) return null;
+        return getParser().getHapiContext().getValidationContext();
     }
-    
-    /**
-     * @param theContext the set of validation rules that are to apply to this message
-     */
-    public void setValidationContext(ValidationContext theContext) {
-        myContext = theContext;
-    }
+
 
     /**
      * {@inheritDoc }
@@ -229,6 +226,9 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * {@inheritDoc }
      */    
     public Message generateACK(AcknowledgmentCode theAcknowledgementCode, HL7Exception theException) throws HL7Exception, IOException {
+        if (theException != null && theException.getResponseMessage() != null) {
+            return theException.getResponseMessage();
+        }
 		Message out = instantiateACK();
 		out.setParser(getParser());
 		fillResponseHeader(out, theAcknowledgementCode);

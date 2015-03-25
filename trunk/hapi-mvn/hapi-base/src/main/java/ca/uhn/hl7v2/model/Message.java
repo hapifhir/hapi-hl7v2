@@ -56,15 +56,6 @@ public interface Message extends Group {
 	public abstract String getVersion();
 
 	/**
-	 * @param theContext the set of validation rules that are to apply to this message
-	 * 
-	 * @deprecated ValidationContext instances private for Message instances will be removed in the
-	 *             next release. Use
-	 *             {@link ca.uhn.hl7v2.HapiContext#setValidationContext(ValidationContext)} then.
-	 */
-	public void setValidationContext(ValidationContext theContext);
-
-	/**
 	 * Convenience method which retrieves the field separator value from the first field of the
 	 * first segment.
 	 * 

@@ -31,7 +31,7 @@ package ca.uhn.hl7v2.model;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
-import ca.uhn.hl7v2.parser.FixOBX5;
+import ca.uhn.hl7v2.parser.FixFieldDataType;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 
@@ -60,7 +60,7 @@ public class Varies implements Variable {
      *
      * @deprecated use FixOBX5#DEFAULT_OBX2_TYPE_PROP
      */
-    public static final String DEFAULT_OBX2_TYPE_PROP = FixOBX5.DEFAULT_OBX2_TYPE_PROP;
+    public static final String DEFAULT_OBX2_TYPE_PROP = FixFieldDataType.DEFAULT_OBX2_TYPE_PROP;
 
     /**
      * System property key: The value may be set to provide a default
@@ -71,7 +71,7 @@ public class Varies implements Variable {
      *
      * @deprecated use FixOBX5#INVALID_OBX2_TYPE_PROP
      */
-    public static final String INVALID_OBX2_TYPE_PROP = FixOBX5.INVALID_OBX2_TYPE_PROP;
+    public static final String INVALID_OBX2_TYPE_PROP = FixFieldDataType.INVALID_OBX2_TYPE_PROP;
 
     /**
      * <p>
@@ -99,7 +99,7 @@ public class Varies implements Variable {
      *
      * @deprecated use FixOBX5#ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE
      */
-    public static final String ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE = FixOBX5.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE;
+    public static final String ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE = FixFieldDataType.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE;
 
 
     private Type data;
@@ -178,10 +178,10 @@ public class Varies implements Variable {
      * @param segment OBX segment instance to be modified
      * @param factory ModelClassFactory to be used
      * @throws HL7Exception if the operation fails
-     * @deprecated use FixOBX5#fix
+     * @deprecated use FixOBX5#fixOBX5
      */
     public static void fixOBX5(Segment segment, ModelClassFactory factory) throws HL7Exception {
-        FixOBX5.fix(segment, factory);
+        FixFieldDataType.fixOBX5(segment, factory, segment.getMessage().getParser().getParserConfiguration());
     }
 
     /**
@@ -200,11 +200,11 @@ public class Varies implements Variable {
      * @param factory             ModelClassFactory to be used
      * @param parserConfiguration configuration that influences setting OBX-5
      * @throws HL7Exception if the operation fails
-     * @deprecated use FixOBX5#fix
+     * @deprecated use FixOBX5#fixOBX5
      */
     public static void fixOBX5(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
             throws HL7Exception {
-        FixOBX5.fix(segment, factory, parserConfiguration);
+        FixFieldDataType.fixOBX5(segment, factory, parserConfiguration);
     }
 
 

@@ -30,6 +30,7 @@ import java.lang.reflect.Constructor;
 
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,9 @@ import org.slf4j.LoggerFactory;
  * Utility class that provides methods for fixing OBX-5 data type. This has been refactored out
  * of {@link ca.uhn.hl7v2.model.Varies}.
  */
-public final class FixOBX5 {
+public final class FixFieldDataType {
 
-    private FixOBX5() {}
+    private FixFieldDataType() {}
 
     /**
      * System property key: The value may be set to provide a default
@@ -87,25 +88,6 @@ public final class FixOBX5 {
 
     private static final Logger LOG = LoggerFactory.getLogger(Varies.class);
 
-    /**
-     * <p>
-     * Sets the data type of field 5 in the given OBX segment to the value of OBX-2.  The argument
-     * is a Segment as opposed to a particular OBX because it is meant to work with any version.
-     * </p>
-     * <p>
-     * Note that if no value is present in OBX-2, or an invalid value is present in
-     * OBX-2, this method will throw an error. This behaviour can be corrected by using the
-     * following system properties: {@link #DEFAULT_OBX2_TYPE_PROP} and {@link #INVALID_OBX2_TYPE_PROP},
-     * or by using configuration in {@link ParserConfiguration}
-     * </p>
-     *
-     * @param segment OBX segment instance to be modified
-     * @param factory ModelClassFactory to be used
-     * @throws HL7Exception if the operation fails
-     */
-    public static void fix(Segment segment, ModelClassFactory factory) throws HL7Exception {
-        fix(segment, factory, segment.getMessage().getParser().getParserConfiguration());
-    }
 
     /**
      * <p>
@@ -124,33 +106,64 @@ public final class FixOBX5 {
      * @param parserConfiguration configuration that influences setting OBX-5
      * @throws ca.uhn.hl7v2.HL7Exception if the operation fails
      */
-    public static void fix(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+    public static void fixOBX5(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
             throws HL7Exception {
+        if (!segment.getName().contains("OBX")) {
+            throw new IllegalArgumentException("Expected OBX segment, but was: " + segment.getName());
+        }
+        String defaultOBX2Type = parserConfiguration.getDefaultObx2Type();
+        if (defaultOBX2Type == null) {
+            defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
+        }
+        String invalidOBX2Type = parserConfiguration.getInvalidObx2Type();
+        if (invalidOBX2Type == null) {
+            invalidOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
+        }
+
+        fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
+    }
+
+    public static void fixMFE3(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+            throws HL7Exception {
+        if (!(segment.getName().contains("MFE")) &&
+                Version.versionOf(segment.getMessage().getVersion()).isGreaterThan(Version.V23)) {
+            throw new IllegalArgumentException("Expected MFE segment, but was: " + segment.getName());
+        }
+        fix(segment, 4, 3, null, null, factory, parserConfiguration);
+    }
+
+    /**
+     * A more generic version of the task of adapting a varies field to a given type
+     *
+     * @param segment segment instance
+     * @param typeField field number of the specified data type
+     * @param dataField field number of the varies data field
+     * @param defaultType default type if the typeField is empty
+     * @param invalidType default type if the typeField is invalid
+     * @param factory ModelClassFactory to be used
+     * @param parserConfiguration parser config
+     * @throws HL7Exception if the operation fails
+     */
+    public static void fix(Segment segment, int typeField, int dataField, String defaultType, String invalidType, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+        throws HL7Exception {
         try {
             //get unqualified class name
-            Primitive obx2 = (Primitive) segment.getField(2, 0);
-            Type[] reps = segment.getField(5);
+            Primitive type = (Primitive) segment.getField(typeField, 0);
+            Type[] reps = segment.getField(dataField);
             for (Type rep : reps) {
                 Varies v = (Varies)rep;
-
-                // If we don't have a value for OBX-2, a default
-                // can be supplied via a System property
-                if (obx2.getValue() == null) {
-                    String defaultOBX2Type = parserConfiguration.getDefaultObx2Type();
-                    if (defaultOBX2Type == null) {
-                        defaultOBX2Type = System.getProperty(DEFAULT_OBX2_TYPE_PROP);
-                    }
-                    if (defaultOBX2Type != null) {
-                        LOG.debug("setting default obx2 type to {}", defaultOBX2Type);
-                        obx2.setValue(defaultOBX2Type);
+                if (type.getValue() == null) {
+                    if (defaultType != null) {
+                        LOG.debug("setting default {}-{} type to {}", segment.getName(), typeField, defaultType);
+                        type.setValue(defaultType);
                     }
                 } // if
 
-                if (obx2.getValue() == null) {
+                if (type.getValue() == null) {
                     if (v.getData() != null) {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
-                            throw new HL7Exception(
-                                    "OBX-5 is valued, but OBX-2 is not.  A datatype for OBX-5 must be specified using OBX-2. See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
+                            throw new HL7Exception(String.format(
+                                    "A datatype for %s-%n must be specified in %s-%n.", segment.getName(), dataField, segment.getName(), typeField),
                                     ErrorCode.REQUIRED_FIELD_MISSING);
                         }
                     }
@@ -158,27 +171,21 @@ public final class FixOBX5 {
                 else {
                     //set class
                     String version = segment.getMessage().getVersion();
-                    String obx2Value = obx2.getValue();
-                    Class<? extends Type> c = factory.getTypeClass(obx2Value, version);
+                    String typeValue = type.getValue();
+                    Class<? extends Type> c = factory.getTypeClass(typeValue, version);
                     if (c == null) {
-
-                        String defaultOBX2Type = parserConfiguration.getInvalidObx2Type();
-                        if (defaultOBX2Type == null) {
-                            defaultOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
-                        }
-                        if (defaultOBX2Type != null) {
-                            c = factory.getTypeClass(defaultOBX2Type, version);
+                        if (invalidType != null) {
+                            c = factory.getTypeClass(invalidType, version);
                         }
 
                         if (c == null) {
                             Primitive obx1 = (Primitive) segment.getField(1, 0);
                             HL7Exception h = new HL7Exception("\'" +
-                                    obx2.getValue() + "\' in record " +
-                                    obx1.getValue() + " is invalid for version " + version +
-                                    ". See JavaDoc for Varies#fixOBX5(Segment, ModelClassFactory)",
+                                    type.getValue() + "\' in record " +
+                                    obx1.getValue() + " is invalid for version " + version,
                                     ErrorCode.DATA_TYPE_ERROR);
-                            h.setSegmentName("OBX");
-                            h.setFieldPosition(2);
+                            h.setSegmentName(segment.getName());
+                            h.setFieldPosition(typeField);
                             throw h;
                         }
                     }
@@ -204,12 +211,12 @@ public final class FixOBX5 {
                             if (escapeSubcomponentDelimInPrimitive) {
 
                                 StringBuilder firstComponentValue = new StringBuilder();
-                                for (Type type : subComponentsInFirstField) {
+                                for (Type stype : subComponentsInFirstField) {
                                     if (firstComponentValue.length() != 0) {
                                         char subComponentSeparator = EncodingCharacters.getInstance(segment.getMessage()).getSubcomponentSeparator();
                                         firstComponentValue.append(subComponentSeparator);
                                     }
-                                    firstComponentValue.append(type.encode());
+                                    firstComponentValue.append(stype.encode());
                                 }
 
                                 setFirstComponentPrimitiveValue(v, firstComponentValue.toString());
@@ -230,7 +237,7 @@ public final class FixOBX5 {
         }
         catch (Exception e) {
             throw new HL7Exception(
-                    e.getClass().getName() + " trying to set data type of OBX-5", e);
+                    e.getClass().getName() + " trying to set data type of " + segment.getName() + "-" + dataField, e);
         }
     }
 

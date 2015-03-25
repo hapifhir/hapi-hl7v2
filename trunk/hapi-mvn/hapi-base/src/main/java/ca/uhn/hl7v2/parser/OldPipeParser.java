@@ -43,7 +43,6 @@ import ca.uhn.hl7v2.model.Primitive;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.FilterIterator;
 import ca.uhn.hl7v2.util.MessageIterator;
 import ca.uhn.hl7v2.util.Terser;
@@ -288,7 +287,7 @@ class OldPipeParser extends Parser {
         
         //set data type of OBX-5
         if (destination.getClass().getName().indexOf("OBX") >= 0) {
-            FixOBX5.fix(destination, getFactory(), getHapiContext().getParserConfiguration());
+            FixFieldDataType.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
         }
         
     }
