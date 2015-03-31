@@ -17,7 +17,7 @@ public class VersionTest {
 	}
 	
 	@Test public void testLatestVersion() {
-		assertEquals(Version.V26, Version.latestVersion());
+		assertEquals(Version.V281, Version.latestVersion());
 	}
 	
 	@Test public void testVersionOf() {

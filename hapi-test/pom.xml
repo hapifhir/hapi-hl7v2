@@ -62,8 +62,29 @@
 			<artifactId>hapi-structures-v26</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
-		
-		
+		<!-- Disabled until new HL7 structure libraries are in place -->
+		<!--
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v27</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v271</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v28</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v281</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        -->
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>
@@ -120,7 +141,37 @@
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
-
+		<!-- Disabled until new HL7 structure libraries are in place -->
+		<!--
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v27</artifactId>
+            <version>${hapi.version.structures}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v271</artifactId>
+            <version>${hapi.version.structures}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v28</artifactId>
+            <version>${hapi.version.structures}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v281</artifactId>
+            <version>${hapi.version.structures}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        -->
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-sourcegen</artifactId>
@@ -302,6 +353,29 @@
 						<artifactId>hapi-structures-v26</artifactId>
 						<version>${hapi.version.structures}</version>
 					</dependency>
+					<!-- Disabled until new HL7 structure libraries are in place -->
+					<!--
+                    <dependency>
+                        <groupId>ca.uhn.hapi</groupId>
+                        <artifactId>hapi-structures-v27</artifactId>
+                        <version>${hapi.version.structures}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ca.uhn.hapi</groupId>
+                        <artifactId>hapi-structures-v271</artifactId>
+                        <version>${hapi.version.structures}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ca.uhn.hapi</groupId>
+                        <artifactId>hapi-structures-v28</artifactId>
+                        <version>${hapi.version.structures}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ca.uhn.hapi</groupId>
+                        <artifactId>hapi-structures-v281</artifactId>
+                        <version>${hapi.version.structures}</version>
+                    </dependency>
+                    -->
 				</dependencies>
 			</plugin>
 			

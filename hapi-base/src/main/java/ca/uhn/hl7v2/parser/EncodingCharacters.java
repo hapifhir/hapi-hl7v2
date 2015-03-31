@@ -24,15 +24,10 @@ If you do not delete the provisions above, a recipient may use your version of
 this file under either the MPL or the GPL.
 
 */
-
-
-
 package ca.uhn.hl7v2.parser;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-
-
 
 /**
  * Represents the set of special characters used to encode traditionally
@@ -54,21 +49,30 @@ public class EncodingCharacters implements Cloneable {
      * @param fieldSeparator field seperator
      * @param encodingCharacters consists of the characters that appear in
      *      MSH-2 (see section 2.8 of the HL7 spec).  The characters are
-     *      Component Separator, Repetition Separator, Escape Character, and
-     *      Subcomponent Separator (in that order).
+     *      Component Separator, Repetition Separator, Escape Character,
+     *      Subcomponent Separator, and, as of v2.7, the Truncation Character 
+     *      (in that order).
      */
     
     public EncodingCharacters(char fieldSeparator, String encodingCharacters) {
         this.fieldSep = fieldSeparator;
-        this.encChars = new char[4];
+        this.encChars = new char[5];
         
         if (encodingCharacters == null) {
-            this.encChars[0] = '^';            
-            this.encChars[1] = '~';            
-            this.encChars[2] = '\\';
-            this.encChars[3] = '&';
+            setComponentSeparator('^');            
+            setRepetitionSeparator('~');            
+            setEscapeCharacter('\\');
+            setSubcomponentSeparator('&');
+            setTruncationCharacter('#');
         } else {
             encodingCharacters.getChars(0, 4, this.encChars, 0);
+            // Add truncation character if available
+            if (encodingCharacters.length() > 4) {
+                char extraChar = encodingCharacters.charAt(4);
+                if (extraChar != fieldSeparator) {
+                    setTruncationCharacter(extraChar);
+                }
+            }
         }
         
     }
@@ -100,20 +104,26 @@ public class EncodingCharacters implements Cloneable {
     
     public EncodingCharacters(char fieldSeparator, char componentSeparator, char repetitionSeparator,
                               char escapeCharacter, char subcomponentSeparator) {
-        this(fieldSeparator, String.valueOf(componentSeparator) + repetitionSeparator + escapeCharacter + subcomponentSeparator);
+        this(fieldSeparator, String.valueOf(componentSeparator) + repetitionSeparator + 
+                escapeCharacter + subcomponentSeparator);
     }
-    
-    
+
+    public EncodingCharacters(char fieldSeparator, char componentSeparator, char repetitionSeparator,
+                              char escapeCharacter, char subcomponentSeparator, char truncationCharacter) {
+        this(fieldSeparator, String.valueOf(componentSeparator) + repetitionSeparator + 
+                escapeCharacter + subcomponentSeparator + truncationCharacter);
+    }    
     
     /** copies contents of "other" */
     
     public EncodingCharacters(EncodingCharacters other) {
         this.fieldSep = other.getFieldSeparator();
-        this.encChars = new char[4];
-        this.encChars[0] = other.getComponentSeparator();
-        this.encChars[1] = other.getRepetitionSeparator();
-        this.encChars[2] = other.getEscapeCharacter();
-        this.encChars[3] = other.getSubcomponentSeparator();
+        this.encChars = new char[5];
+        setComponentSeparator(other.getComponentSeparator());
+        setRepetitionSeparator(other.getRepetitionSeparator());
+        setEscapeCharacter(other.getEscapeCharacter());
+        setSubcomponentSeparator(other.getSubcomponentSeparator());
+        setTruncationCharacter(other.getTruncationCharacter());
     }
     
     /**
@@ -160,6 +170,15 @@ public class EncodingCharacters implements Cloneable {
     public char getSubcomponentSeparator() {
         return this.encChars[3];
     }
+
+    /**
+     * Returns the truncation character.
+     *
+     * @return the truncation character
+     */
+    public char getTruncationCharacter() {
+        return this.encChars[4];
+    }
     
     /**
      * Returns the encoding characters (not including field separator)
@@ -194,6 +213,10 @@ public class EncodingCharacters implements Cloneable {
     public void setSubcomponentSeparator(char newSubcomponentSep) {
         this.encChars[3] = newSubcomponentSep;
     }
+
+    public void setTruncationCharacter(char newTruncationChar) {
+        this.encChars[4] = newTruncationChar;
+    }
     
     /** @see java.lang.Object#equals */
     public boolean equals(Object o) {
@@ -203,7 +226,8 @@ public class EncodingCharacters implements Cloneable {
                 && this.getComponentSeparator() == other.getComponentSeparator()
                 && this.getEscapeCharacter() == other.getEscapeCharacter() 
                 && this.getRepetitionSeparator() == other.getRepetitionSeparator()
-                && this.getSubcomponentSeparator() == other.getSubcomponentSeparator());
+                && this.getSubcomponentSeparator() == other.getSubcomponentSeparator()
+                && this.getTruncationCharacter() == other.getTruncationCharacter());
         } else {
             return false;
         }   
@@ -215,8 +239,9 @@ public class EncodingCharacters implements Cloneable {
             * (int) this.getEscapeCharacter()
             * (int) this.getFieldSeparator()
             * (int) this.getRepetitionSeparator()
-            * (int) this.getSubcomponentSeparator();
-    }
+            * (int) this.getSubcomponentSeparator()
+            * (int) this.getTruncationCharacter();
+    }  
 
     /**
      * Returns an instance of encoding characters with the standard ER7 encoding characters
@@ -226,37 +251,7 @@ public class EncodingCharacters implements Cloneable {
      */
 	public static EncodingCharacters defaultInstance() {
 		return new EncodingCharacters('|', null);
-	}        
-    
-    /**
-     *
-     * Test harness ...
-     *
-     */
-    
-    /*
-     
-    public static void main(String args[]) {
-     
-        String testChars = "^~\\&";
-     
-        String testChars2 = "$%*+";
-     
-     
-     
-        EncodingCharacters ec = new EncodingCharacters('|', testChars);
-     
-        System.out.println("test 1: " + ec.getFieldSeparator() + ec.toString());
-     
-        ec = new EncodingCharacters('|', testChars2);
-     
-        System.out.println("test 2: " + ec.getFieldSeparator() + ec.getComponentSeparator() + ec.getRepetitionSeparator() + ec.getEscapeCharacter() + ec.getSubcomponentSeparator());
-     
-        ec = new EncodingCharacters('[', null);
-     
-        System.out.println("test 3: " + ec.getFieldSeparator() + ec.toString());
-     
-    }*/
+	}
     
 }
 

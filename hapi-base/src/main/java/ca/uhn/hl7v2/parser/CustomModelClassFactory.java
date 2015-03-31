@@ -26,16 +26,15 @@ package ca.uhn.hl7v2.parser;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import ca.uhn.hl7v2.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.util.StringUtil;
 
 /**
@@ -58,6 +57,9 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
 
     private final ModelClassFactory delegate;
     private Map<String, String[]> customModelClasses;
+
+    // some optimization
+    private ConcurrentMap<String, Class> cache = new ConcurrentHashMap<String, Class>();
 
     /**
      * Constructor which just delegated to {@link DefaultModelClassFactory}
@@ -124,10 +126,15 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
         if (!isExplicit) {
             name = getMessageStructureForEvent(name, Version.versionOf(version));
         }
-        Class<? extends Message> retVal = findClass("message", name, version);
+        String key = "message" + name + version;
+        Class<? extends Message> retVal = cache.get(key);
+        if (retVal != null) return retVal;
+
+        retVal = findClass("message", name, version);
         if (retVal == null) {
             retVal = delegate.getMessageClass(name, version, isExplicit);
         }
+        cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -135,10 +142,14 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * {@inheritDoc }
      */
 	public Class<? extends Group> getGroupClass(String name, String version) throws HL7Exception {
-        Class<? extends Group> retVal = findClass("group", name, version);
+        String key = "group" + name + version;
+        Class<? extends Group> retVal = cache.get(key);
+        if (retVal != null) return retVal;
+        retVal = findClass("group", name, version);
         if (retVal == null) {
             retVal = delegate.getGroupClass(name, version);
         }
+        cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -146,10 +157,14 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * {@inheritDoc }
      */
 	public Class<? extends Segment> getSegmentClass(String name, String version) throws HL7Exception {
-        Class<? extends Segment> retVal = findClass("segment", name, version);
+        String key = "segment" + name + version;
+        Class<? extends Segment> retVal = cache.get(key);
+        if (retVal != null) return retVal;
+        retVal = findClass("segment", name, version);
         if (retVal == null) {
             retVal = delegate.getSegmentClass(name, version);
         }
+        cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -157,10 +172,14 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * {@inheritDoc }
      */
 	public Class<? extends Type> getTypeClass(String name, String version) throws HL7Exception {
-        Class<? extends Type> retVal = findClass("datatype", name, version);
+        String key = "datatype" + name + version;
+        Class<? extends Type> retVal = cache.get(key);
+        if (retVal != null) return retVal;
+        retVal = findClass("datatype", name, version);
         if (retVal == null) {
             retVal = delegate.getTypeClass(name, version);
         }
+        cache.putIfAbsent(key, retVal);
         return retVal;
     }
 

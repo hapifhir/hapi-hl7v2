@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.v251.message.ACK;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests all generated message structures to ensure that they can be instantiated correctly
@@ -32,7 +35,7 @@ public class MessageStructuresTest {
 		SKIP.add("ca.uhn.hl7v2.model.v26.message.BRP_O30");
 	}
 
-	@Test
+	@Ignore("Disabled until new HL7 structure libraries are in place")
 	public void testAllMessages() throws Exception {
 
 		DefaultModelClassFactory amcf = new DefaultModelClassFactory();
@@ -40,6 +43,7 @@ public class MessageStructuresTest {
 		for (Version nextVersion : Version.values()) {
 
 			Map<String, String> structures = map.get(nextVersion);
+			assertNotNull("Event map for " + nextVersion + " is null", structures);
 			for (Entry<String, String> nextEntry : structures.entrySet()) {
 				String nextStructure = nextEntry.getValue();
 				if ("?".equals(nextStructure)) {
