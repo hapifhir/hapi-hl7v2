@@ -31,6 +31,8 @@ import java.util.Properties;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for {@link ModelClassFactory} implementations that read event maps from the
@@ -48,9 +50,11 @@ import ca.uhn.hl7v2.Version;
 public abstract class AbstractModelClassFactory implements ModelClassFactory {
 
 	protected static final String DEFAULT_EVENT_MAP_DIRECTORY = "ca/uhn/hl7v2/parser/eventmap/";
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractModelClassFactory.class);
 
 	private String eventMapDirectory = DEFAULT_EVENT_MAP_DIRECTORY;
 	private Map<Version, Map<String, String>> eventMap;
+
 
 	/**
 	 * @return the directory where to read the eventmap file from
@@ -72,10 +76,17 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 */
 	public String getMessageStructureForEvent(String name, Version version) throws HL7Exception {
 		Map<String, String> p = getEventMapForVersion(version);
-		if (p == null)
-			throw new HL7Exception("No map found for version " + version
-					+ ". Only the following are available: " + getEventMap().keySet());
-		return p.get(name);
+		if (p == null) {
+			// Instead of throwing an Exception, Allow to parse as generic message if the structure library
+			// (and the contained event map) are not on the classpath.
+			LOG.debug("No event map found for version " + version);
+			return name;
+			// before:
+			// throw new HL7Exception("No map found for version " + version
+			//		+ ". Only the following are available: " + getEventMap().keySet());
+		} else {
+			return p.get(name);
+		}
 	}
 
 	/**

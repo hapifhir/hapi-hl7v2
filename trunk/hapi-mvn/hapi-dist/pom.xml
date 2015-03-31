@@ -84,6 +84,29 @@
 			<artifactId>hapi-structures-v26</artifactId>
 			<version>${hapi.version.structures}</version>
 		</dependency>
+<!-- Disabled until new HL7 structure libraries are in place -->
+		<!--
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v27</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v271</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v28</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v281</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+		-->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

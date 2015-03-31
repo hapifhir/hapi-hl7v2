@@ -37,7 +37,16 @@ public class EscapeTest {
         String expected = "GLUCOSE\\S\\1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN";
         assertEquals(expected, actual);
     }
-    
+
+	// Escaping of truncation # is not implemented yet. It may only be escaped if it is the first character that
+	// exceeds the conformance length of the component (ch 2.5.5.2). As of now, this information is not
+	// available yet.
+	@Test
+	public void testTruncationEscape() {
+		String actual = esc.escape("Truncation#escape", enc);
+		String expected = "Truncation#escape";
+		assertEquals(expected, actual);
+	}
     
     /** 
      * Loads an escaped, uuencoded string from a file -- this is real data

@@ -34,14 +34,19 @@ import ca.uhn.hl7v2.parser.Parser;
 
 public enum Version {
 
-	V21("2.1"), // -
-	V22("2.2"), // -
-	V23("2.3"), // -
-	V231("2.3.1"), // -
-	V24("2.4"), // -
-	V25("2.5"), // -
-	V251("2.5.1"), // -
-	V26("2.6"); // -
+	V21("2.1"),
+	V22("2.2"),
+	V23("2.3"),
+	V231("2.3.1"),
+	V24("2.4"),
+	V25("2.5"),
+	V251("2.5.1"),
+	V26("2.6"),
+    V27("2.7"),
+    V271("2.7.1"),
+    V28("2.8"),
+    V281("2.8.1");
+    
 
 	private String version;
 	private static ArrayList<Version> ourVersionsOnClasspath;

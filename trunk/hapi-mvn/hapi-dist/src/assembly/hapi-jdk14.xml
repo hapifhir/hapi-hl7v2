@@ -23,6 +23,13 @@
                 <include>ca.uhn.hapi:hapi-structures-v25:jdk14</include>
                 <include>ca.uhn.hapi:hapi-structures-v251:jdk14</include>
                 <include>ca.uhn.hapi:hapi-structures-v26:jdk14</include>
+<!-- Disabled until new HL7 structure libraries are in place -->
+<!--
+                <include>ca.uhn.hapi:hapi-structures-v27:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v271:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v28:jdk14</include>
+                <include>ca.uhn.hapi:hapi-structures-v281:jdk14</include>
+-->
 			</includes>			
             <outputDirectory>lib</outputDirectory>			
 		</dependencySet>

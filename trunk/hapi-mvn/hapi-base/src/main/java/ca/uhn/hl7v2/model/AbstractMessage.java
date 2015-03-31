@@ -381,8 +381,10 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      */
     public void initQuickstart(String messageCode, String messageTriggerEvent, String processingId) throws HL7Exception, IOException {
     	Segment msh = (Segment) get("MSH");
+        Version version = Version.versionOf(getVersion());
     	Terser.set(msh, 1, 0, 1, 1, "|");
-        Terser.set(msh, 2, 0, 1, 1, "^~\\&");
+        Terser.set(msh, 2, 0, 1, 1, Version.V27.isGreaterThan(version) ?
+                "^~\\&" : "^~\\&#");
         GregorianCalendar now = new GregorianCalendar();
         Terser.set(msh, 7, 0, 1, 1, CommonTS.toHl7TSFormat(now));
         Terser.set(msh, 9, 0, 1, 1, messageCode);
@@ -392,9 +394,8 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         Terser.set(msh, 12, 0, 1, 1, getVersion());
         
         // Add structure information if version is 2.4 or better
-        if (!Version.V24.isGreaterThan(Version.versionOf(getVersion()))) {
+        if (!Version.V24.isGreaterThan(version)) {
         	if (this instanceof SuperStructure) {
-        		Version version = Version.versionOf(getVersion());
         		Map<String, String> eventMap = new DefaultModelClassFactory().getEventMapForVersion(version);
         		if (StringUtil.isNotBlank(messageCode) && StringUtil.isNotBlank(messageTriggerEvent)) {
         			String structure = eventMap.get(messageCode + "_" + messageTriggerEvent);

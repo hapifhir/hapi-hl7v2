@@ -195,14 +195,17 @@ public class PipeParser extends Parser {
 	/**
 	 * Returns object that contains the field separator and encoding characters
 	 * for this message.
+	 *
+	 * There's an additional character starting with v2.7 (truncation), but we will
+	 * accept it in messages of any version.
 	 * 
 	 * @throws HL7Exception
 	 */
 	private static EncodingCharacters getEncodingChars(String message) throws HL7Exception {
-		if (message.length() < 8) {
+		if (message.length() < 9) {
 			throw new HL7Exception("Invalid message content: \"" + message + "\"");
 		}
-		return new EncodingCharacters(message.charAt(3), message.substring(4, 8));
+		return new EncodingCharacters(message.charAt(3), message.substring(4, 9));
 	}
 
 	/**
@@ -626,21 +629,29 @@ public class PipeParser extends Parser {
 			throw new HL7Exception("Can't encode message: MSH-1 (field separator) is missing");
 
 		char fieldSep = '|';
-		if (fieldSepString.length() > 0)
-			fieldSep = fieldSepString.charAt(0);
+		if (fieldSepString.length() > 0) fieldSep = fieldSepString.charAt(0);
 
-		String encCharString = Terser.get(msh, 2, 0, 1, 1);
-
-		if (encCharString == null)
-			throw new HL7Exception("Can't encode message: MSH-2 (encoding characters) is missing");
-
-		if (encCharString.length() != 4)
-			throw new HL7Exception("Encoding characters (MSH-2) value '" + encCharString + "' invalid -- must be 4 characters", ErrorCode.DATA_TYPE_ERROR);
-		EncodingCharacters en = new EncodingCharacters(fieldSep, encCharString);
+		EncodingCharacters en = getValidEncodingCharacters(fieldSep, msh);
 
 		// pass down to group encoding method which will operate recursively on
 		// children ...
 		return encode(source, en, getParserConfiguration(), "");
+	}
+
+	private EncodingCharacters getValidEncodingCharacters(char fieldSep, Segment msh) throws HL7Exception {
+		String encCharString = Terser.get(msh, 2, 0, 1, 1);
+
+		if (encCharString == null) {
+			throw new HL7Exception("Can't encode message: MSH-2 (encoding characters) is missing");
+		}
+
+		if (Version.V27.isGreaterThan(Version.versionOf(msh.getMessage().getVersion())) && encCharString.length() != 4) {
+			throw new HL7Exception("Encoding characters (MSH-2) value '" + encCharString + "' invalid -- must be 4 characters", ErrorCode.DATA_TYPE_ERROR);
+		} else if (encCharString.length() != 4 && encCharString.length() != 5) {
+			throw new HL7Exception("Encoding characters (MSH-2) value '" + encCharString + "' invalid -- must be 4 or 5 characters", ErrorCode.DATA_TYPE_ERROR);
+		}
+
+		return new EncodingCharacters(fieldSep, encCharString);
 	}
 
 	/**
@@ -1072,10 +1083,8 @@ public class PipeParser extends Parser {
 		String[] fields = split(msh, fieldSep);
 
 		String compSep;
-		if (fields.length >= 2 && fields[1] != null && fields[1].length() == 4) {
-			compSep = String.valueOf(fields[1].charAt(0)); // get component
-															// separator as 1st
-															// encoding char
+		if (fields.length >= 2 && fields[1] != null && (fields[1].length() == 4 || fields[1].length() == 5)) {
+			compSep = String.valueOf(fields[1].charAt(0)); // get component separator as 1st encoding char
 		} else {
 			throw new HL7Exception("Invalid or incomplete encoding characters - MSH-2 is " + fields[1], ErrorCode.REQUIRED_FIELD_MISSING);
 		}

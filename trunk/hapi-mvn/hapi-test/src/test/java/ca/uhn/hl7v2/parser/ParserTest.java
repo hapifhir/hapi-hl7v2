@@ -48,7 +48,7 @@ public class ParserTest
     }
 
     @Test
-    public void testEventMap() throws Exception {
+    public void testEventMap() throws HL7Exception {
         String message = "MSH|^~\\&|||||||ADT^A04|1|D|2.4\r";
         PipeParser p = new PipeParser();
         Message m = p.parse(message);
@@ -68,7 +68,7 @@ public class ParserTest
     }
 
     @Test
-    public void testGenericMessage() throws Exception {
+    public void testGenericMessage() throws HL7Exception {
         // a valid ORU_R01 message in which MSH-9 has been changed
         String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ZZZ^ZZZ|LABGL1199510021852632|P|2.2\r"
                 + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
@@ -95,7 +95,7 @@ public class ParserTest
      * and the spec doesn't say we need to.
      */
     @Ignore
-    public void __tstUnknownVersionMessage() throws Exception {
+    public void __tstUnknownVersionMessage() throws HL7Exception {
         // a valid ORU_R01 message in which MSH-9 has been changed
         String message = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ORU^R01|LABGL1199510021852632|P|2.999\r"
                 + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r"
@@ -117,7 +117,7 @@ public class ParserTest
     }
 
     @Test
-    public void testGenericMessageAllVersions() throws Exception {
+    public void testGenericMessageAllVersions() throws HL7Exception {
         for (Version versionEnum : Version.values()) {
 
         	String version = versionEnum.getVersion();
@@ -153,9 +153,23 @@ public class ParserTest
 
         }
     }
+
+    @Test
+    public void testParseWithTruncationCharacter() throws HL7Exception {
+        String message = "MSH|^~\\&#|Send App|Send Fac|Rec App|Rec Fac|20070504141816||ORM^O01||P|2.7\r" +
+                "PID|||12345678||Lastname^^INI^^PREFIX||19340207|F|||Street 15^^S GRAVENHAGE^^2551HL^NEDERLAND|||||||||||||||NL\r" +
+                "ORC|NW|8100088345^ORDERNR||LN1||C|^^^20070504080000||20070504141816|||0^Doctor\r" +
+                "OBR|1|8100088345^ORDERNR||ADR^Something||||||||||||0^Doctor\r" +
+                "OBX|1|ST|ADR^Something||item1^item2^item3^^item5||||||F\r";
+
+        Parser p = new PipeParser();
+        Message m = p.parse(message);
+        String test = p.encode(m);
+        assertEquals(message, test);
+    }
     
     @Test
-    public void test1714219() throws Exception {
+    public void test1714219() throws HL7Exception {
 
     	String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||ORM^O01||P|2.2\r" +
     			"PID|||12345678||Lastname^^INI^^PREFIX||19340207|F|||Street 15^^S GRAVENHAGE^^2551HL^NEDERLAND|||||||||||||||NL\r" +
@@ -170,7 +184,7 @@ public class ParserTest
     }
     
     @Test
-    public void test17142192() throws Exception {
+    public void test17142192() throws HL7Exception {
 
         String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||ORM^O01||P|2.3\r" +
                 "PID|||12345678||Lastname^^INI^^PREFIX||19340207|F|||Street 15^^S GRAVENHAGE^^2551HL^NEDERLAND|||||||||||||||NL\r" +

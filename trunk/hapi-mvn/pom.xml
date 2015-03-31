@@ -47,6 +47,8 @@
 		<developer>
 			<name>Christian Ohr</name>
 			<email>ohr@users.sourceforge.net</email>
+            <organization>ICW AG</organization>
+            <organizationUrl>http://www.icw-global.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>Niranjan Sharma</name>
@@ -464,6 +466,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <module>hapi-structures-v271</module>
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
 			</modules>
 		</profile>
 		<profile>
@@ -471,6 +477,7 @@
 			<build>
 				<plugins>
 					<plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven.javadoc.plugin.version}</version>
 						<inherited>true</inherited>
@@ -509,6 +516,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <module>hapi-structures-v271</module>
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-examples</module>
@@ -520,6 +531,7 @@
 			<build>
 				<plugins>
 					<plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven.javadoc.plugin.version}</version>
 						<inherited>true</inherited>
@@ -571,6 +583,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <module>hapi-structures-v271</module>
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-testpanel</module>
 				<module>hapi-hl7overhttp</module>
@@ -625,6 +641,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <module>hapi-structures-v271</module>
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-testpanel</module>
 			</modules>

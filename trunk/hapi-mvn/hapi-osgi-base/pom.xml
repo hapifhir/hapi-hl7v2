@@ -69,6 +69,33 @@
 			<version>${hapi.version.structures}</version>
 			<scope>provided</scope>
 		</dependency>
+<!-- Disabled until new HL7 structure libraries are in place -->
+<!--
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v27</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v271</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v28</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v281</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+-->
 	</dependencies>
 
 	<reporting>
@@ -124,6 +151,10 @@
 							ca.uhn.hl7v2.model.v25.datatype*,
 							ca.uhn.hl7v2.model.v251.datatype*,
 							ca.uhn.hl7v2.model.v26.datatype*,
+                            ca.uhn.hl7v2.model.v27.datatype*,
+                            ca.uhn.hl7v2.model.v271.datatype*,
+                            ca.uhn.hl7v2.model.v28.datatype*,
+                            ca.uhn.hl7v2.model.v281.datatype*,
 							ca.uhn.hl7v2.parser*,
 							ca.uhn.hl7v2.preparser*,
 							ca.uhn.hl7v2.protocol*,
@@ -168,6 +199,22 @@
 							ca.uhn.hl7v2.model.v26.group;resolution:=optional,
 							ca.uhn.hl7v2.model.v26.message;resolution:=optional,
 							ca.uhn.hl7v2.model.v26.segment;resolution:=optional,
+                            ca.uhn.hl7v2.model.v27.datatype;resolution:=optional,
+                            ca.uhn.hl7v2.model.v27.group;resolution:=optional,
+                            ca.uhn.hl7v2.model.v27.message;resolution:=optional,
+                            ca.uhn.hl7v2.model.v27.segment;resolution:=optional,
+                            ca.uhn.hl7v2.model.v271.datatype;resolution:=optional,
+                            ca.uhn.hl7v2.model.v271.group;resolution:=optional,
+                            ca.uhn.hl7v2.model.v271.message;resolution:=optional,
+                            ca.uhn.hl7v2.model.v271.segment;resolution:=optional,
+                            ca.uhn.hl7v2.model.v28.datatype;resolution:=optional,
+                            ca.uhn.hl7v2.model.v28.group;resolution:=optional,
+                            ca.uhn.hl7v2.model.v28.message;resolution:=optional,
+                            ca.uhn.hl7v2.model.v28.segment;resolution:=optional,
+                            ca.uhn.hl7v2.model.v281.datatype;resolution:=optional,
+                            ca.uhn.hl7v2.model.v281.group;resolution:=optional,
+                            ca.uhn.hl7v2.model.v281.message;resolution:=optional,
+                            ca.uhn.hl7v2.model.v281.segment;resolution:=optional,
 							*;resolution:=optional
                         </Import-Package>
 						<!-- This is required to handle dynamic class loading using Class.forName 
@@ -204,7 +251,23 @@
 							ca.uhn.hl7v2.model.v26.datatype,
 							ca.uhn.hl7v2.model.v26.group,
 							ca.uhn.hl7v2.model.v26.message,
-							ca.uhn.hl7v2.model.v26.segment
+							ca.uhn.hl7v2.model.v26.segment,
+                            ca.uhn.hl7v2.model.v27.datatype,
+                            ca.uhn.hl7v2.model.v27.group,
+                            ca.uhn.hl7v2.model.v27.message,
+                            ca.uhn.hl7v2.model.v27.segment,
+                            ca.uhn.hl7v2.model.v271.datatype,
+                            ca.uhn.hl7v2.model.v271.group,
+                            ca.uhn.hl7v2.model.v271.message,
+                            ca.uhn.hl7v2.model.v271.segment,
+                            ca.uhn.hl7v2.model.v28.datatype,
+                            ca.uhn.hl7v2.model.v28.group,
+                            ca.uhn.hl7v2.model.v28.message,
+                            ca.uhn.hl7v2.model.v28.segment,
+                            ca.uhn.hl7v2.model.v281.datatype,
+                            ca.uhn.hl7v2.model.v281.group,
+                            ca.uhn.hl7v2.model.v281.message,
+                            ca.uhn.hl7v2.model.v281.segment
                         </DynamicImport-Package>
 					</instructions>
 				</configuration>

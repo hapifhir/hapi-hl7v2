@@ -195,6 +195,8 @@ public class ER7 {
 				return m_encodingChars.getComponentSeparator();
 			else if(level == 3)
 				return m_encodingChars.getSubcomponentSeparator();
+            else if(level == 4)
+                return m_encodingChars.getTruncationCharacter();
 			else
 				throw new java.lang.Error();
 		}

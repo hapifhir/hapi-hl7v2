@@ -260,8 +260,8 @@ public class DefaultEscaping implements Escaping {
      */
     private static class EncLookup {
 
-        char[] characters = new char[6];
-        String[] encodings = new String[6];
+        char[] characters = new char[7];
+        String[] encodings = new String[7];
 
         EncLookup(EncodingCharacters ec) {
             characters[0] = ec.getFieldSeparator();
@@ -269,8 +269,10 @@ public class DefaultEscaping implements Escaping {
             characters[2] = ec.getSubcomponentSeparator();
             characters[3] = ec.getRepetitionSeparator();
             characters[4] = ec.getEscapeCharacter();
-            characters[5] = '\r';
-            char[] codes = {'F', 'S', 'T', 'R', 'E'};
+
+            characters[5] = ec.getTruncationCharacter();
+            characters[6] = '\r';
+            char[] codes = {'F', 'S', 'T', 'R', 'E', 'L'};
             for (int i = 0; i < codes.length; i++) {
                 StringBuilder seq = new StringBuilder();
                 seq.append(ec.getEscapeCharacter());
@@ -278,7 +280,11 @@ public class DefaultEscaping implements Escaping {
                 seq.append(ec.getEscapeCharacter());
                 encodings[i] = seq.toString();
             }
-            encodings[5] = "\\X000d\\";
+            // Escaping of truncation # is not implemented yet. It may only be escaped if it is the first character that
+            // exceeds the conformance length of the component (ch 2.5.5.2). As of now, this information is not
+            // available at this place.
+            encodings[5] = "#";
+            encodings[6] = "\\X000d\\";
         }
     }
 }
