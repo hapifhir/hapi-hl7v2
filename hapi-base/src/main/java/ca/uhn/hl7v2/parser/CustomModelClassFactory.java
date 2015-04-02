@@ -134,7 +134,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
         if (retVal == null) {
             retVal = delegate.getMessageClass(name, version, isExplicit);
         }
-        cache.putIfAbsent(key, retVal);
+        if (retVal != null) cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -149,7 +149,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
         if (retVal == null) {
             retVal = delegate.getGroupClass(name, version);
         }
-        cache.putIfAbsent(key, retVal);
+        if (retVal != null) cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -164,7 +164,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
         if (retVal == null) {
             retVal = delegate.getSegmentClass(name, version);
         }
-        cache.putIfAbsent(key, retVal);
+        if (retVal != null) cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
@@ -179,7 +179,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
         if (retVal == null) {
             retVal = delegate.getTypeClass(name, version);
         }
-        cache.putIfAbsent(key, retVal);
+        if (retVal != null) cache.putIfAbsent(key, retVal);
         return retVal;
     }
 
