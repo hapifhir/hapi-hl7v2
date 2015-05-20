@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="226">
+                Do not embed slf4j into OSGi bundle (rely on PAX logging). With thanks to juantxorena.
+            </action>
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="207">
                 Avoid that empty segments are added during parsing. With thanks to Jens Villadsen.
             </action>

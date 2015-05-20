@@ -120,9 +120,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<!-- Embed all dependency jars except logging one. Since logging shall 
-							be used from PAX-logging -->
-						<Embed-Dependency>*;scope=compile|runtime;artifactId=!commons-logging|log4j|hapi-base</Embed-Dependency>
+						<!-- Embed all dependency jars except logging one. Since logging shall be used from PAX-logging -->
+						<Embed-Dependency>*;scope=compile|runtime;artifactId=!slf4j-api|hapi-base</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<unpackBundle>true</unpackBundle>
 						<!-- Packages exported by HAPI OSGI Bundle to others -->
