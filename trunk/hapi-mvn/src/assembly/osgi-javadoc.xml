@@ -80,5 +80,36 @@
 			</includes>
 		</fileSet>
 
+        <fileSet>
+            <directory>../hapi-structures-v27/target/apidocs</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>../hapi-structures-v271/target/apidocs</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>../hapi-structures-v28/target/apidocs</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>../hapi-structures-v281/target/apidocs</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
 	</fileSets>
 </assembly>
