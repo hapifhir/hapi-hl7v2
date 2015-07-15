@@ -630,7 +630,7 @@ public class CommonTM implements Serializable {
      * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = Calendar.getInstance();
+        Calendar retVal = new GregorianCalendar();
         retVal.set(Calendar.HOUR_OF_DAY, getHour());
         retVal.set(Calendar.MINUTE, getMinute());
         retVal.set(Calendar.SECOND, getSecond());
@@ -662,7 +662,9 @@ public class CommonTM implements Serializable {
 	            
 	            if (hrOffset < 0) {
 	            	tzBuilder.append('-');
-	            }
+	            } else {
+                    tzBuilder.append('+');
+                }
 	            tzBuilder.append(Math.abs(hrOffset));
 	            tzBuilder.append(':');
 	            if (minOffset < 10) {
