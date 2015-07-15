@@ -56,6 +56,25 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractValidator.class);
 
+	private boolean validatePrimitives;
+
+	/**
+	 * Turns validating primtives on and off (default). Note that primitive validation
+	 * will significantly slow down the validation process.
+	 *
+	 * @param validatePrimitives true if primitive fields shall be validated, false if not
+	 */
+	public void setValidatePrimitives(boolean validatePrimitives) {
+		this.validatePrimitives = validatePrimitives;
+	}
+
+	/**
+	 * @return true if primitive fields shall be validated, false if not
+	 */
+	public boolean isValidatePrimitives() {
+		return validatePrimitives;
+	}
+
 	/**
 	 * Calls {@link #initializeHandler()} to obtain a default instance of a
 	 * {@link ValidationExceptionHandler} before starting the validation.
@@ -78,7 +97,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
 		handler.setValidationSubject(message);
-		// testPrimitiveRules(message, handler); TODO this slows down parser 3x
+		if (isValidatePrimitives()) testPrimitiveRules(message, handler);
 		testMessageRules(message, handler);
 		return handler.result();
 	}
