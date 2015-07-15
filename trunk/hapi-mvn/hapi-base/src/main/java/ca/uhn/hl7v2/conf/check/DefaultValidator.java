@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uhn.hl7v2.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +56,6 @@ import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 import ca.uhn.hl7v2.conf.spec.message.SubComponent;
 import ca.uhn.hl7v2.conf.store.CodeStore;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
-import ca.uhn.hl7v2.model.Composite;
-import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Primitive;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
@@ -420,7 +413,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
     protected void checkDataType(String dataType, Type type, List<HL7Exception> exList) {
         // check datatype
         String typeName = type.getName();
-        if (!typeName.equals(dataType)) {
+        if (!(type instanceof Varies || typeName.equals(dataType))) {
             exList.add(new ProfileNotHL7CompliantException("HL7 datatype " + typeName
                     + " doesn't match profile datatype " + dataType));
         }
