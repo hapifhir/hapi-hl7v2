@@ -46,7 +46,7 @@
             <artifactId>joda-time</artifactId>
             <version>2.1</version>
         </dependency>
-		-->
+        -->
 	</dependencies>
 	<reporting>
 		<plugins>
@@ -100,7 +100,7 @@
 				<!-- make sure our code doesn't have 1.5+ dependencies except where we know it -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
-				<version>1.8</version>
+				<version>1.13</version>
 				<executions>
 					<execution>
 						<id>check-java-version</id>
@@ -111,7 +111,7 @@
 						<configuration>
 							<signature>
 								<groupId>org.codehaus.mojo.signature</groupId>
-								<artifactId>java15</artifactId>
+								<artifactId>java16</artifactId>
 								<version>1.0</version>
 							</signature>
 							<ignores>
