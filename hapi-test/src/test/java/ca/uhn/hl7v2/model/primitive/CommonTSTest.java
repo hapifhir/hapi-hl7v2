@@ -117,11 +117,11 @@ public class CommonTSTest {
     public void testOffsetProblem() throws HL7Exception {
         GregorianCalendar hapiTestCalendar = (GregorianCalendar) GregorianCalendar
                 .getInstance(TimeZone.getTimeZone("CET"));
-        hapiTestCalendar.set(2012, 1, 1);
+        hapiTestCalendar.set(2012, Calendar.FEBRUARY, 1);
         hapiTestCalendar = (GregorianCalendar) DateUtils.truncate(hapiTestCalendar, Calendar.DATE);
 
         assertEquals("20120201000000+0100", CommonTS.toHl7TSFormat(hapiTestCalendar));
-        hapiTestCalendar.set(2012, 7, 1);
+        hapiTestCalendar.set(2012, Calendar.AUGUST, 1);
 
         assertEquals("20120801000000+0200", CommonTS.toHl7TSFormat(hapiTestCalendar));
     }
