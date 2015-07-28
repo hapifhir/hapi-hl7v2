@@ -26,13 +26,13 @@
 
 package ca.uhn.hl7v2.model.primitive;
 
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.DataTypeUtil;
+
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.io.Serializable;
-
-import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.DataTypeUtil;
 
 /**
  * <p>
@@ -499,7 +499,7 @@ public class CommonTS implements Serializable {
                 if (sm != -1)
                     indexOfSign = sm;
 
-                if (offsetExists == false) {
+                if (!offsetExists) {
                     if (val.length() <= 8) {
                         dateVal = val;
                     }
@@ -511,7 +511,7 @@ public class CommonTS implements Serializable {
                     }
                 } //offset not exist
 
-                if (offsetExists == true) {
+                if (offsetExists) {
                     if (indexOfSign > 8) {
                         dateVal = val.substring(0, 8);
                         timeVal = val.substring(8);
@@ -529,9 +529,9 @@ public class CommonTS implements Serializable {
                 dt = new CommonDT();
                 //set the value of the date object to the input date value
                 dt.setValue(dateVal);
-                //if the offset does not exist and a timvalue does not exist then
+                //if the offset does not exist and a timevalue does not exist then
                 //we must provide a default offset = to the local time zone
-                if (timeVal == null && offsetExists == false) {
+                if (timeVal == null && !offsetExists) {
 //                    int defaultOffset = DataTypeUtil.getLocalGMTOffset();
                     tm = new CommonTM();
                     //tm.setOffset(defaultOffset);
@@ -540,7 +540,7 @@ public class CommonTS implements Serializable {
 
                 //if we have a time value then make a new time object and set it to the
                 //input time value (as long as the time val has time + offset or just time only)
-                if (timeVal != null && timeValIsOffsetOnly == false) {
+                if (timeVal != null && !timeValIsOffsetOnly) {
                     // must make sure that the time component contains both hours 
                     // at the very least -- must be at least 2 chars in length.
                 	// Note: this changed as of v2.5, before hours AND minutes were required.
@@ -558,7 +558,7 @@ public class CommonTS implements Serializable {
 
                 //if we have a time value and it only has the offset then make a new
                 //time object and set the offset value to the input value
-                if (timeVal != null && timeValIsOffsetOnly == true) {
+                if (timeVal != null && timeValIsOffsetOnly) {
                     //we know that the time value is just the offset so we
                     //must check to see if it is the right length before setting the
                     //offset field in the tm object

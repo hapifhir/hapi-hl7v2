@@ -630,53 +630,23 @@ public class CommonTM implements Serializable {
      * @since 1.1 
      */
     public Calendar getValueAsCalendar() {
-        Calendar retVal = new GregorianCalendar();
+        int gmtOff = getGMTOffset();
+        Calendar retVal;
+        if (gmtOff != GMT_OFFSET_NOT_SET_VALUE && !omitOffsetFg) {
+            int hrOffset = gmtOff / 100;
+            int minOffset = Math.abs(gmtOff % 100);
+            String timeZone = String.format("GMT%+d:%02d", hrOffset, minOffset);
+            retVal = new GregorianCalendar(TimeZone.getTimeZone(timeZone));
+        } else {
+            retVal = Calendar.getInstance();
+        }
+
         retVal.set(Calendar.HOUR_OF_DAY, getHour());
         retVal.set(Calendar.MINUTE, getMinute());
         retVal.set(Calendar.SECOND, getSecond());
-        
         float fractSecond = getFractSecond();
         retVal.set(Calendar.MILLISECOND, (int) Math.round(fractSecond * 1000.0));
-        
-        int gmtOff = getGMTOffset();
-        if (gmtOff != GMT_OFFSET_NOT_SET_VALUE && !omitOffsetFg) {
-            retVal.set(Calendar.ZONE_OFFSET, (gmtOff/100) * (1000 * 60 * 60));
-            
-            /*
-             * The following sets the TimeZone associated with the returned calendar
-             * to use the offset specified in the value if this conflicts with the
-             * value it already contains.
-             * 
-             * This is needed in situations where daylight savings is in effect
-             * during part of the year, and a date is parsed which contains the 
-             * other part of the year (i.e. parsing a DST DateTime when it is not actually
-             * DST according to the system clock).
-             * 
-             * See CommonTSTest#testGetCalendarRespectsDaylightSavings() for an example
-             * which fails if this is removed.
-             */
-            if (retVal.getTimeZone().getRawOffset() != retVal.get(Calendar.ZONE_OFFSET)) {
-	            int hrOffset = gmtOff / 100;
-	            int minOffset = gmtOff % 100;
-	            StringBuilder tzBuilder = new StringBuilder("GMT");
-	            
-	            if (hrOffset < 0) {
-	            	tzBuilder.append('-');
-	            } else {
-                    tzBuilder.append('+');
-                }
-	            tzBuilder.append(Math.abs(hrOffset));
-	            tzBuilder.append(':');
-	            if (minOffset < 10) {
-	            	tzBuilder.append('0');
-	            }
-	            tzBuilder.append(minOffset);
-	            
-	            retVal.setTimeZone(TimeZone.getTimeZone(tzBuilder.toString()));
-            }
-            
-        }
-        
+
         return retVal;
     }
 
