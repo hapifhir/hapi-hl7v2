@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+			<action type="fix" dev="Christian Ohr" system="newbugs" issue="234">
+				Avoid NullPointerException with non-existing conformance profile. Thanks to Ulrich Metzger for reporting.
+			</action>
 			<action type="fix" dev="Rolf Thorup" system="newbugs" issue="229">
 				Fix daylight savings issue in CommonTM. Thanks to Rolf Thorup for reporting and the fix.
 			</action>

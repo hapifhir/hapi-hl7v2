@@ -8,6 +8,7 @@
 package ca.uhn.hl7v2.conf.store;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
@@ -26,13 +27,25 @@ public class URLProfileStoreTest  {
     @Test
     public void testWithClassLoader() throws Exception {
         URLProfileStore store = new URLProfileStore() {
-            public URL getURL(String ID) throws MalformedURLException {
-                return this.getClass().getClassLoader().getResource("ca/uhn/hl7v2/conf/store/" + ID + ".xml");
+            public URL getURL(String id) throws MalformedURLException {
+                return this.getClass().getClassLoader().getResource("ca/uhn/hl7v2/conf/store/" + id + ".xml");
             }
         };
         
         String profile = store.getProfile("classloader-test");
         assertEquals("<foo/>", profile);        
+    }
+
+    @Test
+    public void testWithNonExistingProfile() throws Exception {
+        URLProfileStore store = new URLProfileStore() {
+            public URL getURL(String id) throws MalformedURLException {
+                return this.getClass().getClassLoader().getResource("ca/uhn/hl7v2/conf/store/" + id + ".xml");
+            }
+        };
+
+        String profile = store.getProfile("non-existing");
+        assertNull(profile);
     }
 
     @Ignore

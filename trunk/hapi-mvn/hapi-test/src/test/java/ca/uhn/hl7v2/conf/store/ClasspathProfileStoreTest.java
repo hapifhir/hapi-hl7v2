@@ -8,6 +8,7 @@
 package ca.uhn.hl7v2.conf.store;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -25,5 +26,10 @@ public class ClasspathProfileStoreTest  {
         assertEquals("<foo/>", profile);        
     }
 
-    
+    @Test
+    public void testWithNonExistingResource() throws Exception {
+        ClasspathProfileStore store = new ClasspathProfileStore();
+        String profile = store.getProfile("non-existing");
+        assertNull(profile);
+    }
 }
