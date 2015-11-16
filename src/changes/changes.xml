@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+			<action type="fix" dev="Christian Ohr" system="newbugs" issue="238">
+				Fix serialization of TerserMessageRule. Thanks to Sebastian Tacke for reporting.
+			</action>
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="234">
 				Avoid NullPointerException with non-existing conformance profile. Thanks to Ulrich Metzger for reporting.
 			</action>

@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.validation.builder.support;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -53,7 +54,7 @@ public class TerserMessageRule extends PredicateMessageRule {
 		super(predicate, new TerserExpression(terserExpression));
 	}
 
-	private static class TerserExpression implements Expression<Message> {
+	private static class TerserExpression implements Expression<Message>, Serializable {
 
 		private String expression;
 
