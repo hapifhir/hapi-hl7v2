@@ -164,6 +164,8 @@ public abstract class AbstractHL7Exception extends Exception {
         if (location != null) {
             if (location.getSegmentName() != null)
                 Terser.set(err, 2, 0, 1, 1, location.getSegmentName());
+            if (location.getSegmentRepetition() > 0)
+                Terser.set(err, 2, 0, 2, 1, Integer.toString(location.getSegmentRepetition()));
             if (location.getField() > 0)
                 Terser.set(err, 2, 0, 3, 1, Integer.toString(location.getField()));
             if (location.getFieldRepetition() > 0)
