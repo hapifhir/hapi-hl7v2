@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="241">
+                Consistently use longs in ID generators. Thanks to Samantha Chan for reporting.
+            </action>
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="240">
 				Fix missing location field in NAK messages. Thanks to Christian Woerns for reporting.
 			</action>
