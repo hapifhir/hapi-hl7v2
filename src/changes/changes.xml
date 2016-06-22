@@ -12,6 +12,9 @@
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="240">
 				Fix missing location field in NAK messages. Thanks to Christian Woerns for reporting.
 			</action>
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="239">
+                Fix wrong case in Role and Identifier elements in conformance profile parsing. Thanks to Jens Villadsen.
+            </action>
 			<action type="fix" dev="Christian Ohr" system="newbugs" issue="238">
 				Fix serialization of TerserMessageRule. Thanks to Sebastian Tacke for reporting.
 			</action>
