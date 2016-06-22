@@ -191,8 +191,8 @@ public class ProfileParser {
 		message.setMsgStructID(elem.getAttribute("MsgStructID"));
 		message.setOrderControl(elem.getAttribute("OrderControl"));
 		message.setEventDesc(elem.getAttribute("EventDesc"));
-		message.setIdentifier(elem.getAttribute("identifier"));
-		message.setRole(elem.getAttribute("role"));
+		message.setIdentifier(elem.getAttribute("Identifier"));
+		message.setRole(elem.getAttribute("Role"));
 
 		Element md = getFirstElementByTagName("MetaData", elem);
 		if (md != null)
