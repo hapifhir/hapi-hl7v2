@@ -60,10 +60,10 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	private ReentrantLock lock = new ReentrantLock();
 
 	public FileBasedGenerator() {
-		this(1);
+		this(1L);
 	}
 
-	FileBasedGenerator(int increment) {
+	FileBasedGenerator(long increment) {
 		super(increment);
 	}
 

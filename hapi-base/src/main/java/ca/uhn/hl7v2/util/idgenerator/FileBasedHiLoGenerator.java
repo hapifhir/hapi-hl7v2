@@ -40,7 +40,7 @@ public class FileBasedHiLoGenerator extends DelegatingHiLoGenerator {
 		this(DEFAULT_MAXLO);
 	}
 
-	public FileBasedHiLoGenerator(int maxLo) {
+	public FileBasedHiLoGenerator(long maxLo) {
 		super(new FileBasedGenerator(maxLo));
 	}	
 	

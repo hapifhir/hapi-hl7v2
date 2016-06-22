@@ -48,7 +48,7 @@ public class LegacyGenerator implements IDGenerator.Ordered {
 	public void reset() {
 	}
 
-	public int getIncrement() {
+	public long getIncrement() {
 		throw new UnsupportedOperationException();
 	}
 

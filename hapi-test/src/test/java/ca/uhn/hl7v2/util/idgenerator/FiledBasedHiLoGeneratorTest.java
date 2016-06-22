@@ -5,11 +5,12 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.util.Home;
 
-
+@Ignore
 public class FiledBasedHiLoGeneratorTest extends AbstractContinuousGeneratorTest<FileBasedHiLoGenerator> {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(FiledBasedHiLoGeneratorTest.class);

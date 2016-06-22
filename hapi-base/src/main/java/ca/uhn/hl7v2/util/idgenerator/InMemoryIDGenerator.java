@@ -43,7 +43,7 @@ public class InMemoryIDGenerator extends IDGenerator.OrderedSupport {
 		super();
 	}
 
-	InMemoryIDGenerator(int increment) {
+	InMemoryIDGenerator(long increment) {
 		super(increment);
 	}
 

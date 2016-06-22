@@ -43,8 +43,8 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(HiLoGenerator.class.getName());
 
-	private int lo = 0;
-	private int base = -1;
+	private long lo = 0L;
+	private long base = -1L;
 
 	public synchronized String getID() throws IOException {
 		if (base < 0) {
@@ -55,11 +55,11 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
 			LOG.debug("Obtain next hi ID");
 			base = nextBase();
 		}
-		return Integer.toString(base + lo);
+		return Long.toString(base + lo);
 	}
 
-	private int nextBase() throws IOException {
-		int base = getNextHiId();
+	private long nextBase() throws IOException {
+        long base = getNextHiId();
 		lo = 0;
 		return base;
 	}
@@ -69,7 +69,7 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
      * @return the next Hi ID
      * @throws IOException
      */
-	protected abstract int getNextHiId() throws IOException;
+	protected abstract long getNextHiId() throws IOException;
 
     /**
      * Resets the Hi ID
@@ -80,7 +80,7 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
      * Returns then next Lo ID
      * @return
      */
-	protected int getNextLoId() {
+	protected long getNextLoId() {
 		return ++lo;
 	}
 
@@ -97,6 +97,6 @@ public abstract class HiLoGenerator extends IDGenerator.OrderedSupport {
      * Returns the maximum Lo ID (expect the Hi ID be incremented afterwards)
      * @return the maximum Lo ID
      */
-	abstract public int getMaxLo();
+	abstract public long getMaxLo();
 
 }
