@@ -6,6 +6,6 @@ public class InMemoryHiLoGeneratorTest extends AbstractContinuousGeneratorTest<H
 	@Override
 	protected HiLoGenerator getGenerator() {
 		return new DelegatingHiLoGenerator(
-				new InMemoryIDGenerator(100));
+				new InMemoryIDGenerator(100L));
 	};
 }

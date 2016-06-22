@@ -61,21 +61,21 @@ public interface IDGenerator {
 	/**
 	 * Extension for continuous ID sequences
 	 */
-	public interface Ordered extends IDGenerator {
+	interface Ordered extends IDGenerator {
 
 		void reset();
-		int getIncrement();
+		long getIncrement();
 
 	}
 
 	/**
 	 * Ordered ID sequences with a configurable increment
 	 */
-	public abstract class OrderedSupport implements Ordered {
+	abstract class OrderedSupport implements Ordered {
 
-		private int increment = 1;
+		private long increment = 1L;
 
-		OrderedSupport(int increment) {
+		OrderedSupport(long increment) {
 			super();
 			this.increment = increment;
 		}
@@ -87,7 +87,7 @@ public interface IDGenerator {
 		public void reset() {
 		}
 
-		public int getIncrement() {
+		public long getIncrement() {
 			return increment;
 		}
 

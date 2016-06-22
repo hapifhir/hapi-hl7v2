@@ -58,11 +58,11 @@ public class DelegatingHiLoGenerator extends HiLoGenerator {
 	}
 
 	@Override
-	protected int getNextHiId() throws IOException {
+	protected long getNextHiId() throws IOException {
 		if (delegate == null)
 			throw new NullPointerException(
 					"Must initialize delegate IDGenerator");
-		return Integer.parseInt(delegate.getID());
+		return Long.parseLong(delegate.getID());
 	}
 
 	public void setDelegate(IDGenerator.Ordered delegate) {
@@ -79,7 +79,7 @@ public class DelegatingHiLoGenerator extends HiLoGenerator {
      * @return
      */
 	@Override
-	public int getMaxLo() {
+	public long getMaxLo() {
 		return delegate.getIncrement();
 	}
 

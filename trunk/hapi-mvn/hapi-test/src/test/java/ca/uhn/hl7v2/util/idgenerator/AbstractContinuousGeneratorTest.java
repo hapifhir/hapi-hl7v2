@@ -27,7 +27,7 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 	public void testGenerator() throws IOException {
 		T gen = getGenerator();
 		gen.reset();
-		int oldId = 0;
+		long oldId = 0;
 		oldId = checkContinuousIDs(gen, oldId, ITERATIONS, 1);
 		// After restarting, we are still in order
 		checkContinuousIDs(gen, oldId, ITERATIONS,1 );
@@ -43,23 +43,23 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 		for (int i = 0; i < THREADS; i++) {
 			c.add(new Incrementer(gen, ITERATIONS));
 		}
-		List<Future<Set<Integer>>> results = service.invokeAll(c, 60000,
+		List<Future<Set<Long>>> results = service.invokeAll(c, 60000,
 				TimeUnit.MILLISECONDS);
 
 		// Check that all IDs of all threads are unique
-		Set<Integer> allIds = new HashSet<Integer>();
-		for (Future<Set<Integer>> future : results) {
-			Set<Integer> ids = future.get();
+		Set<Long> allIds = new HashSet<Long>();
+		for (Future<Set<Long>> future : results) {
+			Set<Long> ids = future.get();
 			assertEquals(ITERATIONS, ids.size());
 			allIds.addAll(future.get());
 		}
 		assertEquals(ITERATIONS * THREADS, allIds.size());
 	}
 
-	private int checkContinuousIDs(T gen, int oldId, int max, int increment)
+	private long checkContinuousIDs(T gen, long oldId, int max, long increment)
 			throws IOException {
 		for (int i = 0; i < max; i++) {
-			int newId = Integer.parseInt(gen.getID());
+			long newId = Long.parseLong(gen.getID());
 			if (oldId > 0)
 				assertEquals("Non consecutive IDs " + oldId, increment, newId - oldId);
 			oldId = newId;
@@ -67,11 +67,11 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 		return oldId;
 	}
 
-	private Set<Integer> checkIncreasingIDs(T gen, int oldId, int max)
+	private Set<Long> checkIncreasingIDs(T gen, long oldId, int max)
 			throws IOException {
-		Set<Integer> ids = new HashSet<Integer>();
+		Set<Long> ids = new HashSet<Long>();
 		for (int i = 0; i < max; i++) {
-			int newId = Integer.parseInt(gen.getID());
+            long newId = Long.parseLong(gen.getID());
 			if (oldId > 0)
 				assertTrue("Non increasing IDs " + oldId, newId > oldId);
 			oldId = newId;
@@ -80,7 +80,7 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 		return ids;
 	}
 
-	class Incrementer implements Callable<Set<Integer>> {
+	class Incrementer implements Callable<Set<Long>> {
 
 		private T gen;
 		private int iterations;
@@ -90,7 +90,7 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 			this.iterations = iterations;
 		}
 
-		public Set<Integer> call() throws Exception {
+		public Set<Long> call() throws Exception {
 			return checkIncreasingIDs(gen, 0, iterations);
 		}
 
