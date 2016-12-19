@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr">
+                Fixed field numbers of handling MFE-4/MFE-5 varies types
+            </action>
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="241">
                 Consistently use longs in ID generators. Thanks to Samantha Chan for reporting.
             </action>

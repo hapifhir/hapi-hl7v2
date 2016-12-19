@@ -400,10 +400,10 @@ public class PipeParser extends Parser {
 		if (destination.getClass().getName().contains("OBX")) {
 			FixFieldDataType.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
 		}
-        // set data type of MFE-3
+        // set data type of MFE-4
         if (destination.getClass().getName().contains("MFE") &&
                 Version.versionOf(destination.getMessage().getVersion()).isGreaterThan(Version.V23)) {
-            FixFieldDataType.fixMFE3(destination, getFactory(), getHapiContext().getParserConfiguration());
+            FixFieldDataType.fixMFE4(destination, getFactory(), getHapiContext().getParserConfiguration());
         }
 
 	}
