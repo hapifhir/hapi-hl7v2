@@ -37,13 +37,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.AbstractHL7Exception;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -64,7 +69,7 @@ public class SegmentGenerator extends java.lang.Object {
 	 * <p>Creates skeletal source code (without correct data structure but no business
 	 * logic) for all segments found in the normative database.  </p>
 	 */
-	public static void makeAll(String baseDirectory, String version, String theTemplatePackage, String theFileExt) throws IOException, SQLException, HL7Exception {
+	public static void makeAll(String baseDirectory, String version, String theTemplatePackage, String theFileExt) throws IOException, SQLException, HL7Exception, MojoExecutionException {
 		//make base directory
 		if (!(baseDirectory.endsWith("\\") || baseDirectory.endsWith("/"))) {
 			baseDirectory = baseDirectory + "/";
@@ -89,8 +94,9 @@ public class SegmentGenerator extends java.lang.Object {
 				
 				makeSegment(seg, version, theTemplatePackage, targetDir, theFileExt);
 			} catch (Exception e) {
-				System.err.println("Error creating source code for all segments: " + e.getMessage());
-				e.printStackTrace();
+//				System.err.println("Error creating source code for all segments: " + e.getMessage());
+//				e.printStackTrace();
+				throw new MojoExecutionException("Failure generating segments", e);
 			}
 		}
 	}
@@ -152,10 +158,44 @@ public class SegmentGenerator extends java.lang.Object {
 		try {
 			Connection conn = normativeDatabase.getConnection();
 
+//			sql.append("SELECT ");
+//			sql.append("HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no, ");
+//			sql.append("HL7SegmentDataElements.repetitional, HL7SegmentDataElements.repetitions, ");
+//			sql.append("HL7DataElements.description, HL7DataElements.length, HL7DataElements.table_id, ");
+//			sql.append("HL7SegmentDataElements.req_opt, HL7Segments.description, HL7DataElements.data_structure ");
+//			sql.append("FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN (HL7DataElements INNER JOIN HL7SegmentDataElements ");
+//			sql.append("ON (HL7DataElements.version_id = HL7SegmentDataElements.version_id) ");
+//			sql.append("AND (HL7DataElements.data_item = HL7SegmentDataElements.data_item)) ");
+//			sql.append("ON (HL7Segments.version_id = HL7SegmentDataElements.version_id) ");
+//			sql.append("AND (HL7Segments.seg_code = HL7SegmentDataElements.seg_code)) ");
+//			sql.append("ON (HL7Versions.version_id = HL7Segments.version_id) ");
+//			sql.append("WHERE HL7SegmentDataElements.seg_code = '");
+//			sql.append(name);
+//			sql.append("' and HL7Versions.hl7_version = '");
+//			sql.append(version);
+//			sql.append("' ORDER BY HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no;");
+
+//			if (false) {
+				listTables(conn, "HL7SegmentDataElements");
+				listTables(conn, "HL7DataElements");
+				listTables(conn, "HL7Segments");
+//			}
+			
+			String lengthColName;
+			if (version.startsWith("2.7") || version.startsWith("2.8")) {
+				lengthColName = "HL7DataElements.max_length";
+			} else {
+				lengthColName = "HL7DataElements.length";
+			}
+			
 			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no, ");
+			sql.append("SELECT ");
+//			sql.append("HL7SegmentDataElements.*, ");
+//			sql.append("HL7DataElements.*, ");
+//			sql.append("HL7Segments.* ");
+			sql.append("HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no, ");
 			sql.append("HL7SegmentDataElements.repetitional, HL7SegmentDataElements.repetitions, ");
-			sql.append("HL7DataElements.description, HL7DataElements.length, HL7DataElements.table_id, ");
+			sql.append("HL7DataElements.description, " + lengthColName + ", HL7DataElements.table_id, ");
 			sql.append("HL7SegmentDataElements.req_opt, HL7Segments.description, HL7DataElements.data_structure ");
 			sql.append("FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN (HL7DataElements INNER JOIN HL7SegmentDataElements ");
 			sql.append("ON (HL7DataElements.version_id = HL7SegmentDataElements.version_id) ");
@@ -163,15 +203,23 @@ public class SegmentGenerator extends java.lang.Object {
 			sql.append("ON (HL7Segments.version_id = HL7SegmentDataElements.version_id) ");
 			sql.append("AND (HL7Segments.seg_code = HL7SegmentDataElements.seg_code)) ");
 			sql.append("ON (HL7Versions.version_id = HL7Segments.version_id) ");
-			sql.append("WHERE HL7SegmentDataElements.seg_code = '");
+			sql.append("WHERE ");
+			sql.append("HL7SegmentDataElements.seg_code = '");
 			sql.append(name);
 			sql.append("' and HL7Versions.hl7_version = '");
 			sql.append(version);
-			sql.append("' ORDER BY HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no;");
+			sql.append("' ");
+			sql.append("ORDER BY HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no;");
 			//System.out.println(sql.toString());  //for debugging
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql.toString());
-
+			
+			Statement stmt;
+			ResultSet rs;
+			try {
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery(sql.toString());
+			} catch (Exception e) {
+				throw new MojoFailureException("Failed to execute the following SQL: " + sql.toString(), e);
+			}
 			List<String> usedFieldDescs = new ArrayList<String>();
 			int index = 0;
 			while (rs.next()) {
@@ -209,7 +257,7 @@ public class SegmentGenerator extends java.lang.Object {
 				if (se.type.equals("-") || se.type.equals("NUL")) {
 					se.type = "NULLDT";
 				}
-				
+
 				/*
 				 * ***
 				 * index is 1-indexed here!!
@@ -240,8 +288,9 @@ public class SegmentGenerator extends java.lang.Object {
 			stmt.close();
 			normativeDatabase.returnConnection(conn);
 		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-			return;
+//			sqle.printStackTrace();
+//			return;
+			throw new MojoFailureException("Failed to generate segment", sqle);
 		}
 		
 		String fileName = theTargetDir.toString() + "/" + name + "." + theFileExt;
@@ -250,6 +299,39 @@ public class SegmentGenerator extends java.lang.Object {
 		String[] datatypePackages = { basePackageName + "datatype" };
         writeSegment(fileName, version, name, elements, segDesc, basePackageName, datatypePackages, theTemplatePackage);
 
+	}
+
+	private static void listTables(Connection conn, String tableName) throws MojoFailureException, SQLException {
+		{
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT ");
+			sql.append(tableName + ".* ");
+			sql.append("FROM " + tableName + " ");
+			//System.out.println(sql.toString());  //for debugging
+			
+			Statement stmt;
+			ResultSet rs;
+			try {
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery(sql.toString());
+			} catch (Exception e) {
+				throw new MojoFailureException("Failed to execute the following SQL: " + sql.toString(), e);
+			}
+
+			rs.next();
+			Set<String> cols = new HashSet<String>();
+			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+				cols.add(rs.getMetaData().getColumnName(i+1));
+			}
+//			System.out.println();
+//			System.out.println(tableName + "Cols: " + cols);
+//			System.out.println();
+			
+			rs.close();
+			stmt.close();
+		}
+		
+	
 	}
 
 
@@ -277,5 +359,6 @@ public class SegmentGenerator extends java.lang.Object {
 		out.flush();
 		out.close();
 	}
-
+	
+	
 }

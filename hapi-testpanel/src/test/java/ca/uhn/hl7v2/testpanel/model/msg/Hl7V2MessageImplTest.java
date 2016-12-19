@@ -25,18 +25,35 @@
  */
 package ca.uhn.hl7v2.testpanel.model.msg;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import junit.framework.Assert;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.testpanel.util.Range;
+import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
+import junit.framework.Assert;
 
 public class Hl7V2MessageImplTest {
 
+	private DefaultHapiContext myCtx;
+
+	@Before
+	public void before() {
+		myCtx = new DefaultHapiContext(new NoValidationBuilder());
+	}
+	
+	@After
+	public void after() throws IOException {
+		myCtx.close();
+	}
+	
 	@Test
 	public void testFindRange() throws HL7Exception {
 
@@ -45,6 +62,7 @@ public class Hl7V2MessageImplTest {
 
 		Range startRange = new Range(10, message.length());
 		ADT_A01 parsed = new ADT_A01();
+		parsed.setParser(myCtx.getGenericParser());
 		parsed.parse(message);
 
 		ArrayList<Integer> path = new ArrayList<Integer>() {
@@ -129,7 +147,7 @@ public class Hl7V2MessageImplTest {
 	public void testFindRangeWithRep() throws Exception {
 
 		String message = "MSH|^~\\&|\r" // 10 chars
-				+ "PID|f1r1~f1r2~\r";
+				+ "PID|11~12~\r";
 
 		Range startRange = new Range(10, message.length()-1);
 		ADT_A01 parsed = new ADT_A01();
@@ -142,10 +160,10 @@ public class Hl7V2MessageImplTest {
 		};
 		
 		Range range = Hl7V2MessageBase.findFieldRange(path, 1, startRange, message, parsed);
-		Assert.assertEquals("f1r1", range.applyTo(message));
+		Assert.assertEquals("11", range.applyTo(message));
 
 		range = Hl7V2MessageBase.findFieldRange(path, 2, startRange, message, parsed);
-		Assert.assertEquals("f1r2", range.applyTo(message));
+		Assert.assertEquals("12", range.applyTo(message));
 
 		range = Hl7V2MessageBase.findFieldRange(path, 3, startRange, message, parsed);
 		Assert.assertEquals("", range.applyTo(message));
@@ -166,6 +184,7 @@ public class Hl7V2MessageImplTest {
 
 		Range startRange = new Range(10, message.length()-1);
 		ADT_A01 parsed = new ADT_A01();
+		parsed.setParser(myCtx.getGenericParser());
 		parsed.parse(message);
 
 		ArrayList<Integer> path = new ArrayList<Integer>() {
@@ -191,6 +210,7 @@ public class Hl7V2MessageImplTest {
 
 		Range startRange = new Range(10, message.length());
 		ADT_A01 parsed = new ADT_A01();
+		parsed.setParser(myCtx.getGenericParser());
 		parsed.parse(message);
 
 		ArrayList<Integer> path = new ArrayList<Integer>() {

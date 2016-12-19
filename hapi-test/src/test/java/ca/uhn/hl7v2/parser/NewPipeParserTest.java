@@ -12,6 +12,7 @@ import ca.uhn.hl7v2.model.v231.message.ORM_O01;
 import ca.uhn.hl7v2.model.v24.datatype.FT;
 import ca.uhn.hl7v2.model.v24.datatype.HD;
 import ca.uhn.hl7v2.model.v24.datatype.SI;
+import ca.uhn.hl7v2.model.v24.group.ORU_R01_OBSERVATION;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
@@ -78,6 +79,37 @@ public class NewPipeParserTest {
 
     }
 
+    @Test
+    public void testParseRepeatingObx5() throws Exception {
+       String msg = "MSH|^~\\&|HNAM|CL|CL_RADNET|CL|20110628095233||ORU^R01|Q2301030099T1904270849|P|2.4\r"
+               + "PID|1||10011682^^^CL_MRN Pool^^CD:237968946|60683166^^^DONOTSEND^^CD:237968946|CLABTEST^ONE||19500101120000|F||C|34605 W 12 MILE RD^^FARM MILLS^MN^48331-3263^CD:309221^CD:756^^CD:637908|CD:637908|(248)489-6000^CD:170||CD:151|M|CD:3391461|606831661088^^^DONOTSEND^FIN NBR^CD:237968946||||CD:654655774|||0|||CD:654897458\r"
+               + "PV1|1|Inpatient|MS^0414^1^CL^^^MMCCN|3|||5332^Rahiman^Abdul|||MED|MS|||1|||5332^Rahiman^Doctor|A||60|||||||||||||||||||CL||Active|||20110329113000\r"
+               + "ORC|NW|3415770735^HNAM_ORDERID|||RL||||20110628095142|71573^Doctor^Janet^D^^^^^DONOTSEND^^^^COMMUNITY DR NBR~70988^Doctor^Janet^D^^^^^DONOTSEND^^^^Personnel Primary Identifier~FHJDB2293^Doctor^Janet^D^^^^^DONOTSEND^^^^External Identifier~T^Doctor^Janet^D^^^^^DONOTSEND^^^^CD:296695676|||||20110628095231|||CD:2562^Written|71573^Doctor^Janet^D^^^^^DONOTSEND^^^^COMMUNITY DR NBR~70988^Doctor^Janet^D^^^^^DONOTSEND^^^^Personnel Primary Identifier~FHJDB2293^Doctor^Janet^D^^^^^DONOTSEND^^^^External Identifier~T^Doctor^Janet^D^^^^^DONOTSEND^^^^CD:296695676\r"
+               + "OBR|1|3415770735^HNAM_ORDERID||CL987^MRA Head w and w/o Contrast|||||||||||Rad Type&Rad Type|||||00000MR20110001703^HNA_ACCN~8546871^HNA_ACCNID~7515376^HNA_PACSID|CD:232990825|20110628095231||Magnetic Resonance Imaging|||1^^0^20110628095100^^RT||||^Dizziness\r"
+               + "OBX|1|TX|20725^ROUTINE HEMATOLOGY|H7800-4|This~Is~A~Report~~~~~||||||I|||200704021122\r"
+               + "NTE|1|P|Special Instructions-\r";
+
+       Parser p = new GenericParser();
+
+       Message hapiMsg;
+
+       // The parse method performs the actual parsing
+
+       hapiMsg = p.parse(msg);
+
+       ORU_R01_OBSERVATION obx = ((ORU_R01) hapiMsg).getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION(0);
+       assertEquals("This", obx.getOBX().getObx5_ObservationValue()[0].encode());
+       assertEquals("Is", obx.getOBX().getObx5_ObservationValue()[1].encode());
+       assertEquals("A", obx.getOBX().getObx5_ObservationValue()[2].encode());
+       assertEquals("Report", obx.getOBX().getObx5_ObservationValue()[3].encode());
+       assertEquals("", obx.getOBX().getObx5_ObservationValue()[4].encode());
+       assertEquals("", obx.getOBX().getObx5_ObservationValue()[5].encode());
+       assertEquals("", obx.getOBX().getObx5_ObservationValue()[6].encode());
+       assertEquals("", obx.getOBX().getObx5_ObservationValue()[7].encode());
+
+   }
+    
+    
     /**
      * Bug 207 contributed by Jens Villadsen
      * <p/>

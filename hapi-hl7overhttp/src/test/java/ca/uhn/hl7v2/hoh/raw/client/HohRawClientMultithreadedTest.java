@@ -219,7 +219,7 @@ public class HohRawClientMultithreadedTest {
 		
 		try {
 			response = client.sendAndReceive(new RawSendable(message));
-		} catch (DecodeException e) {
+		} catch (Exception e) {
 			// We're allowed to fail once
 		}
 		

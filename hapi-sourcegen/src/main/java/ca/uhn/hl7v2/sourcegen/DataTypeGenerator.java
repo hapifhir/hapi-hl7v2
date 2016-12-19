@@ -40,6 +40,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -222,15 +224,28 @@ public class DataTypeGenerator extends Object {
             String[] desc = new String[numComponents];
             int[] table = new int[numComponents];
             DatatypeComponentDef[] componentDefs = new DatatypeComponentDef[numComponents];
+            Set<String> names = new HashSet<String>();
             for (int i = 0; i < numComponents; i++) {
                 type[i] = (String)dataTypes.get(i);
-                desc[i] = (String)descriptions.get(i);
+                String componentName = (String)descriptions.get(i);
+                
+                if (names.contains(componentName)) {
+               	 for (int j = 2; ; j++) {
+               		 if (!names.contains(componentName + j)) {
+               			 componentName = componentName + j;
+               			 break;
+               		 }
+               	 }
+                }
+                names.add(componentName);
+                
+                desc[i] = componentName;
                 table[i] = ((Integer) tables.get(i)).intValue();
                 
                 String typeName = (String)dataTypes.get(i);
                 typeName = SourceGenerator.getAlternateType(typeName, version);
                 
-                componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, (String)descriptions.get(i), ((Integer) tables.get(i)).intValue());
+                componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, componentName, ((Integer) tables.get(i)).intValue());
             }
             
             source = makeComposite(dataType, description, componentDefs, type, desc, table, version, basePackage, theTemplatePackage);
@@ -291,6 +306,13 @@ public class DataTypeGenerator extends Object {
         
             StringWriter out = new StringWriter();
 
+            for (int i = 0; i < dataTypes.length; i++) {
+               if (dataTypes[i].equals(dataType)) {
+                  log.warn("Datatype {} has a child also of type {}! Can not recurse like this", dataType, dataType);
+                  dataTypes[i] = "ST";
+               }
+            }
+            
             theTemplatePackage = theTemplatePackage.replace(".", "/");
             Template template = VelocityFactory.getClasspathTemplateInstance(theTemplatePackage + "/datatype_composite.vsm");
             Context ctx = new VelocityContext();

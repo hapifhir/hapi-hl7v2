@@ -2,7 +2,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.3-alpha1</version>
+		<version>2.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<version>2.0.1</version>
@@ -125,8 +125,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.apple</groupId>
-			<artifactId>applejavaextensions</artifactId>
-			<version>1.5.4</version>
+			<artifactId>AppleJavaExtensions</artifactId>
+			<!--<version>1.5.4</version>-->
+			<version>1.4</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

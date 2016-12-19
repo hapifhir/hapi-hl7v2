@@ -138,31 +138,35 @@ public abstract class GenericMessage extends AbstractMessage {
     }
 
     public static class V27 extends GenericMessage {
-        public V27(ModelClassFactory factory) {
+		private static final long serialVersionUID = -1693277295151324396L;
+		public V27(ModelClassFactory factory) {
             super(factory);
         }
         public String getVersion() { return Version.V27.getVersion(); }
     }
 
     public static class V271 extends GenericMessage {
-        public V271(ModelClassFactory factory) {
+		private static final long serialVersionUID = -1693277295151324396L;
+		public V271(ModelClassFactory factory) {
             super(factory);
         }
         public String getVersion() { return Version.V271.getVersion(); }
     }
 
     public static class V28 extends GenericMessage {
-        public V28(ModelClassFactory factory) {
+		private static final long serialVersionUID = -1693277295151324396L;
+		public V28(ModelClassFactory factory) {
             super(factory);
         }
         public String getVersion() { return Version.V28.getVersion(); }
     }
 
     public static class V281 extends GenericMessage {
-        public V281(ModelClassFactory factory) {
+		private static final long serialVersionUID = -1693277295151324396L;
+		public V281(ModelClassFactory factory) {
             super(factory);
         }
         public String getVersion() { return Version.V281.getVersion(); }
     }
-    
+
 }

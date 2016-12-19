@@ -37,15 +37,15 @@ public class OSXInitializer {
 	public void run(final Controller theController) {
 		com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
 		macApp.setDockIconImage(ImageFactory.getHapi64().getImage());
-		macApp.setAboutHandler(new com.apple.eawt.AboutHandler() {
-			public void handleAbout( com.apple.eawt.AppEvent.AboutEvent theArg0) {
-				theController.showAboutDialog();
-			}});
-		macApp.setQuitHandler(new com.apple.eawt.QuitHandler() {
-
-			public void handleQuitRequestWith( com.apple.eawt.AppEvent.QuitEvent theArg0,  com.apple.eawt.QuitResponse theArg1) {
-				theController.close();
-			}});
+//		macApp.setAboutHandler(new com.apple.eawt.AboutHandler() {
+//			public void handleAbout( com.apple.eawt.AppEvent.AboutEvent theArg0) {
+//				theController.showAboutDialog();
+//			}});
+//		macApp.setQuitHandler(new com.apple.eawt.QuitHandler() {
+//
+//			public void handleQuitRequestWith( com.apple.eawt.AppEvent.QuitEvent theArg0,  com.apple.eawt.QuitResponse theArg1) {
+//				theController.close();
+//			}});
 	}
 	
 }
