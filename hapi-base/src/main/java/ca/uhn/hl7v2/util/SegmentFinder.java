@@ -38,8 +38,8 @@ import java.util.regex.*;
 public class SegmentFinder extends MessageNavigator {
 
     private static final Pattern VALID_PATTERN_PATTERN = Pattern.compile("[\\w\\*\\?]*");
-    private static final Pattern LITERAL_UNBOUNDED = Pattern.compile("\\*", Pattern.LITERAL);
-    private static final Pattern LITERAL_OPTIONAL = Pattern.compile("\\?", Pattern.LITERAL);
+    private static final Pattern LITERAL_UNBOUNDED = Pattern.compile("\\*");
+    private static final Pattern LITERAL_OPTIONAL = Pattern.compile("\\?");
 
     /**
      * Creates a new instance of SegmentFinder.
@@ -170,13 +170,10 @@ public class SegmentFinder extends MessageNavigator {
         if (pattern.equals(candidate)) {
             return true;
         }
-        
         if (!VALID_PATTERN_PATTERN.matcher(pattern).matches())
             throw new IllegalArgumentException("The pattern " + pattern + " is not valid.  Only [\\w\\*\\?]* allowed.");
-
         pattern = LITERAL_UNBOUNDED.matcher(pattern).replaceAll(".*");
         pattern = LITERAL_OPTIONAL.matcher(pattern).replaceAll(".");
-        
         return Pattern.matches(pattern, candidate);
     }
 }
