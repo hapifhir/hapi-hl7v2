@@ -154,7 +154,7 @@ public final class FixFieldDataType {
                 Varies v = (Varies)rep;
                 if (type.getValue() == null) {
                     if (defaultType != null) {
-                        LOG.debug("setting default {}-{} type to {}", segment.getName(), typeField, defaultType);
+                        LOG.debug("setting default {}-{} type to {}", new Object[] {segment.getName(), typeField, defaultType});
                         type.setValue(defaultType);
                     }
                 } // if

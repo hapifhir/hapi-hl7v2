@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -18,6 +20,7 @@ import ca.uhn.hl7v2.conf.store.CodeStore;
 import ca.uhn.hl7v2.conf.store.ProfileCodeStore;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.model.v24.message.ACK;
+import ca.uhn.hl7v2.model.v251.message.ORU_R01;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -130,6 +133,38 @@ public class DefaultValidatorTest extends TestCase {
 		
     }
 
+    /** 
+     * Issue reported on mailing list 
+     */
+    public void testOru() throws Exception {
+		ClassLoader cl = ProfileParser.class.getClassLoader();
+		InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/ORU_R01.xml");
+		if (instream == null) throw new Exception("can't find the xml file");
+		BufferedReader in = new BufferedReader(new InputStreamReader(instream));
+		int tmp = 0;
+		StringBuffer buf = new StringBuffer();
+		while ((tmp = in.read()) != -1) {
+		    buf.append((char) tmp);
+		}        
+		String profileString = buf.toString();
+		//System.out.println(profileString);
+		ProfileParser parser = new ProfileParser(false);
+		RuntimeProfile prof = parser.parse(profileString);
+		
+		DefaultValidator v = new DefaultValidator();
+		
+		String message = IOUtils.toString(cl.getResourceAsStream("ca/uhn/hl7v2/conf/ORU_R01.hl7"));
+		ORU_R01 msg = new ca.uhn.hl7v2.model.v251.message.ORU_R01();
+		msg.parse(message.replaceAll("(\\n|\\r)+", "\r"));
+		
+		HL7Exception[] problems = v.validate(msg, prof.getMessage());
+		String toString = Arrays.asList(problems).toString();
+		
+		assertTrue(toString, problems.length == 0);
+    	
+    }
+    
+    
     public void testNotSupportedSegment() throws Exception {
     	
         ClassLoader cl = ProfileParser.class.getClassLoader();

@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="src" path="src/main/binresources"/>
-	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/binresources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/hapi-base"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/3.1.2.RELEASE/spring-aop-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-asm/3.1.2.RELEASE/spring-asm-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/3.1.2.RELEASE/spring-beans-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/3.1.2.RELEASE/spring-context-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/3.1.2.RELEASE/spring-core-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-expression/3.1.2.RELEASE/spring-expression-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.6/slf4j-log4j12-1.6.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
-	<classpathentry kind="var" path="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0.jar" sourcepath="M2_REPO/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0-sources.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/ca/uhn/hapi/hapi-structures-v25/2.0/hapi-structures-v25-2.0-javadoc.jar!/"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.6/slf4j-api-1.6.6.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/4.9/junit-4.9.jar" sourcepath="M2_REPO/junit/junit/4.9/junit-4.9-sources.jar">
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/james/.m2/repository/junit/junit/4.9/junit-4.9-javadoc.jar!/"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46-sources.jar"/>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty/6.1.26/jetty-6.1.26.jar"/>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty-embedded/6.1.26/jetty-embedded-6.1.26.jar"/>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar"/>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/jetty-sslengine/6.1.26/jetty-sslengine-6.1.26.jar"/>
-	<classpathentry exported="true" kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

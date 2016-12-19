@@ -13,5 +13,11 @@ public interface SuperStructure extends Group {
 	Set<String> getStructuresWhichChildAppliesTo(String theChildName);
 
 	List<String> getChildNamesForStructure(String theStructure);
+
+	/**
+	 * Returns a set containing any non-standard element names that were added
+	 * to this structure
+	 */
+	Set<String> getNonStandardNames();
 	
 }

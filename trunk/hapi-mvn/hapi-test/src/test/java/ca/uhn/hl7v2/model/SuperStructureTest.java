@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.model;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class SuperStructureTest {
 
@@ -41,6 +43,29 @@ public class SuperStructureTest {
 
 	}
 
+	@Test
+	public void testEncodeWithZSegment() throws HL7Exception {
+		ADT_AXX msg = new ADT_AXX();
+
+		String message = "MSH|^~\\&|NES|NINTENDO|AGNEW|CORNERCUBICLE|20010101000000||ADT^A01|Q123456789T123456789X123456|P|2.3\r\n"
+				+ "PID|2||123456789|0123456789^AA^^JP|BROS^MARIO^^^^||19850101000000|M|||123 FAKE STREET^MARIO \\T\\ LUIGI BROS PLACE^TOADSTOOL KINGDOM^NES^A1B2C3^JP^HOME^^1234|1234|(555)555-0123^HOME^JP:1234567|||S|MSH|12345678|||||||0|||||N\r\n";
+
+		msg.parse(message);
+		
+		msg.addNonstandardSegment("ZZZ");
+		GenericSegment zzz = (GenericSegment) msg.get("ZZZ");
+		zzz.parse("ZZZ|1|2");
+
+		DefaultHapiContext ctx = new DefaultHapiContext();
+//		ctx.setValidationContext(new ValidationContextImpl());
+		
+		String out = ctx.getPipeParser().encode(msg);
+		ourLog.info(out);
+		
+		assertThat(out, containsString("ZZZ|1|2"));
+	}
+
+	
 	@Test
 	public void testParseTwoPidA17() throws HL7Exception {
 		ADT_AXX msg = new ADT_AXX();

@@ -34,19 +34,18 @@ import ca.uhn.hl7v2.parser.Parser;
 
 public enum Version {
 
-	V21("2.1"),
-	V22("2.2"),
-	V23("2.3"),
-	V231("2.3.1"),
-	V24("2.4"),
-	V25("2.5"),
-	V251("2.5.1"),
-	V26("2.6"),
-    V27("2.7"),
-    V271("2.7.1"),
-    V28("2.8"),
-    V281("2.8.1");
-    
+	V21("2.1"), // -
+	V22("2.2"), // -
+	V23("2.3"), // -
+	V231("2.3.1"), // -
+	V24("2.4"), // -
+	V25("2.5"), // -
+	V251("2.5.1"), // -
+	V26("2.6"), // -
+	V27("2.7"), // -
+	V271("2.7.1"), // -
+	V28("2.8"), // -
+	V281("2.8.1"); // -
 
 	private String version;
 	private static ArrayList<Version> ourVersionsOnClasspath;
@@ -252,6 +251,14 @@ public enum Version {
 			return new GenericMessage.V251(mcf);
 		case V26:
 			return new GenericMessage.V26(mcf);
+		case V27:
+			return new GenericMessage.V27(mcf);
+		case V271:
+			return new GenericMessage.V271(mcf);
+		case V28:
+			return new GenericMessage.V28(mcf);
+		case V281:
+			return new GenericMessage.V281(mcf);
 		default:
 			throw new Error("Unknown version (this is a HAPI bug): " + this.getVersion());
 		}

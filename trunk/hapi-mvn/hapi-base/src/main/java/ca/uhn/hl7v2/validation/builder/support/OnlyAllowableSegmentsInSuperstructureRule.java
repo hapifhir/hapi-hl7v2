@@ -60,9 +60,13 @@ public class OnlyAllowableSegmentsInSuperstructureRule extends AbstractMessageRu
 
 	private void checkStructure(SuperStructure theMsg, List<ValidationException> theExceptions) {
 		String messageStructure = theMsg.getMessage().getName();
+		Set<String> nonStandardNames = theMsg.getNonStandardNames();
 
 		FORNAME:
 		for (String name : theMsg.getNames()) {
+			if (nonStandardNames != null && nonStandardNames.contains(name)) {
+				continue;
+			}
 			
 			try {
 				for (Structure rep : theMsg.getAll(name)) {
