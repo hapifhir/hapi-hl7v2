@@ -123,13 +123,13 @@ public final class FixFieldDataType {
         fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
     }
 
-    public static void fixMFE3(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+    public static void fixMFE4(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
             throws HL7Exception {
         if (!(segment.getName().contains("MFE")) &&
                 Version.versionOf(segment.getMessage().getVersion()).isGreaterThan(Version.V23)) {
             throw new IllegalArgumentException("Expected MFE segment, but was: " + segment.getName());
         }
-        fix(segment, 4, 3, null, null, factory, parserConfiguration);
+        fix(segment, 5, 4, null, null, factory, parserConfiguration);
     }
 
     /**

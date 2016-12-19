@@ -308,10 +308,10 @@ public abstract class XMLParser extends Parser {
 		if (segmentObject.getClass().getName().contains("OBX")) {
 			FixFieldDataType.fixOBX5(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
 		}
-        // set data type of MFE-3
+        // set data type of MFE-4
         if (segmentObject.getClass().getName().contains("MFE") &&
                 Version.versionOf(segmentObject.getMessage().getVersion()).isGreaterThan(Version.V23)) {
-            FixFieldDataType.fixMFE3(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
+            FixFieldDataType.fixMFE4(segmentObject, getFactory(), getHapiContext().getParserConfiguration());
         }
 	}
 
