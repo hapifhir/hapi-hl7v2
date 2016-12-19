@@ -36,7 +36,11 @@ import java.util.regex.*;
  * @author Bryan Tripp
  */
 public class SegmentFinder extends MessageNavigator {
-    
+
+    private static final Pattern VALID_PATTERN_PATTERN = Pattern.compile("[\\w\\*\\?]*");
+    private static final Pattern LITERAL_UNBOUNDED = Pattern.compile("\\*", Pattern.LITERAL);
+    private static final Pattern LITERAL_OPTIONAL = Pattern.compile("\\?", Pattern.LITERAL);
+
     /**
      * Creates a new instance of SegmentFinder.
      * @param root the scope of searches -- may be a whole message or only a branch
@@ -167,11 +171,11 @@ public class SegmentFinder extends MessageNavigator {
             return true;
         }
         
-        if (!Pattern.matches("[\\w\\*\\?]*", pattern)) 
+        if (!VALID_PATTERN_PATTERN.matcher(pattern).matches())
             throw new IllegalArgumentException("The pattern " + pattern + " is not valid.  Only [\\w\\*\\?]* allowed.");
-        
-        pattern = Pattern.compile("\\*").matcher(pattern).replaceAll(".*");
-        pattern = Pattern.compile("\\?").matcher(pattern).replaceAll(".");
+
+        pattern = LITERAL_UNBOUNDED.matcher(pattern).replaceAll(".*");
+        pattern = LITERAL_OPTIONAL.matcher(pattern).replaceAll(".");
         
         return Pattern.matches(pattern, candidate);
     }
