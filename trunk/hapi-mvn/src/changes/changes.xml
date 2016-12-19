@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.3" date="TBD">
+            <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">
+                Improve SegmentFinder performance. Thanks to Niels Harremoës for reporting.
+            </action>
             <action type="fix" dev="Christian Ohr">
                 Fixed field numbers of handling MFE-4/MFE-5 varies types
             </action>
