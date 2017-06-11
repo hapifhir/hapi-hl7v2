@@ -102,7 +102,6 @@ public class Hl7V2FileSortController {
 			mySorter = theSorter;
 		}
 
-		@Override
 		public void run() {
 			try {
 				SwingLogAppender.addListener(this);
@@ -118,7 +117,6 @@ public class Hl7V2FileSortController {
 			}
 		}
 
-		@Override
 		public void handle(LoggingEvent theEvent, String theFormattedLine) {
 			if (!theEvent.getLoggerName().startsWith(Hl7V2FileSorter.class.getName())) {
 				return;

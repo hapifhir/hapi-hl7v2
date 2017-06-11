@@ -6,20 +6,20 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  * specific language governing rights and limitations under the License.
  *
- * The Original Code is ""  Description:
+ * The Original Code is "" Description:
  * ""
  *
  * The Initial Developer of the Original Code is University Health Network. Copyright (C)
- * 2001.  All Rights Reserved.
+ * 2001. All Rights Reserved.
  *
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
- * applicable instead of those above.  If you wish to allow use of your version of this
+ * GNU General Public License (the "GPL"), in which case the provisions of the GPL are
+ * applicable instead of those above. If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
- * of this file under the MPL, indicate your decision by deleting  the provisions above
- * and replace  them with the notice and other provisions required by the GPL License.
+ * of this file under the MPL, indicate your decision by deleting the provisions above
+ * and replace them with the notice and other provisions required by the GPL License.
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
@@ -59,15 +59,15 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 
 	public void addChild(ConformanceStructure<?> theStructure, String theName, short theMinReps, short theMaxReps) throws HL7Exception {
 		String name = theName;
-        if (nameExists(name)) {
-            int version = 2;
-            String newName = name;
-            while (nameExists(newName)) {
-                newName = name + version++;
-            }
-            name = newName;
-        }
-		
+		if (nameExists(name)) {
+			int version = 2;
+			String newName = name;
+			while (nameExists(newName)) {
+				newName = name + version++;
+			}
+			name = newName;
+		}
+
 		myNameToIndex.put(name, myNames.size());
 		myMinReps.add(theMinReps);
 		myMaxReps.add(theMaxReps);
@@ -80,37 +80,36 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 	}
 
 	public String addNonstandardSegment(String theName, int theIndex) throws HL7Exception {
-        String name = null;
+		String name = null;
 		if (nameExists(theName)) {
-            int version = 2;
-            String newName = theName;
-            while (nameExists(newName)) {
-                newName = theName + version++;
-            }
-            name = newName;
-        } else {
-        	name = theName;
-        }
+			int version = 2;
+			String newName = theName;
+			while (nameExists(newName)) {
+				newName = theName + version++;
+			}
+			name = newName;
+		} else {
+			name = theName;
+		}
 
 		myMinReps.add(theIndex, (short) 0);
 		myMaxReps.add(theIndex, (short) 0);
 		myNames.add(theIndex, name);
 		myPrototypes.add(theIndex, null);
 		myNamesToNonStandardSegments.put(name, new ArrayList<Segment>());
-		
+
 		int index = 0;
 		for (String next : myNames) {
 			myNameToIndex.put(next, index++);
 		}
-		
+
 		return name;
 	}
 
 	public Structure get(String theName) throws HL7Exception {
 		throw new UnsupportedOperationException();
 	}
-	
-	
+
 	public Structure get(String theName, int theRep) throws HL7Exception {
 		int index = getIndex(theName);
 		Structure retVal;
@@ -158,10 +157,10 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 
 	public String getName() {
 		if (myConfDefinition instanceof StaticDef) {
-			StaticDef sd = (StaticDef)myConfDefinition;
+			StaticDef sd = (StaticDef) myConfDefinition;
 			return sd.getMsgType() + "^" + sd.getEventType();
 		} else {
-			return ((SegGroup)myConfDefinition).getName();
+			return ((SegGroup) myConfDefinition).getName();
 		}
 	}
 
@@ -207,15 +206,13 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return retVal;
 	}
 
-	@Override
 	public boolean isChoiceElement(String theArg0) throws HL7Exception {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-    public boolean isEmpty() throws HL7Exception {
-	    return myGroup.isEmpty();
-    }
+	public boolean isEmpty() throws HL7Exception {
+		return myGroup.isEmpty();
+	}
 
 	public boolean isGroup(String theName) throws HL7Exception {
 		throw new UnsupportedOperationException();
@@ -235,14 +232,12 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		return myNameToIndex.containsKey(theName);
 	}
 
-	@Override
-    public boolean accept(MessageVisitor theVisitor, Location theCurrentLocation) throws HL7Exception {
-    	throw new UnsupportedOperationException();
-    }
+	public boolean accept(MessageVisitor theVisitor, Location theCurrentLocation) throws HL7Exception {
+		throw new UnsupportedOperationException();
+	}
 
-	@Override
-    public Location provideLocation(Location theParentLocation, int theIndex, int theRepetition) {
-    	throw new UnsupportedOperationException();
-    }
+	public Location provideLocation(Location theParentLocation, int theIndex, int theRepetition) {
+		throw new UnsupportedOperationException();
+	}
 
 }

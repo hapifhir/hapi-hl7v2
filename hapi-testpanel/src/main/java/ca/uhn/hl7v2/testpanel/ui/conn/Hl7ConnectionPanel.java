@@ -720,7 +720,6 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 
 		myHohAuthEnabledCheckbox = new JCheckBox("Enabled");
 		myHohAuthEnabledCheckbox.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				myConnection.setHohAuthenticationEnabled(myHohAuthEnabledCheckbox.isSelected());
 			}
@@ -924,7 +923,6 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 
 		myHohSignatureEnabled = new JCheckBox("Enabled");
 		myHohSignatureEnabled.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				myConnection.setHohSignatureEnabled(myHohSignatureEnabled.isSelected());
 			}
@@ -1008,7 +1006,6 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 
 		myHohSignatureKeyAliasCombo = new JComboBox();
 		myHohSignatureKeyAliasCombo.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				if (myUpdatingHohSignatureKeyAliasCombo) {
 					return;
@@ -1167,7 +1164,6 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 		myConnection.addPropertyChangeListener(AbstractConnection.HOH_SIGNATURE_KEYSTORE_STATUS, myHohSignatureStatusListener);
 
 		myHohSignerAvailableAliasesListener = new PropertyChangeListener() {
-			@Override
 			public void propertyChange(PropertyChangeEvent theEvt) {
 				updateHohSignatureKeyCombo();
 			}
@@ -1337,7 +1333,6 @@ public class Hl7ConnectionPanel extends JPanel implements IDestroyable {
 			myLabel.setIcon(null);
 		}
 
-		@Override
 		public void propertyChange(PropertyChangeEvent theEvt) {
 			JLabel label = myLabel;
 			WorkingStatusBean newValue = (WorkingStatusBean) theEvt.getNewValue();

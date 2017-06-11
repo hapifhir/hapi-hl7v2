@@ -164,7 +164,6 @@ public class InboundConnectionPanel extends BaseMainPanel implements IDestroyabl
 
 		theConnection.clearNewMessages();
 		myNewMessagesPropertyListener = new VetoableChangeListener() {
-			@Override
 			public void vetoableChange(PropertyChangeEvent theEvt) throws PropertyVetoException {
 				/*
 				 * This window displays messages as they arrive, so the message model

@@ -67,11 +67,13 @@
             <artifactId>hapi-structures-v27</artifactId>
             <version>${hapi.version.structures}</version>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v271</artifactId>
             <version>${hapi.version.structures}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v28</artifactId>

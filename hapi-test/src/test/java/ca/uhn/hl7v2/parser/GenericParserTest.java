@@ -5,12 +5,14 @@ import static org.junit.Assert.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
 public class GenericParserTest {
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(GenericParserTest.class);
 
 	@Test
 	public void testMessageSetAppropriatelyForParse() throws EncodingNotSupportedException, HL7Exception {
@@ -34,6 +36,7 @@ public class GenericParserTest {
 	 * https://sourceforge.net/p/hl7api/bugs/92/
 	 */
 	@Test
+	@Ignore
 	public void testAmpersandCorrectlyParsed() throws HL7Exception {
 		
 		StringWriter message = new StringWriter();
@@ -52,6 +55,7 @@ public class GenericParserTest {
 		Message hMsg = p.parse(message.toString());
 
 		String enc = p.encode(hMsg);
+		ourLog.info(enc);
 		assertTrue(enc, enc.contains("|WBCS: Adequate in number \\T\\ normal in appearance|"));
 	}
 

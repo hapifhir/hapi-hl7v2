@@ -25,13 +25,10 @@
                 <include>ca.uhn.hapi:hapi-structures-v25</include>
                 <include>ca.uhn.hapi:hapi-structures-v251</include>
                 <include>ca.uhn.hapi:hapi-structures-v26</include>
-<!-- Disabled until new HL7 structure libraries are in place -->
-<!--
                 <include>ca.uhn.hapi:hapi-structures-v27</include>
-                <include>ca.uhn.hapi:hapi-structures-v271</include>
+                <!--<include>ca.uhn.hapi:hapi-structures-v271</include>-->
                 <include>ca.uhn.hapi:hapi-structures-v28</include>
                 <include>ca.uhn.hapi:hapi-structures-v281</include>
--->
                 <include>commons-cli:commons-cli</include>
                 <include>org.slf4j:slf4j-api</include>
                 <include>org.slf4j:slf4j-log4j12</include>
@@ -162,6 +159,36 @@
         <fileSet>
             <outputDirectory>src</outputDirectory>
             <directory>../hapi-structures-v26/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v27/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <!-- 
+         <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v271/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        -->
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v28/target</directory>
+            <includes>
+                <include>*sources.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <directory>../hapi-structures-v281/target</directory>
             <includes>
                 <include>*sources.jar</include>
             </includes>

@@ -151,7 +151,6 @@ public class ImportProfileGroupDialog extends JDialog {
 				myOkButton = new JButton("OK");
 				myOkButton.setActionCommand("OK");
 				myOkButton.addActionListener(new ActionListener() {
-					@Override
 					public void actionPerformed(ActionEvent theE) {
 						updateOk();
 						dispose();

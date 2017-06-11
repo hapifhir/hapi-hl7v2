@@ -11,7 +11,6 @@ public class FileNameComparator implements Comparator<File> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public int compare(File theO1, File theO2) {
 		if (theO1 == null && theO2 == null) {
 			return 0;

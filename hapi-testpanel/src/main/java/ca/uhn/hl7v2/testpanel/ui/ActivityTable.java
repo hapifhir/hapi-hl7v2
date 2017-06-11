@@ -6,20 +6,20 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  * specific language governing rights and limitations under the License.
  *
- * The Original Code is ""  Description:
+ * The Original Code is "" Description:
  * ""
  *
  * The Initial Developer of the Original Code is University Health Network. Copyright (C)
- * 2001.  All Rights Reserved.
+ * 2001. All Rights Reserved.
  *
  * Contributor(s): ______________________________________.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
- * applicable instead of those above.  If you wish to allow use of your version of this
+ * GNU General Public License (the "GPL"), in which case the provisions of the GPL are
+ * applicable instead of those above. If you wish to allow use of your version of this
  * file only under the terms of the GPL and not to allow others to use your version
- * of this file under the MPL, indicate your decision by deleting  the provisions above
- * and replace  them with the notice and other provisions required by the GPL License.
+ * of this file under the MPL, indicate your decision by deleting the provisions above
+ * and replace them with the notice and other provisions required by the GPL License.
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
  */
@@ -74,10 +74,10 @@ import ca.uhn.hl7v2.testpanel.ui.conn.JGraph;
 import ca.uhn.hl7v2.testpanel.util.ISendProgressCallback;
 
 public class ActivityTable extends JPanel implements IDestroyable {
-	
+
 	@SuppressWarnings("unused")
 	private static final Logger ourLog = LoggerFactory.getLogger(ActivityTable.class);
-	
+
 	private static final SimpleDateFormat ourTimestampFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
 	private JButton clearButton;
@@ -87,7 +87,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	private JMenuItem myEditAllButton;
 	private JButton myEditButton;
 	private JPopupMenu myEditMenu;
-	private JMenuItem myEditSelectedButton;	
+	private JMenuItem myEditSelectedButton;
 	private boolean myInboundConnection;
 	private PropertyChangeListener myRecentActivityListener;
 	private JMenuItem mySaveAllButton;
@@ -109,28 +109,28 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	protected boolean myTransmissionCancelled;
 
 	private JGraph mySendThroughputGraph;
-	
+
 	public ActivityTable() {
 		super(new BorderLayout());
 		setBorder(null);
-		
+
 		JToolBar toolBar = new JToolBar();
 		toolBar.setRollover(true);
 		toolBar.setFloatable(false);
 		add(toolBar, BorderLayout.NORTH);
-		
+
 		clearButton = new JButton("Clear");
 		clearButton.addMouseListener(new HoverButtonMouseAdapter(clearButton));
 		clearButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/clear.png")));
 		clearButton.setBorderPainted(false);
 		clearButton.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent theE) {
 				myConnection.clearRecentActivity();
 			}
 		});
 		toolBar.add(clearButton);
-		
+
 		mySaveButton = new JButton("Save");
 		mySaveButton.addMouseListener(new HoverButtonMouseAdapter(mySaveButton));
 		mySaveButton.setBorderPainted(false);
@@ -142,10 +142,8 @@ public class ActivityTable extends JPanel implements IDestroyable {
 			}
 		});
 		toolBar.add(mySaveButton);
-		
-		
-		
-		myEditButton = new JButton("Edit");		
+
+		myEditButton = new JButton("Edit");
 		myEditButton.setEnabled(false);
 		myEditButton.setBorderPainted(false);
 		myEditButton.addMouseListener(new HoverButtonMouseAdapter(myEditButton));
@@ -156,17 +154,16 @@ public class ActivityTable extends JPanel implements IDestroyable {
 			}
 		});
 		toolBar.add(myEditButton);
-		
+
 		myhorizontalGlue = Box.createHorizontalGlue();
 		toolBar.add(myhorizontalGlue);
-		
+
 		mySendThroughputGraph = new JGraph();
 		mySendThroughputGraph.setPreferredSize(new Dimension(200, 0));
 		mySendThroughputGraph.setMinimumSize(new Dimension(200, 0));
 		mySendThroughputGraph.setMaximumSize(new Dimension(200, 32767));
 		toolBar.add(mySendThroughputGraph);
-		
-		
+
 		myStop = new JButton();
 		myStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -179,22 +176,22 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myStop.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/stop.png")));
 		myStop.addMouseListener(new HoverButtonMouseAdapter(myStop));
 		toolBar.add(myStop);
-		
+
 		myProgressBar = new JProgressBar();
 		myProgressBar.setEnabled(false);
 		myProgressBar.setMaximumSize(new Dimension(150, 20));
 		myProgressBar.setMinimumSize(new Dimension(150, 20));
 		myProgressBar.setPreferredSize(new Dimension(150, 20));
 		toolBar.add(myProgressBar);
-		
+
 		myScrollPane = new JScrollPane();
 		myScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		add(myScrollPane, BorderLayout.CENTER);
-		
+
 		myTable = new JTable();
 		myTable.setGridColor(Color.LIGHT_GRAY);
-//		myTable.setCellSelectionEnabled(true);
-//		myTable.setRowSelectionAllowed(true);
+		// myTable.setCellSelectionEnabled(true);
+		// myTable.setRowSelectionAllowed(true);
 		myTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		myScrollPane.setViewportView(myTable);
 
@@ -209,7 +206,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 			}
 		});
 		myEditMenu.add(myEditSelectedButton);
-		
+
 		myEditAllButton = new JMenuItem("Edit All Messages");
 		myEditAllButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/edit_all.png")));
 		myEditAllButton.addActionListener(new ActionListener() {
@@ -221,25 +218,25 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myEditMenu.add(myEditAllButton);
 
 		mySaveMenu = new JPopupMenu();
-		
+
 		mySaveSelectedButton = new JMenuItem("Save Selected Message");
 		mySaveSelectedButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/save.png")));
 		mySaveMenu.add(mySaveSelectedButton);
-		
+
 		mySaveAllButton = new JMenuItem("Save All Messages");
 		mySaveAllButton.setIcon(new ImageIcon(ActivityTable.class.getResource("/ca/uhn/hl7v2/testpanel/images/save_all.png")));
 		mySaveMenu.add(mySaveAllButton);
-		
+
 		myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent theE) {
 				updateUiBasedOnSelectedRow();
 			}
 		});
 		updateUiBasedOnSelectedRow();
-		
+
 		setProgressIndicatorsEnabled(false);
 	}
-	
+
 	/**
 	 * @return the scrollPane
 	 */
@@ -250,8 +247,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	public void destroy() {
 		removeListeners();
 	}
-	
-	
+
 	/**
 	 * @return the connection
 	 */
@@ -296,7 +292,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		if (myConnection instanceof InboundConnection) {
 			myInboundConnection = true;
 		}
-		
+
 		myActivityTableModel = new ActivityTableModel();
 		myTable.setModel(myActivityTableModel);
 
@@ -306,7 +302,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 					public void run() {
 						myActivityTableModel.update();
 						myDetailsCellRenderer.markScrollToBottom();
-						
+
 					}
 				});
 			}
@@ -314,13 +310,13 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		myConnection.addPropertyChangeListener(AbstractConnection.RECENT_ACTIVITY_PROPERTY, myRecentActivityListener);
 		myActivityTableModel.update();
 
-//		JScrollBar vsb = myscrollPane.getVerticalScrollBar();
-//		BoundedRangeModel vsbModel = new MyVerticalScrollbarModel();
-//		vsb.setModel(vsbModel);
-		
+		// JScrollBar vsb = myscrollPane.getVerticalScrollBar();
+		// BoundedRangeModel vsbModel = new MyVerticalScrollbarModel();
+		// vsb.setModel(vsbModel);
+
 		myTable.getColumnModel().getColumn(0).setCellRenderer(new ActivityCellRendererBase(this));
 		myTable.getColumnModel().getColumn(1).setCellRenderer(new ActivityTypeCellRenderer(this, theConnection instanceof InboundConnection));
-		
+
 		myDetailsCellRenderer = new ActivityDetailsCellRenderer(this);
 		myTable.getColumnModel().getColumn(2).setCellRenderer(myDetailsCellRenderer);
 
@@ -341,11 +337,12 @@ public class ActivityTable extends JPanel implements IDestroyable {
 	}
 
 	/**
-	 * @param theController the controller to set
+	 * @param theController
+	 *           the controller to set
 	 */
 	public void setController(Controller theController) {
 		assert theController != null;
-		
+
 		myController = theController;
 	}
 
@@ -358,7 +355,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 				messageSelected = true;
 			}
 		}
-		
+
 		mySaveSelectedButton.setEnabled(messageSelected);
 		myEditSelectedButton.setEnabled(messageSelected);
 	}
@@ -402,7 +399,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		public int getRowCount() {
 			return myConnection.getRecentActivity().size();
 		}
-		
+
 		public Object getValueAt(int theRowIndex, int theColumnIndex) {
 			ActivityBase activity = myConnection.getRecentActivity().get(theRowIndex);
 
@@ -445,72 +442,69 @@ public class ActivityTable extends JPanel implements IDestroyable {
 		return myActivityTableModel;
 	}
 
-//	public class MyVerticalScrollbarModel extends DefaultBoundedRangeModel implements BoundedRangeModel {
-//
-//		@Override
-//		public void setRangeProperties(int theNewValue, int theNewExtent, int theNewMin, int theNewMax, boolean theAdjusting) {
-//			super.setRangeProperties(theNewValue, theNewExtent, theNewMin, theNewMax, theAdjusting);
-//			
-//			int oldVal = getValue();
-//			int newVal = getMaximum();
-//	        newVal = Math.min(newVal, Integer.MAX_VALUE - getExtent());
-//
-//	        newVal = Math.max(newVal, getMinimum());
-//	        if (newVal + getExtent() > getMaximum()) {
-//	            newVal = getMaximum() - getExtent(); 
-//	        }
-//
-//			if (oldVal != newVal) {
-//				ourLog.info("Changing scrollbar max from {} to {}", oldVal, newVal);
-//				setValue(getMaximum());
-//			}
-//		}
-//
-//		@Override
-//		public void setMaximum(int theN) {
-//			super.setMaximum(theN);
-//
-//			int oldVal = getValue();
-//			int newVal = getMaximum();
-//			
-//			if (oldVal != newVal) {
-//				ourLog.info("Changing scrollbar max/max from {} to {}", oldVal, newVal);
-//				setValue(getMaximum());
-//			}
-//		}
-//		
-//		 public void setValue(int n) {
-//		        n = Math.min(n, Integer.MAX_VALUE - getExtent());
-//
-//		        int newValue = Math.max(n, getMinimum());
-//		        if (newValue + getExtent() > getMaximum()) {
-//		            newValue = getMaximum() - getExtent(); 
-//		        }
-//		        
-//				ourLog.info("Changing scrollbarval to {}", newValue);
-//
-//		        super.setRangeProperties(newValue, getExtent(), getMinimum(), getMaximum(), getValueIsAdjusting());
-//		    }
-//
-//	}
+	// public class MyVerticalScrollbarModel extends DefaultBoundedRangeModel implements BoundedRangeModel {
+	//
+	// @Override
+	// public void setRangeProperties(int theNewValue, int theNewExtent, int theNewMin, int theNewMax, boolean theAdjusting) {
+	// super.setRangeProperties(theNewValue, theNewExtent, theNewMin, theNewMax, theAdjusting);
+	//
+	// int oldVal = getValue();
+	// int newVal = getMaximum();
+	// newVal = Math.min(newVal, Integer.MAX_VALUE - getExtent());
+	//
+	// newVal = Math.max(newVal, getMinimum());
+	// if (newVal + getExtent() > getMaximum()) {
+	// newVal = getMaximum() - getExtent();
+	// }
+	//
+	// if (oldVal != newVal) {
+	// ourLog.info("Changing scrollbar max from {} to {}", oldVal, newVal);
+	// setValue(getMaximum());
+	// }
+	// }
+	//
+	// @Override
+	// public void setMaximum(int theN) {
+	// super.setMaximum(theN);
+	//
+	// int oldVal = getValue();
+	// int newVal = getMaximum();
+	//
+	// if (oldVal != newVal) {
+	// ourLog.info("Changing scrollbar max/max from {} to {}", oldVal, newVal);
+	// setValue(getMaximum());
+	// }
+	// }
+	//
+	// public void setValue(int n) {
+	// n = Math.min(n, Integer.MAX_VALUE - getExtent());
+	//
+	// int newValue = Math.max(n, getMinimum());
+	// if (newValue + getExtent() > getMaximum()) {
+	// newValue = getMaximum() - getExtent();
+	// }
+	//
+	// ourLog.info("Changing scrollbarval to {}", newValue);
+	//
+	// super.setRangeProperties(newValue, getExtent(), getMinimum(), getMaximum(), getValueIsAdjusting());
+	// }
+	//
+	// }
 
 	public ISendProgressCallback provideTransmissionCallback() {
 		return new ISendProgressCallback() {
-			
+
 			private LinkedList<Integer> myValues = new LinkedList<Integer>();
-			
-			@Override
+
 			public void activityStopped() {
 				setProgressIndicatorsEnabled(false);
 			}
-			
-			@Override
+
 			public void activityStarted() {
 				setProgressIndicatorsEnabled(true);
 				myTransmissionCancelled = false;
 			}
-			
-			@Override
+
 			public void progressUpdate(double theProgress) throws OperationCancelRequestedException {
 				setProgress(theProgress);
 				if (myTransmissionCancelled) {
@@ -518,8 +512,7 @@ public class ActivityTable extends JPanel implements IDestroyable {
 				}
 			}
 
-			@Override
-            public void updateAvgThroughputPerSecond(int theThroughput) {
+			public void updateAvgThroughputPerSecond(int theThroughput) {
 				myValues.add(theThroughput);
 				while (myValues.size() > 100) {
 					myValues.pop();
@@ -527,25 +520,24 @@ public class ActivityTable extends JPanel implements IDestroyable {
 				ourLog.info("Throughput values: {}", myValues);
 				mySendThroughputGraph.setText(theThroughput + " msgs/sec");
 				mySendThroughputGraph.setValues(myValues);
-            }
+			}
 
-			@Override
-            public void updateAvgResponseTimeMillis(int theMillis) {
-	            // TODO Auto-generated method stub
-	            
-            }
+			public void updateAvgResponseTimeMillis(int theMillis) {
+				// TODO Auto-generated method stub
+
+			}
 		};
 	}
-	
+
 	public void setProgressIndicatorsEnabled(boolean theEnabled) {
 		myStop.setEnabled(theEnabled);
 		myStop.setVisible(theEnabled);
 		myProgressBar.setEnabled(theEnabled);
 		myProgressBar.setVisible(theEnabled);
 	}
-	
+
 	public void setProgress(double theProgress) {
-		myProgressBar.setValue(Math.max(0, Math.min(100, (int)(theProgress * 100))));
+		myProgressBar.setValue(Math.max(0, Math.min(100, (int) (theProgress * 100))));
 	}
-	
+
 }

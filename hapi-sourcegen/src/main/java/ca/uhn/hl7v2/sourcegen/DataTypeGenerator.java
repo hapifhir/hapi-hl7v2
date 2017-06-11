@@ -306,6 +306,13 @@ public class DataTypeGenerator extends Object {
         
             StringWriter out = new StringWriter();
 
+            for (int i = 0; i < componentDefs.length; i++) {
+            	if (componentDefs[i].getType().equals(dataType)) {
+                  log.warn("Datatype {} has a component child also of type {}! Can not recurse like this", dataType, dataType);
+                  componentDefs[i].setType("ST");	
+            	}
+            }
+            
             for (int i = 0; i < dataTypes.length; i++) {
                if (dataTypes[i].equals(dataType)) {
                   log.warn("Datatype {} has a child also of type {}! Can not recurse like this", dataType, dataType);

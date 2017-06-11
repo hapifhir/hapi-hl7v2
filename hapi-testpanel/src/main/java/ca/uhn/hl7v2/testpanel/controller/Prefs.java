@@ -725,7 +725,6 @@ public class Prefs {
 	private void sync() {
 
 		Runnable r = new Runnable() {
-			@Override
 			public void run() {
 				StringWriter writer = new StringWriter();
 				try {

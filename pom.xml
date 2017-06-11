@@ -214,6 +214,7 @@
 					<version>2.10.4</version>
 					<configuration>
 						<failOnError>false</failOnError>
+						<additionalparam>-Xdoclint:none</additionalparam>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -529,10 +530,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-                <module>hapi-structures-v27</module>
-                <module>hapi-structures-v271</module>
-                <module>hapi-structures-v28</module>
-                <module>hapi-structures-v281</module>
+            <module>hapi-structures-v27</module>
+				<!--<module>hapi-structures-v271</module>-->
+            <module>hapi-structures-v28</module>
+            <module>hapi-structures-v281</module>
 			</modules>
 		</profile>
 		<profile>
@@ -578,10 +579,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-                <module>hapi-structures-v27</module>
-                <module>hapi-structures-v271</module>
-                <module>hapi-structures-v28</module>
-                <module>hapi-structures-v281</module>
+            <module>hapi-structures-v27</module>
+				<!--<module>hapi-structures-v271</module>-->
+            <module>hapi-structures-v28</module>
+            <module>hapi-structures-v281</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-examples</module>
@@ -644,10 +645,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-                <module>hapi-structures-v27</module>
-                <module>hapi-structures-v271</module>
-                <module>hapi-structures-v28</module>
-                <module>hapi-structures-v281</module>
+            <module>hapi-structures-v27</module>
+				<!--<module>hapi-structures-v271</module>-->
+            <module>hapi-structures-v28</module>
+            <module>hapi-structures-v281</module>
 				<module>hapi-osgi-base</module>
 				<module>hapi-testpanel</module>
 				<module>hapi-hl7overhttp</module>
@@ -696,9 +697,9 @@
 			<id>ALLMODULES</id>
 			<modules>
 				<module>hapi-base</module>
-				<!--<module>hapi-examples</module>
+				<module>hapi-examples</module>
 				<module>hapi-test</module>
-				<module>hapi-testmindeps</module>-->
+				<module>hapi-testmindeps</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
@@ -709,7 +710,7 @@
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
 				<module>hapi-structures-v27</module>
-				<module>hapi-structures-v271</module>
+				<!--<module>hapi-structures-v271</module>-->
 				<module>hapi-structures-v28</module>
 				<module>hapi-structures-v281</module>
 				<module>hapi-hl7overhttp</module>

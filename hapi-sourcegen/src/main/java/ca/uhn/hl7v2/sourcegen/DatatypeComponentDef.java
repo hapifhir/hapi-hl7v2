@@ -25,4 +25,5 @@ public class DatatypeComponentDef extends DatatypeDef {
         return SourceGenerator.makeAlternateAccessorName(getName(), parentType, indexWithinParent + 1);
     }
 
+
 }

@@ -364,7 +364,6 @@ public class ConformanceEditorPanel {
 		btnImport.setBorderPainted(false);
 		btnImport.setIcon(new ImageIcon(ConformanceEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/open.png")));
 		btnImport.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				myController.importProfileGroup();
 			}

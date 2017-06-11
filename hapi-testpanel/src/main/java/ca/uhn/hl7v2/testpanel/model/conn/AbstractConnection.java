@@ -217,7 +217,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	SocketFactory getSocketFactory() {
 		return new SocketFactory() {
 
-			@Override
 			public Socket createTlsSocket() throws IOException {
 				try {
 					if (getTransport() == TransportStyleEnum.HL7_OVER_HTTP && getTlsKeystore() != null) {
@@ -229,7 +228,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 				return SSLSocketFactory.getDefault().createSocket();
 			}
 
-			@Override
 			public ServerSocket createTlsServerSocket() throws IOException {
 				try {
 					if (getTransport() == TransportStyleEnum.HL7_OVER_HTTP && getHohSignatureKeystore_() != null) {
@@ -248,17 +246,14 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 				return sf;
 			}
 
-			@Override
 			public Socket createSocket() throws IOException {
 				return javax.net.SocketFactory.getDefault().createSocket();
 			}
 
-			@Override
 			public ServerSocket createServerSocket() throws IOException {
 				return ServerSocketFactory.getDefault().createServerSocket();
 			}
 
-			@Override
 			public void configureNewAcceptedSocket(Socket theSocket) throws SocketException {
 				// nothing
 			}
@@ -309,7 +304,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 
 	protected void addActivityInSwingThread(final ActivityBase theActivity) {
 		SwingUtilities.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				addActivity(theActivity);
 			}
@@ -979,7 +973,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 		final WorkingStatusBean oldValue = myHohSignatureKeystoreStatus;
 		myHohSignatureKeystoreStatus = theStatusBean;
 		EventQueue.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				firePropertyChange(HOH_SIGNATURE_KEYSTORE_STATUS, oldValue, theStatusBean);
 			}
@@ -1110,7 +1103,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 		final WorkingStatusBean oldValue = myTlsKeystoreStatus;
 		myTlsKeystoreStatus = theStatusBean;
 		EventQueue.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				firePropertyChange(TLS_KEYSTORE_STATUS, oldValue, theStatusBean);
 			}
@@ -1152,7 +1144,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	private final class CheckHohSecurityKeystoreRunnable implements Runnable {
-		@Override
 		public void run() {
 			try {
 				Thread.sleep(500);
@@ -1188,7 +1179,6 @@ public abstract class AbstractConnection extends AbstractModelClass implements I
 	}
 
 	private final class CheckHohSignatureKeystoreRunnable implements Runnable {
-		@Override
 		public void run() {
 
 			if (!isHohSignatureEnabled()) {

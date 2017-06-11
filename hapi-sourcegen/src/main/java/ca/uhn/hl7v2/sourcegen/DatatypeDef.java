@@ -35,6 +35,11 @@ public class DatatypeDef {
     public String getType() {
         return type;
     }
+    
+ 	public void setType(String theType) {
+ 		this.type = theType;
+	}
+
 
     public String getName() {
         return name;

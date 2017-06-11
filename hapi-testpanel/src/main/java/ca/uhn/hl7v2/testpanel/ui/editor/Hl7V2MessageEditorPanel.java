@@ -388,7 +388,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mytoolBar.add(mySendOptionsButton);
 		mySendOptionsButton.addActionListener(new ActionListener() {
 
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				if (mySendOptionsPopupDialog != null) {
 					mySendOptionsPopupDialog.doHide();
@@ -587,7 +586,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				removeMostHighlights();
 				if (!myDisableCaretUpdateHandling) {
 					myController.invokeInBackground(new Runnable() {
-						@Override
 						public void run() {
 							myMessage.setHighlitedPathBasedOnRange(new Range(theE.getDot(), theE.getMark()));
 							myTreePanel.repaint();

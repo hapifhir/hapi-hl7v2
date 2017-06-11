@@ -275,7 +275,6 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 		public void run() {
 
 			EventQueue.invokeLater(new Runnable() {
-				@Override
 				public void run() {
 					myTransmissionCallback.activityStarted();
 				}
@@ -303,7 +302,6 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 
 			} finally {
 				EventQueue.invokeLater(new Runnable() {
-					@Override
 					public void run() {
 						myTransmissionCallback.activityStopped();
 					}
@@ -453,7 +451,6 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 	        final int avgSendTimeF = (int) avgSendTime;
 	        final int throughputPerSecondF = (int) throughputPerSecond;
 	        EventQueue.invokeLater(new Runnable() {
-	        	@Override
 	        	public void run() {
 	        		myTransmissionCallback.updateAvgResponseTimeMillis(avgSendTimeF);
 	        		myTransmissionCallback.updateAvgThroughputPerSecond(throughputPerSecondF);
@@ -461,7 +458,6 @@ public class OutboundConnection extends AbstractConnection implements IDestroyab
 	        });
 	        
 	        EventQueue.invokeLater(new Runnable() {
-	        	@Override
 	        	public void run() {
 	        		try {
 	        			myTransmissionCallback.progressUpdate(complete);

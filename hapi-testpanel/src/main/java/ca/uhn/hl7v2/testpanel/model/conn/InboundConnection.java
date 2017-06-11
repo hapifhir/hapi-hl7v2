@@ -269,7 +269,6 @@ public class InboundConnection extends AbstractConnection {
 				addActivity(new ActivityOutgoingMessage(new Date(), getEncoding(), myParser.encode(response), EncodingCharacters.getInstance(response)));
 
 				SwingUtilities.invokeLater(new Runnable() {
-					@Override
 					public void run() {
 						addNewMessage();
 					}

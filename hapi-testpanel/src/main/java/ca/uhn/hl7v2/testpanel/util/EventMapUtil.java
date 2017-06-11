@@ -23,27 +23,22 @@ public class EventMapUtil {
 
 	private static class MyMCF extends AbstractModelClassFactory {
 
-		@Override
 		public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean theIsExplicit) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
 		public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
 		public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
 		public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
 		public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}

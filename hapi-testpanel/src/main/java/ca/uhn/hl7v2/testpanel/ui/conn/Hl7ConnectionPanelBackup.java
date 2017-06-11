@@ -703,7 +703,6 @@ public class Hl7ConnectionPanelBackup extends JPanel implements IDestroyable {
 		
 		myHohAuthEnabledCheckbox = new JCheckBox("Enabled");
 		myHohAuthEnabledCheckbox.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent theE) {
 				myConnection.setHohAuthenticationEnabled(myHohAuthEnabledCheckbox.isSelected());
 			}
@@ -1097,7 +1096,6 @@ public class Hl7ConnectionPanelBackup extends JPanel implements IDestroyable {
 	}
 
 	private final class CheckHohSecurityKeystoreRunnable implements Runnable {
-		@Override
 		public void run() {
 			try {
 				Thread.sleep(500);

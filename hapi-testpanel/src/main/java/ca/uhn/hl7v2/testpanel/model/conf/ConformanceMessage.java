@@ -324,7 +324,6 @@ public class ConformanceMessage extends AbstractMessage implements ConformanceSt
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
 		public String getMessageStructureForEvent(String theEventName, Version theVersion) throws HL7Exception {
 			throw new UnsupportedOperationException();
 		}

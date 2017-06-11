@@ -38,19 +38,16 @@ public class BulkHl7V2ComparisonTest {
 
 		cmp.addComparisonListener(new IComparisonListener() {
 			
-			@Override
 			public void success(Hl7V2MessageCompare theComparison) {
 				// ignore
 			}
 			
 			
-			@Override
 			public void progressLog(String theMsgLine) {
 				ourLog.info(theMsgLine);
 			}
 			
 			
-			@Override
 			public void failure(Hl7V2MessageCompare theComparison) {
 				if (theComparison.describeDifference().contains("ST")) {
 					Assert.fail(theComparison.describeDifference());

@@ -310,7 +310,6 @@ public class Hl7V2FileSortDialog extends JDialog {
 	public void addMessage(String theMsg) {
 		myOutputListModel.add(theMsg);
 		EventQueue.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				myOutputScrollPane.getVerticalScrollBar().setValue(myOutputScrollPane.getVerticalScrollBar().getMaximum());
 			}
@@ -362,33 +361,27 @@ public class Hl7V2FileSortDialog extends JDialog {
 	public IProgressCallback provideProgressCallback() {
 		return new IProgressCallback() {
 
-			@Override
 			public void activityStarted() {
 				myRunning = true;
 				myCancelled = false;
 				EventQueue.invokeLater(new Runnable() {
-					@Override
 					public void run() {
 						updateButtonStates();
 					}
 				});
 			}
 
-			@Override
 			public void activityStopped() {
 				myRunning = false;
 				EventQueue.invokeLater(new Runnable() {
-					@Override
 					public void run() {
 						updateButtonStates();
 					}
 				});
 			}
 
-			@Override
 			public void progressUpdate(final double theProgress) throws OperationCancelRequestedException {
 				EventQueue.invokeLater(new Runnable() {
-					@Override
 					public void run() {
 						myProgressBar.setValue((int) (myProgressBar.getMaximum() * theProgress));
 					}

@@ -129,12 +129,10 @@ public class SendOptionsPopupDialog extends JDialog {
 
 		addWindowFocusListener(new WindowFocusListener() {
 
-			@Override
 			public void windowGainedFocus(WindowEvent theE) {
 				ourLog.info("Focus gained");
 			}
 
-			@Override
 			public void windowLostFocus(WindowEvent theE) {
 				ourLog.info("Focus lost");
 				SendOptionsPopupDialog.this.setVisible(false);

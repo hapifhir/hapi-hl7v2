@@ -744,7 +744,6 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		} // if-else
 
 		EventQueue.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				firePropertyChange(PROP_HIGHLITED_PATH, oldValue, myHighlitedPath);
 				updateMessageDescription();

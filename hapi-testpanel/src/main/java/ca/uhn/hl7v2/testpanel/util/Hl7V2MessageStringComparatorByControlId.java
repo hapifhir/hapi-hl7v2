@@ -12,7 +12,6 @@ import ca.uhn.hl7v2.util.Terser;
 public class Hl7V2MessageStringComparatorByControlId implements Comparator<String> {
 	private static final PipeParser ourParser = PipeParser.getInstanceWithNoValidation();
 
-	@Override
 	public int compare(String theS1, String theS2) {
 
 		if (theS1 == null && theS2 == null) {
