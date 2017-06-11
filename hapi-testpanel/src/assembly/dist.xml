@@ -2,9 +2,11 @@
 <assembly xmlns="urn:assembly" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:assembly http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
-    <id>linux</id>
+    <id>dist</id>
     
     <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
         <format>tar.bz2</format>
     </formats>
 
@@ -22,6 +24,7 @@
             <directory>${project.basedir}/target/classes</directory>
             <includes>
                 <include>testpanel.sh</include>
+                <include>testpanel.bar</include>
             </includes>
             <outputDirectory></outputDirectory>
             <fileMode>0777</fileMode>

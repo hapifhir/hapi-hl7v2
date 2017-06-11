@@ -280,7 +280,7 @@
 	</reporting>
 	<profiles>
 		<profile>
-			<id>BUNDLE</id>
+			<id>DIST</id>
 			<build>
 				<plugins>
 					<!-- Assembly -->
@@ -312,7 +312,7 @@
 								</goals>
 								<configuration>
 									<descriptors>
-										<descriptor>src/assembly/linux.xml</descriptor>
+										<descriptor>src/assembly/dist.xml</descriptor>
 									</descriptors>
 								</configuration>
 							</execution>
