@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.util;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.File;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.io.FileNotFoundException;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.io.FileReader;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.FileWriter;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.io.IOException;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>import org.slf4j.Logger;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.slf4j.LoggerFactory;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>/**<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * &lt;p&gt;<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * Creates unique message IDs.  IDs are stored in a file called {@link Home#getHomeDirectory() hapi.home}/id_file for persistence<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * across JVM sessions.  Note that if one day you run the JVM with a new working directory,<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * you must move or copy id_file into this directory so that new ID numbers will begin<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * with the last one used, rather than starting over again.<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * &lt;/p&gt;<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * &lt;p&gt;<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * Note that as of HAPI 2.0, by default this class will not fail even if the id_file can<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * not be read/written. In this case, HAPI will try to fail gracefully by simply generating<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * a numeric sequence starting at zero. This behaviour can be overwritten using <a name="line.24"></a>
+<span class="sourceLineNo">025</span> * {@link #NEVER_FAIL_PROPERTY}<a name="line.25"></a>
+<span class="sourceLineNo">026</span> * &lt;/p&gt;<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * Note: you should not use this class directory, but use the {@link IDGeneratorFactory} instead. <a name="line.27"></a>
+<span class="sourceLineNo">028</span> * Also consider using {@link FileBasedHiLoGenerator} which provides better performance<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * <a name="line.29"></a>
+<span class="sourceLineNo">030</span> * <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * @author Neal Acharya<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * @deprecated use one of the IDGenerator implementations<a name="line.32"></a>
+<span class="sourceLineNo">033</span> */<a name="line.33"></a>
+<span class="sourceLineNo">034</span>public class MessageIDGenerator {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>    <a name="line.35"></a>
+<span class="sourceLineNo">036</span>        private static final Logger ourLog = LoggerFactory.getLogger(MessageIDGenerator.class.getName());<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    private static MessageIDGenerator messageIdGenerator;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>    <a name="line.38"></a>
+<span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * Contains the complete path to the default ID file, which is a plain text file containing<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * the number corresponding to the last generated ID<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    public final static String DEFAULT_ID_FILE = Home.getHomeDirectory().getAbsolutePath() + "/id_file";<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    <a name="line.44"></a>
+<span class="sourceLineNo">045</span>    /**<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * System property key which indicates that this class should never fail. If this<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     * system property is set to false (default is true), as in the following code:&lt;br&gt;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>     * &lt;code&gt;System.setProperty(MessageIDGenerator.NEVER_FAIL_PROPERTY, Boolean.FALSE.toString());&lt;/code&gt;&lt;br&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * this class will fail if the underlying disk file can not be<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * read or written. This means you are roughly guaranteed a unique<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * ID number between JVM sessions (barring the file getting lost or corrupted). <a name="line.51"></a>
+<span class="sourceLineNo">052</span>     */<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    public static final String NEVER_FAIL_PROPERTY = MessageIDGenerator.class.getName() + "_NEVER_FAIL_PROPERTY";<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    <a name="line.54"></a>
+<span class="sourceLineNo">055</span>    private long id;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private FileWriter fileW;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    <a name="line.57"></a>
+<span class="sourceLineNo">058</span>    /**<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * Constructor<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * Creates an instance of the class<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * Its reads an id (longint#) from an external file, if one is not present then the external file<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     * is created and initialized to zero.<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * This id is stored into the private field of id.<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     */<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private  MessageIDGenerator() throws IOException {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        initialize();<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    }//end constructor code<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    <a name="line.69"></a>
+<span class="sourceLineNo">070</span>        /**<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         * Force the generator to re-load the ID file and initialize itself.<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         * <a name="line.72"></a>
+<span class="sourceLineNo">073</span>         * This method is mostly provided as a convenience to unit tests, and does<a name="line.73"></a>
+<span class="sourceLineNo">074</span>         * not normally need to be called.<a name="line.74"></a>
+<span class="sourceLineNo">075</span>         */<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    void initialize() throws IOException {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        id = 0;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        <a name="line.78"></a>
+<span class="sourceLineNo">079</span>                /*check external file for the last value unique id value generated by<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        this class*/<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        try{<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            // We should check to see if the external file for storing the unique ids exists<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            File extFile = new File(DEFAULT_ID_FILE);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            if (extFile.createNewFile()== true){<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                /*there was no existing file so a new one has been created with createNewFile method.  The<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                file is stored at  &lt;hapi.home&gt;/id_file.txt */<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                // We can simply initialize the private id field to zero<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                id = 0;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                <a name="line.89"></a>
+<span class="sourceLineNo">090</span>            }//end if<a name="line.90"></a>
+<span class="sourceLineNo">091</span>            else{<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                /*The file does exist which is why we received false from the<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                createNewFile method. We should now try to read from this file*/<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                FileReader fileR = new FileReader(DEFAULT_ID_FILE);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                char[] charArray = new char[100];<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                int e = fileR.read(charArray);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                if (e &lt;= 0){<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                    /*We know the file exists but it has no value stored in it. So at this point we can simply initialize the<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                    private id field to zero*/<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                    id = 0;<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                }//end if<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                else{<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                    /* Here we know that the file exists and has a stored value. we should read this value and set the<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                    private id field to it*/<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                    String idStr = String.valueOf(charArray);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                    String idStrTrim = idStr.trim();<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                    <a name="line.107"></a>
+<span class="sourceLineNo">108</span>                    try {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                        id = Long.parseLong(idStrTrim);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                    } catch (NumberFormatException nfe) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                        ourLog.warn("Failed to parse message ID file value \"" + idStrTrim + "\". Defaulting to 0.");<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                    }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                    <a name="line.113"></a>
+<span class="sourceLineNo">114</span>                }//end else<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                //Fix for bug 1100881:  Close the file after writing.<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                fileR.close();<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            }//end else<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        } catch (FileNotFoundException e) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            ourLog.error("Failed to locate message ID file. Message was: {}", e.getMessage());<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        } catch (IOException e) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                        ourLog.warn("Could not retrieve message ID file, going to default to ID of 0. Message was: {}", e.getMessage());<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                        id = 0;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                        return;<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                } else {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                        throw e;<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    <a name="line.130"></a>
+<span class="sourceLineNo">131</span>    /**<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * Synchronized method used to return the single (static) instance of the class<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     */<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    public static synchronized MessageIDGenerator getInstance() throws IOException {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        if (messageIdGenerator == null)<a name="line.135"></a>
+<span class="sourceLineNo">136</span>            messageIdGenerator = new MessageIDGenerator();<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        return messageIdGenerator;<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    }//end method<a name="line.138"></a>
+<span class="sourceLineNo">139</span>    <a name="line.139"></a>
+<span class="sourceLineNo">140</span>    /**<a name="line.140"></a>
+<span class="sourceLineNo">141</span>     * Synchronized method used to return the incremented id value<a name="line.141"></a>
+<span class="sourceLineNo">142</span>     */<a name="line.142"></a>
+<span class="sourceLineNo">143</span>    public synchronized String getNewID() throws IOException{<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        try {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                //increment the private field<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                id = id + 1;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                //write the id value to the file<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                String idStr = String.valueOf(id);<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>                //create an instance of the Filewriter Object pointing to "C:\\extfiles\\Idfile.txt"<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                fileW = new FileWriter(DEFAULT_ID_FILE, false);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                fileW.write(idStr);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                fileW.flush();<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                fileW.close();<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        } catch (FileNotFoundException e) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                        ourLog.info("Failed to create message ID file. Message was: {}", e.getMessage());<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                        fileW = null;<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        } catch (IOException e) {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                        ourLog.debug("Failed to create message ID file. Message was: {}", e.getMessage());<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                        fileW = null;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                } else {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                        throw e;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                }<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        }<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        return String.valueOf(id);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>    }//end method<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    <a name="line.170"></a>
+<span class="sourceLineNo">171</span>}<a name="line.171"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

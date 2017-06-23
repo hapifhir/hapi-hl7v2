@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span>The contents of this file are subject to the Mozilla Public License Version 1.1 <a name="line.2"></a>
+<span class="sourceLineNo">003</span>(the "License"); you may not use this file except in compliance with the License. <a name="line.3"></a>
+<span class="sourceLineNo">004</span>You may obtain a copy of the License at http://www.mozilla.org/MPL/ <a name="line.4"></a>
+<span class="sourceLineNo">005</span>Software distributed under the License is distributed on an "AS IS" basis, <a name="line.5"></a>
+<span class="sourceLineNo">006</span>WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the <a name="line.6"></a>
+<span class="sourceLineNo">007</span>specific language governing rights and limitations under the License. <a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>The Original Code is "ApplicationLoader.java".  Description: <a name="line.9"></a>
+<span class="sourceLineNo">010</span>"A utility for loading Application bindings from configuration files." <a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>The Initial Developer of the Original Code is University Health Network. Copyright (C) <a name="line.12"></a>
+<span class="sourceLineNo">013</span>2004.  All Rights Reserved. <a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>Contributor(s): ______________________________________. <a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>Alternatively, the contents of this file may be used under the terms of the <a name="line.17"></a>
+<span class="sourceLineNo">018</span>GNU General Public License (the "GPL"), in which case the provisions of the GPL are <a name="line.18"></a>
+<span class="sourceLineNo">019</span>applicable instead of those above.  If you wish to allow use of your version of this <a name="line.19"></a>
+<span class="sourceLineNo">020</span>file only under the terms of the GPL and not to allow others to use your version <a name="line.20"></a>
+<span class="sourceLineNo">021</span>of this file under the MPL, indicate your decision by deleting  the provisions above <a name="line.21"></a>
+<span class="sourceLineNo">022</span>and replace  them with the notice and other provisions required by the GPL License.  <a name="line.22"></a>
+<span class="sourceLineNo">023</span>If you do not delete the provisions above, a recipient may use your version of <a name="line.23"></a>
+<span class="sourceLineNo">024</span>this file under either the MPL or the GPL. <a name="line.24"></a>
+<span class="sourceLineNo">025</span>*/<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>package ca.uhn.hl7v2.protocol.impl;<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.io.BufferedReader;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.io.IOException;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.io.InputStreamReader;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.net.URL;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.util.NoSuchElementException;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import java.util.StringTokenizer;<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import ca.uhn.hl7v2.app.Application;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import ca.uhn.hl7v2.model.Message;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import ca.uhn.hl7v2.protocol.ApplicationRouter;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import ca.uhn.hl7v2.protocol.ReceivingApplication;<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>/**<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * A utility for loading &lt;code&gt;Application&lt;/code&gt; and &lt;code&gt;ReceivingApplication&lt;/code&gt; bindings<a name="line.43"></a>
+<span class="sourceLineNo">044</span> * from configuration files.  <a name="line.44"></a>
+<span class="sourceLineNo">045</span> *  <a name="line.45"></a>
+<span class="sourceLineNo">046</span> * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $<a name="line.47"></a>
+<span class="sourceLineNo">048</span> */<a name="line.48"></a>
+<span class="sourceLineNo">049</span>public class ApplicationLoader {<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    /**<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * &lt;p&gt;A convenience method for binding applications to an &lt;code&gt;ApplicationRouter&lt;/code&gt;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * Information about bindings is read from a file at a specified URL.  Each line in the <a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * file should have the following format (entries TAB delimited):&lt;/p&gt;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * <a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * &lt;p&gt;message_type &amp;#009; trigger_event &amp;#009; processing_id &amp;#009; version_id &amp;#009; app_class&lt;/p&gt;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * <a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * &lt;p&gt;Note that the first four fields can be the wildcard "*", which means any.&lt;/p&gt;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * <a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * &lt;p&gt;For example, if you write an Application called org.yourorganiztion.ADTProcessor<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * that processes several types of ADT messages, and another called <a name="line.61"></a>
+<span class="sourceLineNo">062</span>     * org.yourorganization.ResultProcessor that processes result messages, you might have a <a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * file that looks like this: &lt;/p&gt;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * <a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * &lt;p&gt;ADT &amp;#009; * &amp;#009; * &amp;#009; * &amp;#009; org.yourorganization.ADTProcessor&lt;br&gt;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * ORU &amp;#009; R01 &amp;#009; * &amp;#009; * &amp;#009; org.yourorganization.ResultProcessor&lt;/p&gt;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     * <a name="line.67"></a>
+<span class="sourceLineNo">068</span>     * &lt;p&gt;Each class listed in this file must implement either ca.uhn.hl7v2.app.Application or <a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * ca.uhn.hl7v2.protocol.ReceivingApplication, and must have a zero-argument constructor.&lt;/p&gt;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * <a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * @param theRouter the &lt;code&gt;ApplicationRouter&lt;/code&gt; on which to make the binding<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * @param theSource a URL pointing to the bindings file <a name="line.72"></a>
+<span class="sourceLineNo">073</span>     */<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    public static void loadApplications(ApplicationRouter theRouter, URL theSource)<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        throws IOException, HL7Exception, ClassNotFoundException, InstantiationException, IllegalAccessException {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        <a name="line.76"></a>
+<span class="sourceLineNo">077</span>        if (theSource == null) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            throw new HL7Exception("Can't load application bindings: the given URL is null");<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        }<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        <a name="line.80"></a>
+<span class="sourceLineNo">081</span>        BufferedReader in = new BufferedReader(new InputStreamReader(theSource.openStream()));<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        String line;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        while ((line = in.readLine()) != null) {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            //parse application registration information <a name="line.84"></a>
+<span class="sourceLineNo">085</span>            StringTokenizer tok = new StringTokenizer(line, "\t", false);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            String type, event, procId, verId, className;<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>            if (tok.hasMoreTokens()) { //skip blank lines <a name="line.88"></a>
+<span class="sourceLineNo">089</span>                try {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                    type = tok.nextToken();<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                    event = tok.nextToken();<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                    procId = tok.nextToken();<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                    verId = tok.nextToken();<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                    className = tok.nextToken();<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                }<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                catch (NoSuchElementException ne) {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                    throw new HL7Exception(<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        "Can't register applications from "<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                            + theSource.toExternalForm()<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                            + ". The line '"<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                            + line<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                            + "' is not of the form: message_type [tab] trigger_event " <a name="line.102"></a>
+<span class="sourceLineNo">103</span>                            + "[tab] processing ID [tab] version ID [tab] application_class. "<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                            + "*** NOTE TWO NEW FIELDS AS OF HAPI 0.5 ****. ");<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                }<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>                Class&lt;?&gt; appClass = Class.forName(className); //may throw ClassNotFoundException <a name="line.107"></a>
+<span class="sourceLineNo">108</span>                Object appObject = appClass.newInstance();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                ReceivingApplication&lt;? extends Message&gt; app;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                if (appObject instanceof ReceivingApplication) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                    app = (ReceivingApplication&lt;? extends Message&gt;) appObject;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                } else if (appObject instanceof Application) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                    app = new AppWrapper((Application) appObject);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                } else {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                    throw new HL7Exception(<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                            "The specified class, " + appClass.getName() + <a name="line.116"></a>
+<span class="sourceLineNo">117</span>                            ", doesn't implement Application or ReceivingApplication.");   <a name="line.117"></a>
+<span class="sourceLineNo">118</span>                }<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>                ApplicationRouter.AppRoutingData rd  <a name="line.120"></a>
+<span class="sourceLineNo">121</span>                    = new AppRoutingDataImpl(type, event, procId, verId);                    <a name="line.121"></a>
+<span class="sourceLineNo">122</span>                theRouter.bindApplication(rd, app);<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            }<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    }    <a name="line.125"></a>
+<span class="sourceLineNo">126</span>}<a name="line.126"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

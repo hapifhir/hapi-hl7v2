@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.hoh.sockets;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.IOException;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.io.InputStream;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.net.InetSocketAddress;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.net.ServerSocket;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.net.Socket;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.util.Arrays;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import javax.net.ssl.SSLHandshakeException;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import javax.net.ssl.SSLServerSocket;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import org.junit.Before;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.junit.Test;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.mortbay.jetty.Server;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.mortbay.jetty.security.SslSelectChannelConnector;<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>import static org.junit.Assert.assertEquals;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import static org.junit.Assert.fail;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>public class CustomCertificateTlsSocketFactoryTest {<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>        private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(CustomCertificateTlsSocketFactoryTest.class);<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>        private int myPort;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>        @Before<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        public void before() {<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                myPort = RandomServerPortProvider.findFreePort();<a name="line.29"></a>
+<span class="sourceLineNo">030</span>        }<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>        @Test<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        public void testConnectToNonTrustedSocket() throws IOException, InterruptedException {<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>                CustomCertificateTlsSocketFactory badServer = createTrustedServerSocketFactory();<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                Receiver receiver = new Receiver(badServer);<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                receiver.start();<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                Thread.sleep(500);<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span>                try {<a name="line.40"></a>
+<span class="sourceLineNo">041</span><a name="line.41"></a>
+<span class="sourceLineNo">042</span>                        CustomCertificateTlsSocketFactory goodClient = createNonTrustedClientSocketFactory();<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                        Socket client = goodClient.createClientSocket();<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                        client.connect(new InetSocketAddress("localhost", myPort));<a name="line.44"></a>
+<span class="sourceLineNo">045</span><a name="line.45"></a>
+<span class="sourceLineNo">046</span>                        client.getOutputStream().write("HELLO WORLD".getBytes());<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                        fail();<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>                } catch (SSLHandshakeException e) {<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>                }<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        }<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>        @Test<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        public void testConnectToTrustedSocket() throws IOException, InterruptedException {<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>                CustomCertificateTlsSocketFactory goodServer = createTrustedServerSocketFactory();<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                Receiver receiver = new Receiver(goodServer);<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                receiver.start();<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                Thread.sleep(500);<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>                CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                goodClient.setKeystoreFilename("src/test/resources/truststore.jks");<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                // goodClient.setKeystorePassphrase("changeit");<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                Socket client = goodClient.createClientSocket();<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                client.connect(new InetSocketAddress("localhost", myPort));<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>                client.getOutputStream().write("HELLO WORLD".getBytes());<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                client.close();<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>                Thread.sleep(500);<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                String expected = "HELLO WORLD";<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                String actual = receiver.myString;<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                assertEquals(expected, actual);<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>        }<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>        public static CustomCertificateTlsSocketFactory createNonTrustedClientSocketFactory() {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                goodClient.setKeystoreFilename("src/test/resources/truststore2.jks");<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                goodClient.setKeystorePassphrase("trustpassword");<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                return goodClient;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>        public static StandardSocketFactory createNonSslServerSocketFactory() {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                StandardSocketFactory goodClient = new StandardSocketFactory();<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                return goodClient;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        <a name="line.89"></a>
+<span class="sourceLineNo">090</span>        public static CustomCertificateTlsSocketFactory createTrustedClientSocketFactory() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                goodClient.setKeystoreFilename("src/test/resources/truststore.jks");<a name="line.92"></a>
+<span class="sourceLineNo">093</span>//              goodClient.setKeystorePassphrase("trustpassword");<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                return goodClient;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        }<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>        public static CustomCertificateTlsSocketFactory createTrustedServerSocketFactory() {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                CustomCertificateTlsSocketFactory goodServer = new CustomCertificateTlsSocketFactory();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                goodServer.setKeystoreFilename("src/test/resources/keystore.jks");<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                goodServer.setKeystorePassphrase("changeit");<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                return goodServer;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        }<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>        public static void main(String[] args) throws Exception {<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>                Server s = new Server();<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>                SslSelectChannelConnector ssl = new SslSelectChannelConnector();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                ssl.setKeystore("src/test/resources/keystore.jks");<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                ssl.setPassword("changeit");<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                ssl.setKeyPassword("changeit");<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                ssl.setPort(60647);<a name="line.112"></a>
+<span class="sourceLineNo">113</span><a name="line.113"></a>
+<span class="sourceLineNo">114</span>                s.addConnector(ssl);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                s.start();<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        }<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>        private class Receiver extends Thread {<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>                private ISocketFactory myFactory;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                private ServerSocket myServer;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                private String myString;<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>                public Receiver(ISocketFactory theFactory) {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                        myFactory = theFactory;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>                @Override<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                public void run() {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                        try {<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>                                ourLog.info("Listening on port {}", myPort);<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>                                myServer = myFactory.createServerSocket();<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                                myServer.bind(new InetSocketAddress(myPort));<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                                myServer.setSoTimeout(3000);<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>                                if (myServer instanceof SSLServerSocket) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                                        SSLServerSocket ss = (SSLServerSocket) myServer;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                                        ourLog.info(Arrays.asList(ss.getEnabledCipherSuites()).toString());<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                                }<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                                <a name="line.142"></a>
+<span class="sourceLineNo">143</span>                                Socket socket = myServer.accept();<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                                socket.setSoTimeout(2000);<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>                                InputStream is = socket.getInputStream();<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                                StringBuilder b = new StringBuilder();<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                                for (;;) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                        int next = is.read();<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                                        if (next == -1) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                                                break;<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                        } else {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                                                b.append((char) next);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                                                ourLog.info("Received: " + b);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                                        }<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                                }<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>                                myString = b.toString();<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                        } catch (Throwable e) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                                ourLog.error("Failed", e);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                                fail(e.getMessage());<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                        } finally {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                                if (myServer != null) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                                        try {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                                                myServer.close();<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                                        } catch (Exception e) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                                                e.printStackTrace();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                                        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                                }<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>        }<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>}<a name="line.175"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

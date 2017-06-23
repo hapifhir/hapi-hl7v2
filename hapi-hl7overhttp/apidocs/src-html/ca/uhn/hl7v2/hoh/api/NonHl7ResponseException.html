@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.hoh.api;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>public class NonHl7ResponseException extends DecodeException {<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>        private String myContentType;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>        private String myResponseBody;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>        public NonHl7ResponseException(String theMessage, String theContentType, String theResponseBody) {<a name="line.8"></a>
+<span class="sourceLineNo">009</span>                super(theMessage);<a name="line.9"></a>
+<span class="sourceLineNo">010</span>                myContentType = theContentType;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>                myResponseBody = theResponseBody;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>        }<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>        /**<a name="line.14"></a>
+<span class="sourceLineNo">015</span>         * @return the contentType<a name="line.15"></a>
+<span class="sourceLineNo">016</span>         */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>        public String getContentType() {<a name="line.17"></a>
+<span class="sourceLineNo">018</span>                return myContentType;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>        }<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>        /**<a name="line.21"></a>
+<span class="sourceLineNo">022</span>         * @return the responseBody<a name="line.22"></a>
+<span class="sourceLineNo">023</span>         */<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        public String getResponseBody() {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>                return myResponseBody;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>        }<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>        private static final long serialVersionUID = 1L;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>}<a name="line.30"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

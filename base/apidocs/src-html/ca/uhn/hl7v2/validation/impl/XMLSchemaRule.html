@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span>The contents of this file are subject to the Mozilla Public License Version 1.1 <a name="line.2"></a>
+<span class="sourceLineNo">003</span>(the "License"); you may not use this file except in compliance with the License. <a name="line.3"></a>
+<span class="sourceLineNo">004</span>You may obtain a copy of the License at http://www.mozilla.org/MPL/ <a name="line.4"></a>
+<span class="sourceLineNo">005</span>Software distributed under the License is distributed on an "AS IS" basis, <a name="line.5"></a>
+<span class="sourceLineNo">006</span>WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the <a name="line.6"></a>
+<span class="sourceLineNo">007</span>specific language governing rights and limitations under the License. <a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>The Original Code is "XMLSchemaRule.java".  Description: <a name="line.9"></a>
+<span class="sourceLineNo">010</span>"Validate hl7 v2.xml messages against a given xml-schema." <a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>The Initial Developer of the Original Code is University Health Network. Copyright (C) <a name="line.12"></a>
+<span class="sourceLineNo">013</span>2004.  All Rights Reserved. <a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>Contributor(s): ______________________________________. <a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>Alternatively, the contents of this file may be used under the terms of the <a name="line.17"></a>
+<span class="sourceLineNo">018</span>GNU General Public License (the "GPL"), in which case the provisions of the GPL are <a name="line.18"></a>
+<span class="sourceLineNo">019</span>applicable instead of those above.  If you wish to allow use of your version of this <a name="line.19"></a>
+<span class="sourceLineNo">020</span>file only under the terms of the GPL and not to allow others to use your version <a name="line.20"></a>
+<span class="sourceLineNo">021</span>of this file under the MPL, indicate your decision by deleting  the provisions above <a name="line.21"></a>
+<span class="sourceLineNo">022</span>and replace  them with the notice and other provisions required by the GPL License.  <a name="line.22"></a>
+<span class="sourceLineNo">023</span>If you do not delete the provisions above, a recipient may use your version of <a name="line.23"></a>
+<span class="sourceLineNo">024</span>this file under either the MPL or the GPL. <a name="line.24"></a>
+<span class="sourceLineNo">025</span> */<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>package ca.uhn.hl7v2.validation.impl;<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>import java.io.File;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import java.io.IOException;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import java.util.ArrayList;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import java.util.List;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.util.Map;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.slf4j.Logger;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.slf4j.LoggerFactory;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.w3c.dom.DOMError;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import org.w3c.dom.DOMErrorHandler;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.w3c.dom.Document;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.w3c.dom.Element;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.w3c.dom.Node;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.w3c.dom.NodeList;<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>import ca.uhn.hl7v2.Version;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import ca.uhn.hl7v2.util.XMLUtils;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import ca.uhn.hl7v2.validation.ValidationException;<a name="line.46"></a>
+<span class="sourceLineNo">047</span><a name="line.47"></a>
+<span class="sourceLineNo">048</span>/**<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * Validates HL7 version 2 messages encoded according to the HL7 XML Encoding Syntax against XML<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * schemas provided by hl7.org.<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * &lt;p&gt;<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * The XML schema to validate against is determined as follows:<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * &lt;ul&gt;<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * &lt;li&gt;if the XML document contains a schemaLocation that points to a valid file, this file is<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * assumed to contain the schema definition<a name="line.55"></a>
+<span class="sourceLineNo">056</span> * &lt;li&gt;the location configured using {@link #setSchemaLocations(Map)}<a name="line.56"></a>
+<span class="sourceLineNo">057</span> * &lt;/ul&gt;<a name="line.57"></a>
+<span class="sourceLineNo">058</span> * &lt;p&gt;<a name="line.58"></a>
+<span class="sourceLineNo">059</span> * The validation fails, if<a name="line.59"></a>
+<span class="sourceLineNo">060</span> * &lt;ul&gt;<a name="line.60"></a>
+<span class="sourceLineNo">061</span> * &lt;li&gt;no valid schema file could be found<a name="line.61"></a>
+<span class="sourceLineNo">062</span> * &lt;li&gt;the default namespace of the XML document is not &lt;code&gt;urn:hl7-org:v2xml&lt;/code&gt;<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * &lt;li&gt;the document does not validate against the XML schema file foudn as described above<a name="line.63"></a>
+<span class="sourceLineNo">064</span> * &lt;/ul&gt;<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * <a name="line.65"></a>
+<span class="sourceLineNo">066</span> * @author Nico Vannieuwenhuyze<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * @author Christian Ohr<a name="line.67"></a>
+<span class="sourceLineNo">068</span> */<a name="line.68"></a>
+<span class="sourceLineNo">069</span>@SuppressWarnings("serial")<a name="line.69"></a>
+<span class="sourceLineNo">070</span>public class XMLSchemaRule extends AbstractEncodingRule {<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>        private static final String SECTION_REFERENCE = "http://www.hl7.org/Special/committees/xml/drafts/v2xml.html";<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        private static final String DESCRIPTION = "Checks that an encoded XML message validates against a declared or default schema "<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                        + "(it is recommended to use the standard HL7 schema, but this is not enforced here).";<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        private static final Logger log = LoggerFactory.getLogger(XMLSchemaRule.class);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        private static final String DEFAULT_NS = "urn:hl7-org:v2xml";<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>        private Map&lt;String, String&gt; locations;<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>        private static class ErrorHandler implements DOMErrorHandler {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                private List&lt;ValidationException&gt; validationErrors;<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>                public ErrorHandler(List&lt;ValidationException&gt; validationErrors) {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        super();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                        this.validationErrors = validationErrors;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                }<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>                public boolean handleError(DOMError error) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                        validationErrors.add(new ValidationException(getSeverity(error) + error.getMessage()));<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                        return true;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                }<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>                private String getSeverity(DOMError error) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        switch (error.getSeverity()) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        case DOMError.SEVERITY_WARNING:<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                return "WARNING: ";<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        case DOMError.SEVERITY_ERROR:<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                                return "ERROR: ";<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                        default:<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                return "FATAL ERROR: ";<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                }<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>        }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>        /**<a name="line.106"></a>
+<span class="sourceLineNo">107</span>         * Test/validate a given xml document against a hl7 v2.xml schema.<a name="line.107"></a>
+<span class="sourceLineNo">108</span>         * &lt;p&gt;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>         * Before the schema is applied, the namespace is verified because otherwise schema validation<a name="line.109"></a>
+<span class="sourceLineNo">110</span>         * fails anyway.<a name="line.110"></a>
+<span class="sourceLineNo">111</span>         * &lt;p&gt;<a name="line.111"></a>
+<span class="sourceLineNo">112</span>         * If a schema file is specified in the xml message and the file can be located on the disk this<a name="line.112"></a>
+<span class="sourceLineNo">113</span>         * one is used. If no schema has been specified, or the file can't be located, the locations<a name="line.113"></a>
+<span class="sourceLineNo">114</span>         * property is used.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>         * <a name="line.115"></a>
+<span class="sourceLineNo">116</span>         * @param msg the xml message (as string) to be validated.<a name="line.116"></a>
+<span class="sourceLineNo">117</span>         * @return ValidationException[] an array of validation exceptions, which is zero-sized when no<a name="line.117"></a>
+<span class="sourceLineNo">118</span>         *         validation errors occured.<a name="line.118"></a>
+<span class="sourceLineNo">119</span>         */<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        public ValidationException[] apply(String msg) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                List&lt;ValidationException&gt; validationErrors = new ArrayList&lt;ValidationException&gt;();<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                try {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                        // parse the incoming string into a dom document - no schema validation yet<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                        Document doc = XMLUtils.parse(msg);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                        if (hasCorrectNamespace(doc, validationErrors)) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                                XMLUtils.validate(doc, getSchemaLocation(doc), new ErrorHandler(validationErrors));<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                        }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                } catch (Exception e) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                        log.error("Unable to validate message: {}", e.getMessage(), e);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                        validationErrors.add(new ValidationException("Unable to validate message "<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                                        + e.getMessage(), e));<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>                return validationErrors.toArray(new ValidationException[validationErrors.size()]);<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>        /**<a name="line.138"></a>
+<span class="sourceLineNo">139</span>         * <a name="line.139"></a>
+<span class="sourceLineNo">140</span>         * Try to obtain the XML schema file (depending on message version), either as provided in<a name="line.140"></a>
+<span class="sourceLineNo">141</span>         * xsi:schemaLocation, or as provided in the locations property or in a subdirectory of the<a name="line.141"></a>
+<span class="sourceLineNo">142</span>         * current dir.<a name="line.142"></a>
+<span class="sourceLineNo">143</span>         * <a name="line.143"></a>
+<span class="sourceLineNo">144</span>         * @param doc the DOM document<a name="line.144"></a>
+<span class="sourceLineNo">145</span>         * @return the file name of the schema<a name="line.145"></a>
+<span class="sourceLineNo">146</span>         * @throws IOException<a name="line.146"></a>
+<span class="sourceLineNo">147</span>         */<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        private String getSchemaLocation(Document doc) throws IOException {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                String schemaFilename = extractSchemaLocation(doc);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                if (schemaFilename == null) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                        if ((schemaFilename = staticSchema(doc)) == null) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                throw new IOException(<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                                                "Unable to retrieve a valid schema to use for message validation");<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                        }<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                }<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                return schemaFilename;<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>        private String extractSchemaLocation(Document doc) {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                String schemaFileName = null;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                log.debug("Trying to retrieve the schema defined in the xml document");<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                Element element = doc.getDocumentElement();<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                String schemaLocation = element.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance",<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                                "schemaLocation");<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                if (schemaLocation.length() &gt; 0) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                        log.debug("Schema defined in document: {}", schemaLocation);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                        String schemaItems[] = schemaLocation.split(" ");<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                        if (schemaItems.length == 2) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                                File f = new File(schemaItems[1]);<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                                if (f.exists()) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                                        schemaFileName = schemaItems[1];<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                                        log.debug("Schema defined in document points to a valid file");<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                                } else {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                                        log.warn("Schema file defined in xml document not found on disk: {}",<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                                                        schemaItems[1]);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                                }<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                        }<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                } else {<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                        log.debug("No schema location defined in the xml document");<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                }<a name="line.181"></a>
+<span class="sourceLineNo">182</span><a name="line.182"></a>
+<span class="sourceLineNo">183</span>                return schemaFileName;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>        private String staticSchema(Document doc) {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                String schemaFilename = null;<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                log.debug("Lookup HL7 version in MSH-12 to know which default schema to use");<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                NodeList nodeList = doc.getElementsByTagNameNS(DEFAULT_NS, "VID.1");<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                if (nodeList.getLength() == 1) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                        Node versionNode = nodeList.item(0);<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                        Version version = Version.versionOf(versionNode.getFirstChild().getNodeValue());<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                        String schemaLocation = locations.get(version.getVersion());<a name="line.193"></a>
+<span class="sourceLineNo">194</span><a name="line.194"></a>
+<span class="sourceLineNo">195</span>                        // use the message structure as schema file name (root)<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                        schemaFilename = schemaLocation + "/" + doc.getDocumentElement().getNodeName() + ".xsd";<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                        File myFile = new File(schemaFilename);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                        if (myFile.exists()) {<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                                log.debug("Valid schema file present: {}", schemaFilename);<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                        } else {<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                                log.warn("Schema file not found on disk: {}", schemaFilename);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                                schemaFilename = null;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                        }<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                } else {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                        log.error("HL7 version node MSH-12 not present - unable to determine default schema");<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                }<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                return schemaFilename;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        }<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>        /**<a name="line.210"></a>
+<span class="sourceLineNo">211</span>         * @return &lt;code&gt;true&lt;/code&gt; if default namespace is set properly<a name="line.211"></a>
+<span class="sourceLineNo">212</span>         */<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        private boolean hasCorrectNamespace(Document domDocumentToValidate,<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                        List&lt;ValidationException&gt; validationErrors) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                String nsUri = domDocumentToValidate.getDocumentElement().getNamespaceURI();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                boolean ok = DEFAULT_NS.equals(nsUri);<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                if (!ok) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                        ValidationException e = new ValidationException(<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                                        "The default namespace of the XML document is incorrect - should be "<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                                                        + DEFAULT_NS + " but was " + nsUri);<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                        validationErrors.add(e);<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                        log.error(e.getMessage());<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                }<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                return ok;<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        }<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>        public void setSchemaLocations(Map&lt;String, String&gt; locations) {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                this.locations = locations;<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        }<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>        Map&lt;String, String&gt; getSchemaLocations() {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                return locations;<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        }<a name="line.233"></a>
+<span class="sourceLineNo">234</span><a name="line.234"></a>
+<span class="sourceLineNo">235</span>        /**<a name="line.235"></a>
+<span class="sourceLineNo">236</span>         * @see ca.uhn.hl7v2.validation.Rule#getDescription()<a name="line.236"></a>
+<span class="sourceLineNo">237</span>         */<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        public String getDescription() {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                return DESCRIPTION;<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        }<a name="line.240"></a>
+<span class="sourceLineNo">241</span><a name="line.241"></a>
+<span class="sourceLineNo">242</span>        /**<a name="line.242"></a>
+<span class="sourceLineNo">243</span>         * @see ca.uhn.hl7v2.validation.Rule#getSectionReference()<a name="line.243"></a>
+<span class="sourceLineNo">244</span>         */<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        public String getSectionReference() {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                return SECTION_REFERENCE;<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span><a name="line.248"></a>
+<span class="sourceLineNo">249</span>}<a name="line.249"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

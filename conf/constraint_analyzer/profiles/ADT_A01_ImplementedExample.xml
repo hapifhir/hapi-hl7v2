@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Specification SYSTEM "conformance.dtd">
+
+<Specification SpecName="Constrainable - Constrained - Inbound ADT-ADT_A01" OrgName="Queen's University" HL7Version="2.3.1" SpecVersion="1.0" Status="active" ConformanceType="Constrainable" Role="Sender" HL7OID="">
+<ImpNote><Paragraph>ADT_A01&#160;&#160;Constrainable Profile Example</Paragraph></ImpNote> 
+
+<Conformance AccAck="NE" AppAck="AL" StaticID="{ConfSig(1) Queen's University(1) 2.3.1(6) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(3) 1.0(1) Sender(1)}" DynamicID="{ConfSig(1) Queen's University(1) 2.3.1(6) dynamic-profile(2) AccNE_AppAL(2) defer_mode_ack(1)}" MsgAckMode="Deferred"></Conformance>
+<Encodings><Encoding>ER7</Encoding></Encodings>
+
+<Message MsgType="ADT" EventType="A01" EventDesc="Admit / Visit notification" MsgStructID="ADT_A01">
+	<Description>"MSH,EVN,PID,PV1,{AL1}"</Description>
+	<Segment Name="MSH" LongName="message header segment" Optionality="R" Min="1" Max="1">
+		<Field Name="Field Separator"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="ST" Length="1"> <Reference>"11.6.1"</Reference><DataValues ExValue="|"/></Field>
+		<Field Name="Encoding Characters"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="ST" Length="4"><Reference>"11.2.2"</Reference><DataValues ExValue="^&amp;~\"/></Field>
+		<Field Name="Date/Time Of Message"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"><Reference>"11.2.7"</Reference>
+			<Component Name="Date/Time"  Optionality="R"  Datatype="NM" Length="26"><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description><DataValues ExValue=""/></Component>
+			<Component Name="degree of precision" Optionality="X"  Datatype="ST" Length="1"><Description>"&quot;Retained for backward compatibility only&quot;"</Description> <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Message Type"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="CM_MSG" Length="7" Table="0076"><Reference>"11.3.3"</Reference>
+			<Component Name="message type"  Optionality="R" Datatype="ID" Length="3"> <DataValues ExValue="ADT"/></Component>
+			<Component Name="trigger event"  Optionality="R"  Datatype="ID" Length="3"   > <DataValues ExValue="A01"/></Component>
+			<Component Name="message structure"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Message Control ID"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="ST" Length="20"  ><ImpNote>     <Paragraph>Generated unique id</Paragraph></ImpNote> <Reference>"2.24.2.2"</Reference> <DataValues ExValue=""/></Field>
+		<Field Name="Processing ID"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="PT" Length="3"><ImpNote><Paragraph>In submitted spec, this required field is </Paragraph>     <Paragraph>marked (I) for ignore.</Paragraph></ImpNote><Reference>Reference="2.24.1.11"</Reference>
+			<Component Name="processing ID"  Optionality="R"  Datatype="ID" Length="3" Table="0103"   > <DataValues ExValue="P"/></Component>
+			<Component Name="processing mode"  Optionality="R"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Version ID"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="VID" Length="60" Table="0104"><ImpNote><Paragraph>In originally submitted spec this field</Paragraph><Paragraph>optionality is marked I (ignore)</Paragraph></ImpNote><Reference>"2.24.1.12"</Reference>
+			<Component Name="version ID"  Optionality="R"  Datatype="ID" Length="3" Table="0104"   ><DataValues ExValue="2.3.1"/></Component>
+			<Component Name="internationalization code"  Optionality="X"  Datatype="CE" Length="3"   >
+				<SubComponent Name="identifier"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="name of coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="alternate identifier"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="alternate text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="name of alternate coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+			<Component Name="international version ID"  Optionality="X"  Datatype="CE" Length="3"   >
+				<SubComponent Name="identifier"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="name of coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="alternate identifier"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="alternate text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="name of alternate coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+		</Field>
+	</Segment>
+
+	<Segment Name="EVN" LongName="Event Type Segment" Optionality="R"   Min="1" Max="1">
+		<Field Name="Event Type Code"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="ID" Length="3" Table="0003"  ><Reference>"3.3.1.1"</Reference><DataValues ExValue="A01"/></Field>
+		<Field Name="Recorded Date/Time"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"><ImpNote>     <Paragraph>Transaction Time Stamp</Paragraph></ImpNote><Reference>"3.3.1.2"</Reference>
+			<Component Name="Date/Time" Optionality="R"  Datatype="NM" Length="26"   ><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description> <DataValues ExValue="200108011643"/></Component>
+			<Component Name="degree of precision" Optionality="X"  Datatype="ST" Length="1"   ><Description>"&quot;Retained for backward compatibility only&quot;"</Description><DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Date/Time Planned Event"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="TS" Length="26" ><Reference>"3.3.1.3"</Reference>
+			<Component Name="Date/Time" Optionality="R"  Datatype="NM" Length="26"   ><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description> <DataValues ExValue=""/></Component>
+			<Component Name="degree of precision" Optionality="X"  Datatype="ST" Length="1"   ><Description>"&quot;Retained for backward compatibility only&quot;"</Description><DataValues ExValue=""/></Component>
+		</Field>
+	</Segment>
+
+	<Segment Name="PID" LongName="patient identification segment" Optionality="R"   Min="1" Max="1"   ><ImpNote><Paragraph>Maps to organizations race table</Paragraph></ImpNote>
+		<Field Name="Patient Identifier List"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="CX" Length="20"   >
+			<Component Name="ID"  Optionality="R"  Datatype="ST" Length="20"   ><ImpNote>     <Paragraph>Hospital ID</Paragraph></ImpNote> <DataValues ExValue="123456789012345"/></Component>
+			<Component Name="check digit"  Optionality="X"  Datatype="ST" Length="0"   > <DataValues ExValue=""/></Component>
+			<Component Name="code identifying the check digit scheme employed"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="assigning authority"  Optionality="X"  Datatype="HD" Length="3"   >
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+			<Component Name="identifier type code"  Optionality="X"  Datatype="IS" Length="3" Table="0203"> <DataValues ExValue=""/></Component>
+			<Component Name="assigning facility"  Optionality="X"  Datatype="HD" Length="3">
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+		</Field>
+		<Field Name="Patient Name"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="XPN" Length="3">
+			<Component Name="family+last name prefix"  Optionality="R"  Datatype="CM" Length="25"   > <DataValues ExValue="Smith"/></Component>
+			<Component Name="given name"  Optionality="R"  Datatype="ST" Length="25"   > <DataValues ExValue="Barbara"/></Component>
+			<Component Name="middle initial or name"  Optionality="R"  Datatype="ST" Length="1"   > <DataValues ExValue="D"/></Component>
+			<Component Name="suffix (e.g., JR or III)"  Optionality="R"  Datatype="ST" Length="10"   > <DataValues ExValue=""/></Component>
+			<Component Name="prefix (e.g., DR)"  Optionality="R"  Datatype="ST" Length="10"   > <DataValues ExValue="Dr"/></Component>
+			<Component Name="degree (e.g., MD)"  Optionality="R"  Datatype="IS" Length="10" Table="0360"   ><ImpNote>     <Paragraph>Simply listed as alpha value in original spec</Paragraph></ImpNote> <DataValues ExValue="PHD"/></Component>
+			<Component Name="name type code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="Name Representation code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Mother&apos;s Maiden Name"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="XPN" Length="20"   ><ImpNote>     <Paragraph>Shown as ST data type in original spec</Paragraph></ImpNote>
+			<Component Name="family+last name prefix"  Optionality="R"  Datatype="CM" Length="20"   > <DataValues ExValue="Jones"/></Component>
+			<Component Name="given name"  Optionality="R"  Datatype="ST" Length="10"   > <DataValues ExValue=""/></Component>
+			<Component Name="middle initial or name"  Optionality="R"  Datatype="ST" Length="1"   > <DataValues ExValue=""/></Component>
+			<Component Name="suffix (e.g., JR or III)"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="prefix (e.g., DR)"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="degree (e.g., MD)"  Optionality="X"  Datatype="IS" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="name type code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="Name Representation code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Date/Time Of Birth"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"><Reference>"8.6.2.6"</Reference>
+			<Component Name="Date/Time" Optionality="R"  Datatype="NM" Length="26"> <Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description> <DataValues ExValue="19520328"/></Component>
+			<Component Name="degree of precision"  Optionality="X"  Datatype="ST" Length="1"   ><Description>"&quot;Retained for backward compatibility only&quot;"</Description> <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Sex"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="IS" Length="1" Table="0001"  ><ImpNote>     <Paragraph>M or F only</Paragraph></ImpNote><Reference>"8.6.2.5"</Reference> <DataValues ExValue="F"/></Field>
+	</Segment>
+
+	<Segment Name="PV1" LongName="patient visit segment-" Optionality="R"   Min="1" Max="1">
+		<Field Name="Patient Class"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="IS" Length="1" Table="0004"><ImpNote>     <Paragraph>Optionality marked I (ignore) in orig spec</Paragraph></ImpNote> <Reference>"3.3.3.2"</Reference><DataValues ExValue="I"/></Field>
+		<Field Name="Attending Doctor"  Optionality="R"  Min="1" Max="0" ItemNo="" Datatype="XCN" Length="60" Table="0010"><ImpNote>     <Paragraph>Maps to organization's location table.</Paragraph></ImpNote><Reference>"3.3.3.7"</Reference>
+			<Component Name="ID number (ST)"  Optionality="R"  Datatype="ST" Length="6"   ><ImpNote>     <Paragraph>Attending Code</Paragraph></ImpNote> <DataValues ExValue="654321"/></Component>
+			<Component Name="family+last name"  Optionality="R"  Datatype="CM" Length="48"   ><ImpNote>     <Paragraph>Attending Name</Paragraph></ImpNote> <DataValues ExValue="Dr. Henry George"/></Component>
+			<Component Name="given name"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="middle initial or name"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="suffix (e.g., JR or III)"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="prefix (e.g., DR)"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="degree (e.g., MD)"  Optionality="X"  Datatype="IS" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="source table"  Optionality="X"  Datatype="IS" Length="3"> <DataValues ExValue=""/></Component>
+			<Component Name="assigning authority"  Optionality="X"  Datatype="HD" Length="3">
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+			<Component Name="name type code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="identifier check digit"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="code identifying the check digit scheme employed"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="identifier type code"  Optionality="X"  Datatype="IS" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="assigning facility"  Optionality="X"  Datatype="HD" Length="3"   >
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+			<Component Name="Name Representation code"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Visit Number"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="CX" Length="20"   ><ImpNote>     <Paragraph>Maps to organization's</Paragraph><Paragraph>doctor table.</Paragraph></ImpNote>
+			<Component Name="ID"  Optionality="R"  Datatype="ST" Length="3"   ><ImpNote>     <Paragraph>Unique key used to identify the patient </Paragraph>     <Paragraph>chart.</Paragraph></ImpNote> <DataValues ExValue="8888889999"/></Component>
+			<Component Name="check digit"  Optionality="X"  Datatype="ST" Length="0"   > <DataValues ExValue=""/></Component>
+			<Component Name="code identifying the check digit scheme employed"  Optionality="X"  Datatype="ID" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="assigning authority"  Optionality="X"  Datatype="HD" Length="3"   >
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+			<Component Name="identifier type code"  Optionality="X"  Datatype="IS" Length="3" Table="0203"   > <DataValues ExValue=""/></Component>
+			<Component Name="assigning facility"  Optionality="X"  Datatype="HD" Length="3"   >
+				<SubComponent Name="namespace ID"  Optionality="X"  Datatype="IS" Length="3" Table="0300"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></SubComponent>
+				<SubComponent Name="universal ID type"  Optionality="X"  Datatype="ID" Length="3" Table="0301"   > <DataValues ExValue=""/></SubComponent>
+			</Component>
+		</Field>
+		<Field Name="Admit Date/Time"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"  ><ImpNote>     <Paragraph>Admit/Visit Date</Paragraph></ImpNote><Reference>"3.3.3.44"</Reference>
+			<Component Name="Date/Time" Optionality="R"  Datatype="NM" Length="26"><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description><DataValues ExValue="200107041034"/></Component>
+			<Component Name="degree of precision" Optionality="R"  Datatype="ST" Length="1"   > <Description>"&quot;Retained for backward compatibility only&quot;"</Description><DataValues ExValue=""/></Component>
+		</Field>
+		<Field Name="Discharge Date/Time"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"><ImpNote>     <Paragraph>Discharge/End Visit Date</Paragraph></ImpNote><Reference>"3.3.3.45"</Reference>
+			<Component Name="Date/Time" Optionality="R"  Datatype="NM" Length="26"><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description> <DataValues ExValue="200108211422"/></Component>
+			<Component Name="degree of precision" Optionality="R"  Datatype="ST" Length="1"><Description>"&quot;Retained for backward compatibility only&quot;"</Description> <DataValues ExValue=""/></Component>
+		</Field>
+	</Segment>
+
+
+
+	<Segment Name="AL1" LongName="patient allergy information segment" Optionality="R"  Min="1" Max="5">
+		<Field Name="Set ID - AL1"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="SI" Length="4"><Reference>"3.3.6.1"</Reference> <DataValues ExValue=""/></Field>
+		<Field Name="Allergy Code/Mnemonic/Description"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="CE" Length="60"><ImpNote>     <Paragraph>Maps to organization's Allergy Type values</Paragraph>     <Paragraph>table</Paragraph></ImpNote><Reference>"3.3.6.3"</Reference>
+			<Component Name="identifier"  Optionality="R"  Datatype="ST" Length="5"   ><ImpNote>     <Paragraph>Allergy Code</Paragraph>     <Paragraph>Code not required for free text allergies.</Paragraph></ImpNote> <DataValues ExValue="54321"/></Component>
+			<Component Name="text"  Optionality="R"  Datatype="ST" Length="30"   ><ImpNote>     <Paragraph>Allergy Description</Paragraph></ImpNote> <DataValues ExValue="Tree Mould"/></Component>
+			<Component Name="name of coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="alternate identifier"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="alternate text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="name of alternate coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+	</Segment>
+</Message>
+</Specification>

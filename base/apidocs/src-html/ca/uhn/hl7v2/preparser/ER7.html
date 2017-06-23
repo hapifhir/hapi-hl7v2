@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.preparser;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.util.ArrayList;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.util.Iterator;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.List;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.util.Map;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.util.Properties;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.util.SortedMap;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.util.StringTokenizer;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.util.TreeMap;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.parser.EncodingCharacters;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>/*<a name="line.14"></a>
+<span class="sourceLineNo">015</span>The point of this class (all static members, not instantiatable) is to take a<a name="line.15"></a>
+<span class="sourceLineNo">016</span>traditionally-encoded HL7 message and add all it's contents to a Properties<a name="line.16"></a>
+<span class="sourceLineNo">017</span>object, via the parseMessage() method.<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>The key-value pairs added to the Properties argument have keys that represent a<a name="line.19"></a>
+<span class="sourceLineNo">020</span>datum's location in the message.  (in the ZYX-1-2[0] style.  TODO: define<a name="line.20"></a>
+<span class="sourceLineNo">021</span>exactly.)  See Datum, particularly the toString() of that class.<a name="line.21"></a>
+<span class="sourceLineNo">022</span>Anyway, the Properties keys are those and the values are the tokens found.<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>Note: we accept useless field repetition separators at the end of a <a name="line.24"></a>
+<span class="sourceLineNo">025</span>field repetition sequence.  i.e. |855-4545~555-3792~~~| , and interpret this<a name="line.25"></a>
+<span class="sourceLineNo">026</span>as definining repetitions 0 and 1.  This might not be allowed.  (HL7 2.3.1<a name="line.26"></a>
+<span class="sourceLineNo">027</span>section 2.10 explicitly allows this behaviour for fields / components /<a name="line.27"></a>
+<span class="sourceLineNo">028</span>subcomponents, but the allowance is notably absent for repetitions.  TODO:<a name="line.28"></a>
+<span class="sourceLineNo">029</span>nail down.)  We allow it anyway.<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>Also, we accept things like |855-4545~~555-3792|, and interpret it as defining<a name="line.31"></a>
+<span class="sourceLineNo">032</span>repetitions 0 and 2.  The spec would seem to disallow this too, but there's no<a name="line.32"></a>
+<span class="sourceLineNo">033</span>harm.  :D  <a name="line.33"></a>
+<span class="sourceLineNo">034</span>*/<a name="line.34"></a>
+<span class="sourceLineNo">035</span>public class ER7 {<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        <a name="line.36"></a>
+<span class="sourceLineNo">037</span>        private ER7() {}<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>        /** characters that delimit segments.  for use with StringTokenizer.<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        We are forgiving: HL7 2.3.1 section 2.7 says that carriage return ('\r') is<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        the only segment delimiter.  TODO: check other versions. */ <a name="line.41"></a>
+<span class="sourceLineNo">042</span>        static final String segmentSeparators = "\r\n\f";<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>        /** Parses message and dumps contents to props, with keys in the <a name="line.44"></a>
+<span class="sourceLineNo">045</span>        ZYX[a]-b[c]-d-e style.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public static boolean parseMessage(/*out*/ Properties props, <a name="line.47"></a>
+<span class="sourceLineNo">048</span>                /*in*/ List&lt;DatumPath&gt; msgMask, /*in*/ String message)<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        {<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                boolean ok = false;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                if(message != null) {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                        if(props == null)<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                                props = new Properties();<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>                        StringTokenizer messageTokenizer <a name="line.55"></a>
+<span class="sourceLineNo">056</span>                                = new StringTokenizer(message, segmentSeparators);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                        if(messageTokenizer.hasMoreTokens()) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                                String firstSegment = messageTokenizer.nextToken();<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                                EncodingCharacters encodingChars = new EncodingCharacters('0', "0000");<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                                if(parseMSHSegmentWhole(props, msgMask, encodingChars, firstSegment)) {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                                        ok = true;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                                        SortedMap&lt;String, Integer&gt; segmentId2nextRepIdx = new TreeMap&lt;String, Integer&gt;();<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                                        segmentId2nextRepIdx.put(new String("MSH"), 1); <a name="line.63"></a>
+<span class="sourceLineNo">064</span>                                                // in case we find another MSH segment, heh.<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                                        while(messageTokenizer.hasMoreTokens()) {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                                                parseSegmentWhole(props, segmentId2nextRepIdx, <a name="line.66"></a>
+<span class="sourceLineNo">067</span>                                                        msgMask, encodingChars, messageTokenizer.nextToken());<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                                        }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                                }<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                        }<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                }<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                return ok;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        <a name="line.74"></a>
+<span class="sourceLineNo">075</span>        /** given segment, starting with "MSH", then encoding characters, etc...<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        put MSH[0]-1[0]-1-1 (== MSH-1) and MSH[0]-2[0]-1-1 (== MSH-2) into props, if found,<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        plus everything else found in 'segment' */<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        protected static boolean parseMSHSegmentWhole(/*out*/ Properties props, <a name="line.78"></a>
+<span class="sourceLineNo">079</span>                /*in*/ List&lt;DatumPath&gt; msgMask, /*in*/ EncodingCharacters encodingChars, <a name="line.79"></a>
+<span class="sourceLineNo">080</span>                /*in*/ String segment) <a name="line.80"></a>
+<span class="sourceLineNo">081</span>        {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                boolean ret = false;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                try {<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                        ER7SegmentHandler handler = new ER7SegmentHandler();<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                        handler.m_props = props;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                        handler.m_encodingChars = encodingChars;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                        handler.m_segmentId = "MSH";<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        handler.m_segmentRepIdx = 0;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                        if(msgMask != null)<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                                handler.m_msgMask = msgMask;<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                        else {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                                handler.m_msgMask = new ArrayList&lt;DatumPath&gt;();<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                handler.m_msgMask.add(new DatumPath()); // everything will pass this<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                                        // (every DatumPath startsWith the zero-length DatumPath)<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                        }<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        encodingChars.setFieldSeparator(segment.charAt(3));<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        List&lt;Integer&gt; nodeKey = new ArrayList&lt;Integer&gt;();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                        nodeKey.add(new Integer(0));<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                        handler.putDatum(nodeKey, String.valueOf(encodingChars.getFieldSeparator()));<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                        encodingChars.setComponentSeparator(segment.charAt(4));<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                        encodingChars.setRepetitionSeparator(segment.charAt(5));<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        encodingChars.setEscapeCharacter(segment.charAt(6));<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                        encodingChars.setSubcomponentSeparator(segment.charAt(7));<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                        nodeKey.set(0, new Integer(1));<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                        handler.putDatum(nodeKey, encodingChars.toString());<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>                        if(segment.charAt(8) == encodingChars.getFieldSeparator()) {    <a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                ret = true; <a name="line.109"></a>
+<span class="sourceLineNo">110</span>                                // now -- we recurse <a name="line.110"></a>
+<span class="sourceLineNo">111</span>                                // through fields / field-repetitions / components / subcomponents.<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                                nodeKey.clear();<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                                nodeKey.add(new Integer(2));<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                                parseSegmentGuts(handler, segment.substring(9), nodeKey);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                        }<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                }<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                catch(IndexOutOfBoundsException e) {}<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                catch(NullPointerException e) {}<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>                return ret;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        }<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>        /** pass in a whole segment (of type other than MSH), including message type<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        at the start, according to encodingChars, and we'll parse the contents and<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        put them in props. */<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        protected static void parseSegmentWhole(/*out*/ Properties props, <a name="line.126"></a>
+<span class="sourceLineNo">127</span>                /*in/out*/ Map&lt;String, Integer&gt; segmentId2nextRepIdx, <a name="line.127"></a>
+<span class="sourceLineNo">128</span>                /*in*/ List&lt;DatumPath&gt; msgMask, /*in*/ EncodingCharacters encodingChars, <a name="line.128"></a>
+<span class="sourceLineNo">129</span>                /*in*/ String segment)<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                try {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                        String segmentId = segment.substring(0, 3);<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>                        int currentSegmentRepIdx = 0;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                        if(segmentId2nextRepIdx.containsKey(segmentId))<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                                currentSegmentRepIdx = ((Integer)segmentId2nextRepIdx.get(segmentId)).intValue();<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                        else<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                                currentSegmentRepIdx = 0;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                        segmentId2nextRepIdx.put(segmentId, new Integer(currentSegmentRepIdx+1));<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>                        // will only bother to parse this segment if any of it's contents will <a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        // be dumped to props.<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        boolean parseThisSegment = false;<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        DatumPath segmentIdAsDatumPath = new DatumPath().add(segmentId);<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                        for(Iterator&lt;DatumPath&gt; maskIt = msgMask.iterator(); !parseThisSegment &amp;&amp; maskIt.hasNext(); ) <a name="line.145"></a>
+<span class="sourceLineNo">146</span>                                parseThisSegment = segmentIdAsDatumPath.startsWith(maskIt.next());<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        for(Iterator&lt;DatumPath&gt; maskIt = msgMask.iterator(); !parseThisSegment &amp;&amp; maskIt.hasNext(); ) <a name="line.147"></a>
+<span class="sourceLineNo">148</span>                                parseThisSegment = maskIt.next().startsWith(segmentIdAsDatumPath);<a name="line.148"></a>
+<span class="sourceLineNo">149</span><a name="line.149"></a>
+<span class="sourceLineNo">150</span>                        if(parseThisSegment &amp;&amp; (segment.charAt(3) == encodingChars.getFieldSeparator())) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                                ER7SegmentHandler handler = new ER7SegmentHandler();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                                handler.m_props = props;<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                                handler.m_encodingChars = encodingChars;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                                handler.m_segmentId = segmentId;<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                                handler.m_msgMask = msgMask;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                                handler.m_segmentRepIdx = currentSegmentRepIdx;<a name="line.156"></a>
+<span class="sourceLineNo">157</span><a name="line.157"></a>
+<span class="sourceLineNo">158</span>                                List&lt;Integer&gt; nodeKey = new ArrayList&lt;Integer&gt;();<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                                nodeKey.add(new Integer(0));<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                                parseSegmentGuts(handler, segment.substring(4), nodeKey);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                        }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                }<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                catch(NullPointerException e) {}<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                catch(IndexOutOfBoundsException e) {}<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        }<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>        static protected interface Handler<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        {<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                public int specDepth();<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                public char delim(int level);<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>                public void putDatum(List&lt;Integer&gt; nodeKey, String value);<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        }<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>        static protected class ER7SegmentHandler implements Handler<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                Properties m_props;<a name="line.177"></a>
+<span class="sourceLineNo">178</span><a name="line.178"></a>
+<span class="sourceLineNo">179</span>                EncodingCharacters m_encodingChars;<a name="line.179"></a>
+<span class="sourceLineNo">180</span><a name="line.180"></a>
+<span class="sourceLineNo">181</span>                String m_segmentId;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                int m_segmentRepIdx;<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>                List&lt;DatumPath&gt; m_msgMask;<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>                public int specDepth() {return 4;}<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>                public char delim(int level)<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                        if(level == 0)<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                                return m_encodingChars.getFieldSeparator();<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                        else if(level == 1)<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                                return m_encodingChars.getRepetitionSeparator();<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                        else if(level == 2)<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                                return m_encodingChars.getComponentSeparator();<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                        else if(level == 3)<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                                return m_encodingChars.getSubcomponentSeparator();<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            else if(level == 4)<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                return m_encodingChars.getTruncationCharacter();<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                        else<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                                throw new java.lang.Error();<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                }<a name="line.202"></a>
+<span class="sourceLineNo">203</span><a name="line.203"></a>
+<span class="sourceLineNo">204</span>                public void putDatum(List&lt;Integer&gt; valNodeKey, String value)<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                        // make a DatumPath from valNodeKey and info in this: <a name="line.206"></a>
+<span class="sourceLineNo">207</span>                        DatumPath valDatumPath = new DatumPath();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                        valDatumPath.add(m_segmentId).add(m_segmentRepIdx);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                        for(int i=0; i&lt;valNodeKey.size(); ++i) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                                // valNodeKey: everything counts from 0 -- not so with DatumPath ... sigh. <a name="line.210"></a>
+<span class="sourceLineNo">211</span>                                int itval = ((Integer)valNodeKey.get(i)).intValue();<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                                valDatumPath.add(new Integer(i == 1 ? itval : itval+1));<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                        }<a name="line.213"></a>
+<span class="sourceLineNo">214</span><a name="line.214"></a>
+<span class="sourceLineNo">215</span>                        // see if valDatumPath passes m_msgMask: <a name="line.215"></a>
+<span class="sourceLineNo">216</span>                        boolean valDatumPathPassesMask = false;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                        for(Iterator&lt;DatumPath&gt; maskIt = m_msgMask.iterator(); <a name="line.217"></a>
+<span class="sourceLineNo">218</span>                                !valDatumPathPassesMask &amp;&amp; maskIt.hasNext(); )<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                        {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                                valDatumPathPassesMask = valDatumPath.startsWith(maskIt.next());<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                        }<a name="line.221"></a>
+<span class="sourceLineNo">222</span><a name="line.222"></a>
+<span class="sourceLineNo">223</span>                        if(valDatumPathPassesMask)<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                                m_props.setProperty(valDatumPath.toString(), value);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                }<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        }<a name="line.226"></a>
+<span class="sourceLineNo">227</span><a name="line.227"></a>
+<span class="sourceLineNo">228</span>        /** recursively tokenize "guts" (a segment, or part of one) into tokens, <a name="line.228"></a>
+<span class="sourceLineNo">229</span>        according to separators (aka delimiters) which are different at each level<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        of recursion, and to a recursive depth which is discovered through "handler"<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        via handler.delim(int) and handler.specDepth()  As tokens are found, they<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        are reported to handler via handler.putDatum(), which presumably stashes them<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        away somewhere.  We tell the handler about the location in the message via<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        putDatum()'s key argument, which is a List of Integers representing the <a name="line.234"></a>
+<span class="sourceLineNo">235</span>        position in the parse tree (size() == depth of recursion).<a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>        TODO: say more.<a name="line.237"></a>
+<span class="sourceLineNo">238</span>        */<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        protected static void parseSegmentGuts(/*in/out*/ Handler handler,  <a name="line.239"></a>
+<span class="sourceLineNo">240</span>                /*in*/ String guts, /*in*/List&lt;Integer&gt; nodeKey)<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        {<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                char thisDepthsDelim = handler.delim(nodeKey.size()-1);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                //nodeKey.add(new Integer(0)); // will change nodeKey back before function exits<a name="line.243"></a>
+<span class="sourceLineNo">244</span><a name="line.244"></a>
+<span class="sourceLineNo">245</span>                StringTokenizer gutsTokenizer <a name="line.245"></a>
+<span class="sourceLineNo">246</span>                        = new StringTokenizer(guts, String.valueOf(thisDepthsDelim), true);<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                while(gutsTokenizer.hasMoreTokens()) {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                        String gutsToken = gutsTokenizer.nextToken();<a name="line.248"></a>
+<span class="sourceLineNo">249</span><a name="line.249"></a>
+<span class="sourceLineNo">250</span>                        if(gutsToken.charAt(0) == thisDepthsDelim) {<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                                // gutsToken is all delims -- skipping over as many fields or<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                                // components or whatevers as there are characters in the token: <a name="line.252"></a>
+<span class="sourceLineNo">253</span>                                int oldvalue = ((Integer)nodeKey.get(nodeKey.size()-1)).intValue();<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                                nodeKey.set(nodeKey.size()-1, new Integer(oldvalue + gutsToken.length()));<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                        }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                        else {<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                                if(nodeKey.size() &lt; handler.specDepth()) {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                                        nodeKey.add(new Integer(0));<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                                        parseSegmentGuts(handler, gutsToken, nodeKey);<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                                        nodeKey.remove(nodeKey.size()-1);<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                                }<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                                else <a name="line.262"></a>
+<span class="sourceLineNo">263</span>                                        handler.putDatum(nodeKey, gutsToken);<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                        }<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                }<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                //nodeKey.setSize(nodeKey.size()-1); // undoing add done at top of this func<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        }<a name="line.267"></a>
+<span class="sourceLineNo">268</span><a name="line.268"></a>
+<span class="sourceLineNo">269</span>        public static void main(String args[])<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                if(args.length &gt;= 1) {<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                        //String message = "MSH|^~\\&amp;||||foo|foo|foo";<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                        System.out.println(args[0]);<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>                        Properties props = new Properties();<a name="line.275"></a>
+<span class="sourceLineNo">276</span><a name="line.276"></a>
+<span class="sourceLineNo">277</span>                        List&lt;DatumPath&gt; msgMask = new ArrayList&lt;DatumPath&gt;();<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                        msgMask.add(new DatumPath());<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>                        System.err.println("ER7.parseMessage returned " + parseMessage(props, msgMask, args[0]));<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                        props.list(System.out);<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                }<a name="line.282"></a>
+<span class="sourceLineNo">283</span>        }<a name="line.283"></a>
+<span class="sourceLineNo">284</span>        <a name="line.284"></a>
+<span class="sourceLineNo">285</span>}<a name="line.285"></a>
+<span class="sourceLineNo">286</span><a name="line.286"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

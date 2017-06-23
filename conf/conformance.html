@@ -1,0 +1,121 @@
+
+<h1><font face="Arial">Conformance Tools</font></h1>
+<p><font face="Arial">Version 0.4 of HAPI introduces several features related to
+the HL7 conformance framework.&nbsp; There are also several non-HAPI conformance
+tools.&nbsp;</font></p>
+<p><font face="Arial">The conformance framework was introduced in HL7 2.5.&nbsp;
+In a nutshell, it defines a way of writing detailed message specifications using
+XML.&nbsp; An XML message specification is called a &quot;profile&quot;.&nbsp;
+For more information on conformance, please refer to HL7 2.5 section 2.12 or the
+<a href="http://www.hl7.org/Special/committees/conformance/conform.htm">
+Conformance SIG</a>.&nbsp; </font></p>
+<p><font face="Arial">HAPI 0.4 introduces the following conformance tools:&nbsp;
+</font></p>
+<font face="arial">
+<table border="0" width="100%">
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0"><a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/check/">Message
+      Validator</a></td>
+    <td width="71%" bgcolor="#EFEFEF"> This is not a stand-alone tool but a part
+      of the HAPI framework.&nbsp;&nbsp; It checks messages against profiles and
+      produces a list of non-conformances (if any).&nbsp; Problems can be
+      written to a log or report, or they can trigger an email to an
+      interface engine administrator.&nbsp;&nbsp; </td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0"><a href="compiler.html">Profile
+      Compiler</a></td>
+    <td width="71%" bgcolor="#EFEFEF">Turns a profile into a Java JAR.&nbsp; The
+      JAR contains an API with all the constraints of the profile, so that
+      coding against it will prevent you from producing non-compliant
+      messages.&nbsp; Many non-conformances are caught at compile time, the rest
+      at run-time.&nbsp;&nbsp; </td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0"><a href="constraint_analyzer.html">Constraint
+      Analyzer</a></td>
+    <td width="71%" bgcolor="#EFEFEF">
+</font>
+    <font face="Arial">Determines whether one profile properly constrains
+    another.&nbsp; </font> </td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0">
+<font face="arial"><a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/hl7api/hapi/ca/uhn/hl7v2/conf/store/">Profile Store</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF"><font face="Arial">In progress.&nbsp;
+      Currently saves/loads profiles to/from local disk.&nbsp; Will load
+      profiles from HL7's on-line registry and cache them locally in next
+      version.&nbsp; &nbsp; </font> </td>
+  </tr>
+</table>
+<p><font face="Arial">By the way, non-HAPI conformance tools include the
+following: </font></p>
+<table border="0" width="100%" height="193">
+  <tr>
+
+    <td width="29%" bgcolor="#C0C0C0" height="40"><font face="Arial"><a href="http://www.hl7.org/lib_admin/docs.cfm?dir=library/committees/conf&amp;comm=conf">The
+      Messaging Workbench</a></font>
+</td>
+    <td width="71%" bgcolor="#EFEFEF" height="40"><font face="Arial">This is a graphical profile editor created
+      by Peter Rontey of the US Veteran's
+      Administration.&nbsp;&nbsp;&nbsp;&nbsp;It can be downloaded from the HL7
+      Conformance SIG's documents page.&nbsp;&nbsp; </font>
+</td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="38"><font face="arial"><a href="darius">Custom
+      Z API Generator</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="38"><font face="arial">An XSL tool
+      by Darius Kemeklis that generates custom Z segment API classes for HAPI
+      based on a conformance profile.&nbsp; Standalone as well as integrated
+      into the Messaging Workbench.&nbsp;&nbsp;&nbsp;</font></td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="38"><font face="arial"><a href="http://www.nist.gov/messagemaker">Message
+      Maker</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="38"><font face="arial">This tool
+      by Rob Snelick and colleagues (NIST) generates test messages from a
+      conformance profile.&nbsp;&nbsp;&nbsp;&nbsp;</font></td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="38"><font face="arial"><a href="Conf_FOP.zip">PDF
+      Transform</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="38"><font face="arial">Lloyd
+      McKenzie and Jennifer Puyenbroek's XSL stylesheet which transforms a profile into PDF
+      or HTML.&nbsp;&nbsp;</font></td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="40"><font face="arial"><a href="http://www.ahml.com.au/">Australian
+      Healthcare Messaging Laboratory</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="40"><font face="arial">A service
+      by which messages can be checked for conformance to a profile or to HL7 in
+      general.&nbsp; </font></td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="34"><font face="arial"><a href="http://www.hl7.org/Library/Committees/Conf/HL7v2GlobalMessageProfileLibraryjan2003V3.pdf">HL7 Global
+      Profile Registry</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="34"><font face="arial">A service
+      with which HL7 members can share profiles for their products or
+      regions.&nbsp;&nbsp;This is a link to the users guide which has
+      instructions for accessing the registry.&nbsp;</font></td>
+  </tr>
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0" height="21"><font face="arial"><a href="http://www.orionhealth.com/symphonia_overview.htm">Orion
+      Tools</a></font></td>
+    <td width="71%" bgcolor="#EFEFEF" height="21"><font face="arial">Closed-source
+      tools in the same vein as HAPI.&nbsp; &nbsp;</font></td>
+  </tr>
+</table>
+<p><font face="Arial">Possible future work includes: </font></p>
+<table border="0" width="100%">
+  <tr>
+    <td width="29%" bgcolor="#C0C0C0"><font face="arial">Profile Generator</font></td>
+    <td width="71%" bgcolor="#EFEFEF"><font face="arial">Currently the Messaging
+      Workbench (above) can reverse-engineer a profile from a message.&nbsp;
+      There has been some talk about extending this so that a profile can be
+      created from a set of messages, which would be very useful in that it
+      would allow us to create <i>status quo</i> profiles for legacy
+      interfaces.&nbsp; If Peter doesn't do it, maybe we'll implement this into
+      HAPI at some point.&nbsp; </font></td>
+  </tr>
+</table>

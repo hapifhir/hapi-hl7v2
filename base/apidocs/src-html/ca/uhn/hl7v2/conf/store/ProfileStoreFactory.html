@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.conf.store;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import ca.uhn.hl7v2.util.Home;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>/**<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Provides access to a (configurable) ProfileStore.<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * <a name="line.7"></a>
+<span class="sourceLineNo">008</span> * @author Bryan Tripp<a name="line.8"></a>
+<span class="sourceLineNo">009</span> */<a name="line.9"></a>
+<span class="sourceLineNo">010</span>public class ProfileStoreFactory {<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>        /**<a name="line.12"></a>
+<span class="sourceLineNo">013</span>         * The default profile store directory<a name="line.13"></a>
+<span class="sourceLineNo">014</span>         */<a name="line.14"></a>
+<span class="sourceLineNo">015</span>    public static final String DEFAULT_PROFILE_STORE_DIRECTORY = Home.getHomeDirectory().getAbsolutePath() + "/profiles";<a name="line.15"></a>
+<span class="sourceLineNo">016</span>    <a name="line.16"></a>
+<span class="sourceLineNo">017</span>        private static ProfileStore instance;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>    private static CodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>    /** Non instantiable */<a name="line.20"></a>
+<span class="sourceLineNo">021</span>    private ProfileStoreFactory() {<a name="line.21"></a>
+<span class="sourceLineNo">022</span>        super();<a name="line.22"></a>
+<span class="sourceLineNo">023</span>    }<a name="line.23"></a>
+<span class="sourceLineNo">024</span>    <a name="line.24"></a>
+<span class="sourceLineNo">025</span>    /**<a name="line.25"></a>
+<span class="sourceLineNo">026</span>     * Returns a single configurable instance of a ProfileStore. Configurable by calling setStore().<a name="line.26"></a>
+<span class="sourceLineNo">027</span>     * Defaults to FileProfileStore using the current &lt;hapi.home&gt;/profiles as a base directory Note:<a name="line.27"></a>
+<span class="sourceLineNo">028</span>     * not a singleton (by design) in that nothing prevents creation of profile stores by other<a name="line.28"></a>
+<span class="sourceLineNo">029</span>     * means.<a name="line.29"></a>
+<span class="sourceLineNo">030</span>     */<a name="line.30"></a>
+<span class="sourceLineNo">031</span>    public synchronized static ProfileStore getProfileStore() {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>        if (instance == null)<a name="line.32"></a>
+<span class="sourceLineNo">033</span>            instance = new FileProfileStore(DEFAULT_PROFILE_STORE_DIRECTORY);<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>        return instance;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    }<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>    /**<a name="line.38"></a>
+<span class="sourceLineNo">039</span>     * Sets the profile store that will be returned in subsequent calls to getProfileStore().<a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * <a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * @deprecated use HapiContext to define the ProfileStore to be used<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    public synchronized static void setStore(ProfileStore store) {<a name="line.43"></a>
+<span class="sourceLineNo">044</span>        instance = store;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    }<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    /**<a name="line.47"></a>
+<span class="sourceLineNo">048</span>     * Registers a code store for use with all profiles.<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * <a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * @deprecated use {@link CodeStoreRegistry#addCodeStore(CodeStore)}<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     */<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    public static void addCodeStore(CodeStore store) {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        codeRegistry.addCodeStore(store);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    }<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    /**<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * Registers a code store for use with certain profiles. The profiles with which the code store<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * are used are determined by profileIdPattern, which is a regular expression that will be<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * matched against profile IDs. For example suppose there are three profiles in the profile<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * store, with the following IDs:<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * &lt;ol&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     * &lt;li&gt;ADT:confsig-UHN-2.4-profile-AL-NE-Immediate&lt;/li&gt;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * &lt;li&gt;ADT:confsig-CIHI-2.4-profile-AL-NE-Immediate&lt;/li&gt;<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * &lt;li&gt;ADT:confsig-CIHI-2.3-profile-AL-NE-Immediate&lt;/li&gt;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * &lt;/ol&gt;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * Then to use a code store with only the first profile, the profileIdPattern would be<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     * "ADT:confsig-UHN-2.4-profile-AL-NE-Immediate". To use a code store with both of the 2.4<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     * profiles, the pattern would be ".*2\\.4.*". To use a code store with all profiles, the<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * pattern would be '.*". Multiple stores can be registered for use with the same profile. If<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * this happens, the first one that returned true for knowsCodes(codeSystem) will used. Stores<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * are searched in the order they are added here.<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * <a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * @deprecated use {@link CodeStoreRegistry#addCodeStore(CodeStore, String)}<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     */<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    public static void addCodeStore(CodeStore store, String profileID) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        codeRegistry.addCodeStore(store, profileID);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>    }<a name="line.77"></a>
+<span class="sourceLineNo">078</span><a name="line.78"></a>
+<span class="sourceLineNo">079</span>    /**<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * Returns the first code store that knows the codes in the given code system (as per<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * CodeStore.knowsCodes) and is registered for the given profile. Code stores are checked in the<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * order in which they are added (with addCodeStore()).<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     * <a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * @return null if none are found<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     * <a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * @deprecated use {@link CodeStoreRegistry#getCodeStore(String, String)}<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     */<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    public static CodeStore getCodeStore(String profileID, String codeSystem) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        return codeRegistry.getCodeStore(profileID, codeSystem);<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>}<a name="line.91"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

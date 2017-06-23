@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ER7 xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/ca/uhn/hl7v2/preparser/ER7.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.preparser;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> java.util.Iterator;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> java.util.Properties;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> java.util.SortedMap;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> java.util.StringTokenizer;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> java.util.TreeMap;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.EncodingCharacters;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment">The point of this class (all static members, not instantiatable) is to take a</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_comment">traditionally-encoded HL7 message and add all it's contents to a Properties</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_comment">object, via the parseMessage() method.</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_comment">The key-value pairs added to the Properties argument have keys that represent a</em>
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_comment">datum's location in the message.  (in the ZYX-1-2[0] style.  TODO: define</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_comment">exactly.)  See Datum, particularly the toString() of that class.</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_comment">Anyway, the Properties keys are those and the values are the tokens found.</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_comment">Note: we accept useless field repetition separators at the end of a </em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_comment">field repetition sequence.  i.e. |855-4545~555-3792~~~| , and interpret this</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_comment">as definining repetitions 0 and 1.  This might not be allowed.  (HL7 2.3.1</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_comment">section 2.10 explicitly allows this behaviour for fields / components /</em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_comment">subcomponents, but the allowance is notably absent for repetitions.  TODO:</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_comment">nail down.)  We allow it anyway.</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_comment">Also, we accept things like |855-4545~~555-3792|, and interpret it as defining</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_comment">repetitions 0 and 2.  The spec would seem to disallow this too, but there's no</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_comment">harm.  :D  </em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_comment">*/</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">ER7</a> {
+<a class="jxr_linenumber" name="36" href="#36">36</a>  	
+<a class="jxr_linenumber" name="37" href="#37">37</a>  	<strong class="jxr_keyword">private</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">ER7</a>() {}
+<a class="jxr_linenumber" name="38" href="#38">38</a>  
+<a class="jxr_linenumber" name="39" href="#39">39</a>  	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> characters that delimit segments.  for use with StringTokenizer.</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">	We are forgiving: HL7 2.3.1 section 2.7 says that carriage return ('\r') is</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">	the only segment delimiter.  TODO: check other versions. */</em> 
+<a class="jxr_linenumber" name="42" href="#42">42</a>  	<strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String segmentSeparators = <span class="jxr_string">"\r\n\f"</span>;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  
+<a class="jxr_linenumber" name="44" href="#44">44</a>  	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Parses message and dumps contents to props, with keys in the </em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">	ZYX[a]-b[c]-d-e style.</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">	*/</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> parseMessage(<em class="jxr_comment">/*<em class="jxr_comment">out*/</em> Properties props, </em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> List&lt;DatumPath&gt; msgMask, /*in*/ String message)</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  	{
+<a class="jxr_linenumber" name="50" href="#50">50</a>  		<strong class="jxr_keyword">boolean</strong> ok = false;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  		<strong class="jxr_keyword">if</strong>(message != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="52" href="#52">52</a>  			<strong class="jxr_keyword">if</strong>(props == <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="53" href="#53">53</a>  				props = <strong class="jxr_keyword">new</strong> Properties();
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>  			StringTokenizer messageTokenizer 
+<a class="jxr_linenumber" name="56" href="#56">56</a>  				= <strong class="jxr_keyword">new</strong> StringTokenizer(message, segmentSeparators);
+<a class="jxr_linenumber" name="57" href="#57">57</a>  			<strong class="jxr_keyword">if</strong>(messageTokenizer.hasMoreTokens()) {
+<a class="jxr_linenumber" name="58" href="#58">58</a>  				String firstSegment = messageTokenizer.nextToken();
+<a class="jxr_linenumber" name="59" href="#59">59</a>  				EncodingCharacters encodingChars = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/parser/EncodingCharacters.html">EncodingCharacters</a>('0', <span class="jxr_string">"0000"</span>);
+<a class="jxr_linenumber" name="60" href="#60">60</a>  				<strong class="jxr_keyword">if</strong>(parseMSHSegmentWhole(props, msgMask, encodingChars, firstSegment)) {
+<a class="jxr_linenumber" name="61" href="#61">61</a>  					ok = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="62" href="#62">62</a>  					SortedMap&lt;String, Integer&gt; segmentId2nextRepIdx = <strong class="jxr_keyword">new</strong> TreeMap&lt;String, Integer&gt;();
+<a class="jxr_linenumber" name="63" href="#63">63</a>  					segmentId2nextRepIdx.put(<strong class="jxr_keyword">new</strong> String(<span class="jxr_string">"MSH"</span>), 1); 
+<a class="jxr_linenumber" name="64" href="#64">64</a>  						<em class="jxr_comment">// in case we find another MSH segment, heh.</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  					<strong class="jxr_keyword">while</strong>(messageTokenizer.hasMoreTokens()) {
+<a class="jxr_linenumber" name="66" href="#66">66</a>  						parseSegmentWhole(props, segmentId2nextRepIdx, 
+<a class="jxr_linenumber" name="67" href="#67">67</a>  							msgMask, encodingChars, messageTokenizer.nextToken());
+<a class="jxr_linenumber" name="68" href="#68">68</a>  					}
+<a class="jxr_linenumber" name="69" href="#69">69</a>  				}
+<a class="jxr_linenumber" name="70" href="#70">70</a>  			}
+<a class="jxr_linenumber" name="71" href="#71">71</a>  		}
+<a class="jxr_linenumber" name="72" href="#72">72</a>  		<strong class="jxr_keyword">return</strong> ok;
+<a class="jxr_linenumber" name="73" href="#73">73</a>  	}
+<a class="jxr_linenumber" name="74" href="#74">74</a>  	
+<a class="jxr_linenumber" name="75" href="#75">75</a>  	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> given segment, starting with "MSH", then encoding characters, etc...</em>
+<a class="jxr_linenumber" name="76" href="#76">76</a>  <em class="jxr_javadoccomment">	put MSH[0]-1[0]-1-1 (== MSH-1) and MSH[0]-2[0]-1-1 (== MSH-2) into props, if found,</em>
+<a class="jxr_linenumber" name="77" href="#77">77</a>  <em class="jxr_javadoccomment">	plus everything else found in 'segment' */</em>
+<a class="jxr_linenumber" name="78" href="#78">78</a>  	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> parseMSHSegmentWhole(<em class="jxr_comment">/*<em class="jxr_comment">out*/</em> Properties props, </em>
+<a class="jxr_linenumber" name="79" href="#79">79</a>  		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> List&lt;DatumPath&gt; msgMask, /*in*/ <a href="../../../../ca/uhn/hl7v2/parser/EncodingCharacters.html">EncodingCharacters</a> encodingChars, </em>
+<a class="jxr_linenumber" name="80" href="#80">80</a>  		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> String segment) </em>
+<a class="jxr_linenumber" name="81" href="#81">81</a>  	{
+<a class="jxr_linenumber" name="82" href="#82">82</a>  		<strong class="jxr_keyword">boolean</strong> ret = false;
+<a class="jxr_linenumber" name="83" href="#83">83</a>  		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="84" href="#84">84</a>  			ER7SegmentHandler handler = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">ER7SegmentHandler</a>();
+<a class="jxr_linenumber" name="85" href="#85">85</a>  			handler.m_props = props;
+<a class="jxr_linenumber" name="86" href="#86">86</a>  			handler.m_encodingChars = encodingChars;
+<a class="jxr_linenumber" name="87" href="#87">87</a>  			handler.m_segmentId = <span class="jxr_string">"MSH"</span>;
+<a class="jxr_linenumber" name="88" href="#88">88</a>  			handler.m_segmentRepIdx = 0;
+<a class="jxr_linenumber" name="89" href="#89">89</a>  			<strong class="jxr_keyword">if</strong>(msgMask != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="90" href="#90">90</a>  				handler.m_msgMask = msgMask;
+<a class="jxr_linenumber" name="91" href="#91">91</a>  			<strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="92" href="#92">92</a>  				handler.m_msgMask = <strong class="jxr_keyword">new</strong> ArrayList&lt;DatumPath&gt;();
+<a class="jxr_linenumber" name="93" href="#93">93</a>  				handler.m_msgMask.add(<strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/DatumPath.html">DatumPath</a>()); <em class="jxr_comment">// everything will pass this</em>
+<a class="jxr_linenumber" name="94" href="#94">94</a>  					<em class="jxr_comment">// (every DatumPath startsWith the zero-length DatumPath)</em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>  			}
+<a class="jxr_linenumber" name="96" href="#96">96</a>  
+<a class="jxr_linenumber" name="97" href="#97">97</a>  			encodingChars.setFieldSeparator(segment.charAt(3));
+<a class="jxr_linenumber" name="98" href="#98">98</a>  			List&lt;Integer&gt; nodeKey = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;();
+<a class="jxr_linenumber" name="99" href="#99">99</a>  			nodeKey.add(<strong class="jxr_keyword">new</strong> Integer(0));
+<a class="jxr_linenumber" name="100" href="#100">100</a> 			handler.putDatum(nodeKey, String.valueOf(encodingChars.getFieldSeparator()));
+<a class="jxr_linenumber" name="101" href="#101">101</a> 			encodingChars.setComponentSeparator(segment.charAt(4));
+<a class="jxr_linenumber" name="102" href="#102">102</a> 			encodingChars.setRepetitionSeparator(segment.charAt(5));
+<a class="jxr_linenumber" name="103" href="#103">103</a> 			encodingChars.setEscapeCharacter(segment.charAt(6));
+<a class="jxr_linenumber" name="104" href="#104">104</a> 			encodingChars.setSubcomponentSeparator(segment.charAt(7));
+<a class="jxr_linenumber" name="105" href="#105">105</a> 			nodeKey.set(0, <strong class="jxr_keyword">new</strong> Integer(1));
+<a class="jxr_linenumber" name="106" href="#106">106</a> 			handler.putDatum(nodeKey, encodingChars.toString());
+<a class="jxr_linenumber" name="107" href="#107">107</a> 
+<a class="jxr_linenumber" name="108" href="#108">108</a> 			<strong class="jxr_keyword">if</strong>(segment.charAt(8) == encodingChars.getFieldSeparator()) {	
+<a class="jxr_linenumber" name="109" href="#109">109</a> 				ret = <strong class="jxr_keyword">true</strong>; 
+<a class="jxr_linenumber" name="110" href="#110">110</a> 				<em class="jxr_comment">// now -- we recurse </em>
+<a class="jxr_linenumber" name="111" href="#111">111</a> 				<em class="jxr_comment">// through fields / field-repetitions / components / subcomponents.</em>
+<a class="jxr_linenumber" name="112" href="#112">112</a> 				nodeKey.clear();
+<a class="jxr_linenumber" name="113" href="#113">113</a> 				nodeKey.add(<strong class="jxr_keyword">new</strong> Integer(2));
+<a class="jxr_linenumber" name="114" href="#114">114</a> 				parseSegmentGuts(handler, segment.substring(9), nodeKey);
+<a class="jxr_linenumber" name="115" href="#115">115</a> 			}
+<a class="jxr_linenumber" name="116" href="#116">116</a> 		}
+<a class="jxr_linenumber" name="117" href="#117">117</a> 		<strong class="jxr_keyword">catch</strong>(IndexOutOfBoundsException e) {}
+<a class="jxr_linenumber" name="118" href="#118">118</a> 		<strong class="jxr_keyword">catch</strong>(NullPointerException e) {}
+<a class="jxr_linenumber" name="119" href="#119">119</a> 
+<a class="jxr_linenumber" name="120" href="#120">120</a> 		<strong class="jxr_keyword">return</strong> ret;
+<a class="jxr_linenumber" name="121" href="#121">121</a> 	}
+<a class="jxr_linenumber" name="122" href="#122">122</a> 
+<a class="jxr_linenumber" name="123" href="#123">123</a> 	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> pass in a whole segment (of type other than MSH), including message type</em>
+<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">	at the start, according to encodingChars, and we'll parse the contents and</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">	put them in props. */</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> parseSegmentWhole(<em class="jxr_comment">/*<em class="jxr_comment">out*/</em> Properties props, </em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> 		<em class="jxr_comment">/*<em class="jxr_comment">in/out*/</em> Map&lt;String, Integer&gt; segmentId2nextRepIdx, </em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> 		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> List&lt;DatumPath&gt; msgMask, /*in*/ <a href="../../../../ca/uhn/hl7v2/parser/EncodingCharacters.html">EncodingCharacters</a> encodingChars, </em>
+<a class="jxr_linenumber" name="129" href="#129">129</a> 		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> String segment)</em>
+<a class="jxr_linenumber" name="130" href="#130">130</a> 	{
+<a class="jxr_linenumber" name="131" href="#131">131</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="132" href="#132">132</a> 			String segmentId = segment.substring(0, 3);
+<a class="jxr_linenumber" name="133" href="#133">133</a> 
+<a class="jxr_linenumber" name="134" href="#134">134</a> 			<strong class="jxr_keyword">int</strong> currentSegmentRepIdx = 0;
+<a class="jxr_linenumber" name="135" href="#135">135</a> 			<strong class="jxr_keyword">if</strong>(segmentId2nextRepIdx.containsKey(segmentId))
+<a class="jxr_linenumber" name="136" href="#136">136</a> 				currentSegmentRepIdx = ((Integer)segmentId2nextRepIdx.get(segmentId)).intValue();
+<a class="jxr_linenumber" name="137" href="#137">137</a> 			<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="138" href="#138">138</a> 				currentSegmentRepIdx = 0;
+<a class="jxr_linenumber" name="139" href="#139">139</a> 			segmentId2nextRepIdx.put(segmentId, <strong class="jxr_keyword">new</strong> Integer(currentSegmentRepIdx+1));
+<a class="jxr_linenumber" name="140" href="#140">140</a> 
+<a class="jxr_linenumber" name="141" href="#141">141</a> 			<em class="jxr_comment">// will only bother to parse this segment if any of it's contents will </em>
+<a class="jxr_linenumber" name="142" href="#142">142</a> 			<em class="jxr_comment">// be dumped to props.</em>
+<a class="jxr_linenumber" name="143" href="#143">143</a> 			<strong class="jxr_keyword">boolean</strong> parseThisSegment = false;
+<a class="jxr_linenumber" name="144" href="#144">144</a> 			DatumPath segmentIdAsDatumPath = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/DatumPath.html">DatumPath</a>().add(segmentId);
+<a class="jxr_linenumber" name="145" href="#145">145</a> 			<strong class="jxr_keyword">for</strong>(Iterator&lt;DatumPath&gt; maskIt = msgMask.iterator(); !parseThisSegment &amp;&amp; maskIt.hasNext(); ) 
+<a class="jxr_linenumber" name="146" href="#146">146</a> 				parseThisSegment = segmentIdAsDatumPath.startsWith(maskIt.next());
+<a class="jxr_linenumber" name="147" href="#147">147</a> 			<strong class="jxr_keyword">for</strong>(Iterator&lt;DatumPath&gt; maskIt = msgMask.iterator(); !parseThisSegment &amp;&amp; maskIt.hasNext(); ) 
+<a class="jxr_linenumber" name="148" href="#148">148</a> 				parseThisSegment = maskIt.next().startsWith(segmentIdAsDatumPath);
+<a class="jxr_linenumber" name="149" href="#149">149</a> 
+<a class="jxr_linenumber" name="150" href="#150">150</a> 			<strong class="jxr_keyword">if</strong>(parseThisSegment &amp;&amp; (segment.charAt(3) == encodingChars.getFieldSeparator())) {
+<a class="jxr_linenumber" name="151" href="#151">151</a> 				ER7SegmentHandler handler = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">ER7SegmentHandler</a>();
+<a class="jxr_linenumber" name="152" href="#152">152</a> 				handler.m_props = props;
+<a class="jxr_linenumber" name="153" href="#153">153</a> 				handler.m_encodingChars = encodingChars;
+<a class="jxr_linenumber" name="154" href="#154">154</a> 				handler.m_segmentId = segmentId;
+<a class="jxr_linenumber" name="155" href="#155">155</a> 				handler.m_msgMask = msgMask;
+<a class="jxr_linenumber" name="156" href="#156">156</a> 				handler.m_segmentRepIdx = currentSegmentRepIdx;
+<a class="jxr_linenumber" name="157" href="#157">157</a> 
+<a class="jxr_linenumber" name="158" href="#158">158</a> 				List&lt;Integer&gt; nodeKey = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;();
+<a class="jxr_linenumber" name="159" href="#159">159</a> 				nodeKey.add(<strong class="jxr_keyword">new</strong> Integer(0));
+<a class="jxr_linenumber" name="160" href="#160">160</a> 				parseSegmentGuts(handler, segment.substring(4), nodeKey);
+<a class="jxr_linenumber" name="161" href="#161">161</a> 			}
+<a class="jxr_linenumber" name="162" href="#162">162</a> 		}
+<a class="jxr_linenumber" name="163" href="#163">163</a> 		<strong class="jxr_keyword">catch</strong>(NullPointerException e) {}
+<a class="jxr_linenumber" name="164" href="#164">164</a> 		<strong class="jxr_keyword">catch</strong>(IndexOutOfBoundsException e) {}
+<a class="jxr_linenumber" name="165" href="#165">165</a> 	}
+<a class="jxr_linenumber" name="166" href="#166">166</a> 
+<a class="jxr_linenumber" name="167" href="#167">167</a> 	<strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">Handler</a>
+<a class="jxr_linenumber" name="168" href="#168">168</a> 	{
+<a class="jxr_linenumber" name="169" href="#169">169</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> specDepth();
+<a class="jxr_linenumber" name="170" href="#170">170</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">char</strong> delim(<strong class="jxr_keyword">int</strong> level);
+<a class="jxr_linenumber" name="171" href="#171">171</a> 
+<a class="jxr_linenumber" name="172" href="#172">172</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> putDatum(List&lt;Integer&gt; nodeKey, String value);
+<a class="jxr_linenumber" name="173" href="#173">173</a> 	}
+<a class="jxr_linenumber" name="174" href="#174">174</a> 
+<a class="jxr_linenumber" name="175" href="#175">175</a> 	<strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">ER7SegmentHandler</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">Handler</a>
+<a class="jxr_linenumber" name="176" href="#176">176</a> 	{
+<a class="jxr_linenumber" name="177" href="#177">177</a> 		Properties m_props;
+<a class="jxr_linenumber" name="178" href="#178">178</a> 
+<a class="jxr_linenumber" name="179" href="#179">179</a> 		EncodingCharacters m_encodingChars;
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a> 		String m_segmentId;
+<a class="jxr_linenumber" name="182" href="#182">182</a> 		<strong class="jxr_keyword">int</strong> m_segmentRepIdx;
+<a class="jxr_linenumber" name="183" href="#183">183</a> 
+<a class="jxr_linenumber" name="184" href="#184">184</a> 		List&lt;DatumPath&gt; m_msgMask;
+<a class="jxr_linenumber" name="185" href="#185">185</a> 
+<a class="jxr_linenumber" name="186" href="#186">186</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> specDepth() {<strong class="jxr_keyword">return</strong> 4;}
+<a class="jxr_linenumber" name="187" href="#187">187</a> 
+<a class="jxr_linenumber" name="188" href="#188">188</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">char</strong> delim(<strong class="jxr_keyword">int</strong> level)
+<a class="jxr_linenumber" name="189" href="#189">189</a> 		{
+<a class="jxr_linenumber" name="190" href="#190">190</a> 			<strong class="jxr_keyword">if</strong>(level == 0)
+<a class="jxr_linenumber" name="191" href="#191">191</a> 				<strong class="jxr_keyword">return</strong> m_encodingChars.getFieldSeparator();
+<a class="jxr_linenumber" name="192" href="#192">192</a> 			<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(level == 1)
+<a class="jxr_linenumber" name="193" href="#193">193</a> 				<strong class="jxr_keyword">return</strong> m_encodingChars.getRepetitionSeparator();
+<a class="jxr_linenumber" name="194" href="#194">194</a> 			<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(level == 2)
+<a class="jxr_linenumber" name="195" href="#195">195</a> 				<strong class="jxr_keyword">return</strong> m_encodingChars.getComponentSeparator();
+<a class="jxr_linenumber" name="196" href="#196">196</a> 			<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(level == 3)
+<a class="jxr_linenumber" name="197" href="#197">197</a> 				<strong class="jxr_keyword">return</strong> m_encodingChars.getSubcomponentSeparator();
+<a class="jxr_linenumber" name="198" href="#198">198</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(level == 4)
+<a class="jxr_linenumber" name="199" href="#199">199</a>                 <strong class="jxr_keyword">return</strong> m_encodingChars.getTruncationCharacter();
+<a class="jxr_linenumber" name="200" href="#200">200</a> 			<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="201" href="#201">201</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> java.lang.Error();
+<a class="jxr_linenumber" name="202" href="#202">202</a> 		}
+<a class="jxr_linenumber" name="203" href="#203">203</a> 
+<a class="jxr_linenumber" name="204" href="#204">204</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> putDatum(List&lt;Integer&gt; valNodeKey, String value)
+<a class="jxr_linenumber" name="205" href="#205">205</a> 		{
+<a class="jxr_linenumber" name="206" href="#206">206</a> 			<em class="jxr_comment">// make a DatumPath from valNodeKey and info in this: </em>
+<a class="jxr_linenumber" name="207" href="#207">207</a> 			DatumPath valDatumPath = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/DatumPath.html">DatumPath</a>();
+<a class="jxr_linenumber" name="208" href="#208">208</a> 			valDatumPath.add(m_segmentId).add(m_segmentRepIdx);
+<a class="jxr_linenumber" name="209" href="#209">209</a> 			<strong class="jxr_keyword">for</strong>(<strong class="jxr_keyword">int</strong> i=0; i&lt;valNodeKey.size(); ++i) {
+<a class="jxr_linenumber" name="210" href="#210">210</a> 				<em class="jxr_comment">// valNodeKey: everything counts from 0 -- not so with DatumPath ... sigh. </em>
+<a class="jxr_linenumber" name="211" href="#211">211</a> 				<strong class="jxr_keyword">int</strong> itval = ((Integer)valNodeKey.get(i)).intValue();
+<a class="jxr_linenumber" name="212" href="#212">212</a> 				valDatumPath.add(<strong class="jxr_keyword">new</strong> Integer(i == 1 ? itval : itval+1));
+<a class="jxr_linenumber" name="213" href="#213">213</a> 			}
+<a class="jxr_linenumber" name="214" href="#214">214</a> 
+<a class="jxr_linenumber" name="215" href="#215">215</a> 			<em class="jxr_comment">// see if valDatumPath passes m_msgMask: </em>
+<a class="jxr_linenumber" name="216" href="#216">216</a> 			<strong class="jxr_keyword">boolean</strong> valDatumPathPassesMask = false;
+<a class="jxr_linenumber" name="217" href="#217">217</a> 			<strong class="jxr_keyword">for</strong>(Iterator&lt;DatumPath&gt; maskIt = m_msgMask.iterator(); 
+<a class="jxr_linenumber" name="218" href="#218">218</a> 				!valDatumPathPassesMask &amp;&amp; maskIt.hasNext(); )
+<a class="jxr_linenumber" name="219" href="#219">219</a> 			{
+<a class="jxr_linenumber" name="220" href="#220">220</a> 				valDatumPathPassesMask = valDatumPath.startsWith(maskIt.next());
+<a class="jxr_linenumber" name="221" href="#221">221</a> 			}
+<a class="jxr_linenumber" name="222" href="#222">222</a> 
+<a class="jxr_linenumber" name="223" href="#223">223</a> 			<strong class="jxr_keyword">if</strong>(valDatumPathPassesMask)
+<a class="jxr_linenumber" name="224" href="#224">224</a> 				m_props.setProperty(valDatumPath.toString(), value);
+<a class="jxr_linenumber" name="225" href="#225">225</a> 		}
+<a class="jxr_linenumber" name="226" href="#226">226</a> 	}
+<a class="jxr_linenumber" name="227" href="#227">227</a> 
+<a class="jxr_linenumber" name="228" href="#228">228</a> 	<em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> recursively tokenize "guts" (a segment, or part of one) into tokens, </em>
+<a class="jxr_linenumber" name="229" href="#229">229</a> <em class="jxr_javadoccomment">	according to separators (aka delimiters) which are different at each level</em>
+<a class="jxr_linenumber" name="230" href="#230">230</a> <em class="jxr_javadoccomment">	of recursion, and to a recursive depth which is discovered through "handler"</em>
+<a class="jxr_linenumber" name="231" href="#231">231</a> <em class="jxr_javadoccomment">	via handler.delim(int) and handler.specDepth()  As tokens are found, they</em>
+<a class="jxr_linenumber" name="232" href="#232">232</a> <em class="jxr_javadoccomment">	are reported to handler via handler.putDatum(), which presumably stashes them</em>
+<a class="jxr_linenumber" name="233" href="#233">233</a> <em class="jxr_javadoccomment">	away somewhere.  We tell the handler about the location in the message via</em>
+<a class="jxr_linenumber" name="234" href="#234">234</a> <em class="jxr_javadoccomment">	putDatum()'s key argument, which is a List of Integers representing the </em>
+<a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">	position in the parse tree (size() == depth of recursion).</em>
+<a class="jxr_linenumber" name="236" href="#236">236</a> 
+<a class="jxr_linenumber" name="237" href="#237">237</a> <em class="jxr_javadoccomment">	TODO: say more.</em>
+<a class="jxr_linenumber" name="238" href="#238">238</a> <em class="jxr_javadoccomment">	*/</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> parseSegmentGuts(<em class="jxr_comment">/*<em class="jxr_comment">in/out*/</em> <a href="../../../../ca/uhn/hl7v2/preparser/ER7.html">Handler</a> handler,  </em>
+<a class="jxr_linenumber" name="240" href="#240">240</a> 		<em class="jxr_comment">/*<em class="jxr_comment">in*/</em> String guts, /*in*/List&lt;Integer&gt; nodeKey)</em>
+<a class="jxr_linenumber" name="241" href="#241">241</a> 	{
+<a class="jxr_linenumber" name="242" href="#242">242</a> 		<strong class="jxr_keyword">char</strong> thisDepthsDelim = handler.delim(nodeKey.size()-1);
+<a class="jxr_linenumber" name="243" href="#243">243</a> 		<em class="jxr_comment">//nodeKey.add(new Integer(0)); // will change nodeKey back before function exits</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a> 
+<a class="jxr_linenumber" name="245" href="#245">245</a> 		StringTokenizer gutsTokenizer 
+<a class="jxr_linenumber" name="246" href="#246">246</a> 			= <strong class="jxr_keyword">new</strong> StringTokenizer(guts, String.valueOf(thisDepthsDelim), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="247" href="#247">247</a> 		<strong class="jxr_keyword">while</strong>(gutsTokenizer.hasMoreTokens()) {
+<a class="jxr_linenumber" name="248" href="#248">248</a> 			String gutsToken = gutsTokenizer.nextToken();
+<a class="jxr_linenumber" name="249" href="#249">249</a> 
+<a class="jxr_linenumber" name="250" href="#250">250</a> 			<strong class="jxr_keyword">if</strong>(gutsToken.charAt(0) == thisDepthsDelim) {
+<a class="jxr_linenumber" name="251" href="#251">251</a> 				<em class="jxr_comment">// gutsToken is all delims -- skipping over as many fields or</em>
+<a class="jxr_linenumber" name="252" href="#252">252</a> 				<em class="jxr_comment">// components or whatevers as there are characters in the token: </em>
+<a class="jxr_linenumber" name="253" href="#253">253</a> 				<strong class="jxr_keyword">int</strong> oldvalue = ((Integer)nodeKey.get(nodeKey.size()-1)).intValue();
+<a class="jxr_linenumber" name="254" href="#254">254</a> 				nodeKey.set(nodeKey.size()-1, <strong class="jxr_keyword">new</strong> Integer(oldvalue + gutsToken.length()));
+<a class="jxr_linenumber" name="255" href="#255">255</a> 			}
+<a class="jxr_linenumber" name="256" href="#256">256</a> 			<strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="257" href="#257">257</a> 				<strong class="jxr_keyword">if</strong>(nodeKey.size() &lt; handler.specDepth()) {
+<a class="jxr_linenumber" name="258" href="#258">258</a> 					nodeKey.add(<strong class="jxr_keyword">new</strong> Integer(0));
+<a class="jxr_linenumber" name="259" href="#259">259</a> 					parseSegmentGuts(handler, gutsToken, nodeKey);
+<a class="jxr_linenumber" name="260" href="#260">260</a> 					nodeKey.remove(nodeKey.size()-1);
+<a class="jxr_linenumber" name="261" href="#261">261</a> 				}
+<a class="jxr_linenumber" name="262" href="#262">262</a> 				<strong class="jxr_keyword">else</strong> 
+<a class="jxr_linenumber" name="263" href="#263">263</a> 					handler.putDatum(nodeKey, gutsToken);
+<a class="jxr_linenumber" name="264" href="#264">264</a> 			}
+<a class="jxr_linenumber" name="265" href="#265">265</a> 		}
+<a class="jxr_linenumber" name="266" href="#266">266</a> 		<em class="jxr_comment">//nodeKey.setSize(nodeKey.size()-1); // undoing add done at top of this func</em>
+<a class="jxr_linenumber" name="267" href="#267">267</a> 	}
+<a class="jxr_linenumber" name="268" href="#268">268</a> 
+<a class="jxr_linenumber" name="269" href="#269">269</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String args[])
+<a class="jxr_linenumber" name="270" href="#270">270</a> 	{
+<a class="jxr_linenumber" name="271" href="#271">271</a> 		<strong class="jxr_keyword">if</strong>(args.length &gt;= 1) {
+<a class="jxr_linenumber" name="272" href="#272">272</a> 			<em class="jxr_comment">//String message = "MSH|^~&#92;&#92;&amp;||||foo|foo|foo";</em>
+<a class="jxr_linenumber" name="273" href="#273">273</a> 			System.out.println(args[0]);
+<a class="jxr_linenumber" name="274" href="#274">274</a> 
+<a class="jxr_linenumber" name="275" href="#275">275</a> 			Properties props = <strong class="jxr_keyword">new</strong> Properties();
+<a class="jxr_linenumber" name="276" href="#276">276</a> 
+<a class="jxr_linenumber" name="277" href="#277">277</a> 			List&lt;DatumPath&gt; msgMask = <strong class="jxr_keyword">new</strong> ArrayList&lt;DatumPath&gt;();
+<a class="jxr_linenumber" name="278" href="#278">278</a> 			msgMask.add(<strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/preparser/DatumPath.html">DatumPath</a>());
+<a class="jxr_linenumber" name="279" href="#279">279</a> 
+<a class="jxr_linenumber" name="280" href="#280">280</a> 			System.err.println(<span class="jxr_string">"ER7.parseMessage returned "</span> + parseMessage(props, msgMask, args[0]));
+<a class="jxr_linenumber" name="281" href="#281">281</a> 			props.list(System.out);
+<a class="jxr_linenumber" name="282" href="#282">282</a> 		}
+<a class="jxr_linenumber" name="283" href="#283">283</a> 	}
+<a class="jxr_linenumber" name="284" href="#284">284</a> 	
+<a class="jxr_linenumber" name="285" href="#285">285</a> }
+<a class="jxr_linenumber" name="286" href="#286">286</a> 
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>

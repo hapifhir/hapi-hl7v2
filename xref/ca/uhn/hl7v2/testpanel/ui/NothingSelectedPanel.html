@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>NothingSelectedPanel xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/ca/uhn/hl7v2/testpanel/ui/NothingSelectedPanel.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_javadoccomment"> * The contents of this file are subject to the Mozilla Public License Version 1.1</em>
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_javadoccomment"> * (the "License"); you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_javadoccomment"> * You may obtain a copy of the License at <a href="http://www.mozilla.org/MPL/" target="alexandria_uri">http://www.mozilla.org/MPL/</a></em>
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_javadoccomment"> * Software distributed under the License is distributed on an "AS IS" basis,</em>
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_javadoccomment"> * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_javadoccomment"> * specific language governing rights and limitations under the License.</em>
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment"> * The Original Code is ""  Description:</em>
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_javadoccomment"> * ""</em>
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * The Initial Developer of the Original Code is University Health Network. Copyright (C)</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * 2001.  All Rights Reserved.</em>
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * Contributor(s): ______________________________________.</em>
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> * Alternatively, the contents of this file may be used under the terms of the</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_javadoccomment"> * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment"> * applicable instead of those above.  If you wish to allow use of your version of this</em>
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment"> * file only under the terms of the GPL and not to allow others to use your version</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * of this file under the MPL, indicate your decision by deleting  the provisions above</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> * and replace  them with the notice and other provisions required by the GPL License.</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment"> * If you do not delete the provisions above, a recipient may use your version of</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * this file under either the MPL or the GPL.</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.testpanel.ui;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> java.awt.Color;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> java.awt.Desktop;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> java.awt.GridBagConstraints;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> java.awt.GridBagLayout;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> java.awt.Insets;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> java.awt.event.ActionEvent;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> java.awt.event.ActionListener;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> java.awt.event.MouseAdapter;
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.awt.event.MouseEvent;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> java.net.URISyntaxException;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> javax.swing.ImageIcon;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> javax.swing.JButton;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> javax.swing.JLabel;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> javax.swing.JPanel;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> javax.swing.SwingConstants;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.testpanel.controller.Controller;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../ca/uhn/hl7v2/testpanel/ui/NothingSelectedPanel.html">NothingSelectedPanel</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../ca/uhn/hl7v2/testpanel/ui/BaseMainPanel.html">BaseMainPanel</a> {
+<a class="jxr_linenumber" name="50" href="#50">50</a>  
+<a class="jxr_linenumber" name="51" href="#51">51</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">	 * Create the panel.</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  	<strong class="jxr_keyword">public</strong> <a href="../../../../../ca/uhn/hl7v2/testpanel/ui/NothingSelectedPanel.html">NothingSelectedPanel</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../ca/uhn/hl7v2/testpanel/controller/Controller.html">Controller</a> theController) {
+<a class="jxr_linenumber" name="55" href="#55">55</a>  		GridBagLayout gridBagLayout = <strong class="jxr_keyword">new</strong> GridBagLayout();
+<a class="jxr_linenumber" name="56" href="#56">56</a>  		gridBagLayout.columnWidths = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[]{0, 0};
+<a class="jxr_linenumber" name="57" href="#57">57</a>  		gridBagLayout.rowHeights = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[]{0, 0, 0, 0, 0, 0};
+<a class="jxr_linenumber" name="58" href="#58">58</a>  		gridBagLayout.columnWeights = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[]{1.0, Double.MIN_VALUE};
+<a class="jxr_linenumber" name="59" href="#59">59</a>  		gridBagLayout.rowWeights = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+<a class="jxr_linenumber" name="60" href="#60">60</a>  		setLayout(gridBagLayout);
+<a class="jxr_linenumber" name="61" href="#61">61</a>  		
+<a class="jxr_linenumber" name="62" href="#62">62</a>  		JPanel panel = <strong class="jxr_keyword">new</strong> JPanel();
+<a class="jxr_linenumber" name="63" href="#63">63</a>  		panel.setBackground(Color.WHITE);
+<a class="jxr_linenumber" name="64" href="#64">64</a>  		GridBagConstraints gbc_panel = <strong class="jxr_keyword">new</strong> GridBagConstraints();
+<a class="jxr_linenumber" name="65" href="#65">65</a>  		gbc_panel.insets = <strong class="jxr_keyword">new</strong> Insets(0, 0, 5, 0);
+<a class="jxr_linenumber" name="66" href="#66">66</a>  		gbc_panel.fill = GridBagConstraints.BOTH;
+<a class="jxr_linenumber" name="67" href="#67">67</a>  		gbc_panel.gridx = 0;
+<a class="jxr_linenumber" name="68" href="#68">68</a>  		gbc_panel.gridy = 0;
+<a class="jxr_linenumber" name="69" href="#69">69</a>  		add(panel, gbc_panel);
+<a class="jxr_linenumber" name="70" href="#70">70</a>  		
+<a class="jxr_linenumber" name="71" href="#71">71</a>  		JLabel lblNewLabel_1 = <strong class="jxr_keyword">new</strong> JLabel(<span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="72" href="#72">72</a>  		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+<a class="jxr_linenumber" name="73" href="#73">73</a>  		lblNewLabel_1.setIcon(<strong class="jxr_keyword">new</strong> ImageIcon(NothingSelectedPanel.<strong class="jxr_keyword">class</strong>.getResource(<span class="jxr_string">"/ca/uhn/hl7v2/testpanel/images/hapi_logo.png"</span>)));
+<a class="jxr_linenumber" name="74" href="#74">74</a>  		panel.add(lblNewLabel_1);
+<a class="jxr_linenumber" name="75" href="#75">75</a>  		
+<a class="jxr_linenumber" name="76" href="#76">76</a>  		JLabel lblNewLabel = <strong class="jxr_keyword">new</strong> JLabel(<span class="jxr_string">"&lt;html&gt;&lt;center&gt;"</span> +
+<a class="jxr_linenumber" name="77" href="#77">77</a>  				<span class="jxr_string">"Welcome to HAPI TestPanel!&lt;br&gt;&lt;br&gt;"</span> +
+<a class="jxr_linenumber" name="78" href="#78">78</a>  				<span class="jxr_string">"This is free software, licensed under the Mozilla Public License. "</span> +
+<a class="jxr_linenumber" name="79" href="#79">79</a>  				<span class="jxr_string">"&lt;br&gt;&lt;br&gt;Get Started:"</span> +
+<a class="jxr_linenumber" name="80" href="#80">80</a>  				<span class="jxr_string">"&lt;/center&gt;&lt;/html&gt;"</span>);
+<a class="jxr_linenumber" name="81" href="#81">81</a>  		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+<a class="jxr_linenumber" name="82" href="#82">82</a>  		GridBagConstraints gbc_lblNewLabel = <strong class="jxr_keyword">new</strong> GridBagConstraints();
+<a class="jxr_linenumber" name="83" href="#83">83</a>  		gbc_lblNewLabel.insets = <strong class="jxr_keyword">new</strong> Insets(0, 0, 5, 0);
+<a class="jxr_linenumber" name="84" href="#84">84</a>  		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
+<a class="jxr_linenumber" name="85" href="#85">85</a>  		gbc_lblNewLabel.gridx = 0;
+<a class="jxr_linenumber" name="86" href="#86">86</a>  		gbc_lblNewLabel.gridy = 1;
+<a class="jxr_linenumber" name="87" href="#87">87</a>  		add(lblNewLabel, gbc_lblNewLabel);
+<a class="jxr_linenumber" name="88" href="#88">88</a>  		
+<a class="jxr_linenumber" name="89" href="#89">89</a>  		JButton btnCreateHlV = <strong class="jxr_keyword">new</strong> JButton(<span class="jxr_string">"Create Samples"</span>);
+<a class="jxr_linenumber" name="90" href="#90">90</a>  		btnCreateHlV.addActionListener(<strong class="jxr_keyword">new</strong> ActionListener() {
+<a class="jxr_linenumber" name="91" href="#91">91</a>  			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> actionPerformed(ActionEvent e) {
+<a class="jxr_linenumber" name="92" href="#92">92</a>  				theController.populateWithSampleMessageAndConnections();
+<a class="jxr_linenumber" name="93" href="#93">93</a>  			}
+<a class="jxr_linenumber" name="94" href="#94">94</a>  		});
+<a class="jxr_linenumber" name="95" href="#95">95</a>  		GridBagConstraints gbc_btnCreateHlV = <strong class="jxr_keyword">new</strong> GridBagConstraints();
+<a class="jxr_linenumber" name="96" href="#96">96</a>  		gbc_btnCreateHlV.insets = <strong class="jxr_keyword">new</strong> Insets(0, 0, 5, 0);
+<a class="jxr_linenumber" name="97" href="#97">97</a>  		gbc_btnCreateHlV.gridx = 0;
+<a class="jxr_linenumber" name="98" href="#98">98</a>  		gbc_btnCreateHlV.gridy = 2;
+<a class="jxr_linenumber" name="99" href="#99">99</a>  		add(btnCreateHlV, gbc_btnCreateHlV);
+<a class="jxr_linenumber" name="100" href="#100">100</a> 		
+<a class="jxr_linenumber" name="101" href="#101">101</a> 		JLabel lblNewLabel_2 = <strong class="jxr_keyword">new</strong> JLabel(<span class="jxr_string">"&lt;html&gt;&lt;center&gt;"</span> +
+<a class="jxr_linenumber" name="102" href="#102">102</a> 				<span class="jxr_string">"&lt;br&gt;&lt;br&gt;"</span> +
+<a class="jxr_linenumber" name="103" href="#103">103</a> 				<span class="jxr_string">"Let us know what you think!"</span> +
+<a class="jxr_linenumber" name="104" href="#104">104</a> 				<span class="jxr_string">"&lt;/center&gt;&lt;/html&gt;"</span>);
+<a class="jxr_linenumber" name="105" href="#105">105</a> 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+<a class="jxr_linenumber" name="106" href="#106">106</a> 		GridBagConstraints gbc_lblNewLabel_2 = <strong class="jxr_keyword">new</strong> GridBagConstraints();
+<a class="jxr_linenumber" name="107" href="#107">107</a> 		gbc_lblNewLabel_2.insets = <strong class="jxr_keyword">new</strong> Insets(0, 0, 5, 0);
+<a class="jxr_linenumber" name="108" href="#108">108</a> 		gbc_lblNewLabel_2.fill = GridBagConstraints.HORIZONTAL;
+<a class="jxr_linenumber" name="109" href="#109">109</a> 		gbc_lblNewLabel_2.gridx = 0;
+<a class="jxr_linenumber" name="110" href="#110">110</a> 		gbc_lblNewLabel_2.gridy = 3;
+<a class="jxr_linenumber" name="111" href="#111">111</a> 		add(lblNewLabel_2, gbc_lblNewLabel_2);
+<a class="jxr_linenumber" name="112" href="#112">112</a> 		
+<a class="jxr_linenumber" name="113" href="#113">113</a> 		JLabel lblViewLicenseInformation = <strong class="jxr_keyword">new</strong> JLabel(<span class="jxr_string">"&lt;html&gt;&lt;center&gt;Licensed under the &lt;a href=\&quot;\&quot;&gt;Mozilla Public License&lt;/a&gt;&lt;/center&gt;&lt;/html&gt;"</span>);
+<a class="jxr_linenumber" name="114" href="#114">114</a> 		lblViewLicenseInformation.addMouseListener(<strong class="jxr_keyword">new</strong> MouseAdapter() {
+<a class="jxr_linenumber" name="115" href="#115">115</a> 			@Override
+<a class="jxr_linenumber" name="116" href="#116">116</a> 			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> mouseClicked(MouseEvent e) {
+<a class="jxr_linenumber" name="117" href="#117">117</a> 				<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="118" href="#118">118</a> 					Desktop.getDesktop().browse(<strong class="jxr_keyword">new</strong> URI(<span class="jxr_string">"http://hl7api.sourceforge.net/license.html"</span>));
+<a class="jxr_linenumber" name="119" href="#119">119</a> 				} <strong class="jxr_keyword">catch</strong> (IOException e1) {
+<a class="jxr_linenumber" name="120" href="#120">120</a> 					e1.printStackTrace();
+<a class="jxr_linenumber" name="121" href="#121">121</a> 				} <strong class="jxr_keyword">catch</strong> (URISyntaxException e1) {
+<a class="jxr_linenumber" name="122" href="#122">122</a> 					e1.printStackTrace();
+<a class="jxr_linenumber" name="123" href="#123">123</a> 				}
+<a class="jxr_linenumber" name="124" href="#124">124</a> 			}
+<a class="jxr_linenumber" name="125" href="#125">125</a> 		});
+<a class="jxr_linenumber" name="126" href="#126">126</a> 		lblViewLicenseInformation.setHorizontalAlignment(SwingConstants.CENTER);
+<a class="jxr_linenumber" name="127" href="#127">127</a> 		lblViewLicenseInformation.setForeground(Color.BLACK);
+<a class="jxr_linenumber" name="128" href="#128">128</a> 		GridBagConstraints gbc_lblViewLicenseInformation = <strong class="jxr_keyword">new</strong> GridBagConstraints();
+<a class="jxr_linenumber" name="129" href="#129">129</a> 		gbc_lblViewLicenseInformation.fill = GridBagConstraints.HORIZONTAL;
+<a class="jxr_linenumber" name="130" href="#130">130</a> 		gbc_lblViewLicenseInformation.anchor = GridBagConstraints.SOUTH;
+<a class="jxr_linenumber" name="131" href="#131">131</a> 		gbc_lblViewLicenseInformation.gridx = 0;
+<a class="jxr_linenumber" name="132" href="#132">132</a> 		gbc_lblViewLicenseInformation.gridy = 4;
+<a class="jxr_linenumber" name="133" href="#133">133</a> 		add(lblViewLicenseInformation, gbc_lblViewLicenseInformation);
+<a class="jxr_linenumber" name="134" href="#134">134</a> 
+<a class="jxr_linenumber" name="135" href="#135">135</a> 	}
+<a class="jxr_linenumber" name="136" href="#136">136</a> 
+<a class="jxr_linenumber" name="137" href="#137">137</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>

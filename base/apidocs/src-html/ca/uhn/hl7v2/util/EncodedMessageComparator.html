@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.util;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.util.regex.Pattern;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.w3c.dom.Document;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.w3c.dom.Element;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.w3c.dom.NamedNodeMap;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import org.w3c.dom.Node;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import org.w3c.dom.NodeList;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.xml.sax.SAXException;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import ca.uhn.hl7v2.model.Message;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import ca.uhn.hl7v2.parser.GenericParser;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>/**<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * Tools for testing message strings for semantic equivalence without assuming the correctness<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * of parsers.  <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * @author Bryan Tripp<a name="line.19"></a>
+<span class="sourceLineNo">020</span> */<a name="line.20"></a>
+<span class="sourceLineNo">021</span>public class EncodedMessageComparator {<a name="line.21"></a>
+<span class="sourceLineNo">022</span>    <a name="line.22"></a>
+<span class="sourceLineNo">023</span>    static final GenericParser parser = new GenericParser();  <a name="line.23"></a>
+<span class="sourceLineNo">024</span>    <a name="line.24"></a>
+<span class="sourceLineNo">025</span>    /**<a name="line.25"></a>
+<span class="sourceLineNo">026</span>     * Returns a "standardized" equivalent of the given message string.  For delimited<a name="line.26"></a>
+<span class="sourceLineNo">027</span>     * messages, the returned value is the shortest string that has an equivalent<a name="line.27"></a>
+<span class="sourceLineNo">028</span>     * meaning in HL7.  For XML-encoded messages, the returned value is equivalent XML output<a name="line.28"></a>
+<span class="sourceLineNo">029</span>     * using a standard pretty-print format.  An automatic determination is made about whether <a name="line.29"></a>
+<span class="sourceLineNo">030</span>     * the given string is XML or ER7 (i.e. traditionally) encoded.<a name="line.30"></a>
+<span class="sourceLineNo">031</span>     * @param message an XML-encoded or ER7-encoded message string<a name="line.31"></a>
+<span class="sourceLineNo">032</span>     */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>    public static String standardize(String message) throws SAXException {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>        String result = null;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        String encoding = parser.getEncoding(message);<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        if (encoding.equals("XML")) {<a name="line.36"></a>
+<span class="sourceLineNo">037</span>            result = standardizeXML(message);<a name="line.37"></a>
+<span class="sourceLineNo">038</span>        } else {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>            result = standardizeER7(message);<a name="line.39"></a>
+<span class="sourceLineNo">040</span>        }<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        return result;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    }<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    <a name="line.43"></a>
+<span class="sourceLineNo">044</span>    /**<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * Returns the shortest string that is semantically equivalent to a given ER7-encoded <a name="line.45"></a>
+<span class="sourceLineNo">046</span>     * message string.<a name="line.46"></a>
+<span class="sourceLineNo">047</span>     */<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    public static String standardizeER7(String message) {<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        <a name="line.49"></a>
+<span class="sourceLineNo">050</span>        //make delimiter sequences (must quote with \ if not alphanumeric; can't otherwise because of regexp rules)<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        char fieldDelimChar = message.charAt(3);<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        String fieldDelim = String.valueOf(fieldDelimChar);<a name="line.52"></a>
+<span class="sourceLineNo">053</span>        if (!Character.isLetterOrDigit(fieldDelimChar)) fieldDelim = "\\" + fieldDelimChar;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        <a name="line.54"></a>
+<span class="sourceLineNo">055</span>        char compSepChar = message.charAt(4);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        String compSep = String.valueOf(compSepChar);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        if (!Character.isLetterOrDigit(compSepChar)) compSep = "\\" + compSepChar;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        <a name="line.58"></a>
+<span class="sourceLineNo">059</span>        char repSepChar = message.charAt(5);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        String repSep = String.valueOf(repSepChar);<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        if (!Character.isLetterOrDigit(repSepChar)) repSep = "\\" + repSepChar;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        <a name="line.62"></a>
+<span class="sourceLineNo">063</span>        char subSepChar = message.charAt(7);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        String subSep = String.valueOf(subSepChar);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        if (!Character.isLetterOrDigit(subSepChar)) subSep = "\\" + subSepChar;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        <a name="line.66"></a>
+<span class="sourceLineNo">067</span>        //char space = ' ';<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        <a name="line.68"></a>
+<span class="sourceLineNo">069</span>        /* Things to strip (cumulative):<a name="line.69"></a>
+<span class="sourceLineNo">070</span>         *  - all delimiters and repetition separators before end line (i.e. end segment)<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         *  - repetition separators, comp and subcomp delims before new field<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         *  - subcomponent delimiters before new component<a name="line.72"></a>
+<span class="sourceLineNo">073</span>         */<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        Pattern endSegment = Pattern.compile("[" + fieldDelim + compSep + repSep + subSep + "]*[\n\r]+");<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        message = endSegment.matcher(message).replaceAll("\r");<a name="line.75"></a>
+<span class="sourceLineNo">076</span>        <a name="line.76"></a>
+<span class="sourceLineNo">077</span>        Pattern endField = Pattern.compile("[" + repSep + compSep + subSep + "]*" + fieldDelim);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        message = endField.matcher(message).replaceAll(String.valueOf(fieldDelim));<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        <a name="line.79"></a>
+<span class="sourceLineNo">080</span>        Pattern endComp = Pattern.compile("[" + subSep + "]*" + compSep);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        message = endComp.matcher(message).replaceAll(String.valueOf(compSep));<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        <a name="line.82"></a>
+<span class="sourceLineNo">083</span>        //Pattern endSub = Pattern.compile("[ ]*" + subSep);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        //message = endSub.matcher(message).replaceAll(String.valueOf(subSep));<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        <a name="line.85"></a>
+<span class="sourceLineNo">086</span>        //handle special case of subcomp delim in encoding characters<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        message = message.substring(0, 7) + subSepChar + message.substring(7);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        <a name="line.88"></a>
+<span class="sourceLineNo">089</span>        return message;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    <a name="line.91"></a>
+<span class="sourceLineNo">092</span>    /**<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * Returns a semantic equivalent of a given XML-encoded message in a default format.<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * Attributes, comments, and processing instructions are not considered to change the <a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * HL7 meaning of the message, and are removed in the standardized representation.    <a name="line.95"></a>
+<span class="sourceLineNo">096</span>     */<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    public static String standardizeXML(String message) throws SAXException {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>        try {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                Document doc = XMLUtils.parse(message);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            clean(doc.getDocumentElement());<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            return XMLUtils.serialize(doc, true);<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        } catch (Exception e) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            throw new RuntimeException("Exception while standardizing XML ", e);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        }<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>    }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    <a name="line.107"></a>
+<span class="sourceLineNo">108</span>    /** Removes attributes, comments, and processing instructions. */<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    private static void clean(Element elem) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        NodeList children = elem.getChildNodes();        <a name="line.110"></a>
+<span class="sourceLineNo">111</span>        for (int i = 0; i &lt; children.getLength(); i++) {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            Node child = children.item(i);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            if (child.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE <a name="line.113"></a>
+<span class="sourceLineNo">114</span>                || child.getNodeType() == Node.COMMENT_NODE)<a name="line.114"></a>
+<span class="sourceLineNo">115</span>            {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                                elem.removeChild(child);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>            } else if (child.getNodeType() == Node.ELEMENT_NODE) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                clean((Element) child);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        <a name="line.121"></a>
+<span class="sourceLineNo">122</span>        NamedNodeMap attributes = elem.getAttributes();<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        //get names<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        String[] names = new String[attributes.getLength()];<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        for (int i = 0; i &lt; names.length; i++) {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            names[i] = attributes.item(i).getNodeName();<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        //remove by name<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        for (int i = 0; i &lt; names.length; i++) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>            attributes.removeNamedItem(names[i]);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        }<a name="line.131"></a>
+<span class="sourceLineNo">132</span><a name="line.132"></a>
+<span class="sourceLineNo">133</span>    }<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    <a name="line.134"></a>
+<span class="sourceLineNo">135</span>    /**<a name="line.135"></a>
+<span class="sourceLineNo">136</span>     * &lt;p&gt;Compares two HL7 messages to see if they are equivalent (in terms of their  <a name="line.136"></a>
+<span class="sourceLineNo">137</span>     * HL7 meaning).  Semantically irrelevant differences (e.g. spaces in an XML tag; <a name="line.137"></a>
+<span class="sourceLineNo">138</span>     * extra field delimiters at the end of a segment; XML vs. ER7 encoding; XML attributes)<a name="line.138"></a>
+<span class="sourceLineNo">139</span>     * are ignored. This check is performed without assuming the correctness of the HAPI parsers, <a name="line.139"></a>
+<span class="sourceLineNo">140</span>     * and can therefore be used to test them.  This is done by parsing a message, encoding it<a name="line.140"></a>
+<span class="sourceLineNo">141</span>     * again, and comparing the result with this original.  &lt;/p&gt;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>     * &lt;p&gt;If one message is in XML and the other in ER7, the former is converted to ER7 to <a name="line.142"></a>
+<span class="sourceLineNo">143</span>     * perform the comparison.  This process relies on the HAPI parsers.  However, the <a name="line.143"></a>
+<span class="sourceLineNo">144</span>     * parsed message is first encoded as XML and compared to the original, so that the <a name="line.144"></a>
+<span class="sourceLineNo">145</span>     * integrity of the parser can be verified.  An exception is thrown if this comparison <a name="line.145"></a>
+<span class="sourceLineNo">146</span>     * is unsuccessful.  &lt;/p&gt;<a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * @return true if given messages are semantically equivalent <a name="line.147"></a>
+<span class="sourceLineNo">148</span>     */<a name="line.148"></a>
+<span class="sourceLineNo">149</span>    public static boolean equivalent(String message1, String message2) throws HL7Exception {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        Pair&lt;String&gt; messages = standardize(message1, message2);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        return messages.getValue1().equals(messages.getValue2());<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    <a name="line.153"></a>
+<span class="sourceLineNo">154</span>    static Pair&lt;String&gt; standardize(String message1, String message2) throws HL7Exception {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        String encoding1 = parser.getEncoding(message1);<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        String encoding2 = parser.getEncoding(message2);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        <a name="line.157"></a>
+<span class="sourceLineNo">158</span>        if (!encoding1.equals(encoding2)) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>            if (encoding1.equals("XML")) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                message1 = safeER7Conversion(message1);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            } else {<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                message2 = safeER7Conversion(message2);<a name="line.162"></a>
+<span class="sourceLineNo">163</span>            }<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        }<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        <a name="line.165"></a>
+<span class="sourceLineNo">166</span>        String std1, std2;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        try {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            std1 = standardize(message1);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            std2 = standardize(message2);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        } catch (SAXException e) {<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            throw new HL7Exception("Equivalence check failed due to SAXException: " + e.getMessage());<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        }<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        <a name="line.173"></a>
+<span class="sourceLineNo">174</span>        return new Pair&lt;String&gt;(std1, std2);<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        }<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>        /** <a name="line.177"></a>
+<span class="sourceLineNo">178</span>     * Converts XML message to ER7, first checking integrity of parse and throwing <a name="line.178"></a>
+<span class="sourceLineNo">179</span>     * an exception if parse not correct<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     */<a name="line.180"></a>
+<span class="sourceLineNo">181</span>    static String safeER7Conversion(String xmlMessage) throws HL7Exception {<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        Message m = parser.parse(xmlMessage);<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>        String check = parser.encode(m, "XML");<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        if (!equivalent(xmlMessage, check)) {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>            throw new HL7Exception("Parsed and encoded message not equivalent to original (possibilities: invalid message, bug in parser)");<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        }<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        <a name="line.188"></a>
+<span class="sourceLineNo">189</span>        return parser.encode(m, "VB");        <a name="line.189"></a>
+<span class="sourceLineNo">190</span>    }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>   <a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>    <a name="line.193"></a>
+<span class="sourceLineNo">194</span>}<a name="line.194"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

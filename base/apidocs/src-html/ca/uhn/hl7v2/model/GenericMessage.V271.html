@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.model;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import org.slf4j.Logger;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import org.slf4j.LoggerFactory;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import ca.uhn.hl7v2.Version;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import ca.uhn.hl7v2.parser.ModelClassFactory;<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>/**<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * A generic HL7 message, meant for parsing message with unrecognized structures<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * into a flat list of segments.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * @author Bryan Tripp<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * @author Christian Ohr<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>@SuppressWarnings("serial")<a name="line.17"></a>
+<span class="sourceLineNo">018</span>public abstract class GenericMessage extends AbstractMessage {<a name="line.18"></a>
+<span class="sourceLineNo">019</span>    <a name="line.19"></a>
+<span class="sourceLineNo">020</span>        private static final Logger log = LoggerFactory.getLogger(GenericMessage.class);<a name="line.20"></a>
+<span class="sourceLineNo">021</span>        <a name="line.21"></a>
+<span class="sourceLineNo">022</span>    /** <a name="line.22"></a>
+<span class="sourceLineNo">023</span>     * Creates a new instance of GenericMessage. <a name="line.23"></a>
+<span class="sourceLineNo">024</span>     * <a name="line.24"></a>
+<span class="sourceLineNo">025</span>     * @param factory class factory for contained structures <a name="line.25"></a>
+<span class="sourceLineNo">026</span>     */<a name="line.26"></a>
+<span class="sourceLineNo">027</span>    public GenericMessage(ModelClassFactory factory) {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        super(factory);<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        try {<a name="line.29"></a>
+<span class="sourceLineNo">030</span>            this.addNonstandardSegment("MSH");<a name="line.30"></a>
+<span class="sourceLineNo">031</span>        } catch(HL7Exception e) {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>            String message = "Unexpected error adding GenericSegment to GenericMessage.";<a name="line.32"></a>
+<span class="sourceLineNo">033</span>            log.error(message, e);<a name="line.33"></a>
+<span class="sourceLineNo">034</span>            throw new Error(message); // TODO better throw RuntimeException<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        }        <a name="line.35"></a>
+<span class="sourceLineNo">036</span>    }<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    <a name="line.37"></a>
+<span class="sourceLineNo">038</span>    /**<a name="line.38"></a>
+<span class="sourceLineNo">039</span>     * Returns a subclass of GenericMessage corresponding to a certain version.  <a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * This is needed so that version-specific segments can be added as the message<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * is parsed.<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     *<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     * @param version the HL7 version<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     * @return the class of the generic message<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     */<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        @SuppressWarnings("unchecked")<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public static Class&lt;? extends Message&gt; getGenericMessageClass(String version) {<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                <a name="line.48"></a>
+<span class="sourceLineNo">049</span>                Version v = Version.versionOf(version);<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        if (v != null) {       <a name="line.50"></a>
+<span class="sourceLineNo">051</span>                try {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                        String className = GenericMessage.class.getName() + "$" + v.name();<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                        return (Class&lt;? extends Message&gt;)Class.forName(className);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                } catch (ClassNotFoundException e) {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                        // should not happen as long Version corresponds with the static<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                        // subclasses of GenericMessage<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                }<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        }<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>        log.debug("Unknown version for generic type {}", version);<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        return UnknownVersion.class;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    }<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    public static class UnknownVersion extends GenericMessage {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                private static final long serialVersionUID = 4773366840392833956L;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                public UnknownVersion(ModelClassFactory factory) {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>            super(factory);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        }<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        public String getVersion() {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                return Version.latestVersion().getVersion();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        }<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    }<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>    public static class V21 extends GenericMessage {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                private static final long serialVersionUID = 4773366840392833956L;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                public V21(ModelClassFactory factory) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            super(factory);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        public String getVersion() { return Version.V21.getVersion(); }<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    }<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    <a name="line.83"></a>
+<span class="sourceLineNo">084</span>    public static class V22 extends GenericMessage {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                private static final long serialVersionUID = 7124224621400437244L;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                public V22(ModelClassFactory factory) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>            super(factory);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        }<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        public String getVersion() { return Version.V22.getVersion(); }<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    <a name="line.91"></a>
+<span class="sourceLineNo">092</span>    public static class V23 extends GenericMessage {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                private static final long serialVersionUID = -8794048442253389190L;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                public V23(ModelClassFactory factory) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            super(factory);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        public String getVersion() { return Version.V23.getVersion(); }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>    <a name="line.99"></a>
+<span class="sourceLineNo">100</span>    public static class V231 extends GenericMessage {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                private static final long serialVersionUID = 5979370667795858995L;<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                public V231(ModelClassFactory factory) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            super(factory);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        }<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        public String getVersion() { return Version.V231.getVersion(); }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>    }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    <a name="line.107"></a>
+<span class="sourceLineNo">108</span>    public static class V24 extends GenericMessage {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                private static final long serialVersionUID = -4944772617600551061L;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                public V24(ModelClassFactory factory) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            super(factory);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        public String getVersion() { return Version.V24.getVersion(); }<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>    <a name="line.115"></a>
+<span class="sourceLineNo">116</span>    public static class V25 extends GenericMessage {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                private static final long serialVersionUID = 3937051332672967947L;<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                public V25(ModelClassFactory factory) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            super(factory);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        public String getVersion() { return Version.V25.getVersion(); }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    }<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    <a name="line.123"></a>
+<span class="sourceLineNo">124</span>    public static class V251 extends GenericMessage {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                private static final long serialVersionUID = -767282165482145544L;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                public V251(ModelClassFactory factory) {<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            super(factory);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        }<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        public String getVersion() { return Version.V251.getVersion(); }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>    }<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>    public static class V26 extends GenericMessage {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                private static final long serialVersionUID = -1693277295151324396L;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                public V26(ModelClassFactory factory) {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            super(factory);<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        public String getVersion() { return Version.V26.getVersion(); }<a name="line.137"></a>
+<span class="sourceLineNo">138</span>    }<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>    public static class V27 extends GenericMessage {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                private static final long serialVersionUID = -1693277295151324396L;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                public V27(ModelClassFactory factory) {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            super(factory);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        }<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        public String getVersion() { return Version.V27.getVersion(); }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>    }<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>    public static class V271 extends GenericMessage {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                private static final long serialVersionUID = -1693277295151324396L;<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                public V271(ModelClassFactory factory) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            super(factory);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>        public String getVersion() { return Version.V271.getVersion(); }<a name="line.153"></a>
+<span class="sourceLineNo">154</span>    }<a name="line.154"></a>
+<span class="sourceLineNo">155</span><a name="line.155"></a>
+<span class="sourceLineNo">156</span>    public static class V28 extends GenericMessage {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                private static final long serialVersionUID = -1693277295151324396L;<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                public V28(ModelClassFactory factory) {<a name="line.158"></a>
+<span class="sourceLineNo">159</span>            super(factory);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        }<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        public String getVersion() { return Version.V28.getVersion(); }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>    }<a name="line.162"></a>
+<span class="sourceLineNo">163</span><a name="line.163"></a>
+<span class="sourceLineNo">164</span>    public static class V281 extends GenericMessage {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                private static final long serialVersionUID = -1693277295151324396L;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                public V281(ModelClassFactory factory) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            super(factory);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        public String getVersion() { return Version.V281.getVersion(); }<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    }<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>}<a name="line.172"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

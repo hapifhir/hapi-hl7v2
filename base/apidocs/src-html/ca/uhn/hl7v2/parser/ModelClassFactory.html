@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Created on 21-Apr-2005<a name="line.2"></a>
+<span class="sourceLineNo">003</span> */<a name="line.3"></a>
+<span class="sourceLineNo">004</span>package ca.uhn.hl7v2.parser;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.Serializable;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import ca.uhn.hl7v2.Version;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import ca.uhn.hl7v2.model.Group;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import ca.uhn.hl7v2.model.Message;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.model.Segment;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import ca.uhn.hl7v2.model.Type;<a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>/**<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * Looks up classes for message model components (e.g. concrete implementations of Message, Group,<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * Segment). A custom factory can be used to point to custom model components.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * <a name="line.18"></a>
+<span class="sourceLineNo">019</span> * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * @version $Revision: 1.3 $ updated on $Date: 2009-10-03 15:25:46 $ by $Author: jamesagnew $<a name="line.20"></a>
+<span class="sourceLineNo">021</span> */<a name="line.21"></a>
+<span class="sourceLineNo">022</span>public interface ModelClassFactory extends Serializable {<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>        /**<a name="line.24"></a>
+<span class="sourceLineNo">025</span>         * @param theName name of message<a name="line.25"></a>
+<span class="sourceLineNo">026</span>         * @param theVersion HL7 version<a name="line.26"></a>
+<span class="sourceLineNo">027</span>         * @param isExplicit true if the structure was specified explicitly in MSH-9-3, false if it was<a name="line.27"></a>
+<span class="sourceLineNo">028</span>         *            inferred from MSH-9-1 and MSH-9-2. If false, a lookup may be performed to find an<a name="line.28"></a>
+<span class="sourceLineNo">029</span>         *            alternate structure corresponding to that message type and event.<a name="line.29"></a>
+<span class="sourceLineNo">030</span>         * @return a class that implements the specified message<a name="line.30"></a>
+<span class="sourceLineNo">031</span>         * @throws HL7Exception if the version if not recognized or an appropriate class can not be<a name="line.31"></a>
+<span class="sourceLineNo">032</span>         *             found<a name="line.32"></a>
+<span class="sourceLineNo">033</span>         */<a name="line.33"></a>
+<span class="sourceLineNo">034</span>        public Class&lt;? extends Message&gt; getMessageClass(String theName, String theVersion,<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                        boolean isExplicit) throws HL7Exception;<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>        /**<a name="line.37"></a>
+<span class="sourceLineNo">038</span>         * Retrieves a message class by looking in a specific java package for the message type.<a name="line.38"></a>
+<span class="sourceLineNo">039</span>         * <a name="line.39"></a>
+<span class="sourceLineNo">040</span>         * @param theName The message structure type (e.g. "ADT_A01")<a name="line.40"></a>
+<span class="sourceLineNo">041</span>         * @param theVersion The HL7 version (e.g. "2.3.1")<a name="line.41"></a>
+<span class="sourceLineNo">042</span>         * @param isExplicit If false, the message structure is looked up using<a name="line.42"></a>
+<span class="sourceLineNo">043</span>         *            {@link Parser#getMessageStructureForEvent(String, String)} and converted to the<a name="line.43"></a>
+<span class="sourceLineNo">044</span>         *            appropriate structure type. For example, "ADT_A04" would be converted to "ADT_A01"<a name="line.44"></a>
+<span class="sourceLineNo">045</span>         *            because the A04 trigger uses the A01 message structure according to HL7.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>         * @param packageName The package name to use. Note that if the message type can't be found in<a name="line.46"></a>
+<span class="sourceLineNo">047</span>         *            this package, HAPI will return the standard type returned by<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         *            {@link #getMessageClass(String, String, boolean)}<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * @return message class<a name="line.49"></a>
+<span class="sourceLineNo">050</span>         * @since 2.0<a name="line.50"></a>
+<span class="sourceLineNo">051</span>         */<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        public Class&lt;? extends Message&gt; getMessageClassInASpecificPackage(String theName,<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                        String theVersion, boolean isExplicit, String packageName) throws HL7Exception;<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>        /**<a name="line.55"></a>
+<span class="sourceLineNo">056</span>         * @param theName name of group<a name="line.56"></a>
+<span class="sourceLineNo">057</span>         * @param theVersion HL7 version<a name="line.57"></a>
+<span class="sourceLineNo">058</span>         * @return a class that implements the specified group<a name="line.58"></a>
+<span class="sourceLineNo">059</span>         * @throws HL7Exception if the version if not recognized or an appropriate class can not be<a name="line.59"></a>
+<span class="sourceLineNo">060</span>         *             found<a name="line.60"></a>
+<span class="sourceLineNo">061</span>         */<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        public Class&lt;? extends Group&gt; getGroupClass(String theName, String theVersion)<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                        throws HL7Exception;<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>        /**<a name="line.65"></a>
+<span class="sourceLineNo">066</span>         * @param theName name of segment<a name="line.66"></a>
+<span class="sourceLineNo">067</span>         * @param theVersion HL7 version<a name="line.67"></a>
+<span class="sourceLineNo">068</span>         * @return a class that implements the specified segment<a name="line.68"></a>
+<span class="sourceLineNo">069</span>         * @throws HL7Exception if the version if not recognized or an appropriate class can not be<a name="line.69"></a>
+<span class="sourceLineNo">070</span>         *             found<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         */<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        public Class&lt;? extends Segment&gt; getSegmentClass(String theName, String theVersion)<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                        throws HL7Exception;<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>        /**<a name="line.75"></a>
+<span class="sourceLineNo">076</span>         * @param theName name of type<a name="line.76"></a>
+<span class="sourceLineNo">077</span>         * @param theVersion HL7 version<a name="line.77"></a>
+<span class="sourceLineNo">078</span>         * @return a class that implements the specified type<a name="line.78"></a>
+<span class="sourceLineNo">079</span>         * @throws HL7Exception if the version if not recognized or an appropriate class can not be<a name="line.79"></a>
+<span class="sourceLineNo">080</span>         *             found<a name="line.80"></a>
+<span class="sourceLineNo">081</span>         */<a name="line.81"></a>
+<span class="sourceLineNo">082</span>        public Class&lt;? extends Type&gt; getTypeClass(String theName, String theVersion)<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                        throws HL7Exception;<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>        /**<a name="line.85"></a>
+<span class="sourceLineNo">086</span>         * @param eventName event name<a name="line.86"></a>
+<span class="sourceLineNo">087</span>         * @param version HL7 version<a name="line.87"></a>
+<span class="sourceLineNo">088</span>         * @return message structure name for the eventName and version or &lt;code&gt;null&lt;/code&gt; if none<a name="line.88"></a>
+<span class="sourceLineNo">089</span>         *         could be found<a name="line.89"></a>
+<span class="sourceLineNo">090</span>         * @throws HL7Exception if the version is unknown or the message structure list is inaccessible<a name="line.90"></a>
+<span class="sourceLineNo">091</span>         */<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        public String getMessageStructureForEvent(String eventName, Version version)<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                        throws HL7Exception;<a name="line.93"></a>
+<span class="sourceLineNo">094</span>}<a name="line.94"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
