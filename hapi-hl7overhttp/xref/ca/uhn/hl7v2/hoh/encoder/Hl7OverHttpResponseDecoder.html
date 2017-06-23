@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Hl7OverHttpResponseDecoder xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/ca/uhn/hl7v2/hoh/encoder/Hl7OverHttpResponseDecoder.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.hoh.encoder;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> ca.uhn.hl7v2.hoh.util.StringUtils.*;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> java.io.InputStream;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.hoh.api.DecodeException;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/encoder/Hl7OverHttpResponseDecoder.html">Hl7OverHttpResponseDecoder</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/encoder/AbstractHl7OverHttpDecoder.html">AbstractHl7OverHttpDecoder</a> {
+<a class="jxr_linenumber" name="11" href="#11">11</a>  
+<a class="jxr_linenumber" name="12" href="#12">12</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Hl7OverHttpResponseDecoder.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="13" href="#13">13</a>  	<strong class="jxr_keyword">private</strong> String myActionLine;
+<a class="jxr_linenumber" name="14" href="#14">14</a>  
+<a class="jxr_linenumber" name="15" href="#15">15</a>  	@Override
+<a class="jxr_linenumber" name="16" href="#16">16</a>  	<strong class="jxr_keyword">protected</strong> String readActionLineAndDecode(InputStream theInputStream) <strong class="jxr_keyword">throws</strong> IOException, NoMessageReceivedException, DecodeException {
+<a class="jxr_linenumber" name="17" href="#17">17</a>  		ourLog.trace(<span class="jxr_string">"Entering readActionLineAndDecode(InputStream)"</span>);
+<a class="jxr_linenumber" name="18" href="#18">18</a>  
+<a class="jxr_linenumber" name="19" href="#19">19</a>  		<strong class="jxr_keyword">if</strong> (myActionLine == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="20" href="#20">20</a>  			String firstLine = readFirstLine(theInputStream);
+<a class="jxr_linenumber" name="21" href="#21">21</a>  			<strong class="jxr_keyword">if</strong> (firstLine == <strong class="jxr_keyword">null</strong> || isBlank(firstLine)) {
+<a class="jxr_linenumber" name="22" href="#22">22</a>  				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/encoder/NoMessageReceivedException.html">NoMessageReceivedException</a>();
+<a class="jxr_linenumber" name="23" href="#23">23</a>  			}
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>  			<strong class="jxr_keyword">if</strong> (!firstLine.startsWith(<span class="jxr_string">"HTTP/1.1 "</span>)) {
+<a class="jxr_linenumber" name="26" href="#26">26</a>  				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/api/DecodeException.html">DecodeException</a>(<span class="jxr_string">"HTTP response begins with unknown HTTP version. Line is: "</span> + firstLine);
+<a class="jxr_linenumber" name="27" href="#27">27</a>  			}
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>  			String statusPart = firstLine.substring(9);
+<a class="jxr_linenumber" name="30" href="#30">30</a>  			<strong class="jxr_keyword">int</strong> spaceIdx = statusPart.indexOf(' ');
+<a class="jxr_linenumber" name="31" href="#31">31</a>  			<strong class="jxr_keyword">if</strong> (spaceIdx == -1) {
+<a class="jxr_linenumber" name="32" href="#32">32</a>  				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/api/DecodeException.html">DecodeException</a>(<span class="jxr_string">"Invalid response line, no space after status code. Line is: "</span> + firstLine);
+<a class="jxr_linenumber" name="33" href="#33">33</a>  			}
+<a class="jxr_linenumber" name="34" href="#34">34</a>  
+<a class="jxr_linenumber" name="35" href="#35">35</a>  			String statusCode = statusPart.substring(0, spaceIdx);
+<a class="jxr_linenumber" name="36" href="#36">36</a>  			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="37" href="#37">37</a>  				setResponseStatus(Integer.parseInt(statusCode));
+<a class="jxr_linenumber" name="38" href="#38">38</a>  			} <strong class="jxr_keyword">catch</strong> (NumberFormatException e) {
+<a class="jxr_linenumber" name="39" href="#39">39</a>  				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../ca/uhn/hl7v2/hoh/api/DecodeException.html">DecodeException</a>(<span class="jxr_string">"Invalid response line. Bad status code: "</span> + statusCode);
+<a class="jxr_linenumber" name="40" href="#40">40</a>  			}
+<a class="jxr_linenumber" name="41" href="#41">41</a>  
+<a class="jxr_linenumber" name="42" href="#42">42</a>  			setResponseName(statusPart.substring(spaceIdx).trim());
+<a class="jxr_linenumber" name="43" href="#43">43</a>  			myActionLine = firstLine;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  			ourLog.trace(<span class="jxr_string">"Action line is {}"</span>, myActionLine);
+<a class="jxr_linenumber" name="45" href="#45">45</a>  
+<a class="jxr_linenumber" name="46" href="#46">46</a>  		} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="47" href="#47">47</a>  			ourLog.trace(<span class="jxr_string">"Already have an action line"</span>);
+<a class="jxr_linenumber" name="48" href="#48">48</a>  		}
+<a class="jxr_linenumber" name="49" href="#49">49</a>  		
+<a class="jxr_linenumber" name="50" href="#50">50</a>  		<strong class="jxr_keyword">return</strong> myActionLine;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  	}
+<a class="jxr_linenumber" name="52" href="#52">52</a>  
+<a class="jxr_linenumber" name="53" href="#53">53</a>  	@Override
+<a class="jxr_linenumber" name="54" href="#54">54</a>  	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> authorize() <strong class="jxr_keyword">throws</strong> AuthorizationFailureException {
+<a class="jxr_linenumber" name="55" href="#55">55</a>  		<em class="jxr_comment">// responses do not need authorization</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  	}
+<a class="jxr_linenumber" name="57" href="#57">57</a>  
+<a class="jxr_linenumber" name="58" href="#58">58</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">	 * Returns true if the connection=close header was present in the response</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="61" href="#61">61</a>  	@Override
+<a class="jxr_linenumber" name="62" href="#62">62</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isConnectionCloseHeaderPresent() {
+<a class="jxr_linenumber" name="63" href="#63">63</a>  		<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.isConnectionCloseHeaderPresent();
+<a class="jxr_linenumber" name="64" href="#64">64</a>  	}
+<a class="jxr_linenumber" name="65" href="#65">65</a>  
+<a class="jxr_linenumber" name="66" href="#66">66</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div><script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
+

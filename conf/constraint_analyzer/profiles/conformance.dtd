@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ENTITY % Optionality "R | RE | O | C | CE | X">
+<!ELEMENT Specification (ImpNote?, UseCase?, Conformance, Encodings, Message)>
+<!ATTLIST Specification
+	SpecName CDATA #REQUIRED
+	OrgName CDATA #REQUIRED
+	HL7Version CDATA #REQUIRED
+	SpecVersion CDATA #IMPLIED
+	Status CDATA #IMPLIED
+	Role (Sender | Receiver) "Sender"
+	HL7OID CDATA #IMPLIED
+	ConformanceType (Implementation | Constrainable) #REQUIRED
+>
+<!ELEMENT UseCase (Actor | PreCondition | PostCondition | EventFlow | DerivativeEvent)*>
+<!ELEMENT Actor (#PCDATA)>
+<!ATTLIST Actor
+	Name CDATA #REQUIRED
+>
+<!ELEMENT PreCondition (#PCDATA)>
+<!ATTLIST PreCondition
+	Name CDATA #REQUIRED
+>
+<!ELEMENT PostCondition (#PCDATA)>
+<!ATTLIST PostCondition
+	Name CDATA #REQUIRED
+>
+<!ELEMENT EventFlow (#PCDATA)>
+<!ATTLIST EventFlow
+	Name CDATA #REQUIRED
+>
+<!ELEMENT DerivativeEvent (#PCDATA)>
+<!ATTLIST DerivativeEvent
+	Name CDATA #REQUIRED
+>
+<!ELEMENT Conformance EMPTY>
+<!ATTLIST Conformance
+	AccAck (AL | NE | SU | ER) "NE"
+	AppAck (AL | NE | SU | ER) "AL"
+	StaticID CDATA #REQUIRED
+	DynamicID CDATA #IMPLIED
+	MsgAckMode (Immediate | Deferred) "Deferred"
+>
+<!ELEMENT Encoding (#PCDATA)>
+<!ELEMENT Encodings (Encoding+)>
+<!ELEMENT Message (Description?, Reference?, Segment, (SegGroup | Segment)*)>
+<!ATTLIST Message
+	MsgType CDATA #REQUIRED
+	EventType CDATA #REQUIRED
+	MsgStructID CDATA #REQUIRED
+	OrderControl CDATA #IMPLIED
+	EventDesc CDATA #REQUIRED
+>
+<!ELEMENT SegGroup (ImpNote?, Description?, Reference?, Predicate?, (SegGroup | Segment)+)>
+<!ATTLIST SegGroup
+	Name CDATA #REQUIRED
+	LongName CDATA #REQUIRED
+	Optionality (%Optionality;) #REQUIRED
+	Min CDATA #REQUIRED
+	Max CDATA "1"
+>
+<!ELEMENT Segment (ImpNote?, Description?, Reference?, Predicate?, Field+)>
+<!ATTLIST Segment
+	Name CDATA #REQUIRED
+	LongName CDATA #IMPLIED
+	Optionality (%Optionality;) #REQUIRED
+	Min CDATA #REQUIRED
+	Max CDATA "1"
+>
+<!ELEMENT Field (ImpNote?, Description?, Reference?, Predicate?, DataValues*, Component*)>
+<!ATTLIST Field
+	Name CDATA #REQUIRED
+	Optionality (%Optionality;) #REQUIRED
+	Min CDATA #REQUIRED
+	Max CDATA "1"
+	Datatype CDATA #REQUIRED
+	Length CDATA #IMPLIED
+	Table CDATA #IMPLIED
+	ConstantValue CDATA #IMPLIED
+	ItemNo CDATA #IMPLIED
+>
+<!ELEMENT Component (ImpNote?, Description?, Reference?, Predicate?, DataValues*, SubComponent*)>
+<!ATTLIST Component
+	Name CDATA #REQUIRED
+	Optionality (%Optionality;) #REQUIRED
+	Datatype CDATA #REQUIRED
+	Length CDATA #IMPLIED
+	Table CDATA #IMPLIED
+	ConstantValue CDATA #IMPLIED
+>
+<!ELEMENT SubComponent (ImpNote?, Description?, Reference?, Predicate?, DataValues*)>
+<!ATTLIST SubComponent
+	Name CDATA #REQUIRED
+	Optionality (%Optionality;) #REQUIRED
+	Datatype CDATA #REQUIRED
+	Length CDATA #IMPLIED
+	Table CDATA #IMPLIED
+	ConstantValue CDATA #IMPLIED
+>
+<!ELEMENT Description (#PCDATA)>
+<!ELEMENT ImpNote (Paragraph+)>
+<!ELEMENT Paragraph (#PCDATA)>
+<!ELEMENT Predicate (#PCDATA)>
+<!ELEMENT Reference (#PCDATA)>
+<!ELEMENT DataValues EMPTY>
+<!ATTLIST DataValues ExValue CDATA #IMPLIED>

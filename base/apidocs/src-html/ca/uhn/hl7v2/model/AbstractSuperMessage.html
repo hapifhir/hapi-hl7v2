@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.model;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.util.Collections;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.util.HashMap;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.HashSet;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.util.Map;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.util.Set;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import ca.uhn.hl7v2.parser.ModelClassFactory;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import ca.uhn.hl7v2.util.StringUtil;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.util.Terser;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>/**<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * Base class for a {@link SuperStructure} message.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * <a name="line.16"></a>
+<span class="sourceLineNo">017</span> * @see SuperStructure<a name="line.17"></a>
+<span class="sourceLineNo">018</span> * @see Message<a name="line.18"></a>
+<span class="sourceLineNo">019</span> */<a name="line.19"></a>
+<span class="sourceLineNo">020</span>public abstract class AbstractSuperMessage extends AbstractMessage implements SuperStructure {<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>        private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractSuperMessage.class);<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        private Map&lt;String, Set&lt;String&gt;&gt; myChildNameToStructures = new HashMap&lt;String, Set&lt;String&gt;&gt;();<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>        private String myName;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>        /**<a name="line.27"></a>
+<span class="sourceLineNo">028</span>         * Constructor<a name="line.28"></a>
+<span class="sourceLineNo">029</span>         * <a name="line.29"></a>
+<span class="sourceLineNo">030</span>         * @param theFactory<a name="line.30"></a>
+<span class="sourceLineNo">031</span>         *            The model class factory<a name="line.31"></a>
+<span class="sourceLineNo">032</span>         */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        public AbstractSuperMessage(ModelClassFactory theFactory) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                super(theFactory);<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        }<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>        protected void addSuperstructureApplication(String theChild, String theStructure) {<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                StringUtil.validateNotEmpty(theChild);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                StringUtil.validateNotEmpty(theStructure);<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>                if (!myChildNameToStructures.containsKey(theChild)) {<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                        myChildNameToStructures.put(theChild, new HashSet&lt;String&gt;());<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                }<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                myChildNameToStructures.get(theChild).add(theStructure);<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        }<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>        /**<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * Returns the name of this structure (e.g. "ADT_A01", or "ORU_R01"). Note<a name="line.48"></a>
+<span class="sourceLineNo">049</span>         * that for super structures this value is explicitly set by the parser.<a name="line.49"></a>
+<span class="sourceLineNo">050</span>         */<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        public String getName() {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                if (StringUtil.isBlank(myName)) {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                        String retVal = null;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                        try {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                                Terser t = new Terser(this);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                                retVal = t.get("/MSH-9-3");<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>                                if (StringUtil.isBlank(retVal)) {<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                                        String msh91 = t.get("/MSH-9-1");<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                                        String msh92 = t.get("/MSH-9-2");<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                                        if (StringUtil.isNotBlank(msh91) &amp;&amp; StringUtil.isNotBlank(msh92)) {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                                                retVal = msh91 + "_" + msh92;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                                        }<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                                }<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                        } catch (HL7Exception e) {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                                ourLog.debug("Failed to retrieve MSH-9", e);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        }<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        return retVal;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                }<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>                return myName;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        }<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>        /**<a name="line.74"></a>
+<span class="sourceLineNo">075</span>         * {@inheritDoc}<a name="line.75"></a>
+<span class="sourceLineNo">076</span>         */<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        public Set&lt;String&gt; getStructuresWhichChildAppliesTo(String theChildName) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                return Collections.unmodifiableSet(myChildNameToStructures.get(theChildName));<a name="line.78"></a>
+<span class="sourceLineNo">079</span>        }<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>        /**<a name="line.81"></a>
+<span class="sourceLineNo">082</span>         * Provide the name that will be returned by {@link #getName()}<a name="line.82"></a>
+<span class="sourceLineNo">083</span>         */<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        public void setName(String theName) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                myName = theName;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        }<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>}<a name="line.88"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

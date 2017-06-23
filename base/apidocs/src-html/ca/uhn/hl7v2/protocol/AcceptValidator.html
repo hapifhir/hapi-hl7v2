@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Created on 16-Apr-2004<a name="line.2"></a>
+<span class="sourceLineNo">003</span> */<a name="line.3"></a>
+<span class="sourceLineNo">004</span>package ca.uhn.hl7v2.protocol;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>/**<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * &lt;p&gt;Determines whether messages are acceptable for storage.  See HL7 <a name="line.7"></a>
+<span class="sourceLineNo">008</span> * v2.5 chapter 2 for relevant specifications.  In original-mode <a name="line.8"></a>
+<span class="sourceLineNo">009</span> * processing, validation at this level includes checking whether <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * MSH-9, 11, and 12 have appropriate values.&lt;/p&gt;  <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * <a name="line.11"></a>
+<span class="sourceLineNo">012</span> * &lt;p&gt;In enhanced mode, the above checks are optional.  Checking for <a name="line.12"></a>
+<span class="sourceLineNo">013</span> * syntactical correctness is also optional.  However storage availability <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * and interface status must be checked.&lt;/p&gt;   <a name="line.14"></a>
+<span class="sourceLineNo">015</span> * <a name="line.15"></a>
+<span class="sourceLineNo">016</span> * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $<a name="line.17"></a>
+<span class="sourceLineNo">018</span> */<a name="line.18"></a>
+<span class="sourceLineNo">019</span>public interface AcceptValidator {<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>    /**<a name="line.21"></a>
+<span class="sourceLineNo">022</span>     * Returns a ruling regarding whether the given message can be accepted  <a name="line.22"></a>
+<span class="sourceLineNo">023</span>     * for further processing (ie determines CE, CR, or CA for enhanced mode, <a name="line.23"></a>
+<span class="sourceLineNo">024</span>     * and AR for original mode).  <a name="line.24"></a>
+<span class="sourceLineNo">025</span>     *   <a name="line.25"></a>
+<span class="sourceLineNo">026</span>     * @param theMessage the message to check for acceptability.  <a name="line.26"></a>
+<span class="sourceLineNo">027</span>     * @return<a name="line.27"></a>
+<span class="sourceLineNo">028</span>     */<a name="line.28"></a>
+<span class="sourceLineNo">029</span>    public AcceptRuling check(Transportable theMessage);<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>    /**<a name="line.31"></a>
+<span class="sourceLineNo">032</span>     * Represents a decision regarding whether a message can be initially <a name="line.32"></a>
+<span class="sourceLineNo">033</span>     * accepted for further processing.  As per HL7 specs, for original-mode<a name="line.33"></a>
+<span class="sourceLineNo">034</span>     * messages, a message should be accepted at this stage if the system thinks it can handle <a name="line.34"></a>
+<span class="sourceLineNo">035</span>     * the message based on MSH-9, 11, and 12 values (assuming these can be parsed). <a name="line.35"></a>
+<span class="sourceLineNo">036</span>     * <a name="line.36"></a>
+<span class="sourceLineNo">037</span>     * In enhanced mode, the above checks are optional.  Also optional is a check for <a name="line.37"></a>
+<span class="sourceLineNo">038</span>     * syntactical correctness.  Mandatory checks include availability of safe storage<a name="line.38"></a>
+<span class="sourceLineNo">039</span>     * and "interface status".  <a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * <a name="line.40"></a>
+<span class="sourceLineNo">041</span>     * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $<a name="line.42"></a>
+<span class="sourceLineNo">043</span>     */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    public interface AcceptRuling {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        <a name="line.45"></a>
+<span class="sourceLineNo">046</span>        public static final String ACK_AR = "AR";<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        public static final String ACK_CA = "CA";<a name="line.47"></a>
+<span class="sourceLineNo">048</span>        public static final String ACK_CE = "CE";<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        public static final String ACK_CR = "CR";<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>        /**<a name="line.51"></a>
+<span class="sourceLineNo">052</span>         * @return true if the message can be accepted at the protocol stage.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>         */<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        public boolean isAcceptable();<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>        /**<a name="line.56"></a>
+<span class="sourceLineNo">057</span>         * @return the ACK code corresponding to the ruling, if any.  Ie "AR", <a name="line.57"></a>
+<span class="sourceLineNo">058</span>         * "CE", "CR", or "CA".  If in original mode, null is returned for non-"AR" <a name="line.58"></a>
+<span class="sourceLineNo">059</span>         * situations.  This is because only the application layer can tell whether the <a name="line.59"></a>
+<span class="sourceLineNo">060</span>         * answer is "AE" or "AA". <a name="line.60"></a>
+<span class="sourceLineNo">061</span>         */<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        public String getAckCode();<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        <a name="line.63"></a>
+<span class="sourceLineNo">064</span>        /**<a name="line.64"></a>
+<span class="sourceLineNo">065</span>         * @return an error code from among the static fields of HL7Exception <a name="line.65"></a>
+<span class="sourceLineNo">066</span>         *      (if no error, HL7Exception.MESSAGE_ACCEPTED)<a name="line.66"></a>
+<span class="sourceLineNo">067</span>         */<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        public int getErrorCode();<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        /**<a name="line.70"></a>
+<span class="sourceLineNo">071</span>         * @return zero or more reasons for rejecting a message (suitable for inclusion<a name="line.71"></a>
+<span class="sourceLineNo">072</span>         * in a reply).  <a name="line.72"></a>
+<span class="sourceLineNo">073</span>         */<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        public String[] getReasons();<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>}<a name="line.77"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

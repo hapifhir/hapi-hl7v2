@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.util;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.BufferedReader;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.io.File;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.io.FileFilter;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.FileReader;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.io.FilenameFilter;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.io.IOException;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.util.HashMap;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.util.Map;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.util.StringTokenizer;<a name="line.11"></a>
+<span class="sourceLineNo">012</span><a name="line.12"></a>
+<span class="sourceLineNo">013</span>import org.slf4j.Logger;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.slf4j.LoggerFactory;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>import ca.uhn.hl7v2.ErrorCode;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>/**<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * &lt;p&gt;Implements CodeMapper using files to store code values.  Files are arranged<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * in the following directory structure.  The base directory is called "codemap".<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * This should be created under the hapi.home directory (see Home class; defaults to .).<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * Under the base directory, there should be one directory for each interface, and<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * each of these directories should be named after the interface.  For example if you<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * had interfaces to pharmacy and lab systems you might have the following directories:&lt;/p&gt;<a name="line.25"></a>
+<span class="sourceLineNo">026</span> * &lt;p&gt; &lt;hapi.home&gt;/codemap/pharmacy&lt;br&gt;<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * &lt;hapi.home&gt;/codemap/lab&lt;/p&gt;<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * &lt;p&gt;Each directory should contain two files per HL7 table, named after the table numbers as<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * follows: "hl7nnnn.li" and "hl7nnnn.il", where nnnn is the 4 digit table number.  The .il<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * file contains maps from interface codes to local codes, and the .li file contains maps from<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * local codes to interface codes (these unfortunately may not be symmetrical).&lt;/p&gt;<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * &lt;p&gt;Each line of a file contains a single code map, with the "from" value and the "to" value<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * separated by a tab.  For example, the file &lt;hapi.home&gt;/lab/HL70001.li (to map local codes to interface<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * codes for the HL7 admnistrative sex table in your lab system interface) might contain the<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * following line: &lt;/p&gt;<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * &lt;p&gt;male&amp;tab;M&lt;/p&gt;<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * &lt;p&gt;This means that the local code "male" maps to the interface code "M".&lt;/p&gt;<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * &lt;p&gt;Lines that start with "//" are treated as comments.&lt;/p&gt;<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * @author Bryan Tripp<a name="line.39"></a>
+<span class="sourceLineNo">040</span> */<a name="line.40"></a>
+<span class="sourceLineNo">041</span>public class FileCodeMapper extends CodeMapper {<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>    private static final Logger log = LoggerFactory.getLogger(FileCodeMapper.class);<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private boolean throwIfNoMatch = false;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    File baseDir;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private Map&lt;String, Map&lt;String, Map&lt;String, String&gt;&gt;&gt; interfaceToLocal;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private Map&lt;String, Map&lt;String, Map&lt;String, String&gt;&gt;&gt; localToInterface;<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>    /**<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * Creates a new instance of FileCodeMapper.  You should probably not<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * construct a FileCodeMapper directly.  Use CodeMapper.getInstance()<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * instead ... this will ensure that only a single instance is created,<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * which is important for performance because code maps are loaded from<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * disk every time this constructor is called.<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     */<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    public FileCodeMapper() throws HL7Exception {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        baseDir = new File(Home.getHomeDirectory().getAbsolutePath() + "/codemap");<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        refreshCache();<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    }<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>    /**<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * If values are cached in such a way that they are not guaranteed to be current, a call<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * to this method refreshes the values.<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     */<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public void refreshCache() throws HL7Exception {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        localToInterface = new HashMap&lt;String, Map&lt;String, Map&lt;String, String&gt;&gt;&gt;(10);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        interfaceToLocal = new HashMap&lt;String, Map&lt;String, Map&lt;String, String&gt;&gt;&gt;(10);<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>        log.info("Refreshing cache");<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>        try {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            //get list of child directories<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            File[] interfaceDirs = this.baseDir.listFiles(new FileFilter() {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                public boolean accept(File pathname) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                    boolean acc = false;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                    if (pathname.isDirectory())<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                        acc = true;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                    return acc;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>            });<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>            //loop through directories and set up maps<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            for (int i = 0; i &lt; interfaceDirs.length; i++) {<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>                log.info(<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                    "Checking directory {} for interface code maps.", interfaceDirs[i].getName());<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>                //get list of .li (local -&gt; interface) and .il (interface -&gt; local) files<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                File[] mapFiles = interfaceDirs[i].listFiles(new FilenameFilter() {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                    public boolean accept(File dir, String name) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                        boolean acc = false;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                        if (name.toUpperCase().startsWith("HL7")) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                            if (name.substring(name.lastIndexOf('.')).equals(".li")<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                || name.substring(name.lastIndexOf('.')).equals(".il"))<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                acc = true;<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        }<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        return acc;<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                    }<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                });<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>                //read map entries from each file and add to hash maps for li and il codes<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                HashMap&lt;String, Map&lt;String, String&gt;&gt; li = new HashMap&lt;String, Map&lt;String, String&gt;&gt;(50);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                HashMap&lt;String, Map&lt;String, String&gt;&gt; il = new HashMap&lt;String, Map&lt;String, String&gt;&gt;(50);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                for (int j = 0; j &lt; mapFiles.length; j++) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                    log.info("Reading map entries from file {}", mapFiles[j]);<a name="line.106"></a>
+<span class="sourceLineNo">107</span><a name="line.107"></a>
+<span class="sourceLineNo">108</span>                    String fName = mapFiles[j].getName();<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                    String tableName = fName.substring(0, fName.lastIndexOf('.'));<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                    String mapDirection = fName.substring(fName.lastIndexOf('.') + 1);<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>                    //read values and store in HashMap<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                        Map&lt;String, String&gt; codeMap = new HashMap&lt;String, String&gt;(25);<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                    BufferedReader in = null;<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                    try {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                                in = new BufferedReader(new FileReader(mapFiles[j]));<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                                while (in.ready()) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                                    String line = in.readLine();<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                                    if (!line.startsWith("//")) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                                        StringTokenizer tok = new StringTokenizer(line, "\t", false);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                                        String from = null;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                                        String to = null;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                                        if (tok.hasMoreTokens())<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                                            from = tok.nextToken();<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                                        if (tok.hasMoreTokens())<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                                            to = tok.nextToken();<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                                        if (from != null &amp;&amp; to != null)<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                                            codeMap.put(from, to);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                                    }<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                                }<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                    }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                    finally {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                        if (in != null) in.close();<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                    }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>                    //add to appropriate map for this interface<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                    if (mapDirection.equals("il")) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                        il.put(tableName.toUpperCase(), codeMap);<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                        log.debug("Adding {} codes to interface -&gt; local map for {} in {} interface",<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                    else {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                        li.put(tableName.toUpperCase(), codeMap);<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                        log.debug("Adding {} codes to local -&gt; interface map for {} in {} interface",<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                    }<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                }<a name="line.147"></a>
+<span class="sourceLineNo">148</span><a name="line.148"></a>
+<span class="sourceLineNo">149</span>                //add maps for this interface (this directory) to global list<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                interfaceToLocal.put(interfaceDirs[i].getName(), il);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                localToInterface.put(interfaceDirs[i].getName(), li);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>        }<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        catch (IOException e) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            throw new HL7Exception(<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                "Can't read interface code maps from disk", e);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>    }<a name="line.159"></a>
+<span class="sourceLineNo">160</span><a name="line.160"></a>
+<span class="sourceLineNo">161</span>    /**<a name="line.161"></a>
+<span class="sourceLineNo">162</span>     * Returns the local code for the given interface code as it appears in<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     * the given interface.<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     */<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    public String getLocalCode(String interfaceName, int hl7Table, String interfaceCode) throws HL7Exception {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        String localCode = null;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>        try {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            Map&lt;String, Map&lt;String, String&gt;&gt; interfaceMap = interfaceToLocal.get(interfaceName);<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            localCode = getCode(interfaceMap, hl7Table, interfaceCode);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        catch (NullPointerException npe) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>            if (this.throwIfNoMatch)<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                throw new HL7Exception(<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                    "No local mapping for the interface code "<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                        + interfaceCode<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                        + " for HL7 table "<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                        + hl7Table<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                        + " for the interface '"<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                        + interfaceName<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                        + "'",<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                    ErrorCode.TABLE_VALUE_NOT_FOUND);<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        }<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        return localCode;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    }<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>    /**<a name="line.186"></a>
+<span class="sourceLineNo">187</span>     * Common code for getLocalcode and getInterfaceCode<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     */<a name="line.188"></a>
+<span class="sourceLineNo">189</span>    private String getCode(Map&lt;String, Map&lt;String, String&gt;&gt; interfaceMap, int hl7Table, String code) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        String ret = null;<a name="line.190"></a>
+<span class="sourceLineNo">191</span><a name="line.191"></a>
+<span class="sourceLineNo">192</span>        //get map for the given table<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        StringBuffer tableName = new StringBuffer();<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        tableName.append("HL7");<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        if (hl7Table &lt; 1000)<a name="line.195"></a>
+<span class="sourceLineNo">196</span>            tableName.append("0");<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        if (hl7Table &lt; 100)<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            tableName.append("0");<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        if (hl7Table &lt; 10)<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            tableName.append("0");<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        tableName.append(hl7Table);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        Map&lt;String, String&gt; tableMap = interfaceMap.get(tableName.toString());<a name="line.202"></a>
+<span class="sourceLineNo">203</span><a name="line.203"></a>
+<span class="sourceLineNo">204</span>        //get code<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        ret = tableMap.get(code).toString();<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        return ret;<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>    /**<a name="line.209"></a>
+<span class="sourceLineNo">210</span>     * Returns the interface code for the given local code, for use in the context<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     * of the given interface.<a name="line.211"></a>
+<span class="sourceLineNo">212</span>     */<a name="line.212"></a>
+<span class="sourceLineNo">213</span>    public String getInterfaceCode(String interfaceName, int hl7Table, String localCode) throws HL7Exception {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        String interfaceCode = null;<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        try {<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            Map&lt;String, Map&lt;String, String&gt;&gt; interfaceMap = localToInterface.get(interfaceName);<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            interfaceCode = getCode(interfaceMap, hl7Table, localCode);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>        }<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        catch (NullPointerException npe) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            if (this.throwIfNoMatch)<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                throw new HL7Exception(<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                    "No interface mapping for the local code "<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                        + localCode<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                        + " for HL7 table "<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                        + hl7Table<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                        + " for the interface '"<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                        + interfaceName<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                        + "'",<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                    ErrorCode.TABLE_VALUE_NOT_FOUND);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        }<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        return interfaceCode;<a name="line.231"></a>
+<span class="sourceLineNo">232</span>    }<a name="line.232"></a>
+<span class="sourceLineNo">233</span><a name="line.233"></a>
+<span class="sourceLineNo">234</span>    /**<a name="line.234"></a>
+<span class="sourceLineNo">235</span>     * Determines what happens if no matching code is found during a lookup.  If set to true,<a name="line.235"></a>
+<span class="sourceLineNo">236</span>     * an HL7Exception is thrown if there is no match.  If false, null is returned.  The default<a name="line.236"></a>
+<span class="sourceLineNo">237</span>     * is false.<a name="line.237"></a>
+<span class="sourceLineNo">238</span>     */<a name="line.238"></a>
+<span class="sourceLineNo">239</span>    public void throwExceptionIfNoMatch(boolean throwException) {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>        this.throwIfNoMatch = throwException;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>    }<a name="line.241"></a>
+<span class="sourceLineNo">242</span><a name="line.242"></a>
+<span class="sourceLineNo">243</span>    /**<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     * Test harness.<a name="line.244"></a>
+<span class="sourceLineNo">245</span>     */<a name="line.245"></a>
+<span class="sourceLineNo">246</span>    public static void main(String args[]) {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        try {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>            //FileCodeMapper mapper = new FileCodeMapper();<a name="line.248"></a>
+<span class="sourceLineNo">249</span>            CodeMapper.getInstance().throwExceptionIfNoMatch(true);<a name="line.249"></a>
+<span class="sourceLineNo">250</span>            System.out.println("Local code for M is " + CodeMapper.getLocal("test", 1, "M"));<a name="line.250"></a>
+<span class="sourceLineNo">251</span>            System.out.println("Interface code for female is " + CodeMapper.getInt("test", 1, "female"));<a name="line.251"></a>
+<span class="sourceLineNo">252</span><a name="line.252"></a>
+<span class="sourceLineNo">253</span>        }<a name="line.253"></a>
+<span class="sourceLineNo">254</span>        catch (HL7Exception e) {<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            e.printStackTrace();<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    }<a name="line.257"></a>
+<span class="sourceLineNo">258</span><a name="line.258"></a>
+<span class="sourceLineNo">259</span>}<a name="line.259"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

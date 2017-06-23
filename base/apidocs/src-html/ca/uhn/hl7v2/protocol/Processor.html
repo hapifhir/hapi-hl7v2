@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Created on 16-Apr-2004<a name="line.2"></a>
+<span class="sourceLineNo">003</span> */<a name="line.3"></a>
+<span class="sourceLineNo">004</span>package ca.uhn.hl7v2.protocol;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>/**<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * Encapsulates both the client and server roles of the HL7-defined <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * "original mode" and "enhanced mode" processing rules.  See <a name="line.10"></a>
+<span class="sourceLineNo">011</span> * HL7 v2.5 chapter 2 for specifications.    <a name="line.11"></a>
+<span class="sourceLineNo">012</span> *  <a name="line.12"></a>
+<span class="sourceLineNo">013</span> * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $<a name="line.14"></a>
+<span class="sourceLineNo">015</span> */<a name="line.15"></a>
+<span class="sourceLineNo">016</span>public interface Processor {<a name="line.16"></a>
+<span class="sourceLineNo">017</span>    <a name="line.17"></a>
+<span class="sourceLineNo">018</span>    /**<a name="line.18"></a>
+<span class="sourceLineNo">019</span>     * Always send acknowledgement (in MSH-15 and 16)<a name="line.19"></a>
+<span class="sourceLineNo">020</span>     */<a name="line.20"></a>
+<span class="sourceLineNo">021</span>    public static final String AL = "AL";<a name="line.21"></a>
+<span class="sourceLineNo">022</span>    <a name="line.22"></a>
+<span class="sourceLineNo">023</span>    /**<a name="line.23"></a>
+<span class="sourceLineNo">024</span>     * Never send acknowledgement (in MSH-15 and 16)<a name="line.24"></a>
+<span class="sourceLineNo">025</span>     */<a name="line.25"></a>
+<span class="sourceLineNo">026</span>    public static final String NE = "NE";<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>    /**<a name="line.28"></a>
+<span class="sourceLineNo">029</span>     * Send acknowledgement only on error / reject (in MSH-15 and 16)<a name="line.29"></a>
+<span class="sourceLineNo">030</span>     */<a name="line.30"></a>
+<span class="sourceLineNo">031</span>    public static final String ER = "ER";<a name="line.31"></a>
+<span class="sourceLineNo">032</span>    <a name="line.32"></a>
+<span class="sourceLineNo">033</span>    /**<a name="line.33"></a>
+<span class="sourceLineNo">034</span>     * Send acknowledgement only on successful receipt (in MSH-15 and 16)<a name="line.34"></a>
+<span class="sourceLineNo">035</span>     */<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    public static final String SU = "SU";<a name="line.36"></a>
+<span class="sourceLineNo">037</span>        <a name="line.37"></a>
+<span class="sourceLineNo">038</span>    <a name="line.38"></a>
+<span class="sourceLineNo">039</span>    /**<a name="line.39"></a>
+<span class="sourceLineNo">040</span>     * Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept<a name="line.40"></a>
+<span class="sourceLineNo">041</span>     */<a name="line.41"></a>
+<span class="sourceLineNo">042</span>    public static final String AA = "AA"; <a name="line.42"></a>
+<span class="sourceLineNo">043</span>    <a name="line.43"></a>
+<span class="sourceLineNo">044</span>    /**<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * Original mode: Application Error - Enhanced mode: Application acknowledgment: Error <a name="line.45"></a>
+<span class="sourceLineNo">046</span>     */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    public static final String AE = "AE"; <a name="line.47"></a>
+<span class="sourceLineNo">048</span>    /**<a name="line.48"></a>
+<span class="sourceLineNo">049</span>     * Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     */<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    public static final String AR = "AR";<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    <a name="line.52"></a>
+<span class="sourceLineNo">053</span>    /**<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * Enhanced mode: Accept acknowledgment: Commit Accept<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     */<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    public static final String CA = "CA"; <a name="line.56"></a>
+<span class="sourceLineNo">057</span>    <a name="line.57"></a>
+<span class="sourceLineNo">058</span>    /**<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * Enhanced mode: Accept acknow ledgment: Commit Error<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     */<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    public static final String CE = "CE";<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    <a name="line.62"></a>
+<span class="sourceLineNo">063</span>    /**<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * Enhanced mode: Accept acknowledgment: Commit Reject<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     */<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    public static final String CR = "CR";<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    <a name="line.67"></a>
+<span class="sourceLineNo">068</span>    <a name="line.68"></a>
+<span class="sourceLineNo">069</span>    /**<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * Sends a message to a remote system via an underlying <a name="line.70"></a>
+<span class="sourceLineNo">071</span>     * &lt;code&gt;TransportLayer&lt;/code&gt;.  <a name="line.71"></a>
+<span class="sourceLineNo">072</span>     * <a name="line.72"></a>
+<span class="sourceLineNo">073</span>     * If the message specifies that an accept ACK is required (under enhanced mode <a name="line.73"></a>
+<span class="sourceLineNo">074</span>     * processing rules) then this method may retry if transmission does not appear <a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * to be successful.  The call to this method blocks while this is happening.  <a name="line.75"></a>
+<span class="sourceLineNo">076</span>     * Retries are attempted if a CR message is received, or if no message is received<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     * in the specified time frame.  If a CE is received, an exception is thrown.  If <a name="line.77"></a>
+<span class="sourceLineNo">078</span>     * a CA is received, the call returns quietly.  <a name="line.78"></a>
+<span class="sourceLineNo">079</span>     * <a name="line.79"></a>
+<span class="sourceLineNo">080</span>     * If no accept ack is required, this method returns immediately after attempting to <a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * send a message, throwing an exception only if there is an immediate problem (eg the<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * server can't be contacted).  <a name="line.82"></a>
+<span class="sourceLineNo">083</span>     * <a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * If an accept ack is required only on error, the method waits for maxRetries * <a name="line.84"></a>
+<span class="sourceLineNo">085</span>     * retryItervalMillis for an error to be returned, and assumes that there is no error<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * if none appears in that time.  The message is not actually resent while waiting for an <a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * error ACK. <a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * <a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param theMessage the message to send <a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @param maxRetries note that this should be a small value if you demand an accept ack only<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     *      on error<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * @param retryIntervalMillis note that this should be a small value if you demand an accept ack only<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     *      on error<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @throws TransportException if there is an immediate problem trying to send the <a name="line.94"></a>
+<span class="sourceLineNo">095</span>     *      message.  <a name="line.95"></a>
+<span class="sourceLineNo">096</span>     */<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    public void send(Transportable theMessage, int maxRetries, long retryIntervalMillis) throws HL7Exception;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>    <a name="line.98"></a>
+<span class="sourceLineNo">099</span>    /**<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     * Indicates that the calling thread expects a message with a certain ack<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * ID.  If this message arrives within the specified period of time, it will <a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * be held in an inbound list instead of being passed on to an <a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * &lt;code&gt;Application&lt;/code&gt;.  If a message is in this list it &lt;code&gt;isAvailable()&lt;/code&gt;<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * and can be had via &lt;code&gt;receive()&lt;/code&gt;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * <a name="line.105"></a>
+<span class="sourceLineNo">106</span>     * @param theAckId the acknowledgement ID of the message <a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * @param thePeriodMillis time span during which the message should be kept if received<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     */<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    public void reserve(String theAckId, long thePeriodMillis);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    <a name="line.110"></a>
+<span class="sourceLineNo">111</span>    /**<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     * &lt;p&gt;Performs a single iteration of the receiving-side <a name="line.112"></a>
+<span class="sourceLineNo">113</span>     * of the HL7 original mode or enhanced mode processing rules<a name="line.113"></a>
+<span class="sourceLineNo">114</span>     * (see HL7 Standard v2.5 Chapter 2; the choice of rules<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     * is determined by message values).  Steps in the process are <a name="line.115"></a>
+<span class="sourceLineNo">116</span>     * as follows: &lt;/p&gt;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * <a name="line.117"></a>
+<span class="sourceLineNo">118</span>     * 1. TransportLayer.receive() is called to get the next message &lt;br&gt; <a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * 2. Validation is performed and the message is stored locally. &lt;br&gt;<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     * 2. If the message requires an accept ACK, then an accept, reject, <a name="line.120"></a>
+<span class="sourceLineNo">121</span>     *   or error message is returned as appropriate  &lt;br&gt;<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     * 3. If the message is an accept ack, it is added to a local list that <a name="line.122"></a>
+<span class="sourceLineNo">123</span>     * can be accessed by the send() method &lt;br&gt;<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     * 4. If the message has been reserved, it is added to the available message<a name="line.124"></a>
+<span class="sourceLineNo">125</span>     * list.  &lt;br&gt;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>     * 5. Otherwise it is sent to an Application.   <a name="line.126"></a>
+<span class="sourceLineNo">127</span>     * <a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * @param expectingAck is passed to TransportLayer.receive(), and may determine <a name="line.128"></a>
+<span class="sourceLineNo">129</span>     *      where the message is read from (eg different sockets may be used for <a name="line.129"></a>
+<span class="sourceLineNo">130</span>     *      commit-level ACKs).  Note that this call blocks until a message is ready<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     *      at the specified location, so to run the Processor continuously,  <a name="line.131"></a>
+<span class="sourceLineNo">132</span>     *      separate threads are needed to call cycle() with true and false args.   <a name="line.132"></a>
+<span class="sourceLineNo">133</span>     */<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    public void cycle(boolean expectingAck) throws HL7Exception; <a name="line.134"></a>
+<span class="sourceLineNo">135</span>        <a name="line.135"></a>
+<span class="sourceLineNo">136</span>    /**<a name="line.136"></a>
+<span class="sourceLineNo">137</span>     * @param theAckId the acknowledgement ID of an expected message <a name="line.137"></a>
+<span class="sourceLineNo">138</span>     * @return true if the message has come in and has been saved in the <a name="line.138"></a>
+<span class="sourceLineNo">139</span>     *      inbound message list <a name="line.139"></a>
+<span class="sourceLineNo">140</span>     */<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    public boolean isAvailable(String theAckId);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    <a name="line.142"></a>
+<span class="sourceLineNo">143</span>    /**<a name="line.143"></a>
+<span class="sourceLineNo">144</span>     * Gets the message with the given acknowledgement ID from <a name="line.144"></a>
+<span class="sourceLineNo">145</span>     * the incoming message list.  This method blocks until the <a name="line.145"></a>
+<span class="sourceLineNo">146</span>     * message appears on the list.  If you don't want to block, <a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * call &lt;code&gt;isAvailable()&lt;/code&gt; to see if it is there.<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     * <a name="line.148"></a>
+<span class="sourceLineNo">149</span>     * Note also that the message has no way of arriving on the list <a name="line.149"></a>
+<span class="sourceLineNo">150</span>     * during this call unless the &lt;code&gt;Processor&lt;/code&gt; is running <a name="line.150"></a>
+<span class="sourceLineNo">151</span>     * as a thread, or unless some other thread is calling cycle().   <a name="line.151"></a>
+<span class="sourceLineNo">152</span>     *      <a name="line.152"></a>
+<span class="sourceLineNo">153</span>     * @param theAckId<a name="line.153"></a>
+<span class="sourceLineNo">154</span>     * @param theTimeoutMillis milliseconds until the call times out<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     *      and returns null if the desired message is not available. <a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * @return the incoming message with the given ack ID, or null <a name="line.156"></a>
+<span class="sourceLineNo">157</span>     *      if the call times out. <a name="line.157"></a>
+<span class="sourceLineNo">158</span>     */<a name="line.158"></a>
+<span class="sourceLineNo">159</span>    public Transportable receive(String theAckId, long theTimeoutMillis) throws HL7Exception;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    <a name="line.160"></a>
+<span class="sourceLineNo">161</span>    /**<a name="line.161"></a>
+<span class="sourceLineNo">162</span>     * @return the operational context of this protocol instance <a name="line.162"></a>
+<span class="sourceLineNo">163</span>     */<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    public ProcessorContext getContext();<a name="line.164"></a>
+<span class="sourceLineNo">165</span><a name="line.165"></a>
+<span class="sourceLineNo">166</span>    /**<a name="line.166"></a>
+<span class="sourceLineNo">167</span>     * Request that the processor stop running and clean up any resources and worker threads it has started<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     */<a name="line.168"></a>
+<span class="sourceLineNo">169</span>    public void stop();<a name="line.169"></a>
+<span class="sourceLineNo">170</span><a name="line.170"></a>
+<span class="sourceLineNo">171</span>    <a name="line.171"></a>
+<span class="sourceLineNo">172</span>}<a name="line.172"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

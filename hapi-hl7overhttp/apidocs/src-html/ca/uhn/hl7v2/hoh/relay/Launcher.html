@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.hoh.relay;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.FileNotFoundException;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.springframework.context.ApplicationContext;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.springframework.context.support.FileSystemXmlApplicationContext;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.springframework.util.Log4jConfigurer;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>import ca.uhn.hl7v2.hoh.util.IOUtils;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import ca.uhn.hl7v2.hoh.util.VersionLogger;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>public class Launcher {<a name="line.12"></a>
+<span class="sourceLineNo">013</span>        private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(Launcher.class);<a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>        private FileSystemXmlApplicationContext myAppContext;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>        public Launcher() {<a name="line.17"></a>
+<span class="sourceLineNo">018</span>                this("conf" + IOUtils.FILE_PATH_SEP + "config.xml");<a name="line.18"></a>
+<span class="sourceLineNo">019</span>        }<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>        public Launcher(String configFile) {<a name="line.21"></a>
+<span class="sourceLineNo">022</span>                long start = System.currentTimeMillis();<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>                StringBuilder b = new StringBuilder();<a name="line.24"></a>
+<span class="sourceLineNo">025</span>                b.append("HAPI HL7 over HTTP Relay is starting. This software is Licensed under the ");<a name="line.25"></a>
+<span class="sourceLineNo">026</span>                b.append("Apache Software License (version 2.0) and is Copyright(c) ");<a name="line.26"></a>
+<span class="sourceLineNo">027</span>                b.append("2012 University Health Network.");<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                ourLog.info(b.toString());<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>                VersionLogger.init();<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>                Runtime.getRuntime().addShutdownHook(new ShutdownHook());<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>                myAppContext = new FileSystemXmlApplicationContext(configFile);<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                myAppContext.start();<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>                long delay = System.currentTimeMillis() - start;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                ourLog.info("HAPI HL7 over HTTP Relay started in {} ms", delay);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>        }<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>        public ApplicationContext getAppCtx() {<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                return myAppContext;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        }<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>        public void shutdown() {<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                ourLog.info("Shutdown request detected, stopping all services");<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                if (myAppContext != null) {<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                        myAppContext.close();<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                        myAppContext = null;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                }<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                ourLog.info("Shutdown request completed");<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        }<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>        public static void main(String[] args) throws FileNotFoundException {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                Log4jConfigurer.initLogging("file:conf" + IOUtils.FILE_PATH_SEP + "log4j.xml");<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>                // System.setProperty("relay.port.in",<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                // RandomServerPortProvider.findFreePort() + "");<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                // System.setProperty("relay.port.out",<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                // RandomServerPortProvider.findFreePort() + "");<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                new Launcher();<a name="line.61"></a>
+<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>        private final class ShutdownHook extends Thread {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                @Override<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                public void run() {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        shutdown();<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        }<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>}<a name="line.71"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
