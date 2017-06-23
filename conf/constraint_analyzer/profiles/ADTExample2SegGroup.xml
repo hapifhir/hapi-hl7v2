@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Specification SYSTEM "conformance.dtd">
+<Specification SpecName="Constrainable - Constrained - Inbound ADT-ADT_A01" OrgName="Queen's University" HL7Version="2.3.1" SpecVersion="1.0" Status="active" ConformanceType="Constrainable" Role="Sender" HL7OID="">
+<ImpNote><Paragraph>ADT_A01&#160;&#160;Constrainable Profile Example</Paragraph></ImpNote>
+<Conformance AccAck="NE" AppAck="AL" StaticID="{ConfSig(1) Queen's University(1) 2.3.1(6) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(3) 1.0(1) Sender(1)}" DynamicID="{ConfSig(1) Queen's University(1) 2.3.1(6) dynamic-profile(2) AccNE_AppAL(2) defer_mode_ack(1)}" MsgAckMode="Deferred"></Conformance>
+<Encodings><Encoding>ER7</Encoding></Encodings>
+<Message MsgType="ADT" EventType="A01" EventDesc="Admit / Visit notification" MsgStructID="ADT_A01">
+<Description>"MSH,EVN,PID,PV1,{AL1}"</Description>
+<Segment Name="MSH" LongName="message header segment" Optionality="R" Min="1" Max="1">
+<Field Name="Field Separator"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="ST" Length="1"> <Reference>"11.6.1"</Reference><DataValues ExValue="|"/></Field>
+<Field Name="Encoding Characters"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="ST" Length="4"><Reference>"11.2.2"</Reference><DataValues ExValue="^&amp;~\"/></Field>
+<Field Name="Date/Time Of Message"  Optionality="R" Min="1" Max="1" ItemNo="" Datatype="TS" Length="26"><Reference>"11.2.7"</Reference><Component Name="Date/Time"  Optionality="R"  Datatype="NM" Length="26"><Description>"YYYYMMDD[HHHMM[SS[.SSSS]]][+-ZZZZ]"</Description><DataValues ExValue=""/></Component><Component Name="degree of precision" Optionality="X"  Datatype="ST" Length="1"><Description>"&quot;Retained for backward compatibility only&quot;"</Description> <DataValues ExValue=""/></Component></Field>
+</Segment>
+	<SegGroup Name = "test" LongName="Testing SegmentGroup" Optionality="CE" Min="1" Max="1">
+	<Predicate/>
+	<Segment Name="AL1" LongName="patient allergy information segment" Optionality="C"  Min="0" Max="10">
+		<Predicate/>
+		<Field Name="Set ID - AL1"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="SI" Length="4"><Reference>"3.3.6.1"</Reference> <DataValues ExValue=""/></Field>
+		<Field Name="Allergy Code/Mnemonic/Description"  Optionality="R"   Min="1" Max="1" ItemNo="" Datatype="CE" Length="60"><ImpNote>     <Paragraph>Maps to organization's Allergy Type values</Paragraph>     <Paragraph>table</Paragraph></ImpNote><Reference>"3.3.6.3"</Reference>
+			<Component Name="identifier"  Optionality="R"  Datatype="ST" Length="5"   ><ImpNote>     <Paragraph>Allergy Code</Paragraph>     <Paragraph>Code not required for free text allergies.</Paragraph></ImpNote> <DataValues ExValue="54321"/></Component>
+			<Component Name="text"  Optionality="R"  Datatype="ST" Length="30"   ><ImpNote>     <Paragraph>Allergy Description</Paragraph></ImpNote> <DataValues ExValue="Tree Mould"/></Component>
+			<Component Name="name of coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="alternate identifier"  Optionality="X"  Datatype="ST" Length="3"   ><DataValues ExValue=""/><SubComponent Name="identifier"  Optionality="O"  Datatype="ST" Length="0"/></Component>
+			<Component Name="alternate text"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+			<Component Name="name of alternate coding system"  Optionality="X"  Datatype="ST" Length="3"   > <DataValues ExValue=""/></Component>
+		</Field>
+		
+	</Segment>	
+	</SegGroup>
+</Message>
+</Specification>
