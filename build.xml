@@ -30,7 +30,7 @@
         </exec>
     </target>
     <target name="survey">
-	 <replace dir="target/site" summary="true">
+	 <replace dir="/home/james/sites/scm/hapi-hl7v2" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[<!-- ======== START OF CLASS DATA ======== -->]]></replacetoken>
             <replacevalue><![CDATA[
@@ -49,8 +49,8 @@ The survey will run until the fall.
 	</target> 
 
 	<target name="urchin">
-        <echo>Adding Google analytics in target/site for &lt;body&gt;</echo>
-        <replace dir="target/site" summary="true">
+        <echo>Adding Google analytics in /home/james/sites/scm/hapi-hl7v2 for &lt;body&gt;</echo>
+        <replace dir="/home/james/sites/scm/hapi-hl7v2" summary="true">
             <include name="**/*.html"></include>
             <replacefilter token="#build#" value="${label}"/>
             <replacefilter token="#version#" value="${version}"/>
@@ -68,8 +68,8 @@ The survey will run until the fall.
                 </body >
                 ]]></replacevalue>
         </replace>
-			<echo>Adding Google analytics in target/site for &lt;BODY&gt;</echo>
-        <replace dir="target/site" summary="true">
+			<echo>Adding Google analytics in /home/james/sites/scm/hapi-hl7v2 for &lt;BODY&gt;</echo>
+        <replace dir="/home/james/sites/scm/hapi-hl7v2" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</BODY>]]></replacetoken>
             <replacevalue><![CDATA[
@@ -85,8 +85,8 @@ The survey will run until the fall.
                 </BODY >
                 ]]></replacevalue>
         </replace>
-      <echo>Adding Google analytics in target/site for &lt;FRAMESET&gt;</echo>
-        <replace dir="target/site" summary="true">
+      <echo>Adding Google analytics in /home/james/sites/scm/hapi-hl7v2 for &lt;FRAMESET&gt;</echo>
+        <replace dir="/home/james/sites/scm/hapi-hl7v2" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</HEAD>
 <FRAMESET]]></replacetoken>
@@ -103,8 +103,8 @@ The survey will run until the fall.
                 </HEAD >
                 <FRAMESET]]></replacevalue>
         </replace>
-      <echo>Adding Google analytics in target/site for &lt;frameset&gt;</echo>
-        <replace dir="target/site" summary="true">
+      <echo>Adding Google analytics in /home/james/sites/scm/hapi-hl7v2 for &lt;frameset&gt;</echo>
+        <replace dir="/home/james/sites/scm/hapi-hl7v2" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[</head>
     <frameset]]></replacetoken>
@@ -122,21 +122,21 @@ The survey will run until the fall.
     <frameset]]></replacevalue>
         </replace>        
       <echo>Customizing analytics token for testpanel</echo>
-		  <mkdir dir="target/site/hapi-testpanel"/>
-		  <replace dir="target/site/hapi-testpanel" summary="true" failOnNoReplacements="false">
+		  <mkdir dir="/home/james/sites/scm/hapi-hl7v2/hapi-testpanel"/>
+		  <replace dir="/home/james/sites/scm/hapi-hl7v2/hapi-testpanel" summary="true" failOnNoReplacements="false">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
             <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
         </replace>
       <echo>Customizing analytics token for hl7overhttp</echo>
-		  <mkdir dir="target/site/hapi-hl7overhttp"/>
-		  <replace dir="target/site/hapi-hl7overhttp" summary="true">
+		  <mkdir dir="/home/james/sites/scm/hapi-hl7v2/hapi-hl7overhttp"/>
+		  <replace dir="/home/james/sites/scm/hapi-hl7v2/hapi-hl7overhttp" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
             <replacevalue><![CDATA[UA-1395874-4]]></replacevalue>
         </replace>
       <echo>Adding social plugins for HAPI</echo>
-		  <replace dir="target/site/" summary="true">
+		  <replace dir="/home/james/sites/scm/hapi-hl7v2/" summary="true">
             <include name="**/*.html"></include>
             <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
             <replacevalue><![CDATA[
@@ -165,7 +165,7 @@ The survey will run until the fall.
 				]]></replacevalue>
         </replace>
       <echo>Adding social plugins for TestPanel</echo>
-		  <replace dir="target/site/" summary="true">
+		  <replace dir="/home/james/sites/scm/hapi-hl7v2/" summary="true">
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
           <replacevalue><![CDATA[
@@ -194,7 +194,7 @@ The survey will run until the fall.
           ]]></replacevalue>
       </replace>
       <echo>Adding social plugins for hl7overhttp</echo>
-		  <replace dir="target/site/" summary="true">
+		  <replace dir="/home/james/sites/scm/hapi-hl7v2/" summary="true">
           <include name="**/*.html"></include>
           <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
           <replacevalue><![CDATA[
