@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span>The contents of this file are subject to the Mozilla Public License Version 1.1 <a name="line.2"></a>
+<span class="sourceLineNo">003</span>(the "License"); you may not use this file except in compliance with the License. <a name="line.3"></a>
+<span class="sourceLineNo">004</span>You may obtain a copy of the License at http://www.mozilla.org/MPL/ <a name="line.4"></a>
+<span class="sourceLineNo">005</span>Software distributed under the License is distributed on an "AS IS" basis, <a name="line.5"></a>
+<span class="sourceLineNo">006</span>WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the <a name="line.6"></a>
+<span class="sourceLineNo">007</span>specific language governing rights and limitations under the License. <a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>The Original Code is "ReceivingApplication.java".  Description: <a name="line.9"></a>
+<span class="sourceLineNo">010</span>"From an HL7 messaging perspective, a consumer of a messages" <a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>The Initial Developer of the Original Code is University Health Network. Copyright (C) <a name="line.12"></a>
+<span class="sourceLineNo">013</span>2002, 2005.  All Rights Reserved. <a name="line.13"></a>
+<span class="sourceLineNo">014</span><a name="line.14"></a>
+<span class="sourceLineNo">015</span>Contributor(s): ______________________________________. <a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>Alternatively, the contents of this file may be used under the terms of the <a name="line.17"></a>
+<span class="sourceLineNo">018</span>GNU General Public License (the "GPL"), in which case the provisions of the GPL are <a name="line.18"></a>
+<span class="sourceLineNo">019</span>applicable instead of those above.  If you wish to allow use of your version of this <a name="line.19"></a>
+<span class="sourceLineNo">020</span>file only under the terms of the GPL and not to allow others to use your version <a name="line.20"></a>
+<span class="sourceLineNo">021</span>of this file under the MPL, indicate your decision by deleting  the provisions above <a name="line.21"></a>
+<span class="sourceLineNo">022</span>and replace  them with the notice and other provisions required by the GPL License.  <a name="line.22"></a>
+<span class="sourceLineNo">023</span>If you do not delete the provisions above, a recipient may use your version of <a name="line.23"></a>
+<span class="sourceLineNo">024</span>this file under either the MPL or the GPL. <a name="line.24"></a>
+<span class="sourceLineNo">025</span>*/<a name="line.25"></a>
+<span class="sourceLineNo">026</span>package ca.uhn.hl7v2.protocol;<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Map;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import ca.uhn.hl7v2.model.Message;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>/**<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * &lt;p&gt;From an HL7 messaging perspective, a ReceivingApplication is a consumer of a messages. <a name="line.34"></a>
+<span class="sourceLineNo">035</span> * Once a parser parses an incoming message, the message would normally be forwarded <a name="line.35"></a>
+<span class="sourceLineNo">036</span> * to an application of some sort (e.g. a lab system) which would process the <a name="line.36"></a>
+<span class="sourceLineNo">037</span> * message in some way meaningful for it, and then return a response.&lt;/p&gt;<a name="line.37"></a>
+<span class="sourceLineNo">038</span> *   <a name="line.38"></a>
+<span class="sourceLineNo">039</span> * &lt;p&gt;If you are wondering how to integrate HAPI into an existing server application, <a name="line.39"></a>
+<span class="sourceLineNo">040</span> * this is probably the place.  Create a class that implements ReceivingApplication, then look <a name="line.40"></a>
+<span class="sourceLineNo">041</span> * at HL7Server and ApplicationRouter to see how to get HAPI to listen for messages on <a name="line.41"></a>
+<span class="sourceLineNo">042</span> * a socket and pass them to your ReceivingApplication.&lt;/p&gt;<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * <a name="line.43"></a>
+<span class="sourceLineNo">044</span> * Note that this interface replaces ca.uhn.hl7v2.app.Application in HAPI 0.5.   <a name="line.44"></a>
+<span class="sourceLineNo">045</span> *   <a name="line.45"></a>
+<span class="sourceLineNo">046</span> * @author &lt;a href="mailto:bryan.tripp@uhn.on.ca"&gt;Bryan Tripp&lt;/a&gt;<a name="line.46"></a>
+<span class="sourceLineNo">047</span> */<a name="line.47"></a>
+<span class="sourceLineNo">048</span>public interface ReceivingApplication&lt;T extends Message&gt; {<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>    /**<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * Uses the contents of the message for whatever purpose the application <a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * has for this message, and returns an appropriate response message.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * <a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * @param theMessage an inbound HL7 message <a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * @param theMetadata message metadata (which may include information about where the message comes <a name="line.55"></a>
+<span class="sourceLineNo">056</span>     *      from, etc).  This is the same metadata as in {@link ca.uhn.hl7v2.protocol.Transportable#getMetadata()}.  <a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * <a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * @return an appropriate application response (for example an application ACK or query response). <a name="line.58"></a>
+<span class="sourceLineNo">059</span>     *      Appropriate responses to different types of incoming messages are defined by HL7. <a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * <a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * @throws ReceivingApplicationException if there is a problem internal to the application (for example <a name="line.61"></a>
+<span class="sourceLineNo">062</span>     *      a database problem)<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * @throws HL7Exception if there is a problem with the message <a name="line.63"></a>
+<span class="sourceLineNo">064</span>     */<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    public Message processMessage(T theMessage, Map&lt;String, Object&gt; theMetadata)<a name="line.65"></a>
+<span class="sourceLineNo">066</span>            throws ReceivingApplicationException, HL7Exception;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    <a name="line.67"></a>
+<span class="sourceLineNo">068</span>    /** <a name="line.68"></a>
+<span class="sourceLineNo">069</span>     * @param theMessage an inbound HL7 message <a name="line.69"></a>
+<span class="sourceLineNo">070</span>     * @return true if this ReceivingApplication wishes to accept the message.  By returning<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     *      true, this Application declares itself the recipient of the message, accepts <a name="line.71"></a>
+<span class="sourceLineNo">072</span>     *      responsibility for it, and must be able to respond appropriately to the sending system.  <a name="line.72"></a>
+<span class="sourceLineNo">073</span>     */<a name="line.73"></a>
+<span class="sourceLineNo">074</span>    public boolean canProcess(T theMessage);<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>}<a name="line.76"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

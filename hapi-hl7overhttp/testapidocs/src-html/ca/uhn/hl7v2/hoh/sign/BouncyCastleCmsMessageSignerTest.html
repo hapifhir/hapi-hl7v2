@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.hoh.sign;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import static org.junit.Assert.*;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.io.IOException;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.InputStream;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.security.KeyStore;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.security.KeyStoreException;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.security.NoSuchAlgorithmException;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.security.cert.CertificateException;<a name="line.10"></a>
+<span class="sourceLineNo">011</span><a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.junit.Test;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>public class BouncyCastleCmsMessageSignerTest {<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>        private static final String HELLO_WORLD = "HELLO WORLD!!!!!aa";<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>        private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BouncyCastleCmsMessageSignerTest.class);<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>        @Test<a name="line.20"></a>
+<span class="sourceLineNo">021</span>        public void testSignAndVerify() throws Exception {<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>                BouncyCastleCmsMessageSigner signer = createSigner();<a name="line.23"></a>
+<span class="sourceLineNo">024</span>                String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>                ourLog.info("Signed ({} bytes): {}", signed.length(), signed);<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>                // Now verify<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                signer = createVerifier();<a name="line.29"></a>
+<span class="sourceLineNo">030</span>                signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>        }<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>        public static BouncyCastleCmsMessageSigner createVerifier() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                BouncyCastleCmsMessageSigner signer;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                signer = new BouncyCastleCmsMessageSigner();<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                signer.setKeyStore(loadTrustStore());<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                signer.setKeyAlias(getKeystoreKeyAlias());<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                signer.setAliasPassword(getKeystoreKeyAliasPassword());<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                return signer;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>        }<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>        public static BouncyCastleCmsMessageSigner createSigner() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                signer.setKeyStore(getKeystore());<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                signer.setKeyAlias(getKeystoreKeyAlias());<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                signer.setAliasPassword(getKeystoreKeyAliasPassword());<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                return signer;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>        }<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>        private static KeyStore loadTrustStore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                KeyStore trustStore = KeyStore.getInstance("JKS");<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                InputStream trustStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/truststore.jks");<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                trustStore.load(trustStream, getKeystoreKeyAliasPassword().toCharArray());<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                return trustStore;<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        }<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>        private static String getKeystoreKeyAliasPassword() {<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                return "changeit";<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        }<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>        private static String getKeystoreKeyAlias() {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                return "testcert";<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>        private static KeyStore getKeystore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                KeyStore keyStore = KeyStore.getInstance("JKS");<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                InputStream ksStream = BouncyCastleCmsMessageSignerTest.class.getResourceAsStream("/keystore.jks");<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                keyStore.load(ksStream, getKeystoreKeyAliasPassword().toCharArray());<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                return keyStore;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        }<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>        @Test<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        public void testTryToSignWithPublicKey() throws Exception {<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                BouncyCastleCmsMessageSigner signer = createSigner();<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                signer.setKeyStore(loadTrustStore());<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>                try {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                        signer.sign(HELLO_WORLD.getBytes("US-ASCII"));<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                        fail();<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                } catch (SignatureFailureException e) {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                        assertTrue(e.toString(), e.getMessage().contains(BouncyCastleCmsMessageSigner.MSG_KEY_IS_NOT_A_PRIVATE_KEY));<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        }<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>        @Test<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        public void testSignAndVerifyStringChanged() throws Exception {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                BouncyCastleCmsMessageSigner signer = createSigner();<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>                ourLog.info("Signed ({} bytes): {}", signed.length(), signed);<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>                // Now verify that non-matching fails<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                signer = createVerifier();<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>                try {<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        signer.verify("HELLO WORLD....".getBytes("US-ASCII"), signed);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        fail();<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                } catch (SignatureVerificationException e) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>                }<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>}<a name="line.105"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

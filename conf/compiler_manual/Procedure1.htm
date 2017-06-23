@@ -1,0 +1,534 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./Procedure1_files/filelist.xml">
+<link rel=Edit-Time-Data href="./Procedure1_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>HAPI Conformance Classes System</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>WENDY HALL</o:Author>
+  <o:Template>Normal</o:Template>
+  <o:LastAuthor>WENDY HALL</o:LastAuthor>
+  <o:Revision>16</o:Revision>
+  <o:TotalTime>24</o:TotalTime>
+  <o:Created>2003-03-26T05:04:00Z</o:Created>
+  <o:LastSaved>2003-04-02T04:09:00Z</o:LastSaved>
+  <o:Pages>5</o:Pages>
+  <o:Words>432</o:Words>
+  <o:Characters>2467</o:Characters>
+  <o:Lines>20</o:Lines>
+  <o:Paragraphs>4</o:Paragraphs>
+  <o:CharactersWithSpaces>3029</o:CharactersWithSpaces>
+  <o:Version>9.3821</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-update:auto;
+	mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:Arial;}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:12.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:Arial;}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.75in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:Arial;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:4669582;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1388237534 -1273307636 -259118960 1039416498 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l0:level1
+	{mso-level-start-at:6;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-start-at:17;
+	mso-level-number-format:alpha-upper;
+	mso-level-tab-stop:135.0pt;
+	mso-level-number-position:left;
+	margin-left:135.0pt;
+	text-indent:-.5in;}
+@list l1
+	{mso-list-id:133564267;
+	mso-list-type:hybrid;
+	mso-list-template-ids:839052622 273608426 184580458 -2097770054 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-start-at:5;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-start-at:17;
+	mso-level-number-format:alpha-upper;
+	mso-level-tab-stop:135.0pt;
+	mso-level-number-position:left;
+	margin-left:135.0pt;
+	text-indent:-.5in;}
+@list l2
+	{mso-list-id:287317523;
+	mso-list-type:hybrid;
+	mso-list-template-ids:168069780 -1388155014 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l2:level1
+	{mso-level-start-at:4;
+	mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:407769593;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1436090060 -579280496 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l3:level1
+	{mso-level-start-at:6;
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:732578818;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2070779320 988206298 -1373990590 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l4:level1
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level2
+	{mso-level-number-format:alpha-upper;
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.5in;}
+@list l4:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l5
+	{mso-list-id:817457971;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1189041682 -1756968288 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l5:level1
+	{mso-level-start-at:3;
+	mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l6
+	{mso-list-id:825437810;
+	mso-list-type:hybrid;
+	mso-list-template-ids:819239424 -773297908 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l6:level1
+	{mso-level-start-at:4;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:0in;
+	mso-ansi-font-size:12.0pt;
+	font-family:Arial;
+	mso-ansi-font-weight:normal;
+	mso-ansi-font-style:normal;}
+@list l7
+	{mso-list-id:1489176167;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1306987560 2003234690 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l7:level1
+	{mso-level-start-at:2;
+	mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:.75in;
+	mso-level-number-position:left;
+	margin-left:.75in;
+	text-indent:-.25in;}
+@list l8
+	{mso-list-id:1590381281;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1691289532 67698703 1247306610 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l8:level2
+	{mso-level-start-at:7;
+	mso-level-tab-stop:1.25in;
+	mso-level-number-position:left;
+	margin-left:1.25in;
+	text-indent:-.5in;
+	mso-ansi-font-size:12.0pt;
+	font-family:Arial;
+	mso-ansi-font-weight:normal;
+	mso-ansi-font-style:normal;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1035"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:130.5pt;
+ height:49.5pt'>
+ <v:imagedata src="./Procedure1_files/image001.gif" o:title="hapilogo5"/>
+</v:shape><![endif]--><![if !vml]><img width=174 height=66
+src="./Procedure1_files/image001.gif" v:shapes="_x0000_i1025"><![endif]></h1>
+
+<h1 align=center style='text-align:center'>HAPI Conformance Classes System</h1>
+
+<h1 align=center style='text-align:center'>User Manual</h1>
+
+<p class=MsoNormal align=center style='text-align:center'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1026" style='position:absolute;
+ z-index:1;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ from="5.55pt,24.95pt" to="536.55pt,24.95pt" strokecolor="#339" strokeweight="6pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout'>
+
+<table cellpadding=0 cellspacing=0 align=left>
+ <tr>
+  <td width=2 height=28></td>
+ </tr>
+ <tr>
+  <td></td>
+  <td><img width=719 height=11 src="./Procedure1_files/image002.gif" v:shapes="_x0000_s1026"></td>
+ </tr>
+</table>
+
+</span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h3><span style='color:green'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></h3>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h3><span style='color:green'>Procedure 1<o:p></o:p></span></h3>
+
+<h3><span style='color:green'>Creating a Message Profile with Messaging
+Workbench</span><span style='color:red'><o:p></o:p></span></h3>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>This procedure introduces the process of creating message
+profiles.<span style="mso-spacerun: yes">  </span>More detailed information is
+available from the Messaging Workbench help.<b style='mso-bidi-font-weight:
+normal'><u><span style="mso-spacerun: yes">  </span></u></b>Messaging Workbench
+is freeware that creates, maintains and displays message profiles. This
+software allows rapid prototyping of new profiles, and quick and easy
+alteration of existing profiles to meet new requirements. To download Messaging
+Workbench, see <a href="System_Requirements.htm">System Requirements.</a></p>
+
+<h2>How to create a message profile with the Messaging Workbench</h2>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></u></b></p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l8 level1 lfo3;tab-stops:list .5in'>Start Messaging
+     Workbench.</li>
+</ol>
+
+<p class=MsoNormal style='margin-left:.25in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<ol style='margin-top:0in' start=2 type=1>
+ <li class=MsoNormal style='mso-list:l8 level1 lfo3;tab-stops:list .5in'>Click
+     File&gt;Load Message Structure.</li>
+</ol>
+
+<p class=MsoNormal style='margin-left:.25in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<ol style='margin-top:0in' start=3 type=1>
+ <li class=MsoNormal style='mso-list:l8 level1 lfo3;tab-stops:list .5in'>Pick a
+     message structure from the list (see <a href="Figure1.htm">Figure 1</a>)
+     and click OK.</li>
+</ol>
+
+<p class=MsoFooter style='tab-stops:.5in center 3.0in right 6.0in'><span
+style='background:yellow;mso-highlight:yellow'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.25in;mso-list:l6 level1 lfo7;
+tab-stops:list .5in'><![if !supportLists]>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Select a structure from the Structure textbox (see <a
+href="Figure2.htm">Figure 2</a>) and press Enter.<span style="mso-spacerun: yes"> 
+</span></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.5in'><i>A message tree appears in the
+bottom left corner of the Messaging Workbench.</i> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.25in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.5in'>Note:<span style='mso-tab-count:
+1'>   </span>For a description of the structures listed in the Structure
+textbox, see <a href="http://hl7.org/Library/General/v231.zip">http://hl7.org/Library/General/v231.zip</a>
+.<i><o:p></o:p></i></p>
+
+<p class=MsoNormal><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<ol style='margin-top:0in' start=5 type=1>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo10;tab-stops:list .5in'>To
+     add constraints to each piece of the message tree, click on one of the
+     nodes in the message tree (see <a href="Figure1.htm">Figure 1</a>) and add
+     constraints as follows:</li>
+</ol>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in'><![if !supportLists]>a.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Select the Repeatable check box (<a href="Figure1.htm">Figure
+1</a>).</p>
+
+<p class=MsoNormal style='margin-left:.75in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in 1.0in'><![if !supportLists]>b.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Set the usage list box to either Required or Not Supported (<a
+href="Figure1.htm">Figure 1</a>).<span style="mso-spacerun: yes">  </span>For
+definitions of Required and Not Supported, see HL7 2.5 Section 2.12 or visit
+the bookstore at <a href="http://www.hl7.org">www.hl7.org</a>.</p>
+
+<p class=MsoFooter style='margin-left:.25in;tab-stops:list .5in 1.5in center 3.0in right 6.0in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in'><![if !supportLists]>c.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Change the maximum and minimum cardinality as desired (<a
+href="Figure1.htm">Figure 1</a>).</p>
+
+<p class=MsoNormal style='margin-left:.25in;tab-stops:list .5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in'>Note: A maximum cardinality of
+zero means that there is no limit.</p>
+
+<p class=MsoNormal style='margin-left:.25in;tab-stops:list .5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in'><![if !supportLists]>d.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Set the maximum length of the node (<a href="Figure1.htm">Figure
+1</a>).</p>
+
+<p class=MsoNormal style='tab-stops:list .5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in'><![if !supportLists]>e.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Set an example value if desired (<a href="Figure1.htm">Figure
+1</a>).</p>
+
+<p class=MsoNormal style='margin-left:.25in;tab-stops:list .5in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l4 level1 lfo12;
+tab-stops:list .75in'><![if !supportLists]>f.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Add other information if desired (<a href="Figure1.htm">Figure
+1</a>).</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l3 level1 lfo14;
+tab-stops:list .25in'><![if !supportLists]>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Generate the XML profile as follows: </p>
+
+<p class=MsoNormal style='margin-left:.75in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l0 level2 lfo16;
+tab-stops:list .75in 1.0in'><![if !supportLists]>a.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Click on the Display/Reports tab at the top of the dialog box
+(<a href="Figure3.htm">Figure 3</a>).</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in;tab-stops:list 1.0in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l7 level1 lfo18;
+tab-stops:list .75in'><![if !supportLists]>b.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Select the XML specification from the left drop-down menu (<a
+href="Figure3.htm">Figure 3</a>).</p>
+
+<p class=MsoFooter style='tab-stops:.5in center 3.0in right 6.0in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:.5in'><i>An XML
+representation of the message tree appears.<o:p></o:p></i></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l5 level1 lfo20;
+tab-stops:list .75in'><![if !supportLists]>c.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Click on the Generate HL7 Registry Profile button on the top right
+corner of the Messaging Workbench (<a href="Figure3.htm">Figure 3</a>).</p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in;tab-stops:list .75in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in'><span
+style='mso-tab-count:2'>                        </span><i>A dialog box asks
+whether you want to register this profile with HL7.<o:p></o:p></i></p>
+
+<p class=MsoFooter style='margin-left:.5in;text-indent:-.5in;tab-stops:list .75in center 3.0in right 6.0in'><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal style='margin-left:.75in;text-indent:-.25in;mso-list:l2 level1 lfo22;
+tab-stops:list .75in'><![if !supportLists]>d.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Since registering a profile is beyond the scope of this
+documentation, click No.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>7.<span style='mso-tab-count:1'>         </span>To save this
+profile, click File&gt;Save.</p>
+
+<p class=MsoNormal><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal style='text-indent:.5in'><i>This profile is now ready for
+the generator system (<a href="Procedure2.htm">Procedure 2</a>).<o:p></o:p></i></p>
+
+<p class=MsoNormal><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><v:line id="_x0000_s1030" style='position:absolute;
+ z-index:2;mso-position-horizontal:absolute;mso-position-vertical:absolute'
+ from="-3.45pt,1.75pt" to="527.55pt,1.75pt" strokecolor="#339" strokeweight="6pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:relative;z-index:1'><span style='position:
+absolute;left:-10px;top:-3px;width:719px;height:11px'><img width=719 height=11
+src="./Procedure1_files/image003.gif" v:shapes="_x0000_s1030"></span></span><![endif]><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoNormal align=center style='text-align:center'><a
+href="http://hl7api.sourceforge.net">HAPI Home</a><span style='mso-tab-count:
+1'>    </span><a href="index.htm">Table of Contents</a></p>
+
+<p class=MsoNormal align=center style='text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal align=center style='text-align:center'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:66pt;height:23.25pt'>
+ <v:imagedata src="./Procedure1_files/image004.png" o:title="sourceforge"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=88 height=31
+src="./Procedure1_files/image005.jpg" v:shapes="_x0000_i1026"><![endif]></p>
+
+</div>
+
+</body>
+
+</html>

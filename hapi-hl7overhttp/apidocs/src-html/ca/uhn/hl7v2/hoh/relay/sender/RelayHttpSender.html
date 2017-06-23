@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package ca.uhn.hl7v2.hoh.relay.sender;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.io.IOException;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.net.ConnectException;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.Map;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.springframework.beans.factory.BeanNameAware;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import org.springframework.beans.factory.InitializingBean;<a name="line.8"></a>
+<span class="sourceLineNo">009</span><a name="line.9"></a>
+<span class="sourceLineNo">010</span>import ca.uhn.hl7v2.HL7Exception;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import ca.uhn.hl7v2.hoh.api.DecodeException;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import ca.uhn.hl7v2.hoh.api.EncodeException;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import ca.uhn.hl7v2.hoh.api.IReceivable;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import ca.uhn.hl7v2.hoh.hapi.api.MessageSendable;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import ca.uhn.hl7v2.hoh.hapi.client.HohClientMultithreaded;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import ca.uhn.hl7v2.hoh.relay.Binder;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import ca.uhn.hl7v2.hoh.util.Validate;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import ca.uhn.hl7v2.model.Message;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import ca.uhn.hl7v2.protocol.ApplicationRouter;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import ca.uhn.hl7v2.protocol.MetadataKeys;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import ca.uhn.hl7v2.protocol.ReceivingApplicationException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import ca.uhn.hl7v2.util.Terser;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>public class RelayHttpSender extends HohClientMultithreaded implements IRelaySender&lt;Message&gt;, BeanNameAware, InitializingBean {<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span>        private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(RelayHttpSender.class);<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        private String myBeanName;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        private int myIoRetries = 0;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        <a name="line.29"></a>
+<span class="sourceLineNo">030</span>        /**<a name="line.30"></a>
+<span class="sourceLineNo">031</span>         * {@inheritDoc}<a name="line.31"></a>
+<span class="sourceLineNo">032</span>         */<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        public void afterPropertiesSet() throws Exception {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                Validate.propertySet(getUrl(), "Url");<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                ourLog.info("Sender [{}] will transmit by HL7 over HTTP to {}", myBeanName, getUrl().toExternalForm());<a name="line.35"></a>
+<span class="sourceLineNo">036</span>        }<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>        /**<a name="line.38"></a>
+<span class="sourceLineNo">039</span>         * Returns true<a name="line.39"></a>
+<span class="sourceLineNo">040</span>         * <a name="line.40"></a>
+<span class="sourceLineNo">041</span>         * {@inheritDoc}<a name="line.41"></a>
+<span class="sourceLineNo">042</span>         */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        public boolean canProcess(Message theMessage) {<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                return true;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>        }<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>        /**<a name="line.47"></a>
+<span class="sourceLineNo">048</span>         * {@inheritDoc}<a name="line.48"></a>
+<span class="sourceLineNo">049</span>         */<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        public String getBeanName() {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                return myBeanName;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>        }<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>        /**<a name="line.54"></a>
+<span class="sourceLineNo">055</span>         * @see #setIoRetries(int)<a name="line.55"></a>
+<span class="sourceLineNo">056</span>         */<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        public int getIoRetries() {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                return myIoRetries;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        }<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>        /**<a name="line.61"></a>
+<span class="sourceLineNo">062</span>         * {@inheritDoc}<a name="line.62"></a>
+<span class="sourceLineNo">063</span>         */<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        public Message processMessage(Message theMessage, Map&lt;String, Object&gt; theMetadata) throws ReceivingApplicationException, HL7Exception {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                String sendingIp = (String) theMetadata.get(ApplicationRouter.METADATA_KEY_SENDING_IP);<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                Object sendingPort = theMetadata.get(ApplicationRouter.METADATA_KEY_SENDING_PORT);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                String controlId = (String) theMetadata.get(ApplicationRouter.METADATA_KEY_MESSAGE_CONTROL_ID);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                String rawMessage = (String) theMetadata.get(MetadataKeys.IN_RAW_MESSAGE);<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>                ourLog.info("Relaying message ({} bytes) with ID {} from {}:{} to URL {}", new Object[] {rawMessage.length(), controlId, sendingIp, sendingPort, getUrl()});<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                <a name="line.71"></a>
+<span class="sourceLineNo">072</span>                IReceivable&lt;Message&gt; response;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                long delay = System.currentTimeMillis();<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                int attempt = -1;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                while(true) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                        attempt++;<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                        <a name="line.77"></a>
+<span class="sourceLineNo">078</span>                        if (attempt &gt; 0) {<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                                ourLog.info("This is attempt {}", attempt);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                        }<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                        <a name="line.81"></a>
+<span class="sourceLineNo">082</span>                        try {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                                response = sendAndReceiveMessage(new MessageSendable(theMessage));<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                                delay = System.currentTimeMillis() - delay;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                        } catch (DecodeException e) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                                ourLog.error("Failed to process HL7 over HTTP response from URL \"" + getUrl().toExternalForm() + "\"", e);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                                throw new HL7Exception(Binder.getProductname() + " - Failed to process HL7 over HTTP response from URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                        } catch (ConnectException e) {<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                                ourLog.info("Failed to connect to URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                                throw new HL7Exception(Binder.getProductname() + " - Failed to connect to URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                        } catch (IOException e) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                                if (attempt &lt; myIoRetries) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                                        ourLog.warn("Got an IOException, going to retry transmission: " + e.toString());<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                                        continue;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                }<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                ourLog.error("IO Exception communicating with URL \"" + getUrl().toExternalForm() + "\"", e);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                                throw new HL7Exception(Binder.getProductname() + " - IO Exception communicating with URL URL \"" + getUrl().toExternalForm() + "\" - Error was: " + e.getMessage());<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                        } catch (EncodeException e) {<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                                ourLog.error("Failed to create HTTP request", e);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                                throw new HL7Exception(Binder.getProductname() + " - Failed to create HTTP request - Error was: " + e.getMessage());<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                        }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                <a name="line.102"></a>
+<span class="sourceLineNo">103</span>                        break;<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                }<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                <a name="line.105"></a>
+<span class="sourceLineNo">106</span>                String responseControlId = new Terser(response.getMessage()).get("/MSH-10");<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                ourLog.info("Received response to ID {} with ID {} in {} ms", new Object[] {controlId, responseControlId, delay});<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                <a name="line.108"></a>
+<span class="sourceLineNo">109</span>                return response.getMessage();<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        }<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>        /**<a name="line.112"></a>
+<span class="sourceLineNo">113</span>         * &lt;i&gt;Automatically called by the container&lt;/i&gt;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>         */<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        public void setBeanName(String theBeanName) {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                myBeanName = theBeanName;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        }<a name="line.117"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
+<span class="sourceLineNo">119</span>        /**<a name="line.119"></a>
+<span class="sourceLineNo">120</span>         * If set to a positive integer, the relay will attempt to redeliver a message up to the given<a name="line.120"></a>
+<span class="sourceLineNo">121</span>         * number of times before giving up, if the transmission fails due to an IO exception. <a name="line.121"></a>
+<span class="sourceLineNo">122</span>         */<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        public void setIoRetries(int theIoRetries) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                myIoRetries = theIoRetries;<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        }<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>}<a name="line.128"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-4");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
