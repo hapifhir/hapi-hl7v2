@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>HandlingCharacterEncodings xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.examples;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.DefaultHapiContext;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HL7Exception;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HapiContext;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.app.Connection;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.app.ConnectionHub;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.app.HL7Service;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.llp.ExtendedMinLowerLayerProtocol;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.llp.MllpConstants;
+<a class="jxr_linenumber" name="12" href="#12">12</a>  
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../ca/uhn/hl7v2/examples/HandlingCharacterEncodings.html">HandlingCharacterEncodings</a> {
+<a class="jxr_linenumber" name="14" href="#14">14</a>  
+<a class="jxr_linenumber" name="15" href="#15">15</a>  	@SuppressWarnings(<span class="jxr_string">"unused"</span>)
+<a class="jxr_linenumber" name="16" href="#16">16</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> HL7Exception {
+<a class="jxr_linenumber" name="17" href="#17">17</a>  
+<a class="jxr_linenumber" name="18" href="#18">18</a>  		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_comment">		 * When you use ConnectionHub, SimpleServer, or other network related classes within HAPI to</em>
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_comment">		 * transmit and receive messages, you may need to consider character sets if you plan on</em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_comment">		 * dealing with messages that contain characters beyond basic ASCII.</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>  		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_comment">		 * Character sets are handled by the Lower Layer Protocol implementation, as shown in the</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_comment">		 * two examples below. The most common implementation is MinLowerLayerProtocol.</em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_comment">		 * </em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_comment">		 * By default, MinLowerLayerProtocol uses the "US-ASCII" character set, which is not likely</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_comment">		 * what you are looking for if you want to process accents or characters that don't appear</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_comment">		 * in the English alphabet.</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>  		HapiContext ctx = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/DefaultHapiContext.html">DefaultHapiContext</a>();
+<a class="jxr_linenumber" name="33" href="#33">33</a>  				
+<a class="jxr_linenumber" name="34" href="#34">34</a>        <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_comment">       * Using MinLowerLayerProtocol, it is possible to set the use of a specific character set by</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_comment">       * specifying it to the MLLP. For example, if you wanted to receive Central and Eastern</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_comment">       * European characters, you probably need the ISO-8859-2 charset.</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_comment">       */</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  		MinLowerLayerProtocol mllp = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/llp/MinLowerLayerProtocol.html">MinLowerLayerProtocol</a>();
+<a class="jxr_linenumber" name="40" href="#40">40</a>  		mllp.setCharset(<span class="jxr_string">"ISO-8859-2"</span>);
+<a class="jxr_linenumber" name="41" href="#41">41</a>  		ctx.setLowerLayerProtocol(mllp);
+<a class="jxr_linenumber" name="42" href="#42">42</a>  
+<a class="jxr_linenumber" name="43" href="#43">43</a>  	   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_comment">	    * It is also possible to set the charset globally using a system property. Setting the following</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_comment">       * system property before using MinLowerLayerProtocol tells the LLP that incoming messages</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_comment">       * should be received using this encoding. Note that you can not change this value after a</em>
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_comment">       * connection is established. Also note that this setting does not override individual instances </em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_comment">       * where the charset has been explicitly set (such as the lines above)</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_comment">       */</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>        System.setProperty(MllpConstants.CHARSET_KEY, <span class="jxr_string">"ISO-8859-2"</span>);
+<a class="jxr_linenumber" name="51" href="#51">51</a>  
+<a class="jxr_linenumber" name="52" href="#52">52</a>        <em class="jxr_comment">// Create an HL7 Server</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  		HL7Service s = ctx.newServer(123, false);
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>  		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_comment">		 * If you want to transmit using the same encoding all of the time, you may use default</em>
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_comment">		 * MinLowerLayerProtocol. In the example below, messages will be sent out using ISO-8859-2</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="59" href="#59">59</a>  		ConnectionHub hub = ctx.getConnectionHub();
+<a class="jxr_linenumber" name="60" href="#60">60</a>  		Connection c = hub.attach(<span class="jxr_string">"localhost"</span>, 8888, false);
+<a class="jxr_linenumber" name="61" href="#61">61</a>  
+<a class="jxr_linenumber" name="62" href="#62">62</a>  		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_comment">		 * If the systems sending you messages are correctly populating MSH-18, as in the following</em>
+<a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_comment">		 * message which specified "8859/1" (aka ISO-8859-1) encoding, you have another option.</em>
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_comment">		 * </em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_comment">MSH|^~\&amp;|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_comment">EVN|A45|201004141020|</em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_comment">PID|1||7010226^^^4265^MR~0000000000^^^CANON^JHN^^^^^^GP~1736465^^^4265^VN||Park^Green^^^MS.^^L||19890812|F|||123 TestingLane^^TORONTO^CA-ON^M5G2C2^CAN^H^~^^^^^^^||^PRN^PH^^1^416^2525252^|^^^^^^^||||||||||||||||N</em>
+<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_comment">PV1|1|I||||^^^WP^1469^^^^^^^^|||||||||||^Derkach^Peter.^^^Dr.||20913000131|||||||||||||||||||||||||201004011340|201004141018</em>
+<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_comment">		 * </em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_comment">		 * The other possibility (only available in HAPI 2.0+) is to read the value from MSH-18 and</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_comment">		 * use that to identify the character set. This can be advantageous if you want to be able</em>
+<a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_comment">		 * to receive multiple CharSets. To do this, you need to use the</em>
+<a class="jxr_linenumber" name="74" href="#74">74</a>  <em class="jxr_comment">		 * ExtendedMinLowerLayerProtocol.</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>  <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="76" href="#76">76</a>  		ctx.setLowerLayerProtocol(<strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/llp/ExtendedMinLowerLayerProtocol.html">ExtendedMinLowerLayerProtocol</a>());
+<a class="jxr_linenumber" name="77" href="#77">77</a>  		s = ctx.newServer(123, false);
+<a class="jxr_linenumber" name="78" href="#78">78</a>  
+<a class="jxr_linenumber" name="79" href="#79">79</a>  		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="80" href="#80">80</a>  <em class="jxr_comment">		 * Now the ExtendedMinLowerLayerProtocol is used to send out messages using the value you</em>
+<a class="jxr_linenumber" name="81" href="#81">81</a>  <em class="jxr_comment">		 * have placed in MSH-18.</em>
+<a class="jxr_linenumber" name="82" href="#82">82</a>  <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="83" href="#83">83</a>  		c = hub.attach(<span class="jxr_string">"localhost"</span>, 8888, false);
+<a class="jxr_linenumber" name="84" href="#84">84</a>  
+<a class="jxr_linenumber" name="85" href="#85">85</a>  	}
+<a class="jxr_linenumber" name="86" href="#86">86</a>  
+<a class="jxr_linenumber" name="87" href="#87">87</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div><script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
+

@@ -1,0 +1,1384 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./constraintrules_files/filelist.xml">
+<title>HL7 Message Profile Conformance / Constraint Rules</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:LastAuthor>Bryan Tripp</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>23</o:TotalTime>
+  <o:Created>2003-05-29T19:25:00Z</o:Created>
+  <o:LastSaved>2003-05-29T19:25:00Z</o:LastSaved>
+  <o:Pages>7</o:Pages>
+  <o:Words>1658</o:Words>
+  <o:Characters>9452</o:Characters>
+  <o:Company> </o:Company>
+  <o:Lines>78</o:Lines>
+  <o:Paragraphs>18</o:Paragraphs>
+  <o:CharactersWithSpaces>11607</o:CharactersWithSpaces>
+  <o:Version>9.2720</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:DoNotShowRevisions/>
+  <w:DoNotPrintRevisions/>
+  <w:HyphenationZone>0</w:HyphenationZone>
+  <w:DoNotHyphenateCaps/>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:DoNotShadeFormData/>
+  <w:Compatibility>
+   <w:UsePrinterMetrics/>
+   <w:WW6BorderRules/>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+h1
+	{mso-style-next:Normal;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:0pt;
+	mso-ansi-language:EN-US;
+	mso-bidi-font-weight:normal;
+	text-decoration:underline;
+	text-underline:single;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+ /* Page Definitions */
+@page
+	{mso-footnote-position:end-of-section;
+	mso-endnote-position:end-of-section;
+	mso-endnote-numbering-style:arabic;
+	mso-endnote-numbering-start:0;}
+@page Section1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin:36.0pt;
+	mso-footer-margin:36.0pt;
+	mso-even-header:url("./constraintrules_files/header.htm") eh1;
+	mso-header:url("./constraintrules_files/header.htm") h1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:1398166896;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l1
+	{mso-list-id:1682586786;
+	mso-list-type:simple;
+	mso-list-template-ids:-2062761342;}
+@list l1:level1
+	{mso-level-start-at:0;
+	mso-level-number-format:bullet;
+	mso-level-text:-;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+</head>
+
+<body lang=EN-CA style='tab-interval:36.0pt'>
+
+<div class=Section1>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>HL7 Message Profile
+Conformance / Constraint Rules</span></u></b></p>
+
+<p class=MsoNormal><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Assumptions:</span></b><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l1 level1 lfo2;
+tab-stops:list 18.0pt'><![if !supportLists]><span lang=EN-US style='font-size:
+12.0pt;mso-bidi-font-size:10.0pt'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>message profiles are described in XML in accordance to the Conformance
+DTD, and are well-formed XML documents.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l1 level1 lfo2;
+tab-stops:list 18.0pt'><![if !supportLists]><span lang=EN-US style='font-size:
+12.0pt;mso-bidi-font-size:10.0pt'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>message profiles have been validated against the Conformance DTD.<span
+style="mso-spacerun: yes">  </span>The initial version of the constraint
+checking application will require that the message profiles have an additional
+element directly after the &lt;?xml&gt; declaration.<span style="mso-spacerun:
+yes">  </span>This element will be of the form<span style="mso-spacerun: yes"> 
+</span>&lt;!DOCTYPE [doc_name] SYSTEM=[dtd_filename_and_path]&gt;, and informs
+the Xerces parser to use the DTD specified by the SYSTEM attribute.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l1 level1 lfo2;
+tab-stops:list 18.0pt'><![if !supportLists]><span lang=EN-US style='font-size:
+12.0pt;mso-bidi-font-size:10.0pt'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>the rules below are applied to two message profiles, unless otherwise
+noted.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l1 level1 lfo2;
+tab-stops:list 18.0pt'><![if !supportLists]><span lang=EN-US style='font-size:
+12.0pt;mso-bidi-font-size:10.0pt'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>a message profile is either of &quot;constrainable&quot; type, which
+can be constrained further, or of &quot;implementation&quot; type, which cannot
+be constrained further.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l1 level1 lfo2;
+tab-stops:list 18.0pt'><![if !supportLists]><span lang=EN-US style='font-size:
+12.0pt;mso-bidi-font-size:10.0pt'>-<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>the message profiles used below are denoted as ProA and ProB, such that
+ProB is a constrained version of ProA.<span style="mso-spacerun: yes"> 
+</span>ProA cannot be a message profile of &quot;implementation&quot; type.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Conformance/Specification
+Element Constraints</span></u></b><span lang=EN-US style='font-size:12.0pt;
+mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>The format of the Conformance/Specification elements in the Conformance
+DTD is currently unstable, hence the rules that compare the attributes of these
+entities will not be extensive and are merely interpretations based on chapter
+2 of the v2.5 HL7 Standard and the HL7 v2.x Message Profiling Specification
+v2.2.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>&lt;SPECIFICATION&gt;
+Element Constraints<o:p></o:p></span></u></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>Rule 1:<span style='mso-tab-count:1'>            </span>&lt;SPECIFICATION&gt;
+attribute &quot;ConformanceType&quot;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyTextIndent><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>ProA.ConformanceType = &quot;Constrainable&quot; &amp;&amp;
+ProB.ConformanceType = &quot;Constrainable&quot;|&quot;Implementation&quot;.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>&lt;SEGMENT&gt; Element
+Constraints<o:p></o:p></span></u></b></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>Rule 1:<span style='mso-tab-count:1'>  </span>The number of segments in
+ProA &gt;= The number of segments in ProB.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 2:<span
+style='mso-tab-count:1'>  </span>The Name attribute of segments in ProB must
+match the Name attribute of the corresponding segment in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 3:<span
+style='mso-tab-count:1'>            </span>&lt;SEGMENT&gt; elements in ProB
+must exist in ProA, following the same nested structure.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 4:<span
+style='mso-tab-count:1'>  </span>ProB segments cannot have an Optionality
+attribute that is &quot;lower&quot; than the Optionality attribute in a
+corresponding segment in ProA.<span style="mso-spacerun: yes">  </span>The
+Optionality attribute can be &quot;equal&quot;.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><span style='mso-tab-count:1'>            </span>The precedence of
+Optionality values is as follows:<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:59.4pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality <o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>IS:<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality<o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>CAN BECOME: <o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>RE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R, RE<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE, RE, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=138 valign=top style='width:103.5pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O, X, R, RE, C, CE<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 5:<span
+style='mso-tab-count:1'>  </span>In the case of Optionality values
+&quot;C&quot; and &quot;CE&quot;, a &lt;Predicate&gt; element<span
+style="mso-spacerun: yes">  </span>will exist.<span style="mso-spacerun: yes"> 
+</span>It will be nested within the &lt;SEGMENT&gt;.<span style="mso-spacerun:
+yes">  </span>The &lt;Predicate&gt; in ProB for a particular segment must be
+&quot;stronger&quot; than the &lt;Predicate&gt; in ProB for the corresponding
+segment. These may be difficult to test.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 6:<span
+style='mso-tab-count:1'>  </span>ProA segment cardinality attribute Min must be
+&lt;= ProB segment cardinality attribute Min.<span style="mso-spacerun: yes"> 
+</span>Note:<span style="mso-spacerun: yes">  </span><span style='mso-tab-count:
+1'>            </span>there are special cardinality values for &quot;one or
+zero&quot;, &quot;many&quot;, etc. that shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 7:<span
+style='mso-tab-count:1'>  </span>ProA segment cardinality attribute Max must be
+&gt;= ProB segment cardinality attribute Max.<span style="mso-spacerun: yes"> 
+</span>Note: <span style='mso-tab-count:1'>            </span>there are special
+cardinality values for &quot;one or zero&quot;, &quot;many&quot;, etc. that
+shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>&lt;SEGGROUP&gt; Element
+Constraints</span></u></b><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 1:<span
+style='mso-tab-count:1'>  </span>The number of segment groups in ProA &gt;= The
+number of segment groups in ProB.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 2: The Name
+attribute of segment groups in ProB must match the Name attribute of the corresponding
+segment group in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 3:<span
+style='mso-tab-count:1'>            </span>&lt;SEGROUP&gt; elements in ProB
+must exist in ProA, following the same nested structure.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 4:<span
+style='mso-tab-count:1'>  </span>ProB segment groups cannot have an Optionality
+attribute that is &quot;lower&quot; than the Optionality attribute in a
+corresponding segment group in ProA.<span style="mso-spacerun: yes"> 
+</span>The Optionality attribute can be &quot;equal&quot;.<span
+style="mso-spacerun: yes">  </span>The precedence of Optionality values is as
+follows:<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:59.4pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality <o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>IS:<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality<o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>CAN BECOME: <o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>RE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R, RE<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE, RE, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O, X, R, RE, C, CE<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 5:<span
+style='mso-tab-count:1'>  </span>In the case of Optionality values
+&quot;C&quot; and &quot;CE&quot;, a &lt;Predicate&gt; element<span
+style="mso-spacerun: yes">  </span>will exist.<span style="mso-spacerun: yes"> 
+</span>It will be nested within the &lt;SEGGROUP&gt;.<span style="mso-spacerun:
+yes">  </span>The &lt;Predicate&gt; in ProB for a particular segment group must
+be &quot;stronger&quot; than the &lt;Predicate&gt; in ProB for the corresponding
+segment group.<span style="mso-spacerun: yes">  </span>These may be difficult
+to test.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 6:<span
+style='mso-tab-count:1'>  </span>ProA segment cardinality attribute Min must be
+&lt;= ProB segment cardinality attribute Min.<span style="mso-spacerun: yes"> 
+</span>Note:<span style="mso-spacerun: yes">  </span><span style='mso-tab-count:
+1'>            </span>there are special cardinality values for &quot;one or zero&quot;,
+&quot;many&quot;, etc. that shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 7:<span
+style='mso-tab-count:1'>  </span>ProA segment cardinality attribute Max must be
+&gt;= ProB segment cardinality attribute Max.<span style="mso-spacerun: yes"> 
+</span>Note:<span style="mso-spacerun: yes">  </span><span style='mso-tab-count:
+1'>            </span>there are special cardinality values for &quot;one or zero&quot;,
+&quot;many&quot;, etc. that shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>&lt;FIELD&gt; Element
+Constraints</span></u></b><b style='mso-bidi-font-weight:normal'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 1:<span
+style='mso-tab-count:1'>  </span>The number of &lt;FIELD&gt; elements in a
+segment in ProA is &gt;= The number of &lt;FIELD&gt; elements in a segment in
+ProB.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 2:<span
+style='mso-tab-count:1'>            </span>&lt;FIELD&gt; elements in ProB must
+exist in ProA, following the same nested structure.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 3:<span
+style='mso-tab-count:1'>  </span>The Name attribute of &lt;FIELD&gt; elements
+in ProB must match the Name attribute of the corresponding &lt;FIELD&gt;
+element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 5:<span
+style='mso-tab-count:1'>  </span>The ItemNo attribute of &lt;FIELD&gt; elements
+in ProB must match the ItemNo attribute of the corresponding &lt;FIELD&gt;
+element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 6:<span
+style='mso-tab-count:1'>  </span>The Table attribute of &lt;FIELD&gt; elements
+in ProB must match the Table attribute of the corresponding &lt;FIELD&gt;
+element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 7:<span
+style='mso-tab-count:1'>  </span>The Datatype attribute of &lt;FIELD&gt;
+elements in ProB must match the Datatype attribute of the corresponding
+&lt;FIELD&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 8:<span
+style='mso-tab-count:1'>  </span>The Length attribute of<span
+style="mso-spacerun: yes">  </span>&lt;FIELD&gt; elements in ProA are &gt;= the
+Length attribute of the corresponding &lt;FIELD&gt; element in ProB, if it
+exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 9:<span
+style='mso-tab-count:1'>  </span>The ConstantValue of &lt;FIELD&gt; elements in
+ProA are &gt;= the ConstantValue attribute of the corresponding &lt;FIELD&gt;
+element in ProB, if it exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 10: ProB
+&lt;FIELD&gt; elements cannot have an Optionality attribute that is &quot;lower&quot;
+than the Optionality attribute in a corresponding &lt;FIELD&gt; element in
+ProA.<span style="mso-spacerun: yes">  </span>The Optionality attribute can be
+&quot;equal&quot;.<span style="mso-spacerun: yes">  </span>The precedence of
+Optionality values is as follows:<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:59.4pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality <o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>IS:<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality<o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>CAN BECOME: <o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>RE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R, RE<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE, RE, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O, X, R, RE, C, CE<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><span style="mso-spacerun: yes"> </span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 11:In the
+case of Optionality values &quot;C&quot; and &quot;CE&quot;, a
+&lt;Predicate&gt; element<span style="mso-spacerun: yes">  </span>will
+exist.<span style="mso-spacerun: yes">  </span>It will be nested within the
+&lt;FIELD&gt; element.<span style="mso-spacerun: yes">  </span>The
+&lt;Predicate&gt; in ProB for a particular &lt;FIELD&gt; element must be
+&quot;stronger&quot; than the &lt;Predicate&gt; in ProB for the corresponding
+&lt;FIELD&gt;. <span style="mso-spacerun: yes">  </span>These may be difficult
+to test.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 12:ProA
+&lt;FIELD&gt; element cardinality attribute Min must be &lt;= ProB
+&lt;FIELD&gt; element cardinality attribute Min.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:72.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Note:<span
+style='mso-tab-count:1'>    </span>there are special cardinality values for
+&quot;one or zero&quot;, &quot;many&quot;, etc. that shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 13:ProA
+segment cardinality attribute Max must be &gt;= ProB &lt;FIELD&gt; element
+cardinality attribute <span style="mso-spacerun: yes"> </span>Max.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:72.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Note:<span
+style="mso-spacerun: yes">  </span><span style='mso-tab-count:1'>  </span>there
+are special cardinality values for &quot;one or zero&quot;, &quot;many&quot;,
+etc. that shall be considered.*<o:p></o:p></span></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></b></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></b></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt;color:black'>&lt;COMPONENT&gt;
+Element Constraints</span></u></b><span lang=EN-US style='font-size:12.0pt;
+mso-bidi-font-size:10.0pt'><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 1:<span
+style='mso-tab-count:1'>  </span>The number of &lt;COMPONENT&gt; elements in a
+&lt;FIELD&gt; in ProA is &gt;= The number of &lt;COMPONENT&gt; elements in the
+corresponding &lt;FIELD&gt; in ProB.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 2:<span
+style='mso-tab-count:1'>            </span>&lt;COMPONENT&gt; elements in ProB
+must exist in ProA, following the same nested structure.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 3:<span
+style='mso-tab-count:1'>  </span>The Name attribute of &lt;COMPONENT&gt;
+elements in ProB must match the Name attribute of the corresponding
+&lt;COMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 4:<span
+style='mso-tab-count:1'>  </span>The Table attribute of &lt;COMPONENT&gt;
+elements in ProB must match the Table attribute of the corresponding
+&lt;COMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 5:<span
+style='mso-tab-count:1'>  </span>The Datatype attribute of &lt;COMPONENT&gt;
+elements in ProB must match the Datatype attribute of the corresponding
+&lt;COMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 6:<span
+style='mso-tab-count:1'>  </span>The Length attribute of<span
+style="mso-spacerun: yes">  </span>&lt;COMPONENT&gt; elements in ProA are &gt;=
+the Length attribute of the corresponding &lt;COMPONENT&gt; element in ProB, if
+it exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 7:<span
+style='mso-tab-count:1'>  </span>The ConstantValue of &lt;COMPONENT&gt;
+elements in ProA are &gt;= the ConstantValue attribute of the corresponding
+&lt;COMPONENT&gt; element in ProB, if it exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 8:<span
+style='mso-tab-count:1'>  </span>ProB &lt;COMPONENT&gt; elements cannot have an
+Optionality attribute that is &quot;lower&quot; than the Optionality attribute
+in a corresponding &lt;COMPONENT&gt; element in ProA.<span style="mso-spacerun:
+yes">  </span>The Optionality attribute can be &quot;equal&quot;.<span
+style="mso-spacerun: yes">  </span>The precedence of Optionality values is as
+follows: <o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:59.4pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality <o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>IS:<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality<o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>CAN BECOME: <o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>RE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R, RE<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE, RE, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O, X, R, RE, C, CE<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><span style="mso-spacerun: yes"> </span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 9:<span
+style='mso-tab-count:1'>  </span>In the case of Optionality values
+&quot;C&quot; and &quot;CE&quot;, a &lt;Predicate&gt; element<span
+style="mso-spacerun: yes">  </span>will exist.<span style="mso-spacerun: yes"> 
+</span>It will be nested within the &lt;COMPONENT&gt; element.<span
+style="mso-spacerun: yes">  </span>The &lt;Predicate&gt; in ProB for a
+particular &lt;COMPONENT&gt; element must be &quot;stronger&quot; than the
+&lt;Predicate&gt; in ProB for the corresponding &lt;COMPONENT&gt;.<span
+style="mso-spacerun: yes">    </span>These may be difficult to test.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>&lt;SUBCOMPONENT&gt; Element
+Constraints</span></u></b><b style='mso-bidi-font-weight:normal'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></b></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 1:<span
+style='mso-tab-count:1'>  </span>The number of &lt;SUBCOMPONENT&gt; elements in
+a &lt;COMPONENT&gt; in ProA is &gt;= The number of &lt;SUBCOMPONENT&gt;
+elements in the corresponding &lt;COMPONENT&gt; in <span style='mso-tab-count:
+1'>            </span>ProB.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 2:<span
+style='mso-tab-count:1'>            </span>&lt;SUBCOMPONENT&gt; elements in
+ProB must exist in ProA, following the same nested structure.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 3:<span
+style='mso-tab-count:1'>  </span>The Name attribute of &lt;SUBCOMPONENT&gt;
+elements in ProB must match the Name attribute of the corresponding
+&lt;SUBCOMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 4:<span
+style='mso-tab-count:1'>  </span>The Table attribute of &lt;SUBCOMPONENT&gt;
+elements in ProB must match the Table attribute of the corresponding
+&lt;SUBCOMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 5:<span
+style='mso-tab-count:1'>  </span>The Datatype attribute of &lt;SUBCOMPONENT&gt;
+elements in ProB must match the Datatype attribute of the corresponding
+&lt;SUBCOMPONENT&gt; element in ProA.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 6:<span
+style='mso-tab-count:1'>  </span>The Length attribute of<span
+style="mso-spacerun: yes">  </span>&lt;SUBCOMPONENT&gt; elements in ProA are
+&gt;= the Length attribute of the corresponding &lt;SUBCOMPONENT&gt; element in
+ProB, if it exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 7:<span
+style='mso-tab-count:1'>  </span>The ConstantValue of &lt;SUBCOMPONENT&gt;
+elements in ProA are &gt;= the ConstantValue attribute of the corresponding
+&lt;SUBCOMPONENT&gt; element in ProB, if it exists.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 8:<span
+style='mso-tab-count:1'>  </span>ProB &lt;SUBCOMPONENT&gt; elements cannot have
+an Optionality attribute that is &quot;lower&quot; than the Optionality
+attribute in a corresponding &lt;SUBCOMPONENT&gt; element in <span
+style='mso-tab-count:1'>            </span>ProA.<span style="mso-spacerun:
+yes">  </span>The Optionality attribute can be &quot;equal&quot;.<span
+style="mso-spacerun: yes">  </span>The precedence of Optionality values is as
+follows:<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 style='margin-left:59.4pt;
+ border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality <o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>IS:<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>Usage/Optionality<o:p></o:p></span></p>
+  <p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+  10.0pt'>CAN BECOME: <o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>X<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>RE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>R, RE<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>C, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>CE, RE, R<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=132 valign=top style='width:99.0pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O<o:p></o:p></span></p>
+  </td>
+  <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+  style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>O, X, R, RE, C, CE<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><span style="mso-spacerun: yes"> </span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-indent:-36.0pt'><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'>Rule 9:<span
+style='mso-tab-count:1'>  </span>In the case of Optionality values
+&quot;C&quot; and &quot;CE&quot;, a &lt;Predicate&gt; element<span
+style="mso-spacerun: yes">  </span>will exist.<span style="mso-spacerun: yes"> 
+</span>It will be nested within the &lt;SUBCOMPONENT&gt; element.<span
+style="mso-spacerun: yes">  </span>The &lt;Predicate&gt; in ProB for a particular
+&lt;SUBCOMPONENT&gt; element must be &quot;stronger&quot; than the
+&lt;Predicate&gt; in ProB for the corresponding &lt;SUBCOMPONENT&gt;.<span
+style="mso-spacerun: yes">  </span>These may be difficult to test.<o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span lang=EN-US
+style='font-size:12.0pt;mso-bidi-font-size:10.0pt;color:black'>Other Elements</span></u></b><u><span
+lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:10.0pt'><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>&lt;ImpNote&gt;, &lt;Description&gt;, &lt;Reference&gt;, and
+&lt;Predicate&gt; elements in &lt;SEGMENT&gt;, &lt;SEGGROUP&gt;, &lt;FIELD&gt;,
+&lt;COMPONENT&gt;, and &lt;SUBCOMPONENT&gt; elements are optional according to
+the Conformance DTD.<span style="mso-spacerun: yes">  </span>With the exception
+of the &lt;Predicate&gt; element, these elements may or may not appear in
+either ProA or ProB and cannot be compared.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>&lt;Predicate&gt; elements may be tied into &quot;C&quot; and
+&quot;CE&quot; Optionality values, so they could be compared if the logic used
+in the predicate can be proved (e.g., the element exists if another element
+exists in the message profile.<span style="mso-spacerun: yes">  </span>A
+stronger predicate could be testing the existence of two more elements in the
+message profile).<span style="mso-spacerun: yes">   </span>At the moment, these
+comparisons will probably be done manually.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>&lt;DataValues&gt; elements are example values that are placed within
+the the element of interest.<span style="mso-spacerun: yes">  </span>It is
+assumed that these values will not be compared or evaluated.<o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></u></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>------<u><o:p></o:p></u></span></p>
+
+<p class=MsoNormal><span lang=EN-US style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt'>* Note:<span style="mso-spacerun: yes">  </span>If Optionality is
+&quot;R&quot;, then Min<span style="mso-spacerun: yes">  </span>attribute is
+&quot;1&quot;.<span style="mso-spacerun: yes">  </span>If Optionality is not
+&quot;R&quot;, Min attribute is &quot;0&quot; except when Optionality is
+&quot;RE&quot; and Min attribute is not &quot;0&quot;.<span
+style="mso-spacerun: yes">   </span>In the case where ProA has an Optionality
+attribute value of &quot;RE&quot;, the Min attribute value for ProA will be
+&gt;= the Min attribute value of ProB.<span style="mso-spacerun: yes"> 
+</span>ProB can incidentally have an Optionality attribute value of
+&quot;R&quot; with a Min attribute value of &quot;1&quot; or an Optionality
+attribute value of &quot;RE&quot; with a Min attribute value that follows the
+&gt;= rule above.<o:p></o:p></span></p>
+
+</div>
+
+</body>
+
+</html>
