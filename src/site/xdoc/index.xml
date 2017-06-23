@@ -89,24 +89,57 @@
 
 		</section>
 
-		<section name="HAPI 2.2 Released - May 12, 2014">
-
+		<section name="HAPI HL7v2 2.3 Released - Jun 23, 2017">
+			
 			<p>
-				Just a quick note that the HAPI FHIR website has been
-				launched here:
-				<a href="hapi-fhir/">hapi-fhir</a>
+				A new version of HAPI HL7v2 has been released! This new version includes a number
+				of bugfixes, as well as new message structures for the following versions of
+				HL7: v2.7, v2.8, and v2.8.1.
 			</p>
 
 			<p>
-				HAPI FHIR is an attempt to provide an implementation of
-				the new HL7 FHIR specification that is as easy to use as
-				the HL7 v2 HAPI library.
+				In addition, we have changed the TestPanel distribution so that it is now
+				distributed as a simple executable JAR with some scripts to start it.
 			</p>
 
 			<p>
-				Please give it a try!
+				I want to thank everyone who has been waiting for this release for their patience. 
+				I have stated on the mailing list quite a few times over the last few years that a
+				new release was imminent, and it never materialized. The basic explanation for this
+				is that building a new release has become quite a laborious process that requires
+				quite a lot of hand-holding.
+			</p>
+			
+			<p>
+				A bit of insight into the HAPI HL7v2 build process: 
+				The basic trouble is that building the structures is only possible on a Windows XP
+				system because of the way it works. Essentially the build requires an ODBC driver for
+				an Access MDB file (this is how the HL7 databases are distributed) and this driver was
+				discontinued after Windows XP. Unfortunately the Javac compiler is unwilling to compile
+				the large number of files that make up a structure JAR on Windows XP, so the process now
+				involves building structures on XP, then copying them into a build on Linux and compiling.
+				This whole thing really needs refactoring, but this would be a huge project and isn't
+				something we have capacity to take on at this point.
+			</p>
+			
+			<p>
+				As an additional note, we have now migrated the project from Sourceforge over to 
+				GitHub: <a href="https://github.com/hapifhir/hapi-hl7v2">https://github.com/hapifhir/hapi-hl7v2</a>.
+				The new project website can be found at: 
+				<a href="https://hapifhir.github.io/hapi-hl7v2">https://hapifhir.github.io/hapi-hl7v2</a>.
+				As a side note, we are now going to refer to this project as 
+				"HAPI HL7v2" and the FHIR version of HAPI as "HAPI FHIR". Hopefully this will remove some
+				confusion, as these are completely separate libraries with separate release cycles.
+			</p>
+			
+			<p>
+				Thanks to everyone who contributed to this release. As always, check the
+				the <a href="changes-report.html">Changelog</a> for details about what's
+				new.
 			</p>
 
+			<p>- <a href="https://github.com/jamesagnew">James Agnew</a></p>
+			
 		</section>
 
 		<section name="HAPI 2.2 Released - March 4, 2014">
@@ -122,10 +155,11 @@
 				a number of upgrades to the base API.
 			</p>
 
-			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
+			<p>- <a href="https://github.com/jamesagnew">James Agnew</a></p>
 
 		</section>
 
+<!-- 
 		<section name="HAPI 2.1 has been released - Mar 25, 2013">
 
 <p>After a much-too-long wait, HAPI 2.1 has been released. Once again, this relasse is packed with new features. Most importantly it begins a transition to a simplified API where everything is centered around a&nbsp;<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/DefaultHapiContext.html">HapiContext</a>&nbsp;that acts as a kind of "gateway" into the whole API, and a start down the road to eventually merging the powerful parts of the <span style="font-family: Courier New, Courier, monospace;"><span style="color: #274e13;">.protocol.*</span> </span>hierarchy with the easy to use <span style="color: #274e13; font-family: Courier New, Courier, monospace;">.app.*</span> hierarchy.<br />
@@ -252,14 +286,13 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 				</p>
 			</subsection>
 
-			<p>- <a href="mailto:jamesagnew@users.sourceforge.net">James Agnew</a></p>
+			<p>- <a href="https://github.com/jamesagnew">James Agnew</a></p>
 
 		</section>
 
 		<section name="HAPI 10th Birthday! October 30, 2011" style="position: relative;">
 
 			<img src="images/cake_64.png" alt="Birthday Cake" style="position: absolute; top: -10px; left: 450px;" />
-			<!-- <img src="images/cake_64.png" alt="Birthday Cake" style="float:left;"/> -->
 
 			<p>
 				On October 30 2001. Bryan Tripp and a team at University Health Network registered the HAPI
@@ -271,16 +304,7 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 			<p>
 				A few stats:
 			</p>
-			<!-- <ul> <li> <b>HAPI keeps growing.</b> Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow. The graph below shows the number of unique visitors
-				to our online documentation each month between 2006 and 2011. <img src="images/10yr_visitors.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used all over the world.</b>
-				Here are the top 100 cities this year in terms of visits to our online help. <img src="images/10yr_visitors_map.png" alt="5 years of growth"></img> <br /> <br /> <br /> </li> <li> <b>HAPI is used by all
-				types of organizations.</b> Here are the responses from the 2011 community survey, to date. <table style="width: 500px;"> <thead> <tr> <td>Describe your Organization of Company</td> <td>Percentage of responses</td>
-				</tr> </thead> <tbody> <tr> <td>None / not applicable</td> <td>1.11%</td> </tr> <tr> <td>University / college / other school</td> <td>12.22%</td> </tr> <tr> <td>Government Department, Agency, etc</td>
-				<td>6.67%</td> </tr> <tr> <td>Public Hospital, Clinic, or other health provider</td> <td>12.22%</td> </tr> <tr> <td>Private Hospital, Clinic, or other health provider</td> <td>8.89%</td> </tr> <tr> <td>Insurer,
-				HMO, etc.</td> <td>0</td> </tr> <tr> <td>Small software development company (under 20 developers)</td> <td>23.33%</td> </tr> <tr> <td>Medium software development company (21-100 developers)</td> <td>15.56%</td>
-				</tr> <tr> <td>Large software development company (101+ developers)</td> <td>16.67%</td> </tr> <tr> <td>Other</td> <td>5.56%</td> </tr> </tbody> </table> <br /> <br /> <br /> </li> <li> <b>HAPI is widely
-				deployed.</b> This is just a sample of the companies, hospitals, governments, and educational facilities who have let us know they are using HAPI over the years. Please <a href="mailto:jamesagnew@users.sourceforge.net">contact
-				us</a> if we can add (or remove) your company from this list! <img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img> <br /> <br /> <br /> </li> </ul> -->
+
 			<subsection name="HAPI keeps growing">
 				<p>
 					Over the last five years, the number of visitors to the HAPI website has doubled, and it continues to grow.
@@ -361,14 +385,15 @@ The new release has been uploaded to Sourceforge, and has also had time to synch
 					This is just a sample of the companies, hospitals, governments, and educational facilities
 					who have let us know they are using HAPI over the years.
 					Please
-					<a href="mailto:jamesagnew@users.sourceforge.net">contact us</a>
+					<a href="https://github.com/jamesagnew">contact us</a>
 					if we can add (or remove) your company from this list!
 					<img src="images/who_uses_hapi.png" alt="Who uses HAPI"></img>
 				</p>
 			</subsection>
 
 		</section>
-
+		-->
+		
 	</body>
 
 </document>

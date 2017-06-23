@@ -5,7 +5,7 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-		<release version="2.3" date="TBD">
+		<release version="2.3" date="2017-06-23">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">
                 Improve SegmentFinder performance. Thanks to Niels Harremoës for reporting.
             </action>

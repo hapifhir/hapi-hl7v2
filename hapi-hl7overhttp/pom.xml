@@ -323,7 +323,6 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>${maven.assembly.plugin.version}</version>
 						<inherited>false</inherited>
 						<executions>
 							<execution>
@@ -391,7 +390,6 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>${maven.assembly.plugin.version}</version>
 						<inherited>false</inherited>
 						<executions>
 							<execution>

@@ -7,6 +7,7 @@
 		<version>9</version>
 	</parent>
 
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.uhn.hapi</groupId>
 	<artifactId>hapi</artifactId>
@@ -142,16 +143,6 @@
 		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
 	</scm>
 
-	<repositories>
-		<!--
-		<repository>
-			<id>hapi-sf</id>
-			<name>HAPI Sourceforge Repository</name>
-			<url>http://hl7api.sourceforge.net/m2</url>
-		</repository>
-		-->
-	</repositories>
-
 	<organization>
 		<name>University Health Network</name>
 		<url>http://www.uhn.ca</url>
@@ -188,9 +179,12 @@
 		<!-- Not needed because of the sonatype parent <repository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> 
 			</repository> <snapshotRepository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> </snapshotRepository> -->
 		<site>
+			<!--
 			<id>hl7api.sf.net</id>
-			<!--<url>scp://shell.sourceforge.net/home/groups/h/hl/hl7api/htdocs</url> -->
 			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/</url>
+			-->
+			<id>git.server</id>
+			<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>						
 		</site>
 	</distributionManagement>
 
@@ -202,6 +196,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>${maven.resources.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -351,6 +350,257 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>stage-for-scm-publish</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>stage</goal>
+						</goals>
+						<configuration>
+							<stagingDirectory>${siteMainDirectory}</stagingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-scm</artifactId>
+						<version>2.12</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-manager-plexus</artifactId>
+						<version>1.9.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-gitexe</artifactId>
+						<version>1.9.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-api</artifactId>
+						<version>1.9.5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-publish-plugin</artifactId>
+				<version>1.1</version>
+				<inherited>false</inherited>
+				<configuration>
+					<checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
+					<content>\${siteMainDirectory}</content>
+					<tryUpdate>true</tryUpdate>
+					<scmBranch>gh-pages</scmBranch>
+					<pubScmUrl>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</pubScmUrl>
+				</configuration>
+				<executions>
+					<execution>
+						<id>scm-publish</id>
+						<phase>site-deploy</phase>
+						<goals>
+							<goal>publish-scm</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>site-prepare</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+        <echo>Adding Google analytics in target/site for &lt;body&gt;</echo>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacefilter token="#build#" value="${label}"/>
+            <replacefilter token="#version#" value="${version}"/>
+            <replacetoken><![CDATA[</body>]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+                ]]></replacevalue>
+        </replace>
+         <echo>Adding Google analytics in target/site for &lt;BODY&gt;</echo>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</BODY>]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </BODY >
+                ]]></replacevalue>
+        </replace>
+      <echo>Adding Google analytics in target/site for &lt;FRAMESET&gt;</echo>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</HEAD>
+<FRAMESET]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </HEAD >
+                <FRAMESET]]></replacevalue>
+        </replace>
+      <echo>Adding Google analytics in target/site for &lt;frameset&gt;</echo>
+        <replace dir="target/site" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[</head>
+    <frameset]]></replacetoken>
+            <replacevalue><![CDATA[
+                <script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </head >
+    <frameset]]></replacevalue>
+        </replace>
+      <echo>Customizing analytics token for testpanel</echo>
+        <mkdir dir="target/site/hapi-testpanel"/>
+        <replace dir="target/site/hapi-testpanel" summary="true" failOnNoReplacements="false">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
+            <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
+        </replace>
+      <echo>Customizing analytics token for hl7overhttp</echo>
+        <mkdir dir="target/site/hapi-hl7overhttp"/>
+        <replace dir="target/site/hapi-hl7overhttp" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
+            <replacevalue><![CDATA[UA-1395874-4]]></replacevalue>
+        </replace>
+     <echo>Adding social plugins for HAPI</echo>
+        <replace dir="target/site/" summary="true">
+            <include name="**/*.html"></include>
+            <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
+            <replacevalue><![CDATA[
+               <table cellpadding="0" cellspacing="0" border="0"><tr>
+               <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div></td>
+               <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+               </tr></table>
+
+               </p><p>
+               <!-- Place this tag after the last +1 button tag. -->
+               <script type="text/javascript">
+                 (function() {
+                   var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                   po.src = 'https://apis.google.com/js/plusone.js';
+                   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                 })();
+               </script>
+               <div id="fb-root"></div>
+               <script>(function(d, s, id) {
+                 var js, fjs = d.getElementsByTagName(s)[0];
+                 if (d.getElementById(id)) return;
+                 js = d.createElement(s); js.id = id;
+                 js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+                 fjs.parentNode.insertBefore(js, fjs);
+               }(document, 'script', 'facebook-jssdk'));</script>
+            ]]></replacevalue>
+        </replace>
+      <echo>Adding social plugins for TestPanel</echo>
+        <replace dir="target/site/" summary="true">
+          <include name="**/*.html"></include>
+          <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
+          <replacevalue><![CDATA[
+            <table cellpadding="0" cellspacing="0" border="0"><tr>
+            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
+            <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+            </tr></table>
+
+            <!-- Place this tag after the last +1 button tag. -->
+            <script type="text/javascript">
+              (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+              })();
+            </script>
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            
+          ]]></replacevalue>
+      </replace>
+      <echo>Adding social plugins for hl7overhttp</echo>
+        <replace dir="target/site/" summary="true">
+          <include name="**/*.html"></include>
+          <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
+          <replacevalue><![CDATA[
+            <table cellpadding="0" cellspacing="0" border="0"><tr>
+            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html"></div></td>
+            <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+            </tr></table>
+
+            <!-- Place this tag after the last +1 button tag. -->
+            <script type="text/javascript">
+              (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+              })();
+            </script>
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            
+          ]]></replacevalue>
+      </replace>
+
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
@@ -363,6 +613,10 @@
 
 
 	<properties>
+		<!-- For site -->
+		<siteMainDirectory>${user.home}/sites/hapi-hl7v2</siteMainDirectory>
+		<scmPubCheckoutDirectory>${user.home}/sites/scm/hapi-hl7v2</scmPubCheckoutDirectory>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netbeans.compile.on.save>all</netbeans.compile.on.save>
 		<root.basedir>${basedir}</root.basedir>
@@ -393,24 +647,24 @@
 		<project_parent_basedir>${project.parent.basedir}</project_parent_basedir>
 
 		<!-- Build-time Maven plugin versions -->
-		<maven.assembly.plugin.version>2.3</maven.assembly.plugin.version>
 		<maven.changes.plugin.version>2.8</maven.changes.plugin.version>
 		<maven.cobertura.plugin.version>2.5.2</maven.cobertura.plugin.version>
 		<maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
-		<maven.findbugs.plugin.version>2.5.2</maven.findbugs.plugin.version>
-		<maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
+		<maven.findbugs.plugin.version>3.0.4</maven.findbugs.plugin.version>
+		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.jxr.plugin.version>2.3</maven.jxr.plugin.version>
 		<maven.license.plugin.version>1.5</maven.license.plugin.version>
 		<maven.plugin.plugin.version>3.2</maven.plugin.plugin.version>
 		<maven.project.info.plugin.version>2.7</maven.project.info.plugin.version>
 		<maven.resources.plugin.version>2.6</maven.resources.plugin.version>
-		<maven.site.plugin.version>3.3</maven.site.plugin.version>
+		<maven.site.plugin.version>3.6</maven.site.plugin.version>
 		<maven.source.plugin.version>2.2</maven.source.plugin.version>
 		<maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
 		<maven.surefire.report.plugin.version>2.16</maven.surefire.report.plugin.version>
 
 		<!-- Configuration options -->
 		<plugin.javadoc.maxmemory>1600m</plugin.javadoc.maxmemory>
+
 
 	</properties>
 
@@ -636,7 +890,7 @@
 			<modules>
 				<module>hapi-base</module>
 				<module>hapi-test</module>
-				<module>hapi-sourcegen</module>
+				<!--<module>hapi-sourcegen</module>-->
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>

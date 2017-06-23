@@ -50,6 +50,7 @@ public class VelocityFactory
     */
    public static VelocityEngine getEngineInstance() throws Exception {
       VelocityEngine engine = new VelocityEngine();
+//      RuntimeConstants.RESOURCE_MANAGER_CLASS
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
       engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ResourceLoader.class
             .getName());

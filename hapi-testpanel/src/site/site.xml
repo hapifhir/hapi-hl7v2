@@ -4,11 +4,10 @@
 	<bannerLeft>
 		<name>HAPI TestPanel</name>
 		<src>images/hapi_testpanel_banner.png</src>
-		<href>http://hl7api.sourceforge.net/hapi-testpanel</href>
+		<href>https://hapifhir.github.io/hapi-hl7v2/hapi-testpanel</href>
 	</bannerLeft>
 
 	<poweredBy>
-		<logo name="Hosted on SourceForge.net" href="http://sourceforge.net" img="http://sflogo.sourceforge.net/sflogo.php?group_id=38899&amp;type=2" />
 		<logo name="Built with Maven 2" href="http://maven.apache.org" img="../images/logos/maven-feather.png" />
 	</poweredBy>
 
@@ -17,7 +16,7 @@
 	<body>
 
 		<breadcrumbs>
-			<item name="HAPI" href="http://hl7api.sourceforge.net"></item>
+			<item name="HAPI" href="https://hapifhir.github.io/hapi-hl7v2/"></item>
 		</breadcrumbs>
 
 		<links>
@@ -43,17 +42,12 @@
 			<item name="Changelog" href="changes-report.html" />
 		</menu>
 
-		<head>
-			<link rel="shortcut icon" href="http://hl7api.sourceforge.net/images/favicon.png" />
-			<link rel="stylesheet" type="text/css" href="../hapi.css" />
-		</head>
-
 	</body>
 
 	<skin>
-		<groupId>com.googlecode.fluido-skin</groupId>
-		<artifactId>fluido-skin</artifactId>
-		<version>1.3</version>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.6</version>
 	</skin>
 
 </project>

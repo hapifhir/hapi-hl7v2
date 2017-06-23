@@ -15,6 +15,8 @@ public class ResourceLoader extends ClasspathResourceLoader {
 	 */
 	@Override
 	public InputStream getResourceStream(String theArg0) throws ResourceNotFoundException {
+		System.out.println("** Trying to load: " + theArg0);
+		
 		InputStream resourceStream = ResourceLoader.class.getResourceAsStream(theArg0);
 		if (resourceStream == null) {
 			resourceStream = ResourceLoader.class.getResourceAsStream("/" + theArg0);
@@ -35,12 +37,14 @@ public class ResourceLoader extends ClasspathResourceLoader {
 	 */
 	@Override
 	public boolean resourceExists(String theArg0) {
+		System.out.println("** Checking Exists: " + theArg0);
 		boolean resourceExists = super.resourceExists(theArg0);
+		System.out.println("** Exists: " + resourceExists);
 		return resourceExists;
 	}
 	
 	public static void main(String[] args) {
-		new ResourceLoader().getResourceStream("ca/uhn/hl7v2/sourcegen/templates/messages.vsm");
+		new ResourceLoader().getResourceStream("ca/uhn/hl7v2/sourcegen/templates/group.vsm");
 	}
 
 }
