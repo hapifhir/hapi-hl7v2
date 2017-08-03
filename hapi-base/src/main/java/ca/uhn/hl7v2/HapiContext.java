@@ -291,6 +291,23 @@ public interface HapiContext extends Closeable {
     HL7Service newServer(int port, boolean tls);
 
     /**
+    * Construct a new HL7 Server which will listen for incoming connections
+    * and will pass all messages to the responders, even if the message control id is not 
+    * known to the server
+    *
+    * @param port The port on which to listen for new connections
+    * @param tls  Whether or not to use SSL/TLS
+    * @param acceptAll  Whether or not to accept all messages
+    * @return HL7 service running on the configured port using the default parser and executor
+    * service instances provided by this interface. Note that the returned service <b>will not
+    * be started</b>, and must manually be started using {@link HL7Service#start()} or
+    * {@link HL7Service#startAndWait()}
+    * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here<> for an example of how to use this method
+    * @see #setSocketFactory(SocketFactory)
+    */
+    HL7Service newServer(int port, boolean tls, boolean acceptAll);
+
+    /**
      * Construct a new HL7 Server which will listen for a pair of connections (one for
      * incoming messages, one for outgoing)
      *

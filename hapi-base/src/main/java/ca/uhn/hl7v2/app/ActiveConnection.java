@@ -68,6 +68,7 @@ public class ActiveConnection implements Connection {
 	private List<Receiver> receivers;
 	private boolean open = true;
 	private ExecutorService executorService;
+	private boolean acceptAll = false;
 
 	/**
 	 * Creates a new instance of Connection, with inbound and outbound
@@ -90,6 +91,14 @@ public class ActiveConnection implements Connection {
 		receivers.add(new Receiver(this, llp.getReader(bidirectional
 				.getInputStream())));
 		this.initiator = new ActiveInitiator(this);
+	}
+
+	public ActiveConnection(Parser parser, LowerLayerProtocol llp,
+                            Socket bidirectional, ExecutorService executorService, 
+                            boolean acceptAllMsg)
+			throws LLPException, IOException {
+		this(parser, llp, bidirectional, executorService);
+		acceptAll = acceptAllMsg;
 	}
 
 	/**
@@ -261,6 +270,10 @@ public class ActiveConnection implements Connection {
 
 	public boolean isOpen() {
 		return open;
+	}
+
+	public boolean acceptAllMessages(){
+		return acceptAll;
 	}
 
 }

@@ -180,6 +180,10 @@ public abstract class HapiContextSupport {
 			return context.newServer(port, tls);
 		}
 
+		public HL7Service newServer(int port, boolean tls, boolean acceptAll){
+			return context.newServer(port, tls, acceptAll);	
+		}
+
         public HL7Service newServer(int inboundPort, int outboundPort, boolean tls) {
 			return context.newServer(inboundPort, outboundPort, tls);
 		}

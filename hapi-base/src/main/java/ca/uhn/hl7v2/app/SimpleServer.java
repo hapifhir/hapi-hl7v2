@@ -85,6 +85,7 @@ public class SimpleServer extends HL7Service {
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
 	private HapiContext hapiContext;
+	private boolean acceptAllMsg = false;
 
 	/**
 	 * Creates a new instance of SimpleServer that listens on the given port,
@@ -100,7 +101,7 @@ public class SimpleServer extends HL7Service {
 	 */
 	public SimpleServer(int port, boolean tls) {
 		this(port, new MinLowerLayerProtocol(), new PipeParser(), tls);
-	}	
+	}
 
 	/**
 	 * Creates a new instance of SimpleServer that listens on the given port.
@@ -147,6 +148,21 @@ public class SimpleServer extends HL7Service {
 	}
 
 	/**
+	 * Creates a new instance of SimpleServer that listens on a given server socket
+	 * and will pass all messages to the responders, even if the message control id
+	 * is not known to the server.
+	 * SimpleServer will bind the socket when it is started, so the server socket 
+	 * must not already be bound. 
+	 * 
+	 * @since 2.4
+	 * @throws IllegalStateException If serverSocket is already bound
+	 */
+	public SimpleServer(HapiContext hapiContext, int port, boolean tls, boolean acceptAll) {		
+		this(hapiContext, port, tls);
+		acceptAllMsg = acceptAll;
+	}	
+
+	/**
 	 * Prepare server by initializing the server socket
 	 * 
 	 * @see ca.uhn.hl7v2.app.HL7Service#afterStartup()
@@ -182,7 +198,7 @@ public class SimpleServer extends HL7Service {
 				log.info("Accepted connection from {}:{} on local port {}", 
 						new Object[] { newSocket.socket.getInetAddress().getHostAddress(), newSocket.socket.getPort(), port });
 				ActiveConnection c = new ActiveConnection(getParser(), getLlp(), newSocket.socket,
-						getExecutorService());
+						getExecutorService(), acceptAllMsg);
 				newConnection(c);
 			}
 		} catch (InterruptedException ie) { 
