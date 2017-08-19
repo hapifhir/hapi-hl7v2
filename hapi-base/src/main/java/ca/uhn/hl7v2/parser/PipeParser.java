@@ -1111,7 +1111,9 @@ public class PipeParser extends Parser {
 			String structure = getStructure(string).messageStructure;
 			((AbstractSuperMessage) message).setName(structure);
 		}
-		
+
+		message.setParser(this);
+
 		IStructureDefinition structureDef = getStructureDefinition(message);
 		MessageIterator messageIter = new MessageIterator(message, structureDef, "MSH", true);
 

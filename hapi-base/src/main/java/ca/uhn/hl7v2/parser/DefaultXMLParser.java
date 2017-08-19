@@ -380,6 +380,7 @@ public class DefaultXMLParser extends XMLParser {
      */
 	@Override
 	public void parse(Message theMessage, String theString) throws HL7Exception {
+	   theMessage.setParser(this);
 		Document doc = parseStringIntoDocument(theString);
         parse(theMessage, doc.getDocumentElement());
 

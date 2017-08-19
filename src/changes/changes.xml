@@ -5,6 +5,14 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+		<release version="2.4" date="TBD">
+			<action type="fix">
+				When calling Parser#parse(Message, String), the parser now sets itself
+				as the parser associated with the message. This causes the parser's
+				validation settings to be applied during parse instead of
+				default settings being applied.
+			</action>
+		</release>
 		<release version="2.3" date="2017-06-23">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">
                 Improve SegmentFinder performance. Thanks to Niels Harremoës for reporting.
