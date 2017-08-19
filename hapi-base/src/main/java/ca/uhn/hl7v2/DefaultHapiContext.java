@@ -329,6 +329,10 @@ public class DefaultHapiContext implements HapiContext {
     public SimpleServer newServer(int port, boolean tls) {
         return new SimpleServer(this, port, tls);
     }
+    
+    public SimpleServer newServer(int port, boolean tls, boolean acceptAll) {
+        return new SimpleServer(this, port, tls, acceptAll);
+    }
 
     public TwoPortService newServer(int port1, int port2, boolean tls) {
         return new TwoPortService(this, port1, port2, tls);
