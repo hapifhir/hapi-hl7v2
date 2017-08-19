@@ -12,6 +12,11 @@
 				validation settings to be applied during parse instead of
 				default settings being applied.
 			</action>
+			<action type="add" issue="2">
+				Add an optional mode to SimpleServer where all received messages are
+				processed, even including unexpected ACK messages. Thanks to
+				Tom Chiverton for the pull request!
+			</action>
 		</release>
 		<release version="2.3" date="2017-06-23">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">
