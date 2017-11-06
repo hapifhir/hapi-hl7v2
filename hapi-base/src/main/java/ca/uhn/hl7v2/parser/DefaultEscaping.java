@@ -48,7 +48,7 @@ public class DefaultEscaping implements Escaping {
      * limits the size of variousEncChars to 1000, can be overridden by system property.
      */
     private static Map<EncodingCharacters, EncLookup> variousEncChars = Collections.synchronizedMap(new LinkedHashMap
-        <EncodingCharacters, EncLookup>(5, 0.75f, true) {
+        <EncodingCharacters, EncLookup>(6, 0.75f, true) {
 
         private static final long serialVersionUID = 1L;
         final int maxSize = new Integer(System.getProperty(Escape.class.getName() + ".maxSize", "1000"));
@@ -75,7 +75,7 @@ public class DefaultEscaping implements Escaping {
             char c = text.charAt(i);
 
             FORENCCHARS:
-            for (int j = 0; j < 6; j++) {
+            for (int j = 0; j < esc.characters.length; j++) {
                 if (text.charAt(i) == esc.characters[j]) {
 
                     // Formatting escape sequences such as \.br\ should be left alone
@@ -260,7 +260,8 @@ public class DefaultEscaping implements Escaping {
      */
     private static class EncLookup {
 
-        char[] characters = new char[7];
+        private static final char[] CODES = {'F', 'S', 'T', 'R', 'E', 'L'};
+        private char[] characters = new char[7];
         String[] encodings = new String[7];
 
         EncLookup(EncodingCharacters ec) {
@@ -269,14 +270,13 @@ public class DefaultEscaping implements Escaping {
             characters[2] = ec.getSubcomponentSeparator();
             characters[3] = ec.getRepetitionSeparator();
             characters[4] = ec.getEscapeCharacter();
-
             characters[5] = ec.getTruncationCharacter();
             characters[6] = '\r';
-            char[] codes = {'F', 'S', 'T', 'R', 'E', 'L'};
-            for (int i = 0; i < codes.length; i++) {
+
+            for (int i = 0; i < CODES.length; i++) {
                 StringBuilder seq = new StringBuilder();
                 seq.append(ec.getEscapeCharacter());
-                seq.append(codes[i]);
+                seq.append(CODES[i]);
                 seq.append(ec.getEscapeCharacter());
                 encodings[i] = seq.toString();
             }

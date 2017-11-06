@@ -30,7 +30,14 @@ public class EscapeTest {
         String uu = getUuencodedEscapedString();
         esc.unescape(uu, enc);
     }
-    
+
+
+	@Test
+	public void escapeLinebreakWithHapi() {
+		String escape = esc.escape("\r", enc);
+		assertEquals("\\X000d\\", escape);
+	}
+
 	@Test
     public void testSimpleEscape() {
         String actual = esc.escape("GLUCOSE^1H POST 75 G GLUCOSE PO:SCNC:PT:SER/PLAS:QN", enc);

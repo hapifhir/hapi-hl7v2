@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="fix" dev="Christian Ohr" issue="7">
+				Fix encoding of line breaks as \X000d\
+			</action>
 			<action type="fix">
 				When calling Parser#parse(Message, String), the parser now sets itself
 				as the parser associated with the message. This causes the parser's
