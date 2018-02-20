@@ -163,7 +163,7 @@ public final class FixFieldDataType {
                     if (v.getData() != null) {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
                             throw new HL7Exception(String.format(
-                                    "A datatype for %s-%n must be specified in %s-%n.", segment.getName(), dataField, segment.getName(), typeField),
+                                    "A datatype for %s-%d must be specified in %s-%d.", segment.getName(), dataField, segment.getName(), typeField),
                                     ErrorCode.REQUIRED_FIELD_MISSING);
                         }
                     }
