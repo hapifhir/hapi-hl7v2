@@ -25,6 +25,8 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Stack;
 
 /**
@@ -60,7 +62,9 @@ public class Location {
 		this.subcomponent = l.subcomponent;
 	}
 
-
+	public Collection<GroupLocation> getGroups() {
+		return Collections.unmodifiableCollection(groups);
+	}
 	
 	public boolean isUnknown() {
 	    return this == UNKNOWN;
@@ -71,8 +75,8 @@ public class Location {
         return this;
     }
 
-    public void popGroup() {
-        groups.pop();
+    public GroupLocation popGroup() {
+        return groups.pop();
     }
 
     public GroupLocation getGroupLocation() {
@@ -241,7 +245,7 @@ public class Location {
 		return true;
 	}
 
-    private static class GroupLocation {
+    public static class GroupLocation {
         String groupName;
         int repetition;
 
