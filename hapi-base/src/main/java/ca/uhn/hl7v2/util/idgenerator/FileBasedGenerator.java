@@ -63,7 +63,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		this(1L);
 	}
 
-	FileBasedGenerator(long increment) {
+	public FileBasedGenerator(long increment) {
 		super(increment);
 	}
 
