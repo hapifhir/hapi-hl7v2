@@ -41,6 +41,8 @@ public class ParserConfiguration {
     private Escaping escaping = new DefaultEscaping();
 	private boolean xmlDisableWhitespaceTrimmingOnAllNodes = false;
 	private Set<String> xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
+    private String myInvalidMfe5Type;
+    private String myDefaultMfe5Type;
 
 	/**
 	 * <p>
@@ -157,6 +159,18 @@ public class ParserConfiguration {
 		return myDefaultObx2Type;
 	}
 
+    /**
+     * Returns the default datatype ("ST", "NM", etc) for an MFE segment with a
+     * missing MFE-5 value
+     *
+     * @return Returns the default datatype ("ST", "NM", etc) for an OBX segment
+     *         with a missing MFE-5 value
+     * @see #setDefaultMfe5Type(String)
+     */
+    public String getDefaultMfe5Type() {
+        return myDefaultMfe5Type;
+    }
+
 	/**
 	 * @return Returns the forced encode strings added by
 	 *         {@link #addForcedEncode(String)}
@@ -186,6 +200,19 @@ public class ParserConfiguration {
 	public String getInvalidObx2Type() {
 		return myInvalidObx2Type;
 	}
+
+    /**
+     * Returns the value provides a default datatype ("ST", "NM", etc) for an
+     * MFE segment with an invalid MFE-5 value.
+     *
+     * @return Returns the value provides a default datatype ("ST", "NM", etc)
+     *         for an MFE segment with an invalid MFE-5 value.
+     * @see #setInvalidMfe5Type(String)
+     */
+    public String getInvalidMfe5Type() {
+        return myInvalidMfe5Type;
+    }
+
 
 	/**
 	 * Returns the behaviour to use when parsing a message and a nonstandard
@@ -346,6 +373,44 @@ public class ParserConfiguration {
 		myDefaultObx2Type = theDefaultObx2Type;
 	}
 
+    /**
+     * <p>
+     * If this property is set, the value provides a default datatype ("ST",
+     * "NM", etc) for an MFE segment with a missing MFE-5 value. This is useful
+     * when parsing messages from systems which do not correctly populate MFE-5.
+     * </p>
+     * <p>
+     * For example, if this property is set to "ST", and the following MFE
+     * segment is encountered:
+     *
+     * <pre>
+     * MFE||||This is a value
+     * </pre>
+     *
+     * It will be parsed as though it had read:
+     *
+     * <pre>
+     * MFE||||This is a value|ST
+     * </pre>
+     *
+     * </p>
+     * <p>
+     * Note that this configuration can also be set globally using the system
+     * property {@link FixFieldDataType#DEFAULT_MFE5_TYPE_PROP}, but any value provided to
+     * {@link ParserConfiguration} takes priority over the system property.
+     * </p>
+     *
+     * @param theDefaultMfe5Type
+     *            If this property is set, the value provides a default datatype
+     *            ("ST", "NM", etc) for an MFE segment with a missing MFE-5
+     *            value
+     * @see #setInvalidMfe5Type(String)
+     * @see FixFieldDataType#DEFAULT_MFE5_TYPE_PROP
+     */
+    public void setDefaultMfe5Type(String theDefaultMfe5Type) {
+        myDefaultMfe5Type = theDefaultMfe5Type;
+    }
+
 	/**
 	 * <p>
 	 * If set to <code>true</code> (default is <code>true</code>), when encoding
@@ -449,6 +514,45 @@ public class ParserConfiguration {
 	public void setInvalidObx2Type(String theInvalidObx2Type) {
 		myInvalidObx2Type = theInvalidObx2Type;
 	}
+
+    /**
+     * <p>
+     * If this property is set, the value provides a default datatype ("ST",
+     * "NM", etc) for an MFE segment with an invalid MFE-5 value. This is useful
+     * when parsing messages from systems which do not correctly populate MFE-5.
+     * </p>
+     * <p>
+     * For example, if this property is set to "ST", and the following MFE
+     * segment is encountered:
+     *
+     * <pre>
+     * MFE||||This is a value|INVALID
+     * </pre>
+     *
+     * It will be parsed as though it had read:
+     *
+     * <pre>
+     * MFE||||This is a value|ST
+     * </pre>
+     *
+     * </p>
+     * <p>
+     * Note that this configuration can also be set globally using the system
+     * property {@link FixFieldDataType#INVALID_MFE5_TYPE_PROP}, but any value provided to
+     * {@link ParserConfiguration} takes priority over the system property.
+     * </p>
+     *
+     * @param theInvalidMfe5Type
+     *            If this property is set, the value provides a default datatype
+     *            ("ST", "NM", etc) for an MFE segment with an invalid MFE-5
+     *            value. This is useful when parsing messages from systems which
+     *            do not correctly populate MFE-5.
+     * @see ParserConfiguration#setDefaultMfe5Type(String)
+     * @see FixFieldDataType#INVALID_MFE5_TYPE_PROP
+     */
+    public void setInvalidMfe5Type(String theInvalidMfe5Type) {
+        myInvalidMfe5Type = theInvalidMfe5Type;
+    }
 
 	/**
 	 * If set to <code>true</code> (default is <code>false</code>), pipe parser will be
