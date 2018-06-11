@@ -60,6 +60,23 @@ public final class FixFieldDataType {
     public static final String INVALID_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.invalid_obx2_type";
 
     /**
+     * System property key: The value may be set to provide a default
+     * datatype ("ST", "NM", etc) for an MFE segment with a missing
+     * MFE-5 value.
+     */
+    public static final String DEFAULT_MFE5_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_mfe5_type";
+
+    /**
+     * System property key: The value may be set to provide a default
+     * datatype ("ST", "NM", etc) for an MFE segment with an invalid
+     * MFE-5 value type. In other words, if MFE-5 has a value of "ZYZYZ",
+     * which is not a valid value, but this property is set to "ST", then
+     * MFE-4 will be parsed as an ST.
+     */
+    public static final String INVALID_MFE5_TYPE_PROP = "ca.uhn.hl7v2.model.varies.invalid_mfe5_type";
+
+
+    /**
      * <p>
      * System property key: If this is not set, or set to "true", and a subcomponent delimiter is found within the
      * value of a Varies of a primitive type, this subcomponent delimiter will be treated as a literal
@@ -123,13 +140,41 @@ public final class FixFieldDataType {
         fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
     }
 
+    /**
+     * <p>
+     * Sets the data type of field 4 in the given MFE segment to the value of MFE-5.  The argument
+     * is a Segment as opposed to a particular MFE because it is meant to work with any version.
+     * </p>
+     * <p>
+     * Note that if no value is present in MFE-5, or an invalid value is present in
+     * MFE-5, this method will throw an error. This behaviour can be corrected by using the
+     * following system properties: {@link #DEFAULT_MFE5_TYPE_PROP} and {@link #INVALID_MFE5_TYPE_PROP}
+     * or by using configuration in {@link ParserConfiguration}
+     * </p>
+     *
+     * @param segment MFE segment instance to be modified
+     * @param factory ModelClassFactory to be used
+     * @param parserConfiguration configuration that influences setting MFE-5
+     * @throws ca.uhn.hl7v2.HL7Exception if the operation fails
+     */
     public static void fixMFE4(Segment segment, ModelClassFactory factory, ParserConfiguration parserConfiguration)
             throws HL7Exception {
         if (!(segment.getName().contains("MFE")) &&
                 Version.versionOf(segment.getMessage().getVersion()).isGreaterThan(Version.V23)) {
             throw new IllegalArgumentException("Expected MFE segment, but was: " + segment.getName());
         }
-        fix(segment, 5, 4, null, null, factory, parserConfiguration);
+
+        String defaultMFE5Type = parserConfiguration.getDefaultMfe5Type();
+        if (defaultMFE5Type == null) {
+            defaultMFE5Type = System.getProperty(DEFAULT_MFE5_TYPE_PROP);
+        }
+
+        String invalidMFE5Type = parserConfiguration.getInvalidMfe5Type();
+        if (invalidMFE5Type == null) {
+            invalidMFE5Type = System.getProperty(INVALID_MFE5_TYPE_PROP);
+        }
+
+        fix(segment, 5, 4, defaultMFE5Type, invalidMFE5Type, factory, parserConfiguration);
     }
 
     /**

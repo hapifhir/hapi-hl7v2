@@ -5,9 +5,11 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 
 public class ParserConfigurationTest  {
@@ -46,6 +48,101 @@ public class ParserConfigurationTest  {
         assertIllegalArgument(pc, "AAA-123-");
 
 	}
+
+
+    /**
+     * <p>
+     *     Test for {@link ParserConfiguration#setDefaultMfe5Type(String)}.  Attempt to parse a message with a missing MFE-5 value.
+     * </p>
+     * <p>
+     *     Setup: Set default MFE-5 type to 'ST' with {@link ParserConfiguration#setDefaultMfe5Type(String)}.  Attempt to parse sample message.
+     * </p>
+     * <p>
+     *     Expected Result:  Message will parse successfully
+     * </p>
+     */
+	@Test
+    public void test_setDefaultMfe5Type() throws Exception {
+
+        String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||MFN^M02||P|2.6\r" +
+                         "MFE||||VALUE\r";
+
+        Parser p = new PipeParser();
+        p.getParserConfiguration().setDefaultMfe5Type("ST");
+
+        Message m = p.parse(message);
+
+        Assert.assertNotNull(m);
+    }
+
+    /**
+     * <p>
+     *     Test for {@link ParserConfiguration#setDefaultMfe5Type(String)}.  Attempt to parse a message with a missing MFE-5 value.
+     * </p>
+     * <p>
+     *     Setup: Attempt to parse sample message, not adjusting {@link ParserConfiguration}
+     * </p>
+     * <p>
+     *     Expected Result:  Message will fail to parse
+     * </p>
+     */
+    @Test(expected = HL7Exception.class)
+    public void test_setDefaultMfe5Type_systemDefault() throws Exception {
+
+        String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||MFN^M02||P|2.6\r" +
+                         "MFE||||VALUE\r";
+
+        Parser p = new PipeParser();
+
+        p.parse(message);
+    }
+
+    /**
+     * <p>
+     *     Test for {@link ParserConfiguration#setInvalidMfe5Type(String)}.  Attempt to parse a message with an invalid MFE-5 value.
+     * </p>
+     * <p>
+     *     Setup: Set default MFE-5 type to 'ST' with {@link ParserConfiguration#setDefaultMfe5Type(String)}.  Attempt to parse sample message.
+     * </p>
+     * <p>
+     *     Expected Result:  Message will parse successfully
+     * </p>
+     */
+    @Test
+    public void test_setInvalidMfe5Type() throws Exception {
+
+        String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||MFN^M02||P|2.6\r" +
+                         "MFE||||VALUE|INVALID\r";
+
+        Parser p = new PipeParser();
+        p.getParserConfiguration().setInvalidMfe5Type("ST");
+
+        Message m = p.parse(message);
+
+        Assert.assertNotNull(m);
+    }
+
+    /**
+     * <p>
+     *     Test for {@link ParserConfiguration#setInvalidMfe5Type(String)}.  Attempt to parse a message with an invalid MFE-5 value.
+     * </p>
+     * <p>
+     *     Setup: Attempt to parse sample message, not adjusting {@link ParserConfiguration}
+     * </p>
+     * <p>
+     *     Expected Result:  Message will fail to parse
+     * </p>
+     */
+    @Test(expected = HL7Exception.class)
+    public void test_setInvalidMfe5Type_systemDefault() throws Exception {
+
+        String message = "MSH|^~\\&|Send App|Send Fac|Rec App|Rec Fac|20070504141816||MFN^M02||P|2.6\r" +
+                         "MFE||||VALUE|INVALID\r";
+
+        Parser p = new PipeParser();
+
+        p.parse(message);
+    }
 	
 	private void assertIllegalArgument(ParserConfiguration pc, String forcedEncode) {
         try {
