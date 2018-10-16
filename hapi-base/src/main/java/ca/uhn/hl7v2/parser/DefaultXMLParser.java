@@ -174,9 +174,9 @@ public class DefaultXMLParser extends XMLParser {
         assertNamespaceURI(xmlMessage.getDocumentElement().getNamespaceURI());
 
         Message message = instantiateMessage(xmlMessage.getDocumentElement().getLocalName(), version, true);
-    	// Note: this will change in future to reuse the Parser's/HapiContext's
-    	// ValidationContext.
-        // message.setValidationContext(getValidationContext());
+    	// Set parser before parsing the contents actually starts in order to respect
+        // the settings of the HapiContext
+        message.setParser(this);
         parse(message, xmlMessage.getDocumentElement());
         return message;
     }
