@@ -76,7 +76,7 @@
 						HAPI has now introduced an API for developing applications
 						based on the emerging HL7 FHIR specification.
 						See the
-						<a href="hapi-fhir/">HAPI FHIR</a> site to learn more.
+						<a href="http://hapifhir.io">HAPI FHIR</a> site to learn more.
 					</td>
 					<td style="background: #FFFFFF;">
 						<h3>HAPI TestPanel</h3>
