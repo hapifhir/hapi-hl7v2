@@ -33,7 +33,7 @@ public class MessageVisitorTest {
         TestMessageVisitor tmv = visit(message, visitPopulatedElements(new TestMessageVisitor())).getDelegate();
         
         assertEquals("Visitor start/end method calls not equal", 0, tmv.level);
-        assertEquals("Wrong number of non-empty primitive values", 44, tmv.nonEmptyPrimitives.size());
+        assertEquals("Wrong number of non-empty primitive values", 58, tmv.nonEmptyPrimitives.size());
         
         // Test that all non-empty primitive locations can be used as input to Terser.get(String)
         // and all returned values correspond with the visited values.
@@ -53,7 +53,7 @@ public class MessageVisitorTest {
         TestMessageVisitor tmv = visit(message, visitPopulatedElements(new TestMessageVisitor())).getDelegate();
         
         assertEquals("Visitor start/end method calls not equal", 0, tmv.level);
-        assertEquals("Wrong number of non-empty primitive values", 47, tmv.nonEmptyPrimitives.size());
+        assertEquals("Wrong number of non-empty primitive values", 61, tmv.nonEmptyPrimitives.size());
 
         // PID|1||CIPNUM^^^CAEX^CIP^^^^EX&&ES-EX~CIPTWO||DUMAS^VICTOR HUGO|ZAPATA|19740325|1||||||||||||||||||||||||A~B
 
