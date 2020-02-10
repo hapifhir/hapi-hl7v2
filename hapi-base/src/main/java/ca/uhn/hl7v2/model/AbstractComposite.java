@@ -37,11 +37,10 @@ public abstract class AbstractComposite extends AbstractType implements
 
 	private static final long serialVersionUID = -2657103285266475699L;
 
-	protected Logger log;
+	private static final Logger log = LoggerFactory.getLogger(AbstractComposite.class);
 
 	public AbstractComposite(Message message) {
 		super(message);
-		log = LoggerFactory.getLogger(getClass());
 	}
 
 	@Override
@@ -57,7 +56,7 @@ public abstract class AbstractComposite extends AbstractType implements
 			@SuppressWarnings("unchecked") T ret = (T)getComponent(idx);
 			return ret;
 		} catch (HL7Exception e) {
-	         log.error("Unexpected problem accessing known data type component - this is a bug.", e);
+	         log.error("Unexpected problem accessing known data type component - this is a bug. Class is " + getClass().getName(), e);
 	         throw new RuntimeException(e);
 		}
 	}
