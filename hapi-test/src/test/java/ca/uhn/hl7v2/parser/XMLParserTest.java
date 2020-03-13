@@ -15,12 +15,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Type;
@@ -31,7 +34,6 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
-import ca.uhn.hl7v2.model.v251.message.ERP_R09;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -430,6 +432,35 @@ public class XMLParserTest {
 		assertEquals("\\H\\" + obx5Value + "\\.br\\" + obx5Value + "\\N\\", actual);
 
 	}
+
+
+    /**
+     * <p>
+     *     Attempt to parse a {@link ca.uhn.hl7v2.model.GenericMessage}.  These objects have `$` in their class name, ex: `GenericMessage$V21`.
+     *     The {@link DefaultXMLParser} will attempt to use the class name when constructing the {@link Document} when encoding.  The `$` is
+     *     not a valid character within an element name.
+     * </p>
+     * <p>
+     *     Construct a {@link GenericMessage} for each available version, and call {@link DefaultXMLParser#encode(Message)} on the message.
+     *     We expect that a valid {@link Document} is returned, as the `$` is stripped out.
+     * </p>
+     */
+	@Test
+    public void test_encode_GenericMessage() throws Exception {
+
+	    DefaultXMLParser xmlParser = new DefaultXMLParser();
+
+        for (Version version : Version.values()) {
+
+            Class<? extends Message> c = GenericMessage.getGenericMessageClass(version.getVersion());
+            Message m = c.getConstructor(ModelClassFactory.class).newInstance(new GenericModelClassFactory());
+
+            Document d = xmlParser.encodeDocument(m);
+            Assert.assertNotNull(d);
+            Assert.assertEquals("GenericMessage" + version.name(), d.getDocumentElement().getTagName());
+        }
+    }
+
 
 	private String loadFile(String name) throws IOException {
 		return loadFile(name, '\n');
