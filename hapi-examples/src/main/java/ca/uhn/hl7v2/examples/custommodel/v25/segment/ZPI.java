@@ -12,6 +12,7 @@ import ca.uhn.hl7v2.model.v25.datatype.NM;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 
+
 /**
  * ZPI custom segment example
  *

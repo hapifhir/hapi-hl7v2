@@ -27,13 +27,13 @@ public class ProfileSourceGeneratorTest {
 		
 	}
 	
-	@Test
-	public void testGenerateSourceWithNamespace() {
-		ca.uhn.hl7v2.test.withns.message.ADT_A01 msg = new ca.uhn.hl7v2.test.withns.message.ADT_A01();
-		assertEquals(399, msg.getMSH().getCountryCode().getTable());
-		assertEquals("TESTNS", msg.getMSH().getCountryCode().getTableNamespace());
-		
-		IS nsid = msg.getMSH().getSendingApplication().getHd1_NamespaceID();
-	}
+//	@Test
+//	public void testGenerateSourceWithNamespace() {
+//		ca.uhn.hl7v2.test.withns.message.ADT_A01 msg = new ca.uhn.hl7v2.test.withns.message.ADT_A01();
+//		assertEquals(399, msg.getMSH().getCountryCode().getTable());
+//		assertEquals("TESTNS", msg.getMSH().getCountryCode().getTableNamespace());
+//
+//		IS nsid = msg.getMSH().getSendingApplication().getHd1_NamespaceID();
+//	}
 	
 }

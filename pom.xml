@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- The Comrad fork of hapi-hl7v2 has been converted to use Gradle.
+This pom is left here for future reference
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
@@ -180,15 +183,23 @@
 	</modules>
 
 	<distributionManagement>
-		<!-- Not needed because of the sonatype parent <repository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> 
-			</repository> <snapshotRepository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> </snapshotRepository> -->
+		<repository>
+			<id>hl7api.sf.net</id>
+			<name>HAPI Sourceforge</name>
+			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
+		</repository>
+		<snapshotRepository>
+			<id>hl7api.sf.net</id>
+			<name>HAPI Sourceforge</name>
+			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
+		</snapshotRepository>
 		<site>
 			<!--
 			<id>hl7api.sf.net</id>
 			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/</url>
 			-->
 			<id>git.server</id>
-			<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>						
+			<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>
 		</site>
 	</distributionManagement>
 

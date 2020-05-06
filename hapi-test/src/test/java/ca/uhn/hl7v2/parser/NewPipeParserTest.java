@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.AbstractEncodingRule;
 import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

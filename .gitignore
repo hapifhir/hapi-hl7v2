@@ -1,7 +1,67 @@
-hapi-db/
-target/
+# General files
+*.log
+logs/
+
+# Gradle files
+.gradle/
 bin/
-.idea/
-pom.xml.versionsBackup
-*.iml
+build/
 id_file
+
+# Don't ignore root bin folder
+!/bin/
+
+# Maven files
+target/
+
+# Eclipse files
+.classpath
+.project
+.settings/
+.pydevproject**
+
+#vscode
+.vscode
+
+# IntelliJ files
+*.iml
+.idea
+out/
+
+# Standard Java
+hs_err_pid*
+*.class
+*.jar
+
+# Don't ignore gradle warpper jar files
+!gradle-wrapper.jar
+
+# Ignore lock files
+.autoDeploy.lock
+
+# Docker files
+docker-compose.override.yml
+
+# NPM
+node_modules
+npm-debug.log*
+
+# Aura
+!source/aura-ui/build
+aura.ini
+
+# Metadata folders
+.metadata/
+.idea/
+.recommenders/
+
+# Python binaries/cache
+__pycache__/
+*.py[cod]
+*$py.class
+.coverage/
+.coverage
+htmlcov/
+dist/
+*.egg-info/
+venv/

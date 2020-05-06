@@ -14,7 +14,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -32,6 +34,16 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
+/**
+ * This test class is Ignored.
+ * It is related to hapi's custom Maven plugin called CodeGen.
+ * CodeGen is only pertinent when re-generating the hapi-structures libraries.. which we are not able to do ourselves as it
+ * requires a copy of Windows-XP, MS-Access, a jdbc-odbc bridge driver and a DeLorean with flux-capacitor to travel back to the 90's.
+ *
+ * We (like everyone else) rely on the officially generated hapi-structure-vXX libs that are publicly available
+ * @deprecated
+ */
+@Ignore
 public class XsdConfGenTest {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(XsdConfGenTest.class);
