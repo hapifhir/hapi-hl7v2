@@ -3,7 +3,7 @@
  */
 
 allprojects {
-    group = 'ca.uhn.hapi'
+    group = 'nz.co.comrad'
     version = '2.4-SNAPSHOT'
 }
 
@@ -33,6 +33,16 @@ subprojects {
     }
 
     publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/comradms/hapi-hl7v2")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: GITHUB_ACCESS_TOKEN
+                }
+            }
+        }
         publications {
             maven(MavenPublication) {
                 from(components.java)
