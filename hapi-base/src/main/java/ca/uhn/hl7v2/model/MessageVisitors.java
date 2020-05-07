@@ -34,7 +34,8 @@ import ca.uhn.hl7v2.Location;
  */
 public final class MessageVisitors {
 
-    private MessageVisitors() {}
+    private MessageVisitors() {
+    }
 
     /**
      * Lets a visitor visit a message of parts thereof.
@@ -51,6 +52,7 @@ public final class MessageVisitors {
 
     /**
      * Returns a MessageVisitor that only visits structures
+     *
      * @param visitor delegate MessageVisitor instance
      * @return MessageVisitor that only visits structures
      */
@@ -69,7 +71,6 @@ public final class MessageVisitors {
     public static <T extends MessageVisitor> PopulatedVisitor<T> visitPopulatedElements(T visitor) {
         return new PopulatedVisitor<T>(visitor);
     }
-
 
     public final static class StructuresVisitor<T extends MessageVisitor> extends DelegatingMessageVisitor<T> {
 
@@ -107,7 +108,7 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Group group, Location location) throws HL7Exception {
-            return !group.isEmpty() && super.end(group, location);
+            return group.isEmpty() || super.end(group, location);
         }
 
         @Override
@@ -117,7 +118,7 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Segment segment, Location location) throws HL7Exception {
-            return !segment.isEmpty() && super.end(segment, location);
+            return segment.isEmpty() || super.end(segment, location);
         }
 
         @Override
@@ -127,14 +128,13 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Composite type, Location location) throws HL7Exception {
-            return !type.isEmpty() && super.end(type, location);
+            return type.isEmpty() || super.end(type, location);
         }
 
         @Override
         public boolean visit(Primitive type, Location location) throws HL7Exception {
-            return !type.isEmpty() && super.visit(type, location);
+            return type.isEmpty() || super.visit(type, location);
         }
- 
 
     }
 }
