@@ -1,4 +1,4 @@
-# Comrad fork of HAPI HL7v2
+# Comrad fork of HAPI-HL7v2
 
 ### Changes for Comrad Integration
 * Use Gradle instead of Maven to build the code.
