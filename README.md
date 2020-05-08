@@ -8,6 +8,13 @@ As we are using the officially generated structures libraries from other sources
 
 ```$ ./gradlew  -Dorg.gradle.java.home=/c/Program\ Files/AdoptOpenJDK/jdk-8.0.242.08-hotspot build```
 
+### Licensing
+The original hapi-hl7v2 project is dual-licensed under MPL1.1 and GPLv3 as detailed [here](https://hapifhir.github.io/hapi-hl7v2/license.html)
+
+This fork uses the MPL2.0 license which is backward-compatible with MPL1.1
+
+Refer to LICENSE.txt in the root directory of this project.
+
 ---
 _original readme below:_
 # hapi-hl7v2
