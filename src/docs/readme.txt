@@ -3,10 +3,13 @@ HAPI
 ---------
 Thanks for downloading HAPI!
 
-    You have downloaded a distribution of HAPI - the open-sourced HL7 library.
+    You have downloaded a fork of HAPI - the open-sourced HL7 library.
     
     For information about HAPI's license, please visit 
     http://hl7api.sourceforge.net/license.html
+
+    For information about this fork's license, please review the README.txt and
+    LICENSE.txt files in the root directory of this package.
     
     This package also contains several libraries which are licensed under other 
     license agreements.
