@@ -107,7 +107,7 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Group group, Location location) throws HL7Exception {
-            return !group.isEmpty() && super.end(group, location);
+            return group.isEmpty() || super.end(group, location);
         }
 
         @Override
@@ -117,7 +117,7 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Segment segment, Location location) throws HL7Exception {
-            return !segment.isEmpty() && super.end(segment, location);
+            return segment.isEmpty() || super.end(segment, location);
         }
 
         @Override
@@ -127,14 +127,12 @@ public final class MessageVisitors {
 
         @Override
         public boolean end(Composite type, Location location) throws HL7Exception {
-            return !type.isEmpty() && super.end(type, location);
+            return type.isEmpty() || super.end(type, location);
         }
 
         @Override
         public boolean visit(Primitive type, Location location) throws HL7Exception {
-            return !type.isEmpty() && super.visit(type, location);
+            return type.isEmpty() || super.visit(type, location);
         }
- 
-
     }
 }

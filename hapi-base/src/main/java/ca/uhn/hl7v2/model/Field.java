@@ -49,7 +49,11 @@ public class Field implements Visitable {
         if (visitor.start(this, currentLocation)) {
             for (int i=0; i < reps.length; i++) {
                 Type t = reps[i];
-                if (!t.accept(visitor, currentLocation))
+                Location nextLocation = currentLocation;
+                if (reps.length > 1) {
+                  nextLocation = provideLocation(currentLocation, currentLocation.getField(), i);
+                }
+                if (!t.accept(visitor, nextLocation))
                     break;
             }
         }
@@ -57,7 +61,7 @@ public class Field implements Visitable {
     }
 
     public Location provideLocation(Location parentLocation, int index, int repetition) {
-        return new Location(parentLocation).withField(index);
+        return new Location(parentLocation).withField(index).withFieldRepetition(repetition);
     }
 
     public boolean isEmpty() throws HL7Exception {
