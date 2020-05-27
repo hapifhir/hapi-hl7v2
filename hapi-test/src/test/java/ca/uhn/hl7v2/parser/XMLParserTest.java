@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -305,19 +308,19 @@ public class XMLParserTest {
 
 		// Test a couple of cases of escape sequences
 		DefaultXMLParser p = new DefaultXMLParser();
+		p.getParserConfiguration().setPrettyPrintWhenEncodingXml(false);
 		String encoded = p.encode(msg);
-		assertTrue(encoded
-				.contains("<OBX.5>ABC<escape V=\"H\"/>highlighted<escape V=\"N\"/>EFG</OBX.5>"));
+		assertTrue(encoded.contains("<OBX.5>ABC<escape V=\"H\"/>highlighted<escape V=\"N\"/>EFG</OBX.5>"));
 
 		obx5Value = "\\H\\highlighted\\N\\EFG";
 		obx.getObservationValue(0).parse(obx5Value);
 		encoded = p.encode(msg);
-		assertTrue(encoded.contains(" <escape V=\"H\"/>highlighted<escape V=\"N\"/>EFG</OBX.5>"));
+		assertTrue(encoded.contains("<escape V=\"H\"/>highlighted<escape V=\"N\"/>EFG</OBX.5>"));
 
 		obx5Value = "ABC\\H\\highlighted\\N\\";
 		obx.getObservationValue(0).parse(obx5Value);
 		encoded = p.encode(msg);
-		assertTrue(encoded.contains("<OBX.5>ABC<escape V=\"H\"/>highlighted<escape V=\"N\"/>\n"));
+		assertTrue(encoded.contains("<OBX.5>ABC<escape V=\"H\"/>highlighted<escape V=\"N\"/>"));
 
 		obx5Value = "ABC\\E\\no escape sequence\\H\\highlighted\\N\\EFG";
 		obx.getObservationValue(0).parse(obx5Value);
@@ -348,6 +351,7 @@ public class XMLParserTest {
 		msg.initQuickstart("ADT", "A01", "T");
 		
 		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		p.getParserConfiguration().setPrettyPrintWhenEncodingXml(false);
 		String encoded;
 
 		msg.getMSH().getMessageControlID().setValue("1234");
@@ -368,7 +372,7 @@ public class XMLParserTest {
 
 		msg.getMSH().getMessageControlID().setValue("1234\\E\\\\.BR\\");
 		encoded = p.encode(msg);
-		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\<escape V=\".BR\"/>\n"));
+		assertTrue(encoded, encoded.contains("<MSH.10>1234\\E\\<escape V=\".BR\"/>"));
 
 	}
 
@@ -429,6 +433,35 @@ public class XMLParserTest {
 
 		assertEquals("\\H\\" + obx5Value + "\\.br\\" + obx5Value + "\\N\\", actual);
 
+	}
+
+	/**
+	 * <p>
+	 *     Test to ensure that we can parse an XML document that we ourselves have encoded.   Starting with a known Pipe message,
+	 *     parse it, encode it to XML, and then attempt to parse that resultant XML back to a {@link Message}.  The expectation is that we
+	 *     can parse our own XML.
+	 * </p>
+	 */
+	@Test
+	public void test_ParseEncodedXml() throws Exception {
+
+		// Create a context
+		HapiContext context = new DefaultHapiContext();
+		context.getParserConfiguration().setValidating(false);
+
+		XMLParser xp = context.getXMLParser();
+
+		InputStream str = getClass().getClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a03.txt");
+		Hl7InputStreamMessageIterator iter = new Hl7InputStreamMessageIterator(str, context);
+		while (iter.hasNext()) {
+
+			Message msg = iter.next();
+			Document dom = xp.encodeDocument(msg);
+
+			// We would expect to be able to parse this document back to a Message, as we encoded it.
+			Message outmsg = xp.parseDocument(dom, msg.getVersion());
+			outmsg.printStructure();
+		}
 	}
 
 	private String loadFile(String name) throws IOException {

@@ -26,13 +26,14 @@
 
 package ca.uhn.hl7v2.app;
 
+import java.io.Closeable;
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 
 /**
  * Interface for a connection
  */
-public interface Connection {
+public interface Connection extends Closeable {
 
     /**
      * Activate this connection
@@ -45,11 +46,6 @@ public interface Connection {
      */
     Initiator getInitiator();
 
-
-    /**
-     * Closes the connection
-     */
-    void close();
 
     /**
      * Returns true if this connection is open

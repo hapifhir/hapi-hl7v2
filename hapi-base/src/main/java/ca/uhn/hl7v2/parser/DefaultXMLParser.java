@@ -108,8 +108,6 @@ public class DefaultXMLParser extends XMLParser {
         String messageName = messageClassName.substring(messageClassName.lastIndexOf('.') + 1);
         try {
             Document doc = XMLUtils.emptyDocument(messageName);
-            //Element root = doc.createElement(messageName);
-            //doc.appendChild(root);
             encode(source, doc.getDocumentElement());
             return doc;
         } catch (Exception e) {
@@ -133,7 +131,7 @@ public class DefaultXMLParser extends XMLParser {
                     String elementName = makeGroupElementName(messageName, name);
 					Element childElement;
 					try {
-						childElement = groupElement.getOwnerDocument().createElement(elementName);
+						childElement = groupElement.getOwnerDocument().createElementNS(NS, elementName);
 			        } catch (DOMException e) {
 			            throw new HL7Exception(
 			                "Can't encode element " + elementName + " in group " + groupObject.getClass().getName(), e);

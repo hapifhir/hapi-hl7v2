@@ -63,7 +63,7 @@ public class LazyConnection implements Connection {
         return initiator;
     }
 
-    public void close() {
+    public void close() throws IOException {
         if (isEstablished()) {
             activeConnection.close();
             activeConnection = null;

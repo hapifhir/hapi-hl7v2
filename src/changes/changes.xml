@@ -6,6 +6,21 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="fix" dev="Christian Ohr" issue="35">
+				The Connection interface now extends Closeable. As a consequence, the close()
+				method now throws IOException. Thanks to hauntingEcho for the proposal.
+			</action>
+			<action type="fix" dev="Christian Ohr" issue="33">
+				Fixes problem with missing items in PopulatingVisitor.
+				Thanks to mourezwell for the pull request.
+			</action>
+			<action type="fix" dev="Christian Ohr" issue="31">
+				Allow Visitor or Terser API to filter for repeated field. Thanks to
+				mourezwell for the pull request.
+			</action>
+			<action type="fix" dev="Christian Ohr" issue="22">
+				Fix namespace handling when XML-encoding messages. Thanks to kbalthaser for reporting.
+			</action>
 			<action type="fix" dev="Christian Ohr" issue="7">
 				Fix encoding of line breaks as \X000d\
 			</action>

@@ -134,7 +134,11 @@ public abstract class HL7Service extends Service {
         super.afterTermination();
         cleaner.stopAndWait();
         for (Connection c : connections) {
-            c.close();
+            try {
+                c.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

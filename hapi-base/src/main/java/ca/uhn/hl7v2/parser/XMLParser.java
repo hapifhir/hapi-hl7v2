@@ -341,7 +341,7 @@ public abstract class XMLParser extends Parser {
 			String name = makeElementName(segmentObject, i);
 			Type[] reps = segmentObject.getField(i);
 			for (Type rep : reps) {
-				Element newNode = segmentElement.getOwnerDocument().createElement(name);
+				Element newNode = segmentElement.getOwnerDocument().createElementNS(NS, name);
 				boolean componentHasValue = encode(rep, newNode);
 				if (componentHasValue) {
 					try {
@@ -617,7 +617,7 @@ public abstract class XMLParser extends Parser {
 					} else {
 						if (v.startsWith(".") || "H".equals(v) || "N".equals(v)) {
 							// currently in "escape mode", so create escape element from it
-							Element escape = datatypeElement.getOwnerDocument().createElement(
+							Element escape = datatypeElement.getOwnerDocument().createElementNS(NS,
 									ESCAPE_NODENAME);
 							escape.setAttribute(ESCAPE_ATTRNAME, v);
 							datatypeElement.appendChild(escape);
@@ -663,7 +663,7 @@ public abstract class XMLParser extends Parser {
 		boolean hasValue = false;
 		for (int i = 0; i < components.length; i++) {
 			String name = makeElementName(datatypeObject, i + 1);
-			Element newNode = datatypeElement.getOwnerDocument().createElement(name);
+			Element newNode = datatypeElement.getOwnerDocument().createElementNS(NS, name);
 			boolean componentHasValue = encode(components[i], newNode);
 			if (componentHasValue) {
 				try {

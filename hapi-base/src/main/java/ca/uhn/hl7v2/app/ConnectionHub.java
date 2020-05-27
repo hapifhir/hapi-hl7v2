@@ -26,6 +26,7 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.app;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +86,11 @@ public class ConnectionHub extends HapiContextSupport {
 
 			@Override
 			protected void dispose(Connection connection) {
-				connection.close();
+				try {
+					connection.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
 
 			@Override
