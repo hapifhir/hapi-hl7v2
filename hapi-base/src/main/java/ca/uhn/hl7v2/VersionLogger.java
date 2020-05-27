@@ -67,26 +67,17 @@ public class VersionLogger {
 	}
 
 	private static void printHapiVersion() {
-		InputStream is = null;
-		try {
-			is = VersionLogger.class
-					.getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties");
-			Properties p = new Properties();
-			p.load(is);
-			ourVersion = p.getProperty("version");
-			LOG.info("HAPI version is: " + ourVersion);
-		} catch (IOException e) {
-			LOG.warn("Unable to determine HAPI version information", e);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
+        try (InputStream is = VersionLogger.class
+                .getResourceAsStream("/ca/uhn/hl7v2/hapi-version.properties")) {
+            Properties p = new Properties();
+            p.load(is);
+            ourVersion = p.getProperty("version");
+            LOG.info("HAPI version is: " + ourVersion);
+        } catch (IOException e) {
+            LOG.warn("Unable to determine HAPI version information", e);
+        }
+        // ignore
+    }
 
 	/**
 	 * @return Returns the current version of HAPI

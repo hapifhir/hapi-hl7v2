@@ -26,8 +26,6 @@
  */
 package ca.uhn.hl7v2.conf.store;
 
-import java.io.IOException;
-
 /**
  * Base class for read-only profile stores.
  * 
@@ -38,7 +36,7 @@ public abstract class ReadOnlyProfileStore implements ProfileStore {
     /** 
      * Stores profile in persistent storage with given ID.
      */
-    public void persistProfile(String ID, String profile) throws IOException {
+    public void persistProfile(String ID, String profile) {
         throw new UnsupportedOperationException("Can't persist profile -- this profile store is read-only");
     }
 

@@ -7,8 +7,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -20,7 +18,6 @@ import ca.uhn.hl7v2.conf.store.CodeStore;
 import ca.uhn.hl7v2.conf.store.ProfileCodeStore;
 import ca.uhn.hl7v2.conf.store.ProfileStoreFactory;
 import ca.uhn.hl7v2.model.v24.message.ACK;
-import ca.uhn.hl7v2.model.v251.message.ORU_R01;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -41,16 +38,15 @@ public class DefaultValidatorTest extends TestCase {
     }
     
     public static Test suite() {
-        TestSuite suite = new TestSuite(DefaultValidatorTest.class);
-        return suite;
+        return new TestSuite(DefaultValidatorTest.class);
     }
     
     public void setUp() throws Exception {
         InputStream instream = ProfileParser.class.getResourceAsStream("/ca/uhn/hl7v2/conf/parser/example_ack.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -107,8 +103,8 @@ public class DefaultValidatorTest extends TestCase {
         InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_reqsft.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -135,7 +131,7 @@ public class DefaultValidatorTest extends TestCase {
     /** 
      * Issue reported on mailing list 
      */
-    public void testOru() throws Exception {
+    public void testOru() {
    	 // Disabled because I'm not sure where that conf propfile went....
    	 
    	 
@@ -173,8 +169,8 @@ public class DefaultValidatorTest extends TestCase {
         InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_segnotsup.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -191,8 +187,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		HL7Exception[] problems = v.validate(msg, prof.getMessage());
 		String toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123";
@@ -201,8 +197,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 1);
+
+        assertEquals(toString, 1, problems.length);
 		assertTrue(toString, toString.contains("SFT"));
 		
     }
@@ -213,8 +209,8 @@ public class DefaultValidatorTest extends TestCase {
         InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_fieldnotsup.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -231,8 +227,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		HL7Exception[] problems = v.validate(msg, prof.getMessage());
 		String toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123";
@@ -241,8 +237,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123|sssss";
@@ -251,8 +247,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 1);
+
+        assertEquals(toString, 1, problems.length);
 		assertTrue(toString, toString.contains("Field 2"));
 
     }
@@ -263,8 +259,8 @@ public class DefaultValidatorTest extends TestCase {
         InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_compnotsup.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -281,8 +277,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		HL7Exception[] problems = v.validate(msg, prof.getMessage());
 		String toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123";
@@ -291,8 +287,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123|sssss";
@@ -301,8 +297,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 	
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123^1111|sssss";
@@ -311,8 +307,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 1);
+
+        assertEquals(toString, 1, problems.length);
 		assertTrue(toString, toString.contains("organization name type code"));
 
     }
@@ -323,8 +319,8 @@ public class DefaultValidatorTest extends TestCase {
         InputStream instream = cl.getResourceAsStream("ca/uhn/hl7v2/conf/parser/ADT_A01_subcompnotsup.xml");
         if (instream == null) throw new Exception("can't find the xml file");
         BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        int tmp = 0;
-        StringBuffer buf = new StringBuffer();
+        int tmp;
+        StringBuilder buf = new StringBuilder();
         while ((tmp = in.read()) != -1) {
             buf.append((char) tmp);
         }        
@@ -341,8 +337,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		HL7Exception[] problems = v.validate(msg, prof.getMessage());
 		String toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123";
@@ -351,8 +347,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 		
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123|sssss";
@@ -361,8 +357,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 	
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|123^1111|sssss";
@@ -371,8 +367,8 @@ public class DefaultValidatorTest extends TestCase {
         
 		problems = v.validate(msg, prof.getMessage());
 		toString = Arrays.asList(problems).toString();
-		
-		assertTrue(toString, problems.length == 0);
+
+        assertEquals(toString, 0, problems.length);
 
 		message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r" +
 				"SFT|1^2^3^4^5^6&aaa|sssss";

@@ -35,7 +35,7 @@ public class HohRawClientSimpleTest {
 
 	@Test
 	public void testSendMessageSimple() throws Exception {
-		LogManager.getRootLogger().setLevel((Level)Level.TRACE);
+		LogManager.getRootLogger().setLevel(Level.TRACE);
 
 		String message = // -
 		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -
@@ -117,7 +117,7 @@ public class HohRawClientSimpleTest {
 
 	@Test
 	public void testUnderstandsGzippedResponse() throws Exception {
-		LogManager.getRootLogger().setLevel((Level)Level.TRACE);
+		LogManager.getRootLogger().setLevel(Level.TRACE);
 
 		myServerSocketThread.setGZipResponse(true);
 		
@@ -142,17 +142,17 @@ public class HohRawClientSimpleTest {
 
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidUriRejected1() throws Exception {
+	public void testInvalidUriRejected1() {
 		new HohRawClientSimple("localhost", 9999, "/uri space");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidUriRejected2() throws Exception {
+	public void testInvalidUriRejected2() {
 		new HohRawClientSimple("localhost", 9999, "uri_with_no_starting_slash");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidUriRejected3() throws Exception {
+	public void testInvalidUriRejected3() {
 		new HohRawClientSimple("localhost", 9999, "/uri_with_%_bad_char");
 	}
 
@@ -269,7 +269,7 @@ public class HohRawClientSimpleTest {
 	}
 
 	@After
-	public void after() throws InterruptedException {
+	public void after() {
 		ourLog.info("Marking done as true");
 		myServerSocketThread.done();
 		

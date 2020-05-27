@@ -46,6 +46,6 @@ public interface MessageRule extends Rule<Message> {
      *      The list should be empty if this rule is evaluated against a type 
      *      of message to which it doesn't apply.  
      */
-    public ValidationException[] test(Message msg);
+    ValidationException[] test(Message msg);
     
 }

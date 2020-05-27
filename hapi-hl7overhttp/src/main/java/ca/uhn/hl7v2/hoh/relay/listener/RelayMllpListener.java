@@ -23,12 +23,12 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
 public class RelayMllpListener implements InitializingBean, DisposableBean, IRelayListener, BeanNameAware {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(RelayMllpListener.class);
-	private List<ReceivingApplication<? extends Message>> myApplications = new ArrayList<ReceivingApplication<? extends Message>>();
-	private List<AppRoutingData> myAppRoutingData = new ArrayList<AppRoutingData>();
+	private final List<ReceivingApplication<? extends Message>> myApplications = new ArrayList<>();
+	private final List<AppRoutingData> myAppRoutingData = new ArrayList<>();
 	private String myBeanName;
 	private int myPort;
 	private SimpleServer myServer;
-	private AtomicInteger threadNum	= new AtomicInteger(1);
+	private final AtomicInteger threadNum	= new AtomicInteger(1);
 	private DefaultHapiContext myContext;
 
 	/**
@@ -112,7 +112,7 @@ public class RelayMllpListener implements InitializingBean, DisposableBean, IRel
 
 	private class MyThreadFactory implements ThreadFactory {
 
-		private ThreadGroup group;
+		private final ThreadGroup group;
 
 		private MyThreadFactory() {
 			group = Thread.currentThread().getThreadGroup();

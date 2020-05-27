@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class RandomServerPortProvider {
 
-	private static List<Integer> ourPorts = new ArrayList<Integer>(); 
+	private static final List<Integer> ourPorts = new ArrayList<>();
 	
 	public static int findFreePort() {
 		ServerSocket server;
@@ -21,9 +21,7 @@ public class RandomServerPortProvider {
 			server.close();
 			Thread.sleep(500);
 			return port;
-		} catch (IOException e) {
-			throw new Error(e);
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			throw new Error(e);
 		}
 	}

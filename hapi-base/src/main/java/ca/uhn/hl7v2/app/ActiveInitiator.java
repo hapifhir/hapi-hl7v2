@@ -76,7 +76,7 @@ public class ActiveInitiator implements Initiator {
 			.getLogger("ca.uhn.hl7v2.raw.outbound");
 	private static final Logger rawInbound = LoggerFactory
 			.getLogger("ca.uhn.hl7v2.raw.inbound");
-	private ActiveConnection conn;
+	private final ActiveConnection conn;
 	private long timeoutMillis = 10000;
 
 	/**
@@ -85,7 +85,7 @@ public class ActiveInitiator implements Initiator {
 	 * @param conn
 	 *            the Connection associated with this ActiveInitiator.
 	 */
-	ActiveInitiator(ActiveConnection conn) throws LLPException {
+	ActiveInitiator(ActiveConnection conn) {
 		this.conn = conn;
 
 		// See if timeout has been set
@@ -146,11 +146,10 @@ public class ActiveInitiator implements Initiator {
 				inbound.cancel(true);
 			conn.close();
 			throw e;
-		} catch (InterruptedException e) {
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException ignored) {
 		}
 
-		throw new TimeoutException("Timeout waiting for response to message with control ID "
+        throw new TimeoutException("Timeout waiting for response to message with control ID "
 						+ messID + " after " + timeoutMillis + " ms.");
 	}
 
@@ -177,7 +176,7 @@ public class ActiveInitiator implements Initiator {
     /**
 	 * Test harness
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length != 2) {
 			System.out.println("Usage: ca.uhn.hl7v2.app.ActiveInitiator host port");
 		}
@@ -199,32 +198,29 @@ public class ActiveInitiator implements Initiator {
 
 			// get a bunch of threads to send messages
 			for (int i = 0; i < 1000; i++) {
-				Thread sender = new Thread(new Runnable() {
-					
-					public void run() {
-						try {
-							// get message ID
-							String ID = generator.getID();
-							Message out = parser.parse(outText);
-							Terser tOut = new Terser(out);
-							tOut.set("/MSH-10", ID);
+				Thread sender = new Thread(() -> {
+					try {
+						// get message ID
+						String ID = generator.getID();
+						Message out = parser.parse(outText);
+						Terser tOut = new Terser(out);
+						tOut.set("/MSH-10", ID);
 
-							// send, get response
-							Message in = initiator.sendAndReceive(out);
-							// get ACK ID
-							Terser tIn = new Terser(in);
-							String ackID = tIn.get("/MSA-2");
-							if (ID.equals(ackID)) {
-								System.out.println("OK - ack ID matches");
-							} else {
-								throw new RuntimeException(
-										"Ack ID for message " + ID + " is "
-												+ ackID);
-							}
-
-						} catch (Exception e) {
-							e.printStackTrace();
+						// send, get response
+						Message in = initiator.sendAndReceive(out);
+						// get ACK ID
+						Terser tIn = new Terser(in);
+						String ackID = tIn.get("/MSA-2");
+						if (ID.equals(ackID)) {
+							System.out.println("OK - ack ID matches");
+						} else {
+							throw new RuntimeException(
+									"Ack ID for message " + ID + " is "
+											+ ackID);
 						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				});
 				sender.start();

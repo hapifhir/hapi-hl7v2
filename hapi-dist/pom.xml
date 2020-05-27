@@ -10,8 +10,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-dist</artifactId>
+    <artifactId>hapi-dist</artifactId>
 	<name>HAPI - Java HL7 API - Distribution</name>
 
 	<packaging>pom</packaging>

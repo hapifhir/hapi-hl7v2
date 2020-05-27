@@ -40,9 +40,6 @@ package ca.uhn.hl7v2.conf.classes.exceptions;
 @SuppressWarnings("serial")
 public class ConfRepException extends ConformanceException {
 
-   /** Constructor for ConfRepException
-    * @param val the error message to throw
-    */
    public ConfRepException( int maxReps, int desiredRep ) {
       super("Illegal repetition requested. Note that repetition indexes start at 1. Desired repetition: " + desiredRep + ", Maximum allowable: " + maxReps);
    }

@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 
 public class IndexedErrorCollector extends ErrorCollector {
 
-    private class TestException extends Exception {
+    private static class TestException extends Exception {
 
         TestException(int i, Throwable cause) {
             super("Test " + i + " failed.", cause);
@@ -53,11 +53,9 @@ public class IndexedErrorCollector extends ErrorCollector {
      * Execution continues, but the test will fail at the end if the match fails.
      */
     public <T> void checkThat(int i, final T value, final Matcher<T> matcher) {
-        checkSucceeds(i, new Callable<Object>() {
-            public Object call() throws Exception {
-                assertThat(value, matcher);
-                return value;
-            }
+        checkSucceeds(i, () -> {
+            assertThat(value, matcher);
+            return value;
         });
     }
 

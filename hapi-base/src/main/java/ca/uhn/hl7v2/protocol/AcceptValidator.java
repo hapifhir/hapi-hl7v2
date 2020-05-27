@@ -26,7 +26,7 @@ public interface AcceptValidator {
      * @param theMessage the message to check for acceptability.  
      * @return
      */
-    public AcceptRuling check(Transportable theMessage);
+    AcceptRuling check(Transportable theMessage);
 
     /**
      * Represents a decision regarding whether a message can be initially 
@@ -41,17 +41,17 @@ public interface AcceptValidator {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:38 $ by $Author: jamesagnew $
      */
-    public interface AcceptRuling {
+    interface AcceptRuling {
         
-        public static final String ACK_AR = "AR";
-        public static final String ACK_CA = "CA";
-        public static final String ACK_CE = "CE";
-        public static final String ACK_CR = "CR";
+        String ACK_AR = "AR";
+        String ACK_CA = "CA";
+        String ACK_CE = "CE";
+        String ACK_CR = "CR";
 
         /**
          * @return true if the message can be accepted at the protocol stage.
          */
-        public boolean isAcceptable();
+        boolean isAcceptable();
 
         /**
          * @return the ACK code corresponding to the ruling, if any.  Ie "AR", 
@@ -59,19 +59,19 @@ public interface AcceptValidator {
          * situations.  This is because only the application layer can tell whether the 
          * answer is "AE" or "AA". 
          */
-        public String getAckCode();
+        String getAckCode();
         
         /**
          * @return an error code from among the static fields of HL7Exception 
          *      (if no error, HL7Exception.MESSAGE_ACCEPTED)
          */
-        public int getErrorCode();
+        int getErrorCode();
 
         /**
          * @return zero or more reasons for rejecting a message (suitable for inclusion
          * in a reply).  
          */
-        public String[] getReasons();
+        String[] getReasons();
     }
 
 }

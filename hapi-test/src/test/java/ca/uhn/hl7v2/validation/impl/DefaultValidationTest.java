@@ -21,7 +21,6 @@ import ca.uhn.hl7v2.model.v25.datatype.NM;
 import ca.uhn.hl7v2.model.v25.datatype.SI;
 import ca.uhn.hl7v2.model.v25.datatype.TM;
 import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
-import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -37,7 +36,7 @@ public class DefaultValidationTest {
     private static HapiContext context;
     private static Message myMessage;
     
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
     
 
     @BeforeClass
@@ -106,10 +105,10 @@ public class DefaultValidationTest {
     }
     
     @Test
-    public void testDT() throws Exception {
+    public void testDT() {
         
-        TestSpecBuilder.<String, String>buildSpecs(DTTestSpec.class, DataTypeException.class)
-            .accept((String)null, 
+        TestSpecBuilder.buildSpecs(DTTestSpec.class, DataTypeException.class)
+            .accept(null,
                     "", 
                     "\"\"")
             .reject(" ",
@@ -154,9 +153,9 @@ public class DefaultValidationTest {
     }
     
     @Test
-    public void testTM() throws Exception {
+    public void testTM() {
 
-        TestSpecBuilder.<String, String>buildSpecs(TMTestSpec.class, DataTypeException.class)
+        TestSpecBuilder.buildSpecs(TMTestSpec.class, DataTypeException.class)
             .accept((String)null)
             .accept("\"\"", "\"\"")
             .reject("0")
@@ -198,10 +197,10 @@ public class DefaultValidationTest {
     }
     
     @Test    
-    public void testTS() throws Exception {
+    public void testTS() {
             
-        TestSpecBuilder.<String, String>buildSpecs(TSTestSpec.class, DataTypeException.class)
-            .accept((String)null, 
+        TestSpecBuilder.buildSpecs(TSTestSpec.class, DataTypeException.class)
+            .accept(null,
                     "",
                     "\"\"")
             //year
@@ -349,8 +348,8 @@ public class DefaultValidationTest {
     }    
 
     @Test    
-    public void testTN() throws Exception {
-        TestSpecBuilder.<String, String>buildSpecs(TNTestSpec.class)
+    public void testTN() {
+        TestSpecBuilder.buildSpecs(TNTestSpec.class)
             .add(null,(String)null)
             .add("", "")
             .add("\"\"","\"\"")
@@ -465,11 +464,10 @@ public class DefaultValidationTest {
     }   
     
     /**
-     * @throws Exception ... 
      */
     @Test    
-    public void testNM() throws Exception {
-        TestSpecBuilder.<String, String>buildSpecs(NMTestSpec.class)
+    public void testNM() {
+        TestSpecBuilder.buildSpecs(NMTestSpec.class)
                 .add(null, (String)null)
                 .add("", "")
                 .add("\"\"", "\"\"")
@@ -519,8 +517,8 @@ public class DefaultValidationTest {
     }
     
     @Test    
-    public void testSI() throws Exception {
-        TestSpecBuilder.<String, String>buildSpecs(SITestSpec.class)
+    public void testSI() {
+        TestSpecBuilder.buildSpecs(SITestSpec.class)
         .add(null, (String)null)
         .add("", "")
         .add("1", "1")

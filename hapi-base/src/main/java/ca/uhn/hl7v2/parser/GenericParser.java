@@ -146,7 +146,7 @@ public class GenericParser extends Parser {
 	 */
 	protected String doEncode(Message source, String encoding) throws HL7Exception,
 			EncodingNotSupportedException {
-		String ret = null;
+		String ret;
 		if (encoding == null)
 			encoding = ""; // prevent null pointer exception
 		if (encoding.equalsIgnoreCase("VB")) {
@@ -319,7 +319,7 @@ public class GenericParser extends Parser {
 
 	@Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion,
-			String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+			String thePackageName) throws HL7Exception {
 		return primaryParser.doParseForSpecificPackage(theMessage, theVersion, thePackageName);
 	}
 

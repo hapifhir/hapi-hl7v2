@@ -42,10 +42,10 @@ import ca.uhn.hl7v2.conf.classes.exceptions.*;
  * 				   <tr>Cory Metcalf</tr></table>
  */
 public class ConformancePrimitiveBuilder {
-   private DeploymentManager depManager; // The deployment manager
-   private DocumentationBuilder docBuilder; // The documentation builder
+   private final DeploymentManager depManager; // The deployment manager
+   private final DocumentationBuilder docBuilder; // The documentation builder
 
-   private String packageName; // Represents the Package that this Segment will go in
+   private final String packageName; // Represents the Package that this Segment will go in
 
    /** This constructor will create a new ConformancePrimitiveBuilder
     */

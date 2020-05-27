@@ -27,7 +27,7 @@ public class TransportableImpl implements Transportable {
      */
     public TransportableImpl(String theMessageText) {
         myMessageText = theMessageText;
-        myMetadata = new HashMap<String, Object>();
+        myMetadata = new HashMap<>();
     }
     
     /**

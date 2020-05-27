@@ -34,7 +34,6 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -94,7 +93,7 @@ public class ClassicConfGenMojo extends AbstractMojo
     /**
      * {@inheritDoc}
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
 
     	try {
     		String profileString;
@@ -104,15 +103,11 @@ public class ClassicConfGenMojo extends AbstractMojo
 	    	DeploymentManager dm = new DeploymentManager(targetDirectory, packageName);
 	    	dm.generate(profileString);
 
-		} catch (FileNotFoundException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ConformanceException e) {
+		} catch (ConformanceException | IOException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
-		
-        project.addCompileSourceRoot(targetDirectory);
+
+		project.addCompileSourceRoot(targetDirectory);
 
     }
 

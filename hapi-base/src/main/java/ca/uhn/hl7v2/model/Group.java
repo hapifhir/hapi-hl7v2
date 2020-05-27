@@ -53,7 +53,7 @@ public interface Group extends Structure {
    * @return array of Structure objects
    * @throws HL7Exception if the named Structure is not part of this Group. 
    */
-  public Structure[] getAll(String name) throws HL7Exception;
+  Structure[] getAll(String name) throws HL7Exception;
 
   /**
    * Returns the named structure.  If this Structure is repeating then the first 
@@ -63,7 +63,7 @@ public interface Group extends Structure {
    * @return first (or only) structure object
    * @throws HL7Exception if the named Structure is not part of this Group. 
    */
-  public Structure get(String name) throws HL7Exception;
+  Structure get(String name) throws HL7Exception;
   
   /**
    * Returns a particular repetition of the named Structure. If the given repetition
@@ -78,7 +78,7 @@ public interface Group extends Structure {
    *    or if the given repetition number is more than one greater than the 
    *    existing number of repetitions.  
    */
-  public Structure get(String name, int rep) throws HL7Exception;
+  Structure get(String name, int rep) throws HL7Exception;
   
   /**
    * Returns true if the named structure is required.
@@ -87,7 +87,7 @@ public interface Group extends Structure {
    * @return true if structure is required
    * @throws HL7Exception if the named Structure is not part of this group
    */
-  public boolean isRequired(String name) throws HL7Exception;
+  boolean isRequired(String name) throws HL7Exception;
   
   /**
    * Returns true if the named structure is repeating.
@@ -96,7 +96,7 @@ public interface Group extends Structure {
    * @return true if structure is repeating
    * @throws HL7Exception if the named Structure is not part of this group
    */
-  public boolean isRepeating(String name) throws HL7Exception;
+  boolean isRepeating(String name) throws HL7Exception;
 
   /**
    * Returns true if the named structure is a "choice element". 
@@ -109,7 +109,7 @@ public interface Group extends Structure {
    * @throws HL7Exception if the named Structure is not part of this group
    *
    */
-  public boolean isChoiceElement(String name) throws HL7Exception;
+  boolean isChoiceElement(String name) throws HL7Exception;
 
   /**
    * Returns true if the named structure is a group.
@@ -119,7 +119,7 @@ public interface Group extends Structure {
    * @throws HL7Exception if the named Structure is not part of this group
    * @since 1.2
    */
-  public boolean isGroup(String name) throws HL7Exception;
+  boolean isGroup(String name) throws HL7Exception;
   
   /**
    * Returns an ordered array of the names of the Structures in this 
@@ -128,14 +128,14 @@ public interface Group extends Structure {
    *
    * @return an ordered array of the names of the Structures in this Group
    */
-  public String[] getNames();
+  String[] getNames();
   
   /**
    * Returns the Class of the Structure at the given name index.  
    * @param name name of the structure nested in this group
    * @return class of the structure or null if the class does not exist
    */
-  public Class<? extends Structure> getClass(String name);
+  Class<? extends Structure> getClass(String name);
   
   /**
    * Expands the group by introducing a new child Structure (i.e. 
@@ -164,7 +164,7 @@ public interface Group extends Structure {
      * name already exists.
      * @throws HL7Exception if the segment could not be added
      */
-    public String addNonstandardSegment(String name) throws HL7Exception;
+    String addNonstandardSegment(String name) throws HL7Exception;
 
     /**
      * Expands the group definition to include a segment that is not 
@@ -176,7 +176,7 @@ public interface Group extends Structure {
      *        name already used)
      * @throws HL7Exception if the segment could not be added
      */
-    public String addNonstandardSegment(String name, int theIndex) throws HL7Exception;
+    String addNonstandardSegment(String name, int theIndex) throws HL7Exception;
 
 }
 

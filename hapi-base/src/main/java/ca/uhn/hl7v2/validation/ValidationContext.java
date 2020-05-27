@@ -43,7 +43,7 @@ public interface ValidationContext {
      * @param theType the Primitive being validated 
      * @return active rules for checking the given type in the given version 
      */
-    public Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType);
+    Collection<PrimitiveTypeRule> getPrimitiveRules(String theVersion, String theTypeName, Primitive theType);
 
     /**
      * @param theVersion an HL7 version (eg "2.1")
@@ -51,14 +51,14 @@ public interface ValidationContext {
      * @param theTriggerEvent a value valid fro MSH-9-2
      * @return the active rules that apply to message of the given version, message type, 
      *      and trigger event 
-     */    
-    public Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent);
+     */
+    Collection<MessageRule> getMessageRules(String theVersion, String theMessageType, String theTriggerEvent);
     
     /**
      * @param theVersion an HL7 version (eg "2.1")
      * @param theEncoding an encoding name (eg "VB", "XML)
      * @return the active encoding rules that apply to the given version and encoding
      */
-    public Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding);
+    Collection<EncodingRule> getEncodingRules(String theVersion, String theEncoding);
     
 }

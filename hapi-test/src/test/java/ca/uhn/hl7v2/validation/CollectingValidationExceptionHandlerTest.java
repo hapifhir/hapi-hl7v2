@@ -27,13 +27,13 @@ public class CollectingValidationExceptionHandlerTest {
 		assertSame(ve3, handler.result().get(2));
 	}
 	
-	private class TestHandler extends CollectingValidationExceptionHandler<List<ValidationException>> {
+	private static class TestHandler extends CollectingValidationExceptionHandler<List<ValidationException>> {
 
 		public TestHandler() {
             super(new DefaultHapiContext());
         }
 
-        public List<ValidationException> result() throws HL7Exception {
+        public List<ValidationException> result() {
 			return getExceptions();
 		}
 		

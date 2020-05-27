@@ -64,7 +64,7 @@ public class ReceiverTest {
     @Test
     public void testCloseConnectionOnClosingClientSocket() throws Exception {
         int port = RandomServerPortProvider.findFreePort();
-        BlockingQueue<AcceptedSocket> queue = new ArrayBlockingQueue<AcceptedSocket>(10);
+        BlockingQueue<AcceptedSocket> queue = new ArrayBlockingQueue<>(10);
         AcceptorThread at = new AcceptorThread(port, false, DefaultExecutorService.getDefaultService(), queue);
         at.start();
         

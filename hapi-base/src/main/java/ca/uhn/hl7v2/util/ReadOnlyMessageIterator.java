@@ -51,13 +51,13 @@ import ca.uhn.hl7v2.model.Structure;
  */
 public class ReadOnlyMessageIterator implements Iterator<Structure> {
 
-    private List<Structure> myRemaining; //remaining nodes in reverse order (i.e. last is next)
+    private final List<Structure> myRemaining; //remaining nodes in reverse order (i.e. last is next)
     
     /**
      * @param theRoot root of depth first iteration, which starts with the first child  
      */
     public ReadOnlyMessageIterator(Group theRoot) {
-        myRemaining = new ArrayList<Structure>(40);
+        myRemaining = new ArrayList<>(40);
         addChildren(theRoot);
     }
     
@@ -95,18 +95,16 @@ public class ReadOnlyMessageIterator implements Iterator<Structure> {
      */
     public static Iterator<Structure> createPopulatedStructureIterator(Group theRoot, FilterIterator.Predicate<Structure> structureFilter) {
         Iterator<Structure> allIterator = new ReadOnlyMessageIterator(theRoot);
-        Iterator<Structure> structureIterator = new FilterIterator<Structure>(allIterator, structureFilter);
+        Iterator<Structure> structureIterator = new FilterIterator<>(allIterator, structureFilter);
         
-        FilterIterator.Predicate<Structure> populatedOnly = new FilterIterator.Predicate<Structure>() {
-            public boolean evaluate(Structure obj) {
-                try {
-                    return !obj.isEmpty();
-                } catch (HL7Exception e) {
-                    return false; // no exception expected
-                }
+        FilterIterator.Predicate<Structure> populatedOnly = obj -> {
+            try {
+                return !obj.isEmpty();
+            } catch (HL7Exception e) {
+                return false; // no exception expected
             }
         };
-        return new FilterIterator<Structure>(structureIterator, populatedOnly);         
+        return new FilterIterator<>(structureIterator, populatedOnly);
     }
     
     private void addChildren(Group theParent) {

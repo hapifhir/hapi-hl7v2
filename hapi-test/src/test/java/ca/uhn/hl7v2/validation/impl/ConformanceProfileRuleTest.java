@@ -30,14 +30,14 @@ import ca.uhn.hl7v2.validation.ValidationException;
  */
 public class ConformanceProfileRuleTest {
 
-	private static String PROFILE_ID = "TestProfile";
+	private static final String PROFILE_ID = "TestProfile";
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ConformanceProfileRuleTest.class);
 
 	private ConformanceProfileRule myRule1;
 	private ConformanceProfileRule myRule2;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		myRule1 = new ConformanceProfileRule(PROFILE_ID);
 		myRule2 = new ConformanceProfileRule();
 	}
@@ -48,7 +48,7 @@ public class ConformanceProfileRuleTest {
 
 		InputStream instream = ProfileParser.class.getClassLoader().getResourceAsStream("ca/uhn/hl7v2/conf/parser/example_ack.xml");
 		BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-		StringBuffer profile = new StringBuffer();
+		StringBuilder profile = new StringBuilder();
 		int i;
 		while ((i = in.read()) != -1) {
 			profile.append((char) i);

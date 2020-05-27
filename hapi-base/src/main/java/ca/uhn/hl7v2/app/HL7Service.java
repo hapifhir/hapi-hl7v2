@@ -99,8 +99,8 @@ public abstract class HL7Service extends Service {
     public HL7Service(Parser parser, LowerLayerProtocol llp,
                       ExecutorService executorService) {
         super("HL7 Server", executorService);
-        this.connections = new ArrayList<Connection>();
-        this.listeners = new ArrayList<ConnectionListener>();
+        this.connections = new ArrayList<>();
+        this.listeners = new ArrayList<>();
         this.parser = parser;
         this.llp = llp;
         this.applicationRouter = new ApplicationRouterImpl(parser);
@@ -361,9 +361,7 @@ public abstract class HL7Service extends Service {
     public void loadApplicationsFromFile(File f) throws IOException,
             HL7Exception, ClassNotFoundException, InstantiationException,
             IllegalAccessException {
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(f));
+        try (BufferedReader in = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = in.readLine()) != null) {
                 // parse application registration information
@@ -398,15 +396,8 @@ public abstract class HL7Service extends Service {
 
                 }
             }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // don't care
-                }
-            }
         }
+        // don't care
     }
 
     /**

@@ -23,7 +23,7 @@ public class RegexPrimitiveRuleTest {
     
    
 	@Before
-    public void setUp() throws Exception {
+    public void setUp() {
         myRule = new RegexPrimitiveRule("\\d{4}", "2");
     }
 

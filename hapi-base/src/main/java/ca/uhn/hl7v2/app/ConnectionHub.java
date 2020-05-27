@@ -72,7 +72,7 @@ public class ConnectionHub extends HapiContextSupport {
 	 * multithreaded environment.
 	 */
 	public static final String MAX_CONCURRENT_TARGETS = ConnectionHub.class.getName() + ".maxSize";
-	private final ConcurrentMap<String, String> connectionMutexes = new ConcurrentHashMap<String, String>();
+	private final ConcurrentMap<String, String> connectionMutexes = new ConcurrentHashMap<>();
 	private final CountingMap<ConnectionData, Connection> connections;
 
 	/** Creates a new instance of ConnectionHub */
@@ -111,7 +111,7 @@ public class ConnectionHub extends HapiContextSupport {
 	 */
 	public Connection attach(ConnectionData data) throws HL7Exception {
 		try {
-			Connection conn = null;
+			Connection conn;
 			// Disallow establishing same connection targets concurrently
 			connectionMutexes.putIfAbsent(data.toString(), data.toString());
 			String mutex = connectionMutexes.get(data.toString());
@@ -370,7 +370,6 @@ public class ConnectionHub extends HapiContextSupport {
 			log.info("Discarding connection which appears to be closed. Remote addr: {}",
 					conn.getRemoteAddress());
 			discard(conn);
-			conn = null;
 		}
 	}
 
@@ -450,12 +449,12 @@ public class ConnectionHub extends HapiContextSupport {
 	 * @param <K> key class
 	 * @param <D> managed value class
 	 */
-	private abstract class CountingMap<K, D> {
-		private Map<K, Count> content;
+	private abstract static class CountingMap<K, D> {
+		private final Map<K, Count> content;
 
 		public CountingMap() {
 			super();
-			content = new ConcurrentHashMap<K, Count>();
+			content = new ConcurrentHashMap<>();
 		}
 
 		protected abstract void dispose(D value);
@@ -517,8 +516,8 @@ public class ConnectionHub extends HapiContextSupport {
 		}
 
 		private class Count {
-			private int count;
-			private D value;
+			private final int count;
+			private final D value;
 
 			public Count(D value) {
 				this(value, 1);

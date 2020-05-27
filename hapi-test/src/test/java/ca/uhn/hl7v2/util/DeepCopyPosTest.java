@@ -13,6 +13,7 @@ import ca.uhn.hl7v2.model.v24.segment.AL1;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * JUnit test harness for DeepCopyTest
@@ -91,7 +92,7 @@ public class DeepCopyPosTest  {
         DeepCopy.copy(cq, ad);
         assertEquals(val2, ad.getStreetAddress().getValue());
         assertEquals(val1, ad.getOtherDesignation().getValue());
-        assertEquals(null, ad.getCity().getValue());
+        assertNull(ad.getCity().getValue());
     }
 
     /**
@@ -108,7 +109,7 @@ public class DeepCopyPosTest  {
         ad.getCity().setValue(val2);
         DeepCopy.copy(ad, cq);
         assertEquals(val1, cq.getQuantity().getValue());
-        assertEquals(null, cq.getUnits().getText().getValue());
+        assertNull(cq.getUnits().getText().getValue());
     }
 
 
@@ -138,8 +139,8 @@ public class DeepCopyPosTest  {
         CQ cq = new CQ(null);
         ad.getCity().setValue("hello");
         DeepCopy.copy(ad, cq);
-        assertEquals(null, cq.getQuantity().getValue());
-        assertEquals(null, cq.getUnits().getText().getValue());
+        assertNull(cq.getQuantity().getValue());
+        assertNull(cq.getUnits().getText().getValue());
     }
 
     @Test

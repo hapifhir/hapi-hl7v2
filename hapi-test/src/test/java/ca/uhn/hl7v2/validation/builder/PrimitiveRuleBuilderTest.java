@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.validation.ValidationException;
 import ca.uhn.hl7v2.validation.impl.RuleBinding;
 
 public class PrimitiveRuleBuilderTest {
@@ -28,7 +27,7 @@ public class PrimitiveRuleBuilderTest {
     private PrimitiveRuleBuilder b;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         b = new ValidationRuleBuilder().forVersion(Version.V25).primitive("ST");
     }
 
@@ -43,7 +42,7 @@ public class PrimitiveRuleBuilderTest {
     }
 
     @Test
-    public void testLeftTrimmed() throws ValidationException {
+    public void testLeftTrimmed() {
         assertTrimmedCorrectly(b.leftTrim(), XX_LEFT, 0, 0);
     }
 

@@ -64,7 +64,7 @@ public class CommonTMTest {
 
 	private static TimeZone tz;
 	
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
 
 	@BeforeClass
@@ -349,7 +349,7 @@ public class CommonTMTest {
 	public void testSetGetOffset() {
     		
 		buildSpecs(SetOffsetSpec.class)
-			.add(-0000, baseTime + "+0000")
+			.add(-0, baseTime + "+0000")
 			.add(-24, baseTime + "-0024")
 			.add(-1160, DataTypeException.class)
 			.add(-1159, baseTime + "-1159")

@@ -28,7 +28,8 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.llp;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * An HL7Reader implements reading from an input stream using a particular lower 
@@ -41,17 +42,17 @@ public interface HL7Reader {
     /** 
      * Reads a complete HL7 message from the underlying input stream 
      */
-    public String getMessage() throws LLPException, IOException;
+    String getMessage() throws LLPException, IOException;
     
     /**
      * Sets the InputStream from which to read messages.  The InputStream must be set 
      * before any calls to <code>getMessage()</code>.
      */
-    public void setInputStream(InputStream in) throws IOException;
+    void setInputStream(InputStream in) throws IOException;
     
     /** 
      * Closes the underlying stream and any other resources that should be closed. 
      */
-    public void close() throws java.io.IOException;
+    void close() throws IOException;
     
 }

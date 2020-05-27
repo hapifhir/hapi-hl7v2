@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import ca.uhn.hl7v2.util.StandardSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,15 +77,15 @@ public class SimpleServer extends HL7Service {
 	/**
 	 * Socket timeout for simple server
 	 */
-	public static final int SO_TIMEOUT = AcceptorThread.TIMEOUT;
+	public static final int SO_TIMEOUT = StandardSocketFactory.DEFAULT_ACCEPTED_SOCKET_TIMEOUT;
 
 	private static final Logger log = LoggerFactory.getLogger(SimpleServer.class);
 	
-	private int port;
-	private boolean tls;
+	private final int port;
+	private final boolean tls;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread acceptor;
-	private HapiContext hapiContext;
+	private final HapiContext hapiContext;
 	private boolean acceptAllMsg = false;
 
 	/**
@@ -128,7 +129,7 @@ public class SimpleServer extends HL7Service {
 		this.port = port;
 		this.tls = tls;
 		this.hapiContext = new DefaultHapiContext();
-		this.queue = new LinkedBlockingQueue<AcceptedSocket>(100);
+		this.queue = new LinkedBlockingQueue<>(100);
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class SimpleServer extends HL7Service {
 		this.hapiContext = hapiContext;
 		this.port = port;
 		this.tls = tls;
-		this.queue = new LinkedBlockingQueue<AcceptedSocket>(100);
+		this.queue = new LinkedBlockingQueue<>(100);
 	}
 
 	/**
@@ -176,7 +177,7 @@ public class SimpleServer extends HL7Service {
 			acceptor = new AcceptorThread(port, tls, getExecutorService(), queue, ss);
 			acceptor.start();
 		} catch (Exception e) {
-			log.error("Failed starting SimpleServer on port", port);
+			log.error("Failed starting SimpleServer on port {}", port);
 			throw new RuntimeException(e);
 		}
 	}
@@ -195,8 +196,8 @@ public class SimpleServer extends HL7Service {
 			// Wait some period of time for connections
 			AcceptedSocket newSocket = queue.poll(500, TimeUnit.MILLISECONDS);
 			if (newSocket != null) {
-				log.info("Accepted connection from {}:{} on local port {}", 
-						new Object[] { newSocket.socket.getInetAddress().getHostAddress(), newSocket.socket.getPort(), port });
+				log.info("Accepted connection from {}:{} on local port {}",
+						newSocket.socket.getInetAddress().getHostAddress(), newSocket.socket.getPort(), port);
 				ActiveConnection c = new ActiveConnection(getParser(), getLlp(), newSocket.socket,
 						getExecutorService(), acceptAllMsg);
 				newConnection(c);
@@ -224,7 +225,7 @@ public class SimpleServer extends HL7Service {
 	 * <code>loadApplicationsFromFile(...)</code>). Uses the default
 	 * LowerLayerProtocol.
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length < 1 || args.length > 2) {
 			System.out
 					.println("Usage: ca.uhn.hl7v2.app.SimpleServer port_num [application_spec_file_name]");

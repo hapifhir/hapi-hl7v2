@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DelegatingMessageVisitor<T extends MessageVisitor> implements MessageVisitor {
 
-    private T delegate;
+    private final T delegate;
     protected static final Logger LOG = LoggerFactory.getLogger(DelegatingMessageVisitor.class);
 
     /**

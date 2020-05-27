@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FileProfileStore implements ProfileStore {
     
-    private File root;
+    private final File root;
     private static final Logger log = LoggerFactory.getLogger(FileProfileStore.class);
     
     /** Creates a new instance of FileProfileStore */

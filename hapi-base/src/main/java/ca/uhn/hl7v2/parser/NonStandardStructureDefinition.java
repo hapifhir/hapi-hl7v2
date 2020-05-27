@@ -39,10 +39,10 @@ import java.util.Set;
  */
 public class NonStandardStructureDefinition implements IStructureDefinition {
 
-	private String myName;
-	private IStructureDefinition myParent;
-	private int myPosition;
-	private IStructureDefinition myPreviousSibling;
+	private final String myName;
+	private final IStructureDefinition myParent;
+	private final int myPosition;
+	private final IStructureDefinition myPreviousSibling;
 
 	/**
 	 * Constructor

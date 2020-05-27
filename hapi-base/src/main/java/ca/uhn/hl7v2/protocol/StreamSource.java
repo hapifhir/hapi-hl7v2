@@ -24,24 +24,24 @@ public interface StreamSource {
      * is dead.  
      * @throws TransportException
      */
-    public void connect() throws TransportException;
+    void connect() throws TransportException;
     
     /**
      * Closes streams and underlying connections.  
      * @throws TransportException
      */
-    public void disconnect() throws TransportException;
+    void disconnect() throws TransportException;
     
     /**
      * @return the stream to which we write outbound messages.   
      * @throws TransportException
      */
-    public OutputStream getOutboundStream() throws TransportException;
+    OutputStream getOutboundStream() throws TransportException;
 
     /**
      * @return the stream to which we expect the remote server to send messages.  
      * @throws TransportException
      */
-    public InputStream getInboundStream() throws TransportException;
+    InputStream getInboundStream() throws TransportException;
     
 }

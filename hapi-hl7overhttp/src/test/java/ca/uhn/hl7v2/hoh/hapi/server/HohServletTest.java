@@ -2,13 +2,14 @@ package ca.uhn.hl7v2.hoh.hapi.server;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,15 +86,11 @@ public class HohServletTest {
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		llp.setPreferredCharset(Charset.forName("UTF-8"));
+		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response;
-		try {
-			conn.getInitiator().setTimeout(20000, TimeUnit.SECONDS);
-			response = conn.getInitiator().sendAndReceive(msg);
-		} catch (Exception e) {
-			throw e;
-		}
+		conn.getInitiator().setTimeout(20000, TimeUnit.SECONDS);
+		response = conn.getInitiator().sendAndReceive(msg);
 		String responseStr = response.encode();
 		ourLog.info("Got response: {}", responseStr);
 
@@ -116,7 +113,7 @@ public class HohServletTest {
 																										// utf-8
 		myResponse = msg.generateACK(AcknowledgmentCode.AE, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		llp.setPreferredCharset(Charset.forName("UTF-8"));
+		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
@@ -141,7 +138,7 @@ public class HohServletTest {
 																										// utf-8
 		myResponse = msg.generateACK(AcknowledgmentCode.AR, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		llp.setPreferredCharset(Charset.forName("UTF-8"));
+		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
@@ -165,7 +162,7 @@ public class HohServletTest {
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
-		llp.setPreferredCharset(Charset.forName("UTF-8"));
+		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, DefaultXMLParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
 
@@ -178,7 +175,7 @@ public class HohServletTest {
 	}
 
 	@AfterClass
-	public static void afterClass() throws InterruptedException {
+	public static void afterClass() {
 		// Thread.sleep(1000000);
 		ourHapiContext.getExecutorService().shutdown();
 	}

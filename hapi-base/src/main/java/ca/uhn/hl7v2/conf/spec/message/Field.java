@@ -12,16 +12,16 @@ import ca.uhn.hl7v2.conf.ProfileException;
 public class Field extends AbstractComponent<Field> {
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     private short min;
     private short max;
     private short itemNo;
 
-    private final List<Component> components = new ArrayList<Component>();
+    private final List<Component> components = new ArrayList<>();
     
     /** Creates a new instance of Field */
     public Field() {
@@ -116,12 +116,12 @@ public class Field extends AbstractComponent<Field> {
     public void setItemNo(short itemNo) throws ProfileException {
         short oldItemNo = this.itemNo;
         try {
-            vetoableChangeSupport.fireVetoableChange("itemNo", new Short(oldItemNo), new Short(itemNo));
+            vetoableChangeSupport.fireVetoableChange("itemNo", Short.valueOf(oldItemNo), Short.valueOf(itemNo));
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }            
         this.itemNo = itemNo;
-        propertyChangeSupport.firePropertyChange("itemNo", new Short(oldItemNo), new Short(itemNo));
+        propertyChangeSupport.firePropertyChange("itemNo", Short.valueOf(oldItemNo), Short.valueOf(itemNo));
     }    
     
     /** Indexed getter for property components (index starts at 1 following HL7 convention).

@@ -48,7 +48,7 @@ import ca.uhn.hl7v2.HL7Exception;
  */
 public class MessageNavigator {
     
-    private Group root;
+    private final Group root;
     private Stack<GroupContext> ancestors;
     private int currentChild; // -1 means current structure is current group (special case used for root)
     private Group currentGroup;
@@ -109,7 +109,7 @@ public class MessageNavigator {
     public boolean drillUp() {
         //pop the top group and resume search there
         if (!this.ancestors.empty()) {
-            GroupContext gc = (GroupContext) this.ancestors.pop();
+            GroupContext gc = this.ancestors.pop();
             this.currentGroup = gc.group;
             this.currentChild = gc.child;
             this.childNames = this.currentGroup.getNames();
@@ -153,7 +153,7 @@ public class MessageNavigator {
     
     /** Resets the location to the beginning of the tree (the root) */
     public void reset() {
-        this.ancestors = new Stack<GroupContext>();
+        this.ancestors = new Stack<>();
         this.currentGroup = root;
         this.currentChild = -1;
         this.childNames = currentGroup.getNames();
@@ -203,7 +203,7 @@ public class MessageNavigator {
      * @return Returns the name of the next item within its parent, or "" for the root (message)
      */
     public String iterate(boolean segmentsOnly, boolean loop) throws HL7Exception { 
-        Structure start = null;
+        Structure start;
         
         if (this.currentChild == -1) {
             start = this.currentGroup; 
@@ -215,7 +215,7 @@ public class MessageNavigator {
         //the first rep of anything is traversed.
         Iterator<Structure> it = new MessageIterator(start, "doesn't exist", false);
         if (segmentsOnly) {
-            it = new FilterIterator<Structure>(it, new StructurePredicate(Segment.class));
+            it = new FilterIterator<>(it, new StructurePredicate(Segment.class));
         }
         
         if (it.hasNext()) {
@@ -236,8 +236,8 @@ public class MessageNavigator {
      */
     private String drillHere(Structure destination) throws HL7Exception {
         Structure pathElem = destination;
-        Stack<Structure> pathStack = new Stack<Structure>();
-        Stack<MessageIterator.Index> indexStack = new Stack<MessageIterator.Index>();
+        Stack<Structure> pathStack = new Stack<>();
+        Stack<MessageIterator.Index> indexStack = new Stack<>();
         do {
             MessageIterator.Index index = MessageIterator.getIndex(pathElem.getParent(), pathElem);
             indexStack.push(index);
@@ -281,8 +281,8 @@ public class MessageNavigator {
      * identifies the current location completely.
      */
     private static class GroupContext {
-        public Group group;
-        public int child;
+        public final Group group;
+        public final int child;
         
         public GroupContext(Group g, int c) {
             group = g;

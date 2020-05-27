@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.spec;
 
+import java.beans.PropertyVetoException;
+
 /**
  * An implementation note.  
  * @author Bryan Tripp
@@ -10,10 +12,10 @@ public class ImpNote {
     private String text;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Creates a new instance of ImpNote */
     public ImpNote() {
@@ -59,7 +61,7 @@ public class ImpNote {
      *
      * @throws PropertyVetoException
      */
-    public void setText(String text) throws java.beans.PropertyVetoException {
+    public void setText(String text) throws PropertyVetoException {
         String oldText = this.text;
         vetoableChangeSupport.fireVetoableChange("text", oldText, text);
         this.text = text;

@@ -15,7 +15,7 @@ public class ByteUtils {
 			byte nextByte = theBytes[i];
 			if (nextByte < ' ' || nextByte > 126) {
 				b.append('[');
-				b.append((int) nextByte);
+				b.append(nextByte);
 				b.append(']');
 			} else {
 				b.append((char) nextByte);

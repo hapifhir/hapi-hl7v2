@@ -167,7 +167,7 @@ public class DefaultHapiContextTest {
 		try {
 			context1.newClient("localhost", port2, false);
 			fail("This should throw an exception, nothing listening on port " + port2);
-		} catch (HL7Exception e) {
+		} catch (HL7Exception ignored) {
 			
 		}
 		
@@ -281,16 +281,14 @@ public class DefaultHapiContextTest {
 
     @Test
     public void testNewMessageByClass() throws Exception {
-        Message msg = context1.newMessage(ADT_A01.class);
-        ADT_A01 a01 = (ADT_A01)msg;
-        assertSame(context1.getGenericParser(), a01.getParser());
+        assertSame(context1.getGenericParser(), context1.newMessage(ADT_A01.class).getParser());
     }
 
 	private static class ReceiveAndCloseImmediatelyThread extends Thread {
 
-		private int myPort;
+		private final int myPort;
 		private boolean myDone;
-		private CountDownLatch myLatch = new CountDownLatch(1);
+		private final CountDownLatch myLatch = new CountDownLatch(1);
 
 		public ReceiveAndCloseImmediatelyThread(int thePort) {
 			myPort = thePort;

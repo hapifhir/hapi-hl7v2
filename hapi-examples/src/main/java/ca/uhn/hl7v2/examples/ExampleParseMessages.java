@@ -75,9 +75,6 @@ public class ExampleParseMessages
         try {
             // The parse method performs the actual parsing
             hapiMsg = p.parse(msg);
-        } catch (EncodingNotSupportedException e) {
-            e.printStackTrace();
-            return;
         } catch (HL7Exception e) {
             e.printStackTrace();
             return;

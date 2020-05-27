@@ -33,9 +33,9 @@ package ca.uhn.hl7v2.llp;
  */
 public interface MllpConstants {
 
-    public static final char START_BYTE = 0x0b;
-    public static final char END_BYTE1 = 0x1c;
-    public static final char END_BYTE2 = 0x0d;
+    char START_BYTE = 0x0b;
+    char END_BYTE1 = 0x1c;
+    char END_BYTE2 = 0x0d;
 
     /**
      *<p>
@@ -53,5 +53,5 @@ public interface MllpConstants {
      * If the system property is not set, US-ASCII encoding is used.
      * </p>
      */
-    public static final String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
+    String CHARSET_KEY = "ca.uhn.hl7v2.llp.charset";
 }

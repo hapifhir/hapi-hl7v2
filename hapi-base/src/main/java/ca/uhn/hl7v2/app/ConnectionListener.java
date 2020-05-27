@@ -36,8 +36,8 @@ package ca.uhn.hl7v2.app;
 public interface ConnectionListener {
 
     /** Notifies the listener that a new connection has been opened. */
-    public void connectionReceived(Connection c);
+    void connectionReceived(Connection c);
     
     /** Notifies the listener that a new connection is closed and is being discarded. */
-    public void connectionDiscarded(Connection c);
+    void connectionDiscarded(Connection c);
 }

@@ -51,8 +51,8 @@ public class MLLPTransport extends AbstractTransport implements TransportLayer {
     private MinLLPReader myReader;
     private MinLLPWriter myWriter;
     
-    private StreamSource myStreamSource;
-    private Properties myCharsetMappings;
+    private final StreamSource myStreamSource;
+    private final Properties myCharsetMappings;
     
     /**
      * @param theStreamSource the provider of input and output streams connected
@@ -75,9 +75,6 @@ public class MLLPTransport extends AbstractTransport implements TransportLayer {
         return mappings;        
     }
 
-    /** 
-     * @see ca.uhn.hl7v2.protocol.AstractTransport#doSend(ca.uhn.hl7v2.protocol.Transportable)
-     */
     public void doSend(Transportable theMessage) throws TransportException {
         try {
             String charset = (String) theMessage.getMetadata().get("MSH-18");
@@ -87,9 +84,7 @@ public class MLLPTransport extends AbstractTransport implements TransportLayer {
             } else {
                 myWriter.writeMessage(theMessage.getMessage());
             }
-        } catch (LLPException e) {
-            throw new TransportException(e);
-        } catch (IOException e) {
+        } catch (LLPException | IOException e) {
             throw new TransportException(e);
         }
     }
@@ -104,17 +99,12 @@ public class MLLPTransport extends AbstractTransport implements TransportLayer {
             if (message != null) {
                 result = new TransportableImpl(message);                
             }
-        } catch (LLPException e) {
-            throw new TransportException(e);
-        } catch (IOException e) {
+        } catch (LLPException | IOException e) {
             throw new TransportException(e);
         }
         return result;
     }
-    
-    /**
-     * @see ca.uhn.hl7v2.protocol.AbstractTransport#doConnect()
-     */
+
     public void doConnect() throws TransportException {
         myStreamSource.connect();
         try {

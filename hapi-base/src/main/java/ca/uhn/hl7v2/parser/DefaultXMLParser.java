@@ -74,7 +74,7 @@ public class DefaultXMLParser extends XMLParser {
     private static final Set<String> ourForceGroupNames;
     
     static {
-    	ourForceGroupNames = new HashSet<String>();
+    	ourForceGroupNames = new HashSet<>();
     	ourForceGroupNames.add("DIET");
     }
     
@@ -188,7 +188,7 @@ public class DefaultXMLParser extends XMLParser {
         String messageName = groupObject.getMessage().getName();
         
         NodeList allChildNodes = groupElement.getChildNodes();
-        List<String> unparsedElementList = new ArrayList<String>();
+        List<String> unparsedElementList = new ArrayList<>();
         for (int i = 0; i < allChildNodes.getLength(); i++) {
             Node node = allChildNodes.item(i);
             String name = node.getLocalName();
@@ -278,7 +278,7 @@ public class DefaultXMLParser extends XMLParser {
     
     //includes direct children only
     private List<Element> getChildElementsByTagName(Element theElement, String theName) throws HL7Exception {
-    	List<Element> result = new ArrayList<Element>(10);
+    	List<Element> result = new ArrayList<>(10);
     	NodeList children = theElement.getChildNodes();
     	
     	for (int i = 0; i < children.getLength(); i++) {
@@ -314,11 +314,9 @@ public class DefaultXMLParser extends XMLParser {
         String ret;
         
         if (className.length() > 4 || ourForceGroupNames.contains(className)) {
-            StringBuilder elementName = new StringBuilder();
-            elementName.append(messageName);
-            elementName.append('.');
-            elementName.append(className);
-            ret = elementName.toString();
+            ret = messageName +
+                    '.' +
+                    className;
         } else if (className.length() == 4) {
             // It is not clear why this case is needed.. We should figure out
         	// why it was added, since removing it or optimizing its use would
@@ -332,7 +330,7 @@ public class DefaultXMLParser extends XMLParser {
     }
 
     /** Test harness */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: DefaultXMLParser pipe_encoded_file");
             System.exit(1);
@@ -391,8 +389,7 @@ public class DefaultXMLParser extends XMLParser {
      */
     public static XMLParser getInstanceWithNoValidation() {
         HapiContext context = new DefaultHapiContext(ValidationContextFactory.noValidation());
-        XMLParser retVal = context.getXMLParser();
-        return retVal;
+        return context.getXMLParser();
     }
 
 

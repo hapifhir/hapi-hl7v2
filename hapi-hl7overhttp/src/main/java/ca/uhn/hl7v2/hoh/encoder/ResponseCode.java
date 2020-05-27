@@ -20,7 +20,7 @@ public enum ResponseCode {
 
 	private int myCode;
 	private String myMessage;
-	private static final Map<AcknowledgmentCode, ResponseCode> ourAckCodesToResponseCodes = new HashMap<AcknowledgmentCode, ResponseCode>();
+	private static final Map<AcknowledgmentCode, ResponseCode> ourAckCodesToResponseCodes = new HashMap<>();
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ResponseCode.class);
 
 	static {
@@ -50,7 +50,7 @@ public enum ResponseCode {
 	 * @return The appropriate code
 	 */
 	public static ResponseCode forAcknowledgementCode(String theAcknowledgementCode) {
-		ResponseCode retVal = null;
+		ResponseCode retVal;
 		if (theAcknowledgementCode != null) {
 			retVal = ourAckCodesToResponseCodes.get(AcknowledgmentCode.valueOf(theAcknowledgementCode));
 		} else {

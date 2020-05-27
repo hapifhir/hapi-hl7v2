@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
  */
 class CodeStoreRegistration  {
 
-    private CodeStore codeStore;
-    private Pattern pattern;
+    private final CodeStore codeStore;
+    private final Pattern pattern;
     
     public CodeStoreRegistration(CodeStore codeStore, String regex) {
         this.codeStore = codeStore;

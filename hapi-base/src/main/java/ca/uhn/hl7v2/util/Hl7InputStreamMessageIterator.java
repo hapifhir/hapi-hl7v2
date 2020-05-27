@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 public class Hl7InputStreamMessageIterator extends HapiContextSupport implements Iterator<Message> {
 
 	private Class<? extends Message> myMessageType;
-	private Hl7InputStreamMessageStringIterator myWrapped;
+	private final Hl7InputStreamMessageStringIterator myWrapped;
 
 	/**
 	 * Constructor
@@ -117,12 +117,10 @@ public class Hl7InputStreamMessageIterator extends HapiContextSupport implements
 			} else {
 				retVal = getHapiContext().getPipeParser().parse(nextString);
 			}
-		} catch (EncodingNotSupportedException e) {
-			throw new Hl7InputStreamMessageStringIterator.ParseFailureError("Failed to parse message", e);
 		} catch (HL7Exception e) {
-			throw new Hl7InputStreamMessageStringIterator.ParseFailureError("Failed to parse message", e);
+			throw new ParseFailureError("Failed to parse message", e);
 		}
-		return retVal;
+        return retVal;
 	}
 
 	/**

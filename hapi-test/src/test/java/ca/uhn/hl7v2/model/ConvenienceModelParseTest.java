@@ -11,7 +11,7 @@ public class ConvenienceModelParseTest {
     private PipeParser parser;
 
     @Before
-  	public void setUp() throws Exception {
+  	public void setUp() {
 		parser = new PipeParser();
 	}
 

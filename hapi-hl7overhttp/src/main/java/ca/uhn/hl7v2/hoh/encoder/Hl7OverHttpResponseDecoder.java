@@ -51,7 +51,7 @@ public class Hl7OverHttpResponseDecoder extends AbstractHl7OverHttpDecoder {
 	}
 
 	@Override
-	protected void authorize() throws AuthorizationFailureException {
+	protected void authorize() {
 		// responses do not need authorization
 	}
 

@@ -58,7 +58,7 @@ import ca.uhn.hl7v2.validation.impl.RuleSupport;
 public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>> extends
         BuilderSupport {
 
-    private List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<RuleBinding<? extends Rule<?>>>();
+    private List<RuleBinding<? extends Rule<?>>> rules = new ArrayList<>();
     private Set<Version> versions;
     private String description;
     private String sectionReference;
@@ -82,7 +82,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
         if (versions.length == 0)
             throw new IllegalArgumentException("Must specify a version");
         this.rules = rules;
-        this.versions = new HashSet<Version>(Arrays.asList(versions));
+        this.versions = new HashSet<>(Arrays.asList(versions));
     }
 
     @SuppressWarnings("unchecked")
@@ -169,7 +169,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
         if (type.length == 0) {
             throw new IllegalArgumentException("Must specify a type");
         }
-        return new PrimitiveRuleBuilder(rules, versions, new HashSet<String>(Arrays.asList(type)));
+        return new PrimitiveRuleBuilder(rules, versions, new HashSet<>(Arrays.asList(type)));
     }
 
     /**
@@ -276,7 +276,7 @@ public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>>
          * @return rule builder
          */
         public MessageRuleBuilder rejectOtherThan(final String... triggerEvents) {
-            final Set<String> triggers = new HashSet<String>(Arrays.asList(triggerEvents));
+            final Set<String> triggers = new HashSet<>(Arrays.asList(triggerEvents));
             return all().test(new AbstractMessageRule() {
                 public ValidationException[] apply(Message message) {
                     try {

@@ -45,7 +45,7 @@ public class GeneratedConformanceMessage extends GeneratedConformanceContainer {
 
    /** Adds the member variable to the ConformanceMessage class and
     * adds a line to the constructor to instantiate that member variable
-    * @param a String representing the hl7 message type 
+    * @param msgType String representing the hl7 message type
     *        example "ca.uhn.hl7v2.model.ADT_A01"
     */
    public void addHAPIMessage(String msgType) {

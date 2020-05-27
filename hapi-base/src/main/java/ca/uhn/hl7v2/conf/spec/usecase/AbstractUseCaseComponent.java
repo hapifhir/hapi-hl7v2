@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.spec.usecase;
 
+import java.beans.PropertyVetoException;
+
 /**
  * An abstraction of the parts of a use case (eg EventFlow), all of which have a name and a body.  
  * @author Bryan Tripp 
@@ -10,10 +12,10 @@ public class AbstractUseCaseComponent {
     private String name;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Holds value of property body. */
     private String body;
@@ -62,7 +64,7 @@ public class AbstractUseCaseComponent {
      *
      * @throws PropertyVetoException
      */
-    public void setName(String name) throws java.beans.PropertyVetoException {
+    public void setName(String name) throws PropertyVetoException {
         String oldName = this.name;
         vetoableChangeSupport.fireVetoableChange("name", oldName, name);
         this.name = name;
@@ -81,7 +83,7 @@ public class AbstractUseCaseComponent {
      *
      * @throws PropertyVetoException
      */
-    public void setBody(String body) throws java.beans.PropertyVetoException {
+    public void setBody(String body) throws PropertyVetoException {
         String oldBody = this.body;
         vetoableChangeSupport.fireVetoableChange("body", oldBody, body);
         this.body = body;

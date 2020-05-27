@@ -1,25 +1,5 @@
 package ca.uhn.hl7v2.app;
 
-import static ca.uhn.hl7v2.app.TestUtils.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-
-import ca.uhn.hl7v2.model.v25.message.ACK;
-import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
-import org.hamcrest.number.OrderingComparison;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -27,11 +7,40 @@ import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.SocketFactory;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+import static ca.uhn.hl7v2.app.TestUtils.fill;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * JUnit test harmess for ConnectionHub connecting to a SimpleServer
@@ -76,7 +85,7 @@ public class ConnectionHubTest extends MockitoTest {
 	}
 
 	@AfterClass
-	public static void afterClass() throws Exception {
+	public static void afterClass() {
 		ss1.stopAndWait();
 		ss2.stopAndWait();
 		// ConnectionHub.shutdown();
@@ -128,9 +137,9 @@ public class ConnectionHubTest extends MockitoTest {
 	public void testAttach() throws Exception {
 		Connection i1 = hub.attach("localhost", port1, false);
 		Connection i1again = hub.attach("localhost", port1, false);
-		assertTrue(i1 == i1again);
+		assertSame(i1, i1again);
 		Connection i2 = hub.attach("localhost", port2, false);
-		assertTrue(i2 != i1again);
+		assertNotSame(i2, i1again);
 		assertEquals(2, hub.allConnections().size());
 		hub.allConnections().contains(i1);
 		hub.allConnections().contains(i2);
@@ -142,7 +151,7 @@ public class ConnectionHubTest extends MockitoTest {
 		hub.detach(i2);
 		assertEquals(0, hub.allConnections().size());
 		Connection i1OnceMore = hub.attach("localhost", port1, false);
-		assertTrue(i1 != i1OnceMore);
+		assertNotSame(i1, i1OnceMore);
 		hub.detach(i1OnceMore);
 		assertEquals(0, hub.allConnections().size());
 	}
@@ -154,22 +163,20 @@ public class ConnectionHubTest extends MockitoTest {
 		long now = System.currentTimeMillis();
 		final int myfreePort = RandomServerPortProvider.findFreePort();
 
-		Callable<Long> t = new Callable<Long>() {
-			public Long call() {
-				long time = 0;
-				try {
-					time = System.currentTimeMillis();
-					hub.attach("localhost", myfreePort, false);
-				} catch (HL7Exception e) {
-					time = System.currentTimeMillis() - time;
-				}
-				return time;
+		Callable<Long> t = () -> {
+			long time = 0;
+			try {
+				time = System.currentTimeMillis();
+				hub.attach("localhost", myfreePort, false);
+			} catch (HL7Exception e) {
+				time = System.currentTimeMillis() - time;
 			}
+			return time;
 		};
 				
 		List<Future<Long>> results = DefaultExecutorService.getDefaultService().invokeAll(fill(t, n));
 		long total = 0;
-		List<Long> resultsLongs = new ArrayList<Long>();
+		List<Long> resultsLongs = new ArrayList<>();
 		for (Future<Long> future : results) {
 			total += future.get();
 			resultsLongs.add(future.get());
@@ -179,9 +186,9 @@ public class ConnectionHubTest extends MockitoTest {
 		// Due to synchronization, the threads are executed almost sequentially
 
 		Collections.sort(resultsLongs);
-		ourLog.info("Elapsed: {}, Total: {}. Values: {}", new Object[] {elapsed, total, resultsLongs});
+		ourLog.info("Elapsed: {}, Total: {}. Values: {}", elapsed, total, resultsLongs);
 		
-		assertThat(elapsed, OrderingComparison.lessThan(total));
+		assertTrue(elapsed < total);
 		assertEquals(0, hub.allConnections().size());
 	}
 
@@ -191,30 +198,25 @@ public class ConnectionHubTest extends MockitoTest {
 		int n = 5;
 		long now = System.currentTimeMillis();
 
-		Callable<Long> t = new Callable<Long>() {
-			public Long call() {
-				long time = 0;
-				try {
-					time = System.currentTimeMillis();
-					int port = RandomServerPortProvider.findFreePort();
-					ourLog.info("Attaching to non-existent port {}.", port);
-					hub.attach("localhost", port, false);
-				} catch (HL7Exception e) {
-					time = System.currentTimeMillis() - time;
-				}
-				return time;
+		Callable<Long> t = () -> {
+			long time = 0;
+			try {
+				time = System.currentTimeMillis();
+				int port = RandomServerPortProvider.findFreePort();
+				ourLog.info("Attaching to non-existent port {}.", port);
+				hub.attach("localhost", port, false);
+			} catch (HL7Exception e) {
+				time = System.currentTimeMillis() - time;
 			}
+			return time;
 		};
 		List<Future<Long>> results = DefaultExecutorService.getDefaultService().invokeAll(
 				fill(t, n));
-		Future<Long> fastestResult = Collections.min(results, new Comparator<Future<Long>>() {
-
-			public int compare(Future<Long> o1, Future<Long> o2) {
-				try {
-					return o1.get().compareTo(o2.get());
-				} catch (Exception e) {
-					return 0; // should never happen
-				}
+		Future<Long> fastestResult = Collections.min(results, (o1, o2) -> {
+			try {
+				return o1.get().compareTo(o2.get());
+			} catch (Exception e) {
+				return 0; // should never happen
 			}
 		});
 		long elapsed = System.currentTimeMillis() - now;
@@ -234,13 +236,11 @@ public class ConnectionHubTest extends MockitoTest {
 
 		int n = 100;
 
-		Callable<Connection> t = new Callable<Connection>() {
-			public Connection call() {
-				try {
-					return hub.attach("localhost", port1, false);
-				} catch (HL7Exception e) {
-					return null;
-				}
+		Callable<Connection> t = () -> {
+			try {
+				return hub.attach("localhost", port1, false);
+			} catch (HL7Exception e) {
+				return null;
 			}
 		};
 		List<Future<Connection>> results = DefaultExecutorService.getDefaultService().invokeAll(
@@ -249,7 +249,7 @@ public class ConnectionHubTest extends MockitoTest {
 		Connection unique = results.iterator().next().get();
 		assertNotNull(unique);
 		for (Future<Connection> future : results) {
-			assertTrue(unique == future.get());
+			assertSame(unique, future.get());
 		}
 		assertEquals(1, hub.allConnections().size());
 	}
@@ -327,7 +327,7 @@ public class ConnectionHubTest extends MockitoTest {
 		System.out.println("Connection closed 1");
 
 		Connection i1again = hub.attach("localhost", port1, false);
-		assertTrue(i1 != i1again);
+		assertNotSame(i1, i1again);
 		i1again.getInitiator().sendAndReceive(msg);
 		i1again.close();
 		System.out.println("Connection closed 2");
@@ -339,7 +339,7 @@ public class ConnectionHubTest extends MockitoTest {
 		hub.attach("localhost", port1, false);
 		hub.discard(i1);
 		Connection i1thrice = hub.attach("localhost", port1, false);
-		assertTrue(i1thrice != i1);
+		assertNotSame(i1thrice, i1);
 		hub.discard(i1thrice);
 	}
 
@@ -357,7 +357,7 @@ public class ConnectionHubTest extends MockitoTest {
 			return true;
 		}
 
-		public Message processMessage(Message theIn, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theIn, Map<String, Object> theMetadata) throws HL7Exception {
 			ourLog.info("Received: " + theIn.encode());
 			try {
 				return theIn.generateACK();

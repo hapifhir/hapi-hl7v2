@@ -73,7 +73,7 @@ public interface IDGenerator {
 	 */
 	abstract class OrderedSupport implements Ordered {
 
-		private long increment = 1L;
+		private final long increment;
 
 		OrderedSupport(long increment) {
 			super();

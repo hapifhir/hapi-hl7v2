@@ -15,13 +15,12 @@ import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for responder
@@ -57,7 +56,7 @@ public class ResponderTest {
 	}
 
 	@Test
-	public void testResponseEncoding() throws HL7Exception, LLPException,
+	public void testResponseEncoding() throws LLPException,
 			IOException {
 
 		String outMsg = "MSH|^~\\&|||||20061212094425.814-0500||ACK|2059434|P|2.2\r\n"
@@ -66,7 +65,7 @@ public class ResponderTest {
 		writer.writeMessage(outMsg);
 		String inMsg = reader.getMessage();
 
-		assertTrue(inMsg.indexOf("MSH|") == 0);
+		assertEquals(0, inMsg.indexOf("MSH|"));
 
 	}
 
@@ -92,7 +91,7 @@ public class ResponderTest {
 		writer.writeMessage(outMsg);
 		String inMsg = reader.getMessage();
 
-		assertTrue(inMsg.indexOf("<?xml") == 0);
+		assertEquals(0, inMsg.indexOf("<?xml"));
 
 	}
 
@@ -116,7 +115,7 @@ public class ResponderTest {
 		 * {@inheritDoc}
 		 */
 		public Message processMessage(Message theIn, Map<String, Object> metadata)
-				throws ReceivingApplicationException, HL7Exception {
+				throws HL7Exception {
 			throw new HL7Exception("Test error");
 		}
 

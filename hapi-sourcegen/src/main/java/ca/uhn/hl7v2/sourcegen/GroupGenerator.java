@@ -55,7 +55,7 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  * @author Eric Poiseau
  */
-public class GroupGenerator extends java.lang.Object {
+public class GroupGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(GroupGenerator.class);
 
@@ -161,7 +161,7 @@ public class GroupGenerator extends java.lang.Object {
      * </p>
      */
     public static GroupDef getGroupDef(StructureDef[] structures, String groupName, String baseDirectory, String version, String message, String theTemplatePackage, String theFileExt) throws Exception {
-        GroupDef ret = null;
+        GroupDef ret;
         boolean required = true;
         boolean repeating = false;
         boolean rep_opt = false;
@@ -172,10 +172,10 @@ public class GroupGenerator extends java.lang.Object {
         // See bug 3373654 
         // !"RESPONSE".equals(((SegmentDef)structures[5]).getGroupName())
         if (null == (groupName) && "2.5".equals(version) && "ORL_O34".equals(message) && !structuresContainsSegmentWithGroupName(structures, "RESPONSE")) {
-        	List<StructureDef> tmpStructures = new java.util.ArrayList<StructureDef>(java.util.Arrays.asList(structures));
+        	List<StructureDef> tmpStructures = new java.util.ArrayList<>(java.util.Arrays.asList(structures));
         	tmpStructures.add(new SegmentDef("]", "RESPONSE", false, false, false, ""));
         	tmpStructures.add(5, new SegmentDef("[", "RESPONSE", false, false, false, ""));
-        	structures = (StructureDef[]) tmpStructures.toArray(new StructureDef[structures.length]);
+        	structures = tmpStructures.toArray(new StructureDef[structures.length]);
         }
         
         int len = structures.length;
@@ -184,7 +184,7 @@ public class GroupGenerator extends java.lang.Object {
                                                           // groups/seg's w/o
                                                           // opt & rep markers
         int currShortListPos = 0;
-        int currLongListPos = 0;
+        int currLongListPos;
 
         try {
             // check for rep and opt (see if start & end elements are [] or {}
@@ -273,50 +273,48 @@ public class GroupGenerator extends java.lang.Object {
                                                                        // last
                                                                        // assignment
         System.arraycopy(shortList, 0, finalList, 0, currShortListPos);
-        for (int i = 0; i < finalList.length; i++) {
-        	StructureDef nextStruct = finalList[i];
-        	
-        	// Fix mistakes in the DB
-			if (nextStruct.getUnqualifiedName().equals("ED")) {
-        		continue;
-        	}
-        	if (nextStruct instanceof GroupDef && ((GroupDef)nextStruct).getRawGroupName() != null && ((GroupDef)nextStruct).getRawGroupName().contains("TIIMING")) {
-        		((GroupDef)nextStruct).setRawGroupName(((GroupDef)nextStruct).getRawGroupName().replace("TIIMING", "TIMING"));
-        	}
-        	
-        	/*
-        	 * Versions 2.5 through 2.6 have two definitions of RSP_K21 (the second is under
-        	 * trigger K22 - see chapter 3) and the second definition shows this group as
-        	 * repeatable. See bug 3520523.
-        	 * 
-        	 * This issue has been corrected in 2.7
-        	 */
-        	String nextName = nextStruct.getUnqualifiedName();
-            if ("QUERY_RESPONSE".equals(nextName)) {
-            	if ("RSP_K21".equals(message)) {
-            		if (Version.versionOf(version) == Version.V25 || Version.versionOf(version) == Version.V251
-            				|| Version.versionOf(version) == Version.V26) {
-                        log.info("Forcing repeatable group");
-            			((GroupDef)nextStruct).setRepeating(true);
-            		}
-            	}
+        for (StructureDef nextStruct : finalList) {
+            // Fix mistakes in the DB
+            if (nextStruct.getUnqualifiedName().equals("ED")) {
+                continue;
             }
-        	
-        	/*
-        	 * See 3538074
-        	 * 
-        	 * Current simplified definition (only relevant branch of message strucutre) is:
-		 	 * ORL_O34 -> ORL_O34_RESPONSE -> ORL_O34_PATIENT->ORL_O34_SPECIMEN->ORL_O34_ORDER->ORL_O34_OBSERVATION_REQUEST->ORL_O34_SPECIMEN (!cycle reference).
-			 * Instead of last ORL_O34_SPECIMEN there should be ORL_O34_OBSERVATION_REQUEST_SPECIMEN.
-        	 */
+            if (nextStruct instanceof GroupDef && ((GroupDef) nextStruct).getRawGroupName() != null && ((GroupDef) nextStruct).getRawGroupName().contains("TIIMING")) {
+                ((GroupDef) nextStruct).setRawGroupName(((GroupDef) nextStruct).getRawGroupName().replace("TIIMING", "TIMING"));
+            }
+
+            /*
+             * Versions 2.5 through 2.6 have two definitions of RSP_K21 (the second is under
+             * trigger K22 - see chapter 3) and the second definition shows this group as
+             * repeatable. See bug 3520523.
+             *
+             * This issue has been corrected in 2.7
+             */
+            String nextName = nextStruct.getUnqualifiedName();
+            if ("QUERY_RESPONSE".equals(nextName)) {
+                if ("RSP_K21".equals(message)) {
+                    if (Version.versionOf(version) == Version.V25 || Version.versionOf(version) == Version.V251
+                            || Version.versionOf(version) == Version.V26) {
+                        log.info("Forcing repeatable group");
+                        ((GroupDef) nextStruct).setRepeating(true);
+                    }
+                }
+            }
+
+            /*
+             * See 3538074
+             *
+             * Current simplified definition (only relevant branch of message strucutre) is:
+             * ORL_O34 -> ORL_O34_RESPONSE -> ORL_O34_PATIENT->ORL_O34_SPECIMEN->ORL_O34_ORDER->ORL_O34_OBSERVATION_REQUEST->ORL_O34_SPECIMEN (!cycle reference).
+             * Instead of last ORL_O34_SPECIMEN there should be ORL_O34_OBSERVATION_REQUEST_SPECIMEN.
+             */
             if ("OBSERVATION_REQUEST".equals(ret.getUnqualifiedName())) {
-            	if ("ORL_O34".equals(message)) {
-            		if ("SPECIMEN".equals(nextName))
-            		if (Version.versionOf(version) == Version.V251) {
-            			((GroupDef)nextStruct).setRawGroupName("OBSERVATION_REQUEST_SPECIMEN");
-            			log.info("Forcing name to " + ((GroupDef)nextStruct).getRawGroupName());
-            		}
-            	}
+                if ("ORL_O34".equals(message)) {
+                    if ("SPECIMEN".equals(nextName))
+                        if (Version.versionOf(version) == Version.V251) {
+                            ((GroupDef) nextStruct).setRawGroupName("OBSERVATION_REQUEST_SPECIMEN");
+                            log.info("Forcing name to " + ((GroupDef) nextStruct).getRawGroupName());
+                        }
+                }
             }
 
             ret.addStructure(nextStruct);
@@ -389,22 +387,26 @@ public class GroupGenerator extends java.lang.Object {
     public static int findGroupEnd(String message, StructureDef[] structures, int groupStart) throws IllegalArgumentException, HL7Exception {
 
         // {} is rep; [] is optionality
-        String endMarker = null;
+        String endMarker;
         String startMarker;
         try {
             startMarker = structures[groupStart].getName();
-            if (startMarker.equals("[")) {
-                endMarker = "]";
-            } else if (startMarker.equals("{")) {
-                endMarker = "}";
-            } else if (startMarker.equals("[{")) {
-                endMarker = "}]";
-            } else {
-                log.error("Problem starting at {}", groupStart);
-                for (int i = 0; i < structures.length; i++) {
-                    log.error("Structure {}: ", i, structures[i].getName());
-                }
-                throw new IllegalArgumentException("The segment " + startMarker + " does not begin a group - must be [ or {");
+            switch (startMarker) {
+                case "[":
+                    endMarker = "]";
+                    break;
+                case "{":
+                    endMarker = "}";
+                    break;
+                case "[{":
+                    endMarker = "}]";
+                    break;
+                default:
+                    log.error("Problem starting at {}", groupStart);
+                    for (int i = 0; i < structures.length; i++) {
+                        log.error("Structure at index {}: {}", i, structures[i].getName());
+                    }
+                    throw new IllegalArgumentException("The segment " + startMarker + " does not begin a group - must be [ or {");
             }
         } catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("The given start location is out of bounds");
@@ -429,7 +431,7 @@ public class GroupGenerator extends java.lang.Object {
             throw new HL7Exception("Couldn't find end of group index " + groupStart + " for msg " + message);
         }
         if (!endMarker.equals(segName)) {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             for (int i = 0; i < structures.length; i++) {
                 buf.append("\r\n").append(i).append(" - ").append(structures[i].toString());
             }

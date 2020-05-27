@@ -23,7 +23,7 @@ public class TrimLeadingWhitespaceTest {
     private PrimitiveTypeRule myRule;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         myRule = new TrimLeadingWhitespace();
     }
 

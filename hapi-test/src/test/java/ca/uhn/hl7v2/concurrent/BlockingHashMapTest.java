@@ -32,7 +32,7 @@ public class BlockingHashMapTest {
 	
 	@Before
 	public void setup() {
-		map = new BlockingHashMap<String, Object>(executorService);
+		map = new BlockingHashMap<>(executorService);
 	}
 	
 	// Single and sequential producer/consumer
@@ -115,7 +115,7 @@ public class BlockingHashMapTest {
 	}
 	
 	@Test
-	public void testGiveWithoutConsumer() throws Exception {
+	public void testGiveWithoutConsumer() {
 		Object produced = new Object();
 		assertFalse(map.give(KEY, produced));
 	}	

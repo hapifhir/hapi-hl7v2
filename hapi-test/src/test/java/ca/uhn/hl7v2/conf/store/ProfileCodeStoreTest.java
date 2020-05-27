@@ -16,13 +16,13 @@ import ca.uhn.hl7v2.conf.ProfileException;
  */
 public class ProfileCodeStoreTest {
 
-	private java.net.URL url = ProfileCodeStoreTest.class.getClassLoader().getResource(
+	private final java.net.URL url = ProfileCodeStoreTest.class.getClassLoader().getResource(
 			"ca/uhn/hl7v2/conf/store/sampleTables.xml");
-	private String codeSys = "HL70001";
+	private final String codeSys = "HL70001";
 	// private String profileId =
 	// "{ConfSig(1) CCO(1) 2.4(7) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(4) HL7 2.4(1) Sender(1)}";
-	private String code = "M";
-	private String[] codeArray = { "M", "F", "O", "U" };
+	private final String code = "M";
+	private final String[] codeArray = { "M", "F", "O", "U" };
 	private ProfileCodeStore codeStore;
 
 	@Before
@@ -44,12 +44,12 @@ public class ProfileCodeStoreTest {
 	}
 
 	@Test
-	public void testKnowsCodesPos() throws ProfileException {
+	public void testKnowsCodesPos() {
 		assertTrue(codeStore.knowsCodes(codeSys));
 	}
 
 	@Test
-	public void testIsValidCodePos() throws ProfileException {
+	public void testIsValidCodePos() {
 		assertTrue(codeStore.isValidCode(codeSys, code));
 	}
 
@@ -57,7 +57,7 @@ public class ProfileCodeStoreTest {
 	 * Test isValidCode() using a code that maps to table values containing wildcard characters
 	 */
 	@Test
-	public void testIsValidCodePos2() throws ProfileException {
+	public void testIsValidCodePos2() {
 		String codeSys = "HL70396";
 		String code1 = "99cbc";
 		String code2 = "L";
@@ -92,7 +92,7 @@ public class ProfileCodeStoreTest {
 	 * Test for null check on codeSys
 	 */
 	@Test
-	public void testGetValidCodesNeg3() throws ProfileException {
+	public void testGetValidCodesNeg3() {
 		try {
 			codeStore.getValidCodes(null);
 			fail("codeSystem should not exist");
@@ -105,7 +105,7 @@ public class ProfileCodeStoreTest {
 	 * Test for invalid codeSys length
 	 */
 	@Test
-	public void testGetValidCodesNeg4() throws ProfileException {
+	public void testGetValidCodesNeg4() {
 		try {
 			codeStore.getValidCodes("XXX");
 			fail("codeSystem should not exist");
@@ -119,16 +119,16 @@ public class ProfileCodeStoreTest {
 	 * Test for invalid codeSys
 	 */
 	@Test
-	public void testKnowsCodesNeg() throws ProfileException {
-		assertTrue(!codeStore.knowsCodes("XXX"));
+	public void testKnowsCodesNeg() {
+		assertFalse(codeStore.knowsCodes("XXX"));
 	}
 
 	/**
 	 * Test for invalid code
 	 */
 	@Test
-	public void testIsValidCodeNeg() throws ProfileException {
-		assertTrue(!codeStore.isValidCode("HL70001", "X"));
+	public void testIsValidCodeNeg() {
+		assertFalse(codeStore.isValidCode("HL70001", "X"));
 	}
 
 }

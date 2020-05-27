@@ -17,7 +17,7 @@ public class RuleTypeBuilderTest {
 	private ValidationRuleBuilder b;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		b = new ValidationRuleBuilder().forAllVersions();
 	}
 
@@ -56,7 +56,7 @@ public class RuleTypeBuilderTest {
 	}
 
 	@SuppressWarnings("serial")
-	private class DummyRule implements Rule<Object> {
+	private static class DummyRule implements Rule<Object> {
 
 		public String getDescription() {
 			return null;

@@ -24,14 +24,14 @@ public enum MessageMetadataKeys {
 	private static final Set<String> ourStringKeySetImm;
 	
 	static {
-		HashSet<String> stringKeySet = new HashSet<String>();
+		HashSet<String> stringKeySet = new HashSet<>();
 		ourStringKeySetImm = Collections.unmodifiableSet(stringKeySet);
 		for (MessageMetadataKeys next : values()) {
 			stringKeySet.add(next.name());
 		}
 	}
 	
-	private Class<?> myValueType;
+	private final Class<?> myValueType;
 
 	MessageMetadataKeys(Class<?> theValueType) {
 		myValueType = theValueType;

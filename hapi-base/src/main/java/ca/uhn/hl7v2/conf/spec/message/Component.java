@@ -12,7 +12,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
  */
 public class Component extends AbstractComponent<Component> {
 
-	private final List<SubComponent> components = new ArrayList<SubComponent>();
+	private final List<SubComponent> components = new ArrayList<>();
 
 	/** Creates a new instance of Component */
 	public Component() {

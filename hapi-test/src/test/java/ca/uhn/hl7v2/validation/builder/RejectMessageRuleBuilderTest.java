@@ -17,7 +17,7 @@ public class RejectMessageRuleBuilderTest {
 	private MessageRuleBuilder b1;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		b1 = new ValidationRuleBuilder()
                 .forVersion("2.5")
                     .message().rejectOtherThan("A01", "A08");

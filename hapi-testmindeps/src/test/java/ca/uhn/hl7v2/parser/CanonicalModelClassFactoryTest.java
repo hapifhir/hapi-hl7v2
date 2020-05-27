@@ -1,12 +1,8 @@
 package ca.uhn.hl7v2.parser;
 
-import java.io.IOException;
-
-import org.junit.Assert;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Message;
 
 public class CanonicalModelClassFactoryTest {
 

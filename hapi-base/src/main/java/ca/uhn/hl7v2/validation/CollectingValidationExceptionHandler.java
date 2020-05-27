@@ -41,7 +41,7 @@ import ca.uhn.hl7v2.Severity;
  */
 public abstract class CollectingValidationExceptionHandler<R> extends AbstractValidationExceptionHandler<R> {
 
-	private List<ValidationException> exceptions = new ArrayList<ValidationException>();
+	private final List<ValidationException> exceptions = new ArrayList<>();
     private Severity minimumSeverityToCollect = Severity.ERROR;
 
     /**

@@ -10,19 +10,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionListener;
 import ca.uhn.hl7v2.app.SimpleServer;
@@ -46,15 +44,15 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 	private Message myResponse;
 
 	@Before
-	public void before() throws InterruptedException {
+	public void before() {
 		myPort = RandomServerPortProvider.findFreePort();
 
 		myLlp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.SERVER);
 		myServer = new SimpleServer(myPort, myLlp, GenericParser.getInstanceWithNoValidation());
 		myServer.registerApplication("*", "*", this);
 		myServer.registerConnectionListener(this);
-		myMessage = (Message) null;
-		myResponse = (Message) null;
+		myMessage = null;
+		myResponse = null;
 		myConnections = 0;
 	}
 
@@ -96,7 +94,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		InputStream is = conn.getInputStream();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -151,7 +149,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		InputStream is = conn.getInputStream();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -164,8 +162,8 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage.encode());
 		
-		String expected = myResponse.encode().replaceAll("<\\?.*\\?>", "").replaceAll("(\\r|\\n)+", "\n").trim();
-		String actual = responseString.replaceAll("<\\?.*\\?>", "").replaceAll("(\\r|\\n)+", "\n").trim();
+		String expected = myResponse.encode().replaceAll("<\\?.*\\?>", "").replaceAll("([\\r\\n])+", "\n").trim();
+		String actual = responseString.replaceAll("<\\?.*\\?>", "").replaceAll("([\\r\\n])+", "\n").trim();
 		assertEquals(expected, actual);
 
 	}
@@ -219,7 +217,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -285,7 +283,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -311,7 +309,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("ISO-8859-1"));
+		enc.setCharset(StandardCharsets.ISO_8859_1);
 		enc.setUsername("hello");
 		enc.setPassword("world");
 		enc.setMessage(message);
@@ -359,7 +357,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
 		enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("ISO-8859-1"));
+		enc.setCharset(StandardCharsets.ISO_8859_1);
 		enc.setUsername("hello");
 		enc.setPassword("world");
 		enc.setMessage(message);
@@ -408,7 +406,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 	}
 
 	public Message processMessage(Message theArg0, Map<String, Object> metadata)
-            throws ReceivingApplicationException, HL7Exception {
+            throws HL7Exception {
 		myMessage = theArg0;
 		if (myResponse != null) {
 			return myResponse;
@@ -442,7 +440,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 				"PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r"; // -
 
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("ISO-8859-1"));
+		enc.setCharset(StandardCharsets.ISO_8859_1);
 		enc.setUsername("hello");
 		enc.setPassword("world");
 		enc.setMessage(message);
@@ -470,7 +468,7 @@ public class LlpServerTest implements ReceivingApplication<Message>, ConnectionL
 		InputStream is = conn.getInputStream();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');

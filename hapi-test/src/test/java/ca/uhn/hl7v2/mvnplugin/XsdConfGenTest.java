@@ -29,7 +29,6 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
 import ca.uhn.hl7v2.model.v25.datatype.TS;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
-import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
 
 public class XsdConfGenTest {

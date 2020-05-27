@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
@@ -34,21 +35,21 @@ public class ServerSocketThreadForTesting extends Thread {
 	private boolean myDone;
 	private EncodingStyle myEncoding;
 	private boolean myGZipResponse;
-	private CountDownLatch myLatch = new CountDownLatch(1);
+	private final CountDownLatch myLatch = new CountDownLatch(1);
 	private String myMessage;
-	private int myPort;
+	private final int myPort;
 	private Message myReply;
 	private String myRequestUri;
 	private IAuthorizationServerCallback myServerAuthCallback;
 	private ServerSocket myServerSocket;
 	private boolean mySimulateOneSecondPauseInChunkedEncoding;
 	private ISocketFactory mySocketFactory;
-	private LinkedList<Long> myResponseDelays = new LinkedList<Long>();
+	private LinkedList<Long> myResponseDelays = new LinkedList<>();
 
 	private boolean myCloseNormallyAfterEachMessage;
 
 	public void setResponseDelays(Long... theResponseDelays) {
-		myResponseDelays = new LinkedList<Long>(Arrays.asList(theResponseDelays));
+		myResponseDelays = new LinkedList<>(Arrays.asList(theResponseDelays));
 	}
 	
 	public ServerSocketThreadForTesting(int thePort) {
@@ -205,7 +206,7 @@ public class ServerSocketThreadForTesting extends Thread {
 
 	public class TestSocketThread extends Thread {
 
-		private Socket mySocket;
+		private final Socket mySocket;
 
 		public TestSocketThread(Socket theSocket) {
 			mySocket = theSocket;
@@ -271,15 +272,14 @@ public class ServerSocketThreadForTesting extends Thread {
 							e.getHeaders().remove("Content-Length");
 							e.getHeaders().put("Transfer-Encoding", "chunked");
 
-							OutputStream tempOs = os;
-							tempOs.write("HTTP/1.1 200 OK\r\n".getBytes("ISO-8859-1"));
+							os.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.ISO_8859_1));
 							for (Map.Entry<String, String> next : e.getHeaders().entrySet()) {
 								String nextHeader = next.getKey() + ": " + next.getValue();
 								ourLog.debug("Sending response header - " + nextHeader);
-								tempOs.write((nextHeader + "\r\n").getBytes("ISO-8859-1"));
+								os.write((nextHeader + "\r\n").getBytes(StandardCharsets.ISO_8859_1));
 							}
 
-							tempOs.write("\r\n".getBytes("ISO-8859-1"));
+							os.write("\r\n".getBytes(StandardCharsets.ISO_8859_1));
 
 							byte[] bytes = e.getData();
 							int halfLength = bytes.length / 2;
@@ -287,11 +287,11 @@ public class ServerSocketThreadForTesting extends Thread {
 							String chunkLength = Integer.toHexString(halfLength);
 							ourLog.debug("Sending chunk length: {}", halfLength);
 
-							tempOs.write(chunkLength.getBytes("ISO-8859-1"));
-							tempOs.write("\r\n".getBytes("ISO-8859-1"));
-							tempOs.write(bytes, 0, halfLength);
-							tempOs.write("\r\n".getBytes("ISO-8859-1"));
-							tempOs.flush();
+							os.write(chunkLength.getBytes(StandardCharsets.ISO_8859_1));
+							os.write("\r\n".getBytes(StandardCharsets.ISO_8859_1));
+							os.write(bytes, 0, halfLength);
+							os.write("\r\n".getBytes(StandardCharsets.ISO_8859_1));
+							os.flush();
 
 							Thread.sleep(1000);
 
@@ -299,15 +299,15 @@ public class ServerSocketThreadForTesting extends Thread {
 
 							String remChunkLength = Integer.toHexString(remaining);
 							ourLog.debug("Sending chunk length: {}", remaining);
-							byte[] bytesToSend = remChunkLength.getBytes("ISO-8859-1");
+							byte[] bytesToSend = remChunkLength.getBytes(StandardCharsets.ISO_8859_1);
 							ourLog.debug("Sending bytes: {}", bytesToSend);
-							tempOs.write(bytesToSend);
-							tempOs.write("\r\n".getBytes("ISO-8859-1"));
-							tempOs.write(bytes, halfLength, remaining);
-							tempOs.write("\r\n".getBytes("ISO-8859-1"));
+							os.write(bytesToSend);
+							os.write("\r\n".getBytes(StandardCharsets.ISO_8859_1));
+							os.write(bytes, halfLength, remaining);
+							os.write("\r\n".getBytes(StandardCharsets.ISO_8859_1));
 
-							tempOs.write("0\r\n\r\n\r\n".getBytes("ISO-8859-1"));
-							tempOs.flush();
+							os.write("0\r\n\r\n\r\n".getBytes(StandardCharsets.ISO_8859_1));
+							os.flush();
 
 						} else {
 

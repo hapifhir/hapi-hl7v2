@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -21,13 +22,13 @@ public class BouncyCastleCmsMessageSignerTest {
 	public void testSignAndVerify() throws Exception {
 
 		BouncyCastleCmsMessageSigner signer = createSigner();
-		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
+		String signed = signer.sign(HELLO_WORLD.getBytes(StandardCharsets.US_ASCII));
 
 		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
 
 		// Now verify
 		signer = createVerifier();
-		signer.verify(HELLO_WORLD.getBytes("US-ASCII"), signed);
+		signer.verify(HELLO_WORLD.getBytes(StandardCharsets.US_ASCII), signed);
 
 	}
 
@@ -76,7 +77,7 @@ public class BouncyCastleCmsMessageSignerTest {
 		signer.setKeyStore(loadTrustStore());
 
 		try {
-			signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
+			signer.sign(HELLO_WORLD.getBytes(StandardCharsets.US_ASCII));
 			fail();
 		} catch (SignatureFailureException e) {
 			assertTrue(e.toString(), e.getMessage().contains(BouncyCastleCmsMessageSigner.MSG_KEY_IS_NOT_A_PRIVATE_KEY));
@@ -86,7 +87,7 @@ public class BouncyCastleCmsMessageSignerTest {
 	@Test
 	public void testSignAndVerifyStringChanged() throws Exception {
 		BouncyCastleCmsMessageSigner signer = createSigner();
-		String signed = signer.sign(HELLO_WORLD.getBytes("US-ASCII"));
+		String signed = signer.sign(HELLO_WORLD.getBytes(StandardCharsets.US_ASCII));
 
 		ourLog.info("Signed ({} bytes): {}", signed.length(), signed);
 
@@ -94,9 +95,9 @@ public class BouncyCastleCmsMessageSignerTest {
 		signer = createVerifier();
 
 		try {
-			signer.verify("HELLO WORLD....".getBytes("US-ASCII"), signed);
+			signer.verify("HELLO WORLD....".getBytes(StandardCharsets.US_ASCII), signed);
 			fail();
-		} catch (SignatureVerificationException e) {
+		} catch (SignatureVerificationException ignored) {
 
 		}
 

@@ -41,7 +41,7 @@ public interface Segment extends Structure {
      * @return the string-encoded segment
      * @throws HL7Exception if errors occurred during encoding
      */
-    public String encode() throws HL7Exception;
+    String encode() throws HL7Exception;
 
     /**
      * Returns the array of Fields at the specified index.  The array will be of length 1 for
@@ -51,7 +51,7 @@ public interface Segment extends Structure {
      * @return the array of Fields at the specified field number
      * @throws HL7Exception if field index is out of range.
      */
-    public Type[] getField(int number) throws HL7Exception;
+    Type[] getField(int number) throws HL7Exception;
 
     /**
      * Returns a specific repetition of field at the specified index.  If there exist
@@ -68,7 +68,7 @@ public interface Segment extends Structure {
      *    NOTE: to facilitate local extensions, no exception is thrown if
      *    rep > max cardinality
      */
-    public Type getField(int number, int rep) throws HL7Exception;
+    Type getField(int number, int rep) throws HL7Exception;
 
     /**
      * Returns the maximum length of the field at the given index, in characters.
@@ -76,7 +76,7 @@ public interface Segment extends Structure {
      * @return maximum length of the field
      * @throws HL7Exception if field index is out of range.
      */
-    public int getLength(int number) throws HL7Exception;
+    int getLength(int number) throws HL7Exception;
 
     /**
      * Returns the maximum number of repetitions of this field that are allowed.
@@ -86,7 +86,7 @@ public interface Segment extends Structure {
      * @return maximum number of repetitions of this field
      * @throws HL7Exception if field index is out of range.
      */
-    public int getMaxCardinality(int number) throws HL7Exception;
+    int getMaxCardinality(int number) throws HL7Exception;
 
     /**
      * Returns the names of the fields in this segment.
@@ -94,7 +94,7 @@ public interface Segment extends Structure {
      *
      * @since 1.0 - Note that if user defined types are being used, there is a possibility that some entries may be null. All official hapi structures will have all entries populated, but older user defined structures may not have populated all values, since this feature did not exist prior to release 1.0.
      */
-    public String[] getNames();
+    String[] getNames();
 
     /**
      * Returns true if the field at the given index is required, false otherwise.
@@ -103,7 +103,7 @@ public interface Segment extends Structure {
      * @return true if the field is required
      * @throws HL7Exception if field index is out of range.
      */
-    public boolean isRequired(int number) throws HL7Exception;
+    boolean isRequired(int number) throws HL7Exception;
 
 
     /**
@@ -111,7 +111,7 @@ public interface Segment extends Structure {
      * fields are not counted multiple times).
      * @return number of fields
      */
-    public int numFields();
+    int numFields();
 
 
     /**
@@ -119,7 +119,7 @@ public interface Segment extends Structure {
      * @param string encoded segment
      * @throws HL7Exception if errors occurred during parsing
      */
-    public void parse(String string) throws HL7Exception;
+    void parse(String string) throws HL7Exception;
 
     
 }

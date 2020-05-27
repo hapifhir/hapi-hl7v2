@@ -10,7 +10,7 @@ public class TestUtils {
 	private static final int RETRIES = 10;
 
 	public static <T> List<T> fill(T element, int amount) {
-		List<T> list = new ArrayList<T>();
+		List<T> list = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
 			list.add(element);
 		}
@@ -21,7 +21,7 @@ public class TestUtils {
 		Socket s = null;
 		Exception ex = null;
 		int i = 0;
-		while (s == null && i < RETRIES) {
+		while (s == null) {
 			try {
 				s = new Socket("localhost", port);
 			} catch (Exception e) {
@@ -29,8 +29,6 @@ public class TestUtils {
 				Thread.sleep(SLEEP);
 			}
 		}
-		if (s == null)
-			throw ex;
 		return s;
 	}
 
@@ -39,7 +37,7 @@ public class TestUtils {
 		Connection c = null;
 		Exception ex = null;
 		int i = 0;
-		while (c == null && i < RETRIES) {
+		while (c == null) {
 			try {
 				c = hub.attach("localhost", port1, port2, false);
 			} catch (Exception e) {
@@ -47,8 +45,6 @@ public class TestUtils {
 				Thread.sleep(SLEEP);
 			}
 		}
-		if (c == null)
-			throw ex;
 		return c;
 	}
 

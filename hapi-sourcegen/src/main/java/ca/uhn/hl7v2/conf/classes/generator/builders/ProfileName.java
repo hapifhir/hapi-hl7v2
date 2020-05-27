@@ -72,7 +72,7 @@ public final class ProfileName {
    private String parentName; // The name of the parent name assosiated with this ProfileName
 
    private String profileName; // The name that this ProfileName represents
-   private int profileStructureType; // The HL7 structure level that this ProfileName represents
+   private final int profileStructureType; // The HL7 structure level that this ProfileName represents
 
    /** Creates a new instance of ProfileName 
     * @param profileName the name of the profile
@@ -81,7 +81,7 @@ public final class ProfileName {
     * both for clarity and to avoid name collisions.
     */
    public ProfileName(String profileName, int profileStructureType) {
-      this(profileName, profileStructureType, new HashMap<String, Object>(50), profileName);
+      this(profileName, profileStructureType, new HashMap<>(50), profileName);
    }
 
    /** Creates a new instance of ProfileName 
@@ -93,7 +93,7 @@ public final class ProfileName {
     * @param parentName the name of the parent to the child 
     */
    private ProfileName(String profileName, int profileStructureType, HashMap<String, Object> nameMap, String parentName) {
-      this.profileName = new String(profileName);
+      this.profileName = profileName;
       this.profileStructureType = profileStructureType;
       this.nameMap = nameMap;
       this.parentName = parentName;
@@ -108,7 +108,7 @@ public final class ProfileName {
       int i = 1;
       while (nameMap.containsKey(this.profileStructureType + this.profileName)) {
          i++;
-         this.profileName = new String(profileName + i);
+         this.profileName = profileName + i;
       }
 
       // Store the new name in the hashmap 
@@ -122,7 +122,7 @@ public final class ProfileName {
     * @return ProfileName Returns the ProfileName object
     */
    public ProfileName clearNameMap() {
-      this.nameMap = new HashMap<String, Object>(50);
+      this.nameMap = new HashMap<>(50);
       nameMap.put(this.profileStructureType + this.profileName, null);
       this.parentName = this.profileName;
       return this;
@@ -133,10 +133,7 @@ public final class ProfileName {
     * @return true if the names are equivalent
     */
    public boolean equals(ProfileName n) {
-      if (getAccessorName().equals(n.getAccessorName()))
-         return true;
-      else
-         return false;
+      return getAccessorName().equals(n.getAccessorName());
    }
 
    /** Returns the accessor name
@@ -188,8 +185,7 @@ public final class ProfileName {
     * @return the new ProfileName
     */
    public ProfileName newInstance(String profileName, int profileStructureType) {
-      ProfileName newPN = new ProfileName(profileName, profileStructureType, this.nameMap, this.profileName);
-      return newPN;
+      return new ProfileName(profileName, profileStructureType, this.nameMap, this.profileName);
    }
 
 }

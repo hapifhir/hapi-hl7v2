@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingHashMap<K, V> implements BlockingMap<K, V> {
 
-	private final ConcurrentMap<K, V> map = new ConcurrentHashMap<K, V>();
-	private final ConcurrentMap<K, CountDownLatch> latches = new ConcurrentHashMap<K, CountDownLatch>();
+	private final ConcurrentMap<K, V> map = new ConcurrentHashMap<>();
+	private final ConcurrentMap<K, CountDownLatch> latches = new ConcurrentHashMap<>();
 	private final ExecutorService executor;
 	
 	public BlockingHashMap() {
@@ -93,14 +93,9 @@ public class BlockingHashMap<K, V> implements BlockingMap<K, V> {
 	}
 	
 
-	public Future<V> asyncTake(final K key) throws InterruptedException {
+	public Future<V> asyncTake(final K key) {
 		latchFor(key);
-		return executor.submit(new Callable<V>() {
-
-			public V call() throws Exception {
-				return take(key);
-			}
-		});
+		return executor.submit(() -> take(key));
 	}
 
 	public V poll(K key, long timeout, TimeUnit unit)
@@ -114,12 +109,7 @@ public class BlockingHashMap<K, V> implements BlockingMap<K, V> {
 	
 	public Future<V> asyncPoll(final K key, final long timeout, final TimeUnit unit) {
 		latchFor(key);
-		return executor.submit(new Callable<V>() {
-
-			public V call() throws Exception {
-				return poll(key, timeout, unit);
-			}
-		});		
+		return executor.submit(() -> poll(key, timeout, unit));
 	}
 	
 

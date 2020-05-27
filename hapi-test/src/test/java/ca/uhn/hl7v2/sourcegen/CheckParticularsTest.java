@@ -1,9 +1,5 @@
 package ca.uhn.hl7v2.sourcegen;
 
-import junit.framework.TestCase;
-
-import org.junit.Test;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
@@ -16,11 +12,15 @@ import ca.uhn.hl7v2.model.v231.message.ADT_A34;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v26.message.MDM_T02;
 import ca.uhn.hl7v2.parser.PipeParser;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Check particular corner cases of generated classes
  */
-public class CheckParticularsTest extends TestCase {
+public class CheckParticularsTest {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(CheckParticularsTest.class);
 
@@ -30,8 +30,7 @@ public class CheckParticularsTest extends TestCase {
 			fail("Shouldn't exist: " + className);
 		} catch (ClassNotFoundException e) {
 			// pass
-			return;
-		}
+        }
 	}
 
 	/**
@@ -70,8 +69,7 @@ public class CheckParticularsTest extends TestCase {
 			fail();
 		} catch (ClassNotFoundException e) {
 			// pass
-			return;
-		}
+        }
 	}
 
 	@Test public void testMdmMessage() {

@@ -96,7 +96,7 @@ public class ProcessorImplTest extends TestCase {
         assertEquals(a, myTransport.getLastSent().getMessage());        
     }
     
-    public void testSendAckOnErrorWithError() throws Exception {
+    public void testSendAckOnErrorWithError() {
         String a = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-a|P|2.2|||ER\rNTE|\r";
         String b = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-b|P|2.2\rMSA|CE|msg-a|foo\r";
         receiveLater(myTransport, b, 200);
@@ -104,11 +104,11 @@ public class ProcessorImplTest extends TestCase {
             myProcessor.send(new TransportableImpl(a), 3, 1000);  
             fail("should have thrown exception when error message received");
         } catch (HL7Exception e) {
-            assertTrue(e.getMessage().indexOf("foo") > -1); 
+            assertTrue(e.getMessage().contains("foo"));
         }
     }
     
-    public void testSendAlwaysAckWithError() throws Exception {
+    public void testSendAlwaysAckWithError() {
         String a = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-a|P|2.2|||AL\rNTE|\r";
         String b = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-b|P|2.2\rMSA|CE|msg-a|foo\r";
         receiveLater(myTransport, b, 200);
@@ -116,7 +116,7 @@ public class ProcessorImplTest extends TestCase {
             myProcessor.send(new TransportableImpl(a), 3, 1000);  
             fail("should have thrown exception when error message received");
         } catch (HL7Exception e) {
-            assertTrue(e.getMessage().indexOf("foo") > -1); 
+            assertTrue(e.getMessage().contains("foo"));
         }        
     }
     
@@ -138,12 +138,12 @@ public class ProcessorImplTest extends TestCase {
         String b = "MSH{{{{{|LABGL1||DMCRES||19951002180700||ORU^R01|msg-b|P|2.2\rMSA|AA|msg-a\r";
         receiveLater(myRemotelyDrivenTransport, b, 200);
         Transportable got = myProcessor.receive("msg-a", 2000);
-        assertEquals(null, got);
+        assertNull(got);
     }
 
     public void testReceiveNotAvailable() throws Exception {
         Transportable got = myProcessor.receive("msg-a", 2000);
-        assertEquals(null, got); 
+        assertNull(got);
     }
     
     public void testReceiveNonMatchingAckId() throws Exception {
@@ -153,19 +153,17 @@ public class ProcessorImplTest extends TestCase {
         String b = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|msg-b|P|2.2\rMSA|AA|msg-a\r";
         receiveLater(myRemotelyDrivenTransport, b, 1000);
         Transportable got = myProcessor.receive("doesn't exist", 2000);
-        assertEquals(null, got);        
+        assertNull(got);
     }
 
     public void receiveLater(final MockTransport theTransport, final String theMessage, final long theTimeMillis) {
-        Thread sender = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep(theTimeMillis);
-                } catch (InterruptedException e) {
-                }                
-                theTransport.setNextReceived(new TransportableImpl(theMessage));
+        Thread sender = new Thread(() -> {
+            try {
+                Thread.sleep(theTimeMillis);
+            } catch (InterruptedException ignored) {
             }
-        };
+            theTransport.setNextReceived(new TransportableImpl(theMessage));
+        });
         sender.start();
     }
 

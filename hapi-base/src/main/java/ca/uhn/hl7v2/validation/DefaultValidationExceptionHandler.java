@@ -26,7 +26,6 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.validation;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 
 /**
@@ -63,11 +62,9 @@ public class DefaultValidationExceptionHandler extends AbstractValidationExcepti
 	 * @return the overall assessment of the validation process. This method should usually return
 	 *         <code>false</code> if {@link #onExceptions(ValidationException[])} has been
 	 *         called at least once.
-	 * @throws HL7Exception
-	 * 
 	 * @see {@link DefaultValidationExceptionHandler}
 	 */
-	public Boolean result() throws HL7Exception {
+	public Boolean result() {
 		return result;
 	}
 

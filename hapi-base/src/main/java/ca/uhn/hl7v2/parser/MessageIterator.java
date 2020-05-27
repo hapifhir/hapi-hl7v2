@@ -30,11 +30,11 @@ import ca.uhn.hl7v2.model.Structure;
  */
 public class MessageIterator implements java.util.Iterator<Structure> {
 
-    private Message myMessage;
+    private final Message myMessage;
     private String myDirection;
     private boolean myNextIsSet;
-    private boolean myHandleUnexpectedSegments;
-    private List<Position> myCurrentDefinitionPath = new ArrayList<Position>();
+    private final boolean myHandleUnexpectedSegments;
+    private List<Position> myCurrentDefinitionPath = new ArrayList<>();
 
     private static final Logger log = LoggerFactory.getLogger(MessageIterator.class);
 
@@ -63,7 +63,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     }
 
     private List<Position> popUntilMatchFound(List<Position> theDefinitionPath) {
-        theDefinitionPath = new ArrayList<Position>(theDefinitionPath.subList(0, theDefinitionPath.size() - 1));
+        theDefinitionPath = new ArrayList<>(theDefinitionPath.subList(0, theDefinitionPath.size() - 1));
 
         Position newCurrentPosition = getTail(theDefinitionPath);
         IStructureDefinition newCurrentStructureDefinition = newCurrentPosition.getStructureDefinition();
@@ -184,11 +184,11 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         switch (myMessage.getParser().getParserConfiguration().getUnexpectedSegmentBehaviour()) {
         case ADD_INLINE:
         default:
-        	parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
+        	parentDefinitionPath = new ArrayList<>(myCurrentDefinitionPath.subList(0, myCurrentDefinitionPath.size() - 1));
         	parentStructure = (Group) navigateToStructure(parentDefinitionPath);
         	break;
         case DROP_TO_ROOT:
-        	parentDefinitionPath = new ArrayList<Position>(myCurrentDefinitionPath.subList(0, 1));
+        	parentDefinitionPath = new ArrayList<>(myCurrentDefinitionPath.subList(0, 1));
         	parentStructure = myMessage;
         	myCurrentDefinitionPath = myCurrentDefinitionPath.subList(0, 2);
         	break;
@@ -308,7 +308,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      */
     public static class Position {
         private IStructureDefinition myStructureDefinition;
-        private int myRepNumber = -1;
+        private int myRepNumber;
 
         public IStructureDefinition getStructureDefinition() {
             return myStructureDefinition;
@@ -338,7 +338,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         /** @see Object#equals */
         public boolean equals(Object o) {
             boolean equals = false;
-            if (o != null && o instanceof Position) {
+            if (o instanceof Position) {
                 Position p = (Position) o;
                 if (p.myStructureDefinition.equals(myStructureDefinition) && p.myRepNumber == myRepNumber)
                     equals = true;

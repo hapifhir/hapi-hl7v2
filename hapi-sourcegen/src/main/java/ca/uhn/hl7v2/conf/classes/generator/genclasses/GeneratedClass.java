@@ -42,13 +42,13 @@ import ca.uhn.hl7v2.conf.classes.generator.builders.*;
 public class GeneratedClass {
 
    private static final String INDENT = "   ";
-   private Vector<String> classComments;
-   private Vector<String> classImports;
+   private final Vector<String> classComments;
+   private final Vector<String> classImports;
    private String classPackage;
    private GeneratedMethod constructor;
-   private Vector<String> license;
-   private Vector<String> memberVariables;
-   private Vector<GeneratedMethod> methods;
+   private final Vector<String> license;
+   private final Vector<String> memberVariables;
+   private final Vector<GeneratedMethod> methods;
    private String name;
    private String properties;
 
@@ -56,11 +56,11 @@ public class GeneratedClass {
     *  creates a new instance of the all the memberVariables 
     */
    public GeneratedClass() {
-      classImports = new Vector<String>();
-      memberVariables = new Vector<String>();
-      methods = new Vector<GeneratedMethod>();
-      classComments = new Vector<String>();
-      license = new Vector<String>();
+      classImports = new Vector<>();
+      memberVariables = new Vector<>();
+      methods = new Vector<>();
+      classComments = new Vector<>();
+      license = new Vector<>();
       constructor = new GeneratedMethod();
       constructor.setVisibility("public");
       classPackage = "";
@@ -134,7 +134,7 @@ public class GeneratedClass {
    }
 
    /** This method sets the class name for the class contained within the generated Java source file
-    *  @param the class name
+    *  @param name the class name
     */
    public void setName(String name) {
       this.name = name + " ";
@@ -142,7 +142,7 @@ public class GeneratedClass {
    }
 
    /** This method sets the class properties for the class contained within the generated Java source file
-    *  @param propertie to set
+    *  @param properties properties to set
     */
    public void setProperties(String properties) {
       if (properties != null)
@@ -156,7 +156,7 @@ public class GeneratedClass {
     * @return a String representation of the class
     */
    public String toString() {
-      String theClass = new String();
+      String theClass = "";
 
       theClass += DocumentationBuilder.getDocumentationBuilder().getGeneratedClassHeader();
       theClass += vectorToString(0, license, "").concat("\n\n"); // License block
@@ -179,17 +179,16 @@ public class GeneratedClass {
     * @return the generated string
     */
    private String vectorToString(int indentLevel, Vector<?> vec, String prefix) {
-      String pString = "";
-      String indent = "".concat(prefix);
+      StringBuilder pString = new StringBuilder();
+      StringBuilder indent = new StringBuilder("".concat(prefix));
 
       // Create indentation string
       for (int i = 0; i < indentLevel; i++)
-         indent = INDENT + indent;
+         indent.insert(0, INDENT);
 
       // Convert the vector to a string
-      for (int i = 0; i < vec.size(); i++)
-         pString += indent + vec.get(i).toString() + "\n";
-      return pString;
+      for (Object o : vec) pString.append(indent).append(o.toString()).append("\n");
+      return pString.toString();
    }
 
 }

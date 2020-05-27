@@ -40,8 +40,8 @@ import ca.uhn.hl7v2.validation.MessageRule;
 @SuppressWarnings("serial")
 public class MessageRuleBinding extends RuleBinding<MessageRule> {
 
-    private String myMessageType;
-    private String myTriggerEvent;
+    private final String myMessageType;
+    private final String myTriggerEvent;
     private static final String delim = "^"; 
     
     /**

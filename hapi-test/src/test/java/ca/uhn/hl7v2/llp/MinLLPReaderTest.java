@@ -55,7 +55,7 @@ public class MinLLPReaderTest {
     private ByteArrayInputStream inputStream;
 
     @Rule
-    public IndexedErrorCollector collector = new IndexedErrorCollector();
+    public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @Before
     public void setUp() throws Exception {
@@ -65,7 +65,7 @@ public class MinLLPReaderTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         message = null;
         minLLPReader = null;
     }
@@ -105,7 +105,7 @@ public class MinLLPReaderTest {
      * Ensure setInputStream validates inputs. Pass a null inputStream
      */
     @Test(expected = NullPointerException.class)
-    public void testSetNullInputStream() throws IOException, LLPException {
+    public void testSetNullInputStream() throws IOException {
         minLLPReader.setInputStream(null);
     }
 
@@ -120,8 +120,7 @@ public class MinLLPReaderTest {
             minLLPReader.setInputStream(nullInputStream);
             String recvMessage = minLLPReader.getMessage();
             assertNull("Should not be able to read message from null input stream", recvMessage);
-        } catch (IOException ioe) {
-        } catch (NullPointerException ioe) {
+        } catch (IOException | NullPointerException ignored) {
         }
     }
 
@@ -190,8 +189,7 @@ public class MinLLPReaderTest {
         try {
             minLLPReader.getMessage();
             fail("Input stream should be closed");
-        } catch (IOException ioe) {
-        } catch (LLPException llpe) {
+        } catch (IOException | LLPException ignored) {
         }
     }
 

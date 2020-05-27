@@ -49,7 +49,7 @@ public class HapiClientTest {
 
 
 	@After
-	public void after() throws InterruptedException {
+	public void after() {
 		ourLog.info("Marking done as true");
 		ourServerSocketThread.done();
 	}

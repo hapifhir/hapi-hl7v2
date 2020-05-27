@@ -72,8 +72,8 @@ public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implem
         }
     }
 
-	private Predicate predicate;
-	private Trimmer trimmer;
+	private final Predicate predicate;
+	private final Trimmer trimmer;
 
     /**
      * Creates a new primitive rule without trimming

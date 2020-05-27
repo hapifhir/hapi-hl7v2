@@ -48,7 +48,6 @@ import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.AbstractHL7Exception;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
@@ -61,7 +60,7 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  * @author Eric Poiseau
  */
-public class SegmentGenerator extends java.lang.Object {
+public class SegmentGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(SegmentGenerator.class);
 
@@ -83,16 +82,15 @@ public class SegmentGenerator extends java.lang.Object {
 					version, System.getProperty("ca.on.uhn.hl7.database.url"));
 		}
 
-		for (int i = 0; i < segments.size(); i++) {
+		for (String segment : segments) {
 			try {
-				String seg = (String) segments.get(i);
-				
+
 				String hapiTestGenSegment = System.getProperty("hapi.test.gensegment");
-				if (hapiTestGenSegment != null && !hapiTestGenSegment.contains(seg)) {
+				if (hapiTestGenSegment != null && !hapiTestGenSegment.contains(segment)) {
 					continue;
 				}
-				
-				makeSegment(seg, version, theTemplatePackage, targetDir, theFileExt);
+
+				makeSegment(segment, version, theTemplatePackage, targetDir, theFileExt);
 			} catch (Exception e) {
 //				System.err.println("Error creating source code for all segments: " + e.getMessage());
 //				e.printStackTrace();
@@ -110,7 +108,7 @@ public class SegmentGenerator extends java.lang.Object {
 		//System.out.println(sql);
 		ResultSet rs = stmt.executeQuery(sql);
 
-		ArrayList<String> segments = new ArrayList<String>();
+		ArrayList<String> segments = new ArrayList<>();
 		while (rs.next()) {
 			String segName = rs.getString(1);
 
@@ -150,9 +148,9 @@ public class SegmentGenerator extends java.lang.Object {
 	 */
 	public static void makeSegment(String name, String version, String theTemplatePackage, File theTargetDir, String theFileExt) throws Exception {
 
-		ArrayList<SegmentElement> elements = new ArrayList<SegmentElement>();
+		ArrayList<SegmentElement> elements = new ArrayList<>();
 		String segDesc = null;
-		SegmentElement se = null;
+		SegmentElement se;
 
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
 		try {
@@ -188,14 +186,14 @@ public class SegmentGenerator extends java.lang.Object {
 				lengthColName = "HL7DataElements.length";
 			}
 			
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT ");
 //			sql.append("HL7SegmentDataElements.*, ");
 //			sql.append("HL7DataElements.*, ");
 //			sql.append("HL7Segments.* ");
 			sql.append("HL7SegmentDataElements.seg_code, HL7SegmentDataElements.seq_no, ");
 			sql.append("HL7SegmentDataElements.repetitional, HL7SegmentDataElements.repetitions, ");
-			sql.append("HL7DataElements.description, " + lengthColName + ", HL7DataElements.table_id, ");
+			sql.append("HL7DataElements.description, ").append(lengthColName).append(", HL7DataElements.table_id, ");
 			sql.append("HL7SegmentDataElements.req_opt, HL7Segments.description, HL7DataElements.data_structure ");
 			sql.append("FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN (HL7DataElements INNER JOIN HL7SegmentDataElements ");
 			sql.append("ON (HL7DataElements.version_id = HL7SegmentDataElements.version_id) ");
@@ -220,7 +218,7 @@ public class SegmentGenerator extends java.lang.Object {
 			} catch (Exception e) {
 				throw new MojoFailureException("Failed to execute the following SQL: " + sql.toString(), e);
 			}
-			List<String> usedFieldDescs = new ArrayList<String>();
+			List<String> usedFieldDescs = new ArrayList<>();
 			int index = 0;
 			while (rs.next()) {
 				if (segDesc == null) {
@@ -303,10 +301,10 @@ public class SegmentGenerator extends java.lang.Object {
 
 	private static void listTables(Connection conn, String tableName) throws MojoFailureException, SQLException {
 		{
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT ");
-			sql.append(tableName + ".* ");
-			sql.append("FROM " + tableName + " ");
+			sql.append(tableName).append(".* ");
+			sql.append("FROM ").append(tableName).append(" ");
 			//System.out.println(sql.toString());  //for debugging
 			
 			Statement stmt;
@@ -319,7 +317,7 @@ public class SegmentGenerator extends java.lang.Object {
 			}
 
 			rs.next();
-			Set<String> cols = new HashSet<String>();
+			Set<String> cols = new HashSet<>();
 			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
 				cols.add(rs.getMetaData().getColumnName(i+1));
 			}

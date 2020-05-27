@@ -103,7 +103,7 @@ class OldPipeParser extends Parser {
         
         //4th character of each segment should be field delimiter
         char fourthChar = message.charAt(3);
-        StringTokenizer st = new StringTokenizer(message, String.valueOf(segDelim), false);
+        StringTokenizer st = new StringTokenizer(message, segDelim, false);
         while (st.hasMoreTokens()) {
             String x = st.nextToken();
             if (x.length() > 0) {
@@ -121,9 +121,8 @@ class OldPipeParser extends Parser {
             if (nextFieldDelimLoc < 0)
                 return null;
         }
-        
-        if (ok)
-            encoding = "VB";
+
+        encoding = "VB";
         
         return encoding;
     }
@@ -160,9 +159,9 @@ class OldPipeParser extends Parser {
     /**
      * @returns the message structure from MSH-9-3
      */
-    private MessageStructure getStructure(String message) throws HL7Exception, EncodingNotSupportedException {
+    private MessageStructure getStructure(String message) throws HL7Exception {
         EncodingCharacters ec = getEncodingChars(message);
-        String messageStructure = null;
+        String messageStructure;
         boolean explicityDefined = true;
         String wholeFieldNine;
         try {
@@ -185,14 +184,11 @@ class OldPipeParser extends Parser {
                 messageStructure = "ACK"; //it's common for people to only populate component 1 in an ACK msg
             }*/
             else {
-                StringBuffer buf = new StringBuffer("Can't determine message structure from MSH-9: ");
-                buf.append(wholeFieldNine);
-                if (comps.length < 3) {
-                    buf.append(" HINT: there are only ");
-                    buf.append(comps.length);
-                    buf.append(" of 3 components present");
-                }
-                throw new HL7Exception(buf.toString(), ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
+                String buf = "Can't determine message structure from MSH-9: " + wholeFieldNine +
+                        " HINT: there are only " +
+                        comps.length +
+                        " of 3 components present";
+                throw new HL7Exception(buf, ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
             }            
         }
         catch (IndexOutOfBoundsException e) {
@@ -261,11 +257,10 @@ class OldPipeParser extends Parser {
             
             for (int j = 0; j < reps.length; j++) {
                 try {
-                    StringBuffer statusMessage = new StringBuffer("Parsing field ");
-                    statusMessage.append(i+fieldOffset);
-                    statusMessage.append(" repetition ");
-                    statusMessage.append(j);
-                    log.debug(statusMessage.toString());
+                    String statusMessage = "Parsing field " + (i + fieldOffset) +
+                            " repetition " +
+                            j;
+                    log.debug(statusMessage);
                     //parse(destination.getField(i + fieldOffset, j), reps[j], encodingChars, false);
 
                     Type field = destination.getField(i + fieldOffset, j);
@@ -286,7 +281,7 @@ class OldPipeParser extends Parser {
         }
         
         //set data type of OBX-5
-        if (destination.getClass().getName().indexOf("OBX") >= 0) {
+        if (destination.getClass().getName().contains("OBX")) {
             FixFieldDataType.fixOBX5(destination, getFactory(), getHapiContext().getParserConfiguration());
         }
         
@@ -333,7 +328,7 @@ class OldPipeParser extends Parser {
      * delimiter.
      */
     public static String[] split(String composite, String delim) {
-        List<String> components = new ArrayList<String>();
+        List<String> components = new ArrayList<>();
         
         //defend against evil nulls
         if (composite == null)
@@ -356,7 +351,7 @@ class OldPipeParser extends Parser {
             }
         }
         
-        return components.toArray(new String[components.size()]);
+        return components.toArray(new String[0]);
     }
     
     /**
@@ -364,9 +359,9 @@ class OldPipeParser extends Parser {
      * It is assumed that the Type represents a complete field rather than a component.
      */
     public static String encode(Type source, EncodingCharacters encodingChars) {
-        StringBuffer field = new StringBuffer();
+        StringBuilder field = new StringBuilder();
         for (int i = 1; i <= Terser.numComponents(source); i++) {
-            StringBuffer comp = new StringBuffer();
+            StringBuilder comp = new StringBuilder();
             for (int j = 1; j <= Terser.numSubComponents(source, i); j++) {
                 Primitive p = Terser.getPrimitive(source, i, j);
                 comp.append(encodePrimitive(p, encodingChars));
@@ -380,7 +375,7 @@ class OldPipeParser extends Parser {
     }
     
     private static String encodePrimitive(Primitive p, EncodingCharacters encodingChars) {
-        String val = ((Primitive) p).getValue();
+        String val = p.getValue();
         if (val == null) {
             val = "";
         } else {
@@ -441,7 +436,7 @@ class OldPipeParser extends Parser {
             throw new HL7Exception("Can't encode message: MSH-1 (field separator) is missing");
         
         char fieldSep = '|';
-        if (fieldSepString != null && fieldSepString.length() > 0)
+        if (fieldSepString.length() > 0)
             fieldSep = fieldSepString.charAt(0);
         
         String encCharString = Terser.get(msh, 2, 0, 1, 1);
@@ -456,7 +451,7 @@ class OldPipeParser extends Parser {
         EncodingCharacters en = new EncodingCharacters(fieldSep, encCharString);
         
         //pass down to group encoding method which will operate recursively on children ...
-        return encode((Group) source, en);
+        return encode(source, en);
     }
     
     /**
@@ -464,17 +459,16 @@ class OldPipeParser extends Parser {
      * by encode(Message source, String encoding).
      */
     public static String encode(Group source, EncodingCharacters encodingChars) throws HL7Exception {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         
         String[] names = source.getNames();
-        for (int i = 0; i < names.length; i++) {
-            Structure[] reps = source.getAll(names[i]);
-            for (int rep = 0; rep < reps.length; rep++) {
-                if (reps[rep] instanceof Group) {
-                    result.append(encode((Group) reps[rep], encodingChars));
-                }
-                else {
-                    String segString = encode((Segment) reps[rep], encodingChars);
+        for (String name : names) {
+            Structure[] reps = source.getAll(name);
+            for (Structure structure : reps) {
+                if (structure instanceof Group) {
+                    result.append(encode((Group) structure, encodingChars));
+                } else {
+                    String segString = encode((Segment) structure, encodingChars);
                     if (segString.length() >= 4) {
                         result.append(segString);
                         result.append('\r');
@@ -486,7 +480,7 @@ class OldPipeParser extends Parser {
     }
     
     public static String encode(Segment source, EncodingCharacters encodingChars) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(source.getName());
         result.append(encodingChars.getFieldSeparator());
         
@@ -527,7 +521,7 @@ class OldPipeParser extends Parser {
      * and a line feed, so to the parser, the first character of the next segment is the line feed.
      */
     public static String stripLeadingWhitespace(String in) {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         char[] chars = in.toCharArray();
         int c = 0;
         while (c < chars.length) {
@@ -574,7 +568,7 @@ class OldPipeParser extends Parser {
         //get field array
         String[] fields = split(mshString, String.valueOf(fieldSep));
         
-        Segment msh = null;
+        Segment msh;
         try {
             //parse required fields
             String encChars = fields[1];
@@ -629,7 +623,7 @@ class OldPipeParser extends Parser {
             char fieldDelim = message.charAt(startFieldOne - 1);
             int start = message.indexOf(fieldDelim, startFieldOne) + 1;
             int end = message.indexOf(fieldDelim, start);
-            int segEnd = message.indexOf(String.valueOf(segDelim), start);
+            int segEnd = message.indexOf(segDelim, start);
             if (segEnd > start && segEnd < end)
                 end = segEnd;
             
@@ -662,7 +656,7 @@ class OldPipeParser extends Parser {
         if (endMSH < 0)
             endMSH = message.length();
         String msh = message.substring(startMSH, endMSH);
-        String fieldSep = null;
+        String fieldSep;
         if (msh.length() > 3) {
             fieldSep = String.valueOf(msh.charAt(3));
         }
@@ -672,7 +666,7 @@ class OldPipeParser extends Parser {
         
         String[] fields = split(msh, fieldSep);
         
-        String compSep = null;
+        String compSep;
         if (fields.length >= 2 && fields[1] != null && fields[1].length() == 4) {
             compSep = String.valueOf(fields[1].charAt(0)); //get component separator as 1st encoding char
         } 
@@ -681,7 +675,7 @@ class OldPipeParser extends Parser {
                     ErrorCode.REQUIRED_FIELD_MISSING);
         }
         
-        String version = null;
+        String version;
         if (fields.length >= 12) {
         	String[] comp = split(fields[11], compSep);
         	if (comp.length >= 1) {
@@ -702,14 +696,14 @@ class OldPipeParser extends Parser {
     /**
      * {@inheritDoc }
      */
-    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+    public String doEncode(Segment structure, EncodingCharacters encodingCharacters) {
         return encode(structure, encodingCharacters);
     }
 
     /**
      * {@inheritDoc }
      */
-    public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+    public String doEncode(Type type, EncodingCharacters encodingCharacters) {
         return encode(type, encodingCharacters);
     }
 
@@ -719,22 +713,14 @@ class OldPipeParser extends Parser {
      * @throws UnsupportedOperationException
      */
     @Override
-	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) throws HL7Exception, EncodingNotSupportedException {
+	protected Message doParseForSpecificPackage(String theMessage, String theVersion, String thePackageName) {
         throw new UnsupportedOperationException("Not supported yet.");
 	}
     
     public void parse(Message message, String string) throws HL7Exception {
         MessageIterator messageIter = new MessageIterator(message, "MSH", true);
-        FilterIterator.Predicate<Structure> segmentsOnly = new FilterIterator.Predicate<Structure>() {
-            public boolean evaluate(Structure obj) {
-                if (Segment.class.isAssignableFrom(obj.getClass())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        FilterIterator<Structure> segmentIter = new FilterIterator<Structure>(messageIter, segmentsOnly);
+        FilterIterator.Predicate<Structure> segmentsOnly = obj -> Segment.class.isAssignableFrom(obj.getClass());
+        FilterIterator<Structure> segmentIter = new FilterIterator<>(messageIter, segmentsOnly);
 
         String[] segments = split(string, segDelim);
 
@@ -762,14 +748,11 @@ class OldPipeParser extends Parser {
                 log.debug("Parsing segment {}", name);
 
                 messageIter.setDirection(name);
-                FilterIterator.Predicate<Structure> byDirection = new FilterIterator.Predicate<Structure>() {
-                    public boolean evaluate(Structure obj) {
-                        Structure s = (Structure) obj;
-                        log.debug("PipeParser iterating message in direction {} at {} ", name, s.getName());
-                        return s.getName().matches(name + "\\d*");
-                    }
+                FilterIterator.Predicate<Structure> byDirection = obj -> {
+                    log.debug("PipeParser iterating message in direction {} at {} ", name, ((Structure) obj).getName());
+                    return ((Structure) obj).getName().matches(name + "\\d*");
                 };
-                FilterIterator<Structure> dirIter = new FilterIterator<Structure>(segmentIter, byDirection);
+                FilterIterator<Structure> dirIter = new FilterIterator<>(segmentIter, byDirection);
                 if (dirIter.hasNext()) {
                     parse((Segment) dirIter.next(), segments[i], getEncodingChars(string));
                 }
@@ -783,8 +766,8 @@ class OldPipeParser extends Parser {
      * was defined explicitly.  
      */
     private static class MessageStructure {
-        public String messageStructure;
-        public boolean explicitlyDefined;
+        public final String messageStructure;
+        public final boolean explicitlyDefined;
         
         public MessageStructure(String theMessageStructure, boolean isExplicitlyDefined) {
             messageStructure = theMessageStructure;

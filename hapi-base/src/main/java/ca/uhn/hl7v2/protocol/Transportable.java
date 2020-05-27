@@ -17,7 +17,7 @@ public interface Transportable {
     /**
      * @return the text of an HL7 message (either ER7 or XML encoding).
      */
-    public String getMessage();
+    String getMessage();
     
     /**
      * @return metadata associated with the message.  If the message is being 
@@ -28,6 +28,6 @@ public interface Transportable {
      * was received (this depends on the underlying <code>TransportLayer</code> used).  
      * Message fields are keyed with <code>Terser</code> path names.  
      */
-    public Map<String, Object> getMetadata();
+    Map<String, Object> getMetadata();
     
 }

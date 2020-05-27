@@ -22,9 +22,9 @@ import static org.junit.Assert.assertNotNull;
  */
 public class MessageStructuresTest {
 
-	private static Logger ourLog = LoggerFactory.getLogger(MessageStructuresTest.class);
+	private static final Logger ourLog = LoggerFactory.getLogger(MessageStructuresTest.class);
 
-	private static final Set<String> SKIP = new HashSet<String>();
+	private static final Set<String> SKIP = new HashSet<>();
 
 	static {
 		SKIP.add("ca.uhn.hl7v2.model.v23.message.RRE_O02");
@@ -64,7 +64,7 @@ public class MessageStructuresTest {
 				Class<?> clazz = Class.forName(className);
 
 				try {
-					clazz.getConstructor(new Class<?>[0]).newInstance(new Object[0]);
+					clazz.getConstructor(new Class<?>[0]).newInstance();
 				} catch (Exception e) {
 					Assert.fail("Error instantiating " + className + " - " + e.getMessage());
 				}

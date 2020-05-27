@@ -105,11 +105,11 @@ public interface IClient {
 
 	/**
 	 * Sets the number of milliseconds before timing out. Default is
-	 * {@link #DEFAULT_RESPONSE_TIMEOUT}
+	 * {@link ca.uhn.hl7v2.hoh.raw.client.AbstractRawClient#DEFAULT_RESPONSE_TIMEOUT}
 	 * 
 	 * @param theResponseTimeout
 	 *            The millis to wait before timeout.
-	 * @see #DEFAULT_RESPONSE_TIMEOUT
+	 * @see ca.uhn.hl7v2.hoh.raw.client.AbstractRawClient#DEFAULT_RESPONSE_TIMEOUT
 	 */
 	void setResponseTimeout(long theResponseTimeout);
 

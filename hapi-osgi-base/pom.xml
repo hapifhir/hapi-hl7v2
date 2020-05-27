@@ -9,8 +9,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-osgi-base</artifactId>
+    <artifactId>hapi-osgi-base</artifactId>
 	<name>HAPI - Java HL7 API - OSGI Bundle</name>
 
 	<packaging>bundle</packaging>

@@ -61,9 +61,9 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
     public static final String URL_KEY = "URL";
 
     private String myContentType = "application/hl7+doc+xml";
-    private URL myURL;
+    private final URL myURL;
     private URLConnection myConnection;
-    protected int myBufferSize = 3000;
+    protected final int myBufferSize = 3000;
     
     private final boolean myConnectOnSend;
     private final boolean myConnectOnReceive;
@@ -93,8 +93,7 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
     /** 
      * Writes the given message to the URL. 
      * 
-     * @param theMessage the message to send 
-     * @see ca.uhn.hl7v2.protocol.AbstractTransport#doSend(ca.uhn.hl7v2.protocol.Transportable)
+     * @param theMessage the message to send
      */
     public void doSend(Transportable theMessage) throws TransportException {
         if (myConnectOnSend) {
@@ -110,16 +109,13 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
         }
     }
 
-    /**
-     * @see ca.uhn.hl7v2.protocol.AbstractTransport#doReceive()
-     */
     public Transportable doReceive() throws TransportException {
         
         if (myConnectOnReceive) {
             makeConnection();
         }
 
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 
         try {
             log.debug("Getting InputStream from URLConnection");
@@ -144,7 +140,7 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
                         throw new TransportException("Timeout waiting for response");
                     }
                 }
-                catch (InterruptedException x) {
+                catch (InterruptedException ignored) {
                 }
 
                 if (bytesRead > 0) {
@@ -170,8 +166,6 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
      * Calls openConnection() on the underlying URL and configures the connection, 
      * if this transport is configured to connect when connect() is called (see 
      * constructor params).
-     *   
-     * @see ca.uhn.hl7v2.protocol.AbstractTransport#doConnect()
      */
     public void doConnect() throws TransportException {
         if (myConnectOnConnect) {
@@ -212,7 +206,7 @@ public class URLTransport extends AbstractTransport implements TransportLayer {
     /** 
      * @see ca.uhn.hl7v2.protocol.TransportLayer#disconnect()
      */
-    public void doDisconnect() throws TransportException {
+    public void doDisconnect() {
         myConnection = null;
     }
     

@@ -49,9 +49,9 @@ public class ChoiceElementsRespectedRule extends AbstractMessageRule {
 	public static final MessageRule CHOICE_ELEMENTS_RESPECTED = new ChoiceElementsRespectedRule();
 
 	public ValidationException[] apply(Message theValue) {
-		List<ValidationException> exceptions = new ArrayList<ValidationException>();
+		List<ValidationException> exceptions = new ArrayList<>();
 		apply(theValue, exceptions);
-		return exceptions.toArray(new ValidationException[exceptions.size()]);
+		return exceptions.toArray(new ValidationException[0]);
 	}
 
 	private void apply(Group theStructure, List<ValidationException> theExceptions) {
@@ -64,7 +64,7 @@ public class ChoiceElementsRespectedRule extends AbstractMessageRule {
 
 					if (nextIsChoiceElement && !nextStruct.isEmpty()) {
 						if (choicesWithContent == null) {
-							choicesWithContent = new HashSet<String>();
+							choicesWithContent = new HashSet<>();
 						}
 						choicesWithContent.add(nextName);
 					}

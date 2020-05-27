@@ -36,15 +36,13 @@ public class ServerSocketStreamSourceTest extends TestCase {
         ServerSocket ss = new ServerSocket(port);
         ServerSocketStreamSource source = new ServerSocketStreamSource(ss, "127.0.0.1");
         
-        Thread thd = new Thread() {
-            public void run() {
-                try {
-                    Socket s = new Socket("127.0.0.1", port);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Thread thd = new Thread(() -> {
+            try {
+                Socket s = new Socket("127.0.0.1", port);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
+        });
         thd.start();
         
         try {
@@ -62,9 +60,9 @@ public class ServerSocketStreamSourceTest extends TestCase {
         }
         
         source.connect();
-        
-        assertTrue(source.getInboundStream() != null);
-        assertTrue(source.getOutboundStream() != null);
+
+        assertNotNull(source.getInboundStream());
+        assertNotNull(source.getOutboundStream());
         
     }
 

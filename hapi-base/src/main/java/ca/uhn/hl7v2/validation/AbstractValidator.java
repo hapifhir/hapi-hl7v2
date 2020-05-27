@@ -107,7 +107,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 		Terser t = new Terser(message);
 		String messageType = t.get("MSH-9-1");
 		String triggerEvent = t.get("MSH-9-2");
-		List<MessageRule> rules = new ArrayList<MessageRule>();
+		List<MessageRule> rules = new ArrayList<>();
 		if (getValidationContext() != null) {
 			rules.addAll(getValidationContext().getMessageRules(message.getVersion(), messageType,
 					triggerEvent));
@@ -178,7 +178,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 	}
 
 	private void testPrimitive(Primitive p, ValidationExceptionHandler<R> handler, Location l) {
-		List<PrimitiveTypeRule> rules = new ArrayList<PrimitiveTypeRule>();
+		List<PrimitiveTypeRule> rules = new ArrayList<>();
 		Message m = p.getMessage();
 		if (getValidationContext() != null) {
 			rules.addAll(getValidationContext().getPrimitiveRules(m.getVersion(), p.getName(), p));
@@ -219,7 +219,7 @@ public abstract class AbstractValidator<R> implements Validator<R> {
 			throw new NullPointerException("ValidationExceptionHandler may not be null");
 		}
 		handler.setValidationSubject(message);
-		List<EncodingRule> rules = new ArrayList<EncodingRule>();
+		List<EncodingRule> rules = new ArrayList<>();
 		if (getValidationContext() != null) {
 			rules.addAll(getValidationContext().getEncodingRules(version, isXML ? "XML" : "ER7"));
 		}

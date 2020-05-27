@@ -53,7 +53,7 @@ import java.io.OutputStream;
  * encoding information in MSH-18 with these encodings, corresponding byte order marks (BOMs) are expected
  * at the beginning of the message payload (i.e. AFTER the MLLP start byte) to be able to decode the
  * message in order to read the MSH-18 field. This scheme is also followed when the MinLLPWriter
- * sends out UTF-16 or UTF-32-encoded MLLP messages unless {@link #setOmitBOM(boolean)} is explicitly
+ * sends out UTF-16 or UTF-32-encoded MLLP messages unless {@link #omitBOM} is explicitly
  * set to true.
  * </p>
  * <p>

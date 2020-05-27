@@ -24,7 +24,7 @@ import ca.uhn.hl7v2.parser.Parser;
 public abstract class AbstractClient<T extends AbstractRawClient> implements IClient {
 
 	private Parser myParser;
-	private T myRawClient;
+	private final T myRawClient;
 
 	/**
 	 * Constructor

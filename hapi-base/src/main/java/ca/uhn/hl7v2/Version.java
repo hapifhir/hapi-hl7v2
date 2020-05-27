@@ -25,6 +25,7 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -47,9 +48,9 @@ public enum Version {
 	V28("2.8"), // -
 	V281("2.8.1"); // -
 
-	private String version;
+	private final String version;
 	private static ArrayList<Version> ourVersionsOnClasspath;
-	private static final Map<Version, Boolean> ourIsOnClasspath = new HashMap<Version, Boolean>();
+	private static final Map<Version, Boolean> ourIsOnClasspath = new HashMap<>();
 
 	Version(String version) {
 		this.version = version;
@@ -115,29 +116,29 @@ public enum Version {
 	}
 
 	public static Version[] asOf(Version v) {
-		List<Version> versions = new ArrayList<Version>();
+		List<Version> versions = new ArrayList<>();
 		for (Version version : Version.values()) {
 			if (version.compareTo(v) >= 0)
 				versions.add(version);
 		}
-		return versions.toArray(new Version[versions.size()]);
+		return versions.toArray(new Version[0]);
 	}
 
     public static Version[] except(Version... v) {
-        Set<Version> versions = new HashSet<Version>(Arrays.asList(Version.values()));
+        Set<Version> versions = new HashSet<>(Arrays.asList(Version.values()));
         for (Version version : v) {
             versions.remove(version);
         }
-        return versions.toArray(new Version[versions.size()]);
+        return versions.toArray(new Version[0]);
     }
 
 	public static Version[] before(Version v) {
-		List<Version> versions = new ArrayList<Version>();
+		List<Version> versions = new ArrayList<>();
 		for (Version version : Version.values()) {
 			if (version.compareTo(v) < 0)
 				versions.add(version);
 		}
-		return versions.toArray(new Version[versions.size()]);
+		return versions.toArray(new Version[0]);
 	}
 
 	public String modelPackageName() {
@@ -156,19 +157,13 @@ public enum Version {
 		Boolean retVal = ourIsOnClasspath.get(this);
 		if (retVal == null) {
 			String resource = "ca/uhn/hl7v2/parser/eventmap/" + getVersion() + ".properties";
-            InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource);
-            try {
-			    retVal = in != null;
-			    ourIsOnClasspath.put(this, retVal);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }
-            }
+			try (InputStream in = Parser.class.getClassLoader().getResourceAsStream(resource)) {
+				retVal = in != null;
+				ourIsOnClasspath.put(this, retVal);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			// Ignore
 		}
 		return retVal;
 	}
@@ -179,7 +174,7 @@ public enum Version {
 	 */
 	public static synchronized List<Version> availableVersions() {
 		if (ourVersionsOnClasspath == null) {
-			ourVersionsOnClasspath = new ArrayList<Version>();
+			ourVersionsOnClasspath = new ArrayList<>();
 			for (Version next : values()) {
 				if (next.available()) {
 					ourVersionsOnClasspath.add(next);

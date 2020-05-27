@@ -24,7 +24,6 @@ import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
  * a numeric sequence starting at zero. This behaviour can be overwritten using 
  * {@link #NEVER_FAIL_PROPERTY}
  * </p>
- * Note: you should not use this class directory, but use the {@link IDGeneratorFactory} instead. 
  * Also consider using {@link FileBasedHiLoGenerator} which provides better performance
  * 
  * 
@@ -81,7 +80,7 @@ public class MessageIDGenerator {
         try{
             // We should check to see if the external file for storing the unique ids exists
             File extFile = new File(DEFAULT_ID_FILE);
-            if (extFile.createNewFile()== true){
+            if (extFile.createNewFile()){
                 /*there was no existing file so a new one has been created with createNewFile method.  The
                 file is stored at  <hapi.home>/id_file.txt */
                 // We can simply initialize the private id field to zero
@@ -118,13 +117,8 @@ public class MessageIDGenerator {
         } catch (FileNotFoundException e) {
             ourLog.error("Failed to locate message ID file. Message was: {}", e.getMessage());
         } catch (IOException e) {
-        	if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {
-        		ourLog.warn("Could not retrieve message ID file, going to default to ID of 0. Message was: {}", e.getMessage());
-        		id = 0;
-        		return;
-        	} else {
-        		throw e;
-        	}
+            System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString());
+            throw e;
         }
 	}
     
@@ -153,18 +147,11 @@ public class MessageIDGenerator {
 	        fileW.flush();
 	        fileW.close();
     	} catch (FileNotFoundException e) {
-        	if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {
-        		ourLog.info("Failed to create message ID file. Message was: {}", e.getMessage());
-        		fileW = null;
-        	}
-    	} catch (IOException e) {
-        	if (Boolean.TRUE.equals(System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString()))) {
-        		ourLog.debug("Failed to create message ID file. Message was: {}", e.getMessage());
-        		fileW = null;
-        	} else {
-        		throw e;
-        	}
-    	}
+            System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString());
+        } catch (IOException e) {
+            System.getProperty(NEVER_FAIL_PROPERTY, Boolean.TRUE.toString());
+            throw e;
+        }
     	return String.valueOf(id);
     }//end method
     

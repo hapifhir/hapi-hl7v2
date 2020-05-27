@@ -53,8 +53,8 @@ public class MandatoryFieldsVisitor extends ValidatingMessageVisitor {
     private Set<Location> fieldsLeft;
 
     @Override
-    public boolean start(Message message) throws HL7Exception {
-        fieldsLeft = new HashSet<Location>();
+    public boolean start(Message message) {
+        fieldsLeft = new HashSet<>();
         // Initialize the field expressions to be visited
         for (Map.Entry<String, Integer[]> entry : requiredFields.entrySet()) {
             if (!(entry.getValue().length == 0)) {
@@ -70,7 +70,7 @@ public class MandatoryFieldsVisitor extends ValidatingMessageVisitor {
     }
 
     @Override
-    public boolean end(Message message) throws HL7Exception {
+    public boolean end(Message message) {
         for (Location l : fieldsLeft) {
             ValidationException ve = new ValidationException("Mandatory field is empty");
             ve.setLocation(l);
@@ -81,7 +81,7 @@ public class MandatoryFieldsVisitor extends ValidatingMessageVisitor {
     }
 
     @Override
-    public boolean start(Segment segment, Location location) throws HL7Exception {
+    public boolean start(Segment segment, Location location) {
         // If we don't require a fields for this segment, there is no need to
         // visit the fields
         return requiredFields.containsKey(segment.getName());

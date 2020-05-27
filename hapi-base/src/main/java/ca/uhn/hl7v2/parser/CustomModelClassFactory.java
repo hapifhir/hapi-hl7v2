@@ -53,13 +53,13 @@ import ca.uhn.hl7v2.util.StringUtil;
 public class CustomModelClassFactory extends AbstractModelClassFactory {
 
     private static final long serialVersionUID = 1;
-    private static Logger LOG = LoggerFactory.getLogger(CustomModelClassFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomModelClassFactory.class);
 
     private final ModelClassFactory delegate;
     private Map<String, String[]> customModelClasses;
 
     // some optimization
-    private ConcurrentMap<String, Class> cache = new ConcurrentHashMap<String, Class>();
+    private final ConcurrentMap<String, Class> cache = new ConcurrentHashMap<>();
 
     /**
      * Constructor which just delegated to {@link DefaultModelClassFactory}
@@ -81,7 +81,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * </p>
      */
     public CustomModelClassFactory(String packageName) {
-        this(new HashMap<String, String[]>());
+        this(new HashMap<>());
 
         if (!packageName.endsWith(".")) {
             packageName += ".";
@@ -187,7 +187,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
      * Finds appropriate classes to be loaded for the given structure/type
      */
     @SuppressWarnings("unchecked")
-	protected <T> Class<T> findClass(String subpackage, String name, String version) throws HL7Exception {
+	protected <T> Class<T> findClass(String subpackage, String name, String version) {
         Class<T> classLoaded = null;
         if (customModelClasses != null) {
             if (customModelClasses.containsKey(version)) {
@@ -230,7 +230,7 @@ public class CustomModelClassFactory extends AbstractModelClassFactory {
 	 */
 	public void addModels(Map<String, String[]> addedModelClasses) {
         if (customModelClasses == null) {
-        	customModelClasses = new HashMap<String, String[]>();
+        	customModelClasses = new HashMap<>();
         }
         for (Entry<String, String[]> entry : addedModelClasses.entrySet()) {
         	addModel(entry.getKey(), entry.getValue());

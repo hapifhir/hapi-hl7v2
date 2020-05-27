@@ -3,7 +3,6 @@
  */
 package ca.uhn.hl7v2.protocol;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 
@@ -26,7 +25,7 @@ public class MockApplicationRouter implements ApplicationRouter {
      * 
      * @see ca.uhn.hl7v2.protocol.ApplicationRouter#processMessage(ca.uhn.hl7v2.protocol.Transportable)
      */
-    public Transportable processMessage(Transportable arg0) throws HL7Exception {
+    public Transportable processMessage(Transportable arg0) {
         myLastReceived = arg0;
         return myNextReply;
     }

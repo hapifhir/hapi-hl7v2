@@ -1,14 +1,5 @@
 package ca.uhn.hl7v2.model;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.datatype.CE;
@@ -18,12 +9,20 @@ import ca.uhn.hl7v2.model.v26.datatype.ST;
 import ca.uhn.hl7v2.model.v26.message.ORU_R01;
 import ca.uhn.hl7v2.model.v26.segment.OBX;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.FixFieldDataType;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * A JUnit test harness for Varies
@@ -38,7 +37,7 @@ public class VariesTest {
 	private static Message mshOnly;
 
 	@BeforeClass
-	public static void setup() throws EncodingNotSupportedException, HL7Exception {
+	public static void setup() throws HL7Exception {
 		mshOnly = new PipeParser().parse(MSH_TEXT);
 		mshOnly.setParser(new GenericParser());
 		encoders = EncodingCharacters.getInstance(mshOnly);
@@ -143,7 +142,7 @@ public class VariesTest {
 				+ "OBR|\r" // -
 				+ "OBX||ST|||F1C1&F1C2\r";
 
-		System.setProperty(Varies.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "TRUE");
+		System.setProperty(FixFieldDataType.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "TRUE");
 
 		ORU_R01 msg = new ORU_R01();
 		msg.parse(msgString);
@@ -205,7 +204,7 @@ public class VariesTest {
 				+ "OBR|\r" // -
 				+ "OBX||ST|||F1C1&F1C2\r";
 
-		System.setProperty(Varies.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "FALSE");
+		System.setProperty(FixFieldDataType.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "FALSE");
 
 		ORU_R01 msg = new ORU_R01();
 		msg.parse(msgString);

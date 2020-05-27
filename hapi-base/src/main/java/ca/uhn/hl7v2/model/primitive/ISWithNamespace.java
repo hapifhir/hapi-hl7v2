@@ -8,8 +8,8 @@ import ca.uhn.hl7v2.model.Message;
 @SuppressWarnings("serial")
 public class ISWithNamespace extends IS {
 
-	private String myNamespace;
-	private String myHl7Version;
+	private final String myNamespace;
+	private final String myHl7Version;
 
 	/**
 	 * Constructor

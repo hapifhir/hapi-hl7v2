@@ -45,7 +45,7 @@ public interface Validator<R> {
 	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message is null
 	 */
-	public R validate(Message message) throws HL7Exception;
+    R validate(Message message) throws HL7Exception;
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public interface Validator<R> {
 	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message is null
 	 */
-	public R validate(String message, boolean isXML, String version) throws HL7Exception;
+    R validate(String message, boolean isXML, String version) throws HL7Exception;
 
 	/**
 	 * Validates a {@link Message} using a custom {@link ValidationExceptionHandler}. The handler
@@ -74,7 +74,7 @@ public interface Validator<R> {
 	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
-	public R validate(Message message, ValidationExceptionHandler<R> handler)
+    R validate(Message message, ValidationExceptionHandler<R> handler)
 			throws HL7Exception;
 
 	/**
@@ -90,7 +90,7 @@ public interface Validator<R> {
 	 * @throws HL7Exception if an unexpected error occurs while validating
 	 * @throws NullPointerException if the message or handler is <code>null</code>
 	 */
-	public R validate(String message, boolean isXML, String version,
-			ValidationExceptionHandler<R> handler) throws HL7Exception;
+    R validate(String message, boolean isXML, String version,
+               ValidationExceptionHandler<R> handler) throws HL7Exception;
 
 }

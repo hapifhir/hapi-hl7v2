@@ -34,7 +34,7 @@ public class ApplicationLoaderTest extends TestCase {
         assertTrue(router.hasActiveBinding(a));
         assertTrue(router.hasActiveBinding(b));
         assertTrue(router.hasActiveBinding(c));
-        assertEquals(false, router.hasActiveBinding(d));
+        assertFalse(router.hasActiveBinding(d));
     }
 
 }

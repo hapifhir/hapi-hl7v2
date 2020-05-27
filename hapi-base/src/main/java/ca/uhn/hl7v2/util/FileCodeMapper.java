@@ -43,7 +43,7 @@ public class FileCodeMapper extends CodeMapper {
     private static final Logger log = LoggerFactory.getLogger(FileCodeMapper.class);
 
     private boolean throwIfNoMatch = false;
-    File baseDir;
+    final File baseDir;
     private Map<String, Map<String, Map<String, String>>> interfaceToLocal;
     private Map<String, Map<String, Map<String, String>>> localToInterface;
 
@@ -64,91 +64,81 @@ public class FileCodeMapper extends CodeMapper {
      * to this method refreshes the values.
      */
     public void refreshCache() throws HL7Exception {
-        localToInterface = new HashMap<String, Map<String, Map<String, String>>>(10);
-        interfaceToLocal = new HashMap<String, Map<String, Map<String, String>>>(10);
+        localToInterface = new HashMap<>(10);
+        interfaceToLocal = new HashMap<>(10);
 
         log.info("Refreshing cache");
 
         try {
             //get list of child directories
-            File[] interfaceDirs = this.baseDir.listFiles(new FileFilter() {
-                public boolean accept(File pathname) {
-                    boolean acc = false;
-                    if (pathname.isDirectory())
-                        acc = true;
-                    return acc;
-                }
+            File[] interfaceDirs = this.baseDir.listFiles(pathname -> {
+                boolean acc = false;
+                if (pathname.isDirectory())
+                    acc = true;
+                return acc;
             });
 
             //loop through directories and set up maps
-            for (int i = 0; i < interfaceDirs.length; i++) {
+            for (File interfaceDir : interfaceDirs) {
 
                 log.info(
-                    "Checking directory {} for interface code maps.", interfaceDirs[i].getName());
+                        "Checking directory {} for interface code maps.", interfaceDir.getName());
 
                 //get list of .li (local -> interface) and .il (interface -> local) files
-                File[] mapFiles = interfaceDirs[i].listFiles(new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        boolean acc = false;
-                        if (name.toUpperCase().startsWith("HL7")) {
-                            if (name.substring(name.lastIndexOf('.')).equals(".li")
+                File[] mapFiles = interfaceDir.listFiles((dir, name) -> {
+                    boolean acc = false;
+                    if (name.toUpperCase().startsWith("HL7")) {
+                        if (name.substring(name.lastIndexOf('.')).equals(".li")
                                 || name.substring(name.lastIndexOf('.')).equals(".il"))
-                                acc = true;
-                        }
-                        return acc;
+                            acc = true;
                     }
+                    return acc;
                 });
 
                 //read map entries from each file and add to hash maps for li and il codes
-                HashMap<String, Map<String, String>> li = new HashMap<String, Map<String, String>>(50);
-                HashMap<String, Map<String, String>> il = new HashMap<String, Map<String, String>>(50);
-                for (int j = 0; j < mapFiles.length; j++) {
-                    log.info("Reading map entries from file {}", mapFiles[j]);
+                HashMap<String, Map<String, String>> li = new HashMap<>(50);
+                HashMap<String, Map<String, String>> il = new HashMap<>(50);
+                for (File mapFile : mapFiles) {
+                    log.info("Reading map entries from file {}", mapFile);
 
-                    String fName = mapFiles[j].getName();
+                    String fName = mapFile.getName();
                     String tableName = fName.substring(0, fName.lastIndexOf('.'));
                     String mapDirection = fName.substring(fName.lastIndexOf('.') + 1);
 
                     //read values and store in HashMap
-	                Map<String, String> codeMap = new HashMap<String, String>(25);
-                    BufferedReader in = null;
-                    try {
-		                in = new BufferedReader(new FileReader(mapFiles[j]));
-		                while (in.ready()) {
-		                    String line = in.readLine();
-		                    if (!line.startsWith("//")) {
-		                        StringTokenizer tok = new StringTokenizer(line, "\t", false);
-		                        String from = null;
-		                        String to = null;
-		                        if (tok.hasMoreTokens())
-		                            from = tok.nextToken();
-		                        if (tok.hasMoreTokens())
-		                            to = tok.nextToken();
-		                        if (from != null && to != null)
-		                            codeMap.put(from, to);
-		                    }
-		                }
-                    }
-                    finally {
-                    	if (in != null) in.close();
+                    Map<String, String> codeMap = new HashMap<>(25);
+                    try (BufferedReader in = new BufferedReader(new FileReader(mapFile))) {
+                        while (in.ready()) {
+                            String line = in.readLine();
+                            if (!line.startsWith("//")) {
+                                StringTokenizer tok = new StringTokenizer(line, "\t", false);
+                                String from = null;
+                                String to = null;
+                                if (tok.hasMoreTokens())
+                                    from = tok.nextToken();
+                                if (tok.hasMoreTokens())
+                                    to = tok.nextToken();
+                                if (from != null && to != null)
+                                    codeMap.put(from, to);
+                            }
+                        }
                     }
 
                     //add to appropriate map for this interface
                     if (mapDirection.equals("il")) {
                         il.put(tableName.toUpperCase(), codeMap);
                         log.debug("Adding {} codes to interface -> local map for {} in {} interface",
-                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});
-                    }
-                    else {
+                                codeMap.size(), tableName, interfaceDir.getName());
+                    } else {
                         li.put(tableName.toUpperCase(), codeMap);
                         log.debug("Adding {} codes to local -> interface map for {} in {} interface",
-                                new Object[] {codeMap.size(), tableName, interfaceDirs[i].getName()});
+                                codeMap.size(), tableName, interfaceDir.getName());
                     }
                 }
 
                 //add maps for this interface (this directory) to global list
-                interfaceToLocal.put(interfaceDirs[i].getName(), il);
-                localToInterface.put(interfaceDirs[i].getName(), li);
+                interfaceToLocal.put(interfaceDir.getName(), il);
+                localToInterface.put(interfaceDir.getName(), li);
             }
 
         }
@@ -187,10 +177,10 @@ public class FileCodeMapper extends CodeMapper {
      * Common code for getLocalcode and getInterfaceCode
      */
     private String getCode(Map<String, Map<String, String>> interfaceMap, int hl7Table, String code) {
-        String ret = null;
+        String ret;
 
         //get map for the given table
-        StringBuffer tableName = new StringBuffer();
+        StringBuilder tableName = new StringBuilder();
         tableName.append("HL7");
         if (hl7Table < 1000)
             tableName.append("0");
@@ -202,7 +192,7 @@ public class FileCodeMapper extends CodeMapper {
         Map<String, String> tableMap = interfaceMap.get(tableName.toString());
 
         //get code
-        ret = tableMap.get(code).toString();
+        ret = tableMap.get(code);
         return ret;
     }
 
@@ -243,7 +233,7 @@ public class FileCodeMapper extends CodeMapper {
     /**
      * Test harness.
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             //FileCodeMapper mapper = new FileCodeMapper();
             CodeMapper.getInstance().throwExceptionIfNoMatch(true);

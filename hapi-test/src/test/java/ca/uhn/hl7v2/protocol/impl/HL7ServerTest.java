@@ -24,7 +24,6 @@ import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.MockApp;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.SafeStorage;
 import ca.uhn.hl7v2.protocol.StreamSource;
 import ca.uhn.hl7v2.protocol.Transportable;
@@ -65,14 +64,14 @@ public class HL7ServerTest implements ReceivingApplication<Message> {
         transport.send(new TransportableImpl(message));
         Transportable inbound = transport.receive();
         
-        assertTrue(inbound.getMessage().indexOf("mock") > -1);     
+        assertTrue(inbound.getMessage().contains("mock"));
         
         transport.disconnect();
         ss.close();
         
         try {
             Thread.sleep(100); //give it time to start before we stop it
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException ignored) {}
         server.stop();
         
     }
@@ -148,13 +147,13 @@ public class HL7ServerTest implements ReceivingApplication<Message> {
 		
 		assertEquals(2, myMsgCount);
 
-		assertFalse(server.getProcessors().length == 0);
+		assertNotEquals(0, server.getProcessors().length);
 
 		socket.close();
 		
 	}
 
-	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 		try {
 			Message generateACK = theMessage.generateACK();
 			myMsgCount++;

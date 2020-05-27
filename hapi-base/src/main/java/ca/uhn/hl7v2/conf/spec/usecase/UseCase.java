@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.spec.usecase;
 
+import java.beans.PropertyVetoException;
+
 /**
  * The use case portion of a conformance specification.  
  * @author Bryan Tripp
@@ -10,10 +12,10 @@ public class UseCase {
     private Actor actor;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Holds value of property preCondition. */
     private PreCondition preCondition;
@@ -71,7 +73,7 @@ public class UseCase {
      *
      * @throws PropertyVetoException
      */
-    public void setActor(Actor actor) throws java.beans.PropertyVetoException {
+    public void setActor(Actor actor) throws PropertyVetoException {
         Actor oldActor = this.actor;
         vetoableChangeSupport.fireVetoableChange("actor", oldActor, actor);
         this.actor = actor;
@@ -90,7 +92,7 @@ public class UseCase {
      *
      * @throws PropertyVetoException
      */
-    public void setPreCondition(PreCondition preCondition) throws java.beans.PropertyVetoException {
+    public void setPreCondition(PreCondition preCondition) throws PropertyVetoException {
         PreCondition oldPreCondition = this.preCondition;
         vetoableChangeSupport.fireVetoableChange("preCondition", oldPreCondition, preCondition);
         this.preCondition = preCondition;
@@ -109,7 +111,7 @@ public class UseCase {
      *
      * @throws PropertyVetoException
      */
-    public void setPostCondition(PostCondition postCondition) throws java.beans.PropertyVetoException {
+    public void setPostCondition(PostCondition postCondition) throws PropertyVetoException {
         PostCondition oldPostCondition = this.postCondition;
         vetoableChangeSupport.fireVetoableChange("postCondition", oldPostCondition, postCondition);
         this.postCondition = postCondition;
@@ -128,7 +130,7 @@ public class UseCase {
      *
      * @throws PropertyVetoException
      */
-    public void setEventFlow(EventFlow eventFlow) throws java.beans.PropertyVetoException {
+    public void setEventFlow(EventFlow eventFlow) throws PropertyVetoException {
         EventFlow oldEventFlow = this.eventFlow;
         vetoableChangeSupport.fireVetoableChange("eventFlow", oldEventFlow, eventFlow);
         this.eventFlow = eventFlow;
@@ -147,7 +149,7 @@ public class UseCase {
      *
      * @throws PropertyVetoException
      */
-    public void setDerivativeEvent(DerivativeEvent derivativeEvent) throws java.beans.PropertyVetoException {
+    public void setDerivativeEvent(DerivativeEvent derivativeEvent) throws PropertyVetoException {
         DerivativeEvent oldDerivativeEvent = this.derivativeEvent;
         vetoableChangeSupport.fireVetoableChange("derivativeEvent", oldDerivativeEvent, derivativeEvent);
         this.derivativeEvent = derivativeEvent;

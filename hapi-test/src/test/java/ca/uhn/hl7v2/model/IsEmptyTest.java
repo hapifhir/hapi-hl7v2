@@ -20,7 +20,7 @@ public class IsEmptyTest {
     private ADT_A08 hl7In;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         hl7In = new ADT_A08();
         hl7In.setParser(new DefaultHapiContext(ValidationContextFactory.noValidation()).getPipeParser());
     }

@@ -3,7 +3,6 @@ package ca.uhn.hl7v2.hoh.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -23,13 +22,13 @@ public class KeystoreUtils {
 		// nothing
 	}
 
-	public static KeyStore loadKeystore(File theFile, char[] thePassword) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+	public static KeyStore loadKeystore(File theFile, char[] thePassword) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		KeyStore keystore = KeyStore.getInstance("JKS");
 		keystore.load(new BufferedInputStream(new FileInputStream(theFile)), thePassword);
 		return keystore;
 	}
 
-	public static KeyStore loadKeystore(String theFile, String theKeystorePassword) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+	public static KeyStore loadKeystore(String theFile, String theKeystorePassword) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		char[] pass = theKeystorePassword != null ? theKeystorePassword.toCharArray() : null;
 		return loadKeystore(new File(theFile), pass);
 	}
@@ -119,17 +118,11 @@ public class KeystoreUtils {
 		Key key;
 		try {
 			key = theKeystore.getKey(theKeyAlias, theKeyPassword.toCharArray());
-		} catch (UnrecoverableKeyException e) {
-			ourLog.debug("Failed to recover key", e);
-			return false;
-		} catch (KeyStoreException e) {
-			ourLog.debug("Failed to recover key", e);
-			return false;
-		} catch (NoSuchAlgorithmException e) {
+		} catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
 			ourLog.debug("Failed to recover key", e);
 			return false;
 		}
-		
+
 		if (key == null) {
 			ourLog.debug("Key is null");
 			return false;
@@ -152,17 +145,11 @@ public class KeystoreUtils {
 		try {
 			Key key = theKeystore.getKey(theKeyAlias, theKeyPassword.toCharArray());
 			return key != null;
-		} catch (UnrecoverableKeyException e) {
-			ourLog.debug("Failed to recover key", e);
-			return false;
-		} catch (KeyStoreException e) {
-			ourLog.debug("Failed to recover key", e);
-			return false;
-		} catch (NoSuchAlgorithmException e) {
+		} catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
 			ourLog.debug("Failed to recover key", e);
 			return false;
 		}
-		
+
 	}
 
 }

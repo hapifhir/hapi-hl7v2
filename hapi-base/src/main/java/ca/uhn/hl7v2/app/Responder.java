@@ -62,7 +62,7 @@ import ca.uhn.hl7v2.protocol.impl.TransportableImpl;
 class Responder {
 
 	private ApplicationRouter apps;
-	private Socket inboundSocket;
+	private final Socket inboundSocket;
 
 	/**
 	 * Creates a new instance of Responder
@@ -83,7 +83,7 @@ class Responder {
 	protected String processMessage(String incomingMessageString)
 			throws HL7Exception {
 		
-		Map<String, Object> metadata = new HashMap<String, Object>();
+		Map<String, Object> metadata = new HashMap<>();
 		InetSocketAddress remoteSocketAddress = (InetSocketAddress) inboundSocket.getRemoteSocketAddress();
 		metadata.put(ApplicationRouter.METADATA_KEY_SENDING_IP, remoteSocketAddress.getAddress().getHostAddress());
 		metadata.put(ApplicationRouter.METADATA_KEY_SENDING_PORT, remoteSocketAddress.getPort());
@@ -122,7 +122,7 @@ class Responder {
 	 * Test code.
 	 */
 	@SuppressWarnings({ "unused", "resource" })
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length != 1) {
 			System.err.println("Usage: DefaultApplication message_file");
 			System.exit(1);

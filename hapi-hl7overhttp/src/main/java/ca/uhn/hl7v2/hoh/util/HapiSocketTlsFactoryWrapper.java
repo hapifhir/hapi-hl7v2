@@ -17,7 +17,7 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
  */
 public class HapiSocketTlsFactoryWrapper implements SocketFactory {
 
-	private ISocketFactory mySocketFactory;
+	private final ISocketFactory mySocketFactory;
 
 	/**
 	 * Constuctor

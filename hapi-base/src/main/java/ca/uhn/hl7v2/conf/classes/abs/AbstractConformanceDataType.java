@@ -49,7 +49,7 @@ public abstract class AbstractConformanceDataType {
 	
 	private static final Logger log = LoggerFactory.getLogger(AbstractConformanceDataType.class);
     
-    private Primitive hapiPrimitive;
+    private final Primitive hapiPrimitive;
     
     /** Constructor for AbstractConformanceDataType
      * @param hapiPrimitive the underlying primitive that the extending class represents
@@ -79,7 +79,7 @@ public abstract class AbstractConformanceDataType {
      * maximum allowable length for the extending class.  If the <code>String</code> value is valid, this
      * method will set the underlying HAPI class's value. If the data passed in is invalid for the given
      * data type, a ConfDataException is thrown.
-     * @throws ConformaceException
+     * @throws ConformanceException
      * @param value the value of the Data Type
      */
     protected void setValue(java.lang.String value) throws ConfDataException {

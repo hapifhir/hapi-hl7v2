@@ -43,22 +43,22 @@ import java.util.Vector;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class GeneratedMethod {
-   private Vector<String> body;
-   private Vector<String> comments;
-   private Vector<String> description;
+   private final Vector<String> body;
+   private final Vector<String> comments;
+   private final Vector<String> description;
    protected final String INDENT = "   ";
    private String name;
-   private Vector<String> params;
+   private final Vector<String> params;
    private String returnType;
    private String throwing;
    private String visibility;
 
    /** Creates a new instance of GeneratedMethod */
    public GeneratedMethod() {
-      body = new Vector<String>();
-      comments = new Vector<String>();
-      params = new Vector<String>();
-      description = new Vector<String>();
+      body = new Vector<>();
+      comments = new Vector<>();
+      params = new Vector<>();
+      description = new Vector<>();
    }
 
    /** A method to set the parameters of the method
@@ -166,16 +166,15 @@ public class GeneratedMethod {
     * @return The generated string
     */
    private String vectorToString(int indentLevel, Vector<?> vec, String prefix) {
-      String pString = "";
-      String indent = "".concat(prefix);
+      StringBuilder pString = new StringBuilder();
+      StringBuilder indent = new StringBuilder("".concat(prefix));
 
       // Create indentation string
       for (int i = 0; i < indentLevel; i++)
-         indent = INDENT + indent;
+         indent.insert(0, INDENT);
 
       // Convert the vector to a string
-      for (int i = 0; i < vec.size(); i++)
-         pString += indent + vec.get(i).toString() + "\n";
-      return pString;
+      for (Object o : vec) pString.append(indent).append(o.toString()).append("\n");
+      return pString.toString();
    }
 }

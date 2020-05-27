@@ -27,10 +27,9 @@ public class MetadataExtractor {
      * @return a Map from Terser paths to field values 
      */
     public static Map<String, String> getFields(Message theMessage, List<String> theTerserPaths) throws HL7Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         Terser terser = new Terser(theMessage);
-        for (int i = 0; i < theTerserPaths.size(); i++) {
-            String path = theTerserPaths.get(i);
+        for (String path : theTerserPaths) {
             String fieldValue = terser.get(path);
             fields.put(path, fieldValue);
         }

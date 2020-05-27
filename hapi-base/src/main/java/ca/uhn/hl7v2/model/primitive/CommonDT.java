@@ -168,8 +168,7 @@ public class CommonDT implements Serializable {
                     String msg =
                         "The length of the DT datatype value does not conform to an allowable"
                             + " format. Format should conform to YYYY[MM[DD]]";
-                    DataTypeException e = new DataTypeException(msg);
-                    throw e;
+                    throw new DataTypeException(msg);
                 }
 
                 if (val.length() >= 4) {
@@ -177,7 +176,7 @@ public class CommonDT implements Serializable {
                     int yrInt = Integer.parseInt(val.substring(0, 4));
                     //check to see if the year is valid by creating a Gregorian calendar object with
                     //this value.  If an error occurs then processing will stop in this try block
-                    cal.set(yrInt, 0, 1);
+                    cal.set(yrInt, Calendar.JANUARY, 1);
                     cal.getTime(); //for error detection
                     year = yrInt;
                 }
@@ -236,12 +235,11 @@ public class CommonDT implements Serializable {
             //ensure that the year field is four digits long
             if (Integer.toString(yr).length() != 4) {
                 String msg = "The input year value must be four digits long";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             }
             //check is input year is valid
             //GregorianCalendar cal = new GregorianCalendar(yr,0,1);
-            cal.set(yr, 0, 1);
+            cal.set(yr, Calendar.JANUARY, 1);
             cal.getTime(); //for error detection
             year = yr;
             month = 0;
@@ -273,8 +271,7 @@ public class CommonDT implements Serializable {
             //ensure that the year field is four digits long
             if (Integer.toString(yr).length() != 4) {
                 String msg = "The input year value must be four digits long";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             }
             //validate the input month
             //GregorianCalendar cal = new GregorianCalendar(yr,(mnth-1),1);
@@ -283,7 +280,7 @@ public class CommonDT implements Serializable {
             year = yr;
             month = mnth;
             day = 0;
-            value = Integer.toString(yr) + DataTypeUtil.preAppendZeroes(mnth, 2);
+            value = yr + DataTypeUtil.preAppendZeroes(mnth, 2);
         }
 
         catch (DataTypeException e) {
@@ -309,8 +306,7 @@ public class CommonDT implements Serializable {
             //ensure that the year field is four digits long
             if (Integer.toString(yr).length() != 4) {
                 String msg = "The input year value must be four digits long";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             }
             //validate the input month/day combination
             cal.set(yr, (mnth - 1), dy);
@@ -318,7 +314,7 @@ public class CommonDT implements Serializable {
             year = yr;
             month = mnth;
             day = dy;
-            value = Integer.toString(yr) + DataTypeUtil.preAppendZeroes(mnth, 2) + DataTypeUtil.preAppendZeroes(dy, 2);
+            value = yr + DataTypeUtil.preAppendZeroes(mnth, 2) + DataTypeUtil.preAppendZeroes(dy, 2);
         }
 
         catch (DataTypeException e) {
@@ -365,7 +361,7 @@ public class CommonDT implements Serializable {
      * an Hl7 Date Format.
      */
     public static String toHl7DTFormat(GregorianCalendar cal) throws DataTypeException {
-        String val = "";
+        String val;
         try {
             //set the input cal object so that it can report errors
             //on it's value

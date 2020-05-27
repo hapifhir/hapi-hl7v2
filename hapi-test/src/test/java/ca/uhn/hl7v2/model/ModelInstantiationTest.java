@@ -2,7 +2,6 @@ package ca.uhn.hl7v2.model;
 
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public class ModelInstantiationTest {
 	private static final Logger log = LoggerFactory.getLogger(ModelInstantiationTest.class);
 
 	@Test
-	public void testDataTypes() throws IOException, ClassNotFoundException {
+	public void testDataTypes() throws ClassNotFoundException {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 		
 		ResourceLoader resourceLoader = new DefaultResourceLoader(GenericComposite.class.getClassLoader());
@@ -36,7 +35,7 @@ public class ModelInstantiationTest {
 		scanner.addIncludeFilter(new AssignableTypeFilter(AbstractType.class));
 		Set<BeanDefinition> components = scanner.findCandidateComponents("ca/uhn/hl7v2/model/*/datatype");
 
-		Map<Class<?>, Throwable> failures = new HashMap<Class<?>, Throwable>();
+		Map<Class<?>, Throwable> failures = new HashMap<>();
 		for (BeanDefinition beanDefinition : components) {
 
 			String nextBeanClassName = beanDefinition.getBeanClassName();
@@ -45,7 +44,7 @@ public class ModelInstantiationTest {
 
 			try {
 
-				Constructor<?> constructor = clazz.getConstructor(new Class[] { Message.class });
+				Constructor<?> constructor = clazz.getConstructor(Message.class);
 				constructor.newInstance(new ADT_A01());
 
 			} catch (Exception e) {
@@ -58,7 +57,7 @@ public class ModelInstantiationTest {
 
 		log.debug("Done scanning");
 
-		if (failures.isEmpty() == false) {
+		if (!failures.isEmpty()) {
 
 			StringBuilder m = new StringBuilder();
 			m.append("Got the following failures: \n");
@@ -75,7 +74,7 @@ public class ModelInstantiationTest {
 	}
 
 	@Test
-	public void testMessageTypes() throws IOException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, HL7Exception {
+	public void testMessageTypes() throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, HL7Exception {
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 
 		ResourceLoader resourceLoader = new DefaultResourceLoader(AbstractMessage.class.getClassLoader());
@@ -92,9 +91,9 @@ public class ModelInstantiationTest {
 			
 			log.debug("Scanning class: " + nextBeanClassName);
 			Class<?> clazz = Class.forName(nextBeanClassName);
-			Constructor<?> constructor = clazz.getConstructor(new Class[] {});
+			Constructor<?> constructor = clazz.getConstructor();
 			Message instance = (Message) constructor.newInstance();
-			instantiateStructure(instance, new HashSet<String>());
+			instantiateStructure(instance, new HashSet<>());
 		}
 
 		log.debug("Done scanning");

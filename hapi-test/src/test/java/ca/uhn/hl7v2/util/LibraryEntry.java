@@ -5,15 +5,15 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  * specific language governing rights and limitations under the License.
- *
+ * <p>
  * The Original Code is "LibraryEntry.java".  Description:
  * "HL7 message library entry."
- *
+ * <p>
  * The Initial Developer of the Original Code is Leslie Mann. Copyright (C)
  * 2002.  All Rights Reserved.
- *
+ * <p>
  * Contributor(s): ______________________________________.
- *
+ * <p>
  * Alternatively, the contents of this file may be used under the terms of the
  * GNU General Public License (the  �GPL�), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
@@ -22,7 +22,6 @@
  * and replace  them with the notice and other provisions required by the GPL License.
  * If you do not delete the provisions above, a recipient may use your version of
  * this file under either the MPL or the GPL.
- *
  */
 package ca.uhn.hl7v2.util;
 
@@ -37,45 +36,45 @@ import ca.uhn.hl7v2.model.Message;
  * optionally setid if segment repeats), and parsed message.
  * Parsed message will be null if unable to parse HL7 message
  * string.
- * 
+ *
  * @author Leslie Mann
  */
 public class LibraryEntry {
-	private String messageString;
-	private Message message;
-	private Map<String, String> segments;
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param msgString	HL7 message string
-	 * @param segments		hashmap of message's segment's as strings
-	 * @param messsage		parsed message
-	 */
-	public LibraryEntry(String msgStr, Map<String, String> segments, Message msg) {
-		this.messageString = msgStr;
-		this.message = msg;
-		this.segments = segments;
-	}
-	
-	/**
-	 * Returns HL7 message as string.
-	 */
-	public String messageString() {
-		return messageString;
-	}
-	
-	/**
-	 * Returns parsed message.
-	 */
-	public Message message() {
-		return message;
-	}
-	
-	/**
-	 * Returns hashmap of message segments.
-	 */
-	public Map<String, String> segments() {
-		return segments;
-	}
+    private final String messageString;
+    private final Message message;
+    private final Map<String, String> segments;
+
+    /**
+     * Constructor
+     *
+     * @param msgStr    HL7 message string
+     * @param segments  hashmap of message's segment's as strings
+     * @param msg        parsed message
+     */
+    public LibraryEntry(String msgStr, Map<String, String> segments, Message msg) {
+        this.messageString = msgStr;
+        this.message = msg;
+        this.segments = segments;
+    }
+
+    /**
+     * Returns HL7 message as string.
+     */
+    public String messageString() {
+        return messageString;
+    }
+
+    /**
+     * Returns parsed message.
+     */
+    public Message message() {
+        return message;
+    }
+
+    /**
+     * Returns hashmap of message segments.
+     */
+    public Map<String, String> segments() {
+        return segments;
+    }
 }

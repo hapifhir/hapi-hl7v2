@@ -99,7 +99,7 @@ public class LlpClientTest {
 	}
 
 	@AfterClass
-	public static void afterClass() throws InterruptedException {
+	public static void afterClass() {
 		ourLog.info("Marking done as true");
 		ourServerSocketThread.done();
 		ourExecutor.shutdown();

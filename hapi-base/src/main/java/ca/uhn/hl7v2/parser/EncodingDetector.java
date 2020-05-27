@@ -59,7 +59,7 @@ public final class EncodingDetector {
 
         // 4th character of each segment should be field delimiter
         char fourthChar = theMessage.charAt(3);
-        StringTokenizer st = new StringTokenizer(theMessage, String.valueOf(PipeParser.SEGMENT_DELIMITER), false);
+        StringTokenizer st = new StringTokenizer(theMessage, PipeParser.SEGMENT_DELIMITER, false);
         while (st.hasMoreTokens()) {
             String x = st.nextToken();
             if (x.length() > 0) {

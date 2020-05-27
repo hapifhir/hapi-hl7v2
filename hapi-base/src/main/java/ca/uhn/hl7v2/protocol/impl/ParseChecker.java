@@ -3,7 +3,6 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -32,7 +31,7 @@ public class ParseChecker {
      * are noted in the file [hapi.home]/parse_check.txt.  Ignores extra field delimiters.
      */
     public static void checkParse(String originalMessageText, Message parsedMessage, Parser parser)
-            throws HL7Exception, IOException {
+            throws HL7Exception {
         log.info("ParseChecker is checking parse integrity (turn this off if you are not testing)");
         String newMessageText = parser.encode(parsedMessage);
         
@@ -43,14 +42,14 @@ public class ParseChecker {
         if (!originalMessageText.equals(newMessageText)) {
             //check each segment
             StringTokenizer tok = new StringTokenizer(originalMessageText, "\r");
-            List<String> one = new ArrayList<String>();
+            List<String> one = new ArrayList<>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)
                     one.add(seg);
             }
             tok = new StringTokenizer(newMessageText, "\r");
-            List<String> two = new ArrayList<String>();
+            List<String> two = new ArrayList<>();
             while (tok.hasMoreTokens()) {
                 String seg = tok.nextToken();
                 if (seg.length() > 4)

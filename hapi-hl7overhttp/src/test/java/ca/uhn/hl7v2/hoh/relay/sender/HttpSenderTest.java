@@ -14,8 +14,6 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.ConnectionHub;
-import ca.uhn.hl7v2.hoh.api.DecodeException;
-import ca.uhn.hl7v2.hoh.api.EncodeException;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
 import ca.uhn.hl7v2.hoh.llp.ServerSocketThreadForTesting;
 import ca.uhn.hl7v2.hoh.relay.Launcher;
@@ -38,13 +36,13 @@ public class HttpSenderTest {
 	private int myInPort2;
 
 	@After
-	public void after() throws InterruptedException {
+	public void after() {
 		ourLog.info("Marking done as true");
 		myServerSocketThread.done();
 	}
 
 	@Before
-	public void before() throws InterruptedException {
+	public void before() {
 		// System.setProperty("javax.net.debug", "ssl");
 
 		myOutPort = RandomServerPortProvider.findFreePort();
@@ -61,7 +59,7 @@ public class HttpSenderTest {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void testSenderWithTls() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
+	public void testSenderWithTls() throws HL7Exception, IOException, LLPException, InterruptedException {
 
 		CustomCertificateTlsSocketFactory serverSocketFactory = CustomCertificateTlsSocketFactoryTest.createTrustedServerSocketFactory();
 		myServerSocketThread.setServerSockewtFactory(serverSocketFactory);
@@ -91,7 +89,7 @@ public class HttpSenderTest {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void testErrorMessageReferencesRelay() throws HL7Exception, IOException, LLPException, InterruptedException, DecodeException, EncodeException {
+	public void testErrorMessageReferencesRelay() throws HL7Exception, IOException, LLPException {
 
 		ADT_A01 adt = new ADT_A01();
 		adt.initQuickstart("ADT", "A01", "T");
@@ -144,36 +142,30 @@ public class HttpSenderTest {
 			final ADT_A01 msg2 = new ADT_A01();
 			msg2.initQuickstart("ADT", "A01", "T");
 
-			final Holder<ACK> resp1Holder = new Holder<ACK>();
-			final Holder<ACK> resp2Holder = new Holder<ACK>();
-			final Holder<Throwable> failHolder = new Holder<Throwable>();
+			final Holder<ACK> resp1Holder = new Holder<>();
+			final Holder<ACK> resp2Holder = new Holder<>();
+			final Holder<Throwable> failHolder = new Holder<>();
 
-			Thread t1 = new Thread() {
-				@Override
-				public void run() {
-					try {
-						Connection client1 = new DefaultHapiContext().newClient("localhost", myInPort, false);
-						resp1Holder.myValue = (ACK) client1.getInitiator().sendAndReceive(msg1);
-					} catch (Throwable e) {
-						failHolder.myValue = e;
-					}
+			Thread t1 = new Thread(() -> {
+				try {
+					Connection client1 = new DefaultHapiContext().newClient("localhost", myInPort, false);
+					resp1Holder.myValue = (ACK) client1.getInitiator().sendAndReceive(msg1);
+				} catch (Throwable e) {
+					failHolder.myValue = e;
 				}
-			};
+			});
 			t1.start();
 
 			Thread.sleep(100);
 			
-			Thread t2 = new Thread() {
-				@Override
-				public void run() {
-					try {
-						Connection client2 = new DefaultHapiContext().newClient("localhost", myInPort, false);
-						resp2Holder.myValue = (ACK) client2.getInitiator().sendAndReceive(msg2);
-					} catch (Throwable e) {
-						failHolder.myValue = e;
-					}
+			Thread t2 = new Thread(() -> {
+				try {
+					Connection client2 = new DefaultHapiContext().newClient("localhost", myInPort, false);
+					resp2Holder.myValue = (ACK) client2.getInitiator().sendAndReceive(msg2);
+				} catch (Throwable e) {
+					failHolder.myValue = e;
 				}
-			};
+			});
 			t2.start();
 
 			t1.join();

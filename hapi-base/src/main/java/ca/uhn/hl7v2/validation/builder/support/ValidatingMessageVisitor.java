@@ -41,10 +41,12 @@ import ca.uhn.hl7v2.validation.ValidationException;
  */
 public abstract class ValidatingMessageVisitor extends MessageVisitorSupport {
 
-    private List<ValidationException> validationExceptions = new ArrayList<ValidationException>();
+    private final List<ValidationException> validationExceptions = new ArrayList<>();
 
     protected boolean addValidationException(ValidationException e) {
-        return (e != null) && validationExceptions.add(e);
+        if ((e == null)) return false;
+        validationExceptions.add(e);
+        return true;
     }
 
     protected boolean addValidationExceptions(ValidationException... e) {
@@ -52,7 +54,7 @@ public abstract class ValidatingMessageVisitor extends MessageVisitorSupport {
     }
 
     ValidationException[] getValidationExceptions() {
-        return validationExceptions.toArray(new ValidationException[validationExceptions.size()]);
+        return validationExceptions.toArray(new ValidationException[0]);
     }
 
 }

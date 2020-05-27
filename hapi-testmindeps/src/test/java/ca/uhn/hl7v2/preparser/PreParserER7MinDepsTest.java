@@ -13,7 +13,7 @@ public class PreParserER7MinDepsTest {
 	@org.junit.Test
 	public void testFirstSegmentRep() throws Exception {
 		String msg = "MSH|^~\\&|x|x|x|x|199904140038||ADT^A01||P|2.2\r" + "PID|||||Smith&Booth&Jones^X^Y\r" + "NTE|a||one~two~three\r" + "NTE|b||four\r";
-		String[] result = PreParser.getFields(msg, new String[] { "NTE(0)-1" });
+		String[] result = PreParser.getFields(msg, "NTE(0)-1");
 		assertEquals("a", result[0]);
 	}
 

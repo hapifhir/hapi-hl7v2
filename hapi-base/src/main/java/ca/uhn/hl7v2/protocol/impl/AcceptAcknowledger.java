@@ -32,7 +32,7 @@ public class AcceptAcknowledger {
 
     private static final Logger log = LoggerFactory.getLogger(AcceptAcknowledger.class);
     
-    private static Parser ourParser = new GenericParser();
+    private static final Parser ourParser = new GenericParser();
     
     /** 
      * Validates the given message against our accept validators, attempts to commit
@@ -99,8 +99,8 @@ public class AcceptAcknowledger {
      * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:26 $ by $Author: jamesagnew $
      */
     public static class AcceptACK {
-        private Transportable myAck;
-        private boolean myIsAcceptable;
+        private final Transportable myAck;
+        private final boolean myIsAcceptable;
         
         public AcceptACK(boolean isAcceptable, Transportable theAck) {
             myIsAcceptable = isAcceptable;

@@ -60,14 +60,14 @@ public class ZPI extends AbstractSegment {
     /**
      * Create an accessor for each field
      */
-    public ST[] getPetName() throws HL7Exception {
+    public ST[] getPetName() {
     	return getTypedField(1, new ST[0]);
     }
 
     /**
      * Create an accessor for each field
      */
-    public NM getShoeSize() throws HL7Exception {
+    public NM getShoeSize() {
     	return getTypedField(2, 0);
     }
 

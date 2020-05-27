@@ -3,6 +3,8 @@ package ca.uhn.hl7v2.conf.spec;
 import ca.uhn.hl7v2.conf.spec.usecase.UseCase;
 import ca.uhn.hl7v2.conf.spec.message.StaticDef;
 
+import java.beans.PropertyVetoException;
+
 /**
  * A conformance specification (see HL7 2.5 section 2.12).  
  * @author Bryan Tripp
@@ -15,10 +17,10 @@ public class Specification {
     private Encoding[] encodings;
         
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Holds value of property message. */
     private StaticDef message;
@@ -91,7 +93,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setImpNote(ImpNote impNote) throws java.beans.PropertyVetoException {
+    public void setImpNote(ImpNote impNote) throws PropertyVetoException {
         ImpNote oldImpNote = this.impNote;
         vetoableChangeSupport.fireVetoableChange("impNote", oldImpNote, impNote);
         this.impNote = impNote;
@@ -110,7 +112,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setUseCase(UseCase useCase) throws java.beans.PropertyVetoException {
+    public void setUseCase(UseCase useCase) throws PropertyVetoException {
         UseCase oldUseCase = this.useCase;
         vetoableChangeSupport.fireVetoableChange("useCase", oldUseCase, useCase);
         this.useCase = useCase;
@@ -129,7 +131,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setConformance(Conformance conformance) throws java.beans.PropertyVetoException {
+    public void setConformance(Conformance conformance) throws PropertyVetoException {
         Conformance oldConformance = this.conformance;
         vetoableChangeSupport.fireVetoableChange("conformance", oldConformance, conformance);
         this.conformance = conformance;
@@ -150,13 +152,13 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setEncodings(int index, Encoding encodings) throws java.beans.PropertyVetoException {
+    public void setEncodings(int index, Encoding encodings) throws PropertyVetoException {
         Encoding oldEncodings = this.encodings[index];
         this.encodings[index] = encodings;
         try {
             vetoableChangeSupport.fireVetoableChange("encodings", null, null );
         }
-        catch(java.beans.PropertyVetoException vetoException ) {
+        catch(PropertyVetoException vetoException ) {
             this.encodings[index] = oldEncodings;
             throw vetoException;
         }
@@ -175,7 +177,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setMessage(StaticDef message) throws java.beans.PropertyVetoException {
+    public void setMessage(StaticDef message) throws PropertyVetoException {
         StaticDef oldMessage = this.message;
         vetoableChangeSupport.fireVetoableChange("message", oldMessage, message);
         this.message = message;
@@ -194,7 +196,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setSpecName(String specName) throws java.beans.PropertyVetoException {
+    public void setSpecName(String specName) throws PropertyVetoException {
         String oldSpecName = this.specName;
         vetoableChangeSupport.fireVetoableChange("specName", oldSpecName, specName);
         this.specName = specName;
@@ -213,7 +215,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setOrgName(String orgName) throws java.beans.PropertyVetoException {
+    public void setOrgName(String orgName) throws PropertyVetoException {
         String oldOrgName = this.orgName;
         vetoableChangeSupport.fireVetoableChange("orgName", oldOrgName, orgName);
         this.orgName = orgName;
@@ -232,7 +234,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setHL7Version(String HL7Version) throws java.beans.PropertyVetoException {
+    public void setHL7Version(String HL7Version) throws PropertyVetoException {
         String oldHL7Version = this.HL7Version;
         vetoableChangeSupport.fireVetoableChange("HL7Version", oldHL7Version, HL7Version);
         this.HL7Version = HL7Version;
@@ -251,7 +253,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setSpecVersion(String specVersion) throws java.beans.PropertyVetoException {
+    public void setSpecVersion(String specVersion) throws PropertyVetoException {
         String oldSpecVersion = this.specVersion;
         vetoableChangeSupport.fireVetoableChange("specVersion", oldSpecVersion, specVersion);
         this.specVersion = specVersion;
@@ -270,7 +272,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setStatus(String status) throws java.beans.PropertyVetoException {
+    public void setStatus(String status) throws PropertyVetoException {
         String oldStatus = this.status;
         vetoableChangeSupport.fireVetoableChange("status", oldStatus, status);
         this.status = status;
@@ -289,7 +291,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setRole(String role) throws java.beans.PropertyVetoException {
+    public void setRole(String role) throws PropertyVetoException {
         String oldRole = this.role;
         vetoableChangeSupport.fireVetoableChange("role", oldRole, role);
         this.role = role;
@@ -308,7 +310,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setHL7OID(String HL7OID) throws java.beans.PropertyVetoException {
+    public void setHL7OID(String HL7OID) throws PropertyVetoException {
         String oldHL7OID = this.HL7OID;
         vetoableChangeSupport.fireVetoableChange("HL7OID", oldHL7OID, HL7OID);
         this.HL7OID = HL7OID;
@@ -327,7 +329,7 @@ public class Specification {
      *
      * @throws PropertyVetoException
      */
-    public void setConformanceType(String conformanceType) throws java.beans.PropertyVetoException {
+    public void setConformanceType(String conformanceType) throws PropertyVetoException {
         String oldConformanceType = this.conformanceType;
         vetoableChangeSupport.fireVetoableChange("conformanceType", oldConformanceType, conformanceType);
         this.conformanceType = conformanceType;

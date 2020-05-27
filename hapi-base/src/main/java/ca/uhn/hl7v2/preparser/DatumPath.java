@@ -34,11 +34,11 @@ public class DatumPath implements Cloneable {
 
 	public static final int s_maxSize = 6;
 
-	protected ArrayList<Object> m_path = null;
+	protected ArrayList<Object> m_path;
 
 	public DatumPath()
 	{
-		m_path = new ArrayList<Object>(s_maxSize);
+		m_path = new ArrayList<>(s_maxSize);
 	}
 
 	/** copy constructor */
@@ -101,10 +101,7 @@ public class DatumPath implements Cloneable {
 	{
 		if((0 <= idx) && (idx < m_path.size())) {
 			if(new_value != null) {
-				if(idx == 0)
-					m_path.set(idx, new_value);
-				else if(idx >= 1)
-					m_path.set(idx, new_value);
+				m_path.set(idx, new_value);
 			}
 			else
 				throw new NullPointerException();
@@ -128,11 +125,7 @@ public class DatumPath implements Cloneable {
 	*/
 	public Object get(int idx)
 	{
-		Object gottenObj = m_path.get(idx);
-		if(idx == 0)
-			return gottenObj;
-		else
-			return gottenObj;
+        return m_path.get(idx);
 	}
 
 	public int size() { return m_path.size(); }
@@ -206,7 +199,7 @@ public class DatumPath implements Cloneable {
 	public DatumPath add(int new_value)
 	{
 		if(size() > 0)
-			add(new Integer(new_value));
+			add(Integer.valueOf(new_value));
 		else 
 			throw new ClassCastException();
 
@@ -294,17 +287,17 @@ public class DatumPath implements Cloneable {
 		for(int i=1; !lessThan && (i<s_maxSize); ++i) {
 			int this_i = ((Integer)extendedCopyThis.get(i));
 			int other_i = ((Integer)extendedCopyOther.get(i));
-			lessThan |= (this_i < other_i);
+			lessThan = (this_i < other_i);
 		}
 
 		return lessThan;
 	}
 
-	public static void main(String args[])
+	public static void main(String[] args)
 	{
 		DatumPath dp = new DatumPath();
 		dp.add("ZYX");
-		dp.add(new Integer(42));
+		dp.add(Integer.valueOf(42));
 
 		DatumPath dp2 = new DatumPath().add(-42);
 

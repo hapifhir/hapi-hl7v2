@@ -2,9 +2,9 @@ package ca.uhn.hl7v2.sourcegen;
 
 public class DatatypeComponentDef extends DatatypeDef {
 
-    private int table;
-    private String parentType;
-    private int indexWithinParent;
+    private final int table;
+    private final String parentType;
+    private final int indexWithinParent;
 
     public DatatypeComponentDef(String theParentType, int theIndexWithinParent, String theType, String theName, int theTable) {
         super(theType, theName);

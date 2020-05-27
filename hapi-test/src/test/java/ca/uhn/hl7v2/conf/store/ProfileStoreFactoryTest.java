@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.store;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
@@ -31,10 +33,10 @@ public class ProfileStoreFactoryTest  {
         
         CodeStore codeStore = ProfileStoreFactory.getCodeStore("foo", "HL70001");
         assertTrue(codeStore.knowsCodes("HL70396"));
-        
-        assertTrue( ! ProfileStoreFactory.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061") );
-        assertTrue( ! ProfileStoreFactory.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
-        assertTrue(null == ProfileStoreFactory.getCodeStore("xxx", "xxx"));
+
+        assertFalse(ProfileStoreFactory.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061"));
+        assertFalse(ProfileStoreFactory.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
+        assertNull(ProfileStoreFactory.getCodeStore("xxx", "xxx"));
         
     }
 }

@@ -119,12 +119,10 @@ public abstract class AbstractType implements Type {
 	 * might return "ST[Value^Value2]". This is only intended for logging/debugging purposes.
 	 */
 	static String toString(Type theType) {
-		StringBuilder b = new StringBuilder();
-		b.append(theType.getClass().getSimpleName());
-		b.append("[");
-		b.append(PipeParser.encode(theType, EncodingCharacters.defaultInstance()));
-		b.append("]");
-		return b.toString();
+        return theType.getClass().getSimpleName() +
+                "[" +
+                PipeParser.encode(theType, EncodingCharacters.defaultInstance()) +
+                "]";
 	}
 
     public Location provideLocation(Location location, int index, int repetition) {

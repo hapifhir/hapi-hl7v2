@@ -94,7 +94,7 @@ public class NormativeDatabase
     /**
      * Returns the singleton instance of NormativeDatabase.
      */
-    public static NormativeDatabase getInstance() throws SQLException {
+    public static NormativeDatabase getInstance() {
     	return INSTANCE;
     }
 
@@ -149,9 +149,7 @@ public class NormativeDatabase
                 Object desc = rs.getObject(4);
                 System.out.println("Table: " + tabNum + " Value: " + val + " Description: " + desc);
             }
-        } catch (SQLException e) {
-            log.error("test msg!!", e);
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.error("test msg!!", e);
         }
     }

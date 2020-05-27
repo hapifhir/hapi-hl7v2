@@ -26,7 +26,6 @@
 
 package ca.uhn.hl7v2.validation.impl;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.validation.CollectingValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationExceptionHandler;
@@ -45,7 +44,7 @@ public class SimpleValidationExceptionHandler extends CollectingValidationExcept
         super(context);
     }
 
-    public Boolean result() throws HL7Exception {
+    public Boolean result() {
         return hasFailed();
     }
 

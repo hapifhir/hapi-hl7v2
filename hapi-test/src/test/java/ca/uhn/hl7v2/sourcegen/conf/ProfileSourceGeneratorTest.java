@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.sourcegen.conf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class ProfileSourceGeneratorTest {
     	e = new SegmentElement("", "", 0);
     	e.type = "IS";
     	ProfileSourceGenerator.extractTableInfo(e, "123");
-    	assertEquals(null, e.tableNamespace);
+        assertNull(e.tableNamespace);
     	assertEquals(123, e.table);
 		
 	}

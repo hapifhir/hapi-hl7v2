@@ -47,6 +47,6 @@ public interface Validator {
      * @throws ProfileException if a problem is encountered that interferes with evaluation 
      * @return a list of exceptions representing points of non-conformance (may not be a complete list)
      */
-    public HL7Exception[] validate(Message message, StaticDef profile) throws ProfileException, HL7Exception;
+    HL7Exception[] validate(Message message, StaticDef profile) throws ProfileException, HL7Exception;
     
 }

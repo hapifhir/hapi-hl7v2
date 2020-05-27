@@ -67,7 +67,7 @@ public class HohServlet extends HohRawServlet {
 
 		public IResponseSendable<String> messageReceived(IReceivable<String> theMessage) throws MessageProcessingException {
 
-			Transportable received = new TransportableImpl(theMessage.getMessage(), new HashMap<String, Object>(theMessage.getMetadata()));
+			Transportable received = new TransportableImpl(theMessage.getMessage(), new HashMap<>(theMessage.getMetadata()));
 			Transportable response;
 			try {
 				response = myApplicationRouter.processMessage(received);

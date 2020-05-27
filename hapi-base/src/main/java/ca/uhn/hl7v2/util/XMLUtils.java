@@ -125,8 +125,7 @@ public class XMLUtils {
 
     public static Document emptyDocument(String title) {
         DOMImplementation impl = getDOMImpl();
-        Document doc = impl.createDocument("urn:hl7-org:v2xml", title, null);
-        return doc;
+        return impl.createDocument("urn:hl7-org:v2xml", title, null);
     }
 
     /**
@@ -134,7 +133,7 @@ public class XMLUtils {
      * classpath
      */
     private static class ClasspathResourceResolver implements LSResourceResolver {
-        private DOMImplementationLS impl;
+        private final DOMImplementationLS impl;
 
         ClasspathResourceResolver() {
             impl = getDOMImpl();

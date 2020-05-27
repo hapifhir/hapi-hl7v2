@@ -55,10 +55,10 @@ public class ConformanceComponentBuilder {
 	
 	private static final Logger ourLog = LoggerFactory.getLogger(ConformanceComponentBuilder.class);
 	
-   private DeploymentManager depManager; // The deployment manager
-   private DocumentationBuilder docBuilder;
-   private String packageName;
-   private String versionString;
+   private final DeploymentManager depManager; // The deployment manager
+   private final DocumentationBuilder docBuilder;
+   private final String packageName;
+   private final String versionString;
 
    /** This constructor will create a new ConformanceComponentBuilder
     * @param packageName the name of the package
@@ -169,20 +169,20 @@ public class ConformanceComponentBuilder {
          theComponent.setDatatype(compositeClass.getName().substring(compositeClass.getName().lastIndexOf('.') + 1));
          Method[] methods = compositeClass.getMethods();
 
-         for (int i = 0; i < methods.length; i++) {
+          for (Method method : methods) {
 
-            if (methods[i].getReturnType().getName().length() > 18 && methods[i].getReturnType().getName().substring(0, 18).equals("ca.uhn.hl7v2.model") && methods[i].getParameterTypes().length == 0 && methods[i].getName().subSequence(0, 3).equals("get")) {
+              if (method.getReturnType().getName().length() > 18 && method.getReturnType().getName().startsWith("ca.uhn.hl7v2.model") && method.getParameterTypes().length == 0 && method.getName().subSequence(0, 3).equals("get")) {
 
-               SubComponent sc = new SubComponent();
-               sc.setName(methods[i].getName().substring(3));
-               sc.setDatatype(methods[i].getReturnType().getName().substring(methods[i].getReturnType().getName().lastIndexOf('.') + 1));
-               sc.setConstantValue("");
+                  SubComponent sc = new SubComponent();
+                  sc.setName(method.getName().substring(3));
+                  sc.setDatatype(method.getReturnType().getName().substring(method.getReturnType().getName().lastIndexOf('.') + 1));
+                  sc.setConstantValue("");
 
-               numSubComponents++;
-               theComponent.setSubComponent(numSubComponents, sc);
-            }
+                  numSubComponents++;
+                  theComponent.setSubComponent(numSubComponents, sc);
+              }
 
-         }
+          }
 
          /* Workaround for the TS datatype, as it does not currently
           * provide named getters for its subcomponents. */	

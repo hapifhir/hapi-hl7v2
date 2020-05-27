@@ -27,7 +27,7 @@ public class XMLSchemaRuleTest {
 
 	@Before
 	public void setupBefore() {
-		locations = new HashMap<String, String>();
+		locations = new HashMap<>();
 		URL res = getClass().getClassLoader().getResource("ca/uhn/hl7v2/validation/impl/ACK.xsd");
 		String resPath = res.toString().replace("file:", "").replace("/ACK.xsd", "");
 		locations.put("2.5", resPath);
@@ -36,20 +36,20 @@ public class XMLSchemaRuleTest {
 	}
 
 	@Test
-	public void testStaticSucceeds() throws IOException {
+	public void testStaticSucceeds() {
 		ValidationException[] errors = rule.test(getMessage1());
 		assertEquals(Arrays.asList(errors).toString(), 0, errors.length);
 	}
 
 	@Test
-	public void testStaticFails() throws IOException {
+	public void testStaticFails() {
 		ValidationException[] errors = rule.test(getMessage2());
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
 		assertTrue(errors[0].getMessage().contains("MSA.XXXXXXXX"));
 	}
 
 	@Test
-	public void testStaticNotFound() throws IOException {
+	public void testStaticNotFound() {
 		rule.getSchemaLocations().put("2.5", "dgjkn(/§$&f09e");
 		ValidationException[] errors = rule.test(getMessage2());
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
@@ -57,7 +57,7 @@ public class XMLSchemaRuleTest {
 	}
 
 	@Test
-	public void testStaticNotFound2() throws IOException {
+	public void testStaticNotFound2() {
 		rule.getSchemaLocations().clear();
 		ValidationException[] errors = rule.test(getMessage2());
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
@@ -65,7 +65,7 @@ public class XMLSchemaRuleTest {
 	}
 
 	@Test
-	public void testDynamicFails() throws IOException {
+	public void testDynamicFails() {
 		String msg = getMessage3().replace("@@@", locations.get("2.5"));
 		ValidationException[] errors = rule.test(msg);
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
@@ -73,7 +73,7 @@ public class XMLSchemaRuleTest {
 	}
 
 	@Test
-	public void testDynamicNotFound() throws IOException {
+	public void testDynamicNotFound() {
 		String msg = getMessage3(); // unknown location, override with locations property
 		ValidationException[] errors = rule.test(msg);
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);

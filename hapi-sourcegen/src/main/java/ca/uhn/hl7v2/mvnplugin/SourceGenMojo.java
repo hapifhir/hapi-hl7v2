@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -56,7 +55,7 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  */
 public class SourceGenMojo extends AbstractMojo
 {
-    private static final Set<String> alreadyMade = new HashSet<String>();
+    private static final Set<String> alreadyMade = new HashSet<>();
     
     /**
      * The maven project.
@@ -132,7 +131,7 @@ public class SourceGenMojo extends AbstractMojo
      * 
      * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
      */
-    private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
+    private final String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
     /**
      * Should structures be treated as resources
@@ -144,7 +143,7 @@ public class SourceGenMojo extends AbstractMojo
     /**
      * {@inheritDoc}
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
 
         if (skip) {
             getLog().warn("Configured to skip");
@@ -180,14 +179,10 @@ public class SourceGenMojo extends AbstractMojo
 				EventMapGenerator.generateEventMap(targetResourceDirectory, version);
 				String targetDir = structuresAsResources ? targetResourceDirectory : targetDirectory;
                 SourceGenerator.makeAll(targetDir, version, false, templatePackage, "java");
-			} catch (HL7Exception e) {
-				throw new MojoExecutionException("Failed to build source ", e);
-			} catch (SQLException e) {
-				throw new MojoExecutionException("Failed to build source ", e);
-			} catch (IOException e) {
+			} catch (HL7Exception | IOException | SQLException e) {
 				throw new MojoExecutionException("Failed to build source ", e);
 			}
-            
+
         } else {
             getLog().warn("Already made version " + version + ", skipping!");
         }

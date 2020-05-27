@@ -143,7 +143,7 @@ public class UnderlyingAccessor {
      *      that we are dealing with a Z-segment, and GenericSegment.class is returned
      */
     public static Class<?>getHapiModelClass(String theUnderlyingClassName) {
-        Class<?> c = null;
+        Class<?> c;
         try {
             c = Class.forName(theUnderlyingClassName);
         } catch (ClassNotFoundException e) {
@@ -159,7 +159,7 @@ public class UnderlyingAccessor {
      * @return the accessor name on the given parent that returns the the given child 
      */
     private String makeName(Class<?> theParentClass, String theChildName) {
-        String result = null;
+        String result;
         if (Group.class.isAssignableFrom(theParentClass)) {
             result = "get(\"" + guessCompName(theChildName) + "\", rep)";
         } else if (Segment.class.isAssignableFrom(theParentClass)) {
@@ -186,10 +186,10 @@ public class UnderlyingAccessor {
     
     private static Method getMethod(Class<?> theParentClass, String theChildName) {
         Method result = null;
-        Method methods[] = theParentClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(theChildName)) {
-                result = methods[i];
+        Method[] methods = theParentClass.getMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(theChildName)) {
+                result = method;
                 if (result.getParameterTypes().length == 1) break;
             }
         }        

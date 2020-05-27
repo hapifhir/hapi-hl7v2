@@ -4,6 +4,8 @@ import static ca.uhn.hl7v2.app.TestUtils.fill;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,7 +16,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -63,7 +64,7 @@ public class TwoPortConnectionHubTest {
 	}
 
 	@AfterClass
-	public static void afterClass() throws Exception {
+	public static void afterClass() {
 		tps.stopAndWait();
 		// ConnectionHub.shutdown();
 	}
@@ -76,7 +77,7 @@ public class TwoPortConnectionHubTest {
 	public void testAttach() throws Exception {
 		Connection i1 = TestUtils.acquireClientConnection(hub, port1, port2);
 		Connection i1again = TestUtils.acquireClientConnection(hub, port1, port2);
-		assertTrue(i1 == i1again);
+		assertSame(i1, i1again);
 		assertEquals(1, hub.allConnections().size());
 		hub.allConnections().contains(i1);
 		hub.detach(i1);
@@ -87,7 +88,7 @@ public class TwoPortConnectionHubTest {
 		assertEquals(0, hub.allConnections().size());
 		Connection i1OnceMore = TestUtils.acquireClientConnection(hub,
 				port1, port2);
-		assertTrue(i1 != i1OnceMore);
+		assertNotSame(i1, i1OnceMore);
 		hub.detach(i1OnceMore);
 		assertEquals(0, hub.allConnections().size());
 	}
@@ -97,13 +98,11 @@ public class TwoPortConnectionHubTest {
 
 		int n = 100;
 
-		Callable<Connection> t = new Callable<Connection>() {
-			public Connection call() {
-				try {
-					return hub.attach("localhost", port1, port2, false);
-				} catch (HL7Exception e) {
-					return null;
-				}
+		Callable<Connection> t = () -> {
+			try {
+				return hub.attach("localhost", port1, port2, false);
+			} catch (HL7Exception e) {
+				return null;
 			}
 		};
 		List<Future<Connection>> results = DefaultExecutorService.getDefaultService().invokeAll(
@@ -112,19 +111,19 @@ public class TwoPortConnectionHubTest {
 		Connection unique = results.iterator().next().get();
 		assertNotNull(unique);
 		for (Future<Connection> future : results) {
-			assertTrue(unique == future.get());
+			assertSame(unique, future.get());
 		}
 		assertEquals(1, hub.allConnections().size());
 	}
 
 	@Test
-	public void testAttachToNonexistingServer() throws Exception {
+	public void testAttachToNonexistingServer() {
 		int freePort = RandomServerPortProvider.findFreePort();
 		try {
 			hub.attach("localhost", RandomServerPortProvider.findFreePort(),
 					RandomServerPortProvider.findFreePort(), false);
 			fail("Shouldn't be a service running at " + freePort);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -161,7 +160,7 @@ public class TwoPortConnectionHubTest {
 		Thread.sleep(2000); // wait until connection has been cleaned up
 		// Supposed to discard the closed connection and open a new one
 		Connection i1again = hub.attach("localhost", port1, port2, false);
-		assertTrue(i1 != i1again);
+		assertNotSame(i1, i1again);
 		Thread.sleep(1000);
 		assertNotNull(i1again.getInitiator().sendAndReceive(msg));
 		i1again.close();
@@ -173,7 +172,7 @@ public class TwoPortConnectionHubTest {
 		hub.attach("localhost", port1, port2, false);
 		hub.discard(i1);
 		Connection i1thrice = hub.attach("localhost", port1, port2, false);
-		assertTrue(i1thrice != i1);
+		assertNotSame(i1thrice, i1);
 		hub.discard(i1thrice);
 	}
 
@@ -191,7 +190,7 @@ public class TwoPortConnectionHubTest {
 		}
 
 		public Message processMessage(Message theIn, Map<String, Object> metadata)
-                throws ReceivingApplicationException, HL7Exception {
+                throws HL7Exception {
 			ourLog.info("Received: " + theIn.encode());
 			try {
 				return theIn.generateACK();

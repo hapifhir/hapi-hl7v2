@@ -18,13 +18,13 @@ public interface IClientMultithreaded extends IClient {
 	 * may be different, especially under heavy load
 	 * </p>
 	 */
-	public abstract void setSocketTimeout(long theSocketTimeout);
+    void setSocketTimeout(long theSocketTimeout);
 
 	/**
 	 * <p>
 	 * Returns the number of millis to keep an idle socket open before closing it.
 	 * </p>
 	 */
-	public abstract long getSocketTimeout();
+    long getSocketTimeout();
 
 }

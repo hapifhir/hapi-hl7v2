@@ -42,47 +42,47 @@ public interface JMSDestination {
      * @return the name of the Queue or Topic 
      * @throws JMSException
      */
-    public String getName() throws JMSException; 
+    String getName() throws JMSException;
     
     /**
      * @return a new JMS Message object.  
      * @throws JMSException
      */
-    public TextMessage createMessage() throws JMSException;
+    TextMessage createMessage() throws JMSException;
 
     /**
      * Creates a new session, sender/publisher, and receiver/subscriber.  
      * @throws JMSException
-     */    
-    public void connect() throws JMSException;
+     */
+    void connect() throws JMSException;
     
     /**
      * Closes the JMS session.  
      * @throws JMSException
      */
-    public void disconnect() throws JMSException;
+    void disconnect() throws JMSException;
     
     /**
      * @return true if connected.  
      */
-    public boolean isConnected(); 
+    boolean isConnected();
     
     /**
      * @return the JMS Connection underlying this destination
      */
-    public Connection getConnection();
+    Connection getConnection();
 
     /**
      * Sends the given message to the JMS destination.  
      * @param theMessage message to send
      * @throws JMSException
      */
-    public void send(Message theMessage) throws JMSException;
+    void send(Message theMessage) throws JMSException;
 
     /**
      * @return a message received from the JMS destination. 
      * @throws JMSException
      */
-    public Message receive() throws JMSException;
+    Message receive() throws JMSException;
     
 }

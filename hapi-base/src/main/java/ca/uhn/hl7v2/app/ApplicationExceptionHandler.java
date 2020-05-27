@@ -26,7 +26,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.app;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 
 /**
@@ -53,6 +52,6 @@ public interface ApplicationExceptionHandler<T extends Message> extends Applicat
 	 *         by HAPI in <code>outgoingMessage</code>, or may be replaced with
 	 *         another message.
 	 */
-	public String processException(String incomingMessage, String outgoingMessage, Exception e) throws HL7Exception;
+    String processException(String incomingMessage, String outgoingMessage, Exception e);
 
 }

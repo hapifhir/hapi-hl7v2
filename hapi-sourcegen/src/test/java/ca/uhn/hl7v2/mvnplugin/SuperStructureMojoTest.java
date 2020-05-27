@@ -17,7 +17,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "B", "D", "E", "F", "G"));
 		allLists.add(Arrays.asList("A", "B", "C", "D", "E", "F"));
 
@@ -29,7 +29,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList2() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "B", "C", "D"));
 		allLists.add(Arrays.asList("A", "B", "C", "D", "E", "F", "G"));
 
@@ -41,7 +41,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList3() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "B", "C", "D"));
 		allLists.add(Arrays.asList("A", "E", "F", "G"));
 
@@ -53,7 +53,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList4() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "F", "G"));
 		allLists.add(Arrays.asList("A", "B", "C", "D", "E", "F"));
 
@@ -65,7 +65,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList5() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "B", "C", "D"));
 		allLists.add(Arrays.asList("A", "D"));
 
@@ -77,7 +77,7 @@ public class SuperStructureMojoTest {
 
 	@Test
 	public void testMergeStringList6() {
-		ArrayList<List<String>> allLists = new ArrayList<List<String>>();
+		ArrayList<List<String>> allLists = new ArrayList<>();
 		allLists.add(Arrays.asList("A", "B", "C", "D", "E", "F"));
 		allLists.add(Arrays.asList("A", "D", "F", "G"));
 

@@ -61,10 +61,10 @@ public class StringUtil {
 	 * the method within Commons-Lang StringUtils.
 	 */
 	public static String replace(String theString, String theMatch, String theReplacement) {
-		StringBuffer buf = new StringBuffer(theString.length());
-		int start = 0, end = 0;
+		StringBuilder buf = new StringBuilder(theString.length());
+		int start = 0, end;
 		while ((end = theString.indexOf(theMatch, start)) != -1) {
-			buf.append(theString.substring(start, end)).append(theReplacement);
+			buf.append(theString, start, end).append(theReplacement);
 			start = end + theMatch.length();
 		}
 		buf.append(theString.substring(start));
@@ -89,7 +89,7 @@ public class StringUtil {
 		}
 		
 		for (int i = 0; i < theString.length(); i++) {
-			if (Character.isWhitespace(theString.charAt(i)) == false) {
+			if (!Character.isWhitespace(theString.charAt(i))) {
 				return false;
 			}
 		}

@@ -2,8 +2,8 @@ package ca.uhn.hl7v2.hoh.api;
 
 public class NonHl7ResponseException extends DecodeException {
 
-	private String myContentType;
-	private String myResponseBody;
+	private final String myContentType;
+	private final String myResponseBody;
 
 	public NonHl7ResponseException(String theMessage, String theContentType, String theResponseBody) {
 		super(theMessage);

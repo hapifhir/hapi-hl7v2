@@ -1,6 +1,7 @@
 package ca.uhn.hl7v2.hoh.encoder;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ abstract class AbstractHl7OverHttp {
 	protected static final Charset ourDefaultCharset;
 
 	static {
-		ourDefaultCharset = Charset.forName("UTF-8");
+		ourDefaultCharset = StandardCharsets.UTF_8;
 		VersionLogger.init();
 	}
 	
@@ -161,7 +162,6 @@ abstract class AbstractHl7OverHttp {
 	 * content.
 	 * 
 	 * @see ISigner
-	 * @see StandardMessageSigner
 	 */
 	public void setSigner(ISigner theSigner) {
 		mySigner = theSigner;

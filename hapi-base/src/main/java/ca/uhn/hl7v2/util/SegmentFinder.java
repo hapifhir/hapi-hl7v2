@@ -59,7 +59,7 @@ public class SegmentFinder extends MessageNavigator {
      * @param rep the repetition of the segment to return
      */
     public Segment findSegment(String namePattern, int rep) throws HL7Exception {
-        Structure s = null;
+        Structure s;
         do {
             s = findStructure(namePattern, rep);
         } while (!Segment.class.isAssignableFrom(s.getClass()));

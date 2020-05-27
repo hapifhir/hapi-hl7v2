@@ -306,13 +306,13 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class AlwaysPredicate implements Predicate {
 
-		private boolean b;
+		private final boolean b;
 
 		AlwaysPredicate(boolean b) {
 			this.b = b;
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			return b;
 		}
 
@@ -324,13 +324,13 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class MaxLengthPredicate implements Predicate {
 
-		private int maxLength = Integer.MAX_VALUE;
+		private final int maxLength;
 
 		public MaxLengthPredicate(int maxSize) {
 			this.maxLength = maxSize;
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			return (data == null || data.toString().length() <= maxLength);
 		}
 
@@ -342,13 +342,13 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class InPredicate implements Predicate {
 
-		private Collection<?> allowed;
+		private final Collection<?> allowed;
 
 		InPredicate(Collection<?> allowed) {
 			this.allowed = allowed;
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			return allowed.contains(data);
 		}
 
@@ -373,13 +373,13 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class NotPredicate implements Predicate {
 
-		private Predicate delegate;
+		private final Predicate delegate;
 
 		public NotPredicate(Predicate delegate) {
 			this.delegate = delegate;
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			try {
 				return !delegate.evaluate(data);
 			} catch (ValidationException e) {
@@ -395,8 +395,8 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class EqualsPredicate implements Predicate {
 
-		private Object expected;
-		private boolean ignoresCase;
+		private final Object expected;
+		private final boolean ignoresCase;
 
 		public EqualsPredicate(Object expected) {
 			this(expected, false);
@@ -408,7 +408,7 @@ public abstract class BuilderSupport implements Serializable {
 			this.ignoresCase = ignoresCase;
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			if (ignoresCase)
 				return (data == null && expected == null)
 						|| (data != null && data.toString().equalsIgnoreCase(expected.toString()));
@@ -416,7 +416,7 @@ public abstract class BuilderSupport implements Serializable {
 		}
 
 		public String getDescription() {
-			return "equal to " + String.valueOf(expected);
+			return "equal to " + expected;
 		}
 
 	}
@@ -426,7 +426,7 @@ public abstract class BuilderSupport implements Serializable {
 		public EmptyPredicate() {
 		}
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			return data == null || "".equals(data) || "\"\"".equals(data);
 		}
 
@@ -438,8 +438,8 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class MatchesPredicate implements Predicate {
 
-		private Pattern p;
-		private String description;
+		private final Pattern p;
+		private final String description;
 
 		public MatchesPredicate(String regex) {
 			this(regex, "matching with " + regex);
@@ -459,7 +459,7 @@ public abstract class BuilderSupport implements Serializable {
             this.description = description;
         }		
 
-		public boolean evaluate(Object data) throws ValidationException {
+		public boolean evaluate(Object data) {
 			return (data != null && p.matcher(data.toString()).matches());
 		}
 
@@ -471,7 +471,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class AnyOfPredicate implements Predicate {
 
-		private Iterable<Predicate> predicates;
+		private final Iterable<Predicate> predicates;
 
 		public AnyOfPredicate(Iterable<Predicate> predicates) {
 			super();
@@ -500,7 +500,7 @@ public abstract class BuilderSupport implements Serializable {
 
 	private static class AllOfPredicate implements Predicate {
 
-		private Iterable<Predicate> predicates;
+		private final Iterable<Predicate> predicates;
 
 		public AllOfPredicate(Iterable<Predicate> predicates) {
 			super();

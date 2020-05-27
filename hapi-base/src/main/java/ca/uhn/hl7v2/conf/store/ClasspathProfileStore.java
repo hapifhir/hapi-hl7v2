@@ -26,7 +26,6 @@
  */
 package ca.uhn.hl7v2.conf.store;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -39,7 +38,7 @@ public class ClasspathProfileStore extends URLProfileStore {
 
     public static final String DEFAULT_PROFILE_PREFIX = "/ca/uhn/hl7v2/conf/store";
     
-    private String prefix;
+    private final String prefix;
     
     public ClasspathProfileStore() {
         this(DEFAULT_PROFILE_PREFIX);
@@ -51,7 +50,7 @@ public class ClasspathProfileStore extends URLProfileStore {
     }
 
     @Override
-    public URL getURL(String ID) throws MalformedURLException {
+    public URL getURL(String ID) {
         return getClass().getResource(prefix + "/" + ID + ".xml");
     }
 

@@ -8,9 +8,8 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-examples</artifactId>
+
+    <artifactId>hapi-examples</artifactId>
 	<name>HAPI - Java HL7 API - Examples</name>
 	
 	<packaging>jar</packaging>

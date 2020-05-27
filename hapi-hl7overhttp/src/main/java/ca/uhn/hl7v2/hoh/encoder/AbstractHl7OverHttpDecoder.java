@@ -55,7 +55,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 	private void addConformanceProblem(String theString) {
 		ourLog.debug("Conformance problem detected: {}", theString);
 		if (myConformanceProblems == null) {
-			myConformanceProblems = new ArrayList<String>();
+			myConformanceProblems = new ArrayList<>();
 		}
 		myConformanceProblems.add(theString);
 	}
@@ -215,7 +215,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		return myEncodingStyle;
 	}
 
-	private void doReadContentsFromInputStreamAndDecode(InputStream theInputStream) throws DecodeException, AuthorizationFailureException, IOException, SignatureVerificationException {
+	private void doReadContentsFromInputStreamAndDecode(InputStream theInputStream) throws DecodeException, IOException, SignatureVerificationException {
 		decodeHeaders();
 		authorize();
 		if (myTransferEncoding == TransferEncoding.CHUNKED) {
@@ -279,7 +279,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 						ourLog.debug("Exception in readBytesChunked(InputStream): Reached EOF. Buffer has {} bytes", bos.size());
 						throw new DecodeException("Reached EOF while reading in message chunk");
 					}
-					if (bytesRead == 0 && totalRead < nextSizeInt) {
+					if (bytesRead == 0) {
 						pauseDuringTimedOutRead();
 					}
 					totalRead += bytesRead;
@@ -323,11 +323,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 						trailing = true;
 					}
 					had13 = true;
-					continue;
 				} else if (nextChar == 10) {
-					if (had10) {
-						trailing = true;
-					}
 					break;
 				} else {
 					break;
@@ -359,7 +355,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 
 	public List<String> getConformanceProblems() {
 		if (myConformanceProblems == null) {
-			myConformanceProblems = new ArrayList<String>();
+			myConformanceProblems = new ArrayList<>();
 		}
 		return myConformanceProblems;
 	}
@@ -516,7 +512,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 		ourLog.debug("Read action line: {}", actionLine);
 
 		if (getHeaders() == null) {
-			setHeaders(new LinkedHashMap<String, String>());
+			setHeaders(new LinkedHashMap<>());
 
 			while (true) {
 				String nextLine = readLine(theInputStream);
@@ -574,7 +570,6 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 			}
 
 			if (b == 13) {
-				continue;
 			} else if (b == 10) {
 				break;
 			} else if (b == -1) {
@@ -586,7 +581,6 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				}
 				break;
 			} else if (b < ' ') {
-				continue;
 			} else {
 				retVal.append((char) b);
 			}

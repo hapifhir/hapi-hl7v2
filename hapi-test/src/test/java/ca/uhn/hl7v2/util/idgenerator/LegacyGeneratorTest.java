@@ -6,5 +6,5 @@ public class LegacyGeneratorTest extends AbstractContinuousGeneratorTest<LegacyG
 	@Override
 	protected LegacyGenerator getGenerator() {
 		return new LegacyGenerator();
-	};
+	}
 }

@@ -47,10 +47,10 @@ public class GenericCompositeTest  {
 	private static GenericComposite genericComposite;
 	private static Message message;
 	
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
-	public static void setUp() throws Exception {
+	public static void setUp() {
         message = new GenericMessage.V25(new DefaultModelClassFactory());
 		genericComposite = new GenericComposite(message);
 	}
@@ -78,7 +78,7 @@ public class GenericCompositeTest  {
 	 * Testing getComponent(), attempting to get components at various indexes
 	 */
     @Test
-	public void testGetComponent() throws DataTypeException {
+	public void testGetComponent() {
     	
 		buildSpecs(GetComponentSpec.class)
 			.add(-1, ArrayIndexOutOfBoundsException.class)
@@ -92,7 +92,7 @@ public class GenericCompositeTest  {
     public static class GetComponentsSpec extends ca.uhn.hl7v2.TestSpec<Integer, Integer> {
 
         @Override
-        protected Integer transform(Integer input) throws Throwable {
+        protected Integer transform(Integer input) {
             GenericComposite gc = new GenericComposite(message);
             try { 
                 gc.getComponent(input); 
@@ -108,7 +108,7 @@ public class GenericCompositeTest  {
 	 * Testing getComponents()
 	 */
     @Test
-	public void testGetComponents() throws DataTypeException {
+	public void testGetComponents() {
 		buildSpecs(GetComponentsSpec.class)
 			.add(-1, 0)
 			.add(0, 1)

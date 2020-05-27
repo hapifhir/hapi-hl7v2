@@ -76,7 +76,7 @@ public class PipeParser extends Parser {
 	 */
 	final static String SEGMENT_DELIMITER = "\r";
 
-	private final HashMap<Class<? extends Message>, HashMap<String, StructureDefinition>> myStructureDefinitions = new HashMap<Class<? extends Message>, HashMap<String, StructureDefinition>>();
+	private final HashMap<Class<? extends Message>, HashMap<String, StructureDefinition>> myStructureDefinitions = new HashMap<>();
 
 	/**
 	 * System property key. If value is "true", legacy mode will default to true
@@ -176,14 +176,11 @@ public class PipeParser extends Parser {
 			 * for people to only populate component 1 in an ACK msg }
 			 */
 			else {
-				StringBuilder buf = new StringBuilder("Can't determine message structure from MSH-9: ");
-				buf.append(wholeFieldNine);
-				if (comps.length < 3) {
-					buf.append(" HINT: there are only ");
-					buf.append(comps.length);
-					buf.append(" of 3 components present");
-				}
-				throw new HL7Exception(buf.toString(), ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
+				String buf = "Can't determine message structure from MSH-9: " + wholeFieldNine +
+						" HINT: there are only " +
+						comps.length +
+						" of 3 components present";
+				throw new HL7Exception(buf, ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
 			}
 		} catch (IndexOutOfBoundsException e) {
 			throw new HL7Exception("Can't find message structure (MSH-9-3): " + e.getMessage(), ErrorCode.UNSUPPORTED_MESSAGE_TYPE);
@@ -265,15 +262,15 @@ public class PipeParser extends Parser {
 		}
 		
 		if (clazz.isAnnotationPresent(DoNotCacheStructure.class)) {
-			Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
+			Holder<StructureDefinition> previousLeaf = new Holder<>();
 			retVal = createStructureDefinition(theMessage, previousLeaf, theMessage.getName());
 		} else {
 			Message message = ReflectionUtil.instantiateMessage(clazz, getFactory());
-			Holder<StructureDefinition> previousLeaf = new Holder<StructureDefinition>();
+			Holder<StructureDefinition> previousLeaf = new Holder<>();
 			retVal = createStructureDefinition(message, previousLeaf, theMessage.getName());
 
 			if (!myStructureDefinitions.containsKey(clazz)) {
-				myStructureDefinitions.put(clazz, new HashMap<String, StructureDefinition>());
+				myStructureDefinitions.put(clazz, new HashMap<>());
 			}
 			myStructureDefinitions.get(clazz).put(theMessage.getName(), retVal);
 		}
@@ -457,7 +454,7 @@ public class PipeParser extends Parser {
      * @return split string
 	 */
 	public static String[] split(String composite, String delim) {
-		ArrayList<String> components = new ArrayList<String>();
+		ArrayList<String> components = new ArrayList<>();
 
 		// defend against evil nulls
 		if (composite == null)
@@ -491,7 +488,7 @@ public class PipeParser extends Parser {
 	 * {@inheritDoc }
 	 */
 	@Override
-	public String doEncode(Segment structure, EncodingCharacters encodingCharacters) throws HL7Exception {
+	public String doEncode(Segment structure, EncodingCharacters encodingCharacters) {
 		return encode(structure, encodingCharacters, getParserConfiguration(), null);
 	}
 
@@ -499,7 +496,7 @@ public class PipeParser extends Parser {
 	 * {@inheritDoc }
 	 */
 	@Override
-	public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+	public String doEncode(Type type, EncodingCharacters encodingCharacters) {
 		return encode(type, encodingCharacters, getParserConfiguration(), null);
 	}
 
@@ -545,7 +542,7 @@ public class PipeParser extends Parser {
 						forceUpToFieldNum = 0;
 						break;
 					}
-					String fieldNumString = nextPath.substring(endOfFieldDef + 1, nextPath.length());
+					String fieldNumString = nextPath.substring(endOfFieldDef + 1);
 					if (fieldNumString.length() > 0) {
 						forceUpToFieldNum = Math.max(forceUpToFieldNum, Integer.parseInt(fieldNumString));
 					}
@@ -967,7 +964,7 @@ public class PipeParser extends Parser {
 			char fieldDelim = message.charAt(startFieldOne - 1);
 			int start = message.indexOf(fieldDelim, startFieldOne) + 1;
 			int end = message.indexOf(fieldDelim, start);
-			int segEnd = message.indexOf(String.valueOf(SEGMENT_DELIMITER), start);
+			int segEnd = message.indexOf(SEGMENT_DELIMITER, start);
 			if (segEnd > start && segEnd < end)
 				end = segEnd;
 
@@ -1187,8 +1184,8 @@ public class PipeParser extends Parser {
 	 * whether it was defined explicitly.
 	 */
 	private static class MessageStructure {
-		public String messageStructure;
-		public boolean explicitlyDefined;
+		public final String messageStructure;
+		public final boolean explicitlyDefined;
 
 		public MessageStructure(String theMessageStructure, boolean isExplicitlyDefined) {
 			messageStructure = theMessageStructure;

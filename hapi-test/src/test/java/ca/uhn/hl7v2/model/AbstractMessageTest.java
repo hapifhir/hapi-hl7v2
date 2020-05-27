@@ -107,7 +107,7 @@ public class AbstractMessageTest {
 	}
 
 	@Test
-	public void testParseAndEncode() throws HL7Exception, IOException {
+	public void testParseAndEncode() throws HL7Exception {
 
 		String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r" + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r" + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
 
@@ -133,7 +133,7 @@ public class AbstractMessageTest {
 	}
 
 	@Test
-	public void testNumberedAccessor() throws HL7Exception, IOException {
+	public void testNumberedAccessor() throws HL7Exception {
 
 		String string = "MSH|^~\\&|LABGL1||DMCRES||19951002185200||ADT^A01|LABGL1199510021852632|P|2.2\r" + "PID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456\r" + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r";
 

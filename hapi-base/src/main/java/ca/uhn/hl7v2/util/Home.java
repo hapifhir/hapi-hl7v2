@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class Home {
     
     private static File home;
-    private static Logger log = LoggerFactory.getLogger(Home.class);
+    private static final Logger log = LoggerFactory.getLogger(Home.class);
     
     /** Creates a new instance of Home */
     public Home() {
@@ -47,7 +47,7 @@ public class Home {
         log.info("hapi.home is set to " + home.getAbsolutePath());
     }
     
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         System.out.println("HOME: " + getHomeDirectory().getAbsolutePath());
     }
         

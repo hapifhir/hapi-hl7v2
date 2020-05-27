@@ -20,49 +20,49 @@ public class PreParserER7Test  {
 
 	@Test
 	public void testFirstSegmentRep() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "NTE(0)-1" });
+		String[] result = PreParser.getFields(myMessage, "NTE(0)-1");
 		assertEquals("a", result[0]);
 	}
 
     @Test
 	public void testSecondSegmentRep() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "NTE(1)-1" });
+		String[] result = PreParser.getFields(myMessage, "NTE(1)-1");
 		assertEquals("b", result[0]);
 	}
 
     @Test
 	public void testFirstFieldRep() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "NTE-3(0)" });
+		String[] result = PreParser.getFields(myMessage, "NTE-3(0)");
 		assertEquals("one", result[0]);
 	}
 
     @Test
 	public void testSecondFieldRep() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "NTE-3(1)" });
+		String[] result = PreParser.getFields(myMessage, "NTE-3(1)");
 		assertEquals("two", result[0]);
 	}
 
     @Test
 	public void testFirstCompSubcompInexplicit() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "PID-5" });
+		String[] result = PreParser.getFields(myMessage, "PID-5");
 		assertEquals("Smith", result[0]);
 	}
 
     @Test
 	public void testFirstCompSubcompExplicit() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "PID-5-1-1" });
+		String[] result = PreParser.getFields(myMessage, "PID-5-1-1");
 		assertEquals("Smith", result[0]);
 	}
 
     @Test
 	public void testSecondComp() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "MSH-9-2" });
+		String[] result = PreParser.getFields(myMessage, "MSH-9-2");
 		assertEquals("A01", result[0]);
 	}
 
     @Test
 	public void testSecondSubcomp() throws Exception {
-		String[] result = PreParser.getFields(myMessage, new String[] { "PID-5-1-2" });
+		String[] result = PreParser.getFields(myMessage, "PID-5-1-2");
 		assertEquals("Booth", result[0]);
 	}
 

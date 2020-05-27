@@ -153,18 +153,14 @@ public class HohRawClientSimple extends AbstractRawClient implements IClientSimp
 			String remoteHostIp = (String) receivable.getMetadata().get(MessageMetadataKeys.REMOTE_HOST_ADDRESS);
 			System.out.println("From:\n" + remoteHostIp);
 
-		} catch (DecodeException e) {
+		} catch (DecodeException | EncodeException | IOException e) {
 			// Thrown if the response can't be read
 			e.printStackTrace();
-		} catch (IOException e) {
-			// Thrown if communication fails
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			// Thrown if the message can't be encoded (generally a programming
-			// bug)
-			e.printStackTrace();
-		}
+		} // Thrown if communication fails
+        // Thrown if the message can't be encoded (generally a programming
+        // bug)
 
-	}
+
+    }
 
 }

@@ -31,7 +31,7 @@ public class StringUtils {
 			return true;
 		}
 		for (int i = 0; i < strLen; i++) {
-			if ((Character.isWhitespace(theString.charAt(i)) == false)) {
+			if ((!Character.isWhitespace(theString.charAt(i)))) {
 				return false;
 			}
 		}

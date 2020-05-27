@@ -34,12 +34,12 @@ import ca.uhn.hl7v2.validation.builder.BuilderSupport;
  * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  * 
- * @deprecated use {@link BuilderSupport#maxLength()} instead
+ * @deprecated use {@link BuilderSupport#maxLength(int)} instead
  */
 @SuppressWarnings("serial")
 public class SizeRule extends AbstractPrimitiveTypeRule {
 
-	private int myMaxChars;
+	private final int myMaxChars;
 
 	/**
 	 * @param theMaxChars the maximum number of characters this rule allows in a primitive value

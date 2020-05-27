@@ -8,13 +8,12 @@ import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 public class SerializationTest extends TestCase {
 
-	public void testSerialization() throws EncodingNotSupportedException, HL7Exception, IOException, ClassNotFoundException {
+	public void testSerialization() throws HL7Exception, IOException, ClassNotFoundException {
 
 		String message = "MSH|^~\\&|IRIS|SANTER|AMB_R|SANTER|200803051508||ADT^A03|263206|P|2.5\r"
 				+ "EVN||200803051509||||200803031508\r"

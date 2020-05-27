@@ -77,7 +77,7 @@ public class PreParser {
         
         List<DatumPath> mask = Arrays.asList(thePaths);
 
-        boolean OK = false;
+        boolean OK;
         if (EncodingDetector.isEr7Encoded(theMessageText)) {
             OK = ER7.parseMessage(props, mask, theMessageText);
         } else if (EncodingDetector.isXmlEncoded(theMessageText)) {

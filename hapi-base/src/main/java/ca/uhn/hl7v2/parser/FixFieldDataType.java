@@ -199,7 +199,7 @@ public final class FixFieldDataType {
                 Varies v = (Varies)rep;
                 if (type.getValue() == null) {
                     if (defaultType != null) {
-                        LOG.debug("setting default {}-{} type to {}", new Object[] {segment.getName(), typeField, defaultType});
+                        LOG.debug("setting default {}-{} type to {}", segment.getName(), typeField, defaultType);
                         type.setValue(defaultType);
                     }
                 } // if
@@ -225,8 +225,8 @@ public final class FixFieldDataType {
 
                         if (c == null) {
                             Primitive obx1 = (Primitive) segment.getField(1, 0);
-                            HL7Exception h = new HL7Exception("\'" +
-                                    type.getValue() + "\' in record " +
+                            HL7Exception h = new HL7Exception("'" +
+                                    type.getValue() + "' in record " +
                                     obx1.getValue() + " is invalid for version " + version,
                                     ErrorCode.DATA_TYPE_ERROR);
                             h.setSegmentName(segment.getName());
@@ -237,10 +237,10 @@ public final class FixFieldDataType {
 
                     Type newTypeInstance;
                     try {
-                        Constructor<? extends Type> constr = c.getConstructor(new Class[]{Message.class});
+                        Constructor<? extends Type> constr = c.getConstructor(Message.class);
                         newTypeInstance = constr.newInstance(v.getMessage());
                     } catch (NoSuchMethodException e) {
-                        Constructor<? extends Type> constr = c.getConstructor(new Class[]{Message.class, Integer.class});
+                        Constructor<? extends Type> constr = c.getConstructor(Message.class, Integer.class);
                         newTypeInstance = constr.newInstance(v.getMessage(), 0);
                     }
 

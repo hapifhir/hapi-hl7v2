@@ -68,7 +68,7 @@ enum MllpDecoderState {
         }
 
         @Override
-        protected void handleEndOfStream() throws IOException, LLPException {
+        protected void handleEndOfStream() throws LLPException {
             throw new LLPException("MLLP protocol violation - Stream ends in the message body");
         }
 
@@ -80,7 +80,7 @@ enum MllpDecoderState {
         }
 
         @Override
-        protected void handleEndOfStream() throws IOException, LLPException {
+        protected void handleEndOfStream() throws LLPException {
             throw new LLPException("MLLP protocol violation - Stream ends before LLP end byte");
         }
     },
@@ -91,17 +91,17 @@ enum MllpDecoderState {
         }
 
         @Override
-        protected void handleEndOfStream() throws IOException, LLPException {
+        protected void handleEndOfStream() {
         }
 
         @Override
-        MllpDecoderState read(InputStream in, OutputStream out) throws IOException, LLPException {
+        MllpDecoderState read(InputStream in, OutputStream out) throws LLPException {
             throw new LLPException("Internal error - reading after end of message");
         }
     };
 
-    private int nextStateByte; // byte required for state transition
-    private boolean mustChangeState; // next byte must be nextStateByte
+    private final int nextStateByte; // byte required for state transition
+    private final boolean mustChangeState; // next byte must be nextStateByte
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpDecoderState.class);
 
@@ -138,9 +138,6 @@ enum MllpDecoderState {
                         "' in state " + this + " but was '" + c + "'");
             }
             out.write(c);
-        } catch (SocketTimeoutException e) {
-        	// Logged in the caller so we don't do it here
-            throw e;
         } catch (SocketException e) {
             LOG.info("SocketException on read() attempt.  Socket appears to have been closed: " + e.getMessage());
             throw e;

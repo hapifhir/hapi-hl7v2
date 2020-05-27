@@ -16,10 +16,10 @@ public class SegGroup extends AbstractSegmentContainer implements ProfileStructu
     private short max;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Creates a new instance of SegGroup */
     public SegGroup() {
@@ -191,12 +191,12 @@ public class SegGroup extends AbstractSegmentContainer implements ProfileStructu
     public void setMax(short max) throws ProfileException {
         short oldMax = this.max;
         try {
-            vetoableChangeSupport.fireVetoableChange("max", new Short(oldMax), new Short(max));
+            vetoableChangeSupport.fireVetoableChange("max", Short.valueOf(oldMax), Short.valueOf(max));
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }
         this.max = max;
-        propertyChangeSupport.firePropertyChange("max", new Short(oldMax), new Short(max));
+        propertyChangeSupport.firePropertyChange("max", Short.valueOf(oldMax), Short.valueOf(max));
     }
     
 }

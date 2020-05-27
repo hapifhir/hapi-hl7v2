@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.llp.MinLLPReader;
 import ca.uhn.hl7v2.llp.MinLLPWriter;
@@ -160,7 +159,7 @@ public class PipeParserMinDepsTest implements Application<Message> {
 	}
 
 
-	public Message processMessage(Message theArg0) throws ApplicationException, HL7Exception {
+	public Message processMessage(Message theArg0) throws HL7Exception {
 		try {
 			myGotMessage = true;
 			ourLog.info("Received message: " + theArg0.encode());

@@ -20,6 +20,7 @@ package ca.uhn.hl7v2.hoh.util.repackage;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
 /**
@@ -565,8 +566,8 @@ public class Base64 {
 	 * @since 1.5
 	 */
 	public static boolean isBase64(byte[] arrayOctet) {
-		for (int i = 0; i < arrayOctet.length; i++) {
-			if (!isBase64(arrayOctet[i]) && !isWhiteSpace(arrayOctet[i])) {
+		for (byte b : arrayOctet) {
+			if (!isBase64(b) && !isWhiteSpace(b)) {
 				return false;
 			}
 		}
@@ -953,12 +954,12 @@ public class Base64 {
 	 * implies no chunking of the encoded data. Rounded down to nearest multiple
 	 * of encodedBlockSize.
 	 */
-	protected int lineLength;
+	protected final int lineLength;
 
 	/**
 	 * Size of chunk separator. Not used unless {@link #lineLength} > 0.
 	 */
-	private int chunkSeparatorLength;
+	private final int chunkSeparatorLength;
 
 	/**
 	 * Note <code>lineLength</code> is rounded down to the nearest multiple of
@@ -1112,7 +1113,7 @@ public class Base64 {
 	 *            Object to encode
 	 * @return An object (of type byte[]) containing the Base-N encoded data
 	 *         which corresponds to the byte[] supplied.
-	 * @throws EncoderException
+	 * @throws Exception
 	 *             if the parameter supplied is not of type byte[]
 	 */
 	public Object encode(Object obj) throws Exception {
@@ -1157,7 +1158,7 @@ public class Base64 {
 	 *            Object to decode
 	 * @return An object (of type byte[]) containing the binary data which
 	 *         corresponds to the byte[] or String supplied.
-	 * @throws DecoderException
+	 * @throws Exception
 	 *             if the parameter supplied is not of type byte[]
 	 */
 	public Object decode(Object obj) throws Exception {
@@ -1234,8 +1235,8 @@ public class Base64 {
 	 *         if the byte array is empty; {@code false}, otherwise
 	 */
 	public boolean isInAlphabet(byte[] arrayOctet, boolean allowWSPad) {
-		for (int i = 0; i < arrayOctet.length; i++) {
-			if (!isInAlphabet(arrayOctet[i]) && (!allowWSPad || (arrayOctet[i] != PAD) && !isWhiteSpace(arrayOctet[i]))) {
+		for (byte b : arrayOctet) {
+			if (!isInAlphabet(b) && (!allowWSPad || (b != PAD) && !isWhiteSpace(b))) {
 				return false;
 			}
 		}
@@ -1347,7 +1348,7 @@ public class Base64 {
 	 * @since 1.4
 	 * @version $Id$
 	 */
-	public class CharEncoding {
+	public static class CharEncoding {
 		/**
 		 * CharEncodingISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1. </p>
 		 * <p>
@@ -1532,7 +1533,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset ISO_8859_1 = Charset.forName(CharEncoding.ISO_8859_1);
+		public static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
 
 		/**
 		 * <p>
@@ -1548,7 +1549,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset US_ASCII = Charset.forName(CharEncoding.US_ASCII);
+		public static final Charset US_ASCII = StandardCharsets.US_ASCII;
 
 		/**
 		 * <p>
@@ -1565,7 +1566,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset UTF_16 = Charset.forName(CharEncoding.UTF_16);
+		public static final Charset UTF_16 = StandardCharsets.UTF_16;
 
 		/**
 		 * <p>
@@ -1580,7 +1581,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset UTF_16BE = Charset.forName(CharEncoding.UTF_16BE);
+		public static final Charset UTF_16BE = StandardCharsets.UTF_16BE;
 
 		/**
 		 * <p>
@@ -1595,7 +1596,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset UTF_16LE = Charset.forName(CharEncoding.UTF_16LE);
+		public static final Charset UTF_16LE = StandardCharsets.UTF_16LE;
 
 		/**
 		 * <p>
@@ -1610,7 +1611,7 @@ public class Base64 {
 		 *      href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard
 		 *      charsets</a>
 		 */
-		public static final Charset UTF_8 = Charset.forName(CharEncoding.UTF_8);
+		public static final Charset UTF_8 = StandardCharsets.UTF_8;
 	}
 
 	/**

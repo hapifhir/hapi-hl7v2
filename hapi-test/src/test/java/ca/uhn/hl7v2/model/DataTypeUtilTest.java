@@ -45,12 +45,12 @@ import ca.uhn.hl7v2.IndexedErrorCollector;
 
 public class DataTypeUtilTest {
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     public static class PreAppendZeroesSpec extends ca.uhn.hl7v2.TestSpec<int[], String> {
 
         @Override
-        protected String transform(int[] input) throws Throwable {
+        protected String transform(int[] input) {
             return DataTypeUtil.preAppendZeroes(input[0],input[1]);
         }
         

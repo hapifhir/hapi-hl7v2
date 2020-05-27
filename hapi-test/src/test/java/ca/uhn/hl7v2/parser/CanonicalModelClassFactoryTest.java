@@ -11,7 +11,7 @@ import ca.uhn.hl7v2.model.Message;
 public class CanonicalModelClassFactoryTest {
 
 	@Test
-	public void testAckVersion() throws EncodingNotSupportedException, HL7Exception, IOException {
+	public void testAckVersion() throws HL7Exception, IOException {
 		
 		String messageText = "MSH|^~\\&|4265-ADT|4265|eReferral|eReferral|201004141020||ADT^A45^ADT_A45|102416|T^|2.5^^|||NE|AL|CAN|8859/1\r"
 				+ "EVN|A45|201004141020|\r"

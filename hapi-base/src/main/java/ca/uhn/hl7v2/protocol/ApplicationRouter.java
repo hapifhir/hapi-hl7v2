@@ -46,14 +46,14 @@ public interface ApplicationRouter {
      * @return the response message (this may be null, for example if the given
      * message doesn't require an application ACK)
      */
-    public Transportable processMessage(Transportable theMessage) throws HL7Exception;
+    Transportable processMessage(Transportable theMessage) throws HL7Exception;
 
     /**
      * @param theRoutingData message fields used in determining the appropriate destination
      * @return true if there is a destination application for messages with the given
      * characteristics
      */
-    public boolean hasActiveBinding(AppRoutingData theRoutingData);
+    boolean hasActiveBinding(AppRoutingData theRoutingData);
 
     /**
      * <p>Associates the given application with the given message parameters, so that messages
@@ -68,7 +68,7 @@ public interface ApplicationRouter {
      * @param theApplication the application to which messages with these parameters should be
      *                       sent
      */
-    public void bindApplication(AppRoutingData theRoutingData, ReceivingApplication<? extends Message> theApplication);
+    void bindApplication(AppRoutingData theRoutingData, ReceivingApplication<? extends Message> theApplication);
 
     /**
      * Removes the binding for the given message parameters
@@ -76,15 +76,15 @@ public interface ApplicationRouter {
      * @param theRoutingData
      * @return true if an application was unbound, false otherwise
      */
-    public boolean unbindApplication(AppRoutingData theRoutingData);
+    boolean unbindApplication(AppRoutingData theRoutingData);
 
     /**
      * Removes the binding for the given message parameters
      *
-     * @param theRoutingData
+     * @param theApplication
      * @return true if an application was unbound, false otherwise
      */
-    public boolean unbindApplication(ReceivingApplication<? extends Message> theApplication);
+    boolean unbindApplication(ReceivingApplication<? extends Message> theApplication);
 
     /**
      * Temporarily deactivates the binding on the given field data, if present.
@@ -92,7 +92,7 @@ public interface ApplicationRouter {
      * @param theRoutingData the fields that define a set of messages that are bound to
      *                       some <code>Application</code>
      */
-    public void disableBinding(AppRoutingData theRoutingData);
+    void disableBinding(AppRoutingData theRoutingData);
 
     /**
      * Undoes <code>disableBinding(AppRoutingData theRoutingData)</code>.
@@ -100,14 +100,14 @@ public interface ApplicationRouter {
      * @param theRoutingData the fields that define a set of messages that are bound to
      *                       some <code>Application</code>
      */
-    public void enableBinding(AppRoutingData theRoutingData);
+    void enableBinding(AppRoutingData theRoutingData);
 
     /**
      * @return the <code>Parser</code> that is used to parse inbound messages
      * and encode outbound ones.  It may be of interest to set certain parameters
      * of this parser.
      */
-    public Parser getParser();
+    Parser getParser();
 
     /**
      * Sets an exception handler which will be invoked in the event of a
@@ -126,27 +126,27 @@ public interface ApplicationRouter {
      *
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      */
-    public static interface AppRoutingData {
+    interface AppRoutingData {
 
         /**
          * @return MSH-9-1
          */
-        public String getMessageType();
+        String getMessageType();
 
         /**
          * @return MSH-9-2
          */
-        public String getTriggerEvent();
+        String getTriggerEvent();
 
         /**
          * @return MSH-11-1
          */
-        public String getProcessingId();
+        String getProcessingId();
 
         /**
          * @return MSH-12
          */
-        public String getVersion();
+        String getVersion();
     }
 
 }

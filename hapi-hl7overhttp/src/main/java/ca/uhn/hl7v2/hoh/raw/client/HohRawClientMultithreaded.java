@@ -39,7 +39,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohRawClientMultithreaded.class);
 
 	private final ScheduledExecutorService myExecutorService;
-	private Map<Socket, Long> myIdleSocketsToTimeBecameIdle = new IdentityHashMap<Socket, Long>();
+	private final Map<Socket, Long> myIdleSocketsToTimeBecameIdle = new IdentityHashMap<>();
 	private final SimpleDateFormat myLogTimeFormat = new SimpleDateFormat("HH:mm:ss,SSS");
 	private boolean myReapingScheduled;
 	private long mySocketTimeout = DEFAULT_SOCKET_TIMEOUT;
@@ -95,8 +95,6 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 	 * 
 	 * @param theUrl
 	 *            The URL to connect to
-	 * @param theExecutorService
-	 *            The executor service to use for detecting stale sockets
 	 */
 	public HohRawClientMultithreaded(URL theUrl) {
 		this();
@@ -224,7 +222,7 @@ public class HohRawClientMultithreaded extends AbstractRawClient implements ICli
 			ourLog.debug("Beginning socket reaping pass");
 			try {
 
-				List<Socket> socketsToClose = new ArrayList<Socket>();
+				List<Socket> socketsToClose = new ArrayList<>();
 				long closeIfActiveBefore = System.currentTimeMillis() - mySocketTimeout;
 				synchronized (HohRawClientMultithreaded.this) {
 

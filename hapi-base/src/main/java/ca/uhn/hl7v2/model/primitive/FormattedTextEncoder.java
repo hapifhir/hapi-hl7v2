@@ -105,9 +105,7 @@ public class FormattedTextEncoder {
 			char nextChar = theInput.charAt(i);
 			boolean handled = true;
 
-			switch (nextChar) {
-			case '\\':
-
+			if (nextChar == '\\') {
 				int theStart = i + 1;
 				int numericArgument = Integer.MIN_VALUE;
 				int offsetIncludingNumericArgument = 0;
@@ -222,12 +220,8 @@ public class FormattedTextEncoder {
 					handled = false;
 
 				}
-
-				break;
-			default:
-
+			} else {
 				handled = false;
-
 			}
 
 			if (!handled) {

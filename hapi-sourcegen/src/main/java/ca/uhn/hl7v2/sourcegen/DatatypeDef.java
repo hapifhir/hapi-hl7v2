@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 public class DatatypeDef {
 
     private String type;
-    private String name;
-    private List<DatatypeComponentDef> mySubComponentDefs = new ArrayList<DatatypeComponentDef>();
+    private final String name;
+    private final List<DatatypeComponentDef> mySubComponentDefs = new ArrayList<>();
 
     public DatatypeDef(String theType, String theDescription) {
         super();

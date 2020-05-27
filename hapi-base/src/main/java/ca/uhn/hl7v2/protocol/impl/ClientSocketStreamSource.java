@@ -17,14 +17,13 @@ import ca.uhn.hl7v2.protocol.TransportException;
  */
 public class ClientSocketStreamSource extends SocketStreamSource {
 
-    private SocketAddress myAddress;
+    private final SocketAddress myAddress;
     private Socket mySocket;
 
     /**
      * @param theAddress the address at which to connect sockets
-     * @throws TransportException
      */
-    public ClientSocketStreamSource(SocketAddress theAddress) throws TransportException {
+    public ClientSocketStreamSource(SocketAddress theAddress) {
         myAddress = theAddress;
     }
 

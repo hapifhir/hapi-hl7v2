@@ -12,11 +12,11 @@ public interface ProfileStore {
     /**
      * Retrieves profile from persistent storage (by ID). 
      */
-    public String getProfile(String ID) throws IOException;
+    String getProfile(String ID) throws IOException;
     
     /**
      * Stores profile in persistent storage with given ID. 
      */
-    public void persistProfile(String ID, String profile) throws IOException;
+    void persistProfile(String ID, String profile) throws IOException;
     
 }

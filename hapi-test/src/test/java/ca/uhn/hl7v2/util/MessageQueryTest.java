@@ -5,7 +5,6 @@ package ca.uhn.hl7v2.util;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.MessageQuery.Result;
@@ -20,8 +19,8 @@ import junit.framework.TestCase;
 @SuppressWarnings("deprecation")
 public class MessageQueryTest extends TestCase {
 
-    private PipeParser myParser = new PipeParser();
-    private static String myMsg1 = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4||||||x~y|\r"
+    private final PipeParser myParser = new PipeParser();
+    private static final String myMsg1 = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4||||||x~y|\r"
         + "PID|||T12345~T2~T3||TEST^PATIENT^P||19601002|M||||||||||123456\r"
         + "PV1|||NER|||||||GSU||||||||E||||||||||||||||||||||||||19951002174900|19951006\r"
         + "OBR|1||09527539021001920|1001920^BLOOD GASES, ARTERIAL^^^ABG|||19951002180200|||||||19951002180300||||1793559||0952753902||19951002180700||350|F||^^^^^RT\r"
@@ -38,109 +37,109 @@ public class MessageQueryTest extends TestCase {
         
         String query = "select /MSH-3 as foo";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("LABGL1", result.get(0));
         assertEquals("LABGL1", result.get("foo"));
-        assertEquals(false, result.next());
+        assertFalse(result.next());
         
         query = "select /.PID-3 as x, /.PID-5-1 as y";
         result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("T12345", result.get("x"));
         assertEquals("TEST", result.get("y"));
-        assertEquals(false, result.next());        
+        assertFalse(result.next());
     }
     
     public void testSingleLoopPoint() throws Exception {
         Message msg = myParser.parse(myMsg1);
         String query = "select {id} as id loop id = /.PID-3(*)";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("T12345", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("T2", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("T3", result.get("id"));
-        assertEquals(false, result.next());         
+        assertFalse(result.next());
     }
     
     public void testIndependedentLoopPoints() throws Exception {
         Message msg = myParser.parse(myMsg1);
         String query = "select {id} as id, {charset} as charset loop charset = /.MSH-18(*), id = /.PID-3(*)";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("x", result.get("charset"));
         assertEquals("T12345", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("x", result.get("charset"));
         assertEquals("T2", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("x", result.get("charset"));
         assertEquals("T3", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("y", result.get("charset"));
         assertEquals("T12345", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("y", result.get("charset"));
         assertEquals("T2", result.get("id"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("y", result.get("charset"));
         assertEquals("T3", result.get("id"));
-        assertEquals(false, result.next());
+        assertFalse(result.next());
     }
     
     public void testFoundRepeatedSegment() throws Exception {
         Message msg = myParser.parse(myMsg1);
         String query = "select {obx}/OBX-2 as type loop obx = /.OBSERVATION(*)";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("NM", result.get("type"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("TX", result.get("type"));
-        assertEquals(false, result.next());        
+        assertFalse(result.next());
     }
     
     public void testNestedLoopPoints() throws Exception {
         Message msg = myParser.parse(myMsg1);
         String query = "select {obx}/OBX-2 as type, {result} as value loop obx = /.OBSERVATION(*), result = {obx}/OBX-5(*)";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("NM", result.get("type"));        
         assertEquals("37.0", result.get("value"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("NM", result.get("type"));        
         assertEquals("37.1", result.get("value"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("NM", result.get("type"));        
         assertEquals("37.2", result.get("value"));
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("TX", result.get("type"));        
         assertEquals("*", result.get("value"));
-        assertEquals(false, result.next());
+        assertFalse(result.next());
     }
     
     public void testWhere() throws Exception {
         Message msg = myParser.parse(myMsg1);
         String query = "select {result} as value loop obx = /.OBSERVATION(*), result = {obx}/OBX-5(*) where {obx}/OBX-2 = 'TX'";
         MessageQuery.Result result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("*", result.get("value"));
-        assertEquals(false, result.next());
+        assertFalse(result.next());
 
         query = "select {result} as value loop obx = /.OBSERVATION(*), result = {obx}/OBX-5(*) where {obx}/OBX-2 like 'T.?'";
         result = MessageQuery.query(msg, query);
-        assertEquals(true, result.next());
+        assertTrue(result.next());
         assertEquals("*", result.get("value"));
-        assertEquals(false, result.next());
+        assertFalse(result.next());
     
         query = "select {result} as value loop obx = /.OBSERVATION(*), result = {obx}/OBX-5(*) where {obx}/OBX-2 = 'TX', /.MSH-3 = '---'";
         result = MessageQuery.query(msg, query);
-        assertEquals(false, result.next());
+        assertFalse(result.next());
     }
 
     //from Neal ... tests case where data are null in one row but there are good data in later rows
     // (needs locked Terser)
-    public void testExtractORU_R01() throws HL7Exception, EncodingNotSupportedException {
+    public void testExtractORU_R01() throws HL7Exception {
         Parser parser = new PipeParser();
 
         String msgText;

@@ -12,7 +12,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 @SuppressWarnings("serial")
 public class GenericGroup extends AbstractGroup {
     
-    private String name;
+    private final String name;
 
     /**
      * Creates a generic group

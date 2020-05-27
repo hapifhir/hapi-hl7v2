@@ -44,14 +44,14 @@ import edu.emory.mathcs.backport.java.util.Collections;
  */
 public class SegmentDef implements StructureDef {
 
-    private String name;
-    private String groupName;
-    private String description;
-    private boolean required;
-    private boolean repeating;
+    private final String name;
+    private final String groupName;
+    private final String description;
+    private final boolean required;
+    private final boolean repeating;
     private String myIndexName;
-    private List<DatatypeDef> myFieldDefs = new ArrayList<DatatypeDef>();
-	private boolean choice;
+    private final List<DatatypeDef> myFieldDefs = new ArrayList<>();
+	private final boolean choice;
 	private List<String> associatedStructures;
     
 	/** Creates new SegmentDef */
@@ -126,8 +126,7 @@ public class SegmentDef implements StructureDef {
      * for deriving group names.
      */
     public String[] getChildSegments() {
-        String[] result = {getName()};
-        return result;
+        return new String[]{getName()};
     }
 
     /**
@@ -174,13 +173,13 @@ public class SegmentDef implements StructureDef {
 	 */
 	public List<String> getAssociatedStructures() {
 		if (associatedStructures == null) {
-			associatedStructures = new ArrayList<String>();
+			associatedStructures = new ArrayList<>();
 		}
 		return associatedStructures;
 	}
 
 	/**
-	 * @param theAssociatedStructures the associatedStructures to set
+	 * @param theAssociatedStructure the associatedStructures to set
 	 */
 	public void addAssociatedStructure(String theAssociatedStructure) {
 		if (getAssociatedStructures().contains(theAssociatedStructure)) {

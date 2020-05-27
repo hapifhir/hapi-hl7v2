@@ -42,11 +42,11 @@ import ca.uhn.hl7v2.conf.spec.message.*;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class ConformanceSegmentBuilder {
-   private DeploymentManager depManager; // The deployment manager
-   private DocumentationBuilder docBuilder; // The documentation builder
-   private String packageName; // Represents the Package that this Segment will go in
+   private final DeploymentManager depManager; // The deployment manager
+   private final DocumentationBuilder docBuilder; // The documentation builder
+   private final String packageName; // Represents the Package that this Segment will go in
 
-   private String versionString; // The HAPI version
+   private final String versionString; // The HAPI version
 
    /** This constructor will create a new ConformanceSegmentBuilder
     * @param packageName the name of the package

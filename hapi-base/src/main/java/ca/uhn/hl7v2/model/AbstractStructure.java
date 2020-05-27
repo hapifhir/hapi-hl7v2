@@ -32,7 +32,7 @@ public abstract class AbstractStructure implements Structure {
 
 	private static final long serialVersionUID = -4228833632385764176L;
 	
-	private Group parent;
+	private final Group parent;
 	protected static final Logger log = LoggerFactory.getLogger(AbstractStructure.class);
 
     /**

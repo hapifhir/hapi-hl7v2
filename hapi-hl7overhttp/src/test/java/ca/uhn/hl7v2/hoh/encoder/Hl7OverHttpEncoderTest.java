@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,11 +33,11 @@ public class Hl7OverHttpEncoderTest {
 				+ "MSA|AR|I♥HAPI\r";
 
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("UTF-8"));
+		enc.setCharset(StandardCharsets.UTF_8);
 		enc.setMessage(message);
 		enc.encode();
 		
-		assertEquals("" + message.getBytes("UTF-8").length, enc.getHeaders().get("Content-Length"));
+		assertEquals("" + message.getBytes(StandardCharsets.UTF_8).length, enc.getHeaders().get("Content-Length"));
 	}
 
 	@Test
@@ -46,7 +47,7 @@ public class Hl7OverHttpEncoderTest {
 				+ "MSA|AR|2\r";
 
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("ISO-8859-1"));
+		enc.setCharset(StandardCharsets.ISO_8859_1);
 		enc.setUsername("hello");
 		enc.setPassword("world");
 		enc.setSigner(mySigner);
@@ -68,7 +69,7 @@ public class Hl7OverHttpEncoderTest {
 				+ "PID|||ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103\r";
 
 		Hl7OverHttpRequestEncoder enc = new Hl7OverHttpRequestEncoder();
-		enc.setCharset(Charset.forName("ISO-8859-1"));
+		enc.setCharset(StandardCharsets.ISO_8859_1);
 		enc.setUsername("hello");
 		enc.setPassword("world");
 		enc.setSigner(mySigner);

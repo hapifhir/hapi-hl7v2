@@ -29,7 +29,6 @@ package ca.uhn.hl7v2.examples;
 import java.util.Map;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.*;
 import ca.uhn.hl7v2.model.Message;
@@ -219,7 +218,7 @@ public class SendAndReceiveAMessage {
        *         by HAPI in <code>outgoingMessage</code>, or may be replaced with
        *         another message. <b>This method may not return <code>null</code></b>.
        */
-      public String processException(String theIncomingMessage, Map<String, Object> theIncomingMetadata, String theOutgoingMessage, Exception theE) throws HL7Exception {
+      public String processException(String theIncomingMessage, Map<String, Object> theIncomingMetadata, String theOutgoingMessage, Exception theE) {
           
          /*
           * Here you can do any processing you like. If you want to change

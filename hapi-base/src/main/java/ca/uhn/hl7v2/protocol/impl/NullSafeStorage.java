@@ -3,7 +3,6 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.protocol.SafeStorage;
 import ca.uhn.hl7v2.protocol.Transportable;
 
@@ -20,19 +19,19 @@ public class NullSafeStorage implements SafeStorage {
     /** 
      * Does nothing. 
      */
-    public void store(Transportable theMessage) throws HL7Exception {
+    public void store(Transportable theMessage) {
     }
 
     /** 
      * Does nothing. 
      */
-    public void discard(Transportable theMessage) throws HL7Exception {
+    public void discard(Transportable theMessage) {
      }
 
     /** 
      * Returns an empty array. 
      */
-    public Transportable[] restore() throws HL7Exception {
+    public Transportable[] restore() {
         return new Transportable[0];
     }
 

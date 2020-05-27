@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 
 class RegisteredPattern {
 
-    private String registration;
-    private Pattern regex;
+    private final String registration;
+    private final Pattern regex;
 
     public RegisteredPattern(String registration, String r) {
         this.registration = registration;

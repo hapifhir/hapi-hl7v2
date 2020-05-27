@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  */
 public class DefaultValidator<R> extends AbstractValidator<R> {
 
-    private HapiContext context;
+    private final HapiContext context;
 
     public DefaultValidator(HapiContext context) {
         super();

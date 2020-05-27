@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCodeStore implements CodeStore {
 
-    private static Logger log = LoggerFactory.getLogger(AbstractCodeStore.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractCodeStore.class);
     
     private static final RegisteredPattern[] WILDCARDS = { 
             new RegisteredPattern("ISOnnnn", "ISO\\d\\d\\d\\d"),

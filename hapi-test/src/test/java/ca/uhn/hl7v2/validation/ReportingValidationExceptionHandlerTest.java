@@ -29,8 +29,8 @@ public class ReportingValidationExceptionHandlerTest {
 		ValidationException ve1 = new ValidationException("test1");
 		ValidationException ve2 = new ValidationException("test2");
 		ValidationException ve3 = new ValidationException("test3");
-		handler.onExceptions(new ValidationException[] { ve1 });
-		handler.onExceptions(new ValidationException[] { ve2, ve3 });
+		handler.onExceptions(ve1);
+		handler.onExceptions(ve2, ve3);
 	}
 
 }

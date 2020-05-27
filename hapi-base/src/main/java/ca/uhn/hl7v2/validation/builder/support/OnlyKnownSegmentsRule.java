@@ -49,7 +49,7 @@ public class OnlyKnownSegmentsRule extends AbstractMessageRule {
 	public static final MessageRule ONLY_KNOWN_SEGMENTS = new OnlyKnownSegmentsRule();
 	
 	public ValidationException[] apply(Message msg) {
-		List<ValidationException> exceptions = new ArrayList<ValidationException>();
+		List<ValidationException> exceptions = new ArrayList<>();
 
 		for (Iterator<Structure> iter = ReadOnlyMessageIterator
 				.createPopulatedStructureIterator(msg, GenericSegment.class); iter.hasNext();) {
@@ -59,7 +59,7 @@ public class OnlyKnownSegmentsRule extends AbstractMessageRule {
 			ve.setLocation(location);
 			exceptions.add(ve);
 		}
-		return exceptions.toArray(new ValidationException[exceptions.size()]);
+		return exceptions.toArray(new ValidationException[0]);
 	}
 
 }

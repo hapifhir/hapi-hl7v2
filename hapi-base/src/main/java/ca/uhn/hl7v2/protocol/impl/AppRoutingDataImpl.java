@@ -6,6 +6,8 @@ package ca.uhn.hl7v2.protocol.impl;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.ApplicationRouter.AppRoutingData;
 
+import java.util.Objects;
+
 /**
  * A default implementation of <code>ApplicationRouter.AppRoutingData</code>. 
  * 
@@ -66,16 +68,13 @@ public class AppRoutingDataImpl implements ApplicationRouter.AppRoutingData {
 
         AppRoutingDataImpl that = (AppRoutingDataImpl) o;
 
-        if (myMessageType != null ? !myMessageType.equals(that.myMessageType) : that.myMessageType != null)
+        if (!Objects.equals(myMessageType, that.myMessageType))
             return false;
-        if (myProcessingId != null ? !myProcessingId.equals(that.myProcessingId) : that.myProcessingId != null)
+        if (!Objects.equals(myProcessingId, that.myProcessingId))
             return false;
-        if (myTriggerEvent != null ? !myTriggerEvent.equals(that.myTriggerEvent) : that.myTriggerEvent != null)
+        if (!Objects.equals(myTriggerEvent, that.myTriggerEvent))
             return false;
-        if (myVersionId != null ? !myVersionId.equals(that.myVersionId) : that.myVersionId != null)
-            return false;
-
-        return true;
+        return Objects.equals(myVersionId, that.myVersionId);
     }
 
     @Override

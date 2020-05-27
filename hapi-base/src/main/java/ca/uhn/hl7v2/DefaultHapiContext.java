@@ -141,7 +141,7 @@ public class DefaultHapiContext implements HapiContext {
                 .getModelClassFactory());
     }
 
-    public void close() throws IOException {
+    public void close() {
         getConnectionHub().discardAll();
         if (DefaultExecutorService.isDefaultService(executorService)) {
             executorService.shutdownNow();
@@ -151,14 +151,7 @@ public class DefaultHapiContext implements HapiContext {
     public synchronized ExecutorService getExecutorService() {
         if (executorService == null) {
             executorService = DefaultExecutorService.getDefaultService();
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-
-                @Override
-                public void run() {
-                    executorService.shutdownNow();
-                }
-
-            });
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> executorService.shutdownNow()));
         }
         return executorService;
     }

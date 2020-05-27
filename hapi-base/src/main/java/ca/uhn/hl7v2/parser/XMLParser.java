@@ -147,7 +147,7 @@ public abstract class XMLParser extends Parser {
 	 */
 	@Deprecated
 	public String[] getKeepAsOriginalNodes() {
-		return getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().toArray(new String[getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().size()]);
+		return getParserConfiguration().getXmlDisableWhitespaceTrimmingOnNodeNames().toArray(new String[0]);
 	}
 
 	/**
@@ -282,7 +282,7 @@ public abstract class XMLParser extends Parser {
 	 *             given Segment, or if there is an error while setting individual field values.
 	 */
 	public void parse(Segment segmentObject, Element segmentElement) throws HL7Exception {
-		Set<String> done = new HashSet<String>();
+		Set<String> done = new HashSet<>();
 
 		NodeList all = segmentElement.getChildNodes();
 		for (int i = 0; i < all.getLength(); i++) {
@@ -481,11 +481,9 @@ public abstract class XMLParser extends Parser {
 			if (loc < 0) {
 				repeatedSpacesExist = false;
 			} else {
-				StringBuilder buf = new StringBuilder();
-				buf.append(s.substring(0, loc));
-				buf.append(" ");
-				buf.append(s.substring(loc + 2));
-				s = buf.toString();
+				s = s.substring(0, loc) +
+						" " +
+						s.substring(loc + 2);
 			}
 		}
 		return s.trim();
@@ -701,7 +699,7 @@ public abstract class XMLParser extends Parser {
 		Terser.set(criticalData, 2, 0, 1, 1, parseLeaf(message, "MSH.2", 0));
 		Terser.set(criticalData, 10, 0, 1, 1, parseLeaf(message, "MSH.10", 0));
 		String procID = parseLeaf(message, "MSH.11", 0);
-		if (procID == null || procID.length() == 0) {
+		if (procID.length() == 0) {
 			procID = parseLeaf(message, "PT.1", message.indexOf("MSH.11"));
 			// this field is a composite in later versions
 		}
@@ -730,7 +728,7 @@ public abstract class XMLParser extends Parser {
 
 	public String getVersion(String message) throws HL7Exception {
         String version = parseLeaf(message, "MSH.12", 0);
-        if (version == null || version.trim().length() == 0) {
+        if (version.trim().length() == 0) {
             version = parseLeaf(message, "VID.1", message.indexOf("MSH.12"));
         }
         return version;	    
@@ -792,8 +790,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public String doEncode(Segment structure, EncodingCharacters encodingCharacters)
-			throws HL7Exception {
+	public String doEncode(Segment structure, EncodingCharacters encodingCharacters) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -804,7 +801,7 @@ public abstract class XMLParser extends Parser {
 	 */
 	@Override
 	protected Message doParseForSpecificPackage(String theMessage, String theVersion,
-			String thePackageName) throws HL7Exception {
+			String thePackageName) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -814,7 +811,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public String doEncode(Type type, EncodingCharacters encodingCharacters) throws HL7Exception {
+	public String doEncode(Type type, EncodingCharacters encodingCharacters) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -824,8 +821,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public void parse(Type type, String string, EncodingCharacters encodingCharacters)
-			throws HL7Exception {
+	public void parse(Type type, String string, EncodingCharacters encodingCharacters) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -835,8 +831,7 @@ public abstract class XMLParser extends Parser {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public void parse(Segment segment, String string, EncodingCharacters encodingCharacters)
-			throws HL7Exception {
+	public void parse(Segment segment, String string, EncodingCharacters encodingCharacters) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

@@ -40,7 +40,7 @@ public class TerserTest extends TestCase {
     }
     
     public void testSpec() throws Exception {
-        String test = null;
+        String test;
         test = t.get("MSH-9-2");
         assertEquals("a", test);
         test = t.get("/MSH-9-2");
@@ -115,7 +115,7 @@ public class TerserTest extends TestCase {
         try {
             test = t.get("*QQQ-9-2");
             fail("Should have thrown exception -- no structure has QQQ in its name.");
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
 
         test = t.get("?SH-9-2");
         assertEquals("a", test);
@@ -126,7 +126,7 @@ public class TerserTest extends TestCase {
         try {
             test = t.get("?MSH-9-2");
             fail("Should have thrown exception -- no structure has a single char followed by 'MSH'.");
-        } catch (Exception e) {}                
+        } catch (Exception ignored) {}
     }
 
     /**
@@ -199,7 +199,7 @@ public class TerserTest extends TestCase {
     }   
     
     
-    public void testId() throws EncodingNotSupportedException, HL7Exception {
+    public void testId() throws HL7Exception {
         
         String msgString = "MSH|^~\\&|XYZ|a1510aae-cbcd-43d0-b0e2-4ad082f03775|HU|7d15ac56-8b12-4a07-8b10-3d2ae367f407|20100831104406||RSP^K23|20100831104406208095|P|2.5\r" + 
         		"MSA|AA|20100831104406208095\r" + 

@@ -26,7 +26,7 @@ import ca.uhn.hl7v2.conf.spec.message.SubComponent;
 public class ProfileParserTest {
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		// System.out.println(profileString);
 	}
 
@@ -46,8 +46,8 @@ public class ProfileParserTest {
 		if (instream == null)
 			throw new Exception("can't find the xml file");
 		BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-		int tmp = 0;
-		StringBuffer buf = new StringBuffer();
+		int tmp;
+		StringBuilder buf = new StringBuilder();
 		while ((tmp = in.read()) != -1) {
 			buf.append((char) tmp);
 		}

@@ -37,12 +37,12 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 	@SuppressWarnings("unused")
 	private static final Logger ourLog = LoggerFactory.getLogger(Hl7InputStreamMessageStringIterator.class);
 	
-	private StringBuilder myBuffer = new StringBuilder();
+	private final StringBuilder myBuffer = new StringBuilder();
 	private boolean myFoundMessageInBuffer = false;
 	private Boolean myHasNext;
 	private boolean myIgnoreComments;
 	private String myNext;
-	private Reader myReader;
+	private final Reader myReader;
 
 	/**
 	 * Constructor
@@ -102,7 +102,7 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 						}
 					}
 				} else if (inComment) {
-					if (nextChar == 10 || nextChar == 13) {
+					if (nextChar == 13) {
 						inComment = false;
 					}
 				} else {
@@ -134,7 +134,7 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 
 			if (!myFoundMessageInBuffer) {
 				myHasNext = false;
-				return myHasNext;
+				return false;
 			}
 
 			String msgString;
@@ -148,7 +148,7 @@ public class Hl7InputStreamMessageStringIterator implements Iterator<String> {
 
 			if (!msgString.startsWith("MSH")) {
 				myHasNext = Boolean.FALSE;
-				return myHasNext;
+				return false;
 			}
 
 			myNext = msgString;

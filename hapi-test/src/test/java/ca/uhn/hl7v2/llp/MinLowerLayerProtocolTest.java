@@ -36,7 +36,6 @@ import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import org.junit.After;
 import org.junit.Before;
@@ -70,7 +69,7 @@ public class MinLowerLayerProtocolTest implements ReceivingApplication<Message> 
 
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		System.setProperty("ca.uhn.hl7v2.llp.logBytesRead", "FALSE");
 		System.setProperty("ca.uhn.hl7v2.util.status.out", "");
 		minLowerLayerProtocol = new MinLowerLayerProtocol();
@@ -82,7 +81,7 @@ public class MinLowerLayerProtocolTest implements ReceivingApplication<Message> 
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		minLowerLayerProtocol = null;
 		message = null;
 		llpEncodedMessage = null;
@@ -154,7 +153,7 @@ public class MinLowerLayerProtocolTest implements ReceivingApplication<Message> 
 	}
 	
 	public Message processMessage(Message theIn, Map<String, Object> metadata)
-            throws ReceivingApplicationException, HL7Exception {
+            throws HL7Exception {
 		try {
 			Message ack = theIn.generateACK();
 			myMsgCount++;

@@ -2,8 +2,6 @@ package ca.uhn.hl7v2.protocol;
 
 import java.util.Map;
 
-import ca.uhn.hl7v2.HL7Exception;
-
 /**
  * The Interface ReceivingApplicationExceptionHandler. Allow applications to handle
  * parsing and handling errors.
@@ -33,6 +31,6 @@ public interface ReceivingApplicationExceptionHandler {
 	// Note, if you update the JavaDoc here, also update it in the hapi-example
 	// file SendAndReceiveAMessage.java as it's duplicated there!
 	// ********************************
-	public String processException(String incomingMessage, Map<String, Object> incomingMetadata, String outgoingMessage, Exception e) throws HL7Exception;
+    String processException(String incomingMessage, Map<String, Object> incomingMetadata, String outgoingMessage, Exception e);
 
 }

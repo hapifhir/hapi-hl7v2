@@ -50,7 +50,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     private List<Binding> myBindings;
     private Parser myParser;
     private ReceivingApplicationExceptionHandler myExceptionHandler;
-    private HapiContext myContext;
+    private final HapiContext myContext;
     private AcknowledgmentCode defaultAcknowledgementMode = DEFAULT_EXCEPTION_ACKNOWLEDGEMENT_CODE;
 
 
@@ -90,7 +90,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
     }
 
     private void init(Parser theParser) {
-        myBindings = new ArrayList<Binding>(20);
+        myBindings = new ArrayList<>(20);
         myParser = theParser;
     }
 
@@ -387,9 +387,9 @@ public class ApplicationRouterImpl implements ApplicationRouter {
      * A structure for bindings between routing data and applications.
      */
     private static class Binding {
-        public AppRoutingData routingData;
+        public final AppRoutingData routingData;
         public boolean active;
-        public ReceivingApplication<? extends Message> application;
+        public final ReceivingApplication<? extends Message> application;
 
         public Binding(AppRoutingData theRoutingData, boolean isActive, ReceivingApplication<? extends Message> theApplication) {
             routingData = theRoutingData;

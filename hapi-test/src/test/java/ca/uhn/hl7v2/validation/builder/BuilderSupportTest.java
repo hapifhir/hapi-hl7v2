@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -16,11 +17,11 @@ import ca.uhn.hl7v2.validation.ValidationException;
  */
 public class BuilderSupportTest {
 
-	private static String TEST1 = "TEST";
-	private static String TEST2 = "TESTTEST";
+	private static final String TEST1 = "TEST";
+	private static final String TEST2 = "TESTTEST";
 
 	@SuppressWarnings("serial")
-	private static BuilderSupport b = new BuilderSupport() {
+	private static final BuilderSupport b = new BuilderSupport() {
 	};
 
 	@Test
@@ -191,45 +192,45 @@ public class BuilderSupportTest {
 
 	@Test
 	public void testInCollectionOfQ() throws ValidationException {
-		assertFalse(b.in(Arrays.asList(new String[] { TEST1, TEST2 })).evaluate(null));
-		assertTrue(b.in(Arrays.asList(new String[] { TEST1, TEST2 })).evaluate(TEST1));
-		assertFalse(b.in(Arrays.asList(new String[] { TEST1 })).evaluate(TEST2));
+		assertFalse(b.in(Arrays.asList(TEST1, TEST2)).evaluate(null));
+		assertTrue(b.in(Arrays.asList(TEST1, TEST2)).evaluate(TEST1));
+		assertFalse(b.in(Collections.singletonList(TEST1)).evaluate(TEST2));
 	}
 
 	@Test
 	public void testAnyOfIterableOfPredicate() throws ValidationException {
-		assertFalse(b.anyOf(Arrays.asList(new Predicate[] { b.isEqual(TEST1), b.isEqual(TEST2) }))
+		assertFalse(b.anyOf(Arrays.asList(b.isEqual(TEST1), b.isEqual(TEST2)))
 				.evaluate(null));
-		assertTrue(b.anyOf(Arrays.asList(new Predicate[] { b.isEqual(TEST1), b.isEqual(TEST2) }))
+		assertTrue(b.anyOf(Arrays.asList(b.isEqual(TEST1), b.isEqual(TEST2)))
 				.evaluate(TEST1));
-		assertFalse(b.anyOf(Arrays.asList(new Predicate[] { b.isEqual(TEST1) })).evaluate(TEST2));
+		assertFalse(b.anyOf(Collections.singletonList(b.isEqual(TEST1))).evaluate(TEST2));
 	}
 
 	@Test
 	public void testAllOfIterableOfPredicate() throws ValidationException {
 		assertFalse(b.allOf(
-				Arrays.asList(new Predicate[] { b.startsWith(TEST1), b.isEqual(TEST2) })).evaluate(
+				Arrays.asList(b.startsWith(TEST1), b.isEqual(TEST2))).evaluate(
 				null));
 		assertTrue(b
-				.allOf(Arrays.asList(new Predicate[] { b.startsWith(TEST1), b.isEqual(TEST2) }))
+				.allOf(Arrays.asList(b.startsWith(TEST1), b.isEqual(TEST2)))
 				.evaluate(TEST2));
-		assertFalse(b.allOf(Arrays.asList(new Predicate[] { b.isEqual(TEST1) })).evaluate(TEST2));
+		assertFalse(b.allOf(Collections.singletonList(b.isEqual(TEST1))).evaluate(TEST2));
 	}
 
 	@Test
 	public void testAnyOfPredicateArray() throws ValidationException {
-		assertFalse(b.anyOf(new Predicate[] { b.isEqual(TEST1), b.isEqual(TEST2) }).evaluate(null));
-		assertTrue(b.anyOf(new Predicate[] { b.isEqual(TEST1), b.isEqual(TEST2) }).evaluate(TEST1));
-		assertFalse(b.anyOf(new Predicate[] { b.isEqual(TEST1) }).evaluate(TEST2));
+		assertFalse(b.anyOf(b.isEqual(TEST1), b.isEqual(TEST2)).evaluate(null));
+		assertTrue(b.anyOf(b.isEqual(TEST1), b.isEqual(TEST2)).evaluate(TEST1));
+		assertFalse(b.anyOf(b.isEqual(TEST1)).evaluate(TEST2));
 	}
 
 	@Test
 	public void testAllOfPredicateArray() throws ValidationException {
-		assertFalse(b.allOf(new Predicate[] { b.startsWith(TEST1), b.isEqual(TEST2) }).evaluate(
+		assertFalse(b.allOf(b.startsWith(TEST1), b.isEqual(TEST2)).evaluate(
 				null));
-		assertTrue(b.allOf(new Predicate[] { b.startsWith(TEST1), b.isEqual(TEST2) }).evaluate(
+		assertTrue(b.allOf(b.startsWith(TEST1), b.isEqual(TEST2)).evaluate(
 				TEST2));
-		assertFalse(b.allOf(new Predicate[] { b.isEqual(TEST1) }).evaluate(TEST2));
+		assertFalse(b.allOf(b.isEqual(TEST1)).evaluate(TEST2));
 	}
 
 	@Test

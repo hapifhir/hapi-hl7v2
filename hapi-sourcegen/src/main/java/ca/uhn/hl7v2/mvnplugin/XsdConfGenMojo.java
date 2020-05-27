@@ -114,7 +114,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 	 * @parameter default="true"
 	 * @since 2.1
 	 */
-	private boolean filterBogusGroups = true;
+	private final boolean filterBogusGroups = true;
 
 	/**
 	 * The file name for the generated file (file will be placed in the
@@ -152,12 +152,12 @@ public class XsdConfGenMojo extends AbstractMojo {
 
 	private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates.xsd";
 
-	private static final Set<String> ourConstrainedUsageTypes = new HashSet<String>(new ArrayList<String>(Arrays.asList(new String[] { "R", "RE", "O", "C" })));
+	private static final Set<String> ourConstrainedUsageTypes = new HashSet<>(new ArrayList<>(Arrays.asList("R", "RE", "O", "C")));
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException {
 
 		try {
 
@@ -166,7 +166,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 				new File(targetDirectory).mkdirs();
 			}
 
-			List<RuntimeProfile> parsedProfiles = new ArrayList<RuntimeProfile>();
+			List<RuntimeProfile> parsedProfiles = new ArrayList<>();
 			for (String nextProfile : profiles) {
 
 				ourLog.info("Reading profile: {}", nextProfile);
@@ -201,10 +201,10 @@ public class XsdConfGenMojo extends AbstractMojo {
 			}
 
 			if (linkTriggerToStructure == null) {
-				linkTriggerToStructure = new HashMap<String, String>();
+				linkTriggerToStructure = new HashMap<>();
 			}
 
-			linkTriggerToStructure = new TreeMap<String, String>(linkTriggerToStructure);
+			linkTriggerToStructure = new TreeMap<>(linkTriggerToStructure);
 
 			VelocityContext ctx = new VelocityContext();
 			ctx.put("runtimeProfiles", parsedProfiles);
@@ -344,8 +344,8 @@ public class XsdConfGenMojo extends AbstractMojo {
 		tst = new XsdConfGenMojo();
 		tst.targetDirectory = "hapi-test/target/generated-sources/confgen";
 		tst.targetFile = "CGTA_INPUT_HL7V2.xsd";
-		tst.profiles = new ArrayList<String>();
-		tst.linkTriggerToStructure = new HashMap<String, String>();
+		tst.profiles = new ArrayList<>();
+		tst.linkTriggerToStructure = new HashMap<>();
 
 		tst.profiles.add("/eclipse/workspace/CGTA_Input_Tester_gc/ConverterLibrary/src/main/resources/ca/cgta/input/conf/cgta-adt_a01.xml");
 		tst.linkTriggerToStructure.put("ADT_A02", "ADT_A01");

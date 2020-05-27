@@ -31,7 +31,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private Structure currentStructure; 
     private String direction;
     private Position next;
-    private boolean handleUnexpectedSegments;
+    private final boolean handleUnexpectedSegments;
     
     private static final Logger log = LoggerFactory.getLogger(MessageIterator.class);
     
@@ -209,7 +209,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
             Position parentPos = new Position(grandparent, getIndex(grandparent, pos.parent));
             matchExists = matchExistsAfterPosition(parentPos, name, firstDescendentsOnly, upToFirstRequired);
         }
-        log.debug("Match exists after position {} for {}? {}", new Object[] {pos, name, matchExists});
+        log.debug("Match exists after position {} for {}? {}", pos, name, matchExists);
         return matchExists;
     }
     
@@ -341,14 +341,15 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     public static Index getIndex(Group parent, Structure child) {
         Index index = null;
         String[] names = parent.getNames();
-        findChild : for (int i = 0; i < names.length; i++) {
-            if (names[i].startsWith(child.getName())) {
+        findChild :
+        for (String name : names) {
+            if (name.startsWith(child.getName())) {
                 try {
-                    Structure[] reps = parent.getAll(names[i]);
+                    Structure[] reps = parent.getAll(name);
                     for (int j = 0; j < reps.length; j++) {
                         if (child.equals(reps[j])) {
-                            index = new Index(names[i], j);
-                            break findChild; 
+                            index = new Index(name, j);
+                            break findChild;
                         }
                     }
                 } catch (HL7Exception e) {
@@ -365,8 +366,8 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      * of the child.
      */
     public static class Index {
-        public String name;
-        public int rep;
+        public final String name;
+        public final int rep;
         public Index(String name, int rep) {
             this.name = name;
             this.rep = rep;
@@ -375,7 +376,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         /** @see Object#equals */
         public boolean equals(Object o) {
             boolean equals = false;
-            if (o != null && o instanceof Index) {
+            if (o instanceof Index) {
                 Index i = (Index) o;
                 if (i.rep == rep && i.name.equals(name)) equals = true;
             }
@@ -397,8 +398,8 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      * A structure position within a message. 
      */
     public static class Position {
-        public Group parent;
-        public Index index;
+        public final Group parent;
+        public final Index index;
         public Position(Group parent, String name, int rep) {
             this.parent = parent;
             this.index = new Index(name, rep);
@@ -411,7 +412,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         /** @see Object#equals */
         public boolean equals(Object o) {
             boolean equals = false;
-            if (o != null && o instanceof Position) {
+            if (o instanceof Position) {
                 Position p = (Position) o;
                 if (p.parent.equals(parent) && p.index.equals(index)) equals = true;
             }
@@ -424,13 +425,11 @@ public class MessageIterator implements java.util.Iterator<Structure> {
         }
         
         public String toString() {
-            StringBuffer ret = new StringBuffer(parent.getName());
-            ret.append(":");
-            ret.append(index.name);
-            ret.append("(");
-            ret.append(index.rep);
-            ret.append(")");
-            return ret.toString();           
+            return parent.getName() + ":" +
+                    index.name +
+                    "(" +
+                    index.rep +
+                    ")";
         }
     }
 }

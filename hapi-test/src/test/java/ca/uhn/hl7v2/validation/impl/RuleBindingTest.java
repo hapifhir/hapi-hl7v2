@@ -24,10 +24,10 @@ public class RuleBindingTest {
     PrimitiveTypeRule myRule;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         myRule = new SizeRule(10);
-        myBinding1 = new RuleBinding<PrimitiveTypeRule>("*", "*", myRule);
-        myBinding2 = new RuleBinding<PrimitiveTypeRule>("2.5", "ST", myRule);
+        myBinding1 = new RuleBinding<>("*", "*", myRule);
+        myBinding2 = new RuleBinding<>("2.5", "ST", myRule);
     }
 
     @Test

@@ -139,7 +139,7 @@ public class ConfGenMojo extends AbstractMojo {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException {
 
 		GenerateDataTypesEnum genDt;
 		try {

@@ -100,7 +100,7 @@ public class EventMapGenerator {
 		Writer writer = new FileWriter(file);
 		writer = new BufferedWriter(writer);
 
-		writer.append("#event -> structure map for HL7 " + theVersion + "\r\n");
+		writer.append("#event -> structure map for HL7 ").append(theVersion).append("\r\n");
 		if ("2.1".equals(theVersion) || "2.2".equals(theVersion)) {
 			writer.append("#note: no mappings are defined for 2.1 and 2.2");
 			writer.close();
@@ -108,7 +108,7 @@ public class EventMapGenerator {
 		}
 
 		ResultSet rs = createStructureQuery(theVersion);
-		Map<String, Set<String>> trigger2structure = new TreeMap<String, Set<String>>();
+		Map<String, Set<String>> trigger2structure = new TreeMap<>();
 		while (rs.next()) {
 			String messageType = rs.getString("message_typ_snd");
 			String triggerCode = rs.getString("event_code");
@@ -140,18 +140,15 @@ public class EventMapGenerator {
 			 */
 
 			if (!trigger2structure.containsKey(trigger)) {
-				trigger2structure.put(trigger, new TreeSet<String>(new Comparator<String>() {
-
-					public int compare(String theO1, String theO2) {
-						if (theO1.equals(theO2)) {
-							return 0;
-						} else if (theO1.equals(trigger)) {
-							return 1;
-						} else if (theO2.equals(trigger)) {
-							return -1;
-						} else {
-							return theO1.compareTo(theO2);
-						}
+				trigger2structure.put(trigger, new TreeSet<>((theO1, theO2) -> {
+					if (theO1.equals(theO2)) {
+						return 0;
+					} else if (theO1.equals(trigger)) {
+						return 1;
+					} else if (theO2.equals(trigger)) {
+						return -1;
+					} else {
+						return theO1.compareTo(theO2);
 					}
 				}));
 			}
@@ -178,7 +175,7 @@ public class EventMapGenerator {
 
 		NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
 		Connection conn = normativeDatabase.getConnection();
-		List<TriggerDesc> triggerDescs = new ArrayList<TriggerDesc>();
+		List<TriggerDesc> triggerDescs = new ArrayList<>();
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);

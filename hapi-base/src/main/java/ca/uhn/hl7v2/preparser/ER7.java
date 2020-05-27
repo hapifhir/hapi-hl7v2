@@ -59,8 +59,8 @@ public class ER7 {
 				EncodingCharacters encodingChars = new EncodingCharacters('0', "0000");
 				if(parseMSHSegmentWhole(props, msgMask, encodingChars, firstSegment)) {
 					ok = true;
-					SortedMap<String, Integer> segmentId2nextRepIdx = new TreeMap<String, Integer>();
-					segmentId2nextRepIdx.put(new String("MSH"), 1); 
+					SortedMap<String, Integer> segmentId2nextRepIdx = new TreeMap<>();
+					segmentId2nextRepIdx.put("MSH", 1);
 						// in case we find another MSH segment, heh.
 					while(messageTokenizer.hasMoreTokens()) {
 						parseSegmentWhole(props, segmentId2nextRepIdx, 
@@ -89,20 +89,20 @@ public class ER7 {
 			if(msgMask != null)
 				handler.m_msgMask = msgMask;
 			else {
-				handler.m_msgMask = new ArrayList<DatumPath>();
+				handler.m_msgMask = new ArrayList<>();
 				handler.m_msgMask.add(new DatumPath()); // everything will pass this
 					// (every DatumPath startsWith the zero-length DatumPath)
 			}
 
 			encodingChars.setFieldSeparator(segment.charAt(3));
-			List<Integer> nodeKey = new ArrayList<Integer>();
-			nodeKey.add(new Integer(0));
+			List<Integer> nodeKey = new ArrayList<>();
+			nodeKey.add(0);
 			handler.putDatum(nodeKey, String.valueOf(encodingChars.getFieldSeparator()));
 			encodingChars.setComponentSeparator(segment.charAt(4));
 			encodingChars.setRepetitionSeparator(segment.charAt(5));
 			encodingChars.setEscapeCharacter(segment.charAt(6));
 			encodingChars.setSubcomponentSeparator(segment.charAt(7));
-			nodeKey.set(0, new Integer(1));
+			nodeKey.set(0, 1);
 			handler.putDatum(nodeKey, encodingChars.toString());
 
 			if(segment.charAt(8) == encodingChars.getFieldSeparator()) {	
@@ -110,12 +110,11 @@ public class ER7 {
 				// now -- we recurse 
 				// through fields / field-repetitions / components / subcomponents.
 				nodeKey.clear();
-				nodeKey.add(new Integer(2));
+				nodeKey.add(2);
 				parseSegmentGuts(handler, segment.substring(9), nodeKey);
 			}
 		}
-		catch(IndexOutOfBoundsException e) {}
-		catch(NullPointerException e) {}
+		catch(IndexOutOfBoundsException | NullPointerException ignored) {}
 
 		return ret;
 	}
@@ -131,12 +130,12 @@ public class ER7 {
 		try {
 			String segmentId = segment.substring(0, 3);
 
-			int currentSegmentRepIdx = 0;
+			int currentSegmentRepIdx;
 			if(segmentId2nextRepIdx.containsKey(segmentId))
-				currentSegmentRepIdx = ((Integer)segmentId2nextRepIdx.get(segmentId)).intValue();
+				currentSegmentRepIdx = segmentId2nextRepIdx.get(segmentId);
 			else
 				currentSegmentRepIdx = 0;
-			segmentId2nextRepIdx.put(segmentId, new Integer(currentSegmentRepIdx+1));
+			segmentId2nextRepIdx.put(segmentId, currentSegmentRepIdx + 1);
 
 			// will only bother to parse this segment if any of it's contents will 
 			// be dumped to props.
@@ -155,21 +154,20 @@ public class ER7 {
 				handler.m_msgMask = msgMask;
 				handler.m_segmentRepIdx = currentSegmentRepIdx;
 
-				List<Integer> nodeKey = new ArrayList<Integer>();
-				nodeKey.add(new Integer(0));
+				List<Integer> nodeKey = new ArrayList<>();
+				nodeKey.add(0);
 				parseSegmentGuts(handler, segment.substring(4), nodeKey);
 			}
 		}
-		catch(NullPointerException e) {}
-		catch(IndexOutOfBoundsException e) {}
+		catch(NullPointerException | IndexOutOfBoundsException ignored) {}
 	}
 
-	static protected interface Handler
+	protected interface Handler
 	{
-		public int specDepth();
-		public char delim(int level);
+		int specDepth();
+		char delim(int level);
 
-		public void putDatum(List<Integer> nodeKey, String value);
+		void putDatum(List<Integer> nodeKey, String value);
 	}
 
 	static protected class ER7SegmentHandler implements Handler
@@ -208,8 +206,8 @@ public class ER7 {
 			valDatumPath.add(m_segmentId).add(m_segmentRepIdx);
 			for(int i=0; i<valNodeKey.size(); ++i) {
 				// valNodeKey: everything counts from 0 -- not so with DatumPath ... sigh. 
-				int itval = ((Integer)valNodeKey.get(i)).intValue();
-				valDatumPath.add(new Integer(i == 1 ? itval : itval+1));
+				int itval = valNodeKey.get(i);
+				valDatumPath.add(Integer.valueOf(i == 1 ? itval : itval + 1));
 			}
 
 			// see if valDatumPath passes m_msgMask: 
@@ -250,12 +248,12 @@ public class ER7 {
 			if(gutsToken.charAt(0) == thisDepthsDelim) {
 				// gutsToken is all delims -- skipping over as many fields or
 				// components or whatevers as there are characters in the token: 
-				int oldvalue = ((Integer)nodeKey.get(nodeKey.size()-1)).intValue();
-				nodeKey.set(nodeKey.size()-1, new Integer(oldvalue + gutsToken.length()));
+				int oldvalue = nodeKey.get(nodeKey.size() - 1);
+				nodeKey.set(nodeKey.size()-1, oldvalue + gutsToken.length());
 			}
 			else {
 				if(nodeKey.size() < handler.specDepth()) {
-					nodeKey.add(new Integer(0));
+					nodeKey.add(0);
 					parseSegmentGuts(handler, gutsToken, nodeKey);
 					nodeKey.remove(nodeKey.size()-1);
 				}
@@ -266,7 +264,7 @@ public class ER7 {
 		//nodeKey.setSize(nodeKey.size()-1); // undoing add done at top of this func
 	}
 
-	public static void main(String args[])
+	public static void main(String[] args)
 	{
 		if(args.length >= 1) {
 			//String message = "MSH|^~\\&||||foo|foo|foo";
@@ -274,7 +272,7 @@ public class ER7 {
 
 			Properties props = new Properties();
 
-			List<DatumPath> msgMask = new ArrayList<DatumPath>();
+			List<DatumPath> msgMask = new ArrayList<>();
 			msgMask.add(new DatumPath());
 
 			System.err.println("ER7.parseMessage returned " + parseMessage(props, msgMask, args[0]));

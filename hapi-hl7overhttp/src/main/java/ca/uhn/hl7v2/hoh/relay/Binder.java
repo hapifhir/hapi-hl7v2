@@ -14,21 +14,21 @@ public class Binder implements InitializingBean {
 
     private static final String ourProductName = "HAPI HL7 over HTTP Relay " + VersionLogger.getVersion();
 
-	private String myMessageType = "*";
-	private String myProcessingId = "*";
+	private final String myMessageType = "*";
+	private final String myProcessingId = "*";
 	private IRelayListener myRelayListener;
 	private IRelaySender myRelaySender;
-	private String myTriggerEvent = "*";
-	private String myVersionId = "*";
+	private final String myTriggerEvent = "*";
+	private final String myVersionId = "*";
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		Validate.propertySet(myRelayListener, "listener");
 		Validate.propertySet(myRelaySender, "sender");
 
-		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[MsgType:{} / MsgTrigger:{} / Version:{} / Processing:{}]", new Object[] { myRelaySender.getBeanName(), myRelayListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId });
+		ourLog.info("Binding sender[{}] to listener[{}] for messages with profile[MsgType:{} / MsgTrigger:{} / Version:{} / Processing:{}]", myRelaySender.getBeanName(), myRelayListener.getBeanName(), myMessageType, myTriggerEvent, myVersionId, myProcessingId);
 
 		AppRoutingDataImpl appRoutingData = new AppRoutingDataImpl(myMessageType, myTriggerEvent, myProcessingId, myVersionId);
 		myRelayListener.registerApplication(appRoutingData, myRelaySender);

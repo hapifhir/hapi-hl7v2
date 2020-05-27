@@ -46,7 +46,7 @@ public class ServerConfiguration {
 	/**
 	 * @see ServerConfiguration#setApplicationExceptionPolicy(ApplicationExceptionPolicy)
 	 */
-	public static enum ApplicationExceptionPolicy
+	public enum ApplicationExceptionPolicy
 	{
 
 		/**

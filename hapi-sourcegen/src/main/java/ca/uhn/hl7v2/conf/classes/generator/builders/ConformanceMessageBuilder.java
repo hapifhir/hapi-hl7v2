@@ -45,7 +45,7 @@ import ca.uhn.hl7v2.conf.classes.generator.genclasses.*;
 public class ConformanceMessageBuilder {
    private GeneratedConformanceMessage confMsg;
    private StaticDef msg;
-   private String packageName;
+   private final String packageName;
 
    /** This constructor will create a new ConformanceMessageBuilder
     * @param packageName the name of the package
@@ -103,7 +103,7 @@ public class ConformanceMessageBuilder {
 				UnderlyingAccessor childAccessor = new UnderlyingAccessor(underlyingDataType, childProfileName.getAccessorName());
             GeneratedRepGetter repGetter = new GeneratedRepGetter(childProfileName, childAccessor.getAcceptsRep());
 
-            docBuilder.decorateRepGetter(repGetter, (Seg) msg.getChild(i), childProfileName.getAccessorName());
+            docBuilder.decorateRepGetter(repGetter, msg.getChild(i), childProfileName.getAccessorName());
 
             confMsg.addMethod(repGetter);
             if (depManager.getVerbose())
@@ -122,7 +122,7 @@ public class ConformanceMessageBuilder {
 					UnderlyingAccessor childAccessor = new UnderlyingAccessor(underlyingDataType, underlyingAccessorName);
                GeneratedRepGetter repGetter = new GeneratedRepGetter(childProfileName, childAccessor.getAcceptsRep());
 
-               docBuilder.decorateRepGetter(repGetter, (SegGroup) msg.getChild(i), childProfileName.getOriginalName());
+               docBuilder.decorateRepGetter(repGetter, msg.getChild(i), childProfileName.getOriginalName());
                confMsg.addMethod(repGetter);
                if (depManager.getVerbose())
                   System.out.println("Generating SegGroup: " + packageName + "." + confMsg.getName());

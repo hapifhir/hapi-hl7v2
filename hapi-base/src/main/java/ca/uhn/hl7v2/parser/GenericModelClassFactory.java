@@ -23,7 +23,6 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.parser;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.GenericComposite;
 import ca.uhn.hl7v2.model.GenericGroup;
 import ca.uhn.hl7v2.model.GenericMessage;
@@ -65,35 +64,35 @@ public class GenericModelClassFactory extends AbstractModelClassFactory {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean theIsExplicit) throws HL7Exception {
+	public Class<? extends Message> getMessageClass(String theName, String theVersion, boolean theIsExplicit) {
 		return GenericMessage.getGenericMessageClass(theVersion);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) throws HL7Exception {
+	public Class<? extends Message> getMessageClassInASpecificPackage(String theName, String theVersion, boolean theIsExplicit, String thePackageName) {
 		return GenericMessage.getGenericMessageClass(theVersion);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Group> getGroupClass(String theName, String theVersion) throws HL7Exception {
+	public Class<? extends Group> getGroupClass(String theName, String theVersion) {
 		return GenericGroup.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Segment> getSegmentClass(String theName, String theVersion) throws HL7Exception {
+	public Class<? extends Segment> getSegmentClass(String theName, String theVersion) {
 		return GenericSegment.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Type> getTypeClass(String theName, String theVersion) throws HL7Exception {
+	public Class<? extends Type> getTypeClass(String theName, String theVersion) {
 		return GenericComposite.class;
 	}
 

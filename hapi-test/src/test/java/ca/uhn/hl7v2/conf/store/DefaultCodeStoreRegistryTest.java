@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.store;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
@@ -33,10 +35,10 @@ public class DefaultCodeStoreRegistryTest  {
         
         CodeStore codeStore = registry.getCodeStore("foo", "HL70001");
         assertTrue(codeStore.knowsCodes("HL70396"));
-        
-        assertTrue( ! registry.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061") );
-        assertTrue( ! registry.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
-        assertTrue(null == registry.getCodeStore("xxx", "xxx"));
+
+        assertFalse(registry.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061"));
+        assertFalse(registry.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
+        assertNull(registry.getCodeStore("xxx", "xxx"));
         
     }
 }

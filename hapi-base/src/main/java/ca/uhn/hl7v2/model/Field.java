@@ -35,8 +35,8 @@ import ca.uhn.hl7v2.Location;
  */
 public class Field implements Visitable {
 
-    private Type[] reps;
-    private int maxCardinality;
+    private final Type[] reps;
+    private final int maxCardinality;
     
     
     public Field(Type[] reps, int maxCardinality) {
@@ -64,7 +64,7 @@ public class Field implements Visitable {
         return new Location(parentLocation).withField(index).withFieldRepetition(repetition);
     }
 
-    public boolean isEmpty() throws HL7Exception {
+    public boolean isEmpty() {
         return reps.length == 0;
     }
 

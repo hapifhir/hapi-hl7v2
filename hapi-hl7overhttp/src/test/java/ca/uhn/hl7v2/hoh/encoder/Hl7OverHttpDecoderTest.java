@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,8 +35,8 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStream() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
@@ -63,10 +64,10 @@ public class Hl7OverHttpDecoderTest {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		String msg = "POST /AppName HTTP/1.1\n" + // -
 				"Content-Type: application/hl7-v2; charset=ISO-8859-2\n" + // -
-				"Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\n" + // -
+				"Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\n" + // -
 				"Authorization: Basic aGVsbG86d29ybGQ=\n" + // -
 				"\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
@@ -94,10 +95,10 @@ public class Hl7OverHttpDecoderTest {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		String msg = "POST  \t\t /AppName         \tHTTP/1.1\n" + // -
 				"Content-Type:\t\t application/hl7-v2; charset=ISO-8859-2\n" + // -
-				"Content-Length:            " + ourSampleMessage.getBytes("ISO-8859-1").length + "\n" + // -
+				"Content-Length:            " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\n" + // -
 				"Authorization:\t\t\t\t Basic aGVsbG86d29ybGQ=\n" + // -
 				"\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
@@ -119,8 +120,8 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStreamWithTwoMessages() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 
 		// Double the message
@@ -159,16 +160,16 @@ public class Hl7OverHttpDecoderTest {
 	@Test
 	public void testDecodeFromStreamWithMultibyteSequences() throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=UTF-8\r\n" + "Content-Length: " + ourSampleMessageWithMultibyte.getBytes("UTF-8").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
-		bos.write(ourSampleMessageWithMultibyte.getBytes("UTF-8"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=UTF-8\r\n" + "Content-Length: " + ourSampleMessageWithMultibyte.getBytes(StandardCharsets.UTF_8).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
+		bos.write(ourSampleMessageWithMultibyte.getBytes(StandardCharsets.UTF_8));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
 		d.readHeadersAndContentsFromInputStreamAndDecode(byteArrayInputStream);
 
 		assertEquals(0, byteArrayInputStream.available());
 		assertTrue(d.getConformanceProblems().toString(), d.getConformanceProblems().isEmpty());
-		assertEquals(Charset.forName("UTF-8"), d.getCharset());
+		assertEquals(StandardCharsets.UTF_8, d.getCharset());
 		assertTrue(d.isCharsetExplicitlySet());
 		assertEquals("application/hl7-v2", d.getContentType());
 		assertEquals(ourSampleMessageWithMultibyte, d.getMessage());
@@ -180,7 +181,7 @@ public class Hl7OverHttpDecoderTest {
 
 	@Test
 	public void testDecodeFromStreamWithCompression() throws Exception {
-		byte[] sampleMessage = GZipUtils.compress(ourSampleMessageWithMultibyte.getBytes("UTF-8"));
+		byte[] sampleMessage = GZipUtils.compress(ourSampleMessageWithMultibyte.getBytes(StandardCharsets.UTF_8));
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		String msg = "POST /AppName HTTP/1.1\r\n" + 
@@ -189,7 +190,7 @@ public class Hl7OverHttpDecoderTest {
 				"Content-Encoding: gzip\r\n" + 
 				"Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
 		
-		bos.write(msg.getBytes("ISO-8859-1"));
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(sampleMessage);
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
@@ -197,7 +198,7 @@ public class Hl7OverHttpDecoderTest {
 
 		assertEquals(0, byteArrayInputStream.available());
 		assertTrue(d.getConformanceProblems().toString(), d.getConformanceProblems().isEmpty());
-		assertEquals(Charset.forName("UTF-8"), d.getCharset());
+		assertEquals(StandardCharsets.UTF_8, d.getCharset());
 		assertTrue(d.isCharsetExplicitlySet());
 		assertEquals("application/hl7-v2", d.getContentType());
 		assertEquals(ourSampleMessageWithMultibyte, d.getMessage());
@@ -211,11 +212,11 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStreamWithMultipleMessages() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
 
-		bos.write(msg.getBytes("ISO-8859-1"));
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
-		bos.write(msg.getBytes("ISO-8859-1"));
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
@@ -254,8 +255,8 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStreamWithPauseInTheMiddleOfMessage() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 
@@ -283,8 +284,8 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStreamWithPauseInStatusLine() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 
@@ -312,8 +313,8 @@ public class Hl7OverHttpDecoderTest {
 	public void testDecodeFromStreamWithPauseInMiddleOfHeaders() throws Exception {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes("ISO-8859-1").length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
-		bos.write(msg.getBytes("ISO-8859-1"));
+		String msg = "POST /AppName HTTP/1.1\r\n" + "Content-Type: application/hl7-v2; charset=ISO-8859-2\r\n" + "Content-Length: " + ourSampleMessage.getBytes(StandardCharsets.ISO_8859_1).length + "\r\n" + "Authorization: Basic aGVsbG86d29ybGQ=\r\n" + "\r\n";
+		bos.write(msg.getBytes(StandardCharsets.ISO_8859_1));
 		bos.write(ourSampleMessage.getBytes("ISO-8859-2"));
 		AbstractHl7OverHttpDecoder d = new Hl7OverHttpRequestDecoder();
 

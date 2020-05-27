@@ -73,11 +73,9 @@ public class FiledBasedHiLoGeneratorTest extends AbstractContinuousGeneratorTest
 			assertEquals(Integer.toString((FileBasedHiLoGenerator.DEFAULT_MAXLO * 2) + 1), id);
 
 		} finally {
-			if (file != null) {
-				file.setWritable(true);
-				file.setReadable(true);
-			}
-		}
+            file.setWritable(true);
+            file.setReadable(true);
+        }
 	}
 
 

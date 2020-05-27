@@ -45,13 +45,13 @@ import ca.uhn.hl7v2.protocol.Transportable;
  */
 public abstract class AbstractTransport implements TransportLayer {
     
-    private static Logger log = LoggerFactory.getLogger(AbstractTransport.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractTransport.class);
     
-    private Map<String, Object> myCommonMetadata;
+    private final Map<String, Object> myCommonMetadata;
     private boolean myIsConnected = false;
     
     public AbstractTransport() {
-        myCommonMetadata = new HashMap<String, Object>();
+        myCommonMetadata = new HashMap<>();
     }
         
     /**

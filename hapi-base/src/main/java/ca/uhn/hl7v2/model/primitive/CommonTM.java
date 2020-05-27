@@ -157,8 +157,7 @@ public class CommonTM implements Serializable {
                     String msg =
                         "The length of the TM datatype value does not conform to an allowable"
                             + " format. Format should conform to HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]";
-                    DataTypeException e = new DataTypeException(msg);
-                    throw e;
+                    throw new DataTypeException(msg);
                 } //end if
 
                 if (d != -1) {
@@ -168,8 +167,7 @@ public class CommonTM implements Serializable {
                         String msg =
                             "The length of the TM datatype value does not conform to an allowable"
                                 + " format. Format should conform to HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                 } //end if
 
@@ -180,8 +178,7 @@ public class CommonTM implements Serializable {
                         String msg =
                             "The length of the TM datatype value does not conform to an allowable"
                                 + " format. Format should conform to HH[MM[SS[.S[S[S[S]]]]]][+/-ZZZZ]";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                 } //end if
 
@@ -193,8 +190,7 @@ public class CommonTM implements Serializable {
                     //check to see if the hour value is valid
                     if ((hrInt < 0) || (hrInt > 23)) {
                         String msg = "The hour value of the TM datatype must be >=0 and <=23";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     hour = hrInt;
                 } //end if
@@ -207,8 +203,7 @@ public class CommonTM implements Serializable {
                     //check to see if the minute value is valid
                     if ((minInt < 0) || (minInt > 59)) {
                         String msg = "The minute value of the TM datatype must be >=0 and <=59";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     minute = minInt;
                 } //end if
@@ -221,8 +216,7 @@ public class CommonTM implements Serializable {
                     //check to see if the seconds value is valid
                     if ((secInt < 0) || (secInt > 59)) {
                         String msg = "The seconds value of the TM datatype must be >=0 and <=59";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     second = secInt;
                 } //end if
@@ -235,8 +229,7 @@ public class CommonTM implements Serializable {
                     //check to see if the fractional second value is valid
                     if ((fract < 0) || (fract >= 1)) {
                         String msg = "The fractional second value of the TM datatype must be >= 0 and < 1";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     fractionOfSec = fract;
                 } //end if
@@ -254,8 +247,7 @@ public class CommonTM implements Serializable {
                     //check to see if the hour value is valid
                     if ((offsetInt < 0) || (offsetInt > 23)) {
                         String msg = "The GMT offset hour value of the TM datatype must be >=0 and <=23";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     //extract the minute data from the offset value.  If these characters
                     //are not numeric then a number format exception will be generated
@@ -263,8 +255,7 @@ public class CommonTM implements Serializable {
                     //check to see if the minute value is valid
                     if ((offsetInt < 0) || (offsetInt > 59)) {
                         String msg = "The GMT offset minute value of the TM datatype must be >=0 and <=59";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     //validation done, update the offSet field
                     offSet = Integer.parseInt(tempOffsetNoS);
@@ -311,8 +302,7 @@ public class CommonTM implements Serializable {
             //validate input value
             if ((hr < 0) || (hr > 23)) {
                 String msg = "The hour value of the TM datatype must be >=0 and <=23";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             } //end if
             hour = hr;
             minute = 0;
@@ -346,8 +336,7 @@ public class CommonTM implements Serializable {
             //validate input minute value
             if ((min < 0) || (min > 59)) {
                 String msg = "The minute value of the TM datatype must be >=0 and <=59";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             } //end if
             minute = min;
             second = 0;
@@ -391,10 +380,9 @@ public class CommonTM implements Serializable {
 			//validate input seconds value
 			if ((second < 0) || (second >= 60)) {
 				String msg = "The (rounded) second value of the TM datatype must be >=0 and <60";
-				DataTypeException e = new DataTypeException(msg);
-				throw e;
+                throw new DataTypeException(msg);
 			} //end if
-            int fractionOfSecInt = (int) (secMultRound - (second * 10000));
+            int fractionOfSecInt = secMultRound - (second * 10000);
             fractionOfSec = fractionOfSecInt / 10000F;
             String fractString = "";
             //Now convert the fractionOfSec field to a string without the leading zero
@@ -434,8 +422,7 @@ public class CommonTM implements Serializable {
                 String msg =
                     "The length of the GMT offset for the TM datatype value does"
                         + " not conform to the allowable format [+/-ZZZZ]. Value: " + signedOffset;
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             } //end if
             //obtain the absolute value of the input
             int absOffset = Math.abs(signedOffset);
@@ -446,16 +433,14 @@ public class CommonTM implements Serializable {
             //check to see if the hour value is valid
             if ((hrOffsetInt < 0) || (hrOffsetInt > 23)) {
                 String msg = "The GMT offset hour value of the TM datatype must be >=0 and <=23";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             } //end if
             //extract the minute data from the offset value.
             int minOffsetInt = Integer.parseInt(offsetStr.substring(2, 4));
             //check to see if the minute value is valid
             if ((minOffsetInt < 0) || (minOffsetInt > 59)) {
                 String msg = "The GMT offset minute value of the TM datatype must be >=0 and <=59";
-                DataTypeException e = new DataTypeException(msg);
-                throw e;
+                throw new DataTypeException(msg);
             } //end if
             //The input value is valid, now store it in the offset field
             offSet = signedOffset;
@@ -477,9 +462,9 @@ public class CommonTM implements Serializable {
         //combine the value field with the offSet field and return it
         String returnVal = null;
         if (value != null && !value.equals("")) {
-            if (omitOffsetFg == false && !value.equals("\"\"")) {
+            if (!omitOffsetFg && !value.equals("\"\"")) {
                 int absOffset = Math.abs(offSet);
-                String sign = "";
+                String sign;
                 if (offSet >= 0) {
                     sign = "+";
                 } //end if
@@ -703,7 +688,7 @@ public class CommonTM implements Serializable {
      * an Hl7 Time Format.
      */
     public static String toHl7TMFormat(GregorianCalendar cal) throws DataTypeException {
-        String val = "";
+        String val;
         try {
             //set the input cal object so that it can report errors
             //on it's value

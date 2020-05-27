@@ -43,6 +43,6 @@ public interface EncodingRule extends Rule<String> {
      *      message failed to validate (empty if validation succeeds; may 
      *      not be a complete list as testing may be aborted after failure).  
      */
-    public ValidationException[] test(String msg);
+    ValidationException[] test(String msg);
     
 }

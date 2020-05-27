@@ -11,7 +11,6 @@ import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.Terser;
 import org.junit.After;
@@ -49,7 +48,7 @@ public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 	private static final String msgText = "MSH|^~\\&|LABGL1||DMCRES||19951002180700||ORU^R01|LABGL1199510021807427|P|2.4\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
 
 	@Before
-	public void before() throws Exception {
+	public void before() {
 		port1 = RandomServerPortProvider.findFreePort();
 		port2 = RandomServerPortProvider.findFreePort();
 		tps = new TwoPortService(port1, port2);
@@ -58,7 +57,7 @@ public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 	}
 
 	@After
-	public void after() throws Exception {
+	public void after() {
 		tps.stopAndWait();
 		DefaultExecutorService.getDefaultService().shutdown();
 		
@@ -77,7 +76,7 @@ public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
-		assertTrue(in != null);
+		assertNotNull(in);
 		assertEquals(Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1),
 				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
 		conn.close();
@@ -94,20 +93,18 @@ public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 				new MinLowerLayerProtocol(), insocket, outsocket);
 		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());
-		Callable<Boolean> t = new Callable<Boolean>() {
-			public Boolean call() {
-				try {
-					String id = Long.toString(r.nextLong());
-					Message out = parser.parse(msgText);
-					Terser.set((Segment) out.get("MSH"), 10, 0, 1, 1, id);
-					ourLog.debug("Sending message with ID: {}", id);
-					Message in = conn.getInitiator().sendAndReceive(out);
-					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1)
-							.equals(Terser.get((Segment) in.get("MSA"), 2, 0,
-									1, 1));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+		Callable<Boolean> t = () -> {
+			try {
+				String id = Long.toString(r.nextLong());
+				Message out = parser.parse(msgText);
+				Terser.set((Segment) out.get("MSH"), 10, 0, 1, 1, id);
+				ourLog.debug("Sending message with ID: {}", id);
+				Message in = conn.getInitiator().sendAndReceive(out);
+				return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1)
+						.equals(Terser.get((Segment) in.get("MSA"), 2, 0,
+								1, 1));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 		};
 		CompletionService<Boolean> completionService = completionService(getDefaultService());
@@ -132,7 +129,7 @@ public class TwoPortInitiatorTest implements ReceivingApplication<Message> {
 	}
 
 	public Message processMessage(Message theIn, Map<String, Object> metadata)
-            throws ReceivingApplicationException, HL7Exception {
+            throws HL7Exception {
 		
 		ourLog.debug("Received message with ID {}", new Terser(theIn).get("/MSH-10"));
 		

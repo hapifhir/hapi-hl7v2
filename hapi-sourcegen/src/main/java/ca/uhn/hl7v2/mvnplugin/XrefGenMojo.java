@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -54,7 +53,7 @@ import ca.uhn.hl7v2.sourcegen.SourceGenerator;
  */
 public class XrefGenMojo extends AbstractMojo
 {
-    private static final Set<String> alreadyMade = new HashSet<String>();
+    private static final Set<String> alreadyMade = new HashSet<>();
     
     /**
      * The maven project.
@@ -117,12 +116,12 @@ public class XrefGenMojo extends AbstractMojo
      * 
      * @parameter default="ca.uhn.hl7v2.sourcegen.templates"
      */
-    private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates.json";
+    private final String templatePackage = "ca.uhn.hl7v2.sourcegen.templates.json";
 
     /**
      * {@inheritDoc}
      */
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
 
         if (skip) {
             getLog().warn("Configured to skip");
@@ -151,14 +150,11 @@ public class XrefGenMojo extends AbstractMojo
             try {
                 SourceGenerator.makeAll(targetDirectory, version, false, templatePackage, "json");
                 EventMapGenerator.generateEventDesc(targetDirectory, version, templatePackage);
-			} catch (HL7Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			    throw new MojoExecutionException("Failed to build source ", e);
-			} catch (Exception e) {
-                e.printStackTrace();
-                throw new MojoExecutionException("Failed to build source ", e);
-            }
-            
+			}
+
         } else {
             getLog().warn("Already made version " + version + ", skipping!");
         }

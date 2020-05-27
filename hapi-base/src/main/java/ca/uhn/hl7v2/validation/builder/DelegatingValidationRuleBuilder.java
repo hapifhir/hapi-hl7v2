@@ -33,7 +33,7 @@ package ca.uhn.hl7v2.validation.builder;
 @SuppressWarnings("serial")
 public class DelegatingValidationRuleBuilder extends ValidationRuleBuilder {
 
-	private ValidationRuleBuilder delegate;
+	private final ValidationRuleBuilder delegate;
 
 	public DelegatingValidationRuleBuilder(ValidationRuleBuilder delegate) {
 		this.delegate = delegate;

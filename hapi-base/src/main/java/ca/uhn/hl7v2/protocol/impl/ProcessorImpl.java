@@ -53,11 +53,11 @@ public class ProcessorImpl implements Processor {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessorImpl.class);
 
-    private ProcessorContext myContext;
+    private final ProcessorContext myContext;
     private final Map<String, ExpiringTransportable> myAcceptAcks;
     private final Map<String, Long> myReservations;
     private final Map<String, ExpiringTransportable> myAvailableMessages;
-    private boolean myThreaded; //true if separate threads are calling cycle()  
+    private final boolean myThreaded; //true if separate threads are calling cycle()
     private Cycler ackCycler;
     private Cycler nonAckCycler;
     private ExecutorService myResponseExecutorService;
@@ -81,9 +81,9 @@ public class ProcessorImpl implements Processor {
     public ProcessorImpl(ProcessorContext theContext, boolean isThreaded) {
         myContext = theContext;
         myThreaded = isThreaded;
-        myAcceptAcks = new HashMap<String, ExpiringTransportable>();
-        myReservations = new HashMap<String, Long>();
-        myAvailableMessages = new HashMap<String, ExpiringTransportable>();
+        myAcceptAcks = new HashMap<>();
+        myReservations = new HashMap<>();
+        myAvailableMessages = new HashMap<>();
         
         if (isThreaded) {
             myResponseExecutorService = Executors.newSingleThreadExecutor(); 
@@ -224,7 +224,7 @@ public class ProcessorImpl implements Processor {
      * @see ca.uhn.hl7v2.protocol.Processor#reserve(java.lang.String, long)
      */
     public synchronized void reserve(String theAckId, long thePeriodMillis) {
-        Long expiry = new Long(System.currentTimeMillis() + thePeriodMillis);
+        Long expiry = System.currentTimeMillis() + thePeriodMillis;
         myReservations.put(theAckId, expiry);
     }
     
@@ -246,7 +246,7 @@ public class ProcessorImpl implements Processor {
      * Tries to receive a message, and if there is an error reconnects and tries again. 
      */
     private Transportable tryReceive(TransportLayer theTransport) throws TransportException {
-        Transportable message = null;
+        Transportable message;
         try {
             message = theTransport.receive();            
         } catch (TransportException e) {
@@ -267,7 +267,7 @@ public class ProcessorImpl implements Processor {
         cleanAcceptAcks();
         cleanReservedMessages();
 
-        Transportable in = null;
+        Transportable in;
         try {
             if (expectingAck) {
                 in = tryReceive(myContext.getLocallyDrivenTransportLayer());
@@ -277,7 +277,7 @@ public class ProcessorImpl implements Processor {
         } catch (TransportException e) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e1) {}
+            } catch (InterruptedException ignored) {}
             throw e;
         }
         
@@ -354,17 +354,15 @@ public class ProcessorImpl implements Processor {
     /** Sends in a new thread if isThreaded, otherwise in current thread */
     private void sendAppResponse(final Transportable theResponse) {
         final ProcessorImpl processor = this;
-        Runnable sender = new Runnable() {
-            public void run() {
-                try {
-                	log.debug("Sending response: {}", theResponse);
-                	
-                    //TODO: make configurable 
-                	processor.send(theResponse, 2, 3000);
-                	
-                } catch (HL7Exception e) {
-                    log.error("Error trying to send response from Application", e);
-                }
+        Runnable sender = () -> {
+            try {
+                log.debug("Sending response: {}", theResponse);
+
+                //TODO: make configurable
+                processor.send(theResponse, 2, 3000);
+
+            } catch (HL7Exception e) {
+                log.error("Error trying to send response from Application", e);
             }
         };
         
@@ -383,7 +381,7 @@ public class ProcessorImpl implements Processor {
         while (it.hasNext()) {
             String ackId = it.next();
             Long expiry = myReservations.get(ackId);
-            if (System.currentTimeMillis() > expiry.longValue()) {
+            if (System.currentTimeMillis() > expiry) {
                 it.remove();
             }
         }
@@ -479,9 +477,9 @@ public class ProcessorImpl implements Processor {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.4 $ updated on $Date: 2009-12-16 19:36:34 $ by $Author: jamesagnew $
      */
-    class ExpiringTransportable {
-        public Transportable transportable;
-        public long expiryTime;
+    static class ExpiringTransportable {
+        public final Transportable transportable;
+        public final long expiryTime;
         
         public ExpiringTransportable(Transportable theTransportable, long theExpiryTime) {
             transportable = theTransportable;
@@ -497,8 +495,8 @@ public class ProcessorImpl implements Processor {
      */
     private static class Cycler implements Runnable {
 
-        private Processor myProcessor;
-        private boolean myExpectingAck;
+        private final Processor myProcessor;
+        private final boolean myExpectingAck;
         private boolean isRunning;
         
         /**

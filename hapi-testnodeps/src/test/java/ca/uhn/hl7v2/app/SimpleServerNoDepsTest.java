@@ -19,7 +19,6 @@ import ca.uhn.hl7v2.parser.GenericModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.RandomServerPortProvider;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
 public class SimpleServerNoDepsTest {
 
@@ -35,7 +34,7 @@ public class SimpleServerNoDepsTest {
 	}
 
 	@Before
-	public void before() throws InterruptedException {
+	public void before() {
 		myPort = RandomServerPortProvider.findFreePort();
 		myLlp = new MinLowerLayerProtocol();
 	}
@@ -163,13 +162,13 @@ public class SimpleServerNoDepsTest {
 
 	}
 
-	public class ExceptionThrowingApplication implements ReceivingApplication<Message> {
+	public static class ExceptionThrowingApplication implements ReceivingApplication<Message> {
 
 		public boolean canProcess(Message theMessage) {
 			return true;
 		}
 
-		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 			throw new HL7Exception("exception message");
 		}
 

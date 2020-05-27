@@ -49,7 +49,7 @@ public class GenericPrimitiveTest {
 	private static GenericPrimitive genericPrimitive;
 	private static GenericMessage message;
 	
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
 	public static void setUp() throws Exception {
@@ -86,7 +86,7 @@ public class GenericPrimitiveTest {
 	/**
 	 * Testing set/getValue() with various date strings
 	 */
-	public void testSetGetValue() throws DataTypeException {
+	public void testSetGetValue() {
 
     	buildSpecs(SetGetSpec.class)
 			.add(null, (String)null)

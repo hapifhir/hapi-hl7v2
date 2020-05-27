@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.util.Terser;
 public abstract class AbstractSuperMessage extends AbstractMessage implements SuperStructure {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractSuperMessage.class);
-	private Map<String, Set<String>> myChildNameToStructures = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> myChildNameToStructures = new HashMap<>();
 
 	private String myName;
 
@@ -39,7 +39,7 @@ public abstract class AbstractSuperMessage extends AbstractMessage implements Su
 		StringUtil.validateNotEmpty(theStructure);
 
 		if (!myChildNameToStructures.containsKey(theChild)) {
-			myChildNameToStructures.put(theChild, new HashSet<String>());
+			myChildNameToStructures.put(theChild, new HashSet<>());
 		}
 		myChildNameToStructures.get(theChild).add(theStructure);
 	}

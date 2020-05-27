@@ -8,9 +8,8 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-structures-v251</artifactId>
+
+    <artifactId>hapi-structures-v251</artifactId>
 	<name>HAPI - Java HL7 API - Generated Structures v2.5.1</name>
 	
 	<packaging>jar</packaging>

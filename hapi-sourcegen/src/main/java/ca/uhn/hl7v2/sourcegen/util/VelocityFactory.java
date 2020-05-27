@@ -45,10 +45,8 @@ public class VelocityFactory
 
    /**
     * @return Returns a velocity engine
-    * @throws Exception
-    *                If engine fails to initialize
     */
-   public static VelocityEngine getEngineInstance() throws Exception {
+   public static VelocityEngine getEngineInstance() {
       VelocityEngine engine = new VelocityEngine();
 //      RuntimeConstants.RESOURCE_MANAGER_CLASS
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");

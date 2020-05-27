@@ -44,7 +44,7 @@ public class CommandParser {
    private boolean errFlag = false;
    private String errorType;
    private boolean helpFlag = false;
-   private List<String> params;
+   private final List<String> params;
 
    // option flags
    private boolean testFlag = false;
@@ -53,14 +53,14 @@ public class CommandParser {
    /** creates a new vector to store the command line arguments into 
     */
    public CommandParser() {
-      this.params = new ArrayList<String>();
+      this.params = new ArrayList<>();
    }
 
    /** returns the location where the genrated files are going to be stored into 
     * @return the location where the genrated files are going to be stored into   
     */
    public String getDest() {
-      return params.get(1).toString();
+      return params.get(1);
    }
    /** returns true if the error flag is set or false if it is not
     * @return true if the error flag is set or false if it is not  
@@ -87,14 +87,14 @@ public class CommandParser {
     * @return the pakage name to use for the generated source 
     */
    public String getPackage() {
-      return params.get(2).toString();
+      return params.get(2);
    }
 
    /** returns the location of the XML profile 
     * @return the location of the XML profile  
     */
    public String getSource() {
-      return params.get(0).toString();
+      return params.get(0);
    }
    /** returns true if the test flag is set or false if it is not
     * @return true if the test flag is set or false if it is not  
@@ -111,9 +111,9 @@ public class CommandParser {
    }
 
    /** this method parses the command line for the ConfGen.java command line tool
-    * @param args[] the commnad line arguments
+    * @param args the commnad line arguments
     */
-   public void parse(String args[]) {
+   public void parse(String[] args) {
       int i = 0;
       String arg;
       char flag;

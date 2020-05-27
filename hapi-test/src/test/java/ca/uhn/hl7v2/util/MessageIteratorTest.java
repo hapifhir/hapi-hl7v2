@@ -19,8 +19,7 @@ public class MessageIteratorTest extends TestCase {
     }
     
     public static Test suite() {
-        TestSuite suite = new TestSuite(MessageIteratorTest.class);
-        return suite;
+        return new TestSuite(MessageIteratorTest.class);
     }
     
     /**
@@ -30,14 +29,14 @@ public class MessageIteratorTest extends TestCase {
      * - true if contains as first grandchild 
      * - false if contains as child after 1st required child if this flag is set
      */
-    public void testContains() throws Exception {
+    public void testContains() {
         ADT_A01 msg = new ADT_A01();
-        assertEquals(false, MessageIterator.contains(msg, "BOO", false, false));
+        assertFalse(MessageIterator.contains(msg, "BOO", false, false));
         assertTrue(MessageIterator.contains(msg, "MSH", true, true));
         assertTrue(MessageIterator.contains(msg.getINSURANCE(), "IN1", true, true));
         assertTrue(MessageIterator.contains(msg, "IN1", false, false));
-        assertEquals(false, MessageIterator.contains(msg, "IN2", false, true));
-        assertEquals(true, MessageIterator.contains(msg, "IN2", false, false));
+        assertFalse(MessageIterator.contains(msg, "IN2", false, true));
+        assertTrue(MessageIterator.contains(msg, "IN2", false, false));
     }
     
     /**
@@ -45,22 +44,22 @@ public class MessageIteratorTest extends TestCase {
      * - correct index of a child 
      * - null if child isn't there
      */
-    public void testGetIndex() throws Exception {
+    public void testGetIndex() {
         ADT_A01 msg = new ADT_A01();
         MessageIterator.Index i = MessageIterator.getIndex(msg, msg.getDB1(0));
         assertEquals(i, new MessageIterator.Index("DB1", 0));
-        assertEquals(null, MessageIterator.getIndex(msg, msg.getPROCEDURE().getROL()));        
+        assertNull(MessageIterator.getIndex(msg, msg.getPROCEDURE().getROL()));
     }
     
     /**
      * Positive and negative test. 
      */
-    public void testIsLast() throws Exception {
+    public void testIsLast() {
         ADT_A01 msg = new ADT_A01();
         MessageIterator.Position last = new MessageIterator.Position(msg, "PDA", 0);
         MessageIterator.Position notLast = new MessageIterator.Position(msg, "ACC", 0);        
         assertTrue(MessageIterator.isLast(last));
-        assertTrue(!MessageIterator.isLast(notLast));
+        assertFalse(MessageIterator.isLast(notLast));
     }
 
     /**
@@ -76,12 +75,12 @@ public class MessageIteratorTest extends TestCase {
     public void testMatchExistsAfterPosition() throws Exception {
         ADT_A01 msg = new ADT_A01();
         MessageIterator.Position start = new MessageIterator.Position(msg.getINSURANCE(), "IN2", 0);
-        assertEquals(false, MessageIterator.matchExistsAfterPosition(start, "FOO", false, true));
-        assertEquals(false, MessageIterator.matchExistsAfterPosition(start, "MSH", false, false));
-        assertEquals(true, MessageIterator.matchExistsAfterPosition(start, "IN1", true, true));
-        assertEquals(true, MessageIterator.matchExistsAfterPosition(start, "IN2", false, false));
-        assertEquals(false, MessageIterator.matchExistsAfterPosition(start, "IN2", true, true));
-        assertEquals(true, MessageIterator.matchExistsAfterPosition(start, "ACC", true, true));        
+        assertFalse(MessageIterator.matchExistsAfterPosition(start, "FOO", false, true));
+        assertFalse(MessageIterator.matchExistsAfterPosition(start, "MSH", false, false));
+        assertTrue(MessageIterator.matchExistsAfterPosition(start, "IN1", true, true));
+        assertTrue(MessageIterator.matchExistsAfterPosition(start, "IN2", false, false));
+        assertFalse(MessageIterator.matchExistsAfterPosition(start, "IN2", true, true));
+        assertTrue(MessageIterator.matchExistsAfterPosition(start, "ACC", true, true));
     }
     
     /** 
@@ -89,12 +88,12 @@ public class MessageIteratorTest extends TestCase {
      * - true if not at end of message
      * - false if at end of message 
      */
-    public void testHasNext() throws Exception {
+    public void testHasNext() {
         ADT_A01 msg = new ADT_A01();
         MessageIterator it = new MessageIterator(msg.getUB2(), "PDA", false);
-        assertEquals(true, it.hasNext());
+        assertTrue(it.hasNext());
         it = new MessageIterator(msg.getPDA(), "PDA", false);
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
     
     /**
@@ -108,7 +107,7 @@ public class MessageIteratorTest extends TestCase {
      * - fail if at end of message 
      * - new segment if there are no matching structures 
      */
-    public void testNext() throws Exception {
+    public void testNext() {
         ADT_A01 msg = new ADT_A01();
         MessageIterator it = new MessageIterator(msg.getROL(), "ROL", false);
         assertEquals("next rep if dir matches repeating segment", msg.getROL(1), it.next());

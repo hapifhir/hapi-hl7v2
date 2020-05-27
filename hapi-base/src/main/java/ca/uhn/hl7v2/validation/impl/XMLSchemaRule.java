@@ -78,7 +78,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 	private Map<String, String> locations;
 
 	private static class ErrorHandler implements DOMErrorHandler {
-		private List<ValidationException> validationErrors;
+		private final List<ValidationException> validationErrors;
 
 		public ErrorHandler(List<ValidationException> validationErrors) {
 			super();
@@ -118,7 +118,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 	 *         validation errors occured.
 	 */
 	public ValidationException[] apply(String msg) {
-		List<ValidationException> validationErrors = new ArrayList<ValidationException>();
+		List<ValidationException> validationErrors = new ArrayList<>();
 		try {
 			// parse the incoming string into a dom document - no schema validation yet
 			Document doc = XMLUtils.parse(msg);
@@ -131,7 +131,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 					+ e.getMessage(), e));
 		}
 
-		return validationErrors.toArray(new ValidationException[validationErrors.size()]);
+		return validationErrors.toArray(new ValidationException[0]);
 
 	}
 
@@ -165,7 +165,7 @@ public class XMLSchemaRule extends AbstractEncodingRule {
 				"schemaLocation");
 		if (schemaLocation.length() > 0) {
 			log.debug("Schema defined in document: {}", schemaLocation);
-			String schemaItems[] = schemaLocation.split(" ");
+			String[] schemaItems = schemaLocation.split(" ");
 			if (schemaItems.length == 2) {
 				File f = new File(schemaItems[1]);
 				if (f.exists()) {

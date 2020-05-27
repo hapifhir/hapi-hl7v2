@@ -37,9 +37,9 @@ public class SegmentElement {
 	public String desc;
 	public int field;
 	public int length;
-	private int myIndexWithinSegment;
-	private String mySegmentName;
-	private String myVersion;
+	private final int myIndexWithinSegment;
+	private final String mySegmentName;
+	private final String myVersion;
 	public String opt;
 	public String rep;
 	public int repetitions;

@@ -51,27 +51,21 @@ import ca.uhn.hl7v2.Version;
  */
 public class ParserPackageLoadingTest extends MockitoTest {
 
-    private static String versionPackage1 = "foo.bar.1";
-    private static String versionPackage2 = "foo.bar.2";
-    private static String versionPackage3 = "foo.bar.3";
+    private static final String versionPackage1 = "foo.bar.1";
+    private static final String versionPackage2 = "foo.bar.2";
+    private static final String versionPackage3 = "foo.bar.3";
 
-    private void testPackageList(String theVersion) throws HL7Exception, NoSuchFieldException {
+    private void testPackageList(String theVersion) throws HL7Exception {
 
         String packageListResourceName = MessageFormat.format(
-                DefaultModelClassFactory.CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE, 
-                new Object[] { theVersion });
+                DefaultModelClassFactory.CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE,
+                theVersion);
 
         ClassLoader mockClassLoader = mock(ClassLoader.class);
         
         // Return a new stream each time - the first test loads the packages twice!
         when(mockClassLoader.getResourceAsStream(packageListResourceName))
-            .thenAnswer(new Answer<InputStream>() {
-
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                return packageListStream();
-            }
-
-        });
+            .thenAnswer((Answer<InputStream>) invocation -> packageListStream());
 
         Thread.currentThread().setContextClassLoader(mockClassLoader);
 

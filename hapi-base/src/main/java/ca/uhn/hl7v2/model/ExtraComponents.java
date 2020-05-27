@@ -29,11 +29,11 @@ public class ExtraComponents implements Serializable {
 
 	private static final long serialVersionUID = -2614683870975956395L;
     
-    private List<Variable> comps;
-    private Message message;
+    private final List<Variable> comps;
+    private final Message message;
 
     public ExtraComponents(Message message) {
-        this.comps = new ArrayList<Variable>();
+        this.comps = new ArrayList<>();
         this.message = message; 
     }
     

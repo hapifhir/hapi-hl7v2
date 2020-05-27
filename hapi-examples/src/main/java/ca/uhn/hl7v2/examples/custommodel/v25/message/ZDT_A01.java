@@ -54,7 +54,7 @@ public class ZDT_A01 extends ADT_A01 {
    /**
     * Add an accessor for the ZPI segment
     */
-   public ZPI getZPI() throws HL7Exception {
+   public ZPI getZPI() {
       return getTyped("ZPI", ZPI.class);
    }
 

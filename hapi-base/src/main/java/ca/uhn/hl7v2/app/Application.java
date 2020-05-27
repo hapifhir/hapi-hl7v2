@@ -50,13 +50,13 @@ public interface Application<T extends Message> {
      * Uses the contents of the message for whatever purpose the Application 
      * has for this message, and returns an appropriate response message.   
      */
-    public Message processMessage(T in) throws ApplicationException, HL7Exception;
+    Message processMessage(T in) throws ApplicationException, HL7Exception;
     
     /** 
      * Returns true if this Application wishes to accept the message.  By returning
      * true, this Application declares itself the recipient of the message, accepts 
      * responsibility for it, and must be able to respond appropriately to the sending system.  
      */
-    public boolean canProcess(T in);
+    boolean canProcess(T in);
 }
 

@@ -56,7 +56,7 @@ public class IDTest {
 
     private static HapiContext context;
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
     public static void setupBefore() {
@@ -104,7 +104,7 @@ public class IDTest {
     }
     
 	@Test
-	public void testSetGetValueStringAndTable() throws DataTypeException {
+	public void testSetGetValueStringAndTable() {
 	    buildSpecs(SetGetSpec.class)
 			.add(param(2, null), (String)null)
 			.add(param(2, ""), "")

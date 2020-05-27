@@ -58,7 +58,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
     private static final Logger log = LoggerFactory.getLogger(DefaultModelClassFactory.class);
     
     static final String CUSTOM_PACKAGES_RESOURCE_NAME_TEMPLATE = "custom_packages/{0}";
-    private static final Map<String, String[]> packages = new HashMap<String, String[]>();
+    private static final Map<String, String[]> packages = new HashMap<>();
     private static List<String> ourVersions = null;
 
     static {
@@ -245,7 +245,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
      * @param version HL7 version
      * @return array of package prefix names
      */
-    public static String[] packageList(String version) throws HL7Exception {
+    public static String[] packageList(String version) {
         //get package list for this version 
         return packages.get(version);
     }
@@ -262,29 +262,20 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
         
         InputStream resourceInputStream = classLoader.getResourceAsStream( customPackagesResourceName );
         
-        List<String> packageList = new ArrayList<String>();
+        List<String> packageList = new ArrayList<>();
         
         if ( resourceInputStream != null) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream));
-            
-            try {
+
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream))) {
                 String line = in.readLine();
                 while (line != null) {
-                    log.info( "Adding package to user-defined package list: {}", line );
-                    packageList.add( line );
+                    log.info("Adding package to user-defined package list: {}", line);
+                    packageList.add(line);
                     line = in.readLine();
                 }
-                
+
             } catch (IOException e) {
-                log.error( "Can't load all the custom package list - user-defined classes may not be recognized", e );
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        throw new HL7Exception(e);
-                    }
-                }
+                log.error("Can't load all the custom package list - user-defined classes may not be recognized", e);
             }
             
         }
@@ -294,7 +285,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 
         //add standard package
         packageList.add( getVersionPackageName(version) );
-        return packageList.toArray(new String[packageList.size()]);
+        return packageList.toArray(new String[0]);
     }
 
     /**
@@ -355,7 +346,7 @@ public class DefaultModelClassFactory extends AbstractModelClassFactory {
 	 */
 	public static void reloadPackages() {
         packages.clear();
-        ourVersions = new ArrayList<String>();
+        ourVersions = new ArrayList<>();
         for (Version v : Version.values()) {
             try {
                 String[] versionPackages = loadPackages(v.getVersion());

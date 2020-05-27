@@ -17,7 +17,7 @@ class HohLlpWriter implements HL7Writer {
 
 	private OutputStream myOutputStream;
 	private Charset myPreferredCharset;
-	private Hl7OverHttpLowerLayerProtocol myProtocol;
+	private final Hl7OverHttpLowerLayerProtocol myProtocol;
 	private Charset myCharsetForNextMessage;
 
 	/**
@@ -48,6 +48,7 @@ class HohLlpWriter implements HL7Writer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setOutputStream(OutputStream theOutputStream) throws IOException {
 		myOutputStream = theOutputStream;
 	}

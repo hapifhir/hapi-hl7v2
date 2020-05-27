@@ -31,8 +31,8 @@ public interface ModelClassFactory extends Serializable {
 	 * @throws HL7Exception if the version if not recognized or an appropriate class can not be
 	 *             found
 	 */
-	public Class<? extends Message> getMessageClass(String theName, String theVersion,
-			boolean isExplicit) throws HL7Exception;
+    Class<? extends Message> getMessageClass(String theName, String theVersion,
+                                             boolean isExplicit) throws HL7Exception;
 
 	/**
 	 * Retrieves a message class by looking in a specific java package for the message type.
@@ -49,8 +49,8 @@ public interface ModelClassFactory extends Serializable {
      * @return message class
 	 * @since 2.0
 	 */
-	public Class<? extends Message> getMessageClassInASpecificPackage(String theName,
-			String theVersion, boolean isExplicit, String packageName) throws HL7Exception;
+    Class<? extends Message> getMessageClassInASpecificPackage(String theName,
+                                                               String theVersion, boolean isExplicit, String packageName) throws HL7Exception;
 
 	/**
 	 * @param theName name of group
@@ -59,7 +59,7 @@ public interface ModelClassFactory extends Serializable {
 	 * @throws HL7Exception if the version if not recognized or an appropriate class can not be
 	 *             found
 	 */
-	public Class<? extends Group> getGroupClass(String theName, String theVersion)
+    Class<? extends Group> getGroupClass(String theName, String theVersion)
 			throws HL7Exception;
 
 	/**
@@ -69,7 +69,7 @@ public interface ModelClassFactory extends Serializable {
 	 * @throws HL7Exception if the version if not recognized or an appropriate class can not be
 	 *             found
 	 */
-	public Class<? extends Segment> getSegmentClass(String theName, String theVersion)
+    Class<? extends Segment> getSegmentClass(String theName, String theVersion)
 			throws HL7Exception;
 
 	/**
@@ -79,7 +79,7 @@ public interface ModelClassFactory extends Serializable {
 	 * @throws HL7Exception if the version if not recognized or an appropriate class can not be
 	 *             found
 	 */
-	public Class<? extends Type> getTypeClass(String theName, String theVersion)
+    Class<? extends Type> getTypeClass(String theName, String theVersion)
 			throws HL7Exception;
 
 	/**
@@ -89,6 +89,6 @@ public interface ModelClassFactory extends Serializable {
 	 *         could be found
 	 * @throws HL7Exception if the version is unknown or the message structure list is inaccessible
 	 */
-	public String getMessageStructureForEvent(String eventName, Version version)
+    String getMessageStructureForEvent(String eventName, Version version)
 			throws HL7Exception;
 }

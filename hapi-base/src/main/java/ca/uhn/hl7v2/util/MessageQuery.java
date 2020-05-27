@@ -109,8 +109,8 @@ public class MessageQuery {
 		// parse select clause
 		StringTokenizer select = new StringTokenizer(
 				clauses.getProperty("select"), ", ", false);
-		List<String> fieldPaths = new ArrayList<String>(10);
-		Map<String, Integer> names = new HashMap<String, Integer>(10);
+		List<String> fieldPaths = new ArrayList<>(10);
+		Map<String, Integer> names = new HashMap<>(10);
 		while (select.hasMoreTokens()) {
 			String token = select.nextToken();
 			if (token.equals("as")) {
@@ -127,8 +127,8 @@ public class MessageQuery {
 		// parse loop clause
 		StringTokenizer loop = new StringTokenizer(clauses.getProperty("loop",
 				""), ",", false);
-		List<String> loopPoints = new ArrayList<String>(10);
-		Map<String, Integer> loopPointNames = new HashMap<String, Integer>(10);
+		List<String> loopPoints = new ArrayList<>(10);
+		Map<String, Integer> loopPointNames = new HashMap<>(10);
 		while (loop.hasMoreTokens()) {
 			String pointDecl = loop.nextToken();
 			StringTokenizer tok = new StringTokenizer(pointDecl, "=", false);
@@ -144,7 +144,7 @@ public class MessageQuery {
 		// rather than a list
 		StringTokenizer where = new StringTokenizer(clauses.getProperty(
 				"where", ""), ",", false);
-		List<String> filters = new ArrayList<String>();
+		List<String> filters = new ArrayList<>();
 		while (where.hasMoreTokens()) {
 			filters.add(where.nextToken());
 		}
@@ -184,7 +184,7 @@ public class MessageQuery {
 		setClause(clauses, "loop", split[1]);
 		setClause(clauses, "select", split[0]);
 
-		if (clauses.getProperty("where", "").indexOf("loop ") >= 0) {
+		if (clauses.getProperty("where", "").contains("loop ")) {
 			throw new IllegalArgumentException(
 					"The loop clause must precede the where clause");
 		}
@@ -222,7 +222,7 @@ public class MessageQuery {
 	 * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:27 $ by
 	 *          $Author: jamesagnew $
 	 */
-	public static interface Result {
+	public interface Result {
 
 		/**
 		 * @param theFieldNumber
@@ -230,7 +230,7 @@ public class MessageQuery {
 		 *            query
 		 * @return the corresponding value in the current row
 		 */
-		public String get(int theFieldNumber);
+        String get(int theFieldNumber);
 
 		/**
 		 * @param theFieldName
@@ -238,12 +238,12 @@ public class MessageQuery {
 		 *            "as"
 		 * @return the corresponding value in the current row
 		 */
-		public String get(String theFieldName);
+        String get(String theFieldName);
 
 		/**
 		 * @return a list of named fields as defined with 'as' in the query
 		 */
-		public String[] getNamedFields();
+        String[] getNamedFields();
 
 		/**
 		 * Advances to the next "row" of data if one is available.
@@ -251,27 +251,27 @@ public class MessageQuery {
 		 * @return true if another row is available
 		 * @throws HL7Exception
 		 */
-		public boolean next() throws HL7Exception;
+        boolean next() throws HL7Exception;
 
 	}
 
 	private static class ResultImpl implements Result {
 
-		private Terser myTerser;
+		private final Terser myTerser;
 		private String[] myValues;
-		private String[] myLoopPoints;
-		private Map<String, Integer> myLoopPointNames;
-		private String[] myFieldPaths;
-		private Map<String, Integer> myFieldNames;
-		private int[] myIndices;
-		private int[] myNumEmpty; // number of empty sub-loops since last
+		private final String[] myLoopPoints;
+		private final Map<String, Integer> myLoopPointNames;
+		private final String[] myFieldPaths;
+		private final Map<String, Integer> myFieldNames;
+		private final int[] myIndices;
+		private final int[] myNumEmpty; // number of empty sub-loops since last
 									// non-empty one
-		private int[] myMaxNumEmpty;
+		private final int[] myMaxNumEmpty;
 		private boolean myNonLoopingQuery = false;
-		private String[] myWherePaths;
+		private final String[] myWherePaths;
 		private String[] myWhereValues;
-		private String[] myWherePatterns;
-		private boolean[] myExactMatchFlags;
+		private final String[] myWherePatterns;
+		private final boolean[] myExactMatchFlags;
 
 		public ResultImpl(Message theMessage, String[] theLoopPoints,
 				Map<String, Integer> theLoopPointNames, String[] theFieldPaths,
@@ -438,7 +438,7 @@ public class MessageQuery {
 
 		private String expandLoopPointReference(String thePath,
 				String theLoopPoint) {
-			return thePath.replaceAll("\\{.*\\}", theLoopPoint);
+			return thePath.replaceAll("\\{.*}", theLoopPoint);
 		}
 
 		/**
@@ -478,7 +478,7 @@ public class MessageQuery {
 			}
 
 			boolean hasNext = false;
-			findNext: for (int i = myIndices.length - 1; i >= 0; i--) {
+			for (int i = myIndices.length - 1; i >= 0; i--) {
 				boolean gotMatch = false;
 				while (!gotMatch && myNumEmpty[i] <= myMaxNumEmpty[i]) {
 					myIndices[i]++;
@@ -496,9 +496,9 @@ public class MessageQuery {
 				}
 
 				hasNext = myNumEmpty[i] <= myMaxNumEmpty[i];// &&
-															// currentRowMatchesFilter();
+				// currentRowMatchesFilter();
 				if (hasNext) {
-					break findNext;
+					break;
 				}
 
 				myIndices[i] = 0;

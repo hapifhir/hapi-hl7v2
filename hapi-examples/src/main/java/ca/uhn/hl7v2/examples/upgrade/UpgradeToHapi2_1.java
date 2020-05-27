@@ -8,7 +8,6 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 import ca.uhn.hl7v2.protocol.impl.ApplicationRouterImpl;
 import ca.uhn.hl7v2.protocol.impl.HL7Server;
@@ -18,9 +17,8 @@ public class UpgradeToHapi2_1 {
 
    /**
     * @param args
-    * @throws IOException
     */
-   public static void main(String[] args) throws IOException {
+   public static void main(String[] args) {
 
    }
 
@@ -64,9 +62,9 @@ public class UpgradeToHapi2_1 {
    }
 
 // START SNIPPET: newApp
-public class MyReceivingApplication implements ca.uhn.hl7v2.protocol.ReceivingApplication<Message> {
+public static class MyReceivingApplication implements ca.uhn.hl7v2.protocol.ReceivingApplication<Message> {
 
-   public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+   public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 
       // ...Do something with theMessage...
 
@@ -86,7 +84,7 @@ public class MyReceivingApplication implements ca.uhn.hl7v2.protocol.ReceivingAp
 // END SNIPPET: newApp
 
 // START SNIPPET: oldApp
-public class MyApplication implements ca.uhn.hl7v2.app.Application {
+public static class MyApplication implements ca.uhn.hl7v2.app.Application {
 
    public Message processMessage(Message theMessage) throws HL7Exception {
       // ...Do something with theMessage...

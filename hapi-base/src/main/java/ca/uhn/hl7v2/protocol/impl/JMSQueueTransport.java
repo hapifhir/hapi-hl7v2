@@ -50,8 +50,8 @@ public class JMSQueueTransport extends AbstractJMSTransport {
     private QueueSession myReceivingSession; 
     private QueueSender mySender;
     private QueueReceiver myReceiver;
-    private QueueConnection myConnection;
-    private Queue myQueue;
+    private final QueueConnection myConnection;
+    private final Queue myQueue;
     
     /**
      * @param theConnection
@@ -84,7 +84,7 @@ public class JMSQueueTransport extends AbstractJMSTransport {
     }
 
     /** 
-     * @see ca.uhn.hl7v2.protocol.impl.AbstractJMSTransport#send(javax.jms.Message)
+     * @see ca.uhn.hl7v2.protocol.impl.AbstractJMSTransport#sendJMS(Message) (javax.jms.Message)
      */
     protected void sendJMS(Message theMessage) throws JMSException {
         mySender.send(theMessage);

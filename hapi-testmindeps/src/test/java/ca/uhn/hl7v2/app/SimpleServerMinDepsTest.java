@@ -20,7 +20,6 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericModelClassFactory;
 import ca.uhn.hl7v2.parser.RandomServerPortProvider;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
 public class SimpleServerMinDepsTest {
 
@@ -149,9 +148,9 @@ public class SimpleServerMinDepsTest {
 	}
 
 	
-	public class ExceptionThrowingApplication implements ReceivingApplication<Message> {
+	public static class ExceptionThrowingApplication implements ReceivingApplication<Message> {
 
-		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 			throw new HL7Exception("exception message");
 		}
 

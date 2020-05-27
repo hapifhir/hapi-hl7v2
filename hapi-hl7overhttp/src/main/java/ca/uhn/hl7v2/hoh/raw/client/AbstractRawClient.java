@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -36,7 +37,7 @@ public abstract class AbstractRawClient implements IClient {
 	/**
 	 * The default charset encoding (UTF-8)
 	 */
-	public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+	public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
 	/**
 	 * The default connection timeout in milliseconds: 10000
@@ -55,7 +56,6 @@ public abstract class AbstractRawClient implements IClient {
 
 	private IAuthorizationClientCallback myAuthorizationCallback;
 	private Charset myCharset = DEFAULT_CHARSET;
-	private int myConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 	private String myHost;
 	private BufferedInputStream myInputStream;
 	private boolean myKeepAlive = true;
@@ -116,10 +116,10 @@ public abstract class AbstractRawClient implements IClient {
 	}
 
 	protected Socket connect() throws IOException {
-		ourLog.debug("Creating new connection to {}:{} for URI {}", new Object[] { myHost, myPort, myPath });
+		ourLog.debug("Creating new connection to {}:{} for URI {}", myHost, myPort, myPath);
 
 		Socket socket = mySocketFactory.createClientSocket();
-		socket.connect(new InetSocketAddress(myHost, myPort), myConnectionTimeout);
+		socket.connect(new InetSocketAddress(myHost, myPort), DEFAULT_CONNECTION_TIMEOUT);
 		socket.setSoTimeout(mySoTimeout);
 		socket.setKeepAlive(myKeepAlive);
 		ourLog.trace("Connection established to {}:{}", myHost, myPort);

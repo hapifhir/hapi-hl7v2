@@ -84,7 +84,7 @@ public class UnmodifiableTest extends Assert {
     }
 
     @Test(expected = ClassCastException.class)
-    public void noCastsPossible() throws HL7Exception {
+    public void noCastsPossible() {
         ORU_R01 oru = (ORU_R01)msg;
     }
 
@@ -101,7 +101,7 @@ public class UnmodifiableTest extends Assert {
 
 
     @Test
-    public void plainMessageIterator() throws HL7Exception {
+    public void plainMessageIterator() {
         Iterator<Structure> structures = new ReadOnlyMessageIterator(msg);
         while (structures.hasNext()) {
             Structure s = structures.next();
@@ -127,7 +127,7 @@ public class UnmodifiableTest extends Assert {
         pid.getField(33);
     }
 
-    private class AssertingVisitor extends MessageVisitorSupport {
+    private static class AssertingVisitor extends MessageVisitorSupport {
 
         @Override
         public boolean start(Message message) throws HL7Exception {

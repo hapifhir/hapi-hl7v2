@@ -46,7 +46,6 @@ import ca.uhn.hl7v2.TestSpec;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v26.message.RDE_O11;
 import ca.uhn.hl7v2.model.v26.segment.PID;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -61,7 +60,7 @@ public class CommonDTTest {
     private static final int day = 24;
     private static final String dateString = "20020224";
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     /**
      * Testing default constructor
@@ -104,7 +103,7 @@ public class CommonDTTest {
      * Testing set/getValue() with various date strings
      */
     @Test
-    public void testSetGetValue() throws DataTypeException {
+    public void testSetGetValue() {
 
         buildSpecs(SetGetSpec.class)
             .add(null, (String) null)
@@ -183,7 +182,7 @@ public class CommonDTTest {
      * Testing setYearPrecision() with various year values
      */
     @Test
-    public void testSetYearPrecision() throws DataTypeException {
+    public void testSetYearPrecision() {
         buildSpecs(SetYSpec.class)
             .add(-2000, DataTypeException.class)
             .add(9, DataTypeException.class)
@@ -214,7 +213,7 @@ public class CommonDTTest {
      * Testing setYearMonthPrecision() with various year, month values
      */
     @Test
-    public void testSetYearMonthPrecision() throws DataTypeException {
+    public void testSetYearMonthPrecision() {
         buildSpecs(SetYMSpec.class)
             .add(ints(2001, -1), DataTypeException.class)
             .add(ints(9, 1 ), DataTypeException.class)
@@ -249,7 +248,7 @@ public class CommonDTTest {
      * Testing setYearMonthDayPrecision() with various year, month, day values
      */
     @Test
-    public void testSetYearMonthDayPrecision() throws DataTypeException {
+    public void testSetYearMonthDayPrecision() {
         buildSpecs(SetYMDSpec.class)
             .add(ints( 2001, 1, -1 ), DataTypeException.class)
             .add(ints( 9, 1, 1 ), DataTypeException.class)
@@ -281,7 +280,7 @@ public class CommonDTTest {
         GregorianCalendar cal = new GregorianCalendar();
         cal.clear();
         cal.setLenient(false);
-        cal.set(2002, 5, 24);
+        cal.set(2002, Calendar.JUNE, 24);
         String convertedDate = CommonDT.toHl7DTFormat(cal);
         assertEquals("20020624", convertedDate);
     }
@@ -314,7 +313,7 @@ public class CommonDTTest {
     }
 
     @Test
-    public void testGetDTAsDate() throws EncodingNotSupportedException, HL7Exception {
+    public void testGetDTAsDate() throws HL7Exception {
 
         String msgS = "MSH|^~\\&|IHE|EU-CAT2011|||20110307194153||RDE^O11|MSG00003|P|2.6||||||UTF-8\r"
                 + "PID|||A9283923889^^^^||Doe^John||19680306|M\r"

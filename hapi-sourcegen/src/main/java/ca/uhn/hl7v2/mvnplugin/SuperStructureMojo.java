@@ -111,7 +111,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	 */
 	private String targetStructureName;
 
-	private String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
+	private final String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
 	/**
 	 * The version for the generated source
@@ -123,14 +123,14 @@ public class SuperStructureMojo extends AbstractMojo {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoFailureException {
 
 		if (skip) {
 			getLog().warn("Configured to skip");
 		}
 
 		try {
-			List<String> allStructures = new ArrayList<String>();
+			List<String> allStructures = new ArrayList<>();
 			DefaultModelClassFactory mcf = new DefaultModelClassFactory();
 
 			// We want a sorted and unique list of all structures
@@ -164,7 +164,7 @@ public class SuperStructureMojo extends AbstractMojo {
 			
 			getLog().info("Found " + allStructures.size() + " message classes for version: " + version);
 			
-			List<Message> messagesToMerge = new ArrayList<Message>();
+			List<Message> messagesToMerge = new ArrayList<>();
 
 			Collections.sort(allStructures);
 			for (String nextStructure : allStructures) {
@@ -200,7 +200,7 @@ public class SuperStructureMojo extends AbstractMojo {
 			String fileName = MessageGenerator.determineTargetDir(targetDirectory + "/", version) + "/" + targetStructureName + ".java";
 			getLog().info("Filename will be: " + fileName);
 
-			StructureDef[] contents = structures.toArray(new StructureDef[structures.size()]);
+			StructureDef[] contents = structures.toArray(new StructureDef[0]);
 			String basePackageName = DefaultModelClassFactory.getVersionPackageName(version);
 			MessageGenerator.writeMessage(fileName, contents, targetStructureName, "", version, basePackageName, haveGroups, templatePackage, mergedMessages.myStructureNameToChildNames);
 
@@ -226,15 +226,15 @@ public class SuperStructureMojo extends AbstractMojo {
 
 	}
 
-	private class ListOfStructureDefsAndMapOfStructreNames {
+	private static class ListOfStructureDefsAndMapOfStructreNames {
 		private List<StructureDef> myStructureDefs;
 		private Map<String, List<String>> myStructureNameToChildNames;
 	}
 
 	private ListOfStructureDefsAndMapOfStructreNames mergeGroups(List<? extends Group> theGroupsToMerge, List<Message> theAssociatedStructures) throws HL7Exception {
-		ArrayList<StructureDef> retValStructureDefs = new ArrayList<StructureDef>();
+		ArrayList<StructureDef> retValStructureDefs = new ArrayList<>();
 
-		List<List<String>> allNameLists = new ArrayList<List<String>>();
+		List<List<String>> allNameLists = new ArrayList<>();
 		for (Group nextGroup : theGroupsToMerge) {
 			List<String> nextList = Arrays.asList(nextGroup.getNames());
 			// for (int i = 0; i < nextList.size(); i++) {
@@ -263,8 +263,8 @@ public class SuperStructureMojo extends AbstractMojo {
 			boolean repeating = false;
 			boolean group = false;
 			boolean choice = false;
-			List<Group> childGroups = new ArrayList<Group>();
-			List<Message> associatedChildStructures = new ArrayList<Message>();
+			List<Group> childGroups = new ArrayList<>();
+			List<Message> associatedChildStructures = new ArrayList<>();
 
 			int idx = 0;
 			for (Group nextGroup : theGroupsToMerge) {
@@ -288,7 +288,7 @@ public class SuperStructureMojo extends AbstractMojo {
 				idx++;
 			}
 
-			if (group == false) {
+			if (!group) {
 				SegmentDef seg = new SegmentDef(nextStructureName.substring(0, 3), "", required, repeating, choice, "");
 				retValStructureDefs.add(seg);
 
@@ -299,7 +299,7 @@ public class SuperStructureMojo extends AbstractMojo {
 				 */
 				for (Message next : associatedChildStructures) {
 					seg.addAssociatedStructure(next.getName());
-					Map<String, String> evtMap = new TreeMap<String, String>(new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version)));
+					Map<String, String> evtMap = new TreeMap<>(new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version)));
 					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 						String value = nextEntry.getValue();
 						String name = next.getName();
@@ -315,30 +315,28 @@ public class SuperStructureMojo extends AbstractMojo {
 				continue;
 			}
 
-			if (group) {
-				GroupDef grp = new GroupDef(targetStructureName, nextStructureName, required, repeating, "");
-				grp.setIndexName(nextStructureName);
-				List<StructureDef> children = mergeGroups(childGroups, null).myStructureDefs;
+			GroupDef grp = new GroupDef(targetStructureName, nextStructureName, required, repeating, "");
+			grp.setIndexName(nextStructureName);
+			List<StructureDef> children = mergeGroups(childGroups, null).myStructureDefs;
 
-				/*
-				 * Use the event map to turn each asociated message (e.g.
-				 * ADT_A01.class) into associated structure names (e.g.
-				 * "ADT_A01", "ADT_A04")
-				 */
-				for (Message next : associatedChildStructures) {
-					Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
-					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
-						if (nextEntry.getValue().equals(next.getName())) {
-							grp.addAssociatedStructure(nextEntry.getKey());
-						}
+			/*
+			 * Use the event map to turn each asociated message (e.g.
+			 * ADT_A01.class) into associated structure names (e.g.
+			 * "ADT_A01", "ADT_A04")
+			 */
+			for (Message next : associatedChildStructures) {
+				Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
+				for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
+					if (nextEntry.getValue().equals(next.getName())) {
+						grp.addAssociatedStructure(nextEntry.getKey());
 					}
 				}
-
-				for (StructureDef structureDef : children) {
-					grp.addStructure(structureDef);
-				}
-				retValStructureDefs.add(grp);
 			}
+
+			for (StructureDef structureDef : children) {
+				grp.addStructure(structureDef);
+			}
+			retValStructureDefs.add(grp);
 
 		}
 
@@ -346,7 +344,7 @@ public class SuperStructureMojo extends AbstractMojo {
 		retVal.myStructureDefs = retValStructureDefs;
 
 		if (theAssociatedStructures != null) {
-			HashMap<String, List<String>> retValMap = new HashMap<String, List<String>>();
+			HashMap<String, List<String>> retValMap = new HashMap<>();
 			for (Message next : theAssociatedStructures) {
 				retValMap.put(next.getName(), Arrays.asList(next.getNames()));
 			}
@@ -357,7 +355,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	}
 
 	ArrayList<String> mergeStringLists(List<List<String>> allNameLists) {
-		ArrayList<String> baseList = new ArrayList<String>(allNameLists.remove(0));
+		ArrayList<String> baseList = new ArrayList<>(allNameLists.remove(0));
 		getLog().debug("Base list is: "+ baseList);
 
 		for (List<String> nextCompareList : allNameLists) {
@@ -387,7 +385,6 @@ public class SuperStructureMojo extends AbstractMojo {
 					String find = nextCompareList.get(searchCompareIndex);
 					int foundAt = subList.indexOf(find);
 					if (foundAt != -1) {
-						foundAt += (baseIndex);
 						toAdd = nextCompareList.subList(compareIndex, searchCompareIndex);
 						break;
 					}
@@ -437,7 +434,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	public static void main(String[] args) throws MojoExecutionException, MojoFailureException {
 		
 		SuperStructureMojo m = new SuperStructureMojo();
-		m.structures = new ArrayList<String>();
+		m.structures = new ArrayList<>();
 		m.structures.add("ADT_A[0-9]{2}");
 
 		m.targetDirectory = "target/merge";

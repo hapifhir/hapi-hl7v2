@@ -43,12 +43,12 @@ import ca.uhn.hl7v2.conf.spec.message.*;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class ConformanceFieldBuilder {
-   private DeploymentManager depManager;
-   private DocumentationBuilder docBuilder; // The documentation builder
+   private final DeploymentManager depManager;
+   private final DocumentationBuilder docBuilder; // The documentation builder
 
-   private String packageName; // Represents the Package that this Segment will go in
+   private final String packageName; // Represents the Package that this Segment will go in
    private String underlyingType; // The underlying HAPI Type
-   private String versionString; // The HAPI version
+   private final String versionString; // The HAPI version
 
    /** This constructor will create a new ConformanceFieldBuilder
     * @param packageName the name of the package
@@ -119,7 +119,7 @@ public class ConformanceFieldBuilder {
 		 if( usage != null && (usage.equals("X") || usage.equals("B") || usage.equals("U")) )
 			continue;
 			
-         boolean hasChildren = (field.getComponent(i).getSubComponents() > 0) ? true : false;
+         boolean hasChildren = field.getComponent(i).getSubComponents() > 0;
          ProfileName childProfileName = new ProfileName(field.getComponent(i).getName(), ProfileName.PS_COMP);
          gcc.addComponent(childProfileName, (short) (i - 1), hasChildren);
       }

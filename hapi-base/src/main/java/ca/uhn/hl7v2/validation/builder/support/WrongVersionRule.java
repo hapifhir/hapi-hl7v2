@@ -46,7 +46,7 @@ public class WrongVersionRule extends AbstractMessageRule {
 	public static final MessageRule WRONG_VERSION = new WrongVersionRule();
 	
 	public ValidationException[] apply(Message msg) {
-		List<ValidationException> exceptions = new ArrayList<ValidationException>();
+		List<ValidationException> exceptions = new ArrayList<>();
 
 		ValidationException ve = new ValidationException("Invalid version: " + msg.getVersion());
 		Location location = new Location()
@@ -56,7 +56,7 @@ public class WrongVersionRule extends AbstractMessageRule {
 		ve.setError(ErrorCode.UNSUPPORTED_VERSION_ID);
 		exceptions.add(ve);
 
-		return exceptions.toArray(new ValidationException[exceptions.size()]);
+		return exceptions.toArray(new ValidationException[0]);
 	}
 
 }

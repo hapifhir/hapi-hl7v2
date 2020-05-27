@@ -25,8 +25,8 @@ public interface MessageVisitor {
      * @param message message
      * @return true if the visitor shall descend into the nested structures
      * @throws HL7Exception if an error occurred while visiting
-     */    
-    public boolean start(Message message) throws HL7Exception;
+     */
+    boolean start(Message message) throws HL7Exception;
 
     /**
      * Leaves a message
@@ -34,7 +34,7 @@ public interface MessageVisitor {
      * @return true if the visitor shall descend into the nested structures
      * @throws HL7Exception if an error occurred while visiting
      */
-    public boolean end(Message message) throws HL7Exception;
+    boolean end(Message message) throws HL7Exception;
 
     /**
      * Enters a group (or message)

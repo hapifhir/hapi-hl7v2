@@ -8,8 +8,8 @@ import ca.uhn.hl7v2.hoh.util.StringUtils;
  */
 public class SingleCredentialServerCallback implements IAuthorizationServerCallback {
 
-	private String myUsername;
-	private String myPassword;
+	private final String myUsername;
+	private final String myPassword;
 
 	public SingleCredentialServerCallback(String theUsername, String thePassword) {
 		myUsername = theUsername;

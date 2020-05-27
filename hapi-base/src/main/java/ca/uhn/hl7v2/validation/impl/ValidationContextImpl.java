@@ -45,18 +45,18 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 @SuppressWarnings("serial")
 public class ValidationContextImpl implements ValidationContext, Serializable {
 
-	private List<RuleBinding<PrimitiveTypeRule>> myPrimitiveRuleBindings;
-	private List<RuleBinding<MessageRule>> myMessageRuleBindings;
-	private List<RuleBinding<EncodingRule>> myEncodingRuleBindings;
+	private final List<RuleBinding<PrimitiveTypeRule>> myPrimitiveRuleBindings;
+	private final List<RuleBinding<MessageRule>> myMessageRuleBindings;
+	private final List<RuleBinding<EncodingRule>> myEncodingRuleBindings;
 
     protected Map<String, Collection<PrimitiveTypeRule>> primitiveRuleCache;
     protected Map<String, Collection<MessageRule>> messageRuleCache;
     protected Map<String, Collection<EncodingRule>> encodingRuleCache;
 
 	public ValidationContextImpl() {
-		myPrimitiveRuleBindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
-		myMessageRuleBindings = new ArrayList<RuleBinding<MessageRule>>();
-		myEncodingRuleBindings = new ArrayList<RuleBinding<EncodingRule>>();
+		myPrimitiveRuleBindings = new ArrayList<>();
+		myMessageRuleBindings = new ArrayList<>();
+		myEncodingRuleBindings = new ArrayList<>();
         initCaches();
 	}
 	
@@ -149,7 +149,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
 	}
 	
 	private <T extends Rule<?>> Collection<T> getRules(List<RuleBinding<T>> bindings, String version, String scope) {
-		List<T> active = new ArrayList<T>(bindings.size());
+		List<T> active = new ArrayList<>(bindings.size());
 		for (RuleBinding<T> binding : bindings) {
 			if (applies(binding, version, scope))
 				active.add(binding.getRule());
@@ -184,7 +184,7 @@ public class ValidationContextImpl implements ValidationContext, Serializable {
     }
 
     protected static <T extends Rule<?>> Map<String, Collection<T>> newRuleCache(int size) {
-        Map<String, Collection<T>> cache = new RuleCache<T>(size);
+        Map<String, Collection<T>> cache = new RuleCache<>(size);
         return Collections.synchronizedMap(cache);
     }
 }

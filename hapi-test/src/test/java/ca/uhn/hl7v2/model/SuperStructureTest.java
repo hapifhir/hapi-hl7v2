@@ -1,15 +1,5 @@
 package ca.uhn.hl7v2.model;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.TreeSet;
-
-import ca.uhn.hl7v2.model.v25.segment.MSH;
-import org.junit.Test;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
@@ -18,7 +8,17 @@ import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.ReflectionUtil;
-import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeSet;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class SuperStructureTest {
 
@@ -36,7 +36,7 @@ public class SuperStructureTest {
 		assertEquals("ADT_A01", msg.getName());
 
 		assertEquals("1", msg.getPID().getPid1_SetIDPID().getValue());
-		assertEquals(null, msg.getPID2().getPid1_SetIDPID().getValue());
+		assertNull(msg.getPID2().getPid1_SetIDPID().getValue());
 
 		Segment pid3 = (Segment) msg.get("PID3");
 		assertEquals("2", pid3.getField(1, 0).encode());
@@ -148,7 +148,7 @@ public class SuperStructureTest {
 		DefaultModelClassFactory mcf = new DefaultModelClassFactory();
 		Map<String, String> evtMap = mcf.getEventMapForVersion(Version.V25);
 		
-		TreeSet<String> treeSet = new TreeSet<String>();
+		TreeSet<String> treeSet = new TreeSet<>();
 		treeSet.addAll(evtMap.keySet());
 		treeSet.addAll(evtMap.values());
 		
@@ -193,7 +193,7 @@ public class SuperStructureTest {
 					continue;
 				}
 
-				if (normalMsg.isGroup(nextName) == false) {
+				if (!normalMsg.isGroup(nextName)) {
 					Segment seg = (Segment) axx.get(nextName);
 					String expected = (nextName.substring(0, 3));
 					String actual = seg.encode();

@@ -43,7 +43,7 @@ public class DefaultExecutorService {
 	static ExecutorService defaultExecutorService;
 
 	public static <V> CompletionService<V> completionService(ExecutorService executor) {
-		return new ExecutorCompletionService<V>(executor);
+		return new ExecutorCompletionService<>(executor);
 	}
 
 	public static synchronized ExecutorService getDefaultService() {
@@ -76,8 +76,8 @@ public class DefaultExecutorService {
 
 	private static class MyThreadFactory implements ThreadFactory {
 
-		private ThreadGroup group;
-		private AtomicInteger threadNum;
+		private final ThreadGroup group;
+		private final AtomicInteger threadNum;
 
 		public MyThreadFactory() {
 			group = Thread.currentThread().getThreadGroup();

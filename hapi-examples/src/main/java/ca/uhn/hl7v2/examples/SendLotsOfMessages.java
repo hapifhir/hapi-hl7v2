@@ -61,7 +61,10 @@ public class SendLotsOfMessages {
 				e.printStackTrace();
 				
 				// Since we failed, close the connection
-				conn.close();
+				try {
+					conn.close();
+				} catch (IOException ignored) {
+				}
 				conn = null;
 				
 			}

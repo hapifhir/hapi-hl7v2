@@ -28,7 +28,7 @@ public class RuntimeProfile {
     private String orgName;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Holds value of property role. */
     private String role;
@@ -45,7 +45,7 @@ public class RuntimeProfile {
     private UseCase useCase;
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
 	private String name;
     
     /** Creates a new instance of Specification */

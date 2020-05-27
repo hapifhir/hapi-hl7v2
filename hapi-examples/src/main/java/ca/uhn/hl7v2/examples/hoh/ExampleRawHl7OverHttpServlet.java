@@ -68,11 +68,8 @@ public class ExampleRawHl7OverHttpServlet extends HohRawServlet {
 			 * message with an "AE" response code to note an error. 
 			 */
 			boolean somethingFailed = false;
-			if (somethingFailed) {
-				throw new MessageProcessingException("");
-			}
-			
-			// Return the raw response message
+
+            // Return the raw response message
 			return new RawSendable(ack);
 		}
 		

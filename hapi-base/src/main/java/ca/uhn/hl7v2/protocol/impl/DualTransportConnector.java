@@ -67,7 +67,7 @@ public class DualTransportConnector {
                 
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
         }
         
         if (c1.getException() != null) throw c1.getException();
@@ -98,7 +98,7 @@ public class DualTransportConnector {
      */
     private static class ConnectThread extends Thread {
         
-        private TransportLayer myTransport;
+        private final TransportLayer myTransport;
         private TransportException myException;        
         
         public ConnectThread(TransportLayer theTransport) {

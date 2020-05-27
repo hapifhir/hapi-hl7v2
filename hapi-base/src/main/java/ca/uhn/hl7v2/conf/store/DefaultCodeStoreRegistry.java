@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class DefaultCodeStoreRegistry implements CodeStoreRegistry {
 
-    private static List<CodeStoreRegistration> codeStores = new ArrayList<CodeStoreRegistration>();
+    private static final List<CodeStoreRegistration> codeStores = new ArrayList<>();
 
     public void addCodeStore(CodeStore store) {
         addCodeStore(store, ".*");

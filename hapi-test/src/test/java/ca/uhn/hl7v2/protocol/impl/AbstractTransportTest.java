@@ -3,7 +3,6 @@
  */
 package ca.uhn.hl7v2.protocol.impl;
 
-import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 import ca.uhn.hl7v2.protocol.Transportable;
 import junit.framework.TestCase;
@@ -26,13 +25,13 @@ public class AbstractTransportTest extends TestCase {
 
     public void testReceive() throws Exception {
         TransportLayer transport = new AbstractTransport() {
-            public void doConnect() throws TransportException {}
+            public void doConnect() {}
 
-            public Transportable doReceive() throws TransportException {
+            public Transportable doReceive() {
                 return new TransportableImpl("mock message");
             }
 
-            public void doSend(Transportable arg0) throws TransportException {}
+            public void doSend(Transportable arg0) {}
             
             public void doDisconnect() {}
         };

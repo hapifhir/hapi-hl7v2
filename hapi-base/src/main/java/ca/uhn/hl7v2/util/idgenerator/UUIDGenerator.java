@@ -25,7 +25,6 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.util.idgenerator;
 
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -35,7 +34,7 @@ import java.util.UUID;
  */
 public class UUIDGenerator implements IDGenerator {
 
-	public String getID() throws IOException {
+	public String getID() {
 		return UUID.randomUUID().toString();
 	}
 

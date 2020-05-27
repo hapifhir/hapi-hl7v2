@@ -38,7 +38,7 @@ public class MetadataExtractorTest extends TestCase {
         String a = "/MSH-10";
         String b = "/MSH-12";
         String c = "/.ROL-10-1";
-        ArrayList<String> paths = new ArrayList<String>();
+        ArrayList<String> paths = new ArrayList<>();
         paths.add(a);
         paths.add(b);
         paths.add(c);

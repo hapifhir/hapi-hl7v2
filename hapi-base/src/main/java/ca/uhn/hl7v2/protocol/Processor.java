@@ -18,52 +18,52 @@ public interface Processor {
     /**
      * Always send acknowledgement (in MSH-15 and 16)
      */
-    public static final String AL = "AL";
+    String AL = "AL";
     
     /**
      * Never send acknowledgement (in MSH-15 and 16)
      */
-    public static final String NE = "NE";
+    String NE = "NE";
 
     /**
      * Send acknowledgement only on error / reject (in MSH-15 and 16)
      */
-    public static final String ER = "ER";
+    String ER = "ER";
     
     /**
      * Send acknowledgement only on successful receipt (in MSH-15 and 16)
      */
-    public static final String SU = "SU";
+    String SU = "SU";
         
     
     /**
      * Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept
      */
-    public static final String AA = "AA"; 
+    String AA = "AA";
     
     /**
      * Original mode: Application Error - Enhanced mode: Application acknowledgment: Error 
      */
-    public static final String AE = "AE"; 
+    String AE = "AE";
     /**
      * Original mode: Application Reject - Enhanced mode: Application acknowledgment: Reject
      */
-    public static final String AR = "AR";
+    String AR = "AR";
     
     /**
      * Enhanced mode: Accept acknowledgment: Commit Accept
      */
-    public static final String CA = "CA"; 
+    String CA = "CA";
     
     /**
      * Enhanced mode: Accept acknow ledgment: Commit Error
      */
-    public static final String CE = "CE";
+    String CE = "CE";
     
     /**
      * Enhanced mode: Accept acknowledgment: Commit Reject
      */
-    public static final String CR = "CR";
+    String CR = "CR";
     
     
     /**
@@ -94,7 +94,7 @@ public interface Processor {
      * @throws TransportException if there is an immediate problem trying to send the 
      *      message.  
      */
-    public void send(Transportable theMessage, int maxRetries, long retryIntervalMillis) throws HL7Exception;
+    void send(Transportable theMessage, int maxRetries, long retryIntervalMillis) throws HL7Exception;
     
     /**
      * Indicates that the calling thread expects a message with a certain ack
@@ -106,7 +106,7 @@ public interface Processor {
      * @param theAckId the acknowledgement ID of the message 
      * @param thePeriodMillis time span during which the message should be kept if received
      */
-    public void reserve(String theAckId, long thePeriodMillis);
+    void reserve(String theAckId, long thePeriodMillis);
     
     /**
      * <p>Performs a single iteration of the receiving-side 
@@ -131,14 +131,14 @@ public interface Processor {
      *      at the specified location, so to run the Processor continuously,  
      *      separate threads are needed to call cycle() with true and false args.   
      */
-    public void cycle(boolean expectingAck) throws HL7Exception; 
+    void cycle(boolean expectingAck) throws HL7Exception;
         
     /**
      * @param theAckId the acknowledgement ID of an expected message 
      * @return true if the message has come in and has been saved in the 
      *      inbound message list 
      */
-    public boolean isAvailable(String theAckId);
+    boolean isAvailable(String theAckId);
     
     /**
      * Gets the message with the given acknowledgement ID from 
@@ -156,17 +156,17 @@ public interface Processor {
      * @return the incoming message with the given ack ID, or null 
      *      if the call times out. 
      */
-    public Transportable receive(String theAckId, long theTimeoutMillis) throws HL7Exception;
+    Transportable receive(String theAckId, long theTimeoutMillis) throws HL7Exception;
     
     /**
      * @return the operational context of this protocol instance 
      */
-    public ProcessorContext getContext();
+    ProcessorContext getContext();
 
     /**
      * Request that the processor stop running and clean up any resources and worker threads it has started
      */
-    public void stop();
+    void stop();
 
     
 }

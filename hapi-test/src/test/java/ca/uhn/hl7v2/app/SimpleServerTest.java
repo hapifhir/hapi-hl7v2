@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.TreeSet;
@@ -19,7 +18,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.plexus.util.StringOutputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,7 +39,6 @@ import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.protocol.MetadataKeys;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
 public class SimpleServerTest implements ConnectionListener {
@@ -63,9 +60,8 @@ public class SimpleServerTest implements ConnectionListener {
 	public void testStartAndWaitCatchesBusyPort() throws Exception {
 		port = RandomServerPortProvider.findFreePort();
 
-		ServerSocket ss = new ServerSocket(port);
 		SimpleServer srv = null;
-		try {
+		try (ServerSocket ss = new ServerSocket(port)) {
 			ss.setSoTimeout(50); // very short
 			ss.setReuseAddress(true);
 			try {
@@ -83,7 +79,6 @@ public class SimpleServerTest implements ConnectionListener {
 			LOG.error("Wanted this:", srv.getServiceExitedWithException());
 
 		} finally {
-			ss.close();
 			if (srv != null) {
 				srv.stop();
 			}
@@ -106,10 +101,8 @@ public class SimpleServerTest implements ConnectionListener {
 		srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
 		srv.startAndWait();
 
-		Socket socket = null;
-		try {
+		try (Socket socket = new Socket()) {
 
-			socket = new Socket();
 			socket.setSoTimeout(1000);
 			socket.connect(new InetSocketAddress("localhost", port));
 
@@ -125,7 +118,6 @@ public class SimpleServerTest implements ConnectionListener {
 
 		} finally {
 			srv.stop();
-			socket.close();
 		}
 	}
 	
@@ -168,10 +160,8 @@ public class SimpleServerTest implements ConnectionListener {
 		srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
 		srv.startAndWait();
 
-		Socket socket = null;
-		try {
+		try (Socket socket = new Socket()) {
 
-			socket = new Socket();
 			socket.setSoTimeout(1000);
 			socket.connect(new InetSocketAddress("localhost", port));
 
@@ -187,7 +177,6 @@ public class SimpleServerTest implements ConnectionListener {
 
 		} finally {
 			srv.stop();
-			socket.close();
 		}
 	}
 
@@ -197,7 +186,7 @@ public class SimpleServerTest implements ConnectionListener {
 	}
 
 	@Test
-	public void testRejectAttemptToStartTwice() throws InterruptedException, IOException {
+	public void testRejectAttemptToStartTwice() throws InterruptedException {
 
 		int port = RandomServerPortProvider.findFreePort();
 		SimpleServer ss = new SimpleServer(port);
@@ -207,7 +196,7 @@ public class SimpleServerTest implements ConnectionListener {
 		try {
 			ss.startAndWait();
 			fail();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
 		} finally {
 			ss.stop();
@@ -311,8 +300,7 @@ public class SimpleServerTest implements ConnectionListener {
 		ByteArrayOutputStream sos = new ByteArrayOutputStream();
 		HL7Writer w = llp.getWriter(sos);
 		w.writeMessage(encodedMessage);
-		;
-		byte[] messageBytes = sos.toByteArray();
+        byte[] messageBytes = sos.toByteArray();
 
 		port = RandomServerPortProvider.findFreePort();
 		DefaultHapiContext ctx = new DefaultHapiContext();
@@ -320,8 +308,7 @@ public class SimpleServerTest implements ConnectionListener {
 		SimpleServer server = ctx.newServer(port, false);
 		server.registerApplication(new ErrorThrowingApplication());
 		server.startAndWait();
-		Socket socket = new Socket();
-		try {
+		try (Socket socket = new Socket()) {
 
 			socket.setSoTimeout(500);
 			socket.connect(new InetSocketAddress("127.0.0.1", port));
@@ -338,7 +325,6 @@ public class SimpleServerTest implements ConnectionListener {
 
 		} finally {
 			server.stopAndWait();
-			socket.close();
 		}
 	}
 
@@ -365,8 +351,7 @@ public class SimpleServerTest implements ConnectionListener {
 				fail("Received response: " + response.encode());
 			} catch (HL7Exception e) {
 				assertTrue(e.getMessage(), e.getMessage().contains("Timeout"));
-				return;
-			}
+            }
 
 		} finally {
 			server.stopAndWait();
@@ -406,9 +391,9 @@ public class SimpleServerTest implements ConnectionListener {
 		private Object myReceivedControlId;
 		private Object myRawMessage;
 
-		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 
-			LOG.info("Metadata keys: " + new TreeSet<String>(theMetadata.keySet()));
+			LOG.info("Metadata keys: " + new TreeSet<>(theMetadata.keySet()));
 
 			myReceivedSendingIp = theMetadata.get(MetadataKeys.IN_SENDING_IP);
 			myReceivedControlId = theMetadata.get(MetadataKeys.IN_MESSAGE_CONTROL_ID);
@@ -429,7 +414,7 @@ public class SimpleServerTest implements ConnectionListener {
 
 	private static class ErrorThrowingApplication implements ReceivingApplication<Message> {
 
-		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) {
 			throw new Error("ERROR MESSAGE");
 		}
 
@@ -441,7 +426,7 @@ public class SimpleServerTest implements ConnectionListener {
 
 	private static class HL7ExceptionThrowingApplication implements ReceivingApplication<Message> {
 
-		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 			throw new HL7Exception("ERROR MESSAGE");
 		}
 

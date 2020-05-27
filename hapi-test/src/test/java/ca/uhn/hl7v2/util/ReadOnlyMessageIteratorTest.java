@@ -12,10 +12,8 @@ import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.v25.group.ORU_R01_ORDER_OBSERVATION;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
@@ -27,19 +25,19 @@ import ca.uhn.hl7v2.parser.PipeParser;
 public class ReadOnlyMessageIteratorTest {
 
 	@Test
-	public void testFiltered() throws EncodingNotSupportedException, HL7Exception {
+	public void testFiltered() throws HL7Exception {
 		PipeParser parser = new PipeParser();
 		Message msg = parser.parse(getMessageOne());
 		Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedSegmentIterator(msg);
 		
 		String[] segments = { "MSH","PID","PV1","OBR","OBX","OBX","OBX","OBX","OBX","NTE","OBX","OBX"};
 		for (String segment : segments) {
-		    assertEquals(segment, ((Segment) it.next()).getName());
+		    assertEquals(segment, it.next().getName());
         }
 	}
 	
     @Test
-    public void testFilteredGroups() throws EncodingNotSupportedException, HL7Exception {
+    public void testFilteredGroups() throws HL7Exception {
         PipeParser parser = new PipeParser();
         Message msg = parser.parse(getMessageOne());
         Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedStructureIterator(msg, ORU_R01_ORDER_OBSERVATION.class);
@@ -48,7 +46,7 @@ public class ReadOnlyMessageIteratorTest {
     }
     
     @Test
-    public void testFilteredGroupNames() throws EncodingNotSupportedException, HL7Exception {
+    public void testFilteredGroupNames() throws HL7Exception {
         PipeParser parser = new PipeParser();
         Message msg = parser.parse(getMessageOne());
         Iterator<Structure> it = ReadOnlyMessageIterator.createPopulatedStructureIterator(msg, "ORDER_OBSERVATION");

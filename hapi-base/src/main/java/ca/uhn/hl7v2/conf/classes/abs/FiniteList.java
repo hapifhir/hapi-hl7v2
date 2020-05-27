@@ -43,11 +43,11 @@ import java.util.ArrayList;
  */
 public class FiniteList {
 
-	private ArrayList<Repeatable> reps; // Stores the reps
-	private int maxReps; // The maximum allowable number of reps	
+	private final ArrayList<Repeatable> reps; // Stores the reps
+	private final int maxReps; // The maximum allowable number of reps
 //	private int minReps; // The minimum allowable number of reps	
-	private Class<? extends Repeatable> repType; // The type of repetition being stored here
-	private Object underlyingObject; // The underlying HAPI object
+	private final Class<? extends Repeatable> repType; // The type of repetition being stored here
+	private final Object underlyingObject; // The underlying HAPI object
 
 	/** Constructor for FiniteList
 	 * @param repType the Class which is repeating
@@ -61,7 +61,7 @@ public class FiniteList {
 		this.maxReps = firstRep.getMaxReps();
 //		this.minReps = firstRep.getMinReps();
 
-		reps = new ArrayList<Repeatable>();
+		reps = new ArrayList<>();
 		reps.add(firstRep);
 		createNewReps(maxReps);
 	}
@@ -80,8 +80,7 @@ public class FiniteList {
 	private Repeatable createRep(int rep) {
 		try {
 			Constructor<?> theCon = repType.getConstructors()[0];
-			Repeatable thisRep = (Repeatable) theCon.newInstance(new Object[] { underlyingObject, rep});
-			return thisRep;
+			return (Repeatable) theCon.newInstance(new Object[] { underlyingObject, rep});
 		} catch (InvocationTargetException e) {
 			throw new ConformanceError("Error creating underlying repetition. This is a bug.\nError is: " + e.toString() + "\n" + e.getCause().toString());
 		} catch (Exception e) {

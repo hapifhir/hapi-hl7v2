@@ -15,7 +15,7 @@ public class GenericParserTest {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(GenericParserTest.class);
 
 	@Test
-	public void testMessageSetAppropriatelyForParse() throws EncodingNotSupportedException, HL7Exception {
+	public void testMessageSetAppropriatelyForParse() throws HL7Exception {
 		
 		String message = // -
 		"MSH|^~\\&|||||200803051508||ADT^A31|2|P|2.5\r" + // -

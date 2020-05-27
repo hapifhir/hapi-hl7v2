@@ -11,8 +11,7 @@
 
 	<packaging>jar</packaging>
 
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-structures-v24</artifactId>
+    <artifactId>hapi-structures-v24</artifactId>
 	<name>HAPI - Java HL7 API - Generated Structures v2.4</name>
 	
 	<dependencies>

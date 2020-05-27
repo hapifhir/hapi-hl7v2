@@ -87,7 +87,7 @@ public abstract class HapiContextSupport {
 
 	private static class UnmodifiableHapiContext implements HapiContext {
 
-		private HapiContext context;
+		private final HapiContext context;
 		
 		public UnmodifiableHapiContext(HapiContext context) {
 			this.context = context;

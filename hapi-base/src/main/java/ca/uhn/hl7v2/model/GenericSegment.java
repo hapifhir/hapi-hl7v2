@@ -13,7 +13,7 @@ package ca.uhn.hl7v2.model;
 @SuppressWarnings("serial")
 public class GenericSegment extends AbstractSegment {
     
-    private String name;
+    private final String name;
 
     /**
      * Creates a genric segment

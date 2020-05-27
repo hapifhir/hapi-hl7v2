@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.llp;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -37,9 +38,11 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +52,6 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.model.v25.message.ADT_A01;
-import ca.uhn.hl7v2.util.LibraryEntry;
 import ca.uhn.hl7v2.util.MessageLibrary;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
@@ -73,7 +75,7 @@ public class MinLLPWriterTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         message = "This is a test HL7 message";
         minLLPWriter = new MinLLPWriter();
         outputStream = new ByteArrayOutputStream();
@@ -81,7 +83,7 @@ public class MinLLPWriterTest {
 
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         message = null;
         minLLPWriter = null;
         outputStream = null;
@@ -106,8 +108,7 @@ public class MinLLPWriterTest {
         try {
             minLLPWriter = new MinLLPWriter(nullOutputStream);
             fail("Should not be able to create a MinLLPWriter with a null input stream");
-        } catch (IOException ioe) {
-        } catch (NullPointerException e) {
+        } catch (IOException | NullPointerException ignored) {
         }
     }
 
@@ -132,8 +133,7 @@ public class MinLLPWriterTest {
         try {
             minLLPWriter.setOutputStream(nullOutputStream);
             fail("Should not be able to set a null output stream");
-        } catch (IOException ioe) {
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
         }
     }
 
@@ -150,7 +150,7 @@ public class MinLLPWriterTest {
         MinLLPWriter writer = new MinLLPWriter(out);
         writer.writeMessage(test);
         String encoded = out.toString(charset);
-        assertTrue(encoded.indexOf(test) >= 0);
+        assertTrue(encoded.contains(test));
 
         if (before != null) {
             System.setProperty(MllpConstants.CHARSET_KEY, before);
@@ -188,7 +188,7 @@ public class MinLLPWriterTest {
         String charset = "UTF-16BE"; // big-endian -> no byte-order mark!
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         // Endianess not defined -> BOM would be written if not disabled
-        MinLLPWriter writer = new MinLLPWriter(out, Charset.forName("UTF-16"), true);
+        MinLLPWriter writer = new MinLLPWriter(out, StandardCharsets.UTF_16, true);
         writer.writeMessage(test);
         byte[] bytes = test.getBytes(charset);
         int pos = indexOf(out.toByteArray(), bytes);
@@ -219,7 +219,7 @@ public class MinLLPWriterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MinLLPWriter writer = new MinLLPWriter(out);
         writer.writeMessage(test, charset);
-        assertTrue(out.toString(charset).indexOf(test) >= 0);
+        assertTrue(out.toString(charset).contains(test));
     }
 
 
@@ -231,7 +231,7 @@ public class MinLLPWriterTest {
         minLLPWriter.setOutputStream(outputStream);
         int mismatch = 0;
         for (int i = 0; i < getMessageLib().size(); i++) {
-            String msg = ((LibraryEntry) getMessageLib().get(i)).messageString();
+            String msg = getMessageLib().get(i).messageString();
             minLLPWriter.writeMessage(msg);
             String llpMessage = outputStream.toString();
             outputStream.reset();
@@ -251,15 +251,12 @@ public class MinLLPWriterTest {
     @Test
     public void testWriteMessages() {
         class TestSpec {
-            Object outcome;
-            String writeMessage;
+            final Object outcome;
+            final String writeMessage;
 
 
             TestSpec(String message, Object outcome) {
-                if (message != null)
-                    this.writeMessage = message;
-                else
-                    this.writeMessage = null;
+                this.writeMessage = message;
                 this.outcome = outcome;
             }
 
@@ -270,8 +267,7 @@ public class MinLLPWriterTest {
                     MinLLPWriter minLLPWriter = new MinLLPWriter(outputStream);
                     minLLPWriter.writeMessage(writeMessage);
                     String string = outputStream.toString();
-                    boolean equals = string.equals(outcome);
-                    return equals;
+                    return string.equals(outcome);
                 } catch (Exception e) {
                     return (e.getClass().equals(outcome));
                 }
@@ -279,7 +275,7 @@ public class MinLLPWriterTest {
 
 
             public String toString() {
-                return "[" + (writeMessage != null ? writeMessage.toString() : "null") + ":" + outcome + "]";
+                return "[" + (writeMessage != null ? writeMessage : "null") + ":" + outcome + "]";
             }
         }// inner class
 
@@ -287,11 +283,11 @@ public class MinLLPWriterTest {
                 new TestSpec("", MllpConstants.START_BYTE + "" + MllpConstants.END_BYTE1 + MllpConstants.END_BYTE2),
                 new TestSpec(message, MllpConstants.START_BYTE + message + MllpConstants.END_BYTE1 + MllpConstants.END_BYTE2)};
 
-        List<TestSpec> failedTests = new ArrayList<TestSpec>();
+        List<TestSpec> failedTests = new ArrayList<>();
 
-        for (int i = 0; i < tests.length; i++) {
-            if (!tests[i].executeTest())
-                failedTests.add(tests[i]);
+        for (TestSpec test : tests) {
+            if (!test.executeTest())
+                failedTests.add(test);
         }
 
         assertEquals("readMessages failures: " + failedTests, 0, failedTests.size());
@@ -306,8 +302,7 @@ public class MinLLPWriterTest {
         try {
             minLLPWriter.writeMessage(message);
             fail("Writer should be initialized before use");
-        } catch (IOException ioe) {
-        } catch (NullPointerException e) {
+        } catch (IOException | NullPointerException ignored) {
         }
     }
 
@@ -318,7 +313,7 @@ public class MinLLPWriterTest {
      * behave badly if we don't. Sigh!
      */
     @Test
-    public void testWritesHappenInOnePacket() throws IOException, HL7Exception, LLPException {
+    public void testWritesHappenInOnePacket() throws IOException, HL7Exception {
         myException = null;
         myPacketCount = 0;
         int port = RandomServerPortProvider.findFreePort();
@@ -331,50 +326,47 @@ public class MinLLPWriterTest {
             // ignore
         }
 
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Socket s;
-                    do {
-                        try {
-                            s = ss.accept();
-                        } catch (Exception e) {
-                            s = null;
-                        }
-                    } while (s == null);
-                    InputStream is = s.getInputStream();
-                    while (true) {
-                        int count = is.available();
-                        if (count > 0) {
-                            myPacketCount++;
-                            System.out.println("Count:" + count);
-                            byte[] array = new byte[count];
-                            is.read(array, 0, count);
-                            System.out.println(Arrays.toString(array));
-                        }
+        Thread t = new Thread(() -> {
+            try {
+                Socket s;
+                do {
+                    try {
+                        s = ss.accept();
+                    } catch (Exception e) {
+                        s = null;
                     }
-
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                    myException = t;
+                } while (s == null);
+                InputStream is = s.getInputStream();
+                while (true) {
+                    int count = is.available();
+                    if (count > 0) {
+                        myPacketCount++;
+                        System.out.println("Count:" + count);
+                        byte[] array = new byte[count];
+                        is.read(array, 0, count);
+                        System.out.println(Arrays.toString(array));
+                    }
                 }
+
+            } catch (Throwable t1) {
+                t1.printStackTrace();
+                myException = t1;
             }
-        };
+        });
         t.start();
 
         ADT_A01 msg = new ADT_A01();
         msg.initQuickstart("ADT", "A01", "T");
 
         Connection client = new DefaultHapiContext().newClient("localhost", port, false);
-        client.getInitiator().setTimeoutMillis(100);
+        client.getInitiator().setTimeout(100, TimeUnit.MILLISECONDS);
         try {
             client.getInitiator().sendAndReceive(msg);
         } catch (Exception e) {
             // expected timeout
         }
 
-        assertTrue(myException == null);
+        assertNull(myException);
         assertEquals(1, myPacketCount);
     }
 

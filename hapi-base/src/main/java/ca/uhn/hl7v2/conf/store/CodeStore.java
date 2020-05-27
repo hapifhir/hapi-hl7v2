@@ -44,7 +44,7 @@ public interface CodeStore {
      * @return a list of valid codes
      * @throws ProfileException
      */
-    public String[] getValidCodes(String codeSystem) throws ProfileException;
+    String[] getValidCodes(String codeSystem) throws ProfileException;
 
     /**
      * Validates the codeSystem against the input conformance profile. If valid then output is
@@ -53,7 +53,7 @@ public interface CodeStore {
      * @param codeSystem
      * @return <code>true</code> if CodeStore knows the codeSystem
      */
-    public boolean knowsCodes(String codeSystem);
+    boolean knowsCodes(String codeSystem);
 
     /**
      * Validates the input code value against the input conformance profile and corresponding input
@@ -63,6 +63,6 @@ public interface CodeStore {
      * @param code
      * @return <code>true</code> if code is valid for the codeSystem
      */
-    public boolean isValidCode(String codeSystem, String code);
+    boolean isValidCode(String codeSystem, String code);
 
 }

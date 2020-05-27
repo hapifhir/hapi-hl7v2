@@ -52,8 +52,8 @@ public class JMSQueueAdapter implements JMSDestination {
     private QueueSession myReceivingSession; 
     private QueueSender mySender;
     private QueueReceiver myReceiver;
-    private QueueConnection myConnection;
-    private Queue myQueue;
+    private final QueueConnection myConnection;
+    private final Queue myQueue;
     private boolean myIsConnected;
 
     /**

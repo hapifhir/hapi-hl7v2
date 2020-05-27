@@ -56,7 +56,7 @@ public interface Rule<T> extends Serializable {
      *
      * @return rule description
 	 */
-	public String getDescription();
+    String getDescription();
 
 	/**
 	 * Returns a string indicating the section of the HL7 standard from which this rule
@@ -65,7 +65,7 @@ public interface Rule<T> extends Serializable {
      *
      * @return HL7 specification section reference
 	 */
-	public String getSectionReference();
+    String getSectionReference();
 	
 	/**
 	 * Applies to rule to an object to be checked
@@ -73,6 +73,6 @@ public interface Rule<T> extends Serializable {
 	 * @param value object to be checked
 	 * @return an (potentially empty) array of ValidationExceptions
 	 */
-	public ValidationException[] apply(T value);
+    ValidationException[] apply(T value);
 
 }

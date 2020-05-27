@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class InMemoryIDGenerator extends IDGenerator.OrderedSupport {
 
-	private AtomicLong al = new AtomicLong(0l);
+	private final AtomicLong al = new AtomicLong(0L);
 
 	public InMemoryIDGenerator() {
 		super();
@@ -52,7 +52,7 @@ public class InMemoryIDGenerator extends IDGenerator.OrderedSupport {
 	}
 
 	public synchronized void reset() {
-		set(0l);
+		set(0L);
 	}
 	
 	protected void set(long l) {

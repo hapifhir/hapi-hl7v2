@@ -19,26 +19,22 @@ import ca.uhn.hl7v2.protocol.impl.AbstractTransport;
  */
 public class MockTransport extends AbstractTransport implements TransportLayer {
 
-    private List<Transportable> mySentMessages; 
+    private final List<Transportable> mySentMessages;
     //private Transportable myNextReceived;
-    private List<Transportable> myNextReceivedMsgs; 
-    private Map<String, Object> myMetadata;
-    
-    /**
-     * @param theMessagesToBeReceived a list of <code>Transportable</code>s that 
-     *      should be returned by receive() (in the order they are to be returned)
-     */
+    private final List<Transportable> myNextReceivedMsgs;
+    private final Map<String, Object> myMetadata;
+
     public MockTransport() {
-        mySentMessages = new ArrayList<Transportable>();
-        myNextReceivedMsgs = new ArrayList<Transportable>();
-        myMetadata = new HashMap<String, Object>();
+        mySentMessages = new ArrayList<>();
+        myNextReceivedMsgs = new ArrayList<>();
+        myMetadata = new HashMap<>();
         myMetadata.put("MOCK", "This is a mock transport layer");
     }
 
     /*
      * Stores message for subsequent availability via getSentMessages()
      */
-    public void doSend(Transportable arg0) throws TransportException {
+    public void doSend(Transportable arg0) {
         mySentMessages.add(arg0);
     }
     
@@ -59,14 +55,14 @@ public class MockTransport extends AbstractTransport implements TransportLayer {
      * Returns the next message in the to be received list (as provided in 
      * the constructor). 
      */
-    public synchronized Transportable doReceive() throws TransportException {
+    public synchronized Transportable doReceive() {
         Transportable next = null;
         if (myNextReceivedMsgs.size() > 0) {
             next = myNextReceivedMsgs.remove(0);
         } else {
         	try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException ignored) {
 			}
         }
         return next;
@@ -83,13 +79,13 @@ public class MockTransport extends AbstractTransport implements TransportLayer {
     /** 
      * Does nothing
      */
-    public void doConnect() throws TransportException {
+    public void doConnect() {
     }
 
     /**
      * Does nothing
      */
-    public void doDisconnect() throws TransportException {
+    public void doDisconnect() {
     }
 
 }

@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class DualTransportConnectorTest extends Assert {
 
-    private String localhost = "127.0.0.1";
+    private final String localhost = "127.0.0.1";
     private int portOne;
     private int portTwo;
 
@@ -97,18 +97,15 @@ public class DualTransportConnectorTest extends Assert {
 
     private void startConnect() {
         final DualTransportConnector c = myConnector;
-        Thread thd = new Thread() {
-
-            public void run() {
-                try {
-                    c.connect();
-                } catch (TransportException e) {
-                    myFailed = e;
-                } finally {
-                    myLatch.countDown();
-                }
+        Thread thd = new Thread(() -> {
+            try {
+                c.connect();
+            } catch (TransportException e) {
+                myFailed = e;
+            } finally {
+                myLatch.countDown();
             }
-        };
+        });
         thd.start();
     }
 

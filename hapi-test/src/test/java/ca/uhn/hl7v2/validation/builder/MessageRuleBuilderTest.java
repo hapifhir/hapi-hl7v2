@@ -21,7 +21,7 @@ public class MessageRuleBuilderTest {
 	private MessageRuleBuilder b1;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		b1 = new ValidationRuleBuilder().forVersion("2.5").message("ADT", "A01", "A04");
 	}
 

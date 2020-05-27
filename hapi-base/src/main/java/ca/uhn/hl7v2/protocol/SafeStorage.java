@@ -24,24 +24,22 @@ public interface SafeStorage {
      * @param theMessage the message to store 
      * @throws HL7Exception if there is some problem accessing the store
      */
-    public void store(Transportable theMessage) throws HL7Exception;
+    void store(Transportable theMessage) throws HL7Exception;
     
     /**
      * If the given message exists in the store, it is removed.
      *   
      * @param theMessage the message to discard
-     * @throws HL7Exception if there is some problem accessing the store
      */
-    public void discard(Transportable theMessage) throws HL7Exception;
+    void discard(Transportable theMessage);
     
     /**
      * Returns all messages that have been stored.  The store retains a copy 
      * of each one until discard() is called.  This method would be called 
      * after the HL7 server is restarted.
      *      
-     * @return all messages in the store 
-     * @throws HL7Exception if there is some problem accessing the store
+     * @return all messages in the store
      */
-    public Transportable[] restore() throws HL7Exception;
+    Transportable[] restore();
     
 }

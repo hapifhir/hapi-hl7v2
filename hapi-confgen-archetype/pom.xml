@@ -9,8 +9,7 @@
 	<relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>ca.uhn.hapi</groupId>
-  <artifactId>hapi-confgen-archetype</artifactId>
+    <artifactId>hapi-confgen-archetype</artifactId>
 
   <packaging>jar</packaging>
 

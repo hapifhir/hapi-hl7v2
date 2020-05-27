@@ -60,8 +60,8 @@ public class XsdSegmentGenerator {
 
     public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
 
-    private String templatePackage;
-    private String targetDirectory;
+    private final String templatePackage;
+    private final String targetDirectory;
 
     public XsdSegmentGenerator(String dir, String templatePackage) throws IOException {
         File f = new File(dir);
@@ -105,7 +105,7 @@ public class XsdSegmentGenerator {
             String segmentName = segmentDecl.getName();
             if (isRealSegment(segmentName)) {
 
-                List<SegmentElement> segmentsElements = new ArrayList<SegmentElement>();
+                List<SegmentElement> segmentsElements = new ArrayList<>();
                 XSComplexType complexType = segmentDecl.getType().asComplexType();
                 // Find and iterate over the fields of the segment
                 XSParticle[] children = complexType
@@ -214,18 +214,14 @@ public class XsdSegmentGenerator {
         }
         String targetFile = String.format("%s/%s.java", dirName, segmentName);
 
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"));
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"))) {
             writer.write(source);
             writer.flush();
-        } finally {
-            if (writer != null) writer.close();
         }
     }
 
     private String make(Template template, String normalBasePackageName, String[] datatypePackages,
-                        String segmentName, String description, String version, List<SegmentElement> elements) throws Exception {
+                        String segmentName, String description, String version, List<SegmentElement> elements) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("segmentName", segmentName);

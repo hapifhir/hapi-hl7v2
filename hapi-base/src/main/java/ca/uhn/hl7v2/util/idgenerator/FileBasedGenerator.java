@@ -57,7 +57,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 	private boolean neverFail = true;
 	private boolean used = false;
 	private boolean minimizeReads = false;
-	private ReentrantLock lock = new ReentrantLock();
+	private final ReentrantLock lock = new ReentrantLock();
 
 	public FileBasedGenerator() {
 		this(1L);
@@ -92,21 +92,16 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 
 
 	private void writeNextValue(long id) throws IOException {
-		PrintWriter pw = null;
-		try {
-			pw = new PrintWriter(new FileOutputStream(getFilePath(), false));
-			pw.println(Long.toString(id));
-		} catch (IOException e) {
-			if (neverFail) {
-				LOG.warn("Could not write ID to file {}, going to use internal ID generator. {}",
-						getFilePath(), e.getMessage());
-				return;
-			}
-			throw e;
-		} finally {
-			if (pw != null)
-				pw.close();
-		}
+        try (PrintWriter pw = new PrintWriter(new FileOutputStream(getFilePath(), false))) {
+            pw.println(id);
+        } catch (IOException e) {
+            if (neverFail) {
+                LOG.warn("Could not write ID to file {}, going to use internal ID generator. {}",
+                        getFilePath(), e.getMessage());
+                return;
+            }
+            throw e;
+        }
 	}
 
 	private long readInitialValue(String path) throws IOException {
@@ -129,7 +124,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 			if (br != null)
 				try {
 					br.close();
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 		}
 	}
@@ -181,7 +176,7 @@ public class FileBasedGenerator extends InMemoryIDGenerator {
 		try {
 			lock.lock();
 			super.reset();
-			writeNextValue(0l);
+			writeNextValue(0L);
 		} catch (IOException e) {
 			throw new IllegalStateException("Cannot initialize persistent ID generator", e);
 		} finally {

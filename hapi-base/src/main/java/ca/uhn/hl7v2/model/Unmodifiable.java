@@ -118,12 +118,12 @@ public final class Unmodifiable {
     /**
      * Marker interface for unmodifiable message (parts)
      */
-    private static interface UnmodifiableModel {
+    private interface UnmodifiableModel {
     }
 
 
     private static class Delegating<S> {
-        private S delegate;
+        private final S delegate;
 
         protected Delegating(S delegate) {
             this.delegate = delegate;
@@ -260,7 +260,7 @@ public final class Unmodifiable {
             return getDelegate().numFields();
         }
 
-        public void parse(String string) throws HL7Exception {
+        public void parse(String string) {
             throw new UnsupportedOperationException("This segment is unmodifiable");
         }
     }
@@ -322,11 +322,11 @@ public final class Unmodifiable {
             return getDelegate().getClass(name);
         }
 
-        public String addNonstandardSegment(String name) throws HL7Exception {
+        public String addNonstandardSegment(String name) {
             throw new UnsupportedOperationException("This group is unmodifiable");
         }
 
-        public String addNonstandardSegment(String name, int theIndex) throws HL7Exception {
+        public String addNonstandardSegment(String name, int theIndex) {
             throw new UnsupportedOperationException("This group is unmodifiable");
         }
     }
@@ -364,7 +364,7 @@ public final class Unmodifiable {
             return getDelegate().getParser();
         }
 
-        public void parse(String string) throws HL7Exception {
+        public void parse(String string) {
             throw new UnsupportedOperationException("This message is unmodifiable");
         }
 
@@ -408,7 +408,7 @@ public final class Unmodifiable {
             return unmodifiableMessage(getDelegate().getMessage());
         }
 
-        public void parse(String string) throws HL7Exception {
+        public void parse(String string) {
             throw new UnsupportedOperationException("This type is unmodifiable");
         }
 
@@ -436,7 +436,7 @@ public final class Unmodifiable {
             return getDelegate().getValue();
         }
 
-        public void setValue(String value) throws DataTypeException {
+        public void setValue(String value) {
             throw new UnsupportedOperationException("This Primitive is unmodifiable");
         }
     }
@@ -475,7 +475,7 @@ public final class Unmodifiable {
             return unmodifiableType(getDelegate().getData());
         }
 
-        public void setData(Type data) throws DataTypeException {
+        public void setData(Type data) {
             throw new UnsupportedOperationException("This Varies is unmodifiable");
         }
 
@@ -483,7 +483,7 @@ public final class Unmodifiable {
 
     private static class UnmodifiableExtraComponents extends ExtraComponents {
 
-        private ExtraComponents delegate;
+        private final ExtraComponents delegate;
 
         public UnmodifiableExtraComponents(ExtraComponents delegate) {
             super(delegate.getMessage());

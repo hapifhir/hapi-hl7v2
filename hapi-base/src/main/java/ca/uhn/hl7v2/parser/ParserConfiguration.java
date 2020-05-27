@@ -7,7 +7,6 @@ import java.util.Set;
 
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.GenericMessage;
-import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.util.idgenerator.FileBasedHiLoGenerator;
 import ca.uhn.hl7v2.util.idgenerator.IDGenerator;
@@ -32,7 +31,7 @@ public class ParserConfiguration {
 	private IDGenerator idGenerator = new FileBasedHiLoGenerator();
 	private String myDefaultObx2Type;
 	private boolean myEncodeEmptyMandatorySegments = true;
-	private Set<String> myForcedEncode = new HashSet<String>();
+	private final Set<String> myForcedEncode = new HashSet<>();
 	private String myInvalidObx2Type;
 	private UnexpectedSegmentBehaviourEnum myUnexpectedSegmentBehaviour;
 	private boolean nonGreedyMode = false;
@@ -358,7 +357,7 @@ public class ParserConfiguration {
 	 * </p>
 	 * <p>
 	 * Note that this configuration can also be set globally using the system
-	 * property {@link Varies#DEFAULT_OBX2_TYPE_PROP}, but any value provided to
+	 * property {@link FixFieldDataType#DEFAULT_OBX2_TYPE_PROP}, but any value provided to
 	 * {@link ParserConfiguration} takes priority over the system property.
 	 * </p>
 	 * 
@@ -367,7 +366,7 @@ public class ParserConfiguration {
 	 *            ("ST", "NM", etc) for an OBX segment with a missing OBX-2
 	 *            value
 	 * @see #setInvalidObx2Type(String)
-	 * @see Varies#INVALID_OBX2_TYPE_PROP
+	 * @see FixFieldDataType#INVALID_OBX2_TYPE_PROP
 	 */
 	public void setDefaultObx2Type(String theDefaultObx2Type) {
 		myDefaultObx2Type = theDefaultObx2Type;
@@ -499,7 +498,7 @@ public class ParserConfiguration {
 	 * </p>
 	 * <p>
 	 * Note that this configuration can also be set globally using the system
-	 * property {@link Varies#INVALID_OBX2_TYPE_PROP}, but any value provided to
+	 * property {@link FixFieldDataType#INVALID_OBX2_TYPE_PROP}, but any value provided to
 	 * {@link ParserConfiguration} takes priority over the system property.
 	 * </p>
 	 * 
@@ -509,7 +508,7 @@ public class ParserConfiguration {
 	 *            value. This is useful when parsing messages from systems which
 	 *            do not correctly populate OBX-2.
 	 * @see ParserConfiguration#setDefaultObx2Type(String)
-	 * @see Varies#DEFAULT_OBX2_TYPE_PROP
+	 * @see FixFieldDataType#DEFAULT_OBX2_TYPE_PROP
 	 */
 	public void setInvalidObx2Type(String theInvalidObx2Type) {
 		myInvalidObx2Type = theInvalidObx2Type;
@@ -696,7 +695,7 @@ public class ParserConfiguration {
 		if (theKeepAsOriginalNodes==null) {
 			setXmlDisableWhitespaceTrimmingOnNodeNames((Set<String>)null);
 		} else {
-			setXmlDisableWhitespaceTrimmingOnNodeNames(new HashSet<String>(Arrays.asList(theKeepAsOriginalNodes)));
+			setXmlDisableWhitespaceTrimmingOnNodeNames(new HashSet<>(Arrays.asList(theKeepAsOriginalNodes)));
 		}
 	}
 

@@ -25,8 +25,6 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.util.idgenerator;
 
-import java.io.IOException;
-
 /**
  * ID generator that simply returns the return value of System.nanoTime(). If ID
  * generation happens too fast, there may be duplicate IDs, therefore the generation
@@ -36,10 +34,10 @@ import java.io.IOException;
  */
 public class NanoTimeGenerator implements IDGenerator {
 
-	public synchronized String getID() throws IOException {
+	public synchronized String getID() {
 		try {
-			Thread.sleep(1l);
-		} catch (InterruptedException e) {
+			Thread.sleep(1L);
+		} catch (InterruptedException ignored) {
 		}
 		return Long.toString(System.nanoTime());
 	}

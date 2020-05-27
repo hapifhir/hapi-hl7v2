@@ -32,9 +32,8 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	 * 
 	 * @param key key for the entry
 	 * @return Future the result
-	 * @throws InterruptedException
-	 */
-	Future<V> asyncTake(K key) throws InterruptedException;
+     */
+	Future<V> asyncTake(K key);
 
 	/**
 	 * Waits for the specified amount of time for an entry with the given key
@@ -55,8 +54,7 @@ public interface BlockingMap<K, V> extends Map<K, V> {
 	 * 
 	 * @param key key for the entry
 	 * @return Future the result
-	 * @throws InterruptedException
-	 */
-	Future<V> asyncPoll(K key, long timeout, TimeUnit unit) throws InterruptedException;
+     */
+	Future<V> asyncPoll(K key, long timeout, TimeUnit unit);
 }
 

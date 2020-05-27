@@ -77,17 +77,17 @@ public class XML
 		only converted to 1-based in the string representations that wind up 
 		as m_props keys.
 		*/
-		StringBuffer m_msgID = new StringBuffer();
-		DatumPath m_curPath = new DatumPath();
+		final StringBuffer m_msgID = new StringBuffer();
+		final DatumPath m_curPath = new DatumPath();
 
 		/* the location in the document of the last datum we dumped to m_props. */
-		DatumPath m_lastDumpedPath = new DatumPath();
+		final DatumPath m_lastDumpedPath = new DatumPath();
 
 		/** For handling repeat segments.   segmentID (String) -> next repeat idx
 		(Integer).  So when we hit a segment ZYX, we'll know how many times we've
 		hit a ZYX before, and set the segmentRepIdx part of m_curPath
 		appropriately. */
-		SortedMap<String, Integer> m_segmentId2nextRepIdx = new TreeMap<String, Integer>();
+		final SortedMap<String, Integer> m_segmentId2nextRepIdx = new TreeMap<>();
 
 		/* m_depthWithinUselessElement and m_depthWithinUsefulElement 
 		reflect what m_msgMask thinks about our location in the document at any
@@ -121,7 +121,7 @@ public class XML
 
 		/* With this we keep the text that we've found within a certain element.
 		It's cleared whenever we enter a (sub) element or leave an element. */
-		StringBuffer m_chars = new StringBuffer(10);
+		final StringBuffer m_chars = new StringBuffer(10);
 
 		public HL7MessageHandler()
 		{
@@ -136,7 +136,7 @@ public class XML
 			m_curPath.clear();
 			// will always be "less than" (according to DatumPath.numbersLessThan)
 			// any sensible DatumPath: 
-			m_lastDumpedPath.clear().add(new String()).add(-42).add(-42).add(-42).add(-42).add(-42);
+			m_lastDumpedPath.clear().add("").add(-42).add(-42).add(-42).add(-42).add(-42);
 			m_segmentId2nextRepIdx.clear();
 			m_depthWithinUsefulElement = -1;
 			m_depthWithinUselessElement = -1;
@@ -281,9 +281,9 @@ public class XML
 					if(segmentId2nextRepIdx.containsKey(elementName)) 
 						curPath.add(segmentId2nextRepIdx.get(elementName));
 					else
-						curPath.add(new Integer(0));
+						curPath.add(Integer.valueOf(0));
 
-					segmentId2nextRepIdx.put(elementName, ((Integer)curPath.get(curPath.size()-1)).intValue() + 1);
+					segmentId2nextRepIdx.put(elementName, (Integer) curPath.get(curPath.size() - 1) + 1);
 				}
 				ok = true;
 			}
@@ -296,21 +296,21 @@ public class XML
 							int fieldIdxFromElementName 
 								= Integer.parseInt(elementName.substring(elementName.indexOf('.') + 1));
 
-							curPath.add(new Integer(fieldIdxFromElementName));
+							curPath.add(Integer.valueOf(fieldIdxFromElementName));
 
 							// now add the repetition idx to curPath: 
 							if((lastDumpedPath.size() >= 4) 
-								&& (((Integer)lastDumpedPath.get(2)).intValue() 
+								&& ((Integer) lastDumpedPath.get(2)
 									== fieldIdxFromElementName))
 							{
 								// lastDumpedPath has a fieldIdx and a fieldRepIdx.
-								curPath.add(new Integer(((Integer)lastDumpedPath.get(3)).intValue() + 1));
+								curPath.add(Integer.valueOf((Integer) lastDumpedPath.get(3) + 1));
 							}
 							else
-								curPath.add(new Integer(0));
+								curPath.add(Integer.valueOf(0));
 
 							ok = true;
-						} catch(NumberFormatException e) {}
+						} catch(NumberFormatException ignored) {}
 					} // else => this isn't a field -- must be useless.
 				}
 				else if((curPath.size() == 4) || (curPath.size() == 5)) {
@@ -318,9 +318,9 @@ public class XML
 					try {
 						int idxFromElementName 
 							= Integer.parseInt(elementName.substring(elementName.indexOf('.') + 1));
-						curPath.add(new Integer(idxFromElementName));
+						curPath.add(Integer.valueOf(idxFromElementName));
 						ok = true;
-					} catch(NumberFormatException e) {}
+					} catch(NumberFormatException ignored) {}
 				}
 			}
 			return ok;
@@ -405,9 +405,7 @@ public class XML
 				(numerically), we can count on m_lastDumpedPath and use
 				DatumPath.numbersLessThan to avoid the clobbering.
 				*/
-				if((m_lastDumpedPath.get(0).equals(m_curPath.get(0))) 
-						? (m_lastDumpedPath.numbersLessThan(m_curPath)) 
-						: true)
+				if((!m_lastDumpedPath.get(0).equals(m_curPath.get(0))) || (m_lastDumpedPath.numbersLessThan(m_curPath)))
 				{
 					if(m_depthWithinUsefulElement >= 0) {
 						m_props.setProperty(m_curPath.toString(), m_chars.toString());
@@ -517,7 +515,7 @@ public class XML
 	public static boolean parseMessage(Properties props, String message, 
 			Collection<DatumPath> msgMask) throws HL7Exception
 	{
-		boolean ret = false;
+		boolean ret;
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
@@ -531,30 +529,26 @@ public class XML
 			if(msgMask != null)
 				handler.m_msgMask = msgMask;
 			else {
-				handler.m_msgMask = new ArrayList<DatumPath>();
+				handler.m_msgMask = new ArrayList<>();
 				handler.m_msgMask.add(new DatumPath());
 			}
 
 			parser.parse(inSrc, handler);
 			ret = true;
-        } catch (ParserConfigurationException e) {
+        } catch (IOException | StopParsingException e) {
             throw new HL7Exception(e);
-        } catch (IOException e) {
-            throw new HL7Exception(e);
-        } catch (StopParsingException e) {
-            throw new HL7Exception(e);
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw new HL7Exception(e);
         }
 
-		return ret;
+		return true;
 	}
 
-	public static void main(String args[]) 
+	public static void main(String[] args)
 	{
 		if(args.length >= 1) {
 			Properties props = new Properties();
-			List<DatumPath> msgMask = new ArrayList<DatumPath>();
+			List<DatumPath> msgMask = new ArrayList<>();
 			msgMask.add(new DatumPath().add("MSH").add(0).add(9));
 			//msgMask.add(new DatumPath());
 			boolean parseret;

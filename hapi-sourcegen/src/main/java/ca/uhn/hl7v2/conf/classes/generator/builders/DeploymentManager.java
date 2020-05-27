@@ -45,9 +45,9 @@ import ca.uhn.hl7v2.conf.classes.exceptions.*;
  */
 public class DeploymentManager {
 
-   private ConformanceMessageBuilder confMsgBuilder;
-   private FileGenerator fg;
-   private String packageName;
+   private final ConformanceMessageBuilder confMsgBuilder;
+   private final FileGenerator fg;
+   private final String packageName;
    private boolean verbose = false;
 
    /** Creates a new instance of DeploymentManager */

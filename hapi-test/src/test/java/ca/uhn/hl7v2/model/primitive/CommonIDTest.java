@@ -44,8 +44,6 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
-import ca.uhn.hl7v2.parser.ModelClassFactory;
-import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
@@ -57,7 +55,7 @@ public class CommonIDTest {
 
     private static HapiContext context;
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
     public static void setupBefore() {
@@ -105,7 +103,7 @@ public class CommonIDTest {
     }
     
 	@Test
-	public void testSetGetValueStringAndTable() throws DataTypeException {
+	public void testSetGetValueStringAndTable() {
 	    buildSpecs(SetGetSpec.class)
 			.add(param(2, null), (String)null)
 			.add(param(2, ""), "")

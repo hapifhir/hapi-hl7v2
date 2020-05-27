@@ -31,7 +31,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.DefaultValidationExceptionHandler;
 import ca.uhn.hl7v2.validation.ValidationException;
@@ -52,9 +51,8 @@ public class CustomMessageValidation {
 
 	/**
 	 * @param args
-	 * @throws EncodingNotSupportedException
-	 */
-	public static void main(String[] args) throws EncodingNotSupportedException {
+     */
+	public static void main(String[] args) {
 
 		/*
 		 * In this example, we are looking at a few aspects of custom message validation using HAPI.

@@ -18,7 +18,7 @@ public class AcceptApplication extends DefaultApplication {
      * supplies the desired values (this is just here to override inclusion of the 
      * default error message).  
      */
-    public void fillDetails(Message ack) throws ApplicationException {
+    public void fillDetails(Message ack) {
         //do nothing -- no more information needed 
     }
     

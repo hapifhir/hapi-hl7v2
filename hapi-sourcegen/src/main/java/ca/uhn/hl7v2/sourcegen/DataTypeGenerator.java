@@ -62,7 +62,7 @@ import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  * @author Eric Poiseau
  */
-public class DataTypeGenerator extends Object {
+public class DataTypeGenerator {
     
     private static final Logger log = LoggerFactory.getLogger(DataTypeGenerator.class);
     private static boolean ourMakeAll;
@@ -89,28 +89,27 @@ public class DataTypeGenerator extends Object {
             log.warn("No version {} data types found in database {}", 
             		version, System.getProperty("ca.on.uhn.hl7.database.url"));
         }
-                
-        for (int i = 0; i < types.size(); i++) {
+
+        for (String type : types) {
             try {
                 String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
-                String dataType = (String)types.get(i);
-                
-				String hapiTestGenType = System.getProperty("hapi.test.gentype");
-				if (hapiTestGenType != null && !hapiTestGenType.contains(dataType)) {
-					continue;
-				}
-                
-				make(targetDir, dataType, version, basePackage, theTemplatePackage, theFileExt);
+
+                String hapiTestGenType = System.getProperty("hapi.test.gentype");
+                if (hapiTestGenType != null && !hapiTestGenType.contains((String) type)) {
+                    continue;
+                }
+
+                make(targetDir, (String) type, version, basePackage, theTemplatePackage, theFileExt);
             } catch (DataTypeException dte) {
                 log.warn("{} - {}", dte.getClass().getName(), dte.getMessage());
             } catch (Exception e) {
                 log.error("Error creating source code for all data types", e);
-            } 
+            }
         }
     }
 
     public static ArrayList<String> getDataTypes(String version) throws SQLException {
-        ArrayList<String> types = new ArrayList<String>();
+        ArrayList<String> types = new ArrayList<>();
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
@@ -148,7 +147,7 @@ public class DataTypeGenerator extends Object {
      * Creates source code for a single data type in the HL7 normative
      * database. 
      * @param targetDirectory the directory into which the file will be written
-     * @param datatype the name (e.g. ST, ID, etc.) of the data type to be created
+     * @param dataType the name (e.g. ST, ID, etc.) of the data type to be created
      * @param version the HL7 version of the intended data type
      * @param theFileExt 
      */
@@ -161,27 +160,26 @@ public class DataTypeGenerator extends Object {
         NormativeDatabase normativeDatabase = NormativeDatabase.getInstance();
         Connection conn = normativeDatabase.getConnection();
         Statement stmt = conn.createStatement();
-        StringBuffer sql = new StringBuffer();
         //this query is adapted from the XML SIG informative document
-        sql.append("SELECT HL7DataStructures.data_structure, HL7DataStructureComponents.seq_no, HL7DataStructures.description, HL7DataStructureComponents.table_id,  ");
-        sql.append("HL7Components.description, HL7Components.table_id, HL7Components.data_type_code, HL7Components.data_structure ");
-        sql.append("FROM HL7Versions LEFT JOIN (HL7DataStructures LEFT JOIN (HL7DataStructureComponents LEFT JOIN HL7Components ");
-        sql.append("ON HL7DataStructureComponents.comp_no = HL7Components.comp_no AND ");
-        sql.append("HL7DataStructureComponents.version_id = HL7Components.version_id) ");
-        sql.append("ON HL7DataStructures.version_id = HL7DataStructureComponents.version_id ");
-        sql.append("AND HL7DataStructures.data_structure = HL7DataStructureComponents.data_structure) ");
-        sql.append("ON HL7DataStructures.version_id = HL7Versions.version_id ");
-        sql.append("WHERE HL7DataStructures.data_structure = '");
-        sql.append(dataType);
-        sql.append("' AND HL7Versions.hl7_version = '");
-        sql.append(version);
-        sql.append("' ORDER BY HL7DataStructureComponents.seq_no");
         //System.out.println(sql.toString());  //for debugging
-        ResultSet rs = stmt.executeQuery(sql.toString());
+        String sql = "SELECT HL7DataStructures.data_structure, HL7DataStructureComponents.seq_no, HL7DataStructures.description, HL7DataStructureComponents.table_id,  " +
+                "HL7Components.description, HL7Components.table_id, HL7Components.data_type_code, HL7Components.data_structure " +
+                "FROM HL7Versions LEFT JOIN (HL7DataStructures LEFT JOIN (HL7DataStructureComponents LEFT JOIN HL7Components " +
+                "ON HL7DataStructureComponents.comp_no = HL7Components.comp_no AND " +
+                "HL7DataStructureComponents.version_id = HL7Components.version_id) " +
+                "ON HL7DataStructures.version_id = HL7DataStructureComponents.version_id " +
+                "AND HL7DataStructures.data_structure = HL7DataStructureComponents.data_structure) " +
+                "ON HL7DataStructures.version_id = HL7Versions.version_id " +
+                "WHERE HL7DataStructures.data_structure = '" +
+                dataType +
+                "' AND HL7Versions.hl7_version = '" +
+                version +
+                "' ORDER BY HL7DataStructureComponents.seq_no";
+        ResultSet rs = stmt.executeQuery(sql);
         
-        ArrayList<String> dataTypes = new ArrayList<String>(20);
-        ArrayList<String> descriptions = new ArrayList<String>(20);
-        ArrayList<Integer> tables = new ArrayList<Integer>(20);
+        ArrayList<String> dataTypes = new ArrayList<>(20);
+        ArrayList<String> descriptions = new ArrayList<>(20);
+        ArrayList<Integer> tables = new ArrayList<>(20);
         String description = null;
         while (rs.next()) {
             if (description == null) description = rs.getString(3);
@@ -202,13 +200,13 @@ public class DataTypeGenerator extends Object {
 
             dataTypes.add(dt);
             descriptions.add(de);
-            tables.add(new Integer(ta));
+            tables.add(ta);
         }
         stmt.close();
         normativeDatabase.returnConnection(conn);
         
         //if there is only one component make a Primitive, otherwise make a Composite
-        String source = null;
+        String source;
         if (dataTypes.size() == 1) {
             if (ourMakeAll || dataType.equals("FT") || dataType.equals("ST") || dataType.equals("TX") 
                     || dataType.equals("NM") || dataType.equals("SI") || dataType.equals("TN")
@@ -224,10 +222,10 @@ public class DataTypeGenerator extends Object {
             String[] desc = new String[numComponents];
             int[] table = new int[numComponents];
             DatatypeComponentDef[] componentDefs = new DatatypeComponentDef[numComponents];
-            Set<String> names = new HashSet<String>();
+            Set<String> names = new HashSet<>();
             for (int i = 0; i < numComponents; i++) {
-                type[i] = (String)dataTypes.get(i);
-                String componentName = (String)descriptions.get(i);
+                type[i] = dataTypes.get(i);
+                String componentName = descriptions.get(i);
                 
                 if (names.contains(componentName)) {
                	 for (int j = 2; ; j++) {
@@ -240,12 +238,12 @@ public class DataTypeGenerator extends Object {
                 names.add(componentName);
                 
                 desc[i] = componentName;
-                table[i] = ((Integer) tables.get(i)).intValue();
+                table[i] = tables.get(i);
                 
-                String typeName = (String)dataTypes.get(i);
+                String typeName = dataTypes.get(i);
                 typeName = SourceGenerator.getAlternateType(typeName, version);
                 
-                componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, componentName, ((Integer) tables.get(i)).intValue());
+                componentDefs[i] = new DatatypeComponentDef(dataType, i, typeName, componentName, tables.get(i));
             }
             
             source = makeComposite(dataType, description, componentDefs, type, desc, table, version, basePackage, theTemplatePackage);
@@ -263,13 +261,9 @@ public class DataTypeGenerator extends Object {
         //write to file ... 
         if (source != null) {
             String targetFile = targetDirectory.toString() + "/" + dataType + "." + theFileExt;
-            BufferedWriter writer = null;
-            try {
-	            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING));
-	            writer.write(source);
-	            writer.flush();
-            } finally {
-            	if (writer != null) writer.close();
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), SourceGenerator.ENCODING))) {
+                writer.write(source);
+                writer.flush();
             }
         }
     }
@@ -306,12 +300,12 @@ public class DataTypeGenerator extends Object {
         
             StringWriter out = new StringWriter();
 
-            for (int i = 0; i < componentDefs.length; i++) {
-            	if (componentDefs[i].getType().equals(dataType)) {
-                  log.warn("Datatype {} has a component child also of type {}! Can not recurse like this", dataType, dataType);
-                  componentDefs[i].setType("ST");	
-            	}
+        for (DatatypeComponentDef componentDef : componentDefs) {
+            if (componentDef.getType().equals(dataType)) {
+                log.warn("Datatype {} has a component child also of type {}! Can not recurse like this", dataType, dataType);
+                componentDef.setType("ST");
             }
+        }
             
             for (int i = 0; i < dataTypes.length; i++) {
                if (dataTypes[i].equals(dataType)) {
@@ -335,7 +329,7 @@ public class DataTypeGenerator extends Object {
     }
     
     //test
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         //System.out.println(makePrimitive("ID", "identifier"));
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");

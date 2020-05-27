@@ -52,8 +52,8 @@ public class JMSTopicAdapter implements JMSDestination {
     private TopicSession myReceivingSession; 
     private TopicPublisher myPublisher;
     private TopicSubscriber mySubscriber;
-    private TopicConnection myConnection;
-    private Topic myTopic;
+    private final TopicConnection myConnection;
+    private final Topic myTopic;
     private boolean myIsConnected;
 
     /**

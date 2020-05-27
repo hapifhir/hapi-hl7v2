@@ -21,7 +21,7 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
  */
 public class AppWrapper implements ReceivingApplication<Message> {
 
-    private Application myApplication;
+    private final Application myApplication;
     
     /**
      * @param theApplication an Application to wrap as a ReceivingApplication.  

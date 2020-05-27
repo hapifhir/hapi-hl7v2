@@ -13,9 +13,7 @@ public class DefaultValidationExceptionHandlerTest {
 	public void testHandler() throws HL7Exception {
 		ValidationExceptionHandler<Boolean> handler = new DefaultValidationExceptionHandler();
 		assertTrue(handler.result());
-		handler.onExceptions(new ValidationException[] {
-				new ValidationException("test")
-		});
+		handler.onExceptions(new ValidationException("test"));
 		assertFalse(handler.result());
 	}
 

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -30,7 +29,7 @@ import ca.uhn.hl7v2.conf.ProfileException;
  */
 public class ProfileCodeStore extends AbstractCodeStore {
 
-    private Map<String, List<String>> codes = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> codes = new HashMap<>();
 
     /**
      * Creates a ProfileCodeStore object that uses tables found in an 'spec xml tables only' xml doc
@@ -73,14 +72,13 @@ public class ProfileCodeStore extends AbstractCodeStore {
      * @param codeSystem
      * @return String[]
      * @throws ProfileException
-     * @see ca.uhn.hl7v2.conf.store.CodeStore#getValidCodes(java.lang.String, java.lang.String)
      * 
      */
     public String[] getValidCodes(String codeSystem) throws ProfileException {
         List<String> result = getCodeTable(codeSystem);
         if (result == null)
             throw new ProfileException("Unknown code system: " + codeSystem);
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -93,7 +91,6 @@ public class ProfileCodeStore extends AbstractCodeStore {
      * @param codeSystem
      * 
      * @return boolean
-     * @see ca.uhn.hl7v2.conf.store.CodeStore#knowsCodes(java.lang.String, java.lang.String)
      * 
      */
     public boolean knowsCodes(String codeSystem) {
@@ -106,9 +103,7 @@ public class ProfileCodeStore extends AbstractCodeStore {
 
     /**
      * Retrieves the hl7Table Element from the tableDoc object defined by the table number in the
-     * input codeSystem.
-     * 
-     * @param profileId
+     * input codeSystem
      * 
      * @param codeSystem
      * @return Element
@@ -133,10 +128,10 @@ public class ProfileCodeStore extends AbstractCodeStore {
         private static final String TABLE_ELEMENT_QNAME = "tableElement";
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
             if (HL7_TABLE_QNAME.equals(qName)) {
                 currentTable = attributes.getValue("id");
-                codes.put(currentTable, new ArrayList<String>());
+                codes.put(currentTable, new ArrayList<>());
             } else if (TABLE_ELEMENT_QNAME.equals(qName)) {
                 codes.get(currentTable).add(attributes.getValue("code"));
             }

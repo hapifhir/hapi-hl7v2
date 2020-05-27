@@ -28,7 +28,6 @@ package ca.uhn.hl7v2.examples;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -70,7 +69,7 @@ public class CorrectInvalidMessageBeforeParsing
         Parser parser = new PipeParser() {
 
             // We override the parse method to correct issues
-            public Message parse(String theMessage) throws HL7Exception, EncodingNotSupportedException {
+            public Message parse(String theMessage) throws HL7Exception {
                 theMessage = theMessage.replace("\rPI|", "\rPID|");
                 return super.parse(theMessage);
             }};

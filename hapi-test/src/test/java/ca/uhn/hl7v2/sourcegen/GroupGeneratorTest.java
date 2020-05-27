@@ -67,7 +67,7 @@ public class GroupGeneratorTest {
 	}
 
 	@Test
-	public void testRepGetter() throws Exception {
+	public void testRepGetter() {
 		ADT_A01 a01 = new ADT_A01();
 		a01.getROL(0);
 		a01.getROL(1);

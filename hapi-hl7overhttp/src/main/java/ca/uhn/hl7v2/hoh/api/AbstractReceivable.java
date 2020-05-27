@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractReceivable<T> implements IReceivable<T> {
-	private final Map<String, Object> myMetadata = new HashMap<String, Object>();
+	private final Map<String, Object> myMetadata = new HashMap<>();
 
 	/**
 	 * Add a metadata value

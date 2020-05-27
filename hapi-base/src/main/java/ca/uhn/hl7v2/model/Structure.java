@@ -46,14 +46,14 @@ public interface Structure extends Serializable, Visitable {
    *
    * @return message the root message this structure is part of
    */
-  public Message getMessage();
+  Message getMessage();
 
   /**
    * Returns the structure's name.
    *
    * @return name of this structure
    */
-  public String getName(); 
+  String getName();
   
   /**
    * Returns the parent group within which this structure exists (may be root 
@@ -61,6 +61,6 @@ public interface Structure extends Serializable, Visitable {
    *
    * @return parent group of this structure
    */
-  public Group getParent();
+  Group getParent();
   
 }

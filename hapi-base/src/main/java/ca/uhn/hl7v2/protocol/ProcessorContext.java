@@ -20,26 +20,26 @@ public interface ProcessorContext {
      * @return the router that directs unsolicited inbound messages to 
      *      the appropriate <code>Application</code>  
      */
-    public ApplicationRouter getRouter();
+    ApplicationRouter getRouter();
 
     /**
      * @return the object responsible for transport of remotely initiated message 
      *      exchanges (normally with a remote server)
-     */    
-    public TransportLayer getRemotelyDrivenTransportLayer();
+     */
+    TransportLayer getRemotelyDrivenTransportLayer();
     
     
     /**
      * @return the object responsible for transport of locally initiated message 
      *      exchanges (normally with a remote server)
-     */    
-    public TransportLayer getLocallyDrivenTransportLayer();
+     */
+    TransportLayer getLocallyDrivenTransportLayer();
 
     /**
      * @return the validators that determine whether a message can be 
      *      accepted for routing to the appropriate application 
-     */    
-    public AcceptValidator[] getValidators();
+     */
+    AcceptValidator[] getValidators();
     
     /**
      * Adds a new validator to the list of those returned by 
@@ -47,21 +47,19 @@ public interface ProcessorContext {
      *  
      * @param theValidator the validator to add 
      */
-    public void addValidator(AcceptValidator theValidator);    
+    void addValidator(AcceptValidator theValidator);
     
     /**
      * @return a store for messages while they are being routed to the 
      *      appropriate application 
      */
-    public SafeStorage getSafeStorage();
+    SafeStorage getSafeStorage();
     
     /**
      * Returns the list of fields that are to be included as metadata whenever a <code>Message</code>
      * is converted to a <code>Transportable</code>.  Each field is a String <code>Terser</code>
-     * path.  
-     *  
-     * @param theMetadataFields list of <code>Terser</code> paths of metadata fields 
+     * path.
      */
-    public List<String> getMetadataFields();
+    List<String> getMetadataFields();
     
 }

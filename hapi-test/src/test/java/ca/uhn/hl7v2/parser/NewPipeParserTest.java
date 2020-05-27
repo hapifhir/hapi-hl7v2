@@ -1,10 +1,19 @@
 package ca.uhn.hl7v2.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import ca.uhn.hl7v2.*;
-import ca.uhn.hl7v2.model.*;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.ErrorCode;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.IndexedErrorCollector;
+import ca.uhn.hl7v2.TestSpec;
+import ca.uhn.hl7v2.TestSpecBuilder;
+import ca.uhn.hl7v2.model.Composite;
+import ca.uhn.hl7v2.model.GenericSegment;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Primitive;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.message.ADT_A04;
 import ca.uhn.hl7v2.model.v23.message.SIU_S14;
@@ -44,7 +53,15 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class NewPipeParserTest {
 
@@ -52,11 +69,11 @@ public class NewPipeParserTest {
     private static final Logger ourLog = LoggerFactory.getLogger(NewPipeParserTest.class);
 
     @Rule
-    public IndexedErrorCollector collector = new IndexedErrorCollector();
+    public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     public static class InvalidMessageSpec1 extends TestSpec<String, Message> {
 
-        private Message msg;
+        private final Message msg;
 
         public InvalidMessageSpec1() {
             msg = new ADT_A01();
@@ -118,7 +135,7 @@ public class NewPipeParserTest {
      * fixed however.
      */
     @Test
-    public void testEnsureThatEncodeDoesntAffectStructure() throws HL7Exception, IOException {
+    public void testEnsureThatEncodeDoesntAffectStructure() throws HL7Exception {
         HapiContext ctx = new DefaultHapiContext();
         ctx.getParserConfiguration().setValidating(false);
         InputStream str = getClass().getClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a03.txt");
@@ -185,10 +202,10 @@ public class NewPipeParserTest {
             ourLog.info("Testing rep " + i);
 
             String actual = msg.getORDER(i).getORC().getOrc1_OrderControl().getValue();
-            assertEquals(null, actual);
+            assertNull(actual);
 
             actual = msg.getORDER(i).getOBSERVATION_REQUEST().getOBR().getObr4_UniversalServiceIdentifier().getCe1_Identifier().getValue();
-            assertEquals(null, actual);
+            assertNull(actual);
         }
 
     }
@@ -197,7 +214,7 @@ public class NewPipeParserTest {
      * See http://sourceforge.net/p/hl7api/bugs/171/
      */
     @Test
-    public void testGreedyModeMore() throws HL7Exception, IOException {
+    public void testGreedyModeMore() throws HL7Exception {
 
         DefaultHapiContext ctx = new DefaultHapiContext();
         ctx.getParserConfiguration().setNonGreedyMode(false);
@@ -212,7 +229,7 @@ public class NewPipeParserTest {
             } else if (msg instanceof ca.uhn.hl7v2.model.v25.message.OML_O21) {
             } else {
                 OML_O21 next = (OML_O21) msg;
-                assertTrue(next.getORDER().getOBSERVATION_REQUEST().getPRIOR_RESULTAll().size() == 0);
+                assertEquals(0, next.getORDER().getOBSERVATION_REQUEST().getPRIOR_RESULTAll().size());
             }
         }
 
@@ -499,7 +516,7 @@ public class NewPipeParserTest {
      * Ensure that the correct class is parsed for 2.3.1 ORM^O01
      */
     @Test
-    public void testParseCorrectClass() throws EncodingNotSupportedException, HL7Exception {
+    public void testParseCorrectClass() throws HL7Exception {
 
         String sn = "MSH|^~\\&|RIS 2.0|KIR|InterRis 2.0|Receiving facility|20110309132505||ORM^O01|MSG00001|1|2.3.1|1||||SL|UNICODE UTF-8|SL\r" + "PID|||123^^^^^BIS~1234^^^^^HIS~12345^^^^^KZZZ||Lastname^Name^J^Mr|||M\r" + "PV1||E||||||2314^Novak&Janez^^^^Dr.|||||||||||123365\r"
                 + "ORC|AF|1123abc^marand||3|||1^once^^^^U\r" + "OBR|1|1123abc^marand||RDP_10^RDP Kljicnica|||||||||klinicno vprasanje?||^^^^L&Left|12345^Novak^Janez^^^^^^BPI_ZDR|||||||||||1^Once^^^^R\r";
@@ -699,7 +716,7 @@ public class NewPipeParserTest {
             fail();
         } catch (EncodingNotSupportedException e) {
             assertTrue(e.getMessage(), e.getMessage().contains(msh));
-            assertTrue(e.getMessage(), !e.getMessage().contains(obx));
+            assertFalse(e.getMessage(), e.getMessage().contains(obx));
         }
 
     }
@@ -733,23 +750,23 @@ public class NewPipeParserTest {
         ca.uhn.hl7v2.model.v24.message.ORU_R01 msg = new ca.uhn.hl7v2.model.v24.message.ORU_R01();
         msg.setParser(new PipeParser());
 
-        System.setProperty(Varies.INVALID_OBX2_TYPE_PROP, "ST");
+        System.setProperty(FixFieldDataType.INVALID_OBX2_TYPE_PROP, "ST");
         msg.parse(string);
 
         ourLog.debug(msg.encode());
 
-        System.clearProperty(Varies.INVALID_OBX2_TYPE_PROP);
+        System.clearProperty(FixFieldDataType.INVALID_OBX2_TYPE_PROP);
         try {
             msg.parse(string);
             fail();
-        } catch (HL7Exception e) {
+        } catch (HL7Exception ignored) {
 
         }
 
     }
 
     @Test
-    public void testUnexpectedSegmentAtEng() throws EncodingNotSupportedException, HL7Exception {
+    public void testUnexpectedSegmentAtEng() throws HL7Exception {
         String messageText = "MSH|^~\\&|REG|G|||201002220026||ADT^A14|33186452|P|2.2|||||\r" + "EVN|A14|201002220026|||14380\r" + "PID||^^|222^454554^HN637|324334244^^|TEST^PATIENT^Luis^^Mr.^Mr.|\r"
                 + "PV1||E|^^^^^^^^|^||^^^^^^^^|^^^^^^^|^^^^^^^||^^|||||||^^^^^^^|^|3243^|^|||||||||||||||||||G||||^^^^^^^^|43865896||||||\r" + "PV2||||||||||||||||||^||||N\r"
                 + "NK1|1|TEST^NKGuy^^^^|CHD^ Son|123 Fake Street^^Toronto^ON^M6J 3H2^Can^M|(416)123-4567|(416)123-4567|NK||||||\r" + "IN1|1||0012343001|  OHIP||||||||||||^^^^^|||^^^^^^M|||||||||||||||||||||||||^^^^^^M\r" + "IN2||||||2216\r" + "ZIN||||||||||||||||||";
@@ -762,7 +779,7 @@ public class NewPipeParserTest {
      * In SIU_S12, Groups begin with RGS and have nested subgroups as well
      */
     @Test
-    public void testNestedRepeatingGroups() throws EncodingNotSupportedException, HL7Exception {
+    public void testNestedRepeatingGroups() throws HL7Exception {
 
         String messageText = "MSH|^~\\&|ORSOS|G|PRECASE^SCHEDULING||20100406132803||SIU^S14| 38762|P|2.3\r"
                 + // -
@@ -781,17 +798,17 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testAL1Reps() throws IOException, EncodingNotSupportedException, HL7Exception {
+    public void testAL1Reps() throws IOException, HL7Exception {
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ca/uhn/hl7v2/parser/adt_a03.txt");
         byte[] bytes = new byte[10000];
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         int count;
         while ((count = stream.read(bytes)) > 0) {
             buffer.append(new String(bytes), 0, count);
         }
 
         String er7Message = buffer.toString();
-        er7Message = er7Message.replaceAll("(\\r|\\n)+", "\r");
+        er7Message = er7Message.replaceAll("([\\r\\n])+", "\r");
 
         ca.uhn.hl7v2.model.v25.message.ADT_A03 message = (ADT_A03) parser.parse(er7Message);
 
@@ -810,13 +827,13 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testGetAckID() throws Exception {
+    public void testGetAckID() {
         String message = "MSH|foo|foo";
         String ackID = parser.getAckID(message);
-        assertEquals(null, ackID);
+        assertNull(ackID);
         message = "MSH|^~\\&|STML|001|STML|001|20020307142616||ADT^A05|01500|T|2.2|||AL|NE\rEVN|A05|20020307142547|200203081424\rPID|0001||000005222||TEST^BRIAN||19700623|M||C|30815 RAYBURN^^LIVONIA^MI^48154-0000^USA||(313)422-2182|||S||0001445|380-96-9087\rPV1|0001|O|PR|EL|T0468423||00410^KRISHNAN AMBA MD|||PRO||||1||||O||2||||||||||||||||||||||||||0000000.00|0000000.00|0000000.00|0000000.00\rPV2|||^IV THERAPY|||||20020308\rOBX|0001|ST|ADMIT DIAGNOSIS TEXT\rOBX|0002|ST|1010.1^WEIGHT(KG)^AS4\rOBX|0003|ST|1010.3^HEIGHT(CM)^AS4\rOBX|0004|ST|ALLERGY FREE TEXT\rGT1|0001|0003225|TEST^BRIAN||30815 RAYBURN^^LIVONIA^MI^48154-0000^USA|(313)422-2182||19700623|M||SE|380969087|||||^^^^^USA|||1\rIN1|0001|09|210|BCBSM BC OF MI|600 EAST LAFAYETTE^^DETROIT^MI^48226-0000^USA|||77777|FULL BC|||||||TEST^BRIAN|SE|19700623|30815 RAYBURN^^LIVONIA^MI^48154-0000^USA|Y|Y||||||Y|Y|20020307||||||21009|XYZ380969087||||||1|M|^^^^^USA\rIN2||380969087|||||||||||||||||||N|||||||SPR^LM^00677.00~ICU^LM^02068.00\rIN1|0002|09|211|BCBSM BS OF MI P/C PLAN|600 EAST LAFAYETTE^^DETROIT^MI^48226-0000^USA|||77777|FULL|||||||TEST^BRIAN|SE|19700623|30815 RAYBURN^^LIVONIA^MI^48154-0000^USA|Y|N||||||Y|Y|20020307||||||21109|XYZ380969087||||||1|M|^^^^^USA\rIN2||380969087|||||||||||||||||||N";
         ackID = parser.getAckID(message);
-        assertEquals(null, ackID);
+        assertNull(ackID);
     }
 
     /**
@@ -839,7 +856,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testNonStandardSegmentNearStart() throws EncodingNotSupportedException, HL7Exception {
+    public void testNonStandardSegmentNearStart() throws HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
                 + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r"
                 + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
@@ -857,7 +874,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testNonStandardSegmentNearEnd() throws EncodingNotSupportedException, HL7Exception {
+    public void testNonStandardSegmentNearEnd() throws HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
                 + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r" + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
                 + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
@@ -872,7 +889,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testNonStandardSegmentAfterEnd() throws EncodingNotSupportedException, HL7Exception {
+    public void testNonStandardSegmentAfterEnd() throws HL7Exception {
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" + "PID|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r"
                 + "PV1|1||OLIS||||OLIST^BLAKE^DONALD^THOR^^^^^921379^^^^OLIST\r" + "ORC|RE||T09-100442-RET-0^^OLIS_Site_ID^ISO|||||||||OLIST^BLAKE^DONALD^THOR^^^^L^921379\r"
                 + "OBR|0||T09-100442-RET-0^^OLIS_Site_ID^ISO|RET^RETICULOCYTE COUNT^HL79901 literal|||200905011106|||||||200905011106||OLIST^BLAKE^DONALD^THOR^^^^L^921379||7870279|7870279|T09-100442|MOHLTC|200905011130||B7|F||1^^^200905011106^^R\r"
@@ -920,16 +937,16 @@ public class NewPipeParserTest {
         ourLog.debug(parser.encode(msg));
 
         String val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
         val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(1).getNTE().getComment(0).getValue();
         assertEquals("test", val);
 
         val = msg.getPATIENT_RESULT(1).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
         val = msg.getPATIENT_RESULT(1).getORDER_OBSERVATION(1).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
     }
 
@@ -951,16 +968,16 @@ public class NewPipeParserTest {
         ourLog.debug(parser.encode(msg));
 
         String val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
         val = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(1).getNTE().getComment(0).getValue();
         assertEquals("test", val);
 
         val = msg.getPATIENT_RESULT(1).getORDER_OBSERVATION(0).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
         val = msg.getPATIENT_RESULT(1).getORDER_OBSERVATION(1).getNTE().getComment(0).getValue();
-        assertEquals(null, val);
+        assertNull(val);
 
     }
 
@@ -968,7 +985,7 @@ public class NewPipeParserTest {
      * Check that parsing an empty segment doesn't crash
      */
     @Test
-    public void testParseEmptySegment() throws EncodingNotSupportedException, HL7Exception {
+    public void testParseEmptySegment() throws HL7Exception {
         String message = "MSH|^~\\&|||||20080627102031.292+0100||ADT^A31^ADT_A31|EJ557600005480760|P|2.3|||||BE|8859/1|FR\r\n" + "EVN||20080627101943+0100\r\n" + "PID|||M07869D^^^ADMISSION^^ISSTLUC||DUPONT^JEAN||19701004000000+0100|M\r\n" + "PD1\r\n" + "PV1||N";
         parser.parse(message);
     }
@@ -1063,7 +1080,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testEarlyNonStandard() throws EncodingNotSupportedException, HL7Exception {
+    public void testEarlyNonStandard() throws HL7Exception {
         String message = "MSH|^~\\&|IRIS|SANTER|AMB_R|SANTER|200803051508||ADT^A03|263206|P|2.5\r\n" + "EVN||200803051509||||200803031508\r\n" + "ZZZ|aaa\r\n"
                 + "PID|||5520255^^^PK^PK~ZZZZZZ83M64Z148R^^^CF^CF~ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103^99991231~^^^^TEAM||ZZZ^ZZZ||19830824|F||||||||||||||||||||||N\r\n"
                 + "PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r\n"
@@ -1095,21 +1112,21 @@ public class NewPipeParserTest {
             text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|12345\r";
             parser.parse(text);
             fail("Should have failed message rule");
-        } catch (HL7Exception e) {
+        } catch (HL7Exception ignored) {
         }
 
         try {
             text = "MSH|^~\\&|bar|fo|||||ORU^R01|1|D|2.4|12345\r";
             parser.parse(text);
             fail("Should have failed encoding rule");
-        } catch (HL7Exception e) {
+        } catch (HL7Exception ignored) {
         }
 
         try {
             text = "MSH|^~\\&|ba|foo|||||ORU^R01|1|D|2.4|123456\r";
             parser.parse(text);
             fail("Should have failed datatype rule on field 13");
-        } catch (HL7Exception e) {
+        } catch (HL7Exception ignored) {
         }
     }
 
@@ -1163,7 +1180,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testNonPipeDelimitor() throws EncodingNotSupportedException, HL7Exception {
+    public void testNonPipeDelimitor() throws HL7Exception {
         String msg = "MSH^~|\\&^HDRVTLS^552~DAYTDEV.FO-BAYPINES.MED.VA.GOV~DNS^GMRV VDEF IESIDE^200HD~HDR.MED.VA.GOV~DNS^20061006151615-0800^^ORU~R01^55253408603^T^2.4^^^AL^NE^US\r\n"
                 + "ORC^RE^^6240020~552_120.5^^^^^^^^^^OBS23~325~~~~~~~23 HOUR OBSERVATION^^^^552~DAYTON~L^^^^DAYTON\r\n"
                 + "OBR^^^6240020~552_120.5^4500635~PAIN~99VA120.51^^^200610061445-0800^20061006144607-0800^^^^^^^^^^^^^^20061006144607-0800^^^E^^^^^^^^^123456&NURSE&THREE&A&III&MS&RN&VistA200\r\n"
@@ -1174,7 +1191,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testUnknownVersion() throws EncodingNotSupportedException, HL7Exception {
+    public void testUnknownVersion() {
 
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.999\r" + //
                 "ORC|ORC1\r" + //
@@ -1193,7 +1210,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testParseNonStandardSegment() throws EncodingNotSupportedException, HL7Exception {
+    public void testParseNonStandardSegment() throws HL7Exception {
 
         String message = "MSH|^~\\&|^QueryServices||||20021011161756.297-0500||ORU^R01|1|D|2.4\r" + //
                 "ORC|ORC1\r" + //
@@ -1232,7 +1249,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testEmptySegment() throws EncodingNotSupportedException, HL7Exception {
+    public void testEmptySegment() throws HL7Exception {
         String msg = "MSH|^~\\&|1444-ADT|1444|S-ADT|SIMS|20071023160622||ADT^A03^ADT_A05|Q67084255T54052896X2|P^T|2.5|||NE|AL|CAN|8859/1\r\n" + "EVN|A03|20071023160622\r\n"
                 + "PID|1||00J8804997^^^1444^MR~165640^^^CANON^JHN^^^^^WT||Aalan^Angus^^^^^L||19620404|F|||101 Ames Ave^^Toronto^CA- ON^M2N7J6^CAN^H||^PRN^PH^^1^416^5551545|^PRN^PH^^1^416^2227788|| C||||||||||||||N\r\n" + "PV1";
         parser.parse(msg);
@@ -1244,7 +1261,7 @@ public class NewPipeParserTest {
          * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
          */
         public ValidationException[] apply(String arg0) {
-            if (arg0.indexOf("foo") < 0) {
+            if (!arg0.contains("foo")) {
                 return new ValidationException[]{new ValidationException("Not enough foo")};
             } else {
                 return new ValidationException[]{};
@@ -1293,7 +1310,7 @@ public class NewPipeParserTest {
      * Make sure IS and ID datatypes are supported as OBX-5 values
      */
     @Test
-    public void testParseObx5WithTypeRequiringTable() throws EncodingNotSupportedException, HL7Exception {
+    public void testParseObx5WithTypeRequiringTable() throws HL7Exception {
 
         String string = "MSH|^~\\&|ULTRA|TML|OLIS|OLIS|200905011130||ORU^R01|20169838|T|2.3\r" // -
                 + "ZPI|||7005728^^^TML^MR||TEST^RACHEL^DIAMOND||19310313|F|||200 ANYWHERE ST^^TORONTO^ON^M6G 2T9||(416)888-8888||||||1014071185^KR\r" // -
@@ -1308,7 +1325,7 @@ public class NewPipeParserTest {
     }
 
     @Test
-    public void testMissingSegment() throws EncodingNotSupportedException, HL7Exception {
+    public void testMissingSegment() throws HL7Exception {
 
         String messageString = "MSH|^~\\&|BLAH|Default Facility|||20100604104559||REF^I12^REF_I12|||2.5\r\n" // -
                 + "SFT|BLAH|BLAH|BLAH|2010/06/04 10:44, branch : trunk\r\n" // -

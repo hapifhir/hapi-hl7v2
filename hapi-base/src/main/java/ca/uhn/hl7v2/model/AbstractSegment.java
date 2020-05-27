@@ -66,13 +66,13 @@ public abstract class AbstractSegment extends AbstractStructure implements
 
 	private static final long serialVersionUID = -6686329916234746948L;
 	
-	private List<List<Type>> fields;
-	private List<Class<? extends Type>> types;
-	private List<Boolean> required;
-	private List<Integer> length;
-	private List<Object> args;
-	private List<Integer> maxReps;
-	private List<String> names;
+	private final List<List<Type>> fields;
+	private final List<Class<? extends Type>> types;
+	private final List<Boolean> required;
+	private final List<Integer> length;
+	private final List<Object> args;
+	private final List<Integer> maxReps;
+	private final List<String> names;
 
 	/**
 	 * Calls the abstract init() method to create the fields in this segment.
@@ -86,13 +86,13 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 */
 	public AbstractSegment(Group parent, ModelClassFactory factory) {
 		super(parent);
-		this.fields = new ArrayList<List<Type>>();
-		this.types = new ArrayList<Class<? extends Type>>();
-		this.required = new ArrayList<Boolean>();
-		this.length = new ArrayList<Integer>();
-		this.args = new ArrayList<Object>();
-		this.maxReps = new ArrayList<Integer>();
-		this.names = new ArrayList<String>();
+		this.fields = new ArrayList<>();
+		this.types = new ArrayList<>();
+		this.required = new ArrayList<>();
+		this.length = new ArrayList<>();
+		this.args = new ArrayList<>();
+		this.maxReps = new ArrayList<>();
+		this.names = new ArrayList<>();
 	}
 
     /**
@@ -130,7 +130,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 */
 	public Type[] getField(int number) throws HL7Exception {
 		List<Type> retVal = getFieldAsList(number);
-		return retVal.toArray(new Type[retVal.size()]); // note: fields are
+		return retVal.toArray(new Type[0]); // note: fields are
 														// numbered from 1 from
 														// the user's
 														// perspective
@@ -158,12 +158,9 @@ public abstract class AbstractSegment extends AbstractStructure implements
 			@SuppressWarnings("unchecked")
 			List<T> cast = (List<T>) retVal;
 			return cast.toArray(array);
-        } catch (ClassCastException cce) {
+        } catch (ClassCastException | HL7Exception cce) {
             log.error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            log.error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
         }
 	}
 		
@@ -242,12 +239,9 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		try {
 			@SuppressWarnings("unchecked") T retVal = (T)getField(number, rep);
 			return retVal;
-        } catch (ClassCastException cce) {
+        } catch (ClassCastException | HL7Exception cce) {
             log.error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
-        } catch (HL7Exception he) {
-            log.error("Unexpected problem obtaining field value.  This is a bug.", he);
-            throw new RuntimeException(he);
         }
 	}
 	
@@ -301,17 +295,9 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		} catch (IllegalAccessException iae) {
 			throw new HL7Exception("Can't access class " + c.getName() + " ("
 					+ iae.getClass().getName() + "): " + iae.getMessage());
-		} catch (InstantiationException ie) {
+		} catch (InstantiationException | NoSuchMethodException | InvocationTargetException ie) {
 			throw new HL7Exception("Can't instantiate class " + c.getName()
 					+ " (" + ie.getClass().getName() + "): " + ie.getMessage());
-		} catch (InvocationTargetException ite) {
-			throw new HL7Exception("Can't instantiate class " + c.getName()
-					+ " (" + ite.getClass().getName() + "): "
-					+ ite.getMessage());
-		} catch (NoSuchMethodException nme) {
-			throw new HL7Exception("Can't instantiate class " + c.getName()
-					+ " (" + nme.getClass().getName() + "): "
-					+ nme.getMessage());
 		}
 		return newType;
 	}
@@ -321,7 +307,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 		Object[] result;
 
 		Object o = this.args.get(fieldNum);
-		if (o != null && o instanceof Object[]) {
+		if (o instanceof Object[]) {
 			result = (Object[]) o;
 		} else {
 			result = new Object[] { getMessage() };
@@ -435,14 +421,11 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 *            <code>new Object[]{ getMessage() }</code>
 	 * @param name
 	 *            A textual description of the name of the field
-	 * @throws HL7Exception
-	 *             if the given class does not inherit from Type or if it can
-	 *             not be instantiated.
 	 */
 	protected void add(Class<? extends Type> c, boolean required, int maxReps,
 			int length, Object[] constructorArgs, String name)
 			throws HL7Exception {
-		List<Type> arr = new ArrayList<Type>();
+		List<Type> arr = new ArrayList<>();
 		this.types.add(c);
 		this.fields.add(arr);
 		this.required.add(required);
@@ -531,8 +514,8 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 */
 	public String getName() {
 		String fullName = this.getClass().getName();
-		return fullName.substring(fullName.lastIndexOf('.') + 1,
-				fullName.length());
+		return fullName.substring(fullName.lastIndexOf('.') + 1
+		);
 	}
 
 	/**
@@ -546,7 +529,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 * {@inheritDoc}
 	 */
 	public String[] getNames() {
-		return names.toArray(new String[names.size()]);
+		return names.toArray(new String[0]);
 	}
 
 	/**

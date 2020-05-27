@@ -36,8 +36,8 @@ import java.nio.charset.Charset;
  */
 class MllpEncoder {
 
-    protected Charset charset;
-    protected boolean omitBOM;
+    protected final Charset charset;
+    protected final boolean omitBOM;
 
     MllpEncoder(Charset charset, boolean omitBOM) {
         this.charset = charset;
@@ -46,13 +46,8 @@ class MllpEncoder {
 
     /**
      * Returns a HL7 message string extracted from the MLLP stream
-     *
-     * @param in MLLP input stream
-     * @return HL7 message string
-     * @throws java.io.IOException
-     * @throws ca.uhn.hl7v2.llp.LLPException
      */
-    public void putMessage(String message, OutputStream out) throws IOException, LLPException {
+    public void putMessage(String message, OutputStream out) throws IOException {
         // Try to enforce sending the message in one frame. Multiple calls to write()
         // may cause multiple frames being sent.
         byte[] bytes = toByteArray(message);
@@ -70,8 +65,8 @@ class MllpEncoder {
      * Converts the extract byte sequence into a String. This method must respect
      * a Charset, which is either statically configured or may be obtained at runtime.
      *
-     * @param data HL7 message as byte sequence
-     * @return HL7 message String using correct charset
+     * @param message HL7 message
+     * @return HL7 message as byte array
      */
     protected byte[] toByteArray(String message) {
         return asByteArray(message, charset, omitBOM);

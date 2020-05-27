@@ -33,7 +33,7 @@ public class ValidationContextImplTest extends MockitoTest {
     private static final ValidationException[] PASS = new ValidationException[0];
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         myContext = new ValidationContextImpl();        
     }
 
@@ -41,8 +41,8 @@ public class ValidationContextImplTest extends MockitoTest {
     public void testGetPrimitiveRules() {       
         PrimitiveTypeRule rule1 = mockRule(String.class, PrimitiveTypeRule.class);
         PrimitiveTypeRule rule2 = mockRule(String.class, PrimitiveTypeRule.class);
-        myContext.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "ST", rule1));
-        myContext.getPrimitiveRuleBindings().add(new RuleBinding<PrimitiveTypeRule>("2.5", "FT", rule2));        
+        myContext.getPrimitiveRuleBindings().add(new RuleBinding<>("2.5", "ST", rule1));
+        myContext.getPrimitiveRuleBindings().add(new RuleBinding<>("2.5", "FT", rule2));
         assertOnlyElement(rule1, myContext.getPrimitiveRules("2.5", "ST", null));
     }
 
@@ -65,8 +65,8 @@ public class ValidationContextImplTest extends MockitoTest {
     @Test    
     public void testGetEncodingRules() {
     	EncodingRule rule1 = mockRule(String.class, EncodingRule.class);
-        myContext.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("2.5", "XML", rule1));
-        myContext.getEncodingRuleBindings().add(new RuleBinding<EncodingRule>("2.5", "ER7", rule1));
+        myContext.getEncodingRuleBindings().add(new RuleBinding<>("2.5", "XML", rule1));
+        myContext.getEncodingRuleBindings().add(new RuleBinding<>("2.5", "ER7", rule1));
         assertOnlyElement(rule1, myContext.getEncodingRules("2.5", "XML"));
     }
     

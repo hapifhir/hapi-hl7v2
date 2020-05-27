@@ -44,8 +44,8 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 @SuppressWarnings("serial")
 public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, MessageRule> {
 
-	private String messageType;
-	private String[] triggerEvents;
+	private final String messageType;
+	private final String[] triggerEvents;
 
 	protected MessageRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
 			String messageType, String... triggerEvents) {
@@ -165,7 +165,7 @@ public class MessageRuleBuilder extends RuleTypeBuilder<MessageRuleBuilder, Mess
 
 	@Override
 	protected Collection<RuleBinding<MessageRule>> getRuleBindings(MessageRule rule, String version) {
-        List<RuleBinding<MessageRule>> bindings = new ArrayList<RuleBinding<MessageRule>>();
+        List<RuleBinding<MessageRule>> bindings = new ArrayList<>();
         for (String triggerEvent : triggerEvents) {
             bindings.add(new MessageRuleBinding(version, messageType,
                     triggerEvent, rule));

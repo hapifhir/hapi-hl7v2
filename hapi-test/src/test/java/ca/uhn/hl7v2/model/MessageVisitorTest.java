@@ -92,49 +92,49 @@ public class MessageVisitorTest {
      * Visitor that counts start/end method calls and remembers all non-empty
      * primitive values associated with their respective location.
      */
-    private class TestMessageVisitor extends MessageVisitorSupport {
+    private static class TestMessageVisitor extends MessageVisitorSupport {
         
-        Map<Location, String> nonEmptyPrimitives = new LinkedHashMap<Location, String>();
+        final Map<Location, String> nonEmptyPrimitives = new LinkedHashMap<>();
         int level = 0;
 
         @Override
-        public boolean start(Group group, Location location) throws HL7Exception {
+        public boolean start(Group group, Location location) {
             level++;
             return true;
         }
 
         @Override
-        public boolean end(Group group, Location location) throws HL7Exception {
+        public boolean end(Group group, Location location) {
             level--;
             return true;
         }
 
         @Override
-        public boolean start(Segment segment, Location location) throws HL7Exception {
+        public boolean start(Segment segment, Location location) {
             level++;
             return true;
         }
 
         @Override
-        public boolean end(Segment segment, Location location) throws HL7Exception {
+        public boolean end(Segment segment, Location location) {
             level--;
             return true;
         }
 
         @Override
-        public boolean start(Composite type, Location location) throws HL7Exception {
+        public boolean start(Composite type, Location location) {
             level++;
             return true;
         }
 
         @Override
-        public boolean end(Composite type, Location location) throws HL7Exception {
+        public boolean end(Composite type, Location location) {
             level--;
             return true;
         }
 
         @Override
-        public boolean visit(Primitive type, Location location) throws HL7Exception {
+        public boolean visit(Primitive type, Location location) {
             nonEmptyPrimitives.put(location, type.getValue());
             return true;
         }
@@ -146,17 +146,14 @@ public class MessageVisitorTest {
         StringBuilder sb = new StringBuilder();
 
         if (resourceInputStream != null) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream));
 
-            try {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream))) {
                 String line = in.readLine();
                 while (line != null) {
                     sb.append(line).append(linebreak);
                     line = in.readLine();
                 }
                 return sb.toString();
-            } finally {
-                in.close();
             }
         } else {
             throw new IOException("File " + name + " not found");

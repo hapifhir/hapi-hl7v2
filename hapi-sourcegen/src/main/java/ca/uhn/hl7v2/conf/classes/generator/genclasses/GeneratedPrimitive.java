@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.conf.classes.generator.builders.*;
  * 				  <tr>Cory Metcalf</tr></table>
  */
 public class GeneratedPrimitive extends GeneratedConformanceContainer {
-   private DocumentationBuilder docBuilder; // The documentation builder
+   private final DocumentationBuilder docBuilder; // The documentation builder
 
    private boolean hasConstantValue;
 

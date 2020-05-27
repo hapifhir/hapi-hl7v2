@@ -20,7 +20,7 @@ class HohLlpReader implements HL7Reader {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(HohLlpReader.class);
 
 	private InputStream myInputStream;
-	private Hl7OverHttpLowerLayerProtocol myProtocol;
+	private final Hl7OverHttpLowerLayerProtocol myProtocol;
 	private HohLlpWriter myWriter;
 
 	/**
@@ -88,6 +88,7 @@ class HohLlpReader implements HL7Reader {
 
 	}
 
+	@Override
 	public void setInputStream(InputStream theInputStream) throws IOException {
 		myInputStream = theInputStream;
 	}

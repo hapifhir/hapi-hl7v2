@@ -1,5 +1,7 @@
 package ca.uhn.hl7v2.conf.spec;
 
+import java.beans.PropertyVetoException;
+
 /**
  * Part of a specification that defines application behavior and IDs 
  * for other parts of the spec.   
@@ -11,10 +13,10 @@ public class Conformance {
     private String acceptAck;
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Holds value of property applicationAck. */
     private String applicationAck;
@@ -72,7 +74,7 @@ public class Conformance {
      *
      * @throws PropertyVetoException
      */
-    public void setAcceptAck(String acceptAck) throws java.beans.PropertyVetoException {
+    public void setAcceptAck(String acceptAck) throws PropertyVetoException {
         String oldAcceptAck = this.acceptAck;
         vetoableChangeSupport.fireVetoableChange("acceptAck", oldAcceptAck, acceptAck);
         this.acceptAck = acceptAck;
@@ -91,7 +93,7 @@ public class Conformance {
      *
      * @throws PropertyVetoException
      */
-    public void setApplicationAck(String applicationAck) throws java.beans.PropertyVetoException {
+    public void setApplicationAck(String applicationAck) throws PropertyVetoException {
         String oldApplicationAck = this.applicationAck;
         vetoableChangeSupport.fireVetoableChange("applicationAck", oldApplicationAck, applicationAck);
         this.applicationAck = applicationAck;
@@ -110,7 +112,7 @@ public class Conformance {
      *
      * @throws PropertyVetoException
      */
-    public void setStaticID(String staticID) throws java.beans.PropertyVetoException {
+    public void setStaticID(String staticID) throws PropertyVetoException {
         String oldStaticID = this.staticID;
         vetoableChangeSupport.fireVetoableChange("staticID", oldStaticID, staticID);
         this.staticID = staticID;
@@ -129,7 +131,7 @@ public class Conformance {
      *
      * @throws PropertyVetoException
      */
-    public void setDnamicID(String dnamicID) throws java.beans.PropertyVetoException {
+    public void setDnamicID(String dnamicID) throws PropertyVetoException {
         String oldDnamicID = this.dnamicID;
         vetoableChangeSupport.fireVetoableChange("dnamicID", oldDnamicID, dnamicID);
         this.dnamicID = dnamicID;
@@ -148,7 +150,7 @@ public class Conformance {
      *
      * @throws PropertyVetoException
      */
-    public void setMsgAckMode(String msgAckMode) throws java.beans.PropertyVetoException {
+    public void setMsgAckMode(String msgAckMode) throws PropertyVetoException {
         String oldMsgAckMode = this.msgAckMode;
         vetoableChangeSupport.fireVetoableChange("msgAckMode", oldMsgAckMode, msgAckMode);
         this.msgAckMode = msgAckMode;

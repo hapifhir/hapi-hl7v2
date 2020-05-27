@@ -30,12 +30,12 @@ public abstract class AbstractNonContinuousGeneratorTest<T extends IDGenerator> 
 	}
 
 	@Test
-	public void testMultiThreadedGenerator() throws IOException,
+	public void testMultiThreadedGenerator() throws
 			InterruptedException, ExecutionException {
 		ExecutorService service = Executors.newFixedThreadPool(THREADS);
 		try {
 			final T gen = getGenerator();
-			Collection<Incrementer> c = new ArrayList<Incrementer>();
+			Collection<Incrementer> c = new ArrayList<>();
 			for (int i = 0; i < THREADS; i++) {
 				c.add(new Incrementer(gen, ITERATIONS));
 			}
@@ -43,7 +43,7 @@ public abstract class AbstractNonContinuousGeneratorTest<T extends IDGenerator> 
 					TimeUnit.MILLISECONDS);
 
 			// Check that all IDs of all threads are unique
-			Set<String> allIds = new HashSet<String>();
+			Set<String> allIds = new HashSet<>();
 			for (Future<Set<String>> future : results) {
 				Set<String> ids = future.get();
 				assertEquals(ITERATIONS, ids.size());
@@ -56,7 +56,7 @@ public abstract class AbstractNonContinuousGeneratorTest<T extends IDGenerator> 
 	}
 
 	private Set<String> checkIDs(T gen, int max) throws IOException {
-		Set<String> ids = new HashSet<String>();
+		Set<String> ids = new HashSet<>();
 		for (int i = 0; i < max; i++) {
 			String newId = gen.getID();
 			assertTrue(ids.add(newId));
@@ -66,8 +66,8 @@ public abstract class AbstractNonContinuousGeneratorTest<T extends IDGenerator> 
 
 	class Incrementer implements Callable<Set<String>> {
 
-		private T gen;
-		private int iterations;
+		private final T gen;
+		private final int iterations;
 
 		public Incrementer(T gen, int iterations) {
 			this.gen = gen;
@@ -78,7 +78,7 @@ public abstract class AbstractNonContinuousGeneratorTest<T extends IDGenerator> 
 			return checkIDs(gen, iterations);
 		}
 
-	};
+	}
 
-	abstract protected T getGenerator();
+    abstract protected T getGenerator();
 }

@@ -53,7 +53,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.database.NormativeDatabase;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Creates source code for HL7 Message objects, using the normative DB. HL7
@@ -62,7 +61,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  * @author Eric Poiseau
  */
-public class MessageGenerator extends Object {
+public class MessageGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(MessageGenerator.class);
 
@@ -71,15 +70,14 @@ public class MessageGenerator extends Object {
 	 * a ModelClassFactory for segment class lookup. This makes segment creation
 	 * more flexible, but may slow down parsing substantially.
 	 */
-	public static String MODEL_CLASS_FACTORY_KEY = "ca.uhn.hl7v2.sourcegen.modelclassfactory";
+	public static final String MODEL_CLASS_FACTORY_KEY = "ca.uhn.hl7v2.sourcegen.modelclassfactory";
 
 	/** Creates new MessageGenerator */
 	public MessageGenerator() {
 	}
 
 	public static File determineTargetDir(String baseDirectory, String version) throws IOException, HL7Exception {
-		File targetDir = SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
-		return targetDir;
+		return SourceGenerator.makeDirectory(baseDirectory + DefaultModelClassFactory.getVersionPackagePath(version) + "message");
 	}
 
 	/**
@@ -116,8 +114,8 @@ public class MessageGenerator extends Object {
 		Statement stmt = conn.createStatement();
 		String sql = getMessageListQuery(theVersion);
 		ResultSet rs = stmt.executeQuery(sql);
-		ArrayList<String> messages = new ArrayList<String>();
-		ArrayList<String> chapters = new ArrayList<String>();
+		ArrayList<String> messages = new ArrayList<>();
+		ArrayList<String> chapters = new ArrayList<>();
 		while (rs.next()) {
 			String name = rs.getString(1);
 			if ("0".equals(name)) {
@@ -143,7 +141,7 @@ public class MessageGenerator extends Object {
 	 * segment_code, repetitional, optional, description
 	 */
 	private static String getSegmentListQuery(String message, String version) {
-		String sql = null;
+		String sql;
 
 		sql = "SELECT HL7Segments.seg_code, repetitional, optional, HL7Segments.description, seq_no, groupname " + "FROM HL7Versions RIGHT JOIN (HL7Segments INNER JOIN HL7EventMessageTypeSegments ON (HL7Segments.version_id = HL7EventMessageTypeSegments.version_id) "
 				+ "AND (HL7Segments.seg_code = HL7EventMessageTypeSegments.seg_code)) " + "ON HL7Segments.version_id = HL7Versions.version_id " + "WHERE (((HL7Versions.hl7_version)= '" + version + "') "
@@ -163,8 +161,7 @@ public class MessageGenerator extends Object {
 	 * class structure allows all choices. The matter of enforcing that only a
 	 * single choice is populated can't be handled by the class structure, and
 	 * should be handled elsewhere.
-	 * 
-	 * @param theJdbcUrl
+	 *
 	 */
 	private static SegmentDef[] getSegments(String message, String version) throws SQLException {
 		/*
@@ -253,9 +250,7 @@ public class MessageGenerator extends Object {
 
 			writeMessage(fileName, contents, message, chapter, version, DefaultModelClassFactory.getVersionPackageName(version), true, theTemplatePackage, null);
 
-		} catch (SQLException e) {
-			throw new HL7Exception(e);
-		} catch (IOException e) {
+		} catch (SQLException | IOException e) {
 			throw new HL7Exception(e);
 		}
 		// catch (Exception e) {
@@ -283,7 +278,7 @@ public class MessageGenerator extends Object {
 		}
 
 		for (int i = 0; i < messages.size(); i++) {
-			String message = (String) messages.get(i);
+			String message = messages.get(i);
 
 			String hapiTestGenMessage = System.getProperty("hapi.test.genmessage");
 			if (hapiTestGenMessage != null && !hapiTestGenMessage.contains(message)) {
@@ -291,7 +286,7 @@ public class MessageGenerator extends Object {
 			}
 
 			try {
-				make(message, baseDirectory, (String) chapters.get(i), version, theTemplatePackage, theFileExt);
+				make(message, baseDirectory, chapters.get(i), version, theTemplatePackage, theFileExt);
 			} catch (HL7Exception e) {
 				if (failOnError) {
 					throw e;
@@ -308,7 +303,7 @@ public class MessageGenerator extends Object {
 	public static String makeConstructor(StructureDef[] structs, String messageName, String version) {
 		boolean useFactory = System.getProperty(MODEL_CLASS_FACTORY_KEY, "FALSE").equalsIgnoreCase("TRUE");
 
-		StringBuffer source = new StringBuffer();
+		StringBuilder source = new StringBuilder();
 
 		source.append("\t/** \r\n");
 		source.append("\t * Creates a new ");
@@ -335,8 +330,7 @@ public class MessageGenerator extends Object {
 		source.append("\tprivate void init(ModelClassFactory factory) {\r\n");
 		source.append("\t   try {\r\n");
 		int numStructs = structs.length;
-		for (int i = 0; i < numStructs; i++) {
-			StructureDef def = structs[i];
+		for (StructureDef def : structs) {
 			if (useFactory) {
 				source.append("\t      this.add(factory.get");
 				source.append((def instanceof GroupDef) ? "Group" : "Segment");
@@ -399,9 +393,9 @@ public class MessageGenerator extends Object {
 		// Template template = new Template();
 
 		if (theStructureNameToChildNames != null && theStructureNameToChildNames.size() > 0) {
-			theStructureNameToChildNames = new TreeMap<String, List<String>>(theStructureNameToChildNames);
+			theStructureNameToChildNames = new TreeMap<>(theStructureNameToChildNames);
 		} else {
-			theStructureNameToChildNames = new HashMap<String, List<String>>();
+			theStructureNameToChildNames = new HashMap<>();
 		}
 		
 		Template template = VelocityFactory.getClasspathTemplateInstance(template2);

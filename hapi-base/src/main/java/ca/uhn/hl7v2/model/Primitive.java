@@ -41,7 +41,7 @@ public interface Primitive extends Type {
    *
    * @return a String representation of the value of this field
    */
-  public String getValue();
+  String getValue();
 
   /**
    * Sets the value of this field if the given value is legal in the context of the
@@ -50,6 +50,6 @@ public interface Primitive extends Type {
    * @param value the value to be set
    * @throws DataTypeException if the given value is not valid in this context.
    */
-  public void setValue(String value) throws DataTypeException;
+  void setValue(String value) throws DataTypeException;
 
 }

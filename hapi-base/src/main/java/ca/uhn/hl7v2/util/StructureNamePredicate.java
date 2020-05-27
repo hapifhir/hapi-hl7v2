@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.util.FilterIterator.Predicate;
 
 public class StructureNamePredicate implements Predicate<Structure> {
 
-	private String desired;
+	private final String desired;
 	
 	public StructureNamePredicate(String desired) {
 		super();

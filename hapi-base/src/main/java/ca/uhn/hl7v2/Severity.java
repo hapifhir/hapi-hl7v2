@@ -39,7 +39,7 @@ public enum Severity {
     private final String code;
     private final String message;
 
-    private Severity(String code, String message) {
+    Severity(String code, String message) {
         this.code = code;
         this.message = message;
     }

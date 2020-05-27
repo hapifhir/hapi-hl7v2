@@ -23,8 +23,8 @@ public class InitiatorImplTest extends TestCase {
     private InitiatorImpl myInitiator;
     private MockProcessor myProcessor; 
     
-    private String AA = "MSH|^~\\&|||||||ACK^A01|b|P|2.4\rMSA|AA|a\r";
-    private String AE = "MSH|^~\\&|||||||ACK^A01|b|P|2.4\rMSA|AE|a\r";
+    private final String AA = "MSH|^~\\&|||||||ACK^A01|b|P|2.4\rMSA|AA|a\r";
+    private final String AE = "MSH|^~\\&|||||||ACK^A01|b|P|2.4\rMSA|AE|a\r";
     
     /**
      * Constructor for InitiatorImplTest.
@@ -66,7 +66,7 @@ public class InitiatorImplTest extends TestCase {
 
         myInitiator.setReceiveTimeout(0);
         Message response = myInitiator.sendAndReceive(message);
-        assertEquals(null, response);
+        assertNull(response);
     }
     
     public void testTimeout() throws Exception {        
@@ -78,7 +78,7 @@ public class InitiatorImplTest extends TestCase {
         long start = System.currentTimeMillis();
         Message response = myInitiator.sendAndReceive(message);
         long end = System.currentTimeMillis();
-        assertEquals(null, response);
+        assertNull(response);
         assertTrue(end - start >= 1000);
     }
     
@@ -114,7 +114,7 @@ public class InitiatorImplTest extends TestCase {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
      */    
-    private class MockProcessor implements Processor {
+    private static class MockProcessor implements Processor {
         
         private String myNextMessage;
         private Transportable mySent;
@@ -123,7 +123,7 @@ public class InitiatorImplTest extends TestCase {
             myNextMessage = theMessage;
         }
 
-        public void send(Transportable arg0, int arg1, long arg2) throws HL7Exception {
+        public void send(Transportable arg0, int arg1, long arg2) {
             mySent = arg0;
         }
         
@@ -134,7 +134,7 @@ public class InitiatorImplTest extends TestCase {
         public void reserve(String arg0, long arg1) {
         }
 
-        public void cycle(boolean arg0) throws HL7Exception {
+        public void cycle(boolean arg0) {
         }
 
         public boolean isAvailable(String arg0) {

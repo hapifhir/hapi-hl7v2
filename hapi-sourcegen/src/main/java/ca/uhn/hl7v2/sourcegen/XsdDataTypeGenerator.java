@@ -58,14 +58,14 @@ public class XsdDataTypeGenerator {
 
     public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
 
-    private String templatePackage;
-    private String targetDirectory;
+    private final String templatePackage;
+    private final String targetDirectory;
 
     public XsdDataTypeGenerator(String dir, String templatePackage) throws IOException {
         File f = new File(dir);
         if (!f.isDirectory())
             throw new IOException("Can't create file in " +
-                    dir.toString() + " - it is not a directory.");
+                    dir + " - it is not a directory.");
         this.targetDirectory = dir;
         this.templatePackage = templatePackage.replace(".", "/");
     }
@@ -87,7 +87,7 @@ public class XsdDataTypeGenerator {
     }
 
     private void parsePrimitives(XSSchema schema, Version version) throws Exception {
-        List<DatatypeDef> primitiveTypes = new ArrayList<DatatypeDef>();
+        List<DatatypeDef> primitiveTypes = new ArrayList<>();
         Iterator<XSType> types = schema.iterateTypes();
 
         while (types.hasNext()) {
@@ -110,7 +110,7 @@ public class XsdDataTypeGenerator {
     }
 
     private void parseComposites(XSSchema schema, Version version) throws Exception {
-        List<DatatypeDef> compositeTypes = new ArrayList<DatatypeDef>();
+        List<DatatypeDef> compositeTypes = new ArrayList<>();
         Iterator<XSComplexType> types = schema.iterateComplexTypes();
         while (types.hasNext()) {
             XSComplexType complexType = types.next();
@@ -196,18 +196,14 @@ public class XsdDataTypeGenerator {
         }
         String targetFile = String.format("%s/%s.java", dirName, def.getType());
 
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"));
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"))) {
             writer.write(source);
             writer.flush();
-        } finally {
-            if (writer != null) writer.close();
         }
     }
 
     private String make(Template template, String basePackageName, String normalBasePackageName,
-                        DatatypeDef def, String version) throws Exception {
+                        DatatypeDef def, String version) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("datatype", def);

@@ -18,7 +18,6 @@ import ca.uhn.hl7v2.hoh.util.Validate;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ApplicationRouter;
 import ca.uhn.hl7v2.protocol.MetadataKeys;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.util.Terser;
 
 public class RelayHttpSender extends HohClientMultithreaded implements IRelaySender<Message>, BeanNameAware, InitializingBean {
@@ -30,7 +29,7 @@ public class RelayHttpSender extends HohClientMultithreaded implements IRelaySen
 	/**
 	 * {@inheritDoc}
 	 */
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		Validate.propertySet(getUrl(), "Url");
 		ourLog.info("Sender [{}] will transmit by HL7 over HTTP to {}", myBeanName, getUrl().toExternalForm());
 	}
@@ -61,13 +60,13 @@ public class RelayHttpSender extends HohClientMultithreaded implements IRelaySen
 	/**
 	 * {@inheritDoc}
 	 */
-	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 		String sendingIp = (String) theMetadata.get(ApplicationRouter.METADATA_KEY_SENDING_IP);
 		Object sendingPort = theMetadata.get(ApplicationRouter.METADATA_KEY_SENDING_PORT);
 		String controlId = (String) theMetadata.get(ApplicationRouter.METADATA_KEY_MESSAGE_CONTROL_ID);
 		String rawMessage = (String) theMetadata.get(MetadataKeys.IN_RAW_MESSAGE);
 
-		ourLog.info("Relaying message ({} bytes) with ID {} from {}:{} to URL {}", new Object[] {rawMessage.length(), controlId, sendingIp, sendingPort, getUrl()});
+		ourLog.info("Relaying message ({} bytes) with ID {} from {}:{} to URL {}", rawMessage.length(), controlId, sendingIp, sendingPort, getUrl());
 		
 		IReceivable<Message> response;
 		long delay = System.currentTimeMillis();
@@ -104,7 +103,7 @@ public class RelayHttpSender extends HohClientMultithreaded implements IRelaySen
 		}
 		
 		String responseControlId = new Terser(response.getMessage()).get("/MSH-10");
-		ourLog.info("Received response to ID {} with ID {} in {} ms", new Object[] {controlId, responseControlId, delay});
+		ourLog.info("Received response to ID {} with ID {} in {} ms", controlId, responseControlId, delay);
 		
 		return response.getMessage();
 	}

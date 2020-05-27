@@ -68,7 +68,7 @@ public class CommonTSTest {
     static int second;
     static float fractionalSecond;
     
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();    
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     private static TimeZone tz;
 
@@ -84,7 +84,7 @@ public class CommonTSTest {
     }
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         year = 2002;
         month = 11;
         day = 30;
@@ -100,11 +100,11 @@ public class CommonTSTest {
         } else {
             offsetStr = "-" + offsetStr;
         }
-        timeStamp = Integer.toString(year) + Integer.toString(month) + Integer.toString(day)
-                + Integer.toString(hour) + Integer.toString(minute) + Integer.toString(second)
+        timeStamp = Integer.toString(year) + month + day
+                + hour + minute + second
                 + Float.toString(fractionalSecond).substring(1) + offsetStr;
-        baseTime = Integer.toString(year) + Integer.toString(month) + Integer.toString(day)
-                + Integer.toString(hour) + Integer.toString(minute) + Integer.toString(second)
+        baseTime = Integer.toString(year) + month + day
+                + hour + minute + second
                 + Float.toString(fractionalSecond).substring(1);
     }
 
@@ -624,7 +624,7 @@ public class CommonTSTest {
     public void testSetGetOffset() {
 
         buildSpecs(SetOffsetSpec.class)
-                .add(-0000, baseTime + "+0000")
+                .add(-0, baseTime + "+0000")
                 .add(-1160, DataTypeException.class)
                 .add(-1159, baseTime + "-1159")
                 .add(2106, baseTime + "+2106")

@@ -43,10 +43,10 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class LazyConnection implements Connection {
 
-    private ConnectionData data;
-    private ExecutorService executor;
+    private final ConnectionData data;
+    private final ExecutorService executor;
     private Connection activeConnection;
-    private LazyInitiator initiator;
+    private final LazyInitiator initiator;
 
     public LazyConnection(ConnectionData data, ExecutorService executor) {
         this.data = data;
@@ -107,7 +107,7 @@ public class LazyConnection implements Connection {
 
     static class LazyInitiator implements Initiator {
 
-        private LazyConnection connection;
+        private final LazyConnection connection;
         private long timeoutMillis = 10000;
 
         LazyInitiator(LazyConnection connection) {

@@ -1,7 +1,6 @@
 package ca.uhn.hl7v2.conf.spec.message;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,13 +15,13 @@ public class AbstractSegmentContainer implements Iterable<ProfileStructure> {
     private String description;
     private String reference;
     private String impNote;    
-    private List<ProfileStructure> children = new ArrayList<ProfileStructure>();
+    private final List<ProfileStructure> children = new ArrayList<>();
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     /** Creates a new instance of AbstractSegmentContainer */
     public AbstractSegmentContainer() {

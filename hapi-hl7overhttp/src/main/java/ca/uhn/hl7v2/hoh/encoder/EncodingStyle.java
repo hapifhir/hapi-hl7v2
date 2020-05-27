@@ -25,7 +25,7 @@ public enum EncodingStyle {
 	 */
 	XML("application/hl7-v2+xml");
 
-	private static final Map<String, EncodingStyle> ourContentTypeToEncodingStyles = new HashMap<String, EncodingStyle>();
+	private static final Map<String, EncodingStyle> ourContentTypeToEncodingStyles = new HashMap<>();
 
 	static {
 		for (EncodingStyle next : values()) {
@@ -33,7 +33,7 @@ public enum EncodingStyle {
 		}
 	}
 
-	private String myContentType;
+	private final String myContentType;
 
 	EncodingStyle(String theContentType) {
 		myContentType = theContentType;

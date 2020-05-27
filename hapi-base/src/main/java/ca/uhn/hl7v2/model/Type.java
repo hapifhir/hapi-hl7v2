@@ -41,7 +41,7 @@ public interface Type extends Serializable, Visitable {
      *
      * @return the name of the type
      */
-    public String getName();
+    String getName();
     
     /**
      * Returns an object containing any extra (non-standard) components that 
@@ -50,12 +50,12 @@ public interface Type extends Serializable, Visitable {
      *
      * @return an object containing any extra (non-standard) components
      */
-    public ExtraComponents getExtraComponents();
+    ExtraComponents getExtraComponents();
     
     /**
      * @return the message to which this Type belongs
      */
-    public Message getMessage();
+    Message getMessage();
 
     /**
      * <p>
@@ -86,7 +86,7 @@ public interface Type extends Serializable, Visitable {
      * @param string the message to be parsed
      * @throws HL7Exception if errors occurred while parsing
      */
-    public void parse(String string) throws HL7Exception;
+    void parse(String string) throws HL7Exception;
 
 
     /**
@@ -95,7 +95,7 @@ public interface Type extends Serializable, Visitable {
      * @return the encoded message
      * @throws HL7Exception if errors occurred while encoding
      */
-    public String encode() throws HL7Exception;
+    String encode() throws HL7Exception;
 
 
 	/**

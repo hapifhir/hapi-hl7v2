@@ -38,7 +38,7 @@ public class InitiatorImpl implements Initiator {
      *  with the remote system
      */
     public InitiatorImpl(Processor theProcessor) {
-        myMetadataFields = new ArrayList<String>(20);
+        myMetadataFields = new ArrayList<>(20);
         myMetadataFields.add("MSH-18"); //add character set by default
         myParser = new GenericParser();
         myProcessor = theProcessor;
@@ -52,7 +52,7 @@ public class InitiatorImpl implements Initiator {
      *  with the remote system
      */
     public InitiatorImpl(Parser theParser, Processor theProcessor) {
-        myMetadataFields = new ArrayList<String>(20);
+        myMetadataFields = new ArrayList<>(20);
         myParser = theParser;
         myProcessor = theProcessor;
         init();
@@ -146,16 +146,15 @@ public class InitiatorImpl implements Initiator {
     }
     
     private Map<String, Object> getMetadata(Message theMessage) throws HL7Exception {
-        Map<String, Object> md = new HashMap<String, Object>();
+        Map<String, Object> md = new HashMap<>();
         Terser t = new Terser(theMessage);
 
         //snapshot so concurrent changes won't break our iteration
         String[] fields = getMetadataFields().toArray(new String[0]);
-        
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i].toString();
-            String val = t.get(field); 
-            md.put(field, val);
+
+        for (String s : fields) {
+            String val = t.get(s);
+            md.put(s, val);
         }
         
         return md;

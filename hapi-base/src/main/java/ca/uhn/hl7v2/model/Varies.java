@@ -58,7 +58,7 @@ public class Varies implements Variable {
      * datatype ("ST", "NM", etc) for an OBX segment with a missing
      * OBX-2 value.
      *
-     * @deprecated use FixOBX5#DEFAULT_OBX2_TYPE_PROP
+     * @deprecated use FixFieldDataType#DEFAULT_OBX2_TYPE_PROP
      */
     public static final String DEFAULT_OBX2_TYPE_PROP = FixFieldDataType.DEFAULT_OBX2_TYPE_PROP;
 
@@ -103,7 +103,7 @@ public class Varies implements Variable {
 
 
     private Type data;
-    private Message message;
+    private final Message message;
 
     /**
      * Creates new Varies.

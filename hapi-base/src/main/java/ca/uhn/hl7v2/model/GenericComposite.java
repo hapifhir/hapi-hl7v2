@@ -13,8 +13,8 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class GenericComposite extends AbstractComposite {
     
-    private List<Type> components;
-    private Message message;
+    private final List<Type> components;
+    private final Message message;
 
     /**
      * Creates a generic composite
@@ -24,14 +24,14 @@ public class GenericComposite extends AbstractComposite {
     public GenericComposite(Message message) {
         super(message);
         this.message = message;
-        components = new ArrayList<Type>(20);
+        components = new ArrayList<>(20);
     }
     
     /** 
      * Returns the single component of this composite at the specified position (starting at 0) - 
      * Creates it (and any nonexistent components before it) if necessary.  
      */
-    public Type getComponent(int number) throws DataTypeException {
+    public Type getComponent(int number) {
         for (int i = components.size(); i <= number; i++) {
             components.add(new Varies(message));
         }
@@ -42,7 +42,7 @@ public class GenericComposite extends AbstractComposite {
      * Returns an array containing the components of this field.
      */
     public Type[] getComponents() {
-    	return components.toArray(new Type[components.size()]);
+    	return components.toArray(new Type[0]);
     }    
     
     /** Returns the name of the type (used in XML encoding and profile checking)  */

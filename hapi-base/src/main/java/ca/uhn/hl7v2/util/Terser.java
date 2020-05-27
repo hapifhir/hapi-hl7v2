@@ -112,8 +112,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Terser {
 
-    private SegmentFinder finder;
-    private static Logger log = LoggerFactory.getLogger(Terser.class);
+    private final SegmentFinder finder;
+    private static final Logger log = LoggerFactory.getLogger(Terser.class);
 
     /** Creates a new instance of Terser
      *
@@ -432,8 +432,8 @@ public class Terser {
         Segment segment = getSegment(tok.nextToken());
 
         int[] ind = getIndices(spec);
-        log.trace("Setting {} seg: {} ind: {} {} {} {}", new Object[] { spec, segment.getName(), ind[0], ind[1],
-                ind[2], ind[3] });
+        log.trace("Setting {} seg: {} ind: {} {} {} {}", spec, segment.getName(), ind[0], ind[1],
+                ind[2], ind[3]);
         set(segment, ind[0], ind[1], ind[2], ind[3], value);
     }
 

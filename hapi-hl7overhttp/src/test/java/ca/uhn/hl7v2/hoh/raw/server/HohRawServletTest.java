@@ -59,20 +59,16 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 	}
 
 	public boolean authorize(String theUri, String theUsername, String thePassword) {
-		if (myExpectedUsername == null) {
-			return true;
-		} else {
+		if (myExpectedUsername != null) {
 			if (!StringUtils.equals(myExpectedUri, theUri)) {
 				return false;
 			}
 			if (!StringUtils.equals(myExpectedUsername, theUsername)) {
 				return false;
 			}
-			if (!StringUtils.equals(myExpectedPassword, thePassword)) {
-				return false;
-			}
-			return true;
+			return StringUtils.equals(myExpectedPassword, thePassword);
 		}
+		return true;
 
 	}
 
@@ -104,15 +100,11 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 				myResponse = GenericParser.getInstanceWithNoValidation().parse(myMessage).generateACK().encode();
 			}
 			return new RawSendable(myResponse);
-		} catch (EncodingNotSupportedException e) {
-			throw new MessageProcessingException(e);
-		} catch (HL7Exception e) {
-			throw new MessageProcessingException(e);
-		} catch (IOException e) {
+		} catch (IOException | HL7Exception e) {
 			throw new MessageProcessingException(e);
 		}
 
-	}
+    }
 
 	@Test
 	public void testSuccessWhenRequestHasNoCharsetSpecified() throws Exception {
@@ -170,7 +162,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -237,7 +229,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -310,7 +302,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -379,7 +371,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -448,7 +440,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -517,7 +509,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		String line;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		while ((line = rd.readLine()) != null) {
 			response.append(line);
 			response.append('\r');
@@ -529,12 +521,12 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		assertEquals(charsetName, conn.getHeaderField("Content-Type").replaceAll(".*;.*charset=", ""));
 		assertEquals(200, conn.getResponseCode());
 		assertEquals(message, myMessage);
-		assertEquals(myResponse.replaceAll("(\\r|\\n)+", " "), responseString.replaceAll("(\\r|\\n)+", " "));
+		assertEquals(myResponse.replaceAll("([\\r\\n])+", " "), responseString.replaceAll("([\\r\\n])+", " "));
 
 	}
 
 	@AfterClass
-	public static void afterClass() throws InterruptedException {
+	public static void afterClass() {
 		// Thread.sleep(1000000);
 		ourHapiContext.getExecutorService().shutdown();
 	}

@@ -32,7 +32,6 @@ import java.io.IOException;
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.validation.ValidationContext;
 
 /**
  * <p>
@@ -53,7 +52,7 @@ public interface Message extends Group {
 	 * (e.g. "2.4")
      * @return version number of the HL7 version
 	 */
-	public abstract String getVersion();
+    String getVersion();
 
 	/**
 	 * Convenience method which retrieves the field separator value from the first field of the
@@ -65,7 +64,7 @@ public interface Message extends Group {
 	 * @throws HL7Exception If an error occurs
 	 * @since 1.0
 	 */
-	public Character getFieldSeparatorValue() throws HL7Exception;
+    Character getFieldSeparatorValue() throws HL7Exception;
 
 	/**
 	 * Convenience method which retrieves the encoding characters value from the second field of the
@@ -77,7 +76,7 @@ public interface Message extends Group {
 	 * @throws HL7Exception If an error occurs
 	 * @since 1.0
 	 */
-	public String getEncodingCharactersValue() throws HL7Exception;
+    String getEncodingCharactersValue() throws HL7Exception;
 
 	/**
 	 * Sets the parser to be used when parse/encode methods are called on this Message, as well as
@@ -90,7 +89,7 @@ public interface Message extends Group {
      *
      * @param parser the parser to be used when parse/encode methods are called on this Message
 	 */
-	public void setParser(Parser parser);
+    void setParser(Parser parser);
 
 	/**
 	 * Returns the parser to be used when parse/encode methods are called on this Message, as well
@@ -98,21 +97,21 @@ public interface Message extends Group {
      *
      * @return the parser to be used when parse/encode methods are called on this Message
 	 */
-	public Parser getParser();
+    Parser getParser();
 
 	/**
 	 * Parses the string into this message using the parser returned by {@link #getParser() }
      * @param string the message to be parsed
      * @throws HL7Exception if errors occurred during parsing
 	 */
-	public void parse(String string) throws HL7Exception;
+    void parse(String string) throws HL7Exception;
 
 	/**
 	 * Encodes this message using the parser returned by {@link #getParser() }
      * @return the string-encoded message
      * @throws HL7Exception if error occurred during encoding
 	 */
-	public String encode() throws HL7Exception;
+    String encode() throws HL7Exception;
 
 	/**
 	 * <p>
@@ -134,7 +133,7 @@ public interface Message extends Group {
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
 	 */
-	public Message generateACK() throws HL7Exception, IOException;
+    Message generateACK() throws HL7Exception, IOException;
 
 	/**
 	 * <p>
@@ -159,7 +158,7 @@ public interface Message extends Group {
 	 * 
 	 * @deprecated use {@link #generateACK(AcknowledgmentCode, HL7Exception)}
 	 */
-	public Message generateACK(String theAcknowldegementCode, HL7Exception theException)
+    Message generateACK(String theAcknowldegementCode, HL7Exception theException)
 			throws HL7Exception, IOException;
 
 	/**
@@ -183,8 +182,8 @@ public interface Message extends Group {
      * @return the acknoeldgement message
 	 * @throws HL7Exception If the message can not be constructed
 	 * @throws IOException If a failure occurs in generating a control ID for the message
-	 */	
-	public Message generateACK(AcknowledgmentCode theAcknowlegementCode, HL7Exception theException)
+	 */
+    Message generateACK(AcknowledgmentCode theAcknowlegementCode, HL7Exception theException)
 			throws HL7Exception, IOException;	
 	/**
 	 * <p>
@@ -251,6 +250,6 @@ public interface Message extends Group {
 	 * @return A summary of the structure
 	 * @throws HL7Exception If any problems occur encoding the structure
 	 */
-	public String printStructure() throws HL7Exception;
+    String printStructure() throws HL7Exception;
 
 }

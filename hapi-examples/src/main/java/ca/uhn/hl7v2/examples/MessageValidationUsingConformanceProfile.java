@@ -3,13 +3,10 @@
  */
 package ca.uhn.hl7v2.examples;
 
-import java.io.IOException;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.store.ClasspathProfileStore;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.Validator;
@@ -28,11 +25,9 @@ public class MessageValidationUsingConformanceProfile {
 
 	/**
 	 * @param args
-	 * @throws IOException 
-	 * @throws ProfileException 
-	 * @throws HL7Exception 
+	 * @throws HL7Exception
 	 */
-	public static void main(String[] args) throws ProfileException, IOException, HL7Exception {
+	public static void main(String[] args) throws HL7Exception {
 
 		/*
 		 * In this example, we are looking at a few aspects of message

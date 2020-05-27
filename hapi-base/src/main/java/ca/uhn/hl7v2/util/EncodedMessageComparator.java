@@ -31,7 +31,7 @@ public class EncodedMessageComparator {
      * @param message an XML-encoded or ER7-encoded message string
      */
     public static String standardize(String message) throws SAXException {
-        String result = null;
+        String result;
         String encoding = parser.getEncoding(message);
         if (encoding.equals("XML")) {
             result = standardizeXML(message);
@@ -75,10 +75,10 @@ public class EncodedMessageComparator {
         message = endSegment.matcher(message).replaceAll("\r");
         
         Pattern endField = Pattern.compile("[" + repSep + compSep + subSep + "]*" + fieldDelim);
-        message = endField.matcher(message).replaceAll(String.valueOf(fieldDelim));
+        message = endField.matcher(message).replaceAll(fieldDelim);
         
         Pattern endComp = Pattern.compile("[" + subSep + "]*" + compSep);
-        message = endComp.matcher(message).replaceAll(String.valueOf(compSep));
+        message = endComp.matcher(message).replaceAll(compSep);
         
         //Pattern endSub = Pattern.compile("[ ]*" + subSep);
         //message = endSub.matcher(message).replaceAll(String.valueOf(subSep));
@@ -94,7 +94,7 @@ public class EncodedMessageComparator {
      * Attributes, comments, and processing instructions are not considered to change the 
      * HL7 meaning of the message, and are removed in the standardized representation.    
      */
-    public static String standardizeXML(String message) throws SAXException {
+    public static String standardizeXML(String message) {
         try {
         	Document doc = XMLUtils.parse(message);
             clean(doc.getDocumentElement());
@@ -126,8 +126,8 @@ public class EncodedMessageComparator {
             names[i] = attributes.item(i).getNodeName();
         }
         //remove by name
-        for (int i = 0; i < names.length; i++) {
-            attributes.removeNamedItem(names[i]);
+        for (String name : names) {
+            attributes.removeNamedItem(name);
         }
 
     }
@@ -171,7 +171,7 @@ public class EncodedMessageComparator {
             throw new HL7Exception("Equivalence check failed due to SAXException: " + e.getMessage());
         }
         
-        return new Pair<String>(std1, std2);
+        return new Pair<>(std1, std2);
 	}
 
 	/** 

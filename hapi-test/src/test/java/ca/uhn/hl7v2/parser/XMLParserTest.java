@@ -7,6 +7,7 @@
 package ca.uhn.hl7v2.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 // import hapi.on.olis.erp_z99.message.ERP_R09;
 
@@ -34,7 +35,6 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A01;
 import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
-import ca.uhn.hl7v2.model.v251.message.ERP_R09;
 import ca.uhn.hl7v2.util.Terser;
 
 /**
@@ -59,12 +59,12 @@ public class XMLParserTest {
 	 * duplicate PID segments in a swap patient message) should be handled correctly.
 	 */
 	@Test
-	public void testParseDuplicateSegment() throws IOException, EncodingNotSupportedException,
+	public void testParseDuplicateSegment() throws IOException,
 			HL7Exception {
 		InputStream stream = XMLParserTest.class.getClassLoader().getResourceAsStream(
 				"ca/uhn/hl7v2/parser/adt_a17.xml");
 		byte[] bytes = new byte[10000];
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int count;
 		while ((count = stream.read(bytes)) > 0) {
 			buffer.append(new String(bytes), 0, count);
@@ -83,8 +83,8 @@ public class XMLParserTest {
 		int thirdIndex = er7Message.indexOf("PID", secondIndex + 1);
 		assertTrue(firstIndex > 0);
 		assertTrue(secondIndex > firstIndex);
-		assertTrue("Found third PID " + firstIndex + " " + secondIndex + " " + thirdIndex + ":\r\n"
-				+ er7Message, thirdIndex == -1);
+		assertEquals("Found third PID " + firstIndex + " " + secondIndex + " " + thirdIndex + ":\r\n"
+				+ er7Message, thirdIndex, -1);
 
 	}
 
@@ -131,12 +131,12 @@ public class XMLParserTest {
 	/**
 	 */
 	@Test
-	public void testParseExtraComponents() throws IOException, EncodingNotSupportedException,
+	public void testParseExtraComponents() throws IOException,
 			HL7Exception {
 		InputStream stream = XMLParserTest.class.getClassLoader().getResourceAsStream(
 				"ca/uhn/hl7v2/parser/extracmp_xml.xml");
 		byte[] bytes = new byte[10000];
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		int count;
 		while ((count = stream.read(bytes)) > 0) {
 			buffer.append(new String(bytes), 0, count);
@@ -154,13 +154,13 @@ public class XMLParserTest {
 	}
 	
 	@Test
-	public void testGetAckID() throws HL7Exception, IOException {
+	public void testGetAckID() throws IOException {
 		assertEquals(parser.getAckID("<MSA.2>12</MSA.2>"), "12");
 		assertEquals(parser.getAckID("<thing<foo> help >>><msa.2> *** </i forget"), "***");
 		String ackID = parser.getAckID("<there is no msa.2>x</msa.2>");
-		assertEquals(null, ackID);
+		assertNull(ackID);
 		ackID = parser.getAckID("<msa.2>x");
-		assertEquals(null, ackID);
+		assertNull(ackID);
 		ackID = parser.getAckID("<MSA.2>   12   \r</MSA.2>");
 		assertEquals("12", ackID);
 		ackID = parser.getAckID(loadFile("/ca/uhn/hl7v2/parser/get_ack_id.xml"));
@@ -168,11 +168,11 @@ public class XMLParserTest {
 	}
 
 	@Test
-	public void testGetEncoding() throws Exception {
+	public void testGetEncoding() {
 		String test1 = "<MSH>\r<MSH.1>|</MSH.1>\r<MSH.2>^~\\&amp;</MSH.2>\r</MSH>";
 		String test2 = "blorg gablorg"; // bad: no <MSH>
 		assertEquals("XML", parser.getEncoding(test1));
-		assertEquals(null, parser.getEncoding(test2));
+		assertNull(parser.getEncoding(test2));
 	}
 
 	@Test
@@ -183,7 +183,7 @@ public class XMLParserTest {
 	}
 
 	@Test
-	public void testRemoveWhitespace() throws Exception {
+	public void testRemoveWhitespace() {
 		assertEquals("hello", parser.removeWhitespace("\t\r\nhello "));
 		assertEquals("hello there", parser.removeWhitespace(" hello \t \rthere\r\n"));
 	}
@@ -212,28 +212,28 @@ public class XMLParserTest {
 		assertEquals(expected, actual.toString()); // Encoding
 	}
 
-	public class DummyXMLParser extends XMLParser {
-		public DummyXMLParser() throws HL7Exception {
+	public static class DummyXMLParser extends XMLParser {
+		public DummyXMLParser() {
 			super();
 		}
 
-		public Message parseDocument(Document XMLMessage, String version) throws HL7Exception {
+		public Message parseDocument(Document XMLMessage, String version) {
 			return null;
 		}
 
-		public Document encodeDocument(Message source) throws HL7Exception {
+		public Document encodeDocument(Message source) {
 			return null;
 		}
 
 		@Override
-		public void parse(Message theMessage, String theString) throws HL7Exception {
+		public void parse(Message theMessage, String theString) {
 			throw new UnsupportedOperationException();
 		}
 
 	}
 
 	@Test
-	public void testEdIssue() throws EncodingNotSupportedException, HL7Exception, IOException {
+	public void testEdIssue() throws HL7Exception, IOException {
 
 		String messageText = loadFile("/ca/uhn/hl7v2/parser/ed_issue.xml");
 
@@ -253,7 +253,7 @@ public class XMLParserTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testEncodeOmdO03() throws EncodingNotSupportedException, HL7Exception, IOException {
+	public void testEncodeOmdO03() throws HL7Exception, IOException {
 		String texto = loadFile("/ca/uhn/hl7v2/parser/omd_o03.txt", '\r');
 		XMLParser xmlParser = new DefaultXMLParser();
 		PipeParser pipeParser = new PipeParser();
@@ -346,7 +346,7 @@ public class XMLParserTest {
 	 * Test for 202
 	 */
 	@Test
-	public void testEncodeMessageWithTrailingEncodedBackslash() throws EncodingNotSupportedException, HL7Exception, IOException {
+	public void testEncodeMessageWithTrailingEncodedBackslash() throws HL7Exception, IOException {
 		ADT_A01 msg = new ADT_A01();
 		msg.initQuickstart("ADT", "A01", "T");
 		
@@ -473,17 +473,14 @@ public class XMLParserTest {
 		StringBuilder sb = new StringBuilder();
 
 		if (resourceInputStream != null) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream));
 
-			try {
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceInputStream))) {
 				String line = in.readLine();
 				while (line != null) {
 					sb.append(line).append(linebreak);
 					line = in.readLine();
 				}
 				return sb.toString();
-			} finally {
-				in.close();
 			}
 		} else {
 			throw new IOException("File " + name + " not found");

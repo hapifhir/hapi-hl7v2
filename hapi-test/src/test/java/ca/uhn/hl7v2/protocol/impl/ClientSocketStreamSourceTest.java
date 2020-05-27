@@ -25,15 +25,13 @@ public class ClientSocketStreamSourceTest extends Assert {
             = new ClientSocketStreamSource(new InetSocketAddress("127.0.0.1", port));
         
         final ServerSocket ss = new ServerSocket(port);
-        Thread thd = new Thread() {
-            public void run() {
-                try {
-                    ss.accept(); 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Thread thd = new Thread(() -> {
+            try {
+                ss.accept();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
+        });
         thd.start();
         
         try {
@@ -51,9 +49,9 @@ public class ClientSocketStreamSourceTest extends Assert {
         }
         
         source.connect();
-        
-        assertTrue(source.getInboundStream() != null);
-        assertTrue(source.getOutboundStream() != null);
+
+        assertNotNull(source.getInboundStream());
+        assertNotNull(source.getOutboundStream());
     }
 
 }

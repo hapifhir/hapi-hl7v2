@@ -26,7 +26,7 @@ import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(AbstractHl7OverHttpEncoder.class);
-	private static DateFormat ourRfc1123DateFormat;
+	private static final DateFormat ourRfc1123DateFormat;
 
 	static {
 		ourRfc1123DateFormat = new SimpleDateFormat("EEE, dd MMM yy HH:mm:ss z");
@@ -88,7 +88,7 @@ public abstract class AbstractHl7OverHttpEncoder extends AbstractHl7OverHttp {
 
 		setActionLineAppropriately();
 
-		setHeaders(new LinkedHashMap<String, String>());
+		setHeaders(new LinkedHashMap<>());
 
 		StringBuilder ctBuilder = new StringBuilder();
 		if (mySendable != null) {

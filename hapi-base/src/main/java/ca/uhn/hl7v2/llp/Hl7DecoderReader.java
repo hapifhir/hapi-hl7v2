@@ -39,10 +39,10 @@ import static ca.uhn.hl7v2.llp.MllpConstants.CHARSET_KEY;
 abstract class Hl7DecoderReader<T extends MllpDecoder> implements HL7Reader {
 
     private InputStream in;
-    private T decoder;
+    private final T decoder;
     private Charset charset;
 
-    public Hl7DecoderReader() throws IOException {
+    public Hl7DecoderReader() {
         decoder = initDecoder();
     }
 
@@ -71,7 +71,7 @@ abstract class Hl7DecoderReader<T extends MllpDecoder> implements HL7Reader {
         return charset;
     }
 
-    public void setInputStream(InputStream in) throws IOException {
+    public void setInputStream(InputStream in) {
         if (in == null) throw new NullPointerException("InputStream is null");
         this.in = new BufferedInputStream(in);
     }

@@ -61,10 +61,10 @@ enum HL7Charsets {
     UTF_32      ("UNICODE UTF-32",  "UTF-32");
 
 
-    private String hl7EncodingName;
-    private Charset charset;
+    private final String hl7EncodingName;
+    private final Charset charset;
 
-    private HL7Charsets(String hl7EncodingName, String charset) {
+    HL7Charsets(String hl7EncodingName, String charset) {
         this.hl7EncodingName = hl7EncodingName;
         this.charset = Charset.forName(charset);
     }

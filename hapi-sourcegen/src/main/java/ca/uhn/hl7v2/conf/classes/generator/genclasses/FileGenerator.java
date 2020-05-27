@@ -40,7 +40,7 @@ import java.io.*;
  * 				   <tr>Cory Metcalf</tr></table>
  */
 public class FileGenerator {
-   private String basePath;
+   private final String basePath;
 
    /** Initialize member variable setting the base file path
     * @param basePath representing base path location
@@ -49,8 +49,8 @@ public class FileGenerator {
       // make sure there is a \ appended to ouput director path
       System.out.println(basePath);
       this.basePath = basePath.replace('\\', '/');
-      if ((basePath.charAt(basePath.length() - 1)) != '/')
-         basePath = basePath + "/";
+      if ((basePath.charAt(basePath.length() - 1)) != '/') {
+      }
 
    }
    
@@ -76,7 +76,7 @@ public class FileGenerator {
       fileName = fileName.replaceAll(" ", "") + ".java";
       String filePath = basePath + "/" + packageName + "/" + fileName;
       File f = new File(filePath);
-      StringBuffer dir = new StringBuffer();
+      StringBuilder dir = new StringBuilder();
 
       //check if file exist
       // TODO: Reactivate this once everything works!

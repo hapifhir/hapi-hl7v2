@@ -44,10 +44,9 @@ public class ReflectionUtil {
     public static <T extends Structure> T instantiateStructure(Class<T> theType, Group parent,
             ModelClassFactory theModelClassFactory) throws HL7Exception {
         try {
-            Constructor<T> constructor = theType.getConstructor(new Class<?>[] { Group.class,
-                    ModelClassFactory.class });
-            T message = constructor.newInstance(parent, theModelClassFactory);
-            return message;
+            Constructor<T> constructor = theType.getConstructor(Group.class,
+                    ModelClassFactory.class);
+            return constructor.newInstance(parent, theModelClassFactory);
         } catch (Exception e) {
             throw new HL7Exception("Failed to instantiate type " + theType.getCanonicalName()
                     + ": ", e);
@@ -58,9 +57,8 @@ public class ReflectionUtil {
             ModelClassFactory theModelClassFactory) throws HL7Exception {
         try {
             Constructor<T> constructor = theType
-                    .getConstructor(new Class<?>[] { ModelClassFactory.class });
-            T message = constructor.newInstance(theModelClassFactory);
-            return message;
+                    .getConstructor(ModelClassFactory.class);
+            return constructor.newInstance(theModelClassFactory);
         } catch (Exception e) {
             throw new HL7Exception("Failed to instantiate type " + theType.getCanonicalName()
                     + ": ", e);

@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IReceivable;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialClientCallback;
 import ca.uhn.hl7v2.hoh.auth.SingleCredentialServerCallback;
@@ -234,7 +233,7 @@ public class HohRawClientMultithreadedTest {
 
 	}
 	@After
-	public void after() throws InterruptedException {
+	public void after() {
 		ourLog.info("Marking done as true");
 		myServerSocketThread.done();
 	}

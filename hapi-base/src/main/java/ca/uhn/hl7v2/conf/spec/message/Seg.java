@@ -13,16 +13,16 @@ public class Seg implements ProfileStructure {
     
     
     /** Utility field used by bound properties. */
-    private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    private java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    private final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     private String impNote;    
     private String description;
     private String reference;
     private String predicate;
-    private final List<Field> fields = new ArrayList<Field>();
+    private final List<Field> fields = new ArrayList<>();
     private String name;
     private String longName;
     private String usage;
@@ -291,12 +291,12 @@ public class Seg implements ProfileStructure {
     public void setMax(short max) throws ProfileException {
         short oldMax = this.max;
         try {
-            vetoableChangeSupport.fireVetoableChange("max", new Short(oldMax), new Short(max));
+            vetoableChangeSupport.fireVetoableChange("max", Short.valueOf(oldMax), Short.valueOf(max));
         } catch (Exception e) {
             throw new ProfileException(null, e);
         }
         this.max = max;
-        propertyChangeSupport.firePropertyChange("max", new Short(oldMax), new Short(max));
+        propertyChangeSupport.firePropertyChange("max", Short.valueOf(oldMax), Short.valueOf(max));
     }
     
 

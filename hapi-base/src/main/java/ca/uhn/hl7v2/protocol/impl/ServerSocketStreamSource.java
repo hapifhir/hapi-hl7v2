@@ -34,8 +34,6 @@ import java.net.SocketTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.protocol.TransportException;
-
 /**
  * A <code>StreamSource</code> that gets streams from ServerSockets.  This 
  * allows you to communicate over sockets that are established by the remote 
@@ -49,17 +47,16 @@ public class ServerSocketStreamSource extends SocketStreamSource {
 	/** The default SO_TIMEOUT value for sockets returned by this class */
 	public static final int TIMEOUT = 500;
 	
-    private ServerSocket myServerSocket;
-    private String myExpectedAddress;
+    private final ServerSocket myServerSocket;
+    private final String myExpectedAddress;
     private Socket mySocket;
     
     /**
      * @param theServerSocket a ServerSocket at which to listen for incoming connections  
      * @param theExpectedAddress the IP address from which to accept connections (null means 
-     *      accept from any address) 
-     * @throws TransportException
+     *      accept from any address)
      */
-    public ServerSocketStreamSource(ServerSocket theServerSocket, String theExpectedAddress) throws TransportException {
+    public ServerSocketStreamSource(ServerSocket theServerSocket, String theExpectedAddress) {
         myServerSocket = theServerSocket;
         myExpectedAddress = theExpectedAddress;
     }
@@ -79,7 +76,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
      * 
      * @see ca.uhn.hl7v2.protocol.StreamSource#connect()
      */
-    public void connect() throws TransportException {
+    public void connect() {
         Acceptor a = new Acceptor(myServerSocket, myExpectedAddress);                
         mySocket = a.waitForSocket();
     }
@@ -115,49 +112,47 @@ public class ServerSocketStreamSource extends SocketStreamSource {
                 log.info("Server socket is about to try to accept a connection from any addess");
             }
 
-            Runnable r = new Runnable() {
-                public void run() {
-                    while (true) {
+            Runnable r = () -> {
+                while (true) {
 
-                        Socket s;
-                        try {
+                    Socket s;
+                    try {
 
-                        	if (!theServer.isClosed()) {
-	                            s = theServer.accept();
-	                            s.setSoTimeout(TIMEOUT);
-	                            String address = s.getInetAddress().getHostAddress();
-	                            if (theAddress == null || address.equals(theAddress)) {
-	                                a.setSocket(s);
-	                                synchronized (a) {
-	                                    a.notifyAll();
-	                                }
-	                            } else {
-	                                log.info("Ignoring connection from {}: expecting ", address, theAddress);
-	                            }
-                        	}
-                        	
-                        } catch (SocketTimeoutException e) {
-                            log.debug("Socket timed out without receiving a connection");
-                        } catch (IOException e) {
-                            log.error("Error accepting remote connection", e); 
-                        } // try-catch
-
-                        if (a.getSocket() != null) {
-                            log.info("Accepted connection from address: {}", a.getSocket().getInetAddress());
-                            return;
+                        if (!theServer.isClosed()) {
+                            s = theServer.accept();
+                            s.setSoTimeout(TIMEOUT);
+                            String address = s.getInetAddress().getHostAddress();
+                            if (theAddress == null || address.equals(theAddress)) {
+                                a.setSocket(s);
+                                synchronized (a) {
+                                    a.notifyAll();
+                                }
+                            } else {
+                                log.info("Ignoring connection from {}: expecting {}", address, theAddress);
+                            }
                         }
 
-                        if (theServer.isClosed()) {
-                            log.warn("Server socket closed, aborting");
-                            return;
-                        }
+                    } catch (SocketTimeoutException e) {
+                        log.debug("Socket timed out without receiving a connection");
+                    } catch (IOException e) {
+                        log.error("Error accepting remote connection", e);
+                    } // try-catch
 
-                        //if there's a problem, don't fill up the log at lightning speed
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e2) {}
-
+                    if (a.getSocket() != null) {
+                        log.info("Accepted connection from address: {}", a.getSocket().getInetAddress());
+                        return;
                     }
+
+                    if (theServer.isClosed()) {
+                        log.warn("Server socket closed, aborting");
+                        return;
+                    }
+
+                    //if there's a problem, don't fill up the log at lightning speed
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {}
+
                 }
             };
             
@@ -183,7 +178,7 @@ public class ServerSocketStreamSource extends SocketStreamSource {
                     synchronized (this) {
                         this.wait(100);
                     }
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException ignored) {}
             }
             return getSocket();
         }

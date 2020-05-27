@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.model.MessageVisitorFactory;
 public class MandatoryFields implements MessageVisitorFactory<MandatoryFieldsVisitor> {
 
     // Maps with segment names and required fields
-    private final Map<String, Integer[]> requiredFields = new HashMap<String, Integer[]>();
+    private final Map<String, Integer[]> requiredFields = new HashMap<>();
 
     /**
      * @param requiredFields map for required fields in segments

@@ -17,16 +17,16 @@ public class AbstractComponent<T> {
     
     
     /** Utility field used by bound properties. */
-    protected java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
+    protected final java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport(this);
     
     /** Utility field used by constrained properties. */
-    protected java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
+    protected final java.beans.VetoableChangeSupport vetoableChangeSupport =  new java.beans.VetoableChangeSupport(this);
     
     private String impNote;
     private String description;
     private String reference;
     private String predicate;
-    private final List<DataValue> dataValues = new ArrayList<DataValue>();
+    private final List<DataValue> dataValues = new ArrayList<>();
     private String name;
     private String usage;
     private String datatype;
@@ -276,7 +276,7 @@ public class AbstractComponent<T> {
             throw new ProfileException(null, e);
         }
         this.length = length;
-        propertyChangeSupport.firePropertyChange("length", new Long(oldLength), new Long(length));
+        propertyChangeSupport.firePropertyChange("length", oldLength, length);
     }
     
     /** Getter for property constantValue.

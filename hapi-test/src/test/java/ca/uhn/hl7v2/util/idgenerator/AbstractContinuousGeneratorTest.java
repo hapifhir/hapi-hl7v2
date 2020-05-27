@@ -34,12 +34,12 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 	}
 
 	@Test
-	public void testMultiThreadedGenerator() throws IOException,
+	public void testMultiThreadedGenerator() throws
 			InterruptedException, ExecutionException {
 		final T gen = getGenerator();
 		gen.reset();
 		ExecutorService service = Executors.newFixedThreadPool(THREADS);
-		Collection<Incrementer> c = new ArrayList<Incrementer>();
+		Collection<Incrementer> c = new ArrayList<>();
 		for (int i = 0; i < THREADS; i++) {
 			c.add(new Incrementer(gen, ITERATIONS));
 		}
@@ -47,7 +47,7 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 				TimeUnit.MILLISECONDS);
 
 		// Check that all IDs of all threads are unique
-		Set<Long> allIds = new HashSet<Long>();
+		Set<Long> allIds = new HashSet<>();
 		for (Future<Set<Long>> future : results) {
 			Set<Long> ids = future.get();
 			assertEquals(ITERATIONS, ids.size());
@@ -69,7 +69,7 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 
 	private Set<Long> checkIncreasingIDs(T gen, long oldId, int max)
 			throws IOException {
-		Set<Long> ids = new HashSet<Long>();
+		Set<Long> ids = new HashSet<>();
 		for (int i = 0; i < max; i++) {
             long newId = Long.parseLong(gen.getID());
 			if (oldId > 0)
@@ -82,8 +82,8 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 
 	class Incrementer implements Callable<Set<Long>> {
 
-		private T gen;
-		private int iterations;
+		private final T gen;
+		private final int iterations;
 
 		public Incrementer(T gen, int iterations) {
 			this.gen = gen;
@@ -94,9 +94,9 @@ public abstract class AbstractContinuousGeneratorTest<T extends IDGenerator.Orde
 			return checkIncreasingIDs(gen, 0, iterations);
 		}
 
-	};
+	}
 
-	abstract protected T getGenerator();
+    abstract protected T getGenerator();
 	
 	
 }

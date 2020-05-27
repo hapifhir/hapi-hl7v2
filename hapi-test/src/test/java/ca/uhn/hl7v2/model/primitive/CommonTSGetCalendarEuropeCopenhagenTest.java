@@ -34,7 +34,7 @@ public class CommonTSGetCalendarEuropeCopenhagenTest {
 
     @Parameters(name = "{0},{1}")
     public static Collection<Object[]> params() {
-        List<String> tzs = new ArrayList<String>();
+        List<String> tzs = new ArrayList<>();
         {
             // west to east
             tzs.add("Canada/Eastern");
@@ -47,13 +47,13 @@ public class CommonTSGetCalendarEuropeCopenhagenTest {
             tzs.add("Europe/Copenhagen");
             tzs.add("GMT+2");
         }
-        List<String> instants = new ArrayList<String>();
+        List<String> instants = new ArrayList<>();
         {
             instants.add("2015010112");
             instants.add("2015060112");
         }
 
-        List<Object[]> params = new ArrayList<Object[]>();
+        List<Object[]> params = new ArrayList<>();
         for (String tz : tzs) {
             for (String i : instants) {
                 params.add(new Object[]{tz, i});
@@ -64,11 +64,11 @@ public class CommonTSGetCalendarEuropeCopenhagenTest {
 
 
     @Rule
-    public ErrorCollector collector = new ErrorCollector();
+    public final ErrorCollector collector = new ErrorCollector();
 
-    SimpleDateFormat dfm = new SimpleDateFormat("yyyyMMddHH");
-    CommonTS cts = new CommonTS();
-    GregorianCalendar expected;
+    final SimpleDateFormat dfm = new SimpleDateFormat("yyyyMMddHH");
+    final CommonTS cts = new CommonTS();
+    final GregorianCalendar expected;
     final TimeZone tz;
 
     public CommonTSGetCalendarEuropeCopenhagenTest(

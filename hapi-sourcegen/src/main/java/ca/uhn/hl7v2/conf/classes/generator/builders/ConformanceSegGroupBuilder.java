@@ -30,8 +30,12 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
-import ca.uhn.hl7v2.conf.classes.generator.genclasses.*;
-import ca.uhn.hl7v2.conf.spec.message.*;
+import ca.uhn.hl7v2.conf.classes.generator.genclasses.GeneratedConformanceContainer;
+import ca.uhn.hl7v2.conf.classes.generator.genclasses.GeneratedMethod;
+import ca.uhn.hl7v2.conf.classes.generator.genclasses.GeneratedRepGetter;
+import ca.uhn.hl7v2.conf.spec.message.ProfileStructure;
+import ca.uhn.hl7v2.conf.spec.message.Seg;
+import ca.uhn.hl7v2.conf.spec.message.SegGroup;
 
 /** This Class builds Conformance SegGroup Classes
  * @author <table><tr>James Agnew</tr>
@@ -42,16 +46,16 @@ import ca.uhn.hl7v2.conf.spec.message.*;
  */
 public class ConformanceSegGroupBuilder {
 
-   private DeploymentManager depManager; // The deployment manager
-   private DocumentationBuilder docBuilder; // The documentation builder
+   private final DeploymentManager depManager; // The deployment manager
+   private final DocumentationBuilder docBuilder; // The documentation builder
 
-   private String packageName; // Represents the Package that this Segment will go in
-   private String structID; // The struct ID of the message type
-   private String version; // The HAPI version
+   private final String packageName; // Represents the Package that this Segment will go in
+   private final String structID; // The struct ID of the message type
+   private final String version; // The HAPI version
 
    /** This constructor will create a new ConformanceSegmentBuilder
     * @param packageName the name of the package
-    * @param versionString the version of HL7 which these classes are conforming to
+    * @param version the version of HL7 which these classes are conforming to
     * @param depManager the instance of DeploymentManager
     */
    public ConformanceSegGroupBuilder(String packageName, String version, DeploymentManager depManager, String structID) {
@@ -114,7 +118,7 @@ public class ConformanceSegGroupBuilder {
 				UnderlyingAccessor childAccessor = new UnderlyingAccessor(underlyingPackageType, childProfileName.getAccessorName());
             GeneratedRepGetter repGetter = new GeneratedRepGetter(childProfileName, childAccessor.getAcceptsRep());
 
-            docBuilder.decorateRepGetter(repGetter, (Seg) segGroup.getChild(i), childProfileName.getOriginalName());
+            docBuilder.decorateRepGetter(repGetter, segGroup.getChild(i), childProfileName.getOriginalName());
             gcc.addMethod(repGetter);
             if (depManager.getVerbose())
                System.out.println("Generating Segment: " + packageName + "." + gcc.getName());
@@ -133,7 +137,7 @@ public class ConformanceSegGroupBuilder {
 					UnderlyingAccessor childAccessor = new UnderlyingAccessor(underlyingPackageType, underlyingAccessorName);
                GeneratedRepGetter repGetter = new GeneratedRepGetter(childProfileName, childAccessor.getAcceptsRep());
 
-               docBuilder.decorateRepGetter(repGetter, (SegGroup) segGroup.getChild(i), childProfileName.getOriginalName());
+               docBuilder.decorateRepGetter(repGetter, segGroup.getChild(i), childProfileName.getOriginalName());
                gcc.addMethod(repGetter);
                if (depManager.getVerbose())
                   System.out.println("Generating SegGroup: " + packageName + "." + gcc.getName());
@@ -152,17 +156,17 @@ public class ConformanceSegGroupBuilder {
 	 * @param segGroup the SegGroup to build
 	 */
 	public static String generateSegGroupName(SegGroup segGroup) {
-		String name = new String();
+		StringBuilder name = new StringBuilder();
 
 		for (int i = 1; i <= segGroup.getChildren(); i++) {
 			ProfileStructure child = segGroup.getChild(i);
 			if (child instanceof Seg)
-				name += child.getName();
+				name.append(child.getName());
 			else
-				name += generateSegGroupName((SegGroup) child);
+				name.append(generateSegGroupName((SegGroup) child));
 		}
 
-		return name;
+		return name.toString();
 	}
 
 }

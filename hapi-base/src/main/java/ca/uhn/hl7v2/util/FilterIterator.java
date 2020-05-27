@@ -42,8 +42,8 @@ import java.util.*;
 
 public class FilterIterator<T> implements Iterator<T> {
     
-    private Predicate<T> predicate;
-    private Iterator<T> iter;
+    private final Predicate<T> predicate;
+    private final Iterator<T> iter;
     private T nextObject;
     private boolean nextObjectSet = false;
     
@@ -95,7 +95,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * Interface for evaluating whether an object should be returned by the iterator
      */
     public interface Predicate<T> {
-        public boolean evaluate(T obj);
+        boolean evaluate(T obj);
     }
     
 }

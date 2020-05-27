@@ -36,7 +36,7 @@ import java.util.Stack;
  */
 public class Location {
 
-    private Stack<GroupLocation> groups = new Stack<GroupLocation>();
+    private Stack<GroupLocation> groups = new Stack<>();
 	private String segmentName = null;
 	private int segmentRepetition = 0;
 	private int field = -1;
@@ -52,7 +52,7 @@ public class Location {
 	}
 
 	public Location(Location l) {
-        this.groups = new Stack<GroupLocation>();
+        this.groups = new Stack<>();
         groups.addAll(l.groups);
 		this.segmentName = l.segmentName;
 		this.segmentRepetition = l.segmentRepetition;
@@ -60,6 +60,7 @@ public class Location {
 		this.fieldRepetition = l.fieldRepetition;
 		this.component = l.component;
 		this.subcomponent = l.subcomponent;
+		this.componentLevel = l.componentLevel;
 	}
 
 	public Collection<GroupLocation> getGroups() {
@@ -240,14 +241,12 @@ public class Location {
 			return false;
 		if (segmentRepetition != other.segmentRepetition)
 			return false;
-		if (subcomponent != other.subcomponent)
-			return false;
-		return true;
-	}
+        return subcomponent == other.subcomponent;
+    }
 
     public static class GroupLocation {
-        String groupName;
-        int repetition;
+        final String groupName;
+        final int repetition;
 
         private GroupLocation(String groupName, int repetition) {
             this.groupName = groupName;

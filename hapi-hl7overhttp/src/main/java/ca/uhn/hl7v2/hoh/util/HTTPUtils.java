@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletOutputStream;
 
@@ -15,7 +16,7 @@ public class HTTPUtils {
 	public static final Charset DEFAULT_CHARSET;
 
 	static {
-		DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+		DEFAULT_CHARSET = StandardCharsets.ISO_8859_1;
 	}
 
 	/**

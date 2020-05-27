@@ -44,10 +44,8 @@ public class MessageValidation {
 
 	/**
 	 * @param args
-	 * @throws HL7Exception
-	 * @throws ca.uhn.hl7v2.parser.EncodingNotSupportedException
-	 */
-	public static void main(String[] args) throws HL7Exception {
+     */
+	public static void main(String[] args) {
 
 		/*
 		 * In this example, we are looking at a few aspects of message

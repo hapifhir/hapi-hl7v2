@@ -58,7 +58,7 @@ public class CommonISTest {
         context = new DefaultHapiContext(ValidationContextFactory.defaultValidation());
     }
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 	
 	
 	
@@ -99,7 +99,7 @@ public class CommonISTest {
 	 * Test for void set/getValue(int, String)
 	 */
 	@Test
-	public void testSetGetValueStringAndTable() throws DataTypeException {
+	public void testSetGetValueStringAndTable() {
 		buildSpecs(SetGetSpec.class)
 			.add(null, (String)null)
 			.add("", "")

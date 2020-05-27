@@ -41,7 +41,7 @@ public interface Composite extends Type {
    *
    * @return array of components of this composite type
    */
-  public Type[] getComponents();
+  Type[] getComponents();
 
   /**
    * Returns the single component of this composite at the specified position (starting at 0).
@@ -50,6 +50,6 @@ public interface Composite extends Type {
    * @return component at this index
    * @throws DataTypeException
    */
-  public Type getComponent(int number) throws DataTypeException;
+  Type getComponent(int number) throws DataTypeException;
 
 }

@@ -45,8 +45,8 @@ public class ProcessorContextImpl implements ProcessorContext {
         myLocallyDrivenTransport = theTransport;
         mySafeStorage = theStorage;
         
-        myValidators = new ArrayList<AcceptValidator>(8);
-        myMetadataFields = new ArrayList<String>(30);
+        myValidators = new ArrayList<>(8);
+        myMetadataFields = new ArrayList<>(30);
     }
 
     /**
@@ -70,8 +70,8 @@ public class ProcessorContextImpl implements ProcessorContext {
         myLocallyDrivenTransport = theLocallyDrivenTransport;
         mySafeStorage = theStorage;
         
-        myValidators = new ArrayList<AcceptValidator>(8);
-        myMetadataFields = new ArrayList<String>(30);
+        myValidators = new ArrayList<>(8);
+        myMetadataFields = new ArrayList<>(30);
     }
 
     /**

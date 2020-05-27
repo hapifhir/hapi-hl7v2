@@ -58,11 +58,11 @@ public class ActiveConnection implements Connection {
 
 	private static final Logger log = LoggerFactory.getLogger(ActiveConnection.class);
 
-	private Initiator initiator;
+	private final Initiator initiator;
 	private Responder responder;
 	private List<Socket> sockets;
-	private HL7Writer ackWriter;
-	private HL7Writer sendWriter;
+	private final HL7Writer ackWriter;
+	private final HL7Writer sendWriter;
 	private Parser parser;
 	private BlockingMap<String, String> responses;
 	private List<Receiver> receivers;
@@ -132,13 +132,12 @@ public class ActiveConnection implements Connection {
 	}
 
 	/** Common initialization tasks */
-	private void init(Parser parser, ExecutorService executorService, Socket inboundSocket)
-			throws LLPException {
+	private void init(Parser parser, ExecutorService executorService, Socket inboundSocket) {
 		this.parser = parser;
 		this.executorService = executorService;
-		sockets = new ArrayList<Socket>();
-		responses = new BlockingHashMap<String, String>(executorService);
-		receivers = new ArrayList<Receiver>(2);
+		sockets = new ArrayList<>();
+		responses = new BlockingHashMap<>(executorService);
+		receivers = new ArrayList<>(2);
 		responder = new Responder(inboundSocket);
 	}
 

@@ -47,11 +47,11 @@ public class DefaultEscaping implements Escaping {
     /**
      * limits the size of variousEncChars to 1000, can be overridden by system property.
      */
-    private static Map<EncodingCharacters, EncLookup> variousEncChars = Collections.synchronizedMap(new LinkedHashMap
+    private static final Map<EncodingCharacters, EncLookup> variousEncChars = Collections.synchronizedMap(new LinkedHashMap
         <EncodingCharacters, EncLookup>(6, 0.75f, true) {
 
         private static final long serialVersionUID = 1L;
-        final int maxSize = new Integer(System.getProperty(Escape.class.getName() + ".maxSize", "1000"));
+        final int maxSize = Integer.parseInt(System.getProperty(Escape.class.getName() + ".maxSize", "1000"));
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<EncodingCharacters, EncLookup> eldest) {
@@ -94,7 +94,7 @@ public class DefaultEscaping implements Escaping {
                                 {
                                     int nextEscapeIndex = text.indexOf(esc.characters[j], i + 1);
                                     if (nextEscapeIndex > 0) {
-                                        result.append(text.substring(i, nextEscapeIndex + 1));
+                                        result.append(text, i, nextEscapeIndex + 1);
                                         charReplaced = true;
                                         i = nextEscapeIndex;
                                         break FORENCCHARS;
@@ -107,7 +107,7 @@ public class DefaultEscaping implements Escaping {
                                     if (i+2 < textLength && text.charAt(i+2) == '\\') {
                                         int nextEscapeIndex = i + 2;
                                         if (nextEscapeIndex > 0) {
-                                            result.append(text.substring(i, nextEscapeIndex + 1));
+                                            result.append(text, i, nextEscapeIndex + 1);
                                             charReplaced = true;
                                             i = nextEscapeIndex;
                                             break FORENCCHARS;
@@ -261,8 +261,8 @@ public class DefaultEscaping implements Escaping {
     private static class EncLookup {
 
         private static final char[] CODES = {'F', 'S', 'T', 'R', 'E', 'L'};
-        private char[] characters = new char[7];
-        String[] encodings = new String[7];
+        private final char[] characters = new char[7];
+        final String[] encodings = new String[7];
 
         EncLookup(EncodingCharacters ec) {
             characters[0] = ec.getFieldSeparator();
@@ -274,11 +274,10 @@ public class DefaultEscaping implements Escaping {
             characters[6] = '\r';
 
             for (int i = 0; i < CODES.length; i++) {
-                StringBuilder seq = new StringBuilder();
-                seq.append(ec.getEscapeCharacter());
-                seq.append(CODES[i]);
-                seq.append(ec.getEscapeCharacter());
-                encodings[i] = seq.toString();
+                String seq = String.valueOf(ec.getEscapeCharacter()) +
+                        CODES[i] +
+                        ec.getEscapeCharacter();
+                encodings[i] = seq;
             }
             // Escaping of truncation # is not implemented yet. It may only be escaped if it is the first character that
             // exceeds the conformance length of the component (ch 2.5.5.2). As of now, this information is not

@@ -23,7 +23,7 @@ public interface TransportLayer {
      * @param theMessage the message to send 
      * @throws TransportException
      */
-    public void send(Transportable theMessage) throws TransportException;
+    void send(Transportable theMessage) throws TransportException;
     
     /**
      * Gets the next message from the remote system.  This call blocks until
@@ -32,21 +32,21 @@ public interface TransportLayer {
      * @return the next available message 
      * @throws TransportException
      */
-    public Transportable receive() throws TransportException;
+    Transportable receive() throws TransportException;
     
     /**
      * @return metadata to be added to the metadata of all incoming messages.  
      *      This provides a way of associating connection information with  
      *      incoming messages (eg the IP address of the remote server).
      */
-    public Map<String, Object> getCommonMetadata();    
+    Map<String, Object> getCommonMetadata();
     
     /**
      * Initializes a connection to the remote server.  This can be called after 
      * an exception is encountered, to refresh a dead connection.  
      * @throws TransportException
      */
-    public void connect() throws TransportException;
+    void connect() throws TransportException;
     
     /**
      * @return true if connect() has completed successfully.  Note that true 
@@ -54,12 +54,12 @@ public interface TransportLayer {
      *  not test a connection during this call) but should return false if connect()
      *  has not been called, or if connect() has been called and is pending.  
      */
-    public boolean isConnected();
+    boolean isConnected();
     
     /**
      * Drops any existing connection to the remote server.  
      * @throws TransportException
      */
-    public void disconnect() throws TransportException;
+    void disconnect() throws TransportException;
     
 }

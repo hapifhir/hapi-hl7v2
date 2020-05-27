@@ -34,7 +34,7 @@ public class Hl7OverHttpLowerLayerProtocol extends LowerLayerProtocol {
 	private IAuthorizationServerCallback myAuthorizationServerCallback;
 	private HohLlpReader myNextReader;
 	private HohLlpWriter myNextWriter;
-	private ServerRoleEnum myRole;
+	private final ServerRoleEnum myRole;
 	private ISigner mySigner;
 	private String myUriPath = "/";
 	private Charset myPreferredCharset;

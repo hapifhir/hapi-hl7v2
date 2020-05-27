@@ -47,13 +47,13 @@ public class CustomThreading {
 
 
 	@SuppressWarnings("unused")
-   public static void main(String[] args) throws Exception {
+   public static void main(String[] args) {
 
         // Instantiate a custom executor service to be used
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 10, 100,
                 30, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(100));
+                new ArrayBlockingQueue<>(100));
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
 		/*

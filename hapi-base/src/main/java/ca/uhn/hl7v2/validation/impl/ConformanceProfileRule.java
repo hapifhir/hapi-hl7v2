@@ -95,7 +95,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
      * @see ca.uhn.hl7v2.validation.MessageRule#test(ca.uhn.hl7v2.model.Message)
      */
     public ValidationException[] apply(Message msg) {
-        List<ValidationException> problems = new ArrayList<ValidationException>();
+        List<ValidationException> problems = new ArrayList<>();
         String[] ids = {myProfileID};
         
         try {
@@ -117,14 +117,14 @@ public class ConformanceProfileRule extends AbstractMessageRule {
             problems.add(new ValidationException("Can't validate against profile: " + e.getMessage(), e));
         }
         
-        return problems.toArray(new ValidationException[problems.size()]);
+        return problems.toArray(new ValidationException[0]);
     }
     
     private String[] getDeclaredProfileIDs(Message theMessage) throws HL7Exception {
         Terser t = new Terser(theMessage);
         boolean noMore = false;
         int c = 0;
-        List<String> declaredProfiles = new ArrayList<String>(8);
+        List<String> declaredProfiles = new ArrayList<>(8);
         while (!noMore) {
             String path = "MSH-21(" + c++ + ")";
             String idRep = t.get(path);
@@ -135,7 +135,7 @@ public class ConformanceProfileRule extends AbstractMessageRule {
                 declaredProfiles.add(idRep);
             }
         }
-        return declaredProfiles.toArray(new String[declaredProfiles.size()]);
+        return declaredProfiles.toArray(new String[0]);
     }
 
     private synchronized RuntimeProfile getProfile(String profileString) throws ProfileException {

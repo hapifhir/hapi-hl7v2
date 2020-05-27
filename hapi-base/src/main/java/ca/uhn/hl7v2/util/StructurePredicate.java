@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.util.FilterIterator.Predicate;
 
 public class StructurePredicate implements Predicate<Structure> {
 
-	private Class<? extends Structure> desired;
+	private final Class<? extends Structure> desired;
 	
 	public StructurePredicate(Class<? extends Structure> desired) {
 		super();

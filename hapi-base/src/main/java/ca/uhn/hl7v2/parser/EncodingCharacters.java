@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.model.Message;
 public class EncodingCharacters implements Cloneable {
     
     private char fieldSep;
-    private char[] encChars;
+    private final char[] encChars;
     
     /**
      * Creates new EncodingCharacters object with the given character

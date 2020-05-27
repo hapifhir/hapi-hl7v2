@@ -55,8 +55,8 @@ public class XsdMessageGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(XsdMessageGenerator.class);
     public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
 
-    private String templatePackage;
-    private String targetDirectory;
+    private final String templatePackage;
+    private final String targetDirectory;
     private Template messageTemplate;
     private Template groupTemplate;
 
@@ -105,7 +105,7 @@ public class XsdMessageGenerator {
         XSParticle[] messages = allMessages.getModelGroup().getChildren();
         for (XSParticle message : messages) {
             XSElementDecl messageElement = message.getTerm().asElementDecl();
-            GroupDef messageDef = parseGroupOrMessage(messageElement.getName(), message, true, version, basePackageName, new HashMap<String, StructureDef>());
+            GroupDef messageDef = parseGroupOrMessage(messageElement.getName(), message, true, version, basePackageName, new HashMap<>());
             String messageClass = makeMessage(messageDef, basePackageName, version.getVersion(), null);
             writeFile(messageClass, "message", messageElement.getName(), version);
         }
@@ -179,18 +179,14 @@ public class XsdMessageGenerator {
         }
         String targetFile = String.format("%s/%s.java", dirName, name);
 
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"));
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"))) {
             writer.write(source);
             writer.flush();
-        } finally {
-            if (writer != null) writer.close();
         }
     }
 
     private String makeMessage(GroupDef def, String normalBasePackageName,
-                        String version, List<String> structureNameToChildNames) throws Exception {
+                        String version, List<String> structureNameToChildNames) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("message", def.getRawGroupName());
@@ -206,7 +202,7 @@ public class XsdMessageGenerator {
         return out.toString();
     }
 
-    private String makeGroup(GroupDef def, String normalBasePackageName, String version) throws Exception {
+    private String makeGroup(GroupDef def, String normalBasePackageName, String version) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("groupName", def.getName());

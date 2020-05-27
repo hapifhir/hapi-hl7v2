@@ -92,8 +92,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
     	}
     	
         String version = null;
-        Pattern p = ourVersionPattern;
-        Matcher m = p.matcher(this.getClass().getName());
+        Matcher m = ourVersionPattern.matcher(this.getClass().getName());
         if (m.find()) {
             String verFolder = m.group(1);
             if (verFolder.length() > 0) {

@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class TestSpecBuilder<I, O> {
 
-    private List<TestSpec<I, O>> specs = new ArrayList<TestSpec<I,O>>();
-    private Class<? extends TestSpec<I, O>> resultClass;
-    private Class<? extends Throwable> defaultException;
+    private final List<TestSpec<I, O>> specs = new ArrayList<>();
+    private final Class<? extends TestSpec<I, O>> resultClass;
+    private final Class<? extends Throwable> defaultException;
     
     /**
      * Creates a builder instance
@@ -22,11 +22,11 @@ public class TestSpecBuilder<I, O> {
      * @return a builder instance that builds TestSpec instances of the given type
      */
     public static <I, O> TestSpecBuilder<I, O> buildSpecs(Class<? extends TestSpec<I, O>> resultClass) {
-        return new TestSpecBuilder<I, O>(resultClass, Exception.class);        
+        return new TestSpecBuilder<>(resultClass, Exception.class);
     }
 
     public static <I, O> TestSpecBuilder<I, O> buildSpecs(Class<? extends TestSpec<I, O>> resultClass, Class<? extends Throwable> defaultException) {
-        return new TestSpecBuilder<I, O>(resultClass, defaultException);        
+        return new TestSpecBuilder<>(resultClass, defaultException);
     }
     
     private TestSpecBuilder(Class<? extends TestSpec<I, O>> resultClass, Class<? extends Throwable> defaultException) {
@@ -57,7 +57,8 @@ public class TestSpecBuilder<I, O> {
         return add(input, (O)input);
     }
     
-    public TestSpecBuilder<I, O> accept(I... input) {
+    @SafeVarargs
+    public final TestSpecBuilder<I, O> accept(I... input) {
         for (I i : input) {
             accept(i);
         }
@@ -81,7 +82,8 @@ public class TestSpecBuilder<I, O> {
         return add(input, defaultException);
     }
     
-    public TestSpecBuilder<I, O> reject(I... input) {
+    @SafeVarargs
+    public final TestSpecBuilder<I, O> reject(I... input) {
         for (I i : input) {
             reject(i);
         }

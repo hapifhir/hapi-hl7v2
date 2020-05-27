@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class AcceptAcknowledgerTest extends TestCase {
 
-    private static String message = "MSH|^~\\&|||||||ADT^A01|b|P|2.4\rNTE|\r";
+    private static final String message = "MSH|^~\\&|||||||ADT^A01|b|P|2.4\rNTE|\r";
  
     /**
      * Constructor for AcceptAcknowledgerTest.
@@ -34,7 +34,7 @@ public class AcceptAcknowledgerTest extends TestCase {
         
         AcceptAcknowledger.AcceptACK ack = 
             AcceptAcknowledger.validate(context, new TransportableImpl(message));
-        assertEquals(true, ack.isAcceptable());
+        assertTrue(ack.isAcceptable());
     }
     
     public void testValidateReject() throws Exception {
@@ -43,7 +43,7 @@ public class AcceptAcknowledgerTest extends TestCase {
         
         AcceptAcknowledger.AcceptACK ack = 
             AcceptAcknowledger.validate(context, new TransportableImpl(message));
-        assertEquals(false, ack.isAcceptable());        
+        assertFalse(ack.isAcceptable());
     }
 
     public void testValidateCantStore() throws Exception {
@@ -51,7 +51,7 @@ public class AcceptAcknowledgerTest extends TestCase {
         
         AcceptAcknowledger.AcceptACK ack = 
             AcceptAcknowledger.validate(context, new TransportableImpl(message));
-        assertEquals(false, ack.isAcceptable());        
+        assertFalse(ack.isAcceptable());
     }
     
     /**
@@ -60,7 +60,7 @@ public class AcceptAcknowledgerTest extends TestCase {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
      */
-    public class MockValidator implements AcceptValidator {
+    public static class MockValidator implements AcceptValidator {
         
         private final boolean OK;
         
@@ -96,7 +96,7 @@ public class AcceptAcknowledgerTest extends TestCase {
      * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
      * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
      */    
-    public class BadStore implements SafeStorage {
+    public static class BadStore implements SafeStorage {
 
         /** 
          * Throws an exception. 
@@ -105,10 +105,10 @@ public class AcceptAcknowledgerTest extends TestCase {
             throw new HL7Exception("This SafeStorage is meant to fail");            
         }
 
-        public void discard(Transportable arg0) throws HL7Exception {
+        public void discard(Transportable arg0) {
         }
 
-        public Transportable[] restore() throws HL7Exception {
+        public Transportable[] restore() {
             return null;
         }
         

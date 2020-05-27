@@ -46,7 +46,7 @@ public class CustomCertificateTlsSocketFactoryTest {
 			client.getOutputStream().write("HELLO WORLD".getBytes());
 			fail();
 
-		} catch (SSLHandshakeException e) {
+		} catch (SSLHandshakeException ignored) {
 
 		}
 	}
@@ -83,8 +83,7 @@ public class CustomCertificateTlsSocketFactoryTest {
 	}
 
 	public static StandardSocketFactory createNonSslServerSocketFactory() {
-		StandardSocketFactory goodClient = new StandardSocketFactory();
-		return goodClient;
+		return new StandardSocketFactory();
 	}
 	
 	public static CustomCertificateTlsSocketFactory createTrustedClientSocketFactory() {
@@ -117,7 +116,7 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 	private class Receiver extends Thread {
 
-		private ISocketFactory myFactory;
+		private final ISocketFactory myFactory;
 		private ServerSocket myServer;
 		private String myString;
 

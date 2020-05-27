@@ -24,7 +24,7 @@ public class SizeRuleTest {
 	private SizeRule myRule;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         myRule = new SizeRule(5);
     }
 

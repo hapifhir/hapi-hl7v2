@@ -15,7 +15,7 @@ public class ProfileStoreFactory {
     public static final String DEFAULT_PROFILE_STORE_DIRECTORY = Home.getHomeDirectory().getAbsolutePath() + "/profiles";
     
 	private static ProfileStore instance;
-    private static CodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();
+    private static final CodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();
 
     /** Non instantiable */
     private ProfileStoreFactory() {

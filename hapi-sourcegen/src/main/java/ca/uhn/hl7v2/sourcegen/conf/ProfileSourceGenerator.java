@@ -8,7 +8,6 @@ package ca.uhn.hl7v2.sourcegen.conf;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.conf.ProfileException;
 import ca.uhn.hl7v2.conf.parser.ProfileParser;
 import ca.uhn.hl7v2.conf.spec.RuntimeProfile;
 import ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer;
@@ -62,14 +60,14 @@ public class ProfileSourceGenerator {
     private String myTargetDirectory;
     private String myBasePackage;
     private String myMessageName;
-    private Set<String> mySegmentDefNames;
-    private Set<String> myGroupDefNames;
+    private final Set<String> mySegmentDefNames;
+    private final Set<String> myGroupDefNames;
     private final ArrayList<SegmentDef> mySegmentDefs;
     private final Map<String, ArrayList<SegmentElement>> mySegmentNameToSegmentElements;
     private final ArrayList<GroupDef> myGroupDefs;
-    private GenerateDataTypesEnum myGenerateDataTypes;
-    private String myTemplatePackage;
-    private String myFileExt;
+    private final GenerateDataTypesEnum myGenerateDataTypes;
+    private final String myTemplatePackage;
+    private final String myFileExt;
 
     public ProfileSourceGenerator(RuntimeProfile theProfile, String theTargetDirectory, String theBasePackage, GenerateDataTypesEnum theGenDt, String theTemplatePackage,
             String theFileExt) {
@@ -90,11 +88,11 @@ public class ProfileSourceGenerator {
 
         myTargetDirectory += myBasePackage.replaceAll("\\.", "/");
 
-        mySegmentDefs = new ArrayList<SegmentDef>();
-        myGroupDefs = new ArrayList<GroupDef>();
-        mySegmentNameToSegmentElements = new HashMap<String, ArrayList<SegmentElement>>();
-        mySegmentDefNames = new HashSet<String>();
-        myGroupDefNames = new HashSet<String>();
+        mySegmentDefs = new ArrayList<>();
+        myGroupDefs = new ArrayList<>();
+        mySegmentNameToSegmentElements = new HashMap<>();
+        mySegmentDefNames = new HashSet<>();
+        myGroupDefNames = new HashSet<>();
     }
 
     public void generate() throws Exception {
@@ -142,8 +140,8 @@ public class ProfileSourceGenerator {
         }
 
         // Write Segments
-        Set<String> alreadyWrittenDatatypes = new HashSet<String>();
-        Set<String> alreadyWrittenSegments = new HashSet<String>();
+        Set<String> alreadyWrittenDatatypes = new HashSet<>();
+        Set<String> alreadyWrittenSegments = new HashSet<>();
         for (SegmentDef next : mySegmentDefs) {
             alreadyWrittenSegments.add(next.getName());
 
@@ -163,8 +161,7 @@ public class ProfileSourceGenerator {
 
             SegmentGenerator.writeSegment(fileName, version, segmentName, elements, description, myBasePackage, datatypePackages, myTemplatePackage);
 
-            switch (myGenerateDataTypes) {
-            case SINGLE:
+            if (myGenerateDataTypes == GenerateDataTypesEnum.SINGLE) {
                 for (DatatypeDef nextFieldDef : next.getFieldDefs()) {
                     writeDatatype(nextFieldDef, alreadyWrittenDatatypes, version);
                 }
@@ -287,7 +284,7 @@ public class ProfileSourceGenerator {
         String description = nextSeg.getLongName();
 
         SegmentDef retVal = new SegmentDef(name, groupName, required, repeating, false, description);
-        ArrayList<SegmentElement> segmentElements = new ArrayList<SegmentElement>();
+        ArrayList<SegmentElement> segmentElements = new ArrayList<>();
 
         // Extract fields from the segment definition
         for (int i = 0; i < nextSeg.getFields(); i++) {
@@ -331,8 +328,7 @@ public class ProfileSourceGenerator {
 		Pattern p = Pattern.compile("^([a-zA-Z]+)([0-9]+)$");
 		Matcher m = p.matcher(table);
 		if (m.find()) {
-			String namespace = m.group(1);
-			nextSegmentElement.tableNamespace = namespace;
+            nextSegmentElement.tableNamespace = m.group(1);
 			
 			String tableNum = m.group(2);
 			nextSegmentElement.table = Integer.parseInt(tableNum);
@@ -407,11 +403,10 @@ public class ProfileSourceGenerator {
             }
         }
 
-        DatatypeComponentDef retVal = new DatatypeComponentDef(parentType, indexWithinParent, type, desc, table);
-        return retVal;
+        return new DatatypeComponentDef(parentType, indexWithinParent, type, desc, table);
     }
 
-    public static void main(String[] args) throws ProfileException, IOException, Exception {
+    public static void main(String[] args) throws Exception {
         RuntimeProfile rp = new ProfileParser(false).parseClasspath("ca/uhn/hl7v2/conf/parser/ADT_A01.xml");
         new ProfileSourceGenerator(rp, "hapi-test/target/generated-sources/confgen", "hapi.on.olis", GenerateDataTypesEnum.SINGLE, "ca.uhn.hl7v2.sourcegen.templates.json", "json")
                 .generate();

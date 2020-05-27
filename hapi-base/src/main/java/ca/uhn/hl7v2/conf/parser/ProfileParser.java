@@ -92,8 +92,8 @@ public class ProfileParser {
 
 	private static final Logger log = LoggerFactory.getLogger(ProfileParser.class);
 
-	private boolean alwaysValidate;
-	private DOMErrorHandler errorHandler;
+	private final boolean alwaysValidate;
+	private final DOMErrorHandler errorHandler;
 
 	/**
 	 * Creates a new instance of ProfileParser
@@ -104,18 +104,14 @@ public class ProfileParser {
 	public ProfileParser(boolean alwaysValidate) {
 
 		this.alwaysValidate = alwaysValidate;
-		this.errorHandler = new DOMErrorHandler() {
-
-			public boolean handleError(DOMError error) {
-				if (error.getSeverity() == DOMError.SEVERITY_WARNING) {
-					log.warn("Warning: {}", error.getMessage());
-				} else {
-					throw new RuntimeException((Exception) error.getRelatedException());
-				}
-				return true;
-			}
-
-		};
+		this.errorHandler = error -> {
+            if (error.getSeverity() == DOMError.SEVERITY_WARNING) {
+                log.warn("Warning: {}", error.getMessage());
+            } else {
+                throw new RuntimeException((Exception) error.getRelatedException());
+            }
+            return true;
+        };
 	}
 
 
@@ -138,7 +134,7 @@ public class ProfileParser {
 			throw new FileNotFoundException(classPath);
 		}
 
-		StringBuffer profileString = new StringBuffer();
+		StringBuilder profileString = new StringBuilder();
 		byte[] buffer = new byte[1000];
 		int bytesRead;
 		while ((bytesRead = stream.read(buffer)) > 0) {
@@ -344,7 +340,7 @@ public class ProfileParser {
 	/** Parses a component profile */
 	private AbstractComponent<?> parseComponentProfile(Element elem, boolean isSubComponent)
 			throws ProfileException {
-		AbstractComponent<?> comp = null;
+		AbstractComponent<?> comp;
 		if (isSubComponent) {
 			log.debug("      Parsing subcomp profile: " + elem.getAttribute("Name"));
 			comp = new SubComponent();
@@ -462,7 +458,7 @@ public class ProfileParser {
 		return val;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 
 		if (args.length != 1) {
 			System.out.println("Usage: ProfileParser profile_file");

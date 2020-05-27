@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -56,28 +55,25 @@ class AcceptorThread extends Service {
 	
 	private static final Logger log = LoggerFactory
 			.getLogger(AcceptorThread.class);
-	private int port;
-	private boolean tls = false;
+	private final int port;
+	private final boolean tls;
 	private ServerSocket ss;
 	private final BlockingQueue<AcceptedSocket> queue;
 	private final SocketFactory socketFactory;
 
 	public AcceptorThread(ServerSocket serverSocket, int port, ExecutorService service,
-			BlockingQueue<AcceptedSocket> queue) throws IOException,
-			SocketException {
+			BlockingQueue<AcceptedSocket> queue) throws IOException {
 		this(port, false, service, queue);
 		this.ss = serverSocket;
 	}
 
 	public AcceptorThread(int port, ExecutorService service,
-			BlockingQueue<AcceptedSocket> queue) throws IOException,
-			SocketException {
+			BlockingQueue<AcceptedSocket> queue) throws IOException {
 		this(port, false, service, queue);
 	}
 
 	public AcceptorThread(int port, boolean tls, ExecutorService service,
-			BlockingQueue<AcceptedSocket> queue) throws IOException,
-			SocketException {
+			BlockingQueue<AcceptedSocket> queue) {
 		this(port, tls, service, queue, null);
 	}
 

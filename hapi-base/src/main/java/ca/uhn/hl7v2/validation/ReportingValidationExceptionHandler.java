@@ -45,7 +45,7 @@ public class ReportingValidationExceptionHandler implements ValidationExceptionH
 
     private static final Logger LOG = LoggerFactory
             .getLogger(ReportingValidationExceptionHandler.class);
-    private boolean throwFirstException;
+    private final boolean throwFirstException;
     private ValidationException firstException;
 
     /**

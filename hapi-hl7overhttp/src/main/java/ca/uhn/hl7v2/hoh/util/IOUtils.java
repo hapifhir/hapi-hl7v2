@@ -46,7 +46,7 @@ public class IOUtils {
 	public static long copy(InputStream input, OutputStream output) throws IOException {
 		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		long count = 0;
-		int n = 0;
+		int n;
 		while (-1 != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;
@@ -57,7 +57,7 @@ public class IOUtils {
 	public static long copyWhileDataAvailable(InputStream input, OutputStream output) throws IOException {
 		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		long count = 0;
-		int n = 0;
+		int n;
 		while (input.available() > 0 && -1 != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;

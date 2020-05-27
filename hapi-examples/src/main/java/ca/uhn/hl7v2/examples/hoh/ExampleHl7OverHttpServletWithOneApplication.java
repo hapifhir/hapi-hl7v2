@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 
-import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
 import ca.uhn.hl7v2.model.Message;
@@ -23,7 +21,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 	 * Initialise the servlet
 	 */
 	@Override
-	public void init(ServletConfig theConfig) throws ServletException {
+	public void init(ServletConfig theConfig) {
 		
 		/* Servlet should be initialized with an instance of
 		 * ReceivingApplication, which handles incoming messages 
@@ -35,7 +33,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 	/**
 	 * The application does the actual processing
 	 */
-	private class MyApplication implements ReceivingApplication<Message>
+	private static class MyApplication implements ReceivingApplication<Message>
 	{
 
 		/**
@@ -68,25 +66,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 			 * message with an "AE" response code to note an error. 
 			 */
 			boolean somethingFailed = false;
-			if (somethingFailed) {
-				throw new ReceivingApplicationException("");
-			}
 
-			/*
-			 * It is better to return an HL7 message with an AE response
-			 * code. This will still be returned by the transport with
-			 * an HTTP 500 status code, but an HL7 message will still 
-			 * be propagated up. 
-			 */
-			if (somethingFailed) {
-				try {
-					response = theMessage.generateACK(AcknowledgmentCode.AE, 
-							new HL7Exception("There was a problem!!"));
-				} catch (IOException e) {
-					throw new ReceivingApplicationException(e);
-				}
-			}
-			
 			return response;
 		}
 

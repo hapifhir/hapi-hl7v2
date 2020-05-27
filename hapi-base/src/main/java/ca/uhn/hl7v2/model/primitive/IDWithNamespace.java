@@ -8,8 +8,8 @@ import ca.uhn.hl7v2.model.Message;
 @SuppressWarnings("serial")
 public class IDWithNamespace extends ID {
 
-	private String myNamespace;
-	private String myHl7Version;
+	private final String myNamespace;
+	private final String myHl7Version;
 
 	public IDWithNamespace(Message theMessage, String theHl7Version, String theNamespace, int theTable) {
 		super(theMessage, theTable);

@@ -34,26 +34,26 @@ public interface Initiator {
      * @param theMessage the message to send to the remote system
      * @return the response from the remote system 
      */
-    public Message sendAndReceive(Message theMessage) throws HL7Exception;
+    Message sendAndReceive(Message theMessage) throws HL7Exception;
     
     /**
      * @return the <code>Parser</code> that is used to encode outbound messages
      * and parse inbound ones.  It may be of interest to set certain parameters 
      * of this parser, for example whether to use XML encoding.   
      */
-    public Parser getParser();
+    Parser getParser();
     
     /**
      * @return the <code>Processor</code> instance that is used to perform the message
      * exchange   
      */
-    public Processor getUnderlyingProcessor();
+    Processor getUnderlyingProcessor();
     
     /**
      * @return the list of fields that will be included as metadata when a <code>Message</code>
      * is converted to a <code>Transportable</code>.  Each field is a <code>Terser</code>
      * path (type String).  
      */
-    public List<String> getMetadataFields();
+    List<String> getMetadataFields();
         
 }

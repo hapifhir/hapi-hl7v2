@@ -26,12 +26,11 @@
  */
 package ca.uhn.hl7v2.sourcegen;
 
-import java.util.ArrayList;
-
-import junit.framework.TestCase;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import junit.framework.TestCase;
+
+import java.util.ArrayList;
 
 
 /**
@@ -87,10 +86,10 @@ public class SourceGeneratorTest extends TestCase {
 	/**
 	 * Testing getVersionPackagePath() with various version strings
 	 */
-	public void testGetVersionPackagePath() throws DataTypeException {
+	public void testGetVersionPackagePath() {
 		class TestSpec {
-			String ver;
-			Object outcome;
+			final String ver;
+			final Object outcome;
 			Exception exception = null;
 			
 			TestSpec(String ver, Object outcome) {
@@ -107,17 +106,13 @@ public class SourceGeneratorTest extends TestCase {
 			public boolean executeTest() {
 				try {
 					String retval = DefaultModelClassFactory.getVersionPackagePath(ver);
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
+					return retval.equals(outcome);
 				} catch (Exception e) {
 					if (e.getClass().equals(outcome)) {
 						return true;
 					} else {
 						this.exception = e;
-						return (e.getClass().equals(outcome));
+						return false;
 					}
 				}
 			}
@@ -140,11 +135,11 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.6", "ca/uhn/hl7v2/model/v26/")
 		};
 		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
+		ArrayList<TestSpec> failedTests = new ArrayList<>();
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-         		failedTests.add( tests[ i ] );
+		for (TestSpec test : tests) {
+			if (!test.executeTest())
+				failedTests.add(test);
 		}
 
    		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
@@ -153,10 +148,10 @@ public class SourceGeneratorTest extends TestCase {
 	/**
 	 * Testing getVersionPackageName() with various version strings
 	 */
-	public void testGetVersionPackageName() throws DataTypeException {
+	public void testGetVersionPackageName() {
 		class TestSpec {
-			String ver;
-			Object outcome;
+			final String ver;
+			final Object outcome;
 			Exception exception = null;
 			
 			TestSpec(String ver, Object outcome) {
@@ -173,17 +168,13 @@ public class SourceGeneratorTest extends TestCase {
 			public boolean executeTest() {
 				try {
 					String retval = DefaultModelClassFactory.getVersionPackageName(ver);
-					if (retval != null) {
-						return retval.equals(outcome);
-					} else {
-						return outcome == null;
-					}
+					return retval.equals(outcome);
 				} catch (Exception e) {
 					if (e.getClass().equals(outcome)) {
 						return true;
 					} else {
 						this.exception = e;
-						return (e.getClass().equals(outcome));
+						return false;
 					}
 				}
 			}
@@ -206,11 +197,11 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("2.6", "ca.uhn.hl7v2.model.v26.")
 		};
 		
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
+		ArrayList<TestSpec> failedTests = new ArrayList<>();
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-				failedTests.add( tests[ i ] );
+		for (TestSpec test : tests) {
+			if (!test.executeTest())
+				failedTests.add(test);
 		}
 
 		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 
@@ -219,8 +210,8 @@ public class SourceGeneratorTest extends TestCase {
 	/** Tests makeAccessorName() */
 	public void testMakeAccessorName() {        
 		class TestSpec {
-			String fieldDesc;
-			Object outcome;
+			final String fieldDesc;
+			final Object outcome;
 			Exception exception = null;
 			
 			TestSpec(String fieldDesc, Object outcome) {
@@ -243,7 +234,7 @@ public class SourceGeneratorTest extends TestCase {
 						return true;
 					} else {
 						this.exception = e;
-						return (e.getClass().equals(outcome));
+						return false;
 					}
 				}
 			}
@@ -260,9 +251,9 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("(INTERNAL)", "getINTERNAL"),
 		};
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-				fail( tests[ i ].toString() );
+		for (TestSpec test : tests) {
+			if (!test.executeTest())
+				fail(test.toString());
 		}
 
 	}
@@ -271,9 +262,9 @@ public class SourceGeneratorTest extends TestCase {
 	/** Tests getAlternateType() */
 	public void testGetAlternateType() {
 		class TestSpec {
-			String type;
-			String ver;
-			Object outcome;
+			final String type;
+			final String ver;
+			final Object outcome;
 			Exception exception = null;
 			
 			TestSpec(String type, String ver, Object outcome) {
@@ -301,7 +292,7 @@ public class SourceGeneratorTest extends TestCase {
 						return true;
 					} else {
 						this.exception = e;
-						return (e.getClass().equals(outcome));
+						return false;
 					}
 				}
 			}
@@ -315,11 +306,11 @@ public class SourceGeneratorTest extends TestCase {
 			new TestSpec("test", "2.4", "test"),
 		};
 
-		ArrayList<TestSpec> failedTests = new ArrayList<TestSpec>();
+		ArrayList<TestSpec> failedTests = new ArrayList<>();
 
-		for (int i = 0; i < tests.length ; i++) {
-			if ( ! tests[ i ].executeTest() ) 
-				failedTests.add( tests[ i ] );
+		for (TestSpec test : tests) {
+			if (!test.executeTest())
+				failedTests.add(test);
 		}
 
 		assertEquals("Failures: " + failedTests, 0, failedTests.size()); 

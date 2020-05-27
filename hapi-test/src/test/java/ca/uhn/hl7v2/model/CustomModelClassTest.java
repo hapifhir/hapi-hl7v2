@@ -9,7 +9,6 @@ import org.junit.Test;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.group.ADT_A01_INSURANCE;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.unittest.custommodel.v25.message.ADT_A01;
@@ -18,7 +17,7 @@ import ca.uhn.hl7v2.unittest.custommodel.v25.message.ZDT_A01;
 public class CustomModelClassTest {
 
 	@Test
-	public void testDirectSubclass() throws EncodingNotSupportedException, HL7Exception {
+	public void testDirectSubclass() throws HL7Exception {
 		
 		String msg = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ADT^A01^ADT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.5\r" + 
 				"EVN||20120701000000-0500\r" + 
@@ -49,10 +48,10 @@ public class CustomModelClassTest {
 	/**
 	 * Test for issue 3558962
 	 * 
-	 * @see https://sourceforge.net/tracker/?func=detail&aid=3558962&group_id=38899&atid=423835
+	 * see https://sourceforge.net/tracker/?func=detail&aid=3558962&group_id=38899&atid=423835
 	 */
 	@Test
-	public void testRenamedSubclass() throws EncodingNotSupportedException, HL7Exception {
+	public void testRenamedSubclass() throws HL7Exception {
 		
 		String msg = "MSH|^~\\&|DATASERVICES|CORPORATE|||20120711120510.2-0500||ZDT^A01^ZDT_A01|9c906177-dfca-4bbe-9abd-d8eb43df93a0|D|2.5\r" + 
 				"EVN||20120701000000-0500\r" + 

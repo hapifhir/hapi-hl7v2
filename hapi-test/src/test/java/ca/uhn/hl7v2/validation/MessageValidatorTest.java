@@ -17,7 +17,6 @@ import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
@@ -39,7 +38,7 @@ public class MessageValidatorTest extends MockitoTest {
 
     @SuppressWarnings("serial")
 	@Before
-    public void setUp() throws Exception {
+    public void setUp() {
 //        ValidationContextImpl context = new ValidationContextImpl();
 //        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
 //        context.getMessageRuleBindings().add(new MessageRuleBinding("*", "*", "*", new MockMessageRule()));
@@ -86,7 +85,7 @@ public class MessageValidatorTest extends MockitoTest {
     }
 
     @Test
-    public void testWithdrawnDatatype() throws EncodingNotSupportedException, HL7Exception {
+    public void testWithdrawnDatatype() {
 
         String deviceObservationMessage = "MSH|^~\\&|AcmeInc^ACDE48234567ABCD^EUI-64||||20090713090030+0000||ORU^R01^ORU_R01|MSGID1234|P|2.6|||NE|AL|||||IHE PCD ORU-R01 2006^HL7^2.16.840.1.113883.9.n.m^HL7\r"
                 + "PID|||1^^^Imaginary Hospital^PI ||Doe^John^Joseph^^^^L^A|||M|||||0123456789\r"
@@ -110,7 +109,7 @@ public class MessageValidatorTest extends MockitoTest {
     
     // TODO to be enabled if Message Validation also tests primitives 
     @Ignore
-    public void testWithdrawnDatatype2() throws EncodingNotSupportedException, HL7Exception {
+    public void testWithdrawnDatatype2() throws HL7Exception {
 
         String deviceObservationMessage = "MSH|^~\\&|AcmeInc^ACDE48234567ABCD^EUI-64||||20090713090030+0000||ORU^R01^ORU_R01|MSGID1234|P|2.6|||NE|AL|||||IHE PCD ORU-R01 2006^HL7^2.16.840.1.113883.9.n.m^HL7\r"
                 + "PID|||1^^^Imaginary Hospital^PI ||Doe^John^Joseph^^^^L^A|||M|||||0123456789\r"

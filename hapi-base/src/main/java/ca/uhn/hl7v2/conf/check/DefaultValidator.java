@@ -71,7 +71,7 @@ import ca.uhn.hl7v2.util.Terser;
  */
 public class DefaultValidator extends HapiContextSupport implements Validator {
 
-	private EncodingCharacters enc; // used to check for content in parts of a message
+	private final EncodingCharacters enc; // used to check for content in parts of a message
 	private static final Logger log = LoggerFactory.getLogger(DefaultValidator.class);
 	private boolean validateChildren = true;
 	private CodeStore codeStore;
@@ -111,7 +111,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 */
 	public HL7Exception[] validate(Message message, StaticDef profile) throws ProfileException,
 			HL7Exception {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
+		List<HL7Exception> exList = new ArrayList<>();
 		Terser t = new Terser(message);
 
         checkMessageType(t.get("/MSH-9-1"), profile, exList);
@@ -120,11 +120,11 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
         exList.addAll(doTestGroup(message, profile, profile.getIdentifier(),
 				validateChildren));
-		return exList.toArray(new HL7Exception[exList.size()]);
+		return exList.toArray(new HL7Exception[0]);
 	}
 
 
-    protected void checkEventType(String evType, StaticDef profile, List<HL7Exception> exList) throws HL7Exception {
+    protected void checkEventType(String evType, StaticDef profile, List<HL7Exception> exList) {
         if (!evType.equals(profile.getEventType())
                 && !profile.getEventType().equalsIgnoreCase("ALL")) {
             HL7Exception e = new ProfileNotFollowedException("Event type " + evType
@@ -133,7 +133,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
         }
     }
 
-    protected void checkMessageType(String msgType, StaticDef profile, List<HL7Exception> exList) throws HL7Exception {
+    protected void checkMessageType(String msgType, StaticDef profile, List<HL7Exception> exList) {
         if (!msgType.equals(profile.getMsgType())) {
             HL7Exception e = new ProfileNotFollowedException("Message type " + msgType
                     + " doesn't match profile type of " + profile.getMsgType());
@@ -159,8 +159,8 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	protected List<HL7Exception> doTestGroup(Group group, AbstractSegmentContainer profile,
 			String profileID, boolean theValidateChildren) throws ProfileException {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
-		List<String> allowedStructures = new ArrayList<String>();
+		List<HL7Exception> exList = new ArrayList<>();
+		List<String> allowedStructures = new ArrayList<>();
 
 		for (ProfileStructure struct : profile) {
 
@@ -170,7 +170,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 				// see which instances have content
 				try {
-					List<Structure> instancesWithContent = new ArrayList<Structure>();
+					List<Structure> instancesWithContent = new ArrayList<>();
 					for (Structure instance : group.getAll(struct.getName())) {
 						if (!instance.isEmpty())
 							instancesWithContent.add(instance);
@@ -253,7 +253,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 */
 	public List<HL7Exception> testStructure(Structure s, ProfileStructure profile, String profileID)
 			throws ProfileException {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
+		List<HL7Exception> exList = new ArrayList<>();
 		if (profile instanceof Seg) {
 			if (Segment.class.isAssignableFrom(s.getClass())) {
 				exList.addAll(doTestSegment((Segment) s, (Seg) profile, profileID, validateChildren));
@@ -284,8 +284,8 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	protected List<HL7Exception> doTestSegment(ca.uhn.hl7v2.model.Segment segment, Seg profile,
 			String profileID, boolean theValidateChildren) throws ProfileException {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
-		List<Integer> allowedFields = new ArrayList<Integer>();
+		List<HL7Exception> exList = new ArrayList<>();
+		List<Integer> allowedFields = new ArrayList<>();
 
 		for (int i = 1; i <= profile.getFields(); i++) {
 			Field field = profile.getField(i);
@@ -297,7 +297,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 				// see which instances have content
 				try {
 					Type[] instances = segment.getField(i);
-					List<Type> instancesWithContent = new ArrayList<Type>();
+					List<Type> instancesWithContent = new ArrayList<>();
 					for (Type instance : instances) {
 						if (!instance.isEmpty())
 							instancesWithContent.add(instance);
@@ -376,7 +376,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 	 */
 	public List<HL7Exception> testType(Type type, AbstractComponent<?> profile, String encoded,
 			String profileID) {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
+		List<HL7Exception> exList = new ArrayList<>();
 		if (encoded == null)
 			encoded = PipeParser.encode(type, this.enc);
 
@@ -501,7 +501,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		if (store == null) {
 			log.info(
 					"Not checking value {}: no code store was found for profile {} code system {}",
-					new Object[] { value, profileID, codeSystem });
+					value, profileID, codeSystem);
 		} else {
 			if (!store.knowsCodes(codeSystem)) {
 				log.warn("Not checking value {}: Don't have a table for code system {}", value,
@@ -521,14 +521,13 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	protected List<HL7Exception> doTestField(Type type, Field profile, boolean escape, String profileID,
 			boolean theValidateChildren) throws ProfileException, HL7Exception {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
 
 		// account for MSH 1 & 2 which aren't escaped
 		String encoded = null;
 		if (!escape && Primitive.class.isAssignableFrom(type.getClass()))
 			encoded = ((Primitive) type).getValue();
 
-		exList.addAll(testType(type, profile, encoded, profileID));
+		List<HL7Exception> exList = new ArrayList<>(testType(type, profile, encoded, profileID));
 
 		// test children
 		if (theValidateChildren) {
@@ -564,8 +563,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	protected List<HL7Exception> doTestComponent(Type type, Component profile, String profileID,
 			boolean theValidateChildren) throws ProfileException, HL7Exception {
-		List<HL7Exception> exList = new ArrayList<HL7Exception>();
-		exList.addAll(testType(type, profile, null, profileID));
+		List<HL7Exception> exList = new ArrayList<>(testType(type, profile, null, profileID));
 
 		// test children
 		if (profile.getSubComponents() > 0 && !profile.getUsage().equals("X") && (!type.isEmpty())) {
@@ -618,7 +616,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 
 		if (args.length != 2) {
 			System.out.println("Usage: DefaultValidator message_file profile_file");
@@ -651,7 +649,7 @@ public class DefaultValidator extends HapiContextSupport implements Validator {
 		File file = new File(path);
 		// char[] cbuf = new char[(int) file.length()];
 		BufferedReader in = new BufferedReader(new FileReader(file));
-		StringBuffer buf = new StringBuffer(5000);
+		StringBuilder buf = new StringBuilder(5000);
 		int c;
 		while ((c = in.read()) != -1) {
 			buf.append((char) c);

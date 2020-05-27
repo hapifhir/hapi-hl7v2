@@ -27,7 +27,6 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.protocol.impl;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.jms.JMSException;
@@ -74,11 +73,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
         myOutbound = theOutboundDestination;
     }
     
-    /**
-     * @param theConnection JMS connection over which messages are exchanged 
-     * @param theDestination JMS destination to which messages are produced and 
-     *      from which messages are consumed 
-     */
+
     public JMSTransport() {
         myMetadata = makeMetadata();
     }
@@ -87,7 +82,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
      * Sets common metadata on the basis of connection and destination.  
      */ 
     private Map<String, Object> makeMetadata() {
-        Map<String, Object> md = new HashMap<String, Object>();
+        Map<String, Object> md = new HashMap<>();
         try {
             md.put(INBOUND_CLIENT_ID_KEY, myInbound.getConnection().getClientID());
             md.put(INBOUND_CONNECTION_METADATA_KEY, myInbound.getConnection().getMetaData());
@@ -120,7 +115,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
 //    }
 
     /** 
-     * @see ca.uhn.hl7v2.protocol.Transport#doSend(ca.uhn.hl7v2.protocol.Transportable)
+     * @see AbstractTransport#doSend(ca.uhn.hl7v2.protocol.Transportable)
      */
     public void doSend(Transportable theMessage) throws TransportException {
         try {            
@@ -142,20 +137,18 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
      * @return a Message containing data from the given Transportable
      */
     protected Message toMessage(Transportable theSource) throws TransportException {
-        Message message;
+        TextMessage message;
         try {
             message = myOutbound.createMessage();
          
-            if ( !(message instanceof TextMessage)) {
+            if (message == null) {
                 throw new TransportException("This implementation expects getMessage() to return "
                     + " a TextMessage.  Override this method if another message type is to be used");
             }
 
-            ((TextMessage) message).setText(theSource.getMessage());
-        
-            Iterator<String> it = theSource.getMetadata().keySet().iterator();
-            while (it.hasNext()) {
-                Object key = it.next();
+            message.setText(theSource.getMessage());
+
+            for (Object key : theSource.getMetadata().keySet()) {
                 Object val = theSource.getMetadata().get(key);
                 message.setObjectProperty(key.toString(), val);
             }
@@ -179,7 +172,7 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
                 + " a TextMessage.  Override this method if another message type is to be used");
         }
         
-        Transportable result = null;
+        Transportable result;
         try {
             String text = ((TextMessage) theMessage).getText();
             result = new TransportableImpl(text);
@@ -192,10 +185,10 @@ public class JMSTransport extends AbstractTransport implements TransportLayer {
     }
     
     /** 
-     * @see ca.uhn.hl7v2.protocol.AbstractTransport#doReceive()
+     * @see AbstractTransport#doReceive()
      */
     public Transportable doReceive() throws TransportException {
-        Transportable result = null;
+        Transportable result;
         try {
             Message message = myInbound.receive();
             result = toTransportable(message);

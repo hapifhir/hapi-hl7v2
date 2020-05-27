@@ -469,16 +469,14 @@ public class CommonTS implements Serializable {
                 //8 characters in length
                 if (val.length() < 4) {
                     String msg = "The length of the TS datatype value must be at least 4 characters in length.";
-                    DataTypeException e = new DataTypeException(msg);
-                    throw e;
+                    throw new DataTypeException(msg);
                 }
 
                 //check the length of the input value, ensure that it is not greater
                 //than 24 characters in length
                 if (val.length() > 24) {
                     String msg = "The length of the TS datatype value must not be more than 24 characters in length.";
-                    DataTypeException e = new DataTypeException(msg);
-                    throw e;
+                    throw new DataTypeException(msg);
                 }
 
                 //at this point we know that we have a value that should conform to the DT
@@ -531,7 +529,7 @@ public class CommonTS implements Serializable {
                 dt.setValue(dateVal);
                 //if the offset does not exist and a timevalue does not exist then
                 //we must provide a default offset = to the local time zone
-                if (timeVal == null && !offsetExists) {
+                if (timeVal == null) {
 //                    int defaultOffset = DataTypeUtil.getLocalGMTOffset();
                     tm = new CommonTM();
                     //tm.setOffset(defaultOffset);
@@ -549,8 +547,7 @@ public class CommonTS implements Serializable {
                             "The length of the time component for the TM datatype"
                                 + " value does not conform to the allowable format"
                                 + " YYYY[MM[DD[HH[MM[SS[.S[S[S[S]]]]]]]]][+/-ZZZZ].";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if
                     tm = new CommonTM();
                     tm.setValue(timeVal);
@@ -566,8 +563,7 @@ public class CommonTS implements Serializable {
                         String msg =
                             "The length of the GMT offset for the TM datatype value does"
                                 + " not conform to the allowable format [+/-ZZZZ]";
-                        DataTypeException e = new DataTypeException(msg);
-                        throw e;
+                        throw new DataTypeException(msg);
                     } //end if 
                     tm = new CommonTM();
                     //first extract the + sign from the offset value string if it exists
@@ -698,7 +694,7 @@ public class CommonTS implements Serializable {
      * an Hl7 TimeStamp Format.
      */
     public static String toHl7TSFormat(GregorianCalendar cal) throws DataTypeException {
-        String val = "";
+        String val;
         try {
             //set the input cal object so that it can report errors
             //on it's value

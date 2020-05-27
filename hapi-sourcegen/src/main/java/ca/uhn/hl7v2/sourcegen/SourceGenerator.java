@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringUtils;
  * <p>Note: should put a nice UI on this</p>
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-public class SourceGenerator extends Object {
+public class SourceGenerator {
     
 	public static final String ENCODING = "UTF-8";
 	
@@ -52,7 +52,6 @@ public class SourceGenerator extends Object {
     /**
      * Generates source code for all data types, segments, groups, and messages.
      * @param baseDirectory the directory where source should be written
-     * @param theJdbcUrl The JDBC URL
      * @throws HL7Exception - 
      */
     public static void makeAll(String baseDirectory, String version, boolean failOnError, String theTemplatePackage, String theFileExt) throws HL7Exception  {
@@ -82,30 +81,30 @@ public class SourceGenerator extends Object {
      * taken here is to eliminate bracketed text if a it looks like a data type.
      */
     public static String makeAccessorName(String fieldDesc, String parentName) {
-        StringBuffer aName = new StringBuffer();
+        StringBuilder aName = new StringBuilder();
         char[] chars = fieldDesc.toCharArray();
         boolean lastCharWasNotLetter = true;
         int inBrackets = 0;
         StringBuffer bracketContents = new StringBuffer();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '(' ) inBrackets++;
-            if (chars[i] == ')' ) inBrackets--;
-            
-            if (Character.isLetterOrDigit(chars[i])) {
+        for (char aChar : chars) {
+            if (aChar == '(') inBrackets++;
+            if (aChar == ')') inBrackets--;
+
+            if (Character.isLetterOrDigit(aChar)) {
                 if (inBrackets > 0) {
                     //buffer everthing in brackets
-                    bracketContents.append(chars[i]);
+                    bracketContents.append(aChar);
                 } else {
-                    //add capitalized bracketed text if appropriate 
+                    //add capitalized bracketed text if appropriate
                     if (bracketContents.length() > 0) {
                         aName.append(capitalize(filterBracketedText(bracketContents.toString())));
                         bracketContents = new StringBuffer();
                     }
                     if (lastCharWasNotLetter) {
                         //first letter of each word is upper-case
-                        aName.append(Character.toUpperCase(chars[i]));
+                        aName.append(Character.toUpperCase(aChar));
                     } else {
-                        aName.append(chars[i]);
+                        aName.append(aChar);
                     }
                     lastCharWasNotLetter = false;
                 }
@@ -148,10 +147,10 @@ public class SourceGenerator extends Object {
     
     /** Capitalizes first character of the given text. */
     private static String capitalize(String text) {
-        StringBuffer cap = new StringBuffer();
+        StringBuilder cap = new StringBuilder();
         if (text.length() > 0) {
             cap.append(Character.toUpperCase(text.charAt(0)));
-            cap.append(text.substring(1, text.length()));
+            cap.append(text.substring(1));
         }
         return cap.toString();
     }
@@ -170,7 +169,7 @@ public class SourceGenerator extends Object {
             
             if (!currDir.exists()) {
                 //create
-                currDir.mkdir();;
+                currDir.mkdir();
             } else if (currDir.isFile()) {
                 throw new IOException("Can't create directory " + thisDirName +
                 " - file with same name exists.");
@@ -223,7 +222,7 @@ public class SourceGenerator extends Object {
     }
 
 	public static String makeAlternateAccessorName(String fieldDesc, String parentName, int index) {
-        StringBuffer aName = new StringBuffer();
+        StringBuilder aName = new StringBuilder();
         
         aName.append(StringUtils.capitalize(parentName.toLowerCase())).append(index).append("_");
         
@@ -231,25 +230,25 @@ public class SourceGenerator extends Object {
         boolean lastCharWasNotLetter = true;
         int inBrackets = 0;
         StringBuffer bracketContents = new StringBuffer();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '(' ) inBrackets++;
-            if (chars[i] == ')' ) inBrackets--;
-            
-            if (Character.isLetterOrDigit(chars[i])) {
+        for (char aChar : chars) {
+            if (aChar == '(') inBrackets++;
+            if (aChar == ')') inBrackets--;
+
+            if (Character.isLetterOrDigit(aChar)) {
                 if (inBrackets > 0) {
                     //buffer everthing in brackets
-                    bracketContents.append(chars[i]);
+                    bracketContents.append(aChar);
                 } else {
-                    //add capitalized bracketed text if appropriate 
+                    //add capitalized bracketed text if appropriate
                     if (bracketContents.length() > 0) {
                         aName.append(capitalize(filterBracketedText(bracketContents.toString())));
                         bracketContents = new StringBuffer();
                     }
                     if (lastCharWasNotLetter) {
                         //first letter of each word is upper-case
-                        aName.append(Character.toUpperCase(chars[i]));
+                        aName.append(Character.toUpperCase(aChar));
                     } else {
-                        aName.append(chars[i]);
+                        aName.append(aChar);
                     }
                     lastCharWasNotLetter = false;
                 }
@@ -257,11 +256,10 @@ public class SourceGenerator extends Object {
                 lastCharWasNotLetter = true;
             }
         }
-        aName.append(capitalize(filterBracketedText(bracketContents.toString())));        
-        String retVal = aName.toString();
+        aName.append(capitalize(filterBracketedText(bracketContents.toString())));
 
-        
-        return retVal;
+
+        return aName.toString();
 	}
     
 }

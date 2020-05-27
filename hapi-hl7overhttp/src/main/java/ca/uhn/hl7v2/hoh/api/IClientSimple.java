@@ -6,19 +6,19 @@ public interface IClientSimple extends IClient {
 	 * If a socket exists and it is connected, closes the socket. Only required
 	 * if {@link #isAutoClose() auto close} mode is false
 	 */
-	public abstract void close();
+    void close();
 
 	/**
 	 * @return Should the socket auto-close
 	 * @see #setAutoClose(boolean)
 	 */
-	public abstract boolean isAutoClose();
+    boolean isAutoClose();
 
 	/**
 	 * @return Returns true if there is a socket, and it appears to be connected
 	 *         and not shut down
 	 */
-	public abstract boolean isConnected();
+    boolean isConnected();
 
 	/**
 	 * <p>
@@ -33,6 +33,6 @@ public interface IClientSimple extends IClient {
 	 * calling {@link #close()}.
 	 * </p>
 	 */
-	public abstract void setAutoClose(boolean theAutoClose);
+    void setAutoClose(boolean theAutoClose);
 
 }

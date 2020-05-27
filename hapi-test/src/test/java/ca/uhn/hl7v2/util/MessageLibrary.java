@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +75,8 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
      // the final character of a message: a carriage return
     private static final char LAST_CHARACTER = 13;
 		
-	private String messageFilePath;
-	private String encoding;
+	private final String messageFilePath;
+	private final String encoding;
 	private int numParsingErrors = 0;
 		
 	/**
@@ -111,11 +112,11 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 * Entries are collected into an ArrayList.
 	 */
 	private ArrayList<LibraryEntry> setEntries(String messageFilePath) {
-		ArrayList<LibraryEntry> entries = new ArrayList<LibraryEntry>();
+		ArrayList<LibraryEntry> entries = new ArrayList<>();
 		Parser parser;
-		if (encoding=="XML") {
+		if (Objects.equals(encoding, "XML")) {
 			parser = new DefaultXMLParser();
-		} else if (encoding=="VB") {
+		} else if (Objects.equals(encoding, "VB")) {
 			parser = new PipeParser();
 		} else {
 			parser = new GenericParser();
@@ -126,8 +127,8 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
                     this.getClass().getClassLoader().getResourceAsStream(messageFilePath)));
 			//BufferedReader in = new BufferedReader(new FileReader(messageFilePath));
 	 
-			StringBuffer msgBuf = new StringBuffer();
-			HashMap<String, String> segments = new HashMap<String, String>();
+			StringBuilder msgBuf = new StringBuilder();
+			HashMap<String, String> segments = new HashMap<>();
 			Message msg = null;
 		
 			boolean eof = false;
@@ -162,15 +163,12 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 					try {
 						Integer.parseInt(lineSplit[1]);
 						lineKey = lineKey + "|" + lineSplit[1];
-					} catch (NumberFormatException e) {
-						// Ignore
-//						int stop = 1;
-					} catch (ArrayIndexOutOfBoundsException e) {
+					} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
 						// Ignore
 //						int stop = 1;
 					}
 					segments.put(lineKey, line);
-					msgBuf.append(line+"\r");
+					msgBuf.append(line).append("\r");
 				} else if (msgBuf.length()>0) {
 					//only add an entry if have added some lines
 					//msgBuf.append("\r\n");
@@ -181,7 +179,7 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 						++numParsingErrors;
 						ourLog.debug("Parsing errors with message:\n" + msgStr, e);
 					}
-					entries.add(new LibraryEntry(new String(msgStr), new HashMap<String, String>(segments), msg));
+					entries.add(new LibraryEntry(msgStr, new HashMap<>(segments), msg));
 					//reset for next message
 					msgBuf.setLength(0);
 					segments.clear();
@@ -207,10 +205,10 @@ public class MessageLibrary extends ArrayList<LibraryEntry> {
 	 */
 	public ByteArrayInputStream getAsByteArrayInputStream() {
 		Iterator<LibraryEntry> msgs = this.iterator();
-		StringBuffer inputMessages = new StringBuffer();
+		StringBuilder inputMessages = new StringBuilder();
 		while (msgs.hasNext()) {
-			LibraryEntry entry = (LibraryEntry) msgs.next();
-			inputMessages.append(START_MESSAGE + entry.messageString() + END_MESSAGE + LAST_CHARACTER);
+			LibraryEntry entry = msgs.next();
+			inputMessages.append(START_MESSAGE).append(entry.messageString()).append(END_MESSAGE).append(LAST_CHARACTER);
 		}			
 		return new ByteArrayInputStream(inputMessages.toString().getBytes());
 	}

@@ -40,7 +40,7 @@ public class StructureDefinition implements IStructureDefinition {
 
     private HashSet<String> myAllChildrenNames;
     private HashSet<String> myAllFirstLeafNames;
-    private ArrayList<StructureDefinition> myChildren = new ArrayList<StructureDefinition>();
+    private final ArrayList<StructureDefinition> myChildren = new ArrayList<>();
     private IStructureDefinition myFirstSibling;
     private boolean myFirstSiblingIsSet;
     private Boolean myIsFinalChildOfParent;
@@ -77,7 +77,7 @@ public class StructureDefinition implements IStructureDefinition {
      */
     @Override
     public boolean equals(Object theObj) {
-        if (theObj == null || !(theObj instanceof StructureDefinition)) {
+        if (!(theObj instanceof StructureDefinition)) {
             return false;
         }
         StructureDefinition o = (StructureDefinition) theObj;
@@ -90,7 +90,7 @@ public class StructureDefinition implements IStructureDefinition {
      */
     public HashSet<String> getAllChildNames() {
         if (myAllChildrenNames == null) {
-            myAllChildrenNames = new HashSet<String>();
+            myAllChildrenNames = new HashSet<>();
             for (IStructureDefinition next : myChildren) {
                 myAllChildrenNames.add(next.getName());
                 myAllChildrenNames.addAll(next.getAllChildNames());
@@ -106,7 +106,7 @@ public class StructureDefinition implements IStructureDefinition {
      */
     public HashSet<String> getAllPossibleFirstChildren() {
         if (myAllFirstLeafNames == null) {
-            myAllFirstLeafNames = new HashSet<String>();
+            myAllFirstLeafNames = new HashSet<>();
             
             boolean hasChoice = false;
             for (IStructureDefinition next : myChildren) {
@@ -190,7 +190,7 @@ public class StructureDefinition implements IStructureDefinition {
             return myNamesOfAllPossibleFollowingLeaves;
         }
 
-        myNamesOfAllPossibleFollowingLeaves = new HashSet<String>();
+        myNamesOfAllPossibleFollowingLeaves = new HashSet<>();
 
         IStructureDefinition nextLeaf = getNextLeaf();
         if (nextLeaf != null) {

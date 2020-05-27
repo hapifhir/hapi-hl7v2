@@ -41,22 +41,22 @@ public interface StructureDef {
 	/**
 	 * For superstructures, returns the message structures this structure is associated with
 	 */
-	public List<String> getAssociatedStructures();
+    List<String> getAssociatedStructures();
 	
     /**
      * Returns the name of the structure.
      */
-    public String getName();
+    String getName();
     
     /**
      * Returns a text description of the structure.
      */
-    public String getDescription();
+    String getDescription();
     
     /**
      * Returns true if this structure is required in the Group.  
-     */ 
-    public boolean isRequired();
+     */
+    boolean isRequired();
 
     /**
      * @see Group#isChoiceElement(String)
@@ -65,18 +65,18 @@ public interface StructureDef {
     
     /**
      * Returns true if this structure is a segment.  
-     */ 
-    public boolean isSegment();
+     */
+    boolean isSegment();
     
     /**
      * Returns true if this structure can repeat in the Group.  
-     */ 
-    public boolean isRepeating();
+     */
+    boolean isRepeating();
 
     /**
      * Returns true if this structure can repeat in the Group.  
-     */ 
-    public boolean isGroup();
+     */
+    boolean isGroup();
     
     /**
      * Returns a list of the names of the segments that are children of this Structure.  
@@ -85,14 +85,14 @@ public interface StructureDef {
      * in subgroups (depth first).  This method is used to support the XML SIG's convention 
      * for deriving group names. 
      */
-    public String[] getChildSegments(); 
+    String[] getChildSegments();
     
     /**
      * @return Returns the name without any prefix qualification. This is only different for
      * group definitions, where the qualification is the message type (i.e. this will 
      * return PROCEDURE instead of ADT_A01_PROCEDURE)
      */
-    public String getUnqualifiedName();
+    String getUnqualifiedName();
     
     /** 
      * Returns the name by which a particular structure can be accessed (eg for use 
@@ -104,11 +104,11 @@ public interface StructureDef {
      * method is called matters: it should be called ONCE for each element of the group in the 
      * order in which they appear.  
      */
-    public String getIndexName();
+    String getIndexName();
     
     /**
      * {@see #getIndexName()}
      */
-    public void setIndexName(String theIndexName);
+    void setIndexName(String theIndexName);
 }
 

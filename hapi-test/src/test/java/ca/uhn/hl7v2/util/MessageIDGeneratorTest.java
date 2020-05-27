@@ -40,11 +40,9 @@ public class MessageIDGeneratorTest {
 
 			assertEquals("1", id);
 		} finally {
-			if (file != null) {
-				file.setWritable(true);
-				file.setReadable(true);
-			}
-		}
+            file.setWritable(true);
+            file.setReadable(true);
+        }
 	}
 
 }

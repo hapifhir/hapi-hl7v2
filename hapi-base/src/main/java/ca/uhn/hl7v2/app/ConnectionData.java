@@ -34,14 +34,14 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
  * Connection meta data class.
  */
 class ConnectionData {
-	private String host;
-	private int port;
-	private int port2;
-	private boolean tls;
-	private Parser parser;
-	private LowerLayerProtocol protocol;
+	private final String host;
+	private final int port;
+	private final int port2;
+	private final boolean tls;
+	private final Parser parser;
+	private final LowerLayerProtocol protocol;
 	private SocketFactory socketFactory;
-    private boolean lazy;
+    private final boolean lazy;
 
 	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol) {
 		this(host, port, parser, protocol, false);
@@ -154,9 +154,7 @@ class ConnectionData {
 		}
 		if (port != other.port)
 			return false;
-		if (port2 != other.port2)
-			return false;
-		return true;
+		return port2 == other.port2;
 	}
 
 	@Override

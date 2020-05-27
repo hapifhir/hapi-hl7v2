@@ -40,7 +40,7 @@ public interface PrimitiveTypeRule extends Rule<String> {
      * @param value an original value to be corrected 
      * @return a corrected version of the given value 
      */
-    public String correct(String value);
+    String correct(String value);
 
     /**
      * Tests the given string against the criteria defined by this 
@@ -48,6 +48,6 @@ public interface PrimitiveTypeRule extends Rule<String> {
      * 
      * @deprecated use {@link #apply(Object)}
      */
-    public boolean test(String value);
+    boolean test(String value);
     
 }

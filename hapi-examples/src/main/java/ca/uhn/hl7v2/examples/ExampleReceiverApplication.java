@@ -33,7 +33,6 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
 /**
  * Application class for receiving ADT^A01 messages
@@ -52,7 +51,7 @@ public class ExampleReceiverApplication implements ReceivingApplication<Message>
     /**
      * {@inheritDoc}
      */
-	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 
         String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theMessage);
         System.out.println("Received message:\n" + encodedMessage + "\n\n");

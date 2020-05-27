@@ -40,7 +40,7 @@ import java.nio.charset.Charset;
  */
 class MllpDecoder {
 
-    protected Charset charset;
+    protected final Charset charset;
     private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(MllpDecoder.class);
     
     MllpDecoder(Charset charset) {

@@ -22,13 +22,13 @@ import static org.junit.Assert.assertNotNull;
 
 public class DTTest {
     private static final int year = 2002;
-    private static int month = 2;
-    private static int day = 24;
-    private static String dateString = "20020224";
+    private static final int month = 2;
+    private static final int day = 24;
+    private static final String dateString = "20020224";
 
     private static HapiContext context;
 
-    @Rule public IndexedErrorCollector collector = new IndexedErrorCollector();
+    @Rule public final IndexedErrorCollector collector = new IndexedErrorCollector();
 
     @BeforeClass
     public static void setupBefore() {
@@ -60,7 +60,7 @@ public class DTTest {
      * Testing set/getValue() with various date strings
      */
     @Test
-    public void testSetGetValue() throws DataTypeException {
+    public void testSetGetValue() {
         buildSpecs(SetGetSpec.class)
     	    .add(null, (String)null)
     	    .add("", "")
@@ -110,7 +110,7 @@ public class DTTest {
      * Testing setYearPrecision() with various year values
      */
     @Test    
-    public void testSetYearPrecision() throws DataTypeException {  	
+    public void testSetYearPrecision() {
         buildSpecs(SetYearPrecisionSpec.class)
     	    .add(-2000, DataTypeException.class)
     	    .add(9, DataTypeException.class)
@@ -139,7 +139,7 @@ public class DTTest {
      * Testing setYearMonthPrecision() with various year, month values
      */
     @Test    
-    public void testSetYearMonthPrecision() throws DataTypeException {	
+    public void testSetYearMonthPrecision() {
         buildSpecs(SetYearMonthPrecisionSpec.class)
     	    .add(ints(2001, -1), DataTypeException.class)
     	    .add(ints(9, 1), DataTypeException.class)
@@ -172,7 +172,7 @@ public class DTTest {
      * Testing setYearMonthDayPrecision() with various year, month, day values
      */
     @Test    
-    public void testSetYearMonthDayPrecision() throws DataTypeException {  	
+    public void testSetYearMonthDayPrecision() {
         buildSpecs(SetYearMonthDayPrecisionSpec.class)
     	    .add(ints(2001, 1, -1), DataTypeException.class)
     	    .add(ints(9, 1, 1), DataTypeException.class)

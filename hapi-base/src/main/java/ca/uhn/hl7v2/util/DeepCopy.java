@@ -1,6 +1,5 @@
 package ca.uhn.hl7v2.util;
 
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.*;
 

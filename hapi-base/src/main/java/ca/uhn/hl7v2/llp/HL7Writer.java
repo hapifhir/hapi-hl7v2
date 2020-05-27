@@ -42,17 +42,17 @@ public interface HL7Writer {
      * Sends a complete message to the underlying output stream using the  
      * lower layer protocol implemented by this HL7Writer.  
      */
-    public void writeMessage(String message) throws LLPException, IOException;
+    void writeMessage(String message) throws LLPException, IOException;
     
     /**
      * Sets the OutputStream to which to write messages.  The OutputStream must be set 
      * before any calls to <code>()</code>.
      */
-    public void setOutputStream(OutputStream out) throws IOException;
+    void setOutputStream(OutputStream out) throws IOException;
 
     /** 
      * Closes the underlying stream and any other resources that should be closed. 
      */
-    public void close() throws java.io.IOException;
+    void close() throws IOException;
     
 }

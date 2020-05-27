@@ -6,11 +6,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,25 +19,19 @@ import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Contains;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.app.Application;
-import ca.uhn.hl7v2.app.ApplicationException;
 import ca.uhn.hl7v2.app.SimpleServer;
 import ca.uhn.hl7v2.app.TestUtils;
-import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.protocol.MetadataKeys;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.testutil.LogCapturingAppender;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.StandardSocketFactory;
@@ -62,7 +55,7 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 		return true;
 	}
 
-	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws HL7Exception {
 		myLastReceivedRawMessage = (String) theMetadata.get(MetadataKeys.IN_RAW_MESSAGE);
 		try {
 			Message ack = theMessage.generateACK();
@@ -125,7 +118,7 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 				"PID|||DDS-31223^^^DDS&1.3.6.1.4.1.12559.11.1.4.1.2&ISO^PI||Kiefer^Gisela^^^^^L|Endres^^^^^^M|19351005041238|F|||&Uhlandstra�e^^Marbach am Neckar^^71726^DEU||||||||||||||||||||N\r" + // -
 				"PV1||I|1W^314^1^ITALIAN_HOSPITAL||||LOPEZ^GABRIELLA^^^DR|PRUST^RALPH^^^DR|||||||||||28^^^IHEPAM&1.3.6.1.4.1.12559.11.1.2.2.5&ISO^VN|||||||||||||||||||||||||20111219123200"; // -
 
-		byte[] msgBytes = msg.getBytes("UTF-8");
+		byte[] msgBytes = msg.getBytes(StandardCharsets.UTF_8);
 		msgBytes = ArrayUtils.addAll(new byte[] { MllpConstants.START_BYTE }, msgBytes);
 		msgBytes = ArrayUtils.addAll(msgBytes, new byte[] { MllpConstants.END_BYTE1, MllpConstants.END_BYTE2 });
 
@@ -223,7 +216,7 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 		ctx.close();
 	}
 
-	private void processMessageWithPartialDelay(DefaultHapiContext ctx, final int theDelay) throws InterruptedException, HL7Exception, IOException, DataTypeException, Exception, LLPException {
+	private void processMessageWithPartialDelay(DefaultHapiContext ctx, final int theDelay) throws Exception {
 		ctx.setValidationContext(new ValidationContextImpl());
 
 		int port = RandomServerPortProvider.findFreePort();
@@ -247,31 +240,26 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 		myLastExpectedRawMessage = msg.encode();
 		w.writeMessage(myLastExpectedRawMessage);
 
-		new Thread() {
-			@Override
-			public void run() {
-				byte[] bytesToWrite = cap.toByteArray();
-				try {
-					if (theDelay == 0) {
-						socket.getOutputStream().write(bytesToWrite);
-						socket.getOutputStream().flush();
-					} else {
-						socket.getOutputStream().write(bytesToWrite, 0, bytesToWrite.length / 2);
-						socket.getOutputStream().flush();
+		new Thread(() -> {
+			byte[] bytesToWrite = cap.toByteArray();
+			try {
+				if (theDelay == 0) {
+					socket.getOutputStream().write(bytesToWrite);
+				} else {
+					socket.getOutputStream().write(bytesToWrite, 0, bytesToWrite.length / 2);
+					socket.getOutputStream().flush();
 
-						Thread.sleep(theDelay);
+					Thread.sleep(theDelay);
 
-						socket.getOutputStream().write(bytesToWrite, bytesToWrite.length / 2, bytesToWrite.length - bytesToWrite.length / 2);
-						socket.getOutputStream().flush();
-					}
-				} catch (Exception e) {
-					ourLog.error("Exception during send: ", e);
+					socket.getOutputStream().write(bytesToWrite, bytesToWrite.length / 2, bytesToWrite.length - bytesToWrite.length / 2);
 				}
+				socket.getOutputStream().flush();
+			} catch (Exception e) {
+				ourLog.error("Exception during send: ", e);
 			}
-		}.start();
-		;
+		}).start();
 
-		try {
+        try {
 			myLastReceivedResponse = r.getMessage();
 		} catch (SocketException e) {
 			myLastReceiveException = e;
@@ -281,14 +269,14 @@ public class ExtendedMinLowerLayerProtocolTest implements ReceivingApplication<M
 	}
 
 	private List<Byte> toList(byte[] theActualBytes) {
-		ArrayList<Byte> retVal = new ArrayList<Byte>();
+		ArrayList<Byte> retVal = new ArrayList<>();
 		for (byte b : theActualBytes) {
 			retVal.add(b);
 		}
 		return retVal;
 	}
 
-	private void verifyReaderForCodeSystem(ADT_A01 a01, String hl7Cs, String javaCs, String theString) throws DataTypeException, HL7Exception, UnsupportedEncodingException, IOException, LLPException {
+	private void verifyReaderForCodeSystem(ADT_A01 a01, String hl7Cs, String javaCs, String theString) throws HL7Exception, IOException, LLPException {
 		a01.getMSH().getMsh18_CharacterSet(0).setValue(hl7Cs);
 
 		/*

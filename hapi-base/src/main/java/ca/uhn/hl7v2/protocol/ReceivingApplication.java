@@ -62,7 +62,7 @@ public interface ReceivingApplication<T extends Message> {
      *      a database problem)
      * @throws HL7Exception if there is a problem with the message 
      */
-    public Message processMessage(T theMessage, Map<String, Object> theMetadata)
+    Message processMessage(T theMessage, Map<String, Object> theMetadata)
             throws ReceivingApplicationException, HL7Exception;
     
     /** 
@@ -71,6 +71,6 @@ public interface ReceivingApplication<T extends Message> {
      *      true, this Application declares itself the recipient of the message, accepts 
      *      responsibility for it, and must be able to respond appropriately to the sending system.  
      */
-    public boolean canProcess(T theMessage);
+    boolean canProcess(T theMessage);
 
 }

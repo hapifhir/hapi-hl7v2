@@ -40,8 +40,8 @@ package ca.uhn.hl7v2.validation;
  */
 public class MessageValidator extends AbstractValidator<Boolean> {
 
-	private boolean theFailOnErrorFlag;
-	private ValidationContext validationContext;
+	private final boolean theFailOnErrorFlag;
+	private final ValidationContext validationContext;
 
 	public MessageValidator(ValidationContext context) {
 		this(context, false);

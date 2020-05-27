@@ -13,9 +13,9 @@ import java.net.Socket;
 public class LoadTester extends Thread {
     
     Connection conn;
-    Message[] messages;
-    long interval;
-    long duration;
+    final Message[] messages;
+    final long interval;
+    final long duration;
     
     /** Creates a new instance of LoadTester */
     public LoadTester(Message[] messages, long intervalMilliseconds, long durationSeconds, String host, int port) throws Exception {
@@ -32,7 +32,7 @@ public class LoadTester extends Thread {
         while (c < 1000) { //System.currentTimeMillis() < end) {
             try {
                 Thread.sleep(interval);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
                         
             System.out.println("Sending message " + c++);
             try {
@@ -43,7 +43,7 @@ public class LoadTester extends Thread {
         }
     }
     
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             GenericParser parser = new GenericParser();            
             String[] strings = {"MSH|^~\\&|Fake Sending App|Fake Sending Facility||Fake Receiving Facility|200108151718||ACK^A01^ACK|20|P|2.4|\rMSA|AA\r"};

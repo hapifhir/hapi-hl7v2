@@ -73,27 +73,25 @@ public class MLLPTransportTest extends TestCase {
     }
     
     private void startConnect(final TransportLayer theTransport) {
-        Thread thd = new Thread() {
-            public void run() {
-                try {
-                    theTransport.connect();
-                } catch (TransportException e) {
-                    e.printStackTrace();
-                }
+        Thread thd = new Thread(() -> {
+            try {
+                theTransport.connect();
+            } catch (TransportException e) {
+                e.printStackTrace();
             }
-        };
+        });
         thd.start();
     }
     
     public void testCharset() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         StreamSource ss = new StreamSource() {
-            public void connect() throws TransportException {}
-            public void disconnect() throws TransportException {}
-            public OutputStream getOutboundStream() throws TransportException {
+            public void connect() {}
+            public void disconnect() {}
+            public OutputStream getOutboundStream() {
                 return out;
             }
-            public InputStream getInboundStream() throws TransportException {
+            public InputStream getInboundStream() {
                 return new ByteArrayInputStream("inbound message".getBytes());
             }
         };

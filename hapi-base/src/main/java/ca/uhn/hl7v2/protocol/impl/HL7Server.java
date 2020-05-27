@@ -47,29 +47,29 @@ import ca.uhn.hl7v2.protocol.TransportException;
 import ca.uhn.hl7v2.protocol.TransportLayer;
 
 /**
- * A TCP/IP based server. 
- * 
+ * A TCP/IP based server.
+ *
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2009-06-30 13:30:45 $ by $Author: jamesagnew $
  */
 public class HL7Server {
 
-    private static Logger log = LoggerFactory.getLogger(HL7Server.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(HL7Server.class);
+
     private final ServerSocket myServerSocket;
     private ServerSocket myServerSocket2;
     private final ApplicationRouter myRouter;
     private final SafeStorage myStorage;
-    
+
     private boolean myIsRunning = false;
     private List<Processor> myProcessors;
-    
+
     /**
      * @param theServerSocket a ServerSocket on which to listen for connections that will
-     *      be used for both locally-driven and remotely-driven message exchanges
-     * @param theRouter used to send incoming messages to appropriate <code>Application</code>s
-     * @param theStorage used to commit incoming messages to safe storage before returning 
-     *      an accept ACK 
+     *                        be used for both locally-driven and remotely-driven message exchanges
+     * @param theRouter       used to send incoming messages to appropriate <code>Application</code>s
+     * @param theStorage      used to commit incoming messages to safe storage before returning
+     *                        an accept ACK
      */
     public HL7Server(ServerSocket theServerSocket, ApplicationRouter theRouter, SafeStorage theStorage) {
         myServerSocket = theServerSocket;
@@ -77,67 +77,66 @@ public class HL7Server {
         myStorage = theStorage;
         initProcessorList();
     }
-    
+
     /**
-     * @param theLocallyDriven a ServerSocket on which to listen for connections that will
-     *      be used for locally-initiated message exchanges
+     * @param theLocallyDriven  a ServerSocket on which to listen for connections that will
+     *                          be used for locally-initiated message exchanges
      * @param theRemotelyDriven a ServerSocket on which to listen for connections that will
-     *      be used for remotely-initiated message exchanges
-     * @param theRouter used to send incoming messages to appropriate <code>Application</code>s
-     * @param theStorage used to commit incoming messages to safe storage before returning 
-     *      an accept ACK 
+     *                          be used for remotely-initiated message exchanges
+     * @param theRouter         used to send incoming messages to appropriate <code>Application</code>s
+     * @param theStorage        used to commit incoming messages to safe storage before returning
+     *                          an accept ACK
      */
-    public HL7Server(ServerSocket theLocallyDriven, ServerSocket theRemotelyDriven, 
-        ApplicationRouter theRouter, SafeStorage theStorage) {
-    
+    public HL7Server(ServerSocket theLocallyDriven, ServerSocket theRemotelyDriven,
+                     ApplicationRouter theRouter, SafeStorage theStorage) {
+
         myServerSocket = theLocallyDriven;
         myServerSocket2 = theRemotelyDriven;
         myRouter = theRouter;
-        myStorage = theStorage;  
-        initProcessorList();       
+        myStorage = theStorage;
+        initProcessorList();
     }
 
     //creates list and starts thread to clean dead processors from it     
     private void initProcessorList() {
-        myProcessors = new ArrayList<Processor>();
-        
-        final List<Processor> processors = myProcessors; 
-        Thread cleaner = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {}
-                
-                synchronized (processors) {
-                    Iterator<Processor> it = processors.iterator();
-                    while (it.hasNext()) {
-                        Processor proc = it.next();
-                        if (!proc.getContext().getLocallyDrivenTransportLayer().isConnected() 
-                                || !proc.getContext().getRemotelyDrivenTransportLayer().isConnected()) {
-                            it.remove();
-                        }
+        myProcessors = new ArrayList<>();
+
+        final List<Processor> processors = myProcessors;
+        Thread cleaner = new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+
+            synchronized (processors) {
+                Iterator<Processor> it = processors.iterator();
+                while (it.hasNext()) {
+                    Processor proc = it.next();
+                    if (!proc.getContext().getLocallyDrivenTransportLayer().isConnected()
+                            || !proc.getContext().getRemotelyDrivenTransportLayer().isConnected()) {
+                        it.remove();
                     }
                 }
             }
-        };
+        });
         cleaner.start();
     }
-        
+
     /**
-     * Accepts a single inbound connection if the same ServerSocket is used for 
-     * all message exchanges, or a connection from each if two ServerSockets are 
-     * being used. 
-     *  
-     * @param theAddress the IP address from which to accept connections (null means 
-     *      accept from any address).  Connection attempts from other addresses will 
-     *      be ignored.  
-     * @return a <code>Processor</code> connected to the given address  
+     * Accepts a single inbound connection if the same ServerSocket is used for
+     * all message exchanges, or a connection from each if two ServerSockets are
+     * being used.
+     *
+     * @param theAddress the IP address from which to accept connections (null means
+     *                   accept from any address).  Connection attempts from other addresses will
+     *                   be ignored.
+     * @return a <code>Processor</code> connected to the given address
      * @throws TransportException
      */
     public Processor accept(String theAddress) throws TransportException {
         TransportLayer transport = getTransport(myServerSocket, theAddress);
-        ProcessorContext context = null;
-        
+        ProcessorContext context;
+
         if (myServerSocket2 == null) { //we're doing inbound & outbound on the same port
             transport.connect();
             context = new ProcessorContextImpl(myRouter, transport, myStorage);
@@ -145,101 +144,92 @@ public class HL7Server {
             TransportLayer transport2 = getTransport(myServerSocket2, theAddress);
             DualTransportConnector connector = new DualTransportConnector(transport, transport2);
             connector.connect();
-            
+
             context = new ProcessorContextImpl(myRouter, transport, transport2, myStorage);
         }
-        return new ProcessorImpl(context, true);        
+        return new ProcessorImpl(context, true);
     }
-    
+
     private static TransportLayer getTransport(ServerSocket theServerSocket, String theAddress) throws TransportException {
         ServerSocketStreamSource ss = new ServerSocketStreamSource(theServerSocket, theAddress);
         return new MLLPTransport(ss);
     }
-    
+
     /**
-     * Starts accepting connections in a new Thread.  Note that this can be 
+     * Starts accepting connections in a new Thread.  Note that this can be
      * called multiple times with separate addresses.  The stop() method ends
-     * all Threads started here.  
-     * 
-     * @param theAddress IP address from which connections are accepted (null 
-     *  means any address is OK) 
+     * all Threads started here.
+     *
+     * @param theAddress IP address from which connections are accepted (null
+     *                   means any address is OK)
      */
-    public void start(final String theAddress) {  
-        final HL7Server server = this;      
-        Runnable acceptor = new Runnable() {
-            public void run() {
-                while (server.isRunning()) {
-                    try {
-                        Processor p = server.accept(theAddress);
-                        if (!myIsRunning) {
-                        	p.stop();
-                        } else {
-                            server.newProcessor(p); 
-                            Thread.sleep(1);
-                        }
-                    } catch (TransportException e) {
-                        log.error(e.getMessage(), e);
-                    } catch (InterruptedException e) {
-                    } 
+    public void start(final String theAddress) {
+        final HL7Server server = this;
+        Runnable acceptor = () -> {
+            while (server.isRunning()) {
+                try {
+                    Processor p = server.accept(theAddress);
+                    if (!myIsRunning) {
+                        p.stop();
+                    } else {
+                        server.newProcessor(p);
+                        Thread.sleep(1);
+                    }
+                } catch (TransportException e) {
+                    log.error(e.getMessage(), e);
+                } catch (InterruptedException ignored) {
                 }
             }
         };
-        
+
         myIsRunning = true;
-        
+
         Thread thd = new Thread(acceptor);
         thd.start();
     }
-    
-    private void newProcessor(Processor theProcessor) {
-        synchronized (myProcessors) {
-            myProcessors.add(theProcessor);
-        }
+
+    private synchronized void newProcessor(Processor theProcessor) {
+        myProcessors.add(theProcessor);
     }
-    
+
     /**
-     * Stops running after the next connection is made. 
+     * Stops running after the next connection is made.
      */
-    public void stop() {
+    public synchronized void stop() {
         myIsRunning = false;
-        synchronized (myProcessors) {
-            for (Processor next : myProcessors) {
-            	next.stop();
-            }
+        for (Processor next : myProcessors) {
+            next.stop();
         }
     }
-    
+
     /**
      * Returns <code>true</code> between when start() returns and when stop() is called.
-     * 
+     * <p>
      * Note that this is not the same as checking whether there are any active connections to
      * this server. To determine this, call {@link #getProcessors()} and check whether the array
      * returned is non-empty.
-     * 
-     * @return true between when start() returns and when stop() is called.  
+     *
+     * @return true between when start() returns and when stop() is called.
      */
     public boolean isRunning() {
         return myIsRunning;
     }
-    
+
     /**
-     * @return <code>Processor</code>s arising from connections to this server 
+     * @return <code>Processor</code>s arising from connections to this server
      */
     public Processor[] getProcessors() {
-        synchronized (myProcessors) {
-            return (Processor[]) myProcessors.toArray(new Processor[0]);
-        }
+        return myProcessors.toArray(new Processor[0]);
     }
-    
+
     /**
-     * 
-     * @param theUrlSpec a string specifying an URL, which can optionally begin with "classpath:" 
-     * @return the resource specified after "classpath:", if that's how it starts, otherwise 
-     *      new URL(theUrlSpec) 
+     * @param theUrlSpec a string specifying an URL, which can optionally begin with "classpath:"
+     * @return the resource specified after "classpath:", if that's how it starts, otherwise
+     * new URL(theUrlSpec)
      * @throws MalformedURLException
      */
     private static URL getURL(String theUrlSpec) throws MalformedURLException {
-        URL url = null;
+        URL url;
         if (theUrlSpec.startsWith("classpath:")) {
             StringTokenizer tok = new StringTokenizer(theUrlSpec, ":", false);
             tok.nextToken();
@@ -250,34 +240,34 @@ public class HL7Server {
         }
         return url;
     }
-    
+
     public static void main(String[] args) {
         if (args.length < 1 || args.length > 3) {
             System.out.println("Usage: HL7Server (shared_port | (locally_driven_port remotely_driven_port)) app_binding_URL");
             System.exit(1);
         }
-        
+
         SafeStorage storage = new NullSafeStorage();
         ApplicationRouter router = new ApplicationRouterImpl();
-        
+
         try {
-            HL7Server server = null;
-            String appURL = null;
+            HL7Server server;
+            String appURL;
             if (args.length == 2) {
                 int port = Integer.parseInt(args[0]);
                 server = new HL7Server(new ServerSocket(port), router, storage);
-                appURL = args[1];                
+                appURL = args[1];
             } else {
                 int localPort = Integer.parseInt(args[0]);
                 int remotePort = Integer.parseInt(args[1]);
                 server = new HL7Server(new ServerSocket(localPort), new ServerSocket(remotePort), router, storage);
                 appURL = args[2];
             }
-            
+
             ApplicationLoader.loadApplications(router, getURL(appURL));
-            
+
             server.start(null); //any address OK            
-            
+
         } catch (NumberFormatException e) {
             System.out.println("Port arguments must be integers");
             System.exit(2);
@@ -296,7 +286,7 @@ public class HL7Server {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             System.exit(7);
-        } 
+        }
 
     }
 }

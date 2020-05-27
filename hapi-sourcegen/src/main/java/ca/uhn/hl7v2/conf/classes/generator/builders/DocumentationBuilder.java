@@ -31,6 +31,7 @@ this file under either the MPL or the GPL.
 */
 package ca.uhn.hl7v2.conf.classes.generator.builders;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import ca.uhn.hl7v2.conf.spec.message.*;
@@ -71,7 +72,7 @@ public final class DocumentationBuilder {
 		GeneratedConformanceContainer genClass,
 		String label,
 		String data) {
-		if (data != null && data != "")
+		if (data != null && !Objects.equals(data, ""))
 			genClass.addClassComment(
 				"   <tr><td>" + label + "</td><td>" + data + "</td></tr>");
 	}
@@ -85,7 +86,7 @@ public final class DocumentationBuilder {
 		GeneratedPrimitive genClass,
 		String label,
 		String data) {
-		if (data != null && data != "")
+		if (data != null && !Objects.equals(data, ""))
 			genClass.addClassComment(
 				"   <tr><td>" + label + "</td><td>" + data + "</td></tr>");
 	}
@@ -160,7 +161,7 @@ public final class DocumentationBuilder {
 
 	/** Adds comments to a generated constructor
 	 * @param constructor a constructor to add comments to
-	 * @param msg the message
+	 * @param className class name
 	 */
 	public void decorateConstructor(GeneratedMethod constructor, String className) {
 		constructor.addToDescription("Default constructor for Conformance_HL7_" + className + ". Has the");
@@ -213,7 +214,6 @@ public final class DocumentationBuilder {
 	}
 
 	/** Adds Class Comments to a Maximum Repition Method
-	 * @param genClass a GeneratedConformanceContainer
 	 * @param genMethod the GeneratedMethod for which the comments are being added to
 	 */
 	public void decorateMaxReps(GeneratedMethod genMethod) {
@@ -225,7 +225,6 @@ public final class DocumentationBuilder {
 	}
 
 	/** Adds Class Comments to a Minimum Repition Method
-	 * @param genClass a GeneratedConformanceContainer
 	 * @param genMethod the GeneratedMethod for which the comments are being added to
 	 */
 	public void decorateMinReps(GeneratedMethod genMethod) {

@@ -38,8 +38,8 @@ import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
 public abstract class PredicateMessageRule extends AbstractMessageRule implements
 		PredicateRuleSupport<Message> {
 
-	private Predicate testPredicate;
-	private Expression<Message> testExpression;
+	private final Predicate testPredicate;
+	private final Expression<Message> testExpression;
 
     /**
      * Create a new message rule

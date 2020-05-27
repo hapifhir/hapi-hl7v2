@@ -27,7 +27,7 @@ public class URLProfileStoreTest  {
     @Test
     public void testWithClassLoader() throws Exception {
         URLProfileStore store = new URLProfileStore() {
-            public URL getURL(String id) throws MalformedURLException {
+            public URL getURL(String id) {
                 return this.getClass().getClassLoader().getResource("ca/uhn/hl7v2/conf/store/" + id + ".xml");
             }
         };
@@ -39,7 +39,7 @@ public class URLProfileStoreTest  {
     @Test
     public void testWithNonExistingProfile() throws Exception {
         URLProfileStore store = new URLProfileStore() {
-            public URL getURL(String id) throws MalformedURLException {
+            public URL getURL(String id) {
                 return this.getClass().getClassLoader().getResource("ca/uhn/hl7v2/conf/store/" + id + ".xml");
             }
         };
@@ -57,7 +57,7 @@ public class URLProfileStoreTest  {
         };
         
         String in = store.getProfile("test");
-        assertTrue(in.indexOf("Google") >= 0);
+        assertTrue(in.contains("Google"));
     }
     
     /*public void testWithFile() throws Exception {

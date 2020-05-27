@@ -11,7 +11,6 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -42,7 +41,7 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BouncyCastleCmsMessageSigner.class);
 
-	private String myAlgorithm = "SHA512withRSA";
+	private final String myAlgorithm = "SHA512withRSA";
 	private String myAliasPassword;
 	private String myKeyAlias;
 	private KeyStore myKeyStore;
@@ -146,7 +145,7 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
 
-			List<X509Certificate> certList = new ArrayList<X509Certificate>();
+			List<X509Certificate> certList = new ArrayList<>();
 			CMSTypedData msg = new CMSProcessableByteArray(theBytes);
 
 			X509Certificate signCert = (X509Certificate) myKeyStore.getCertificate(myKeyAlias);
@@ -195,8 +194,8 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 			SignerInformationStore signers = s.getSignerInfos();
 			boolean verified = false;
 
-			for (Iterator<?> i = signers.getSigners().iterator(); i.hasNext();) {
-				SignerInformation signer = (SignerInformation) i.next();
+			for (Object o : signers.getSigners()) {
+				SignerInformation signer = (SignerInformation) o;
 				try {
 
 					ourLog.debug("Signer: {}", signer.getSID());
@@ -210,7 +209,7 @@ public class BouncyCastleCmsMessageSigner implements ISigner {
 
 			}
 
-			if (verified == false) {
+			if (!verified) {
 				throw new SignatureVerificationException();
 			}
 

@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.junit.Assert;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -69,9 +67,9 @@ public class TsComponentOneTest {
 	public void testGetOperationsOnNull() throws DataTypeException {
 		
 		DTM dtm = myMsg.getPATIENT_RESULT().getORDER_OBSERVATION().getOBSERVATION().getOBX().getObx14_DateTimeOfTheObservation().getTs1_Time();
-		Assert.assertEquals(null, dtm.getValueAsCalendar());
-		Assert.assertEquals(null, dtm.getValueAsDate());
-		Assert.assertEquals(null, dtm.getValue());
+        assertNull(dtm.getValueAsCalendar());
+        assertNull(dtm.getValueAsDate());
+        assertNull(dtm.getValue());
 		
 	}
 	

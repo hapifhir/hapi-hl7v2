@@ -21,16 +21,14 @@ public class MockApp implements ReceivingApplication<Message> {
      * Returns a default message.  
      * @see ca.uhn.hl7v2.app.Application#processMessage(ca.uhn.hl7v2.model.Message)
      */
-    public Message processMessage(Message in, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
+    public Message processMessage(Message in, Map<String, Object> theMetadata) throws HL7Exception {
         Message response = null;
         try {
             response = in.generateACK();
-        } catch (HL7Exception e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (HL7Exception | IOException e) {
             e.printStackTrace();
         }
-        
+
         Terser t = new Terser(response);
         t.set("MSA-3", "this is a mock application response");
         return response;

@@ -26,20 +26,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.AcceptorThread.AcceptedSocket;
@@ -50,6 +36,18 @@ import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.SocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A TCP/IP-based HL7 Service that uses separate ports for inbound and outbound
@@ -63,11 +61,11 @@ public class TwoPortService extends HL7Service {
 	private static final Logger log = LoggerFactory
 			.getLogger(TwoPortService.class);
 
-	private Map<String, AcceptedSocket> waitingForSecondSocket = new HashMap<String, AcceptedSocket>();
-	private int inboundPort;
-	private int outboundPort;
-	private boolean tls;
-	private BlockingQueue<AcceptedSocket> queue;
+	private final Map<String, AcceptedSocket> waitingForSecondSocket = new HashMap<>();
+	private final int inboundPort;
+	private final int outboundPort;
+	private final boolean tls;
+	private final BlockingQueue<AcceptedSocket> queue;
 	private AcceptorThread inboundAcceptor, outboundAcceptor;
 	private final HapiContext hapiContext;
 
@@ -93,7 +91,7 @@ public class TwoPortService extends HL7Service {
 			int inboundPort, int outboundPort, boolean tls) {
 		super(hapiContext);
 		this.hapiContext = hapiContext;
-		this.queue = new LinkedBlockingQueue<AcceptedSocket>();
+		this.queue = new LinkedBlockingQueue<>();
 		this.inboundPort = inboundPort;
 		this.outboundPort = outboundPort;
 		this.tls = tls;
@@ -116,7 +114,7 @@ public class TwoPortService extends HL7Service {
 			ExecutorService executorService) {
 		super(parser, llp, executorService);
 		this.hapiContext = new DefaultHapiContext();
-		this.queue = new LinkedBlockingQueue<AcceptedSocket>();
+		this.queue = new LinkedBlockingQueue<>();
 		this.inboundPort = inboundPort;
 		this.outboundPort = outboundPort;
 		this.tls = tls;
@@ -138,7 +136,7 @@ public class TwoPortService extends HL7Service {
 			outboundAcceptor.start();
 			log.info("TwoPortService running on ports {} and {}", inboundPort,
 					outboundPort);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Could not run TwoPortService on ports {} and {}",
 					inboundPort, outboundPort);
 			throw new RuntimeException(e);
@@ -220,8 +218,7 @@ public class TwoPortService extends HL7Service {
 				: socket2.socket;
 	}
 
-	protected AcceptorThread createAcceptThread(int port)
-			throws SocketException, IOException {
+	protected AcceptorThread createAcceptThread(int port) {
 		SocketFactory ss = this.hapiContext.getSocketFactory();
 		return new AcceptorThread(port, tls, getExecutorService(), queue, ss);
 	}
@@ -233,7 +230,7 @@ public class TwoPortService extends HL7Service {
 	 * <code>super.loadApplicationsFromFile(...)</code>). Uses the default
 	 * LowerLayerProtocol.
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		if (args.length < 2 || args.length > 3) {
 			System.out
 					.println("Usage: ca.uhn.hl7v2.app.TwoPortService inbound_port outbound_port [application_spec_file_name]");

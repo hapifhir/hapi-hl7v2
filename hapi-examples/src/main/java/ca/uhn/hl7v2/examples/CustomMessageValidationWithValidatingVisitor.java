@@ -43,7 +43,7 @@ import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
  */
 public class CustomMessageValidationWithValidatingVisitor {
 
-	public static void main(String[] args) throws HL7Exception {
+	public static void main(String[] args) {
 
 		/*
 		 * In this example, we are looking at a more advanced aspect of message
@@ -66,7 +66,7 @@ public class CustomMessageValidationWithValidatingVisitor {
 		/*
 		 * Define the mandatory fields and visitor factory
 		 */
-		final Map<String, Integer[]> map = new HashMap<String, Integer[]>();
+		final Map<String, Integer[]> map = new HashMap<>();
         map.put("MSH", new Integer[] {2, 3, 4, 5, 6, 7, 9, 10, 12});
         map.put("PID", new Integer[] {2, 3, 5, 6, 7});
         final MandatoryFields mandatoryFields = new MandatoryFields(map);

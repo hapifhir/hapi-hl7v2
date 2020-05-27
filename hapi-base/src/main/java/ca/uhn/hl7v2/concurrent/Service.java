@@ -52,7 +52,7 @@ public abstract class Service implements Runnable {
 	private final ExecutorService executorService;
 	private Future<?> thread;
 	private Throwable serviceExitedWithException;
-	private CountDownLatch startupLatch = new CountDownLatch(1);
+	private final CountDownLatch startupLatch = new CountDownLatch(1);
 
 	public Service(String name, ExecutorService executorService) {
 		super();
@@ -155,17 +155,15 @@ public abstract class Service implements Runnable {
 		if (!thread.isDone())
 			try {
 				thread.get(shutdownTimeout, TimeUnit.MILLISECONDS);
-			} catch (ExecutionException ee) {
+			} catch (ExecutionException | InterruptedException ee) {
                 // empty
 			} catch (TimeoutException te) {
 				log.warn(
 						"Thread did not stop after {} milliseconds. Now cancelling.",
 						shutdownTimeout);
 				thread.cancel(true);
-			} catch (InterruptedException e) {
-                // empty
 			}
-	}
+    }
 
 	/**
 	 * Stops the thread by leaving its main loop. {@link #afterTermination()} is

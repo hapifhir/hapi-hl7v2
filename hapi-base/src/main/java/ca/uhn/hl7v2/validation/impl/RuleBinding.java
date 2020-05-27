@@ -42,9 +42,9 @@ public class RuleBinding<T extends Rule<?>> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private boolean myActiveFlag;
-	private String myVersion;
-	private String myScope;
-	private T myRule;
+	private final String myVersion;
+	private final String myScope;
+	private final T myRule;
 
 	/**
 	 * Active by default.

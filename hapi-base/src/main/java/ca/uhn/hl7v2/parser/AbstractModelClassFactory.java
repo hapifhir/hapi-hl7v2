@@ -129,7 +129,7 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 	 * @throws IOException
 	 */
 	protected Map<Version, Map<String, String>> loadMessageStructures() throws IOException {
-		Map<Version, Map<String, String>> map = new HashMap<Version, Map<String, String>>();
+		Map<Version, Map<String, String>> map = new HashMap<>();
 		for (Version v : Version.values()) {
 			String resource = getEventMapDirectory() + v.getVersion() + ".properties";
 			InputStream in = getResource(resource);
@@ -138,7 +138,7 @@ public abstract class AbstractModelClassFactory implements ModelClassFactory {
 					Properties structures = new Properties();
 					structures.load(in);
 					
-					Map<String, String> structureMap = new HashMap<String, String>();
+					Map<String, String> structureMap = new HashMap<>();
 					for(Map.Entry<Object, Object> next : structures.entrySet()) {
 						structureMap.put((String)next.getKey(), (String)next.getValue());
 					}

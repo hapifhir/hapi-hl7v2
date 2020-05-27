@@ -4,6 +4,7 @@
 package ca.uhn.hl7v2.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.Socket;
@@ -50,7 +51,7 @@ public class InitiatorTest {
 	}
 
 	@AfterClass
-	public static void afterClass() throws Exception {
+	public static void afterClass() {
 		ss.stopAndWait();
 		DefaultExecutorService.getDefaultService().shutdown();
 	}
@@ -64,7 +65,7 @@ public class InitiatorTest {
 		conn.activate();
 		Message out = parser.parse(msgText);
 		Message in = conn.getInitiator().sendAndReceive(out);
-		assertTrue(in != null);
+		assertNotNull(in);
 		assertEquals(Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1),
 				Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
 	}
@@ -77,20 +78,18 @@ public class InitiatorTest {
 		final Connection conn = new ActiveConnection(parser, new MinLowerLayerProtocol(), new Socket("localhost", port));
 		conn.activate();
 		final Random r = new Random(System.currentTimeMillis());
-		Callable<Boolean> t = new Callable<Boolean>() {
-			public Boolean call() {
-				try {
-					String id = Long.toString(r.nextLong());
-					Message out = parser.parse(msgText);
-					Terser.set((Segment)out.get("MSH"), 10, 0, 1, 1, id);
-					Message in = conn.getInitiator().sendAndReceive(out);
-					return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1).equals(
-							Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
-				} catch (Exception e) {
-				}
-				return false;
-			}
-		};
+		Callable<Boolean> t = () -> {
+            try {
+                String id = Long.toString(r.nextLong());
+                Message out = parser.parse(msgText);
+                Terser.set((Segment)out.get("MSH"), 10, 0, 1, 1, id);
+                Message in = conn.getInitiator().sendAndReceive(out);
+                return Terser.get((Segment) out.get("MSH"), 10, 0, 1, 1).equals(
+                        Terser.get((Segment) in.get("MSA"), 2, 0, 1, 1));
+            } catch (Exception ignored) {
+            }
+            return false;
+        };
 		List<Future<Boolean>> results = DefaultExecutorService.getDefaultService()
 				.invokeAll(TestUtils.fill(t, n));
 		for (Future<Boolean> future : results) {

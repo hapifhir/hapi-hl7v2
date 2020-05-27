@@ -84,12 +84,12 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
     }
 
     private void init() {
-        names = new ArrayList<String>();
-        structures = new HashMap<String, List<Structure>>();
-        required = new HashMap<String, Boolean>();
-        repeating = new HashMap<String, Boolean>();
-        classes = new HashMap<String, Class<? extends Structure>>();
-        choiceElements = new HashSet<String>();
+        names = new ArrayList<>();
+        structures = new HashMap<>();
+        required = new HashMap<>();
+        repeating = new HashMap<>();
+        classes = new HashMap<>();
+        choiceElements = new HashSet<>();
     }
 
     /**
@@ -225,7 +225,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
         String newName = insert(c, false, true, index, name);
         if (this.nonStandardNames == null) {
-            this.nonStandardNames = new HashSet<String>();
+            this.nonStandardNames = new HashSet<>();
         }
         this.nonStandardNames.add(newName);
 
@@ -250,7 +250,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
 
         String newName = insert(c, false, true, theIndex, theName);
         if (this.nonStandardNames == null) {
-            this.nonStandardNames = new HashSet<String>();
+            this.nonStandardNames = new HashSet<>();
         }
         this.nonStandardNames.add(newName);
 
@@ -434,7 +434,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             throw new HL7Exception("The structure " + name + " does not exist in the group "
                     + this.getClass().getName());
         }
-        return list.toArray(new Structure[list.size()]);
+        return list.toArray(new Structure[0]);
     }
 
     /**
@@ -450,7 +450,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
             throw new HL7Exception("Structure with name \"" + name + "\" has type " + clazz.getName()
                     + " but should be " + theType);
         }
-        List<T> retVal = new ArrayList<T>();
+        List<T> retVal = new ArrayList<>();
         for (Structure next : structures.get(name)) {
             retVal.add((T) next);
         }
@@ -644,7 +644,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         this.required.put(name, required);
         this.repeating.put(name, repeating);
         this.classes.put(name, c);
-        this.structures.put(name, new ArrayList<Structure>());
+        this.structures.put(name, new ArrayList<>());
         
         if (choiceElement) {
         	this.choiceElements.add(name);
@@ -772,7 +772,7 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
                 theStringBuilder.append(lineSeparator);
                 inChoice = false;
                 theIndent -= PS_INDENT;
-            } else if (nextChoice && inChoice) {
+            } else if (nextChoice) {
                 indent(theStringBuilder, theIndent);
                 theStringBuilder.append("|");
                 theStringBuilder.append(lineSeparator);

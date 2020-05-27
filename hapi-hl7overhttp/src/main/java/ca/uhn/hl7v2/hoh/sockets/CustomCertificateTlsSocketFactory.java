@@ -122,21 +122,11 @@ public class CustomCertificateTlsSocketFactory implements ISocketFactory {
 			mySocketFactory = ctx.getSocketFactory();
 			myServerSocketFactory = ctx.getServerSocketFactory();
 
-		} catch (NoSuchAlgorithmException e) {
-			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
-		} catch (CertificateException e) {
-			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
-		} catch (FileNotFoundException e) {
-			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
-		} catch (UnrecoverableKeyException e) {
-			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
-		} catch (KeyStoreException e) {
-			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
-		} catch (KeyManagementException e) {
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | UnrecoverableKeyException | FileNotFoundException | CertificateException e) {
 			throw new IOException("Failed to initialize socket factory: " + e.getMessage(), e);
 		}
 
-	}
+    }
 
 	/**
 	 * The filename to load as a keystore

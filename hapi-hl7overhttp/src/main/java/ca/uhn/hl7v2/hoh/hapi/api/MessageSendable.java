@@ -21,7 +21,7 @@ public class MessageSendable implements IResponseSendable<Message> {
 	private final EncodingStyle myEncodingStyle;
 	private ResponseCode myResponseCode;
 
-	private String myRawMessage;
+	private final String myRawMessage;
 
 	/**
 	 * Constructor
@@ -57,7 +57,7 @@ public class MessageSendable implements IResponseSendable<Message> {
 	private EncodingStyle detectEncodingStyle(Parser theParser) {
 		if (theParser instanceof XMLParser) {
 			return EncodingStyle.XML;
-		} else if (theParser instanceof GenericParser && ((GenericParser) theParser).isPipeParserPrimary() == false) {
+		} else if (theParser instanceof GenericParser && !((GenericParser) theParser).isPipeParserPrimary()) {
 			return EncodingStyle.XML;
 		} else {
 			return EncodingStyle.ER7;

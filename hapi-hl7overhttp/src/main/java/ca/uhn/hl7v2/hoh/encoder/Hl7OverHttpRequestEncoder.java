@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.hoh.encoder;
 import static ca.uhn.hl7v2.hoh.util.StringUtils.*;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import ca.uhn.hl7v2.hoh.util.VersionLogger;
 import ca.uhn.hl7v2.hoh.util.repackage.Base64;
@@ -20,19 +21,15 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 	public void setPort(int thePort) {
 		myPort = thePort;
 	}
-	private boolean myAcceptGzip = false;
+	private final boolean myAcceptGzip = false;
 
 	@Override
 	protected void addSpecificHeaders() {
 		if (isNotBlank(getUsername()) && isNotBlank(getPassword())) {
 			String authorizationUnescaped = defaultString(getUsername()) + ":" + defaultString(getPassword());
 			String encoded;
-			try {
-				encoded = Base64.encodeBase64String(authorizationUnescaped.getBytes("ISO-8859-1"));
-			} catch (UnsupportedEncodingException e) {
-				throw new Error("Could not find US-ASCII encoding. This shouldn't happen!");
-			}
-			getHeaders().put("Authorization", "Basic " + encoded);
+            encoded = Base64.encodeBase64String(authorizationUnescaped.getBytes(StandardCharsets.ISO_8859_1));
+            getHeaders().put("Authorization", "Basic " + encoded);
 		}
 
 		if (myAcceptGzip) {

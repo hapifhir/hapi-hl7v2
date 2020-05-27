@@ -49,13 +49,13 @@ public class OnlyAllowableSegmentsInSuperstructureRule extends AbstractMessageRu
 	public static final MessageRule ONLY_ALLOWABLE_SEGMENTS = new OnlyAllowableSegmentsInSuperstructureRule();
 	
 	public ValidationException[] apply(Message msg) {
-		List<ValidationException> exceptions = new ArrayList<ValidationException>();
+		List<ValidationException> exceptions = new ArrayList<>();
 		
 		if (msg instanceof SuperStructure) {
 			checkStructure((SuperStructure)msg, exceptions);
 		}
 		
-		return exceptions.toArray(new ValidationException[exceptions.size()]);
+		return exceptions.toArray(new ValidationException[0]);
 	}
 
 	private void checkStructure(SuperStructure theMsg, List<ValidationException> theExceptions) {

@@ -55,7 +55,7 @@ public final class MessageVisitors {
      * @return MessageVisitor that only visits structures
      */
     public static <T extends MessageVisitor> StructuresVisitor<T> visitStructures(T visitor) {
-        return new StructuresVisitor<T>(visitor);
+        return new StructuresVisitor<>(visitor);
     }
 
     /**
@@ -67,7 +67,7 @@ public final class MessageVisitors {
      * @return MessageVisitor that only visits populated message elements
      */
     public static <T extends MessageVisitor> PopulatedVisitor<T> visitPopulatedElements(T visitor) {
-        return new PopulatedVisitor<T>(visitor);
+        return new PopulatedVisitor<>(visitor);
     }
 
 
@@ -84,12 +84,12 @@ public final class MessageVisitors {
         }
 
         @Override
-        public final boolean start(Composite type, Location location) throws HL7Exception {
+        public final boolean start(Composite type, Location location) {
             return false;
         }
 
         @Override
-        public boolean visit(Primitive type, Location location) throws HL7Exception {
+        public boolean visit(Primitive type, Location location) {
             return false;
         }
     }

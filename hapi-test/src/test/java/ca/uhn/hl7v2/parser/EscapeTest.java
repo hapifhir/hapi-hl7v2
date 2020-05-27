@@ -22,8 +22,8 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextImpl;
  */
 public class EscapeTest {
     
-    private EncodingCharacters enc = new EncodingCharacters('|', null);
-    private Escaping esc = new DefaultEscaping();
+    private final EncodingCharacters enc = new EncodingCharacters('|', null);
+    private final Escaping esc = new DefaultEscaping();
     
 	@Test
     public void testUnescape() throws Exception {
@@ -64,7 +64,7 @@ public class EscapeTest {
         InputStream inStream = loader.getResourceAsStream("ca/uhn/hl7v2/parser/uuencoded_escaped.txt");
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         String line;
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         while ( (line = in.readLine()) != null) {
             content.append(line);
         }

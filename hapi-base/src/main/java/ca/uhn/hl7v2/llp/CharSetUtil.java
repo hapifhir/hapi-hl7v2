@@ -50,7 +50,7 @@ public class CharSetUtil {
         try {
             String[] fields = PreParser.getFields(message, "MSH-18(0)");
             String hl7CharsetName = stripNonLowAscii(fields[0]);
-            if (hl7CharsetName != null && hl7CharsetName.length() > 0)
+            if (hl7CharsetName.length() > 0)
                 charset = HL7Charsets.getCharsetForHL7Encoding(hl7CharsetName);
             LOG.trace("Detected MSH-18 value \"{}\" so using charset {}", hl7CharsetName, charset.displayName());
         } catch (EncodingNotSupportedException e) {
@@ -111,8 +111,8 @@ public class CharSetUtil {
                 (byte) 0xFF}, "UTF-32BE"),
         NONE(new byte[]{},    "US-ASCII");
 
-        private byte[] bytes;
-        private Charset charset;
+        private final byte[] bytes;
+        private final Charset charset;
 
         BOM(byte[] bytes, String charset) {
             this.bytes = bytes;

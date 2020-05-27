@@ -30,6 +30,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.sourcegen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,13 +42,13 @@ import java.util.List;
  */
 public class GroupDef implements StructureDef {
 
-	private ArrayList<StructureDef> elements;
-    private String messageName;
+	private final ArrayList<StructureDef> elements;
+    private final String messageName;
     private String groupName;
-    private String description;
-    private boolean required;
+    private final String description;
+    private final boolean required;
     private boolean repeating;
-    private HashMap<String, String> existingNames;
+    private final HashMap<String, String> existingNames;
     private String myIndexName;
 	private List<String> associatedStructures;
     
@@ -56,11 +57,11 @@ public class GroupDef implements StructureDef {
     public GroupDef(String messageName, String groupName, boolean required, boolean repeating, String description) {
         this.messageName = messageName;
         this.groupName = groupName;
-        this.elements = new ArrayList<StructureDef>();
+        this.elements = new ArrayList<>();
         this.required = required;
         this.repeating = repeating;
         this.description = description;
-        this.existingNames = new HashMap<String, String>();
+        this.existingNames = new HashMap<>();
     }
 
     /**
@@ -69,17 +70,17 @@ public class GroupDef implements StructureDef {
      * after all the elements are added.  
      */
     public String getName() {
-        String result = null;
+        String result;
         
         if (groupName != null && groupName.length() > 0) {
             result = messageName + "_" + groupName;
         } else {
-            StringBuffer name = new StringBuffer();
+            StringBuilder name = new StringBuilder();
             name.append(messageName);
             name.append("_");
             String[] children = getChildSegments();
-            for (int i = 0; i < children.length; i++) {
-                name.append(children[i]);
+            for (String child : children) {
+                name.append(child);
             }        
             result = name.toString();            
         }
@@ -121,7 +122,7 @@ public class GroupDef implements StructureDef {
     public StructureDef[] getStructures() {
         StructureDef[] ret = new StructureDef[elements.size()];
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = (StructureDef)elements.get(i);
+            ret[i] = elements.get(i);
         }
         return ret;
     }
@@ -181,17 +182,14 @@ public class GroupDef implements StructureDef {
      * for deriving group names.
      */
     public String[] getChildSegments() {
-        ArrayList<String> deepChildList = new ArrayList<String>();
-        for (int i = 0; i < elements.size(); i++) {
-            StructureDef childStruct = (StructureDef) elements.get(i);
-            String[] childStructChildren = childStruct.getChildSegments();
-            for (int j = 0; j < childStructChildren.length; j++) {
-                deepChildList.add(childStructChildren[j]);
-            }
+        ArrayList<String> deepChildList = new ArrayList<>();
+        for (StructureDef element : elements) {
+            String[] childStructChildren = element.getChildSegments();
+            deepChildList.addAll(Arrays.asList(childStructChildren));
         }
         String[] result = new String[deepChildList.size()];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (String) deepChildList.get(i);
+            result[i] = deepChildList.get(i);
         }
         return result; 
     }
@@ -241,13 +239,13 @@ public class GroupDef implements StructureDef {
 	 */
 	public List<String> getAssociatedStructures() {
 		if (associatedStructures == null) {
-			associatedStructures = new ArrayList<String>();
+			associatedStructures = new ArrayList<>();
 		}
 		return associatedStructures;
 	}
 
 	/**
-	 * @param theAssociatedStructures the associatedStructures to set
+	 * @param theAssociatedStructure the associatedStructures to set
 	 */
 	public void addAssociatedStructure(String theAssociatedStructure) {
 		getAssociatedStructures().add(theAssociatedStructure);

@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +34,7 @@ public class HohRawServlet extends HttpServlet {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void doGet(HttpServletRequest theReq, HttpServletResponse theResp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest theReq, HttpServletResponse theResp) throws IOException {
 
 		theResp.setStatus(400);
 		theResp.setContentType("text/html");
@@ -49,10 +48,10 @@ public class HohRawServlet extends HttpServlet {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void doPost(HttpServletRequest theReq, HttpServletResponse theResp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest theReq, HttpServletResponse theResp) throws IOException {
 
 		Hl7OverHttpRequestDecoder decoder = new Hl7OverHttpRequestDecoder();
-		decoder.setHeaders(new LinkedHashMap<String, String>());
+		decoder.setHeaders(new LinkedHashMap<>());
 
 		Enumeration<?> headerNames = theReq.getHeaderNames();
 		while (headerNames.hasMoreElements()) {

@@ -50,7 +50,7 @@ import static ca.uhn.hl7v2.llp.MllpConstants.CHARSET_KEY;
 abstract class HL7EncoderWriter<T extends MllpEncoder> implements HL7Writer {
 
     private OutputStream out;
-    private T encoder;
+    private final T encoder;
     private Charset charset;
     protected boolean omitBOM;
 
@@ -73,7 +73,7 @@ abstract class HL7EncoderWriter<T extends MllpEncoder> implements HL7Writer {
     /**
      * Creates a HL7EncoderWriter, specifying the underlying output stream.
      */
-    public HL7EncoderWriter(OutputStream out, Charset charset, boolean omitBOM) throws IOException {
+    public HL7EncoderWriter(OutputStream out, Charset charset, boolean omitBOM) {
         this.out = out;
         this.charset = charset;
         this.omitBOM = omitBOM;
@@ -85,7 +85,7 @@ abstract class HL7EncoderWriter<T extends MllpEncoder> implements HL7Writer {
     /**
      * Sets the underlying output stream to which messages are written.
      */
-    public synchronized void setOutputStream(OutputStream out) throws IOException {
+    public synchronized void setOutputStream(OutputStream out) {
         if (out == null) throw new NullPointerException("OutputStream must not be null");
         this.out = new BufferedOutputStream(out);
     }
@@ -105,7 +105,7 @@ abstract class HL7EncoderWriter<T extends MllpEncoder> implements HL7Writer {
      * Sends a complete message to the underlying output stream, delimited
      * according to the minimal lower layer protocol, using the specified character set.
      */
-    public synchronized void writeMessage(String message, String charset) throws LLPException, IOException {
+    public synchronized void writeMessage(String message, String charset) throws IOException {
         if (message == null) {
             throw new NullPointerException("Message may not be null");
         }

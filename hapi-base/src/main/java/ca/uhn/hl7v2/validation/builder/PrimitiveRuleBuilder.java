@@ -45,7 +45,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
 @SuppressWarnings("serial")
 public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, PrimitiveTypeRule>  {
 
-	private Set<String> types;
+	private final Set<String> types;
 
 	protected PrimitiveRuleBuilder(List<RuleBinding<? extends Rule<?>>> rules, Set<Version> versions,
 			Set<String> types) {
@@ -134,7 +134,7 @@ public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, 
 	@Override
 	protected Collection<RuleBinding<PrimitiveTypeRule>> getRuleBindings(PrimitiveTypeRule rule,
 			String version) {
-		List<RuleBinding<PrimitiveTypeRule>> bindings = new ArrayList<RuleBinding<PrimitiveTypeRule>>();
+		List<RuleBinding<PrimitiveTypeRule>> bindings = new ArrayList<>();
 		for (String type : types) {
 			bindings.add(new PrimitiveTypeRuleBinding(version, type, rule));
 		}

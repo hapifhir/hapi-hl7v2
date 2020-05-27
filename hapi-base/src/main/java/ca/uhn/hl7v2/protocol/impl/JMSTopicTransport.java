@@ -51,8 +51,8 @@ public class JMSTopicTransport extends AbstractJMSTransport {
     private TopicSession myReceivingSession; 
     private TopicPublisher myPublisher;
     private TopicSubscriber mySubscriber;
-    private TopicConnection myConnection;
-    private Topic myTopic;
+    private final TopicConnection myConnection;
+    private final Topic myTopic;
     private String myMessageSelector;
     
 
@@ -99,7 +99,7 @@ public class JMSTopicTransport extends AbstractJMSTransport {
     }
 
     /** 
-     * @see ca.uhn.hl7v2.protocol.impl.AbstractJMSTransport#send(javax.jms.Message)
+     * @see ca.uhn.hl7v2.protocol.impl.AbstractJMSTransport#sendJMS(Message) (javax.jms.Message)
      */
     protected void sendJMS(Message theMessage) throws JMSException {
         myPublisher.publish(theMessage);
@@ -112,9 +112,6 @@ public class JMSTopicTransport extends AbstractJMSTransport {
         return mySubscriber.receive();
     }
 
-    /** 
-     * @see ca.uhn.hl7v2.protocol.AbstractJMSTransport#doConnect()
-     */
     public void doConnect() throws TransportException {
         boolean transacted = false;
         int ackMode = Session.AUTO_ACKNOWLEDGE;

@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 public class SplitInputStream extends InputStream {
 
 	private int myBytesUntilSplit;
-	private InputStream myWrap;
+	private final InputStream myWrap;
 
 	public SplitInputStream(InputStream theWrap, int theSplitPoint) {
 		myBytesUntilSplit = theSplitPoint;
@@ -20,7 +20,7 @@ public class SplitInputStream extends InputStream {
 	 * @see java.io.InputStream#read(byte[])
 	 */
 	@Override
-	public int read(byte[] theB) throws IOException {
+	public int read(byte[] theB) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -37,7 +37,6 @@ public class SplitInputStream extends InputStream {
 			theLen = myBytesUntilSplit;
 		} else {
 			myBytesUntilSplit = -1;
-			theLen = 0;
 			throw new SocketTimeoutException();
 		}
 		int retVal = myWrap.read(theB, theOff, theLen);
@@ -92,7 +91,7 @@ public class SplitInputStream extends InputStream {
 	 * @see java.io.InputStream#reset()
 	 */
 	@Override
-	public synchronized void reset() throws IOException {
+	public synchronized void reset() {
 		throw new UnsupportedOperationException();
 	}
 
