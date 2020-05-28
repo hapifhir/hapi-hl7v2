@@ -761,6 +761,7 @@
 			<build>
 			</build>
 			<modules>
+				<module>hapi-bom</module>
 				<module>hapi-base</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-test</module>
@@ -782,6 +783,7 @@
 			<build>
 			</build>
 			<modules>
+				<module>hapi-bom</module>
 				<module>hapi-base</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
@@ -793,10 +795,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
+            	<module>hapi-structures-v27</module>
 				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
+            	<module>hapi-structures-v28</module>
+            	<module>hapi-structures-v281</module>
 			</modules>
 		</profile>
 		<profile>
@@ -832,21 +834,22 @@
 				</plugins>
 			</build>
 			<modules>
+				<module>hapi-bom</module>
 				<module>hapi-base</module>
 				<module>hapi-sourcegen</module>
 				<module>hapi-structures-v21</module>
 				<module>hapi-structures-v22</module>
 				<module>hapi-structures-v23</module>
 				<module>hapi-structures-v231</module>
+				<module>hapi-structures-v231-alternatenames</module>
 				<module>hapi-structures-v24</module>
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
+            	<module>hapi-structures-v27</module>
 				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
-				<module>hapi-osgi-base</module>
+           	    <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-examples</module>
 				<module>hapi-dist</module>
@@ -908,11 +911,10 @@
 				<module>hapi-structures-v25</module>
 				<module>hapi-structures-v251</module>
 				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
+            	<module>hapi-structures-v27</module>
 				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
-				<module>hapi-osgi-base</module>
+            	<module>hapi-structures-v28</module>
+            	<module>hapi-structures-v281</module>
 				<module>hapi-testpanel</module>
 				<module>hapi-hl7overhttp</module>
 				<module>hapi-examples</module>

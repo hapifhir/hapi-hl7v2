@@ -305,7 +305,7 @@ SortableTable.prototype.getCache = function (sType, nColumn) {
 			value:		this.getRowValue(r, sType, nColumn),
 			element:	r
 		};
-	};
+	}
 	return a;
 };
 

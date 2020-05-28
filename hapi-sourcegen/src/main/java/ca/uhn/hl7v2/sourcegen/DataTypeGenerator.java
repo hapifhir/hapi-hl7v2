@@ -95,11 +95,11 @@ public class DataTypeGenerator {
                 String basePackage = DefaultModelClassFactory.getVersionPackageName(version);
 
                 String hapiTestGenType = System.getProperty("hapi.test.gentype");
-                if (hapiTestGenType != null && !hapiTestGenType.contains((String) type)) {
+                if (hapiTestGenType != null && !hapiTestGenType.contains(type)) {
                     continue;
                 }
 
-                make(targetDir, (String) type, version, basePackage, theTemplatePackage, theFileExt);
+                make(targetDir, type, version, basePackage, theTemplatePackage, theFileExt);
             } catch (DataTypeException dte) {
                 log.warn("{} - {}", dte.getClass().getName(), dte.getMessage());
             } catch (Exception e) {

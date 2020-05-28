@@ -28,6 +28,7 @@ package ca.uhn.hl7v2.sourcegen;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -196,7 +197,7 @@ public class XsdDataTypeGenerator {
         }
         String targetFile = String.format("%s/%s.java", dirName, def.getType());
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF-8"))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), StandardCharsets.UTF_8))) {
             writer.write(source);
             writer.flush();
         }

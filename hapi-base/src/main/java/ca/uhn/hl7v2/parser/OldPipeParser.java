@@ -749,8 +749,8 @@ class OldPipeParser extends Parser {
 
                 messageIter.setDirection(name);
                 FilterIterator.Predicate<Structure> byDirection = obj -> {
-                    log.debug("PipeParser iterating message in direction {} at {} ", name, ((Structure) obj).getName());
-                    return ((Structure) obj).getName().matches(name + "\\d*");
+                    log.debug("PipeParser iterating message in direction {} at {} ", name, obj.getName());
+                    return obj.getName().matches(name + "\\d*");
                 };
                 FilterIterator<Structure> dirIter = new FilterIterator<>(segmentIter, byDirection);
                 if (dirIter.hasNext()) {

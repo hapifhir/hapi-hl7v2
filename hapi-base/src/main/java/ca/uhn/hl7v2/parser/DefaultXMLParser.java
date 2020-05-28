@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.model.GenericMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -106,6 +107,12 @@ public class DefaultXMLParser extends XMLParser {
     public Document encodeDocument(Message source) throws HL7Exception {
         String messageClassName = source.getClass().getName();
         String messageName = messageClassName.substring(messageClassName.lastIndexOf('.') + 1);
+
+        // Handle GenericMessages which will have an errant $ in their class name.
+        if (source instanceof GenericMessage) {
+            messageName = messageName.replaceAll("\\$", "");
+        }
+
         try {
             Document doc = XMLUtils.emptyDocument(messageName);
             encode(source, doc.getDocumentElement());

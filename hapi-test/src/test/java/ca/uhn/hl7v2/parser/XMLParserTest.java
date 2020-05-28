@@ -7,6 +7,7 @@
 package ca.uhn.hl7v2.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 // import hapi.on.olis.erp_z99.message.ERP_R09;
@@ -18,6 +19,8 @@ import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -443,7 +446,7 @@ public class XMLParserTest {
 	 * </p>
 	 */
 	@Test
-	public void test_ParseEncodedXml() throws Exception {
+	public void testParseEncodedXml() throws Exception {
 
 		// Create a context
 		HapiContext context = new DefaultHapiContext();
@@ -461,6 +464,19 @@ public class XMLParserTest {
 			// We would expect to be able to parse this document back to a Message, as we encoded it.
 			Message outmsg = xp.parseDocument(dom, msg.getVersion());
 			outmsg.printStructure();
+		}
+	}
+
+	@Test
+	public void testEncodeGenericMessage() throws Exception {
+		DefaultXMLParser xmlParser = new DefaultXMLParser();
+		for (Version version : Version.values()) {
+			Class<? extends Message> c = GenericMessage.getGenericMessageClass(version.getVersion());
+			Message m = c.getConstructor(ModelClassFactory.class).newInstance(new GenericModelClassFactory());
+			Document d = xmlParser.encodeDocument(m);
+			assertNotNull(d);
+			assertEquals("GenericMessage" + version.name(), d.getDocumentElement().getTagName());
+			assertNotNull(xmlParser.encode(m));
 		}
 	}
 

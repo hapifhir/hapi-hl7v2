@@ -233,15 +233,15 @@ public abstract class XMLParser extends Parser {
 	 *             fields are null)
 	 */
 	protected String doEncode(Message source) throws HL7Exception {
+		/*
 		if (source instanceof GenericMessage) {
 			throw new HL7Exception(
 					"Can't XML-encode a GenericMessage.  Message must have a recognized structure.");
 		}
+		*/
+		log.info("XML-Encoding a GenericMessage is not covered by the specification. ");
 
 		Document doc = encodeDocument(source);
-		// Element documentElement = doc.getDocumentElement();
-		// if (!documentElement.hasAttribute("xmlns"))
-		// documentElement.setAttribute("xmlns", "urn:hl7-org:v2xml");
 		try {
 			return XMLUtils.serialize(doc, getParserConfiguration().isPrettyPrintWhenEncodingXml());
 		} catch (Exception e) {
