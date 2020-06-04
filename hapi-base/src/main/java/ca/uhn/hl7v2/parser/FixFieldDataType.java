@@ -55,7 +55,7 @@ public final class FixFieldDataType {
      *
      * OBX-2 enable  OBX-2 default value.
      */
-    public static final boolean ENABLE_DEFAULT_OBX2_DEFAULT_VALUE = "ca.uhn.hl7v2.model.varies.enable.obx2.default.value";
+    public static final boolean ENABLE_DEFAULT_OBX2_IMPL = "ca.uhn.hl7v2.model.varies.enable.obx2.default.impl";
 
     /**
      * System property key: The value may be set to provide a default
@@ -144,7 +144,7 @@ public final class FixFieldDataType {
             invalidOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
         }
 
-        if (ENABLE_DEFAULT_OBX2_DEFAULT_VALUE){
+        if (System.getProperty(ENABLE_DEFAULT_OBX2_IMPL)){
             fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
         }
     }
