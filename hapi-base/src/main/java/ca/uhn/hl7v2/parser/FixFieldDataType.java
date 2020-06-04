@@ -51,13 +51,6 @@ public final class FixFieldDataType {
     public static final String DEFAULT_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_obx2_type";
 
     /**
-     * System property key: If this is not set to true, it will be a false.
-     *
-     * OBX-2 enable  OBX-2 default value.
-     */
-    public static final boolean ENABLE_DEFAULT_OBX2_DEFAULT_VALUE = "ca.uhn.hl7v2.model.varies.enable.obx2.default.value";
-
-    /**
      * System property key: The value may be set to provide a default
      * datatype ("ST", "NM", etc) for an OBX segment with an invalid
      * OBX-2 value type. In other words, if OBX-2 has a value of "ZYZYZ",
@@ -144,9 +137,7 @@ public final class FixFieldDataType {
             invalidOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
         }
 
-        if (ENABLE_DEFAULT_OBX2_DEFAULT_VALUE){
-            fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
-        }
+        fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, factory, parserConfiguration);
     }
 
     /**
