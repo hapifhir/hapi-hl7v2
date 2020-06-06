@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.model;
 
+import static ca.uhn.hl7v2.parser.FixFieldDataType.SHOULD_FIX_OBX5;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -206,6 +207,48 @@ public class VariesTest {
 				+ "OBX||ST|||F1C1&F1C2\r";
 
 		System.setProperty(Varies.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "FALSE");
+
+		ORU_R01 msg = new ORU_R01();
+		msg.parse(msgString);
+
+		String encode = msg.encode();
+		ourLog.debug("\n\n" + encode);
+
+		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
+				.getOBX().getObx5_ObservationValue(0);
+		ST obx5 = (ST) observationValue.getData();
+		String actual = obx5.getValue();
+		assertEquals("F1C1", actual);
+
+		actual = obx5.encode();
+		ourLog.debug("Actual: " + actual);
+		assertEquals("F1C1^F1C2", actual);
+
+		String expected = "MSH|^~\\&\r" // -
+				+ "OBR|\r" // -
+				+ "OBX||ST|||F1C1^F1C2\r";
+
+		String trim = encode.trim();
+		ourLog.debug("Encoded: " + trim.replace("\r", "\n"));
+
+		assertEquals(expected.trim(), trim);
+
+	}
+
+	/**
+	 * AD = ST, ST,...
+	 */
+	@Test
+	public void testObx5WithExpectedComponentUnpexpectedSubcomponentWithinPrimitiveWithoutEscaping_ShouldFixOBX2()
+			throws HL7Exception {
+
+		// Message is stripped down
+		String msgString = "MSH|^~\\&\r" // -
+				+ "OBR|\r" // -
+				+ "OBX||ST|||F1C1&F1C2\r";
+
+		System.setProperty(Varies.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "FALSE");
+		System.setProperty(SHOULD_FIX_OBX5, "TRUE");
 
 		ORU_R01 msg = new ORU_R01();
 		msg.parse(msgString);

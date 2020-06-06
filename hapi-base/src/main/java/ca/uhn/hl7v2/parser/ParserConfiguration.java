@@ -43,6 +43,7 @@ public class ParserConfiguration {
 	private Set<String> xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
     private String myInvalidMfe5Type;
     private String myDefaultMfe5Type;
+    private Boolean fixingObx5;
 
 	/**
 	 * <p>
@@ -700,4 +701,11 @@ public class ParserConfiguration {
 		}
 	}
 
+	public Boolean isFixingObx5() {
+		return fixingObx5;
+	}
+
+	public void setFixingObx5(Boolean fixingObx5) {
+		this.fixingObx5 = fixingObx5;
+	}
 }
