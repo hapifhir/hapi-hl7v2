@@ -43,6 +43,7 @@ public class ParserConfiguration {
 	private Set<String> xmlDisableWhitespaceTrimmingOnNodeNames = Collections.emptySet();
     private String myInvalidMfe5Type;
     private String myDefaultMfe5Type;
+    private Boolean shouldSetObx2DefaultValue = true;
 
 	/**
 	 * <p>
@@ -700,4 +701,19 @@ public class ParserConfiguration {
 		}
 	}
 
+	/**
+	 * Configures the XML Parser to not set the obx2 default value, meaning that
+	 * if set to false, it will ignore setting the default value eg. "ST", and not to throw an exception
+	 * in case there is no default value.
+	 * <p>
+	 * Default is <b>true</b>
+	 * </p>
+	 */
+	public Boolean getShouldSetObx2DefaultValue() {
+		return shouldSetObx2DefaultValue;
+	}
+
+	public void setShouldSetObx2DefaultValue(Boolean shouldSetObx2DefaultValue) {
+		this.shouldSetObx2DefaultValue = shouldSetObx2DefaultValue;
+	}
 }
