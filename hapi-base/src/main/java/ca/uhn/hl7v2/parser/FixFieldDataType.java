@@ -49,13 +49,6 @@ public final class FixFieldDataType {
      * datatype ("ST", "NM", etc) for an OBX segment with a missing
      * OBX-2 value.
      */
-    public static final String SHOULD_FIX_OBX5 = "ca.uhn.hl7v2.model.varies.should_fix_obx5";
-
-    /**
-     * System property key: Boolean Vale
-     * datatype ("ST", "NM", etc) for an OBX segment with a missing
-     * OBX-2 value.
-     */
     public static final String DEFAULT_OBX2_TYPE_PROP = "ca.uhn.hl7v2.model.varies.default_obx2_type";
 
     /**
@@ -145,12 +138,8 @@ public final class FixFieldDataType {
             invalidOBX2Type = System.getProperty(INVALID_OBX2_TYPE_PROP);
         }
 
-        Boolean shouldFixObx5 = parserConfiguration.isFixingObx5();
-        if (shouldFixObx5 == null) {
-            shouldFixObx5 = Boolean.valueOf(System.getProperty(SHOULD_FIX_OBX5));
-        }
+        fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, parserConfiguration.getShouldSetObx2DefaultValue(), factory, parserConfiguration);
 
-        fix(segment, 2, 5, defaultOBX2Type, invalidOBX2Type, shouldFixObx5, factory, parserConfiguration);
 
     }
 
@@ -199,13 +188,14 @@ public final class FixFieldDataType {
      * @param dataField field number of the varies data field
      * @param defaultType default type if the typeField is empty
      * @param invalidType default type if the typeField is invalid
-     * @param shouldFix should set defaultType
+     * @param shouldSetDefaultValue should we set the default value
      * @param factory ModelClassFactory to be used
      * @param parserConfiguration parser config
      * @throws HL7Exception if the operation fails
      */
     public static void fix(Segment segment, int typeField, int dataField, String defaultType, String invalidType,
-            Boolean shouldFix, ModelClassFactory factory, ParserConfiguration parserConfiguration)
+            Boolean shouldSetDefaultValue, ModelClassFactory factory,
+            ParserConfiguration parserConfiguration)
         throws HL7Exception {
         try {
             //get unqualified class name
@@ -213,14 +203,14 @@ public final class FixFieldDataType {
             Type[] reps = segment.getField(dataField);
             for (Type rep : reps) {
                 Varies v = (Varies)rep;
-                if (type.getValue() == null) {
-                    if (defaultType != null && shouldFix) {
+                if (type.getValue() == null && shouldSetDefaultValue) {
+                    if (defaultType != null) {
                         LOG.debug("setting default {}-{} type to {}", new Object[] {segment.getName(), typeField, defaultType});
                         type.setValue(defaultType);
                     }
                 } // if
 
-                if (type.getValue() == null && shouldFix) {
+                if (type.getValue() == null && shouldSetDefaultValue) {
                     if (v.getData() != null) {
                         if (!(v.getData() instanceof Primitive) || ((Primitive) v.getData()).getValue() != null) {
                             throw new HL7Exception(String.format(
@@ -239,7 +229,7 @@ public final class FixFieldDataType {
                             c = factory.getTypeClass(invalidType, version);
                         }
 
-                        if (c == null) {
+                        if (c == null && shouldSetDefaultValue == true) {
                             Primitive obx1 = (Primitive) segment.getField(1, 0);
                             HL7Exception h = new HL7Exception("\'" +
                                     type.getValue() + "\' in record " +
@@ -251,10 +241,12 @@ public final class FixFieldDataType {
                         }
                     }
 
-                    Type newTypeInstance;
+                    Type newTypeInstance = null;
                     try {
-                        Constructor<? extends Type> constr = c.getConstructor(new Class[]{Message.class});
-                        newTypeInstance = constr.newInstance(v.getMessage());
+                        if(c != null) {
+                            Constructor<? extends Type> constr = c.getConstructor(new Class[] { Message.class });
+                            newTypeInstance = constr.newInstance(v.getMessage());
+                        }
                     } catch (NoSuchMethodException e) {
                         Constructor<? extends Type> constr = c.getConstructor(new Class[]{Message.class, Integer.class});
                         newTypeInstance = constr.newInstance(v.getMessage(), 0);
@@ -286,8 +278,9 @@ public final class FixFieldDataType {
 
                         }
                     }
-
-                    v.setData(newTypeInstance);
+                    if(newTypeInstance !=null) {
+                        v.setData(newTypeInstance);
+                    }
                 }
 
             } // for reps

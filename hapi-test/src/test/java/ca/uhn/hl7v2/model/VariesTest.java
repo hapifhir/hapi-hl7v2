@@ -1,6 +1,5 @@
 package ca.uhn.hl7v2.model;
 
-import static ca.uhn.hl7v2.parser.FixFieldDataType.SHOULD_FIX_OBX5;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.v24.datatype.CE;
 import ca.uhn.hl7v2.model.v26.datatype.AD;
 import ca.uhn.hl7v2.model.v26.datatype.CD;
@@ -22,6 +22,7 @@ import ca.uhn.hl7v2.parser.EncodingCharacters;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
@@ -239,18 +240,21 @@ public class VariesTest {
 	 * AD = ST, ST,...
 	 */
 	@Test
-	public void testObx5WithExpectedComponentUnpexpectedSubcomponentWithinPrimitiveWithoutEscaping_ShouldFixOBX2()
+	public void testObx5Without_OBX2()
 			throws HL7Exception {
 
 		// Message is stripped down
 		String msgString = "MSH|^~\\&\r" // -
 				+ "OBR|\r" // -
-				+ "OBX||ST|||F1C1&F1C2\r";
+				+ "OBX|||||<html><head>test</head>hello world</body></html>\r";
 
-		System.setProperty(Varies.ESCAPE_SUBCOMPONENT_DELIM_IN_PRIMITIVE, "FALSE");
-		System.setProperty(SHOULD_FIX_OBX5, "TRUE");
 
 		ORU_R01 msg = new ORU_R01();
+		PipeParser pipeParser = new PipeParser();
+		ParserConfiguration parserConfiguration = new ParserConfiguration();
+		parserConfiguration.setShouldSetObx2DefaultValue(false);
+		pipeParser.setParserConfiguration(parserConfiguration);
+		msg.setParser(pipeParser);
 		msg.parse(msgString);
 
 		String encode = msg.encode();
@@ -258,17 +262,17 @@ public class VariesTest {
 
 		Varies observationValue = msg.getPATIENT_RESULT(0).getORDER_OBSERVATION(0).getOBSERVATION()
 				.getOBX().getObx5_ObservationValue(0);
-		ST obx5 = (ST) observationValue.getData();
+		GenericPrimitive obx5 = (GenericPrimitive) observationValue.getData();
 		String actual = obx5.getValue();
-		assertEquals("F1C1", actual);
+		assertEquals("<html><head>test</head>hello world</body></html>", actual);
 
 		actual = obx5.encode();
 		ourLog.debug("Actual: " + actual);
-		assertEquals("F1C1^F1C2", actual);
+		assertEquals("<html><head>test</head>hello world</body></html>", actual);
 
 		String expected = "MSH|^~\\&\r" // -
 				+ "OBR|\r" // -
-				+ "OBX||ST|||F1C1^F1C2\r";
+				+ "OBX|||||<html><head>test</head>hello world</body></html>\r";
 
 		String trim = encode.trim();
 		ourLog.debug("Encoded: " + trim.replace("\r", "\n"));
