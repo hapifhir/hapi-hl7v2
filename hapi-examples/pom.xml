@@ -1,92 +1,93 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
-	<parent>
-		<artifactId>hapi</artifactId>
-		<groupId>ca.uhn.hapi</groupId>
-		<version>2.4-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	
-	<modelVersion>4.0.0</modelVersion>
-	
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-examples</artifactId>
-	<name>HAPI - Java HL7 API - Examples</name>
-	
-	<packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<dependencies>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-base</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-hl7overhttp</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>		
-		<dependency>
+    <parent>
+        <artifactId>hapi</artifactId>
+        <groupId>ca.uhn.hapi</groupId>
+        <version>2.4.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ca.uhn.hapi</groupId>
+    <artifactId>hapi-examples</artifactId>
+    <name>HAPI - Java HL7 API - Examples</name>
+
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-hl7overhttp</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v21</artifactId>
             <version>${hapi.version.structures}</version>
-        </dependency>       
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v22</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v22</artifactId>
             <version>${hapi.version.structures}</version>
-		</dependency>		
+        </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v23</artifactId>
             <version>${hapi.version.structures}</version>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v231</artifactId>
             <version>${hapi.version.structures}</version>
-        </dependency>       
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v24</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v24</artifactId>
             <version>${hapi.version.structures}</version>
-		</dependency>		
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v25</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v25</artifactId>
             <version>${hapi.version.structures}</version>
-		</dependency>		
+        </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v251</artifactId>
             <version>${hapi.version.structures}</version>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v26</artifactId>
             <version>${hapi.version.structures}</version>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.1</version>
-        </dependency>   
+        </dependency>
         <dependency>
-		    <groupId>org.mortbay.jetty</groupId>
-		    <artifactId>jetty-embedded</artifactId>
-		    <version>6.1.26</version>
-		    <optional>true</optional>
-		</dependency>
-        
-	</dependencies>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-embedded</artifactId>
+            <version>6.1.26</version>
+            <optional>true</optional>
+        </dependency>
 
-	<reporting>
-		<plugins>
-		</plugins>
-	</reporting>
+    </dependencies>
 
-	<build>
-		<plugins>
+    <reporting>
+        <plugins>
+        </plugins>
+    </reporting>
+
+    <build>
+        <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -113,68 +114,68 @@
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>ca.uhn.hapi</groupId>
-				<artifactId>hapi-sourcegen</artifactId>
-				<version>${hapi.version}</version>
-				<executions>
-					<execution>
-						<id>ack</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>confgen</goal>
-						</goals>
-						<configuration>
-							
-							<!-- This is the conformance profile file to use -->
-							<profile>${project.basedir}/src/main/resources/example_ack.xml</profile>
-							
-						    <!-- Place generated Java source here -->
-							<targetDirectory>${project.basedir}/target/generated-sources/confgen</targetDirectory>
-							
-							<!-- Generated classes will be placed here -->
-							<packageName>com.foo.ack</packageName>
-							
-						</configuration>
-					</execution>
-					<execution>
-						<id>a31</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<!-- <goal>confgen</goal>  -->
-						</goals>
-						<configuration>
-							
-							<!-- This is the conformance profile file to use -->
-							<profile>${basedir}/src/main/resources/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml</profile>
-							
-						    <!-- Place generated Java source here -->
-							<targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
-							
-							<!-- Generated classes will be placed here -->
-							<packageName>com.foo.a31</packageName>
-							
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven.deploy.plugin.version}</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
+            <plugin>
+                <groupId>ca.uhn.hapi</groupId>
+                <artifactId>hapi-sourcegen</artifactId>
+                <version>${hapi.version}</version>
+                <executions>
+                    <execution>
+                        <id>ack</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>confgen</goal>
+                        </goals>
+                        <configuration>
 
-	<profiles>
-	</profiles>
-	
+                            <!-- This is the conformance profile file to use -->
+                            <profile>${project.basedir}/src/main/resources/example_ack.xml</profile>
+
+                            <!-- Place generated Java source here -->
+                            <targetDirectory>${project.basedir}/target/generated-sources/confgen</targetDirectory>
+
+                            <!-- Generated classes will be placed here -->
+                            <packageName>com.foo.ack</packageName>
+
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>a31</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <!-- <goal>confgen</goal>  -->
+                        </goals>
+                        <configuration>
+
+                            <!-- This is the conformance profile file to use -->
+                            <profile>${basedir}/src/main/resources/ca/uhn/hl7v2/examples/profiles/ADT_A31.xml</profile>
+
+                            <!-- Place generated Java source here -->
+                            <targetDirectory>${basedir}/target/generated-sources/confgen</targetDirectory>
+
+                            <!-- Generated classes will be placed here -->
+                            <packageName>com.foo.a31</packageName>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven.deploy.plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+    </profiles>
+
 </project>

@@ -20,7 +20,7 @@ plugins {
 
 allprojects {
     group = 'nz.co.comrad.hapi-hl7v2'
-    version = '2.4-SNAPSHOT'
+    version = '2.4.1-SNAPSHOT'
     apply plugin: "com.jfrog.artifactory"
 }
 

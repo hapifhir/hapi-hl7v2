@@ -1,76 +1,77 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<parent>
-		<artifactId>hapi</artifactId>
-		<groupId>ca.uhn.hapi</groupId>
-		<version>2.4-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+    <parent>
+        <artifactId>hapi</artifactId>
+        <groupId>ca.uhn.hapi</groupId>
+        <version>2.4.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi-osgi-base</artifactId>
-	<name>HAPI - Java HL7 API - OSGI Bundle</name>
+    <groupId>ca.uhn.hapi</groupId>
+    <artifactId>hapi-osgi-base</artifactId>
+    <name>HAPI - Java HL7 API - OSGI Bundle</name>
 
-	<packaging>bundle</packaging>
+    <packaging>bundle</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-base</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v21</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v22</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v23</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v231</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v24</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v25</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v251</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-structures-v26</artifactId>
-			<version>${hapi.version.structures}</version>
-			<scope>provided</scope>
-		</dependency>
-<!-- Disabled until new HL7 structure libraries are in place -->
-<!--
+    <dependencies>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v21</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v22</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v23</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v231</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v24</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v25</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v251</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v26</artifactId>
+            <version>${hapi.version.structures}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Disabled until new HL7 structure libraries are in place -->
+        <!--
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v27</artifactId>
@@ -96,35 +97,35 @@
             <scope>provided</scope>
         </dependency>
 -->
-	</dependencies>
+    </dependencies>
 
-	<reporting>
-		<plugins>
-		</plugins>
-	</reporting>
+    <reporting>
+        <plugins>
+        </plugins>
+    </reporting>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<inherited>true</inherited>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<!-- Embed all dependency jars except logging one. Since logging shall be used from PAX-logging -->
-						<Embed-Dependency>*;scope=compile|runtime;artifactId=!slf4j-api|hapi-base</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
-						<unpackBundle>true</unpackBundle>
-						<!-- Packages exported by HAPI OSGI Bundle to others -->
-						<Export-Package>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <!-- Embed all dependency jars except logging one. Since logging shall be used from PAX-logging -->
+                        <Embed-Dependency>*;scope=compile|runtime;artifactId=!slf4j-api|hapi-base</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <unpackBundle>true</unpackBundle>
+                        <!-- Packages exported by HAPI OSGI Bundle to others -->
+                        <Export-Package>
 							ca.uhn.hl7v2*,
 							ca.uhn.hl7v2.app*,
                             ca.uhn.hl7v2.concurrent*,
@@ -164,60 +165,11 @@
                             ca.uhn.hl7v2.validation.builder.support*,
                             ca.uhn.hl7v2.validation.builder.impl*
                         </Export-Package>
-						<Import-Package>
-							ca.uhn.hl7v2.model.v21.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v21.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v21.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v21.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v22.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v22.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v22.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v22.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v23.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v23.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v23.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v23.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v231.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v231.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v231.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v231.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v24.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v24.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v24.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v24.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v25.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v25.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v25.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v25.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v251.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v251.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v251.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v251.segment;resolution:=optional,
-							ca.uhn.hl7v2.model.v26.datatype;resolution:=optional,
-							ca.uhn.hl7v2.model.v26.group;resolution:=optional,
-							ca.uhn.hl7v2.model.v26.message;resolution:=optional,
-							ca.uhn.hl7v2.model.v26.segment;resolution:=optional,
-                            ca.uhn.hl7v2.model.v27.datatype;resolution:=optional,
-                            ca.uhn.hl7v2.model.v27.group;resolution:=optional,
-                            ca.uhn.hl7v2.model.v27.message;resolution:=optional,
-                            ca.uhn.hl7v2.model.v27.segment;resolution:=optional,
-                            ca.uhn.hl7v2.model.v271.datatype;resolution:=optional,
-                            ca.uhn.hl7v2.model.v271.group;resolution:=optional,
-                            ca.uhn.hl7v2.model.v271.message;resolution:=optional,
-                            ca.uhn.hl7v2.model.v271.segment;resolution:=optional,
-                            ca.uhn.hl7v2.model.v28.datatype;resolution:=optional,
-                            ca.uhn.hl7v2.model.v28.group;resolution:=optional,
-                            ca.uhn.hl7v2.model.v28.message;resolution:=optional,
-                            ca.uhn.hl7v2.model.v28.segment;resolution:=optional,
-                            ca.uhn.hl7v2.model.v281.datatype;resolution:=optional,
-                            ca.uhn.hl7v2.model.v281.group;resolution:=optional,
-                            ca.uhn.hl7v2.model.v281.message;resolution:=optional,
-                            ca.uhn.hl7v2.model.v281.segment;resolution:=optional,
-							*;resolution:=optional
+                        <Import-Package> ca.uhn.hl7v2.model.v21.datatype;resolution:=optional, ca.uhn.hl7v2.model.v21.group;resolution:=optional, ca.uhn.hl7v2.model.v21.message;resolution:=optional, ca.uhn.hl7v2.model.v21.segment;resolution:=optional, ca.uhn.hl7v2.model.v22.datatype;resolution:=optional, ca.uhn.hl7v2.model.v22.group;resolution:=optional, ca.uhn.hl7v2.model.v22.message;resolution:=optional, ca.uhn.hl7v2.model.v22.segment;resolution:=optional, ca.uhn.hl7v2.model.v23.datatype;resolution:=optional, ca.uhn.hl7v2.model.v23.group;resolution:=optional, ca.uhn.hl7v2.model.v23.message;resolution:=optional, ca.uhn.hl7v2.model.v23.segment;resolution:=optional, ca.uhn.hl7v2.model.v231.datatype;resolution:=optional, ca.uhn.hl7v2.model.v231.group;resolution:=optional, ca.uhn.hl7v2.model.v231.message;resolution:=optional, ca.uhn.hl7v2.model.v231.segment;resolution:=optional, ca.uhn.hl7v2.model.v24.datatype;resolution:=optional, ca.uhn.hl7v2.model.v24.group;resolution:=optional, ca.uhn.hl7v2.model.v24.message;resolution:=optional, ca.uhn.hl7v2.model.v24.segment;resolution:=optional, ca.uhn.hl7v2.model.v25.datatype;resolution:=optional, ca.uhn.hl7v2.model.v25.group;resolution:=optional, ca.uhn.hl7v2.model.v25.message;resolution:=optional, ca.uhn.hl7v2.model.v25.segment;resolution:=optional, ca.uhn.hl7v2.model.v251.datatype;resolution:=optional, ca.uhn.hl7v2.model.v251.group;resolution:=optional, ca.uhn.hl7v2.model.v251.message;resolution:=optional, ca.uhn.hl7v2.model.v251.segment;resolution:=optional, ca.uhn.hl7v2.model.v26.datatype;resolution:=optional, ca.uhn.hl7v2.model.v26.group;resolution:=optional, ca.uhn.hl7v2.model.v26.message;resolution:=optional, ca.uhn.hl7v2.model.v26.segment;resolution:=optional, ca.uhn.hl7v2.model.v27.datatype;resolution:=optional, ca.uhn.hl7v2.model.v27.group;resolution:=optional, ca.uhn.hl7v2.model.v27.message;resolution:=optional, ca.uhn.hl7v2.model.v27.segment;resolution:=optional, ca.uhn.hl7v2.model.v271.datatype;resolution:=optional, ca.uhn.hl7v2.model.v271.group;resolution:=optional, ca.uhn.hl7v2.model.v271.message;resolution:=optional, ca.uhn.hl7v2.model.v271.segment;resolution:=optional, ca.uhn.hl7v2.model.v28.datatype;resolution:=optional, ca.uhn.hl7v2.model.v28.group;resolution:=optional, ca.uhn.hl7v2.model.v28.message;resolution:=optional, ca.uhn.hl7v2.model.v28.segment;resolution:=optional, ca.uhn.hl7v2.model.v281.datatype;resolution:=optional, ca.uhn.hl7v2.model.v281.group;resolution:=optional, ca.uhn.hl7v2.model.v281.message;resolution:=optional, ca.uhn.hl7v2.model.v281.segment;resolution:=optional, *;resolution:=optional
                         </Import-Package>
-						<!-- This is required to handle dynamic class loading using Class.forName 
+                        <!-- This is required to handle dynamic class loading using Class.forName 
 							methods in various places in HAPI -->
-						<DynamicImport-Package>
+                        <DynamicImport-Package>
 							ca.uhn.hl7v2.model.v21.datatype,
 							ca.uhn.hl7v2.model.v21.group,
 							ca.uhn.hl7v2.model.v21.message,
@@ -267,45 +219,45 @@
                             ca.uhn.hl7v2.model.v281.message,
                             ca.uhn.hl7v2.model.v281.segment
                         </DynamicImport-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/osgi-source.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/osgi-javadoc.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>../src/assembly/osgi-source.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>../src/assembly/osgi-javadoc.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
 </project>
