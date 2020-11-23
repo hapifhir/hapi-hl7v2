@@ -2,127 +2,128 @@
 <!-- The Comrad fork of hapi-hl7v2 has been converted to use Gradle.
 This pom is left here for future reference
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>9</version>
-	</parent>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
 
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>ca.uhn.hapi</groupId>
-	<artifactId>hapi</artifactId>
-	<packaging>pom</packaging>
-	<version>2.4-SNAPSHOT</version>
-	<name>HAPI - The Open Source Java HL7 Parser and API</name>
-	<url>http://hl7api.sourceforge.net/</url>
-	<description>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ca.uhn.hapi</groupId>
+    <artifactId>hapi</artifactId>
+    <packaging>pom</packaging>
+    <version>2.4.1-SNAPSHOT</version>
+    <name>HAPI - The Open Source Java HL7 Parser and API</name>
+    <url>http://hl7api.sourceforge.net/</url>
+    <description>
 		HAPI (HL7 application programming interface; pronounced "happy") is an open-source, 
 		object-oriented HL7 2.x parser for Java.  HL7 (http://hl7org)  is a messaging 
 		specification for healthcare information systems.  This project is not affiliated with 
 		the HL7 organization; we are just writing some software that conforms to their 
 		specification.  The project was initiated by University Health Network 
 		(a large multi-site teaching hospital in Toronto, Canada).   		
-	</description>
+    </description>
 
-	<mailingLists>
-		<mailingList>
-			<name>HAPI Developers Mailing List</name>
-			<subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
-			<unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
-			<archive>http://news.gmane.org/gmane.comp.medical.hl7</archive>
-			<post>mailto:hl7api-devel@lists.sourceforge.net</post>
-		</mailingList>
-	</mailingLists>
+    <mailingLists>
+        <mailingList>
+            <name>HAPI Developers Mailing List</name>
+            <subscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/hl7api-devel</unsubscribe>
+            <archive>http://news.gmane.org/gmane.comp.medical.hl7</archive>
+            <post>mailto:hl7api-devel@lists.sourceforge.net</post>
+        </mailingList>
+    </mailingLists>
 
-	<developers>
-		<developer>
-			<name>Bryan Tripp</name>
-			<email>bryan_tripp@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>James Agnew</name>
-			<email>jamesagnew@users.sourceforge.net</email>
-			<organization>University Health Network</organization>
-			<organizationUrl>http://www.uhn.ca</organizationUrl>
-		</developer>
-		<developer>
-			<name>Christian Ohr</name>
-			<email>ohr@users.sourceforge.net</email>
+    <developers>
+        <developer>
+            <name>Bryan Tripp</name>
+            <email>bryan_tripp@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>James Agnew</name>
+            <email>jamesagnew@users.sourceforge.net</email>
+            <organization>University Health Network</organization>
+            <organizationUrl>http://www.uhn.ca</organizationUrl>
+        </developer>
+        <developer>
+            <name>Christian Ohr</name>
+            <email>ohr@users.sourceforge.net</email>
             <organization>ICW AG</organization>
             <organizationUrl>http://www.icw-global.com</organizationUrl>
-		</developer>
-		<developer>
-			<name>Niranjan Sharma</name>
-			<email>niranjan.sharma@med.ge.com</email>
-		</developer>
-		<developer>
-			<name>Alexei Guevara</name>
-			<email>aguevara@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Charles D. Fisher</name>
-			<email>cdfisher@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Abraham Tio</name>
-			<email>jazzhammer@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Leslie Mann</name>
-			<email>lmann@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Neal Acharya</name>
-			<email>nacharya@users.sourceforge.net</email>
-		</developer>
-		<developer>
-			<name>Nico Vannieuwenhuyze</name>
-			<email>nicovn@users.sourceforge.net</email>
-		</developer>
-	</developers>
+        </developer>
+        <developer>
+            <name>Niranjan Sharma</name>
+            <email>niranjan.sharma@med.ge.com</email>
+        </developer>
+        <developer>
+            <name>Alexei Guevara</name>
+            <email>aguevara@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Charles D. Fisher</name>
+            <email>cdfisher@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Abraham Tio</name>
+            <email>jazzhammer@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Leslie Mann</name>
+            <email>lmann@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Neal Acharya</name>
+            <email>nacharya@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Nico Vannieuwenhuyze</name>
+            <email>nicovn@users.sourceforge.net</email>
+        </developer>
+    </developers>
 
-	<contributors>
-		<contributor>
-			<name>Axel Biernat</name>
-		</contributor>
-		<contributor>
-			<name>Rodolfo Chavez</name>
-		</contributor>
-		<contributor>
-			<name>Ryan W. Gross</name>
-			<organization>General Electric Corporation - Healthcare IT</organization>
-		</contributor>
-		<contributor>
-			<name>Nicolas Lefebvre</name>
-		</contributor>
-		<contributor>
-			<name>Jens Kristian Villadsen</name>
-			<organization>Cetrea A/S</organization>
-			<organizationUrl>http://www.cetrea.com/</organizationUrl>
-		</contributor>
-		<contributor>
-			<name>Tom Chiverton</name>
-		</contributor>
+    <contributors>
+        <contributor>
+            <name>Axel Biernat</name>
+        </contributor>
+        <contributor>
+            <name>Rodolfo Chavez</name>
+        </contributor>
+        <contributor>
+            <name>Ryan W. Gross</name>
+            <organization>General Electric Corporation - Healthcare IT</organization>
+        </contributor>
+        <contributor>
+            <name>Nicolas Lefebvre</name>
+        </contributor>
+        <contributor>
+            <name>Jens Kristian Villadsen</name>
+            <organization>Cetrea A/S</organization>
+            <organizationUrl>http://www.cetrea.com/</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Tom Chiverton</name>
+        </contributor>
 
-	</contributors>
+    </contributors>
 
-	<inceptionYear>2001</inceptionYear>
+    <inceptionYear>2001</inceptionYear>
 
-	<issueManagement>
-		<system>sourceforge</system>
-		<url>http://sourceforge.net/tracker/?group_id=38899</url>
-	</issueManagement>
+    <issueManagement>
+        <system>sourceforge</system>
+        <url>http://sourceforge.net/tracker/?group_id=38899</url>
+    </issueManagement>
 
-	<ciManagement>
-	</ciManagement>
+    <ciManagement>
+    </ciManagement>
 
-	<licenses>
-		<license>
-			<name>HAPI is dual licensed (MPL, GPL)</name>
-			<comments><![CDATA[
+    <licenses>
+        <license>
+            <name>HAPI is dual licensed (MPL, GPL)</name>
+            <comments><![CDATA[
 			   HAPI is dual licensed under both the Mozilla Public License and the GNU General Public License.
 			   What this means is that you may choose to use HAPI under the terms of either license.
 			   You are both permitted and encouraged to use HAPI, royalty-free, within your applications,
@@ -130,320 +131,320 @@ This pom is left here for future reference
 			   terms of one of the licenses below.
 			   You are under no obligations to inform the HAPI project about what you are doing with
 			   HAPI, but we would love to hear about it anyway!
-			]]></comments>
-		</license>
-		<license>
-			<name>Mozilla Public License 1.1</name>
-			<url>http://www.mozilla.org/MPL/MPL-1.1.txt</url>
-		</license>
-		<license>
-			<name>GNU General Public License</name>
-			<url>http://www.gnu.org/licenses/gpl.txt</url>
-		</license>
-	</licenses>
+			]]>            </comments>
+        </license>
+        <license>
+            <name>Mozilla Public License 1.1</name>
+            <url>http://www.mozilla.org/MPL/MPL-1.1.txt</url>
+        </license>
+        <license>
+            <name>GNU General Public License</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
 
 
-	<scm>
-		<connection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</developerConnection>
-		<url>https://sourceforge.net/p/hl7api/code/764/tree/</url>
-		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
-	</scm>
+    <scm>
+        <connection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</connection>
+        <developerConnection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</developerConnection>
+        <url>https://sourceforge.net/p/hl7api/code/764/tree/</url>
+        <!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
+    </scm>
 
-	<organization>
-		<name>University Health Network</name>
-		<url>http://www.uhn.ca</url>
-	</organization>
+    <organization>
+        <name>University Health Network</name>
+        <url>http://www.uhn.ca</url>
+    </organization>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>codehaus</id>
-			<name>Codehaus Repo</name>
-			<url>http://repository.codehaus.org/org/codehaus/mojo/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>mc-release</id>
-			<name>Local Maven repository of releases</name>
-			<url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codehaus</id>
+            <name>Codehaus Repo</name>
+            <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mc-release</id>
+            <name>Local Maven repository of releases</name>
+            <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
-	<dependencies>
-	</dependencies>
+    <dependencies>
+    </dependencies>
 
-	<modules>
-		<!--<module>hapi-confgen-archetype</module> -->
-		<!--<module>HapiOpenesbEncoder</module> -->
-	</modules>
+    <modules>
+        <!--<module>hapi-confgen-archetype</module> -->
+        <!--<module>HapiOpenesbEncoder</module> -->
+    </modules>
 
-	<distributionManagement>
-		<repository>
-			<id>hl7api.sf.net</id>
-			<name>HAPI Sourceforge</name>
-			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
-		</repository>
-		<snapshotRepository>
-			<id>hl7api.sf.net</id>
-			<name>HAPI Sourceforge</name>
-			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
-		</snapshotRepository>
-		<site>
-			<!--
+    <distributionManagement>
+        <repository>
+            <id>hl7api.sf.net</id>
+            <name>HAPI Sourceforge</name>
+            <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
+        </repository>
+        <snapshotRepository>
+            <id>hl7api.sf.net</id>
+            <name>HAPI Sourceforge</name>
+            <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url>
+        </snapshotRepository>
+        <site>
+            <!--
 			<id>hl7api.sf.net</id>
 			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/</url>
 			-->
-			<id>git.server</id>
-			<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>
-		</site>
-	</distributionManagement>
+            <id>git.server</id>
+            <url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>
+        </site>
+    </distributionManagement>
 
-	<build>
-		<defaultGoal>install</defaultGoal>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>${maven.resources.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.0.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>versions-maven-plugin</artifactId>
-					<version>1.3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.10.4</version>
-					<configuration>
-						<failOnError>false</failOnError>
-						<additionalparam>-Xdoclint:none</additionalparam>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>ca.uhn.hapi</groupId>
-										<artifactId>
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>1.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.4</version>
+                    <configuration>
+                        <failOnError>false</failOnError>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>ca.uhn.hapi</groupId>
+                                        <artifactId>
 											hapi-sourcegen
-										</artifactId>
-										<versionRange>
+                                        </artifactId>
+                                        <versionRange>
 											[2.2,)
-										</versionRange>
-										<goals>
-											<goal>confgen</goal>
-											<goal>xsdconfgen</goal>
-											<goal>sourcegen</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
+                                        </versionRange>
+                                        <goals>
+                                            <goal>confgen</goal>
+                                            <goal>xsdconfgen</goal>
+                                            <goal>sourcegen</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
 											org.codehaus.mojo
-										</groupId>
-										<artifactId>
+                                        </groupId>
+                                        <artifactId>
 											buildnumber-maven-plugin
-										</artifactId>
-										<versionRange>
+                                        </artifactId>
+                                        <versionRange>
 											[1.2,)
-										</versionRange>
-										<goals>
-											<goal>
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
 												create-timestamp
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>1.2</version>
-				<executions>
-					<execution>
-						<id>num</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-						<configuration>
-							<doCheck>false</doCheck>
-							<doUpdate>false</doUpdate>
-							<format>{0} ({1,date,yyyy-MM-dd HH:mm:ss})</format>
-							<items>
-								<item>scmVersion</item>
-								<item>timestamp</item>
-							</items>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ts</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>create-timestamp</goal>
-						</goals>
-						<configuration>
-							<doCheck>false</doCheck>
-							<doUpdate>false</doUpdate>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-   			<plugin>
+                <executions>
+                    <execution>
+                        <id>num</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <format>{0} ({1,date,yyyy-MM-dd HH:mm:ss})</format>
+                            <items>
+                                <item>scmVersion</item>
+                                <item>timestamp</item>
+                            </items>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ts</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>${maven.site.plugin.version}</version>
-				<executions>
-					<execution>
-						<id>attach-descriptor</id>
-						<goals>
-							<goal>attach-descriptor</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${maven.site.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<!-- <forceJavacCompilerUse>true</forceJavacCompilerUse> <verbose>true</verbose> <fork>true</fork> -->
-					<forceJavacCompilerUse>true</forceJavacCompilerUse>
-					<maxmem>1024m</maxmem>
-					<!-- <verbose>true</verbose> -->
-					<forceJavacCompilerUse>true</forceJavacCompilerUse>
-					<fork>true</fork>
-				</configuration>
-			</plugin>
-			<!-- <plugin> <groupId>com.mycila.maven-license-plugin</groupId> <artifactId>maven-license-plugin</artifactId> <version>1.9.0</version> <configuration> <header>${project.basedir}/src/license/header.txt</header> 
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <!-- <forceJavacCompilerUse>true</forceJavacCompilerUse> <verbose>true</verbose> <fork>true</fork> -->
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                    <maxmem>1024m</maxmem>
+                    <!-- <verbose>true</verbose> -->
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <!-- <plugin> <groupId>com.mycila.maven-license-plugin</groupId> <artifactId>maven-license-plugin</artifactId> <version>1.9.0</version> <configuration> <header>${project.basedir}/src/license/header.txt</header> 
 				</configuration> </plugin> -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>${maven.license.plugin.version}</version>
-				<inherited>true</inherited>
-				<configuration>
-					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-					<licenseName>gplmpl</licenseName>
-					<licenseResolver>file://${project.parent.basedir}/src/license</licenseResolver>
-					<descriptionTemplate>${project.parent.basedir}/src/license/description-template.ftl</descriptionTemplate>
-					<failOnMissingHeader>true</failOnMissingHeader>
-					<includes>
-						<include>**/AbstractHL7Exception.java</include>
-					</includes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>stage-for-scm-publish</id>
-						<phase>post-site</phase>
-						<goals>
-							<goal>stage</goal>
-						</goals>
-						<configuration>
-							<stagingDirectory>${siteMainDirectory}</stagingDirectory>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-scm</artifactId>
-						<version>2.12</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-manager-plexus</artifactId>
-						<version>1.9.5</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-provider-gitexe</artifactId>
-						<version>1.9.5</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-api</artifactId>
-						<version>1.9.5</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-publish-plugin</artifactId>
-				<version>1.1</version>
-				<inherited>false</inherited>
-				<configuration>
-					<checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
-					<content>\${siteMainDirectory}</content>
-					<tryUpdate>true</tryUpdate>
-					<scmBranch>gh-pages</scmBranch>
-					<pubScmUrl>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</pubScmUrl>
-				</configuration>
-				<executions>
-					<execution>
-						<id>scm-publish</id>
-						<phase>site-deploy</phase>
-						<goals>
-							<goal>publish-scm</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>site-prepare</id>
-						<phase>post-site</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-        <echo>Adding Google analytics in target/site for &lt;body&gt;</echo>
-        <replace dir="target/site" summary="true">
-            <include name="**/*.html"></include>
-            <replacefilter token="#build#" value="${label}"/>
-            <replacefilter token="#version#" value="${version}"/>
-            <replacetoken><![CDATA[</body>]]></replacetoken>
-            <replacevalue><![CDATA[
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${maven.license.plugin.version}</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <licenseName>gplmpl</licenseName>
+                    <licenseResolver>file://${project.parent.basedir}/src/license</licenseResolver>
+                    <descriptionTemplate>${project.parent.basedir}/src/license/description-template.ftl</descriptionTemplate>
+                    <failOnMissingHeader>true</failOnMissingHeader>
+                    <includes>
+                        <include>**/AbstractHL7Exception.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>stage-for-scm-publish</id>
+                        <phase>post-site</phase>
+                        <goals>
+                            <goal>stage</goal>
+                        </goals>
+                        <configuration>
+                            <stagingDirectory>${siteMainDirectory}</stagingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-scm</artifactId>
+                        <version>2.12</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-manager-plexus</artifactId>
+                        <version>1.9.5</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>1.9.5</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-api</artifactId>
+                        <version>1.9.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.1</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
+                    <content>\${siteMainDirectory}</content>
+                    <tryUpdate>true</tryUpdate>
+                    <scmBranch>gh-pages</scmBranch>
+                    <pubScmUrl>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</pubScmUrl>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scm-publish</id>
+                        <phase>site-deploy</phase>
+                        <goals>
+                            <goal>publish-scm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>site-prepare</id>
+                        <phase>post-site</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo>Adding Google analytics in target/site for &lt;body&gt;</echo>
+                                <replace dir="target/site" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacefilter token="#build#" value="${label}"/>
+                                    <replacefilter token="#version#" value="${version}"/>
+                                    <replacetoken><![CDATA[</body>]]></replacetoken>
+                                    <replacevalue><![CDATA[
                 <script type="text/javascript">
                 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -454,13 +455,13 @@ This pom is left here for future reference
                 pageTracker._trackPageview();
                 } catch(err) {}</script>
                 </body >
-                ]]></replacevalue>
-        </replace>
-         <echo>Adding Google analytics in target/site for &lt;BODY&gt;</echo>
-        <replace dir="target/site" summary="true">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[</BODY>]]></replacetoken>
-            <replacevalue><![CDATA[
+                ]]>                                    </replacevalue>
+                                </replace>
+                                <echo>Adding Google analytics in target/site for &lt;BODY&gt;</echo>
+                                <replace dir="target/site" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[</BODY>]]></replacetoken>
+                                    <replacevalue><![CDATA[
                 <script type="text/javascript">
                 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -471,14 +472,14 @@ This pom is left here for future reference
                 pageTracker._trackPageview();
                 } catch(err) {}</script>
                 </BODY >
-                ]]></replacevalue>
-        </replace>
-      <echo>Adding Google analytics in target/site for &lt;FRAMESET&gt;</echo>
-        <replace dir="target/site" summary="true">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[</HEAD>
+                ]]>                                    </replacevalue>
+                                </replace>
+                                <echo>Adding Google analytics in target/site for &lt;FRAMESET&gt;</echo>
+                                <replace dir="target/site" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[</HEAD>
 <FRAMESET]]></replacetoken>
-            <replacevalue><![CDATA[
+                                    <replacevalue><![CDATA[
                 <script type="text/javascript">
                 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -490,13 +491,13 @@ This pom is left here for future reference
                 } catch(err) {}</script>
                 </HEAD >
                 <FRAMESET]]></replacevalue>
-        </replace>
-      <echo>Adding Google analytics in target/site for &lt;frameset&gt;</echo>
-        <replace dir="target/site" summary="true">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[</head>
+                                </replace>
+                                <echo>Adding Google analytics in target/site for &lt;frameset&gt;</echo>
+                                <replace dir="target/site" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[</head>
     <frameset]]></replacetoken>
-            <replacevalue><![CDATA[
+                                    <replacevalue><![CDATA[
                 <script type="text/javascript">
                 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -508,26 +509,26 @@ This pom is left here for future reference
                 } catch(err) {}</script>
                 </head >
     <frameset]]></replacevalue>
-        </replace>
-      <echo>Customizing analytics token for testpanel</echo>
-        <mkdir dir="target/site/hapi-testpanel"/>
-        <replace dir="target/site/hapi-testpanel" summary="true" failOnNoReplacements="false">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
-            <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
-        </replace>
-      <echo>Customizing analytics token for hl7overhttp</echo>
-        <mkdir dir="target/site/hapi-hl7overhttp"/>
-        <replace dir="target/site/hapi-hl7overhttp" summary="true">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
-            <replacevalue><![CDATA[UA-1395874-4]]></replacevalue>
-        </replace>
-     <echo>Adding social plugins for HAPI</echo>
-        <replace dir="target/site/" summary="true">
-            <include name="**/*.html"></include>
-            <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
-            <replacevalue><![CDATA[
+                                </replace>
+                                <echo>Customizing analytics token for testpanel</echo>
+                                <mkdir dir="target/site/hapi-testpanel"/>
+                                <replace dir="target/site/hapi-testpanel" summary="true" failOnNoReplacements="false">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
+                                    <replacevalue><![CDATA[UA-1395874-3]]></replacevalue>
+                                </replace>
+                                <echo>Customizing analytics token for hl7overhttp</echo>
+                                <mkdir dir="target/site/hapi-hl7overhttp"/>
+                                <replace dir="target/site/hapi-hl7overhttp" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[UA-1395874-1]]></replacetoken>
+                                    <replacevalue><![CDATA[UA-1395874-4]]></replacevalue>
+                                </replace>
+                                <echo>Adding social plugins for HAPI</echo>
+                                <replace dir="target/site/" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
+                                    <replacevalue><![CDATA[
                <table cellpadding="0" cellspacing="0" border="0"><tr>
                <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div></td>
                <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
@@ -535,43 +536,43 @@ This pom is left here for future reference
 
                </p><p>
                <!-- Place this tag after the last +1 button tag. -->
-               <script type="text/javascript">
+<script type="text/javascript">
                  (function() {
                    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
                    po.src = 'https://apis.google.com/js/plusone.js';
                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
                  })();
                </script>
-               <div id="fb-root"></div>
-               <script>(function(d, s, id) {
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
                  var js, fjs = d.getElementsByTagName(s)[0];
                  if (d.getElementById(id)) return;
                  js = d.createElement(s); js.id = id;
                  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
                  fjs.parentNode.insertBefore(js, fjs);
                }(document, 'script', 'facebook-jssdk'));</script>
-            ]]></replacevalue>
-        </replace>
-      <echo>Adding social plugins for TestPanel</echo>
-        <replace dir="target/site/" summary="true">
-          <include name="**/*.html"></include>
-          <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
-          <replacevalue><![CDATA[
+            ]]>                                    </replacevalue>
+                                </replace>
+                                <echo>Adding social plugins for TestPanel</echo>
+                                <replace dir="target/site/" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
+                                    <replacevalue><![CDATA[
             <table cellpadding="0" cellspacing="0" border="0"><tr>
             <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
             <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
             </tr></table>
 
             <!-- Place this tag after the last +1 button tag. -->
-            <script type="text/javascript">
+<script type="text/javascript">
               (function() {
                 var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
                 po.src = 'https://apis.google.com/js/plusone.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
               })();
             </script>
-            <div id="fb-root"></div>
-            <script>(function(d, s, id) {
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];
               if (d.getElementById(id)) return;
               js = d.createElement(s); js.id = id;
@@ -579,28 +580,28 @@ This pom is left here for future reference
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
             
-          ]]></replacevalue>
-      </replace>
-      <echo>Adding social plugins for hl7overhttp</echo>
-        <replace dir="target/site/" summary="true">
-          <include name="**/*.html"></include>
-          <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
-          <replacevalue><![CDATA[
+          ]]>                                    </replacevalue>
+                                </replace>
+                                <echo>Adding social plugins for hl7overhttp</echo>
+                                <replace dir="target/site/" summary="true">
+                                    <include name="**/*.html"></include>
+                                    <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
+                                    <replacevalue><![CDATA[
             <table cellpadding="0" cellspacing="0" border="0"><tr>
             <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html"></div></td>
             <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
             </tr></table>
 
             <!-- Place this tag after the last +1 button tag. -->
-            <script type="text/javascript">
+<script type="text/javascript">
               (function() {
                 var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
                 po.src = 'https://apis.google.com/js/plusone.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
               })();
             </script>
-            <div id="fb-root"></div>
-            <script>(function(d, s, id) {
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];
               if (d.getElementById(id)) return;
               js = d.createElement(s); js.id = id;
@@ -608,385 +609,385 @@ This pom is left here for future reference
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
             
-          ]]></replacevalue>
-      </replace>
+          ]]>                                    </replacevalue>
+                                </replace>
 
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-7</version>
-			</extension>
-		</extensions>
-	</build>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>1.0-beta-7</version>
+            </extension>
+        </extensions>
+    </build>
 
 
-	<properties>
-		<!-- For site -->
-		<siteMainDirectory>${user.home}/sites/hapi-hl7v2</siteMainDirectory>
-		<scmPubCheckoutDirectory>${user.home}/sites/scm/hapi-hl7v2</scmPubCheckoutDirectory>
+    <properties>
+        <!-- For site -->
+        <siteMainDirectory>${user.home}/sites/hapi-hl7v2</siteMainDirectory>
+        <scmPubCheckoutDirectory>${user.home}/sites/scm/hapi-hl7v2</scmPubCheckoutDirectory>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<netbeans.compile.on.save>all</netbeans.compile.on.save>
-		<root.basedir>${basedir}</root.basedir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <netbeans.compile.on.save>all</netbeans.compile.on.save>
+        <root.basedir>${basedir}</root.basedir>
 
-		<!-- HAPI Versions -->
-		<hapi.version>2.3</hapi.version>
-		<hapi.version.structures>2.3</hapi.version.structures>
-		<hapi.version.stable>2.2</hapi.version.stable>
-		<hapi.version.testpanel>2.0.1</hapi.version.testpanel>
+        <!-- HAPI Versions -->
+        <hapi.version>2.3</hapi.version>
+        <hapi.version.structures>2.3</hapi.version.structures>
+        <hapi.version.stable>2.2</hapi.version.stable>
+        <hapi.version.testpanel>2.0.1</hapi.version.testpanel>
 
-		<!-- Dependency versions -->
-		<bouncycastle.version>1.46</bouncycastle.version>
-		<commons-cli.version>1.2</commons-cli.version>
+        <!-- Dependency versions -->
+        <bouncycastle.version>1.46</bouncycastle.version>
+        <commons-cli.version>1.2</commons-cli.version>
         <commons-lang.version>2.6</commons-lang.version>
-		<geronimo.jms.spec.version>1.1.1</geronimo.jms.spec.version>
+        <geronimo.jms.spec.version>1.1.1</geronimo.jms.spec.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.9.0</mockito.version>
-		<jetty.version>6.1.26</jetty.version>
-		<junit.version>4.11</junit.version>
-		<log4j.version>1.2.17</log4j.version>
-		<slf4j.version>1.7.10</slf4j.version>
-		<spring.version>4.1.4.RELEASE</spring.version>
+        <jetty.version>6.1.26</jetty.version>
+        <junit.version>4.11</junit.version>
+        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.10</slf4j.version>
+        <spring.version>4.1.4.RELEASE</spring.version>
 
-		<!-- Renamed properties for use in *.vm site documentation -->
-		<log4j_version>${log4j.version}</log4j_version>
-		<slf4j_version>${slf4j.version}</slf4j_version>
-		<hapi_version_stable>${hapi.version.stable}</hapi_version_stable>
-		<project_parent_basedir>${project.parent.basedir}</project_parent_basedir>
+        <!-- Renamed properties for use in *.vm site documentation -->
+        <log4j_version>${log4j.version}</log4j_version>
+        <slf4j_version>${slf4j.version}</slf4j_version>
+        <hapi_version_stable>${hapi.version.stable}</hapi_version_stable>
+        <project_parent_basedir>${project.parent.basedir}</project_parent_basedir>
 
-		<!-- Build-time Maven plugin versions -->
-		<maven.changes.plugin.version>2.8</maven.changes.plugin.version>
-		<maven.cobertura.plugin.version>2.5.2</maven.cobertura.plugin.version>
-		<maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
-		<maven.findbugs.plugin.version>3.0.4</maven.findbugs.plugin.version>
-		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-		<maven.jxr.plugin.version>2.3</maven.jxr.plugin.version>
-		<maven.license.plugin.version>1.5</maven.license.plugin.version>
-		<maven.plugin.plugin.version>3.2</maven.plugin.plugin.version>
-		<maven.project.info.plugin.version>2.7</maven.project.info.plugin.version>
-		<maven.resources.plugin.version>2.6</maven.resources.plugin.version>
-		<maven.site.plugin.version>3.6</maven.site.plugin.version>
-		<maven.source.plugin.version>2.2</maven.source.plugin.version>
-		<maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
-		<maven.surefire.report.plugin.version>2.16</maven.surefire.report.plugin.version>
+        <!-- Build-time Maven plugin versions -->
+        <maven.changes.plugin.version>2.8</maven.changes.plugin.version>
+        <maven.cobertura.plugin.version>2.5.2</maven.cobertura.plugin.version>
+        <maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
+        <maven.findbugs.plugin.version>3.0.4</maven.findbugs.plugin.version>
+        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+        <maven.jxr.plugin.version>2.3</maven.jxr.plugin.version>
+        <maven.license.plugin.version>1.5</maven.license.plugin.version>
+        <maven.plugin.plugin.version>3.2</maven.plugin.plugin.version>
+        <maven.project.info.plugin.version>2.7</maven.project.info.plugin.version>
+        <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
+        <maven.site.plugin.version>3.6</maven.site.plugin.version>
+        <maven.source.plugin.version>2.2</maven.source.plugin.version>
+        <maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+        <maven.surefire.report.plugin.version>2.16</maven.surefire.report.plugin.version>
 
-		<!-- Configuration options -->
-		<plugin.javadoc.maxmemory>1600m</plugin.javadoc.maxmemory>
+        <!-- Configuration options -->
+        <plugin.javadoc.maxmemory>1600m</plugin.javadoc.maxmemory>
 
 
-	</properties>
+    </properties>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${maven.jxr.plugin.version}</version>
-				<inherited>false</inherited>
-				<configuration>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<id>all-xref</id>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>${maven.surefire.report.plugin.version}</version>
-				<inherited>false</inherited>
-				<reportSets>
-					<reportSet>
-						<id>hapi-tests</id>
-						<reports>
-							<report>report-only</report>
-						</reports>
-						<configuration>
-							<reportsDirectories>
-								<reportsDirectory>${project.basedir}/hapi-test/target/surefire-reports</reportsDirectory>
-							</reportsDirectories>
-						</configuration>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<version>${maven.changes.plugin.version}</version>
-				<inherited>false</inherited>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>changes-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-				<configuration>
-					<issueLinkTemplatePerSystem>
-						<default>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</default>
-						<newbugs>https://sourceforge.net/p/hl7api/bugs/%ISSUE%/</newbugs>
-						<newfeatures>https://sourceforge.net/p/hl7api/feature-requests/%ISSUE%/</newfeatures>
-					</issueLinkTemplatePerSystem>
-					<escapeHTML>false</escapeHTML>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>${maven.project.info.plugin.version}</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>project-team</report>
-							<report>mailing-list</report>
-							<report>license</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${maven.jxr.plugin.version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>all-xref</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven.surefire.report.plugin.version}</version>
+                <inherited>false</inherited>
+                <reportSets>
+                    <reportSet>
+                        <id>hapi-tests</id>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                        <configuration>
+                            <reportsDirectories>
+                                <reportsDirectory>${project.basedir}/hapi-test/target/surefire-reports</reportsDirectory>
+                            </reportsDirectories>
+                        </configuration>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>${maven.changes.plugin.version}</version>
+                <inherited>false</inherited>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <issueLinkTemplatePerSystem>
+                        <default>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</default>
+                        <newbugs>https://sourceforge.net/p/hl7api/bugs/%ISSUE%/</newbugs>
+                        <newfeatures>https://sourceforge.net/p/hl7api/feature-requests/%ISSUE%/</newfeatures>
+                    </issueLinkTemplatePerSystem>
+                    <escapeHTML>false</escapeHTML>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${maven.project.info.plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            <report>license</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
-	<profiles>
-		<profile>
-			<id>CORE</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-test</module>
-				<module>hapi-testmindeps</module>
-				<module>hapi-testnodeps</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-examples</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>ROOT</id>
-			<build>
-			</build>
-			<modules>
-			</modules>
-		</profile>
-		<profile>
-			<id>GEN</id>
-			<build>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-structures-v21</module>
-				<module>hapi-structures-v22</module>
-				<module>hapi-structures-v23</module>
-				<module>hapi-structures-v231</module>
-				<module>hapi-structures-v231-alternatenames</module>
-				<module>hapi-structures-v24</module>
-				<module>hapi-structures-v25</module>
-				<module>hapi-structures-v251</module>
-				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
-				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>DIST</id>
-			<build>
-				<plugins>
-					<plugin>
+    <profiles>
+        <profile>
+            <id>CORE</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-sourcegen</module>
+                <module>hapi-test</module>
+                <module>hapi-testmindeps</module>
+                <module>hapi-testnodeps</module>
+                <module>hapi-hl7overhttp</module>
+                <module>hapi-examples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>ROOT</id>
+            <build>
+            </build>
+            <modules>
+            </modules>
+        </profile>
+        <profile>
+            <id>GEN</id>
+            <build>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-sourcegen</module>
+                <module>hapi-structures-v21</module>
+                <module>hapi-structures-v22</module>
+                <module>hapi-structures-v23</module>
+                <module>hapi-structures-v231</module>
+                <module>hapi-structures-v231-alternatenames</module>
+                <module>hapi-structures-v24</module>
+                <module>hapi-structures-v25</module>
+                <module>hapi-structures-v251</module>
+                <module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <!--<module>hapi-structures-v271</module>-->
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>DIST</id>
+            <build>
+                <plugins>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<inherited>true</inherited>
-						<configuration>
-							<minmemory>128m</minmemory>
-							<maxmemory>1g</maxmemory>
-							<linksource>true</linksource>
-							<verbose>false</verbose>
-							<debug>false</debug>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${maven.gpg.plugin.version}</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-structures-v21</module>
-				<module>hapi-structures-v22</module>
-				<module>hapi-structures-v23</module>
-				<module>hapi-structures-v231</module>
-				<module>hapi-structures-v24</module>
-				<module>hapi-structures-v25</module>
-				<module>hapi-structures-v251</module>
-				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
-				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
-				<module>hapi-osgi-base</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-examples</module>
-				<module>hapi-dist</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>MINIDIST</id>
-			<build>
-				<plugins>
-					<plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <minmemory>128m</minmemory>
+                            <maxmemory>1g</maxmemory>
+                            <linksource>true</linksource>
+                            <verbose>false</verbose>
+                            <debug>false</debug>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<inherited>true</inherited>
-						<configuration>
-							<minmemory>128m</minmemory>
-							<maxmemory>1g</maxmemory>
-							<linksource>true</linksource>
-							<verbose>false</verbose>
-							<debug>false</debug>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${maven.gpg.plugin.version}</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-examples</module>
-				<module>hapi-dist</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>SITE</id>
-			<build>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-test</module>
-				<!--<module>hapi-sourcegen</module>-->
-				<module>hapi-structures-v21</module>
-				<module>hapi-structures-v22</module>
-				<module>hapi-structures-v23</module>
-				<module>hapi-structures-v231</module>
-				<module>hapi-structures-v24</module>
-				<module>hapi-structures-v25</module>
-				<module>hapi-structures-v251</module>
-				<module>hapi-structures-v26</module>
-            <module>hapi-structures-v27</module>
-				<!--<module>hapi-structures-v271</module>-->
-            <module>hapi-structures-v28</module>
-            <module>hapi-structures-v281</module>
-				<module>hapi-osgi-base</module>
-				<module>hapi-testpanel</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-examples</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>MINISITE</id>
-			<build>
-			</build>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-examples</module>
-				<module>hapi-sourcegen</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>MYSQL</id>
-			<properties>
-				<sourcegen.jdbcUrl.old>jdbc:mysql://localhost:3306/hl7v25</sourcegen.jdbcUrl.old>
-				<sourcegen.jdbcUser.old>hl7</sourcegen.jdbcUser.old>
-				<sourcegen.jdbcPassword.old>hl7</sourcegen.jdbcPassword.old>
-				<sourcegen.jdbcUrl.new>jdbc:mysql://localhost:3306/hl7v65</sourcegen.jdbcUrl.new>
-				<sourcegen.jdbcUser.new>hl7</sourcegen.jdbcUser.new>
-				<sourcegen.jdbcPassword.new>hl7</sourcegen.jdbcPassword.new>
-			</properties>
-		</profile>
-		<profile>
-			<id>ACCESS</id>
-			<properties>
-				<sourcegen.jdbcUrl.old>jdbc:odbc:hl7v25</sourcegen.jdbcUrl.old>
-				<sourcegen.jdbcUser.old />
-				<sourcegen.jdbcPassword.old />
-				<sourcegen.jdbcUrl.new>jdbc:odbc:hl7v65</sourcegen.jdbcUrl.new>
-				<sourcegen.jdbcUser.new />
-				<sourcegen.jdbcPassword.new />
-				<sourcegen.jdbcUrl.27>jdbc:odbc:hl7v7</sourcegen.jdbcUrl.27>
-				<sourcegen.jdbcUser.27 />
-				<sourcegen.jdbcPassword.27 />
-				<sourcegen.jdbcUrl.28>jdbc:odbc:hl7v8</sourcegen.jdbcUrl.28>
-				<sourcegen.jdbcUser.28 />
-				<sourcegen.jdbcPassword.28 />
-			</properties>
-		</profile>
-		<profile>
-			<id>ALLMODULES</id>
-			<modules>
-				<module>hapi-base</module>
-				<module>hapi-examples</module>
-				<module>hapi-test</module>
-				<module>hapi-testmindeps</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-structures-v21</module>
-				<module>hapi-structures-v22</module>
-				<module>hapi-structures-v23</module>
-				<module>hapi-structures-v231</module>
-				<module>hapi-structures-v24</module>
-				<module>hapi-structures-v25</module>
-				<module>hapi-structures-v251</module>
-				<module>hapi-structures-v26</module>
-				<module>hapi-structures-v27</module>
-				<!--<module>hapi-structures-v271</module>-->
-				<module>hapi-structures-v28</module>
-				<module>hapi-structures-v281</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-osgi-base</module>
-				<module>hapi-testpanel</module>
-			</modules>
-		</profile>
-	</profiles>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-sourcegen</module>
+                <module>hapi-structures-v21</module>
+                <module>hapi-structures-v22</module>
+                <module>hapi-structures-v23</module>
+                <module>hapi-structures-v231</module>
+                <module>hapi-structures-v24</module>
+                <module>hapi-structures-v25</module>
+                <module>hapi-structures-v251</module>
+                <module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <!--<module>hapi-structures-v271</module>-->
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
+                <module>hapi-osgi-base</module>
+                <module>hapi-hl7overhttp</module>
+                <module>hapi-examples</module>
+                <module>hapi-dist</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>MINIDIST</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <minmemory>128m</minmemory>
+                            <maxmemory>1g</maxmemory>
+                            <linksource>true</linksource>
+                            <verbose>false</verbose>
+                            <debug>false</debug>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-sourcegen</module>
+                <module>hapi-hl7overhttp</module>
+                <module>hapi-examples</module>
+                <module>hapi-dist</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>SITE</id>
+            <build>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-test</module>
+                <!--<module>hapi-sourcegen</module>-->
+                <module>hapi-structures-v21</module>
+                <module>hapi-structures-v22</module>
+                <module>hapi-structures-v23</module>
+                <module>hapi-structures-v231</module>
+                <module>hapi-structures-v24</module>
+                <module>hapi-structures-v25</module>
+                <module>hapi-structures-v251</module>
+                <module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <!--<module>hapi-structures-v271</module>-->
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
+                <module>hapi-osgi-base</module>
+                <module>hapi-testpanel</module>
+                <module>hapi-hl7overhttp</module>
+                <module>hapi-examples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>MINISITE</id>
+            <build>
+            </build>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-examples</module>
+                <module>hapi-sourcegen</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>MYSQL</id>
+            <properties>
+                <sourcegen.jdbcUrl.old>jdbc:mysql://localhost:3306/hl7v25</sourcegen.jdbcUrl.old>
+                <sourcegen.jdbcUser.old>hl7</sourcegen.jdbcUser.old>
+                <sourcegen.jdbcPassword.old>hl7</sourcegen.jdbcPassword.old>
+                <sourcegen.jdbcUrl.new>jdbc:mysql://localhost:3306/hl7v65</sourcegen.jdbcUrl.new>
+                <sourcegen.jdbcUser.new>hl7</sourcegen.jdbcUser.new>
+                <sourcegen.jdbcPassword.new>hl7</sourcegen.jdbcPassword.new>
+            </properties>
+        </profile>
+        <profile>
+            <id>ACCESS</id>
+            <properties>
+                <sourcegen.jdbcUrl.old>jdbc:odbc:hl7v25</sourcegen.jdbcUrl.old>
+                <sourcegen.jdbcUser.old />
+                <sourcegen.jdbcPassword.old />
+                <sourcegen.jdbcUrl.new>jdbc:odbc:hl7v65</sourcegen.jdbcUrl.new>
+                <sourcegen.jdbcUser.new />
+                <sourcegen.jdbcPassword.new />
+                <sourcegen.jdbcUrl.27>jdbc:odbc:hl7v7</sourcegen.jdbcUrl.27>
+                <sourcegen.jdbcUser.27 />
+                <sourcegen.jdbcPassword.27 />
+                <sourcegen.jdbcUrl.28>jdbc:odbc:hl7v8</sourcegen.jdbcUrl.28>
+                <sourcegen.jdbcUser.28 />
+                <sourcegen.jdbcPassword.28 />
+            </properties>
+        </profile>
+        <profile>
+            <id>ALLMODULES</id>
+            <modules>
+                <module>hapi-base</module>
+                <module>hapi-examples</module>
+                <module>hapi-test</module>
+                <module>hapi-testmindeps</module>
+                <module>hapi-sourcegen</module>
+                <module>hapi-structures-v21</module>
+                <module>hapi-structures-v22</module>
+                <module>hapi-structures-v23</module>
+                <module>hapi-structures-v231</module>
+                <module>hapi-structures-v24</module>
+                <module>hapi-structures-v25</module>
+                <module>hapi-structures-v251</module>
+                <module>hapi-structures-v26</module>
+                <module>hapi-structures-v27</module>
+                <!--<module>hapi-structures-v271</module>-->
+                <module>hapi-structures-v28</module>
+                <module>hapi-structures-v281</module>
+                <module>hapi-hl7overhttp</module>
+                <module>hapi-osgi-base</module>
+                <module>hapi-testpanel</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
