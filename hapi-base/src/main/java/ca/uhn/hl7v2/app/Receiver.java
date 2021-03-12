@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.HL7Reader;
+import ca.uhn.hl7v2.llp.LLPException;
 
 /**
  * Listens for incoming messages on a certain input stream, and sends them to
@@ -48,6 +49,7 @@ public class Receiver extends Service {
 
 	private final ActiveConnection conn;
 	private final HL7Reader in;
+	private ReceiverParserExceptionHandler parserExeptionHandler;
 
 	/** Creates a new instance of Receiver, associated with the given Connection */
 	public Receiver(ActiveConnection c, HL7Reader in) {
@@ -56,6 +58,9 @@ public class Receiver extends Service {
 		this.in = in;
 	}
 
+	public void setParserExeptionHandler(ReceiverParserExceptionHandler parserExeptionHandler) {
+		this.parserExeptionHandler = parserExeptionHandler;
+	}
 
 	@Override
 	protected void handle() {
@@ -65,6 +70,14 @@ public class Receiver extends Service {
 				log.debug("Failed to read a message");
 			} else {
 				processMessage(message);
+			}
+		} catch (LLPException e)  {
+			//For any protocol exceptions on this particular connection notify the application about the same
+			//and close the connection
+			conn.close();
+			log.info("LLPException: closing Connection from " + describeRemoteConnection() + ", will no longer read messages with this Receiver: " + e.getMessage());
+			if(parserExeptionHandler!=null) {
+				parserExeptionHandler.handle(e);
 			}
 		} catch (SocketException e)  {
 			// This probably means that the client closed the server connection normally
@@ -138,4 +151,10 @@ public class Receiver extends Service {
 		}
 	}
 
+	/**
+	 * Handle any protocol level parsing exceptions and pass them on to an exception handler
+	 */
+	public static interface ReceiverParserExceptionHandler {
+		void handle(Exception e);
+	}
 }

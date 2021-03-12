@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.concurrent.BlockingMap;
+import ca.uhn.hl7v2.app.Receiver.ReceiverParserExceptionHandler;
 import ca.uhn.hl7v2.concurrent.BlockingHashMap;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.HL7Writer;
@@ -139,6 +140,17 @@ public class ActiveConnection implements Connection {
 		responses = new BlockingHashMap<>(executorService);
 		receivers = new ArrayList<>(2);
 		responder = new Responder(inboundSocket);
+	}
+	
+	/**
+	 * Register the parser exception handler for each of the receivers
+	 */
+	public void setReceiverParserExeptionHandler(ReceiverParserExceptionHandler parserExeptionHandler) {
+		if (receivers != null) {
+			for (Receiver receiver : receivers) {
+				receiver.setParserExeptionHandler(parserExeptionHandler);
+			}
+		}
 	}
 
 	/**
