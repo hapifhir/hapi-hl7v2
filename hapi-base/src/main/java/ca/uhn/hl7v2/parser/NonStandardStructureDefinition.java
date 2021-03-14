@@ -61,6 +61,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public Set<String> getAllChildNames() {
 		return Collections.emptySet();
 	}
@@ -68,13 +69,15 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
-	public Set<String> getAllPossibleFirstChildren() {
+	@Override
+    public Set<String> getAllPossibleFirstChildren() {
 		return Collections.emptySet();
 	}
 
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public List<StructureDefinition> getChildren() {
 		return Collections.emptyList();
 	}
@@ -82,6 +85,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public IStructureDefinition getFirstChild() {
 		return null;
 	}
@@ -89,6 +93,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public IStructureDefinition getFirstSibling() {
 		return null;
 	}
@@ -103,6 +108,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getNameAsItAppearsInParent() {
 		return getName();
 	}
@@ -110,6 +116,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public Set<String> getNamesOfAllPossibleFollowingLeaves() {
 		return myPreviousSibling.getNamesOfAllPossibleFollowingLeaves();
 	}
@@ -117,6 +124,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public IStructureDefinition getNextLeaf() {
 		return myPreviousSibling.getNextLeaf();
 	}
@@ -124,6 +132,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public IStructureDefinition getNextSibling() {
 		return myPreviousSibling.getNextSibling();
 	}
@@ -131,6 +140,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public IStructureDefinition getParent() {
 		return myParent;
 	}
@@ -138,6 +148,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public int getPosition() {
 		return myPosition;
 	}
@@ -145,6 +156,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean hasChildren() {
 		return false;
 	}
@@ -152,6 +164,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean isFinalChildOfParent() {
 		return myPreviousSibling.isFinalChildOfParent();
 	}
@@ -159,6 +172,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean isRepeating() {
 		return true;
 	}
@@ -166,6 +180,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean isRequired() {
 		return false;
 	}
@@ -173,6 +188,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean isSegment() {
 		return true;
 	}
@@ -180,6 +196,7 @@ public class NonStandardStructureDefinition implements IStructureDefinition {
 	/**
 	 * {@inheritDoc }
 	 */
+	@Override
 	public boolean isChoiceElement() {
 		return false;
 	}

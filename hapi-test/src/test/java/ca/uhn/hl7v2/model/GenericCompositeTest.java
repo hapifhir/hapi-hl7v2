@@ -81,7 +81,7 @@ public class GenericCompositeTest  {
 	public void testGetComponent() {
     	
 		buildSpecs(GetComponentSpec.class)
-			.add(-1, ArrayIndexOutOfBoundsException.class)
+			.add(-1, IndexOutOfBoundsException.class)
 			.add(0, Varies.class)
 			.add(1, Varies.class)
 			.add(2, Varies.class)

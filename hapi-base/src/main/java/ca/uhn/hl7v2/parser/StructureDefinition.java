@@ -49,7 +49,7 @@ public class StructureDefinition implements IStructureDefinition {
     private boolean myIsSegment;
     private String myName;
     private String myNameAsItAppearsInParent;
-    private Set<String> myNamesOfAllPossibleFollowingLeaves;
+    private volatile Set<String> myNamesOfAllPossibleFollowingLeaves;
     private IStructureDefinition myNextLeaf;
     private IStructureDefinition myNextSibling;
     private IStructureDefinition myParent;
@@ -88,6 +88,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public HashSet<String> getAllChildNames() {
         if (myAllChildrenNames == null) {
             myAllChildrenNames = new HashSet<>();
@@ -104,6 +105,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public HashSet<String> getAllPossibleFirstChildren() {
         if (myAllFirstLeafNames == null) {
             myAllFirstLeafNames = new HashSet<>();
@@ -134,6 +136,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public ArrayList<StructureDefinition> getChildren() {
         return myChildren;
     }
@@ -142,6 +145,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public IStructureDefinition getFirstChild() {
         return myChildren.get(0);
     }
@@ -150,6 +154,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public IStructureDefinition getFirstSibling() {
         if (!myFirstSiblingIsSet) {
             if (myParent == null) {
@@ -177,6 +182,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameAsItAppearsInParent() {
         return myNameAsItAppearsInParent;
     }
@@ -185,35 +191,38 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public Set<String> getNamesOfAllPossibleFollowingLeaves() {
         if (myNamesOfAllPossibleFollowingLeaves != null) {
             return myNamesOfAllPossibleFollowingLeaves;
         }
 
-        myNamesOfAllPossibleFollowingLeaves = new HashSet<>();
+        HashSet<String> retVal = new HashSet<>();
 
         IStructureDefinition nextLeaf = getNextLeaf();
         if (nextLeaf != null) {
-            myNamesOfAllPossibleFollowingLeaves.add(nextLeaf.getName());
-            myNamesOfAllPossibleFollowingLeaves.addAll(nextLeaf.getNamesOfAllPossibleFollowingLeaves());
+            retVal.add(nextLeaf.getName());
+            Set<String> namesOfAllPossibleFollowingLeaves = nextLeaf.getNamesOfAllPossibleFollowingLeaves();
+            retVal.addAll(namesOfAllPossibleFollowingLeaves);
         }
 
         IStructureDefinition parent = myParent;
         while (parent != null) {
             if (parent.isRepeating()) {
-                myNamesOfAllPossibleFollowingLeaves.addAll(parent.getAllPossibleFirstChildren());
+                retVal.addAll(parent.getAllPossibleFirstChildren());
             }
             parent = parent.getParent();
         }
 
-        return myNamesOfAllPossibleFollowingLeaves;
-
+        myNamesOfAllPossibleFollowingLeaves = retVal;
+        return retVal;
     }
 
 
     /**
      * {@inheritDoc }
      */
+    @Override
     public IStructureDefinition getNextLeaf() {
         return myNextLeaf;
     }
@@ -222,6 +231,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public IStructureDefinition getNextSibling() {
         if (myNextSibling != null) {
             return myNextSibling;
@@ -239,6 +249,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public IStructureDefinition getParent() {
         return myParent;
     }
@@ -247,6 +258,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public int getPosition() {
         return myPosition;
     }
@@ -255,6 +267,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public boolean hasChildren() {
         return !myChildren.isEmpty();
     }
@@ -272,6 +285,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public boolean isFinalChildOfParent() {
         if (myIsFinalChildOfParent != null) {
             return myIsFinalChildOfParent;
@@ -284,6 +298,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public boolean isRepeating() {
         return myIsRepeating;
     }
@@ -292,6 +307,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public boolean isRequired() {
         return myIsRequired;
     }
@@ -300,6 +316,7 @@ public class StructureDefinition implements IStructureDefinition {
     /**
      * {@inheritDoc }
      */
+    @Override
     public boolean isSegment() {
         return myIsSegment;
     }
@@ -390,7 +407,8 @@ public class StructureDefinition implements IStructureDefinition {
 	/**
 	 * @see ca.uhn.hl7v2.model.Group#isChoiceElement(String)
 	 */
-	public boolean isChoiceElement() {
+	@Override
+    public boolean isChoiceElement() {
 		return myChoiceElement;
 	}
 

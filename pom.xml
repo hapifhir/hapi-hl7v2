@@ -141,10 +141,9 @@
 
 
 	<scm>
-		<connection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</connection>
-		<developerConnection>scm:svn:https://svn.code.sf.net/p/hl7api/code/trunk</developerConnection>
-		<url>https://sourceforge.net/p/hl7api/code/764/tree/</url>
-		<!-- <url>http://hl7api.cvs.sourceforge.net/hl7api/</url> <tag>HEAD</tag> -->
+		<connection>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</connection>
+		<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>
+		<developerConnection>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</developerConnection>
 	</scm>
 
 	<organization>
@@ -183,10 +182,6 @@
 		<!-- Not needed because of the sonatype parent <repository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> 
 			</repository> <snapshotRepository> <id>hl7api.sf.net</id> <name>HAPI Sourceforge</name> <url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/m2</url> </snapshotRepository> -->
 		<site>
-			<!--
-			<id>hl7api.sf.net</id>
-			<url>scp://shell.sourceforge.net/home/project-web/hl7api/htdocs/</url>
-			-->
 			<id>git.server</id>
 			<url>scm:git:git@github.com:hapifhir/hapi-hl7v2.git</url>						
 		</site>
@@ -274,6 +269,14 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>

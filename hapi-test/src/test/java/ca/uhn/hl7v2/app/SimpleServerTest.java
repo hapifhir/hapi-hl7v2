@@ -1,5 +1,6 @@
 package ca.uhn.hl7v2.app;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -74,7 +75,9 @@ public class SimpleServerTest implements ConnectionListener {
 			srv = ctx.newServer(port, false);
 			srv.registerApplication(new DefaultApplication(AcknowledgmentCode.AA));
 			srv.startAndWait();
-			assertNotNull(srv.getServiceExitedWithException());
+
+			SimpleServer finalSrv = srv;
+			await().until(()-> finalSrv.getServiceExitedWithException() != null);
 
 			LOG.error("Wanted this:", srv.getServiceExitedWithException());
 

@@ -35,6 +35,10 @@
 				processed, even including unexpected ACK messages. Thanks to
 				Tom Chiverton for the pull request!
 			</action>
+			<actopm type="fix">
+				A concurrency issue causing an exception when parsing or receiving multiple
+				messages in parallel has been resolved.
+			</action>
 		</release>
 		<release version="2.3" date="2017-06-23">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">

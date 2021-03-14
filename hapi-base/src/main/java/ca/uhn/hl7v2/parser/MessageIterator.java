@@ -65,6 +65,10 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     private List<Position> popUntilMatchFound(List<Position> theDefinitionPath) {
         theDefinitionPath = new ArrayList<>(theDefinitionPath.subList(0, theDefinitionPath.size() - 1));
 
+        if (theDefinitionPath.size() == 0) {
+            return null;
+        }
+
         Position newCurrentPosition = getTail(theDefinitionPath);
         IStructureDefinition newCurrentStructureDefinition = newCurrentPosition.getStructureDefinition();
 
@@ -87,6 +91,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     /**
      * Returns true if another object exists in the iteration sequence.
      */
+    @Override
     public boolean hasNext() {
 
         log.trace("hasNext() for direction {}", myDirection);
@@ -255,6 +260,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
      * child, or first child of the first child of the first child, etc.</li>
      * </ol>
      */
+    @Override
     public Structure next() {
         if (!hasNext()) {
             throw new NoSuchElementException("No more nodes in message");
@@ -286,6 +292,7 @@ public class MessageIterator implements java.util.Iterator<Structure> {
     }
 
     /** Not supported */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Can't remove a node from a message");
     }

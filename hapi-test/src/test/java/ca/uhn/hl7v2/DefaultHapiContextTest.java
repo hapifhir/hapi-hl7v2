@@ -311,6 +311,7 @@ public class DefaultHapiContextTest {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				fail(e1.getMessage());
+				myLatch.countDown();
 				return;
 			}
 
