@@ -39,6 +39,10 @@
 				A concurrency issue causing an exception when parsing or receiving multiple
 				messages in parallel has been resolved.
 			</action>
+			<action type="add" issue="26">
+				A new protocol error handler has been added to the LLP layer. Thanks to
+				Sumeet Chhetri for the pull request!
+			</action>
 		</release>
 		<release version="2.3" date="2017-06-23">
             <action type="fix" dev="Christian Ohr" system="newbugs" issue="242">

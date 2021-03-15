@@ -79,6 +79,10 @@
 			<name>Nico Vannieuwenhuyze</name>
 			<email>nicovn@users.sourceforge.net</email>
 		</developer>
+		<developer>
+			<id>sumeetchhetri</id>
+			<name>Sumeet Chhetri</name>
+		</developer>
 	</developers>
 
 	<contributors>
