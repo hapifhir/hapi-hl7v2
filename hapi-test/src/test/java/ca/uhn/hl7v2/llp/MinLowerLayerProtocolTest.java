@@ -26,30 +26,43 @@
  */
 package ca.uhn.hl7v2.llp;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.HL7Service;
-import ca.uhn.hl7v2.app.Initiator;
-import ca.uhn.hl7v2.app.SimpleServer;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v26.message.ADT_A01;
-import ca.uhn.hl7v2.protocol.ReceivingApplication;
-import ca.uhn.hl7v2.util.RandomServerPortProvider;
+import static ca.uhn.hl7v2.llp.MllpConstants.END_BYTE1;
+import static ca.uhn.hl7v2.llp.MllpConstants.END_BYTE2;
+import static ca.uhn.hl7v2.llp.MllpConstants.START_BYTE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Map;
-
-import static ca.uhn.hl7v2.llp.MllpConstants.*;
-import static org.junit.Assert.*;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.HL7Service;
+import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.app.Receiver.ReceiverParserExceptionHandler;
+import ca.uhn.hl7v2.app.SimpleServer;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.StreamSource;
+import ca.uhn.hl7v2.protocol.impl.ClientSocketStreamSource;
+import ca.uhn.hl7v2.protocol.impl.MLLPTransport;
+import ca.uhn.hl7v2.protocol.impl.TransportableImpl;
+import ca.uhn.hl7v2.util.RandomServerPortProvider;
 
 /**
  * Unit test class for ca.uhn.hl7v2.llp.MinLowerLayerProtocol
@@ -150,6 +163,37 @@ public class MinLowerLayerProtocolTest implements ReceivingApplication<Message> 
 		c.close();
 		Thread.sleep(SimpleServer.SO_TIMEOUT + 500);
 		assertTrue(server.getRemoteConnections().isEmpty());
+	}
+	
+	@Test
+	public void testInvalidEncodedCharsInMessage() throws Exception {
+
+		HapiContext context = new DefaultHapiContext();
+		int port = RandomServerPortProvider.findFreePort();
+		HL7Service server = context.newServer(port, false);
+		server.registerApplication("*", "*", this);
+		final AtomicBoolean parserExceptionRaised = new AtomicBoolean(false);
+		server.setParserExeptionHandler(new ReceiverParserExceptionHandler() {
+			@Override
+			public void handle(Exception e) {
+				parserExceptionRaised.set(true);
+				ourLog.error("Received LLP Encoder exception " + e.getMessage());
+			}
+		});
+		server.startAndWait();
+
+		StreamSource sender = new ClientSocketStreamSource(new InetSocketAddress("127.0.0.1", port));
+		MLLPTransport transport = new MLLPTransport(sender);
+		transport.connect();
+
+		//à --> LATIN SMALL LETTER A WITH GRAVE (U+00E0) -- 00 represents END byte as per MllpDecoderState, hence it expects START_BYTE after encountering END
+		//which raises an LLP exception
+		String message = "MSH|^~\\&|LABGL1||DMCRESà||19951002180700||ORU^R01|LABGL1199510021807427|P|2.2\rPID|||T12345||TEST^PATIENT^P||19601002|M||||||||||123456";
+		try {
+			transport.send(new TransportableImpl(message));
+		} catch (Exception e) {
+			assertTrue(parserExceptionRaised.get());
+		}
 	}
 	
 	public Message processMessage(Message theIn, Map<String, Object> metadata)

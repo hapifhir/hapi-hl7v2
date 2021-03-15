@@ -29,6 +29,7 @@ package ca.uhn.hl7v2.app;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.Receiver.ReceiverParserExceptionHandler;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.concurrent.Service;
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
@@ -73,6 +74,7 @@ public abstract class HL7Service extends Service {
     private final List<ConnectionListener> listeners;
     private final ConnectionCleaner cleaner;
     private final ApplicationRouterImpl applicationRouter;
+    private ReceiverParserExceptionHandler parserExeptionHandler;
 
     /**
      * @param theHapiContext HapiContext
@@ -168,6 +170,7 @@ public abstract class HL7Service extends Service {
      */
     public synchronized void newConnection(ActiveConnection c) {
         c.getResponder().setApplicationRouter(applicationRouter);
+        c.setReceiverParserExeptionHandler(parserExeptionHandler);
         c.activate();
         connections.add(c); // keep track of connections
         notifyListeners(c);
@@ -324,6 +327,13 @@ public abstract class HL7Service extends Service {
         applicationRouter.setExceptionHandler(exHandler);
     }
 
+    /**
+     * Register a receiver level parser exception handler so that an application can be notified
+     * of protocol level parsing errors if any
+     */
+    public void setParserExeptionHandler(ReceiverParserExceptionHandler parserExeptionHandler) {
+    	this.parserExeptionHandler = parserExeptionHandler;
+    }
 
     /**
      * <p>
