@@ -57,17 +57,22 @@ import ca.uhn.hl7v2.model.Varies;
  * This segment has the following fields:</p>
  * <ul>
 #foreach ( $element in $elements )
- #if (${element.isRequired()})
-  #set ($reqd = "")
- #else
-  #set ($reqd = "optional")
- #end
- #if (${element.isRepeating()})
-  #set ($rept = "repeating")
- #else
+ #if (${element.isWithdrawn()})
+  #set ($reqd = "withdrawn")
   #set ($rept = "")
+ #else
+     #if (${element.isRequired()})
+      #set ($reqd = "")
+     #else
+      #set ($reqd = "optional")
+     #end
+     #if (${element.isRepeating()})
+      #set ($rept = "repeating")
+     #else
+      #set ($rept = "")
+     #end
  #end
- * <li>${segmentName}-${velocityCount}: ${element.desc} (${element.alternateType}) <b>$reqd $rept</b>
+ * <li>${segmentName}-${foreach.count}: ${element.desc} (${element.alternateType}) <b>$reqd $rept</b>
 #end
  * </ul>
  */
@@ -100,9 +105,9 @@ public class ${segmentName} extends AbstractSegment {
       #set ($constructorArgs = "new Object[]{ getMessage() }")
     #else
       #if (${element.hasTableNamespace})
-        #set ($constructorArgs = "new Object[]{ getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, new Integer(${element.table}) }")
+        #set ($constructorArgs = "new Object[]{ getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, ${element.table} }")
       #else
-        #set ($constructorArgs = "new Object[]{ getMessage(), new Integer(${element.table}) }")
+        #set ($constructorArgs = "new Object[]{ getMessage(), ${element.table} }")
       #end
     #end
           this.add(${element.alternateType}.class, $reqd, ${element.repetitions}, ${element.length}, ${constructorArgs}, "${element.descEscaped}");
@@ -113,154 +118,137 @@ public class ${segmentName} extends AbstractSegment {
 #end
     }
 
-
 #foreach ( $element in $elements )
 #if ($element.repeating)
     /**
-     * Returns all repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * Returns all repetitions of ${element.desc} (${segmentName}-${foreach.count}).
      */
     public ${element.alternateType}[] get${element.accessorName}() {
-    	${element.alternateType}[] retVal = this.getTypedField(${velocityCount}, new ${element.alternateType}[0]);
-    	return retVal;
+    	return this.getTypedField(${foreach.count}, new ${element.alternateType}[0]);
     }
 
-
     /**
-     * Returns all repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * Returns all repetitions of ${element.desc} (${segmentName}-${foreach.count}).
      */
     public ${element.alternateType}[] get${element.alternateAccessorName}() {
-    	${element.alternateType}[] retVal = this.getTypedField(${velocityCount}, new ${element.alternateType}[0]);
-    	return retVal;
+    	return this.getTypedField(${foreach.count}, new ${element.alternateType}[0]);
     }
 
-
     /**
-     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${foreach.count}).
      * This method does not create a repetition, so if no repetitions have currently been defined or accessed,
      * it will return zero.
      */
     public int get${element.accessorName}Reps() {
-    	return this.getReps(${velocityCount});
+    	return this.getReps(${foreach.count});
     }
-
 
     /**
      * Returns a specific repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
+     * ${segmentName}-${foreach.count}: "${element.desc}" - creates it if necessary
      *
      * @param rep The repetition index (0-indexed)
      */
     public ${element.alternateType} get${element.accessorName}(int rep) { 
-		${element.alternateType} retVal = this.getTypedField(${velocityCount}, rep);
-		return retVal;
+		return this.getTypedField(${foreach.count}, rep, ${element.alternateType}.class);
     }
 
     /**
      * Returns a specific repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
+     * ${segmentName}-${foreach.count}: "${element.desc}" - creates it if necessary
      *
      * @param rep The repetition index (0-indexed)
      */
     public ${element.alternateType} get${element.alternateAccessorName}(int rep) { 
-		${element.alternateType} retVal = this.getTypedField(${velocityCount}, rep);
-		return retVal;
+		return this.getTypedField(${foreach.count}, rep, ${element.alternateType}.class);
     }
 
     /**
-     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${velocityCount}).
+     * Returns a count of the current number of repetitions of ${element.desc} (${segmentName}-${foreach.count}).
      * This method does not create a repetition, so if no repetitions have currently been defined or accessed,
      * it will return zero.
      */
     public int get${element.alternateAccessorName}Reps() {
-    	return this.getReps(${velocityCount});
+    	return this.getReps(${foreach.count});
     }
-
 
     /**
      * Inserts a repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" at a specific index
+     * ${segmentName}-${foreach.count}: "${element.desc}" at a specific index
      *
      * @param rep The repetition index (0-indexed)
      * @throws HL7Exception If the rep is invalid (below 0, or too high for the allowable repetitions)
      */
     public ${element.alternateType} insert${element.accessorName}(int rep) throws HL7Exception { 
-        return ($element.alternateType) super.insertRepetition(${velocityCount}, rep);
+        return ($element.alternateType) super.insertRepetition(${foreach.count}, rep);
     }
-
 
     /**
      * Inserts a repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" at a specific index
+     * ${segmentName}-${foreach.count}: "${element.desc}" at a specific index
      *
      * @param rep The repetition index (0-indexed)
      * @throws HL7Exception If the rep is invalid (below 0, or too high for the allowable repetitions)
      */
     public ${element.alternateType} insert${element.alternateAccessorName}(int rep) throws HL7Exception { 
-        return ($element.alternateType) super.insertRepetition(${velocityCount}, rep);
+        return ($element.alternateType) super.insertRepetition(${foreach.count}, rep);
     }
-
 
     /**
      * Removes a repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" at a specific index
+     * ${segmentName}-${foreach.count}: "${element.desc}" at a specific index
      *
      * @param rep The repetition index (0-indexed)
      * @throws HL7Exception If the rep is invalid (below 0, or too high for the allowable repetitions)
      */
     public ${element.alternateType} remove${element.accessorName}(int rep) throws HL7Exception { 
-        return ($element.alternateType) super.removeRepetition(${velocityCount}, rep);
+        return ($element.alternateType) super.removeRepetition(${foreach.count}, rep);
     }
-
 
     /**
      * Removes a repetition of
-     * ${segmentName}-${velocityCount}: "${element.desc}" at a specific index
+     * ${segmentName}-${foreach.count}: "${element.desc}" at a specific index
      *
      * @param rep The repetition index (0-indexed)
      * @throws HL7Exception If the rep is invalid (below 0, or too high for the allowable repetitions)
      */
     public ${element.alternateType} remove${element.alternateAccessorName}(int rep) throws HL7Exception { 
-        return ($element.alternateType) super.removeRepetition(${velocityCount}, rep);
+        return ($element.alternateType) super.removeRepetition(${foreach.count}, rep);
     }
-
 
 #else
 
     /**
      * Returns
-     * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
+     * ${segmentName}-${foreach.count}: "${element.desc}" - creates it if necessary
      */
     public $element.alternateType get${element.accessorName}() { 
-		${element.alternateType} retVal = this.getTypedField(${velocityCount}, 0);
-		return retVal;
+		return this.getTypedField(${foreach.count}, 0);
     }
     
     /**
      * Returns
-     * ${segmentName}-${velocityCount}: "${element.desc}" - creates it if necessary
+     * ${segmentName}-${foreach.count}: "${element.desc}" - creates it if necessary
      */
     public $element.alternateType get${element.alternateAccessorName}() { 
-		${element.alternateType} retVal = this.getTypedField(${velocityCount}, 0);
-		return retVal;
+		return this.getTypedField(${foreach.count}, 0);
     }
 
 #end
 
 #end
-
-
 
     /** {@inheritDoc} */   
     protected Type createNewTypeWithoutReflection(int field) {
        switch (field) {
 #foreach ( $element in $elements )
-#set ( $idx = ${velocityCount} - 1 )
+#set ( $idx = ${foreach.count} - 1 )
 #if ( $element.alternateType == "Varies" )
           case ${idx}: return new Varies(getMessage());
 #elseif ( $element.idType && $element.hasTableNamespace)
-          case ${idx}: return new ${element.alternateType}(getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, new Integer( ${element.table} ));
+          case ${idx}: return new ${element.alternateType}(getMessage(), ${hl7VersionInQuotes}, ${element.tableNamespaceInQuotes}, ${element.table});
 #elseif ( $element.idType )
-          case ${idx}: return new ${element.alternateType}(getMessage(), new Integer( ${element.table} ));
+          case ${idx}: return new ${element.alternateType}(getMessage(), ${element.table} );
 #else
           case ${idx}: return new ${element.alternateType}(getMessage());
 #end
@@ -268,7 +256,4 @@ public class ${segmentName} extends AbstractSegment {
           default: return null;
        }
    }
-
-
 }
-

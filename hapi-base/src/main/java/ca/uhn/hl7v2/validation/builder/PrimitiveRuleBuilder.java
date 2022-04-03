@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class PrimitiveRuleBuilder extends RuleTypeBuilder<PrimitiveRuleBuilder, PrimitiveTypeRule>  {
 
 	private final Set<String> types;

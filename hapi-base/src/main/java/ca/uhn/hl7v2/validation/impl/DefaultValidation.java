@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.validation.builder.support.DefaultValidationBuilder;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class DefaultValidation extends ValidationContextImpl {
 
 	public DefaultValidation() {

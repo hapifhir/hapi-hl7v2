@@ -96,7 +96,7 @@ http://hl7api.sourceforge.net/
                		</xsd:complexContent>
 						#end
                </xsd:complexType>
-					#addField(${nextField}, ${nextFieldName}, $false)
+					#addField(${nextField}, ${nextFieldName}, false)
 				#end
 			#end
 		#elseif ($nextStructure.class.simpleName == "SegGroup")

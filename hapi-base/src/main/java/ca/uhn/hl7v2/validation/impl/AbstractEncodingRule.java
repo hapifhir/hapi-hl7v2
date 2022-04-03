@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * @author Christian Ohr
  *
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractEncodingRule extends RuleSupport<String> implements EncodingRule {
 
 	public ValidationException[] test(String value) {

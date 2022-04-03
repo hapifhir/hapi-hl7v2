@@ -43,7 +43,7 @@ import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
  * 
  * @author James Agnew
  */
-@SuppressWarnings("serial")
+
 public class OnlyAllowableSegmentsInSuperstructureRule extends AbstractMessageRule {
 
 	public static final MessageRule ONLY_ALLOWABLE_SEGMENTS = new OnlyAllowableSegmentsInSuperstructureRule();

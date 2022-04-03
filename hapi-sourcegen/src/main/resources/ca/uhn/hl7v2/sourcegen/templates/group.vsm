@@ -64,7 +64,7 @@ import ca.uhn.hl7v2.model.*;
     #else
       #set ($chc = "")
     #end
- * <li>${velocityCount}: ${group.name} (${group.description}) <b>$reqd $rept $chc</b></li>
+ * <li>${foreach.count}: ${group.name} (${group.description}) <b>$reqd $rept $chc</b></li>
 #end
  * </ul>
 #if ($hasChc)
@@ -117,9 +117,7 @@ public class $groupName extends AbstractGroup {
        return "${specVersion}";
     }
 
-
 #foreach ( $group in $groups )
-
     /**
      * Returns
 #if ($group.repeating)
@@ -128,10 +126,8 @@ public class $groupName extends AbstractGroup {
      * $group.indexName (${group.description}) - creates it if necessary
      */
     public $group.name get${group.indexName}() { 
-       $group.name retVal = getTyped("${group.indexName}", ${group.name}.class);
-       return retVal;
+       return getTyped("${group.indexName}", ${group.name}.class);
     }
-
 
 #if ($group.repeating)
     /**
@@ -143,8 +139,7 @@ public class $groupName extends AbstractGroup {
      *     greater than the number of existing repetitions.
      */
     public $group.name get${group.indexName}(int rep) { 
-       $group.name retVal = getTyped("${group.indexName}", rep, ${group.name}.class);
-       return retVal;
+       return getTyped("${group.indexName}", rep, ${group.name}.class);
     }
 
     /** 
@@ -169,21 +164,19 @@ public class $groupName extends AbstractGroup {
 
     /**
      * Inserts a specific repetition of ${group.indexName} (${group.description})
-     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(String, Structure, int)
      */
     public void insert${group.indexName}(${group.name} structure, int rep) throws HL7Exception { 
        super.insertRepetition("${group.indexName}", structure, rep);
     }
 
-
     /**
      * Inserts a specific repetition of ${group.indexName} (${group.description})
-     * @see AbstractGroup${HASH}insertRepetition(Structure, int) 
+     * @see AbstractGroup${HASH}insertRepetition(String, int)
      */
     public ${group.name} insert${group.indexName}(int rep) throws HL7Exception { 
        return (${group.name})super.insertRepetition("${group.indexName}", rep);
     }
-
 
     /**
      * Removes a specific repetition of ${group.indexName} (${group.description})
@@ -194,8 +187,6 @@ public class $groupName extends AbstractGroup {
     }
 
 #end
-
 #end
-
 }
 

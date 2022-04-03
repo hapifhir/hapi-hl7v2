@@ -3,6 +3,7 @@ package ca.uhn.hl7v2.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import ca.uhn.hl7v2.HL7Exception;
 
@@ -79,9 +80,9 @@ public class ExtraComponents implements Serializable {
      * all preceding components exist, creating any missing ones.  
      */
     private void ensureComponentAndPredecessorsExist(int comp) {
-        for (int i = this.comps.size(); i <= comp; i++) {
-            this.comps.add(new Varies(message));
-        }
+        IntStream.rangeClosed(this.comps.size(), comp).
+                mapToObj(i -> new Varies(message))
+                .forEach(this.comps::add);
     }
 
 

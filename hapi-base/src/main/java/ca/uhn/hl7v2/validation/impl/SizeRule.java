@@ -36,7 +36,7 @@ import ca.uhn.hl7v2.validation.builder.BuilderSupport;
  * 
  * @deprecated use {@link BuilderSupport#maxLength(int)} instead
  */
-@SuppressWarnings("serial")
+
 public class SizeRule extends AbstractPrimitiveTypeRule {
 
 	private final int myMaxChars;

@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class WrongVersionRule extends AbstractMessageRule {
 
 	public static final MessageRule WRONG_VERSION = new WrongVersionRule();

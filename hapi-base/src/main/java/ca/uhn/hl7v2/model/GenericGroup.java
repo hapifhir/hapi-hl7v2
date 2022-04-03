@@ -9,7 +9,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * it's a flat list of segments.    
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class GenericGroup extends AbstractGroup {
     
     private final String name;

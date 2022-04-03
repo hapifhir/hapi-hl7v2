@@ -32,7 +32,7 @@ package ca.uhn.hl7v2.validation.builder.support;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class DefaultValidationBuilder extends DefaultValidationWithoutTNBuilder {
 
 	@Override

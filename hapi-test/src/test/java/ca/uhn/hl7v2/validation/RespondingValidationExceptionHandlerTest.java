@@ -1,19 +1,24 @@
 package ca.uhn.hl7v2.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import ca.uhn.hl7v2.*;
-import ca.uhn.hl7v2.parser.PipeParser;
-import org.junit.Test;
-
+import ca.uhn.hl7v2.AcknowledgmentCode;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Location;
+import ca.uhn.hl7v2.MockitoTest;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.message.ADT_A02;
 import ca.uhn.hl7v2.model.v26.message.ADT_A01;
+import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RespondingValidationExceptionHandlerTest extends MockitoTest {
 

@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.HL7Exception;
  * Encodings include "|" (traditional) and "XML".
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-@SuppressWarnings("serial")
+
 public class EncodingNotSupportedException extends HL7Exception {
 
     /**

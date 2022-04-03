@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.validation.impl.XMLSchemaRule;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class EncodingRuleBuilder extends RuleTypeBuilder<EncodingRuleBuilder, EncodingRule> {
 
 	private final String encoding;

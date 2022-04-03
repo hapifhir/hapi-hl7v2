@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.MessageRule;
  *  
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class MessageRuleBinding extends RuleBinding<MessageRule> {
 
     private final String myMessageType;

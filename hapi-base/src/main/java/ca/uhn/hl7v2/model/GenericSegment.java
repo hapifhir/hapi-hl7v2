@@ -10,7 +10,7 @@ package ca.uhn.hl7v2.model;
  * explicitly defined and declared (see Parser.packageList() ).  
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class GenericSegment extends AbstractSegment {
     
     private final String name;

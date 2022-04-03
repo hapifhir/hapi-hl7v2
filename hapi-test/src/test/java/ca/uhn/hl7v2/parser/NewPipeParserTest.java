@@ -1091,7 +1091,7 @@ public class NewPipeParserTest {
 
     }
 
-    @SuppressWarnings("serial")
+    
     @Test
     public void testValidation() throws Exception {
         HapiContext hc = new DefaultHapiContext();
@@ -1255,7 +1255,7 @@ public class NewPipeParserTest {
         parser.parse(msg);
     }
 
-    @SuppressWarnings("serial")
+    
     private static class FooEncodingRule extends AbstractEncodingRule {
         /**
          * @see ca.uhn.hl7v2.validation.EncodingRule#test(java.lang.String)
@@ -1283,7 +1283,7 @@ public class NewPipeParserTest {
         }
     }
 
-    @SuppressWarnings("serial")
+    
     private static class BarMessageRule extends AbstractMessageRule {
 
         /**

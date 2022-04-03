@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * @author Christian Ohr
  *
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractPrimitiveTypeRule extends RuleSupport<String> implements PrimitiveTypeRule {
 
 	public boolean test(String value) {

@@ -55,7 +55,7 @@ public class RuleTypeBuilderTest {
 		assertSame(binding.getRule(), rule);
 	}
 
-	@SuppressWarnings("serial")
+	
 	private static class DummyRule implements Rule<Object> {
 
 		public String getDescription() {

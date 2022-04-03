@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.model.Message;
  * 
  * @author James Agnew
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractTextPrimitive extends AbstractPrimitive {
 
 	/**

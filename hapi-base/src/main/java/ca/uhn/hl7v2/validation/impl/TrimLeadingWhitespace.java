@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.validation.builder.PrimitiveRuleBuilder;
  * 
  * @deprecated use {@link PrimitiveRuleBuilder#leftTrim()} instead
  */
-@SuppressWarnings("serial")
+
 public class TrimLeadingWhitespace extends AbstractPrimitiveTypeRule {
 
 	private static final Pattern LEADING_WHITESPACE = Pattern.compile("^\\s+");

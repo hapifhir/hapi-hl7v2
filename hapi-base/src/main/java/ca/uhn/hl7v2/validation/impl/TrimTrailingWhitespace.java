@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.validation.builder.PrimitiveRuleBuilder;
  * 
  * @deprecated use {@link PrimitiveRuleBuilder#leftTrim()} instead
  */
-@SuppressWarnings("serial")
+
 public class TrimTrailingWhitespace extends AbstractPrimitiveTypeRule {
 
 	private static final Pattern TRAILING_WHITESPACE = Pattern.compile("\\s+$");

@@ -30,7 +30,7 @@ public class ReceiverTest {
     @Test
     public void testCloseConnectionOnClosingServerSocket() throws Exception {
         int port = RandomServerPortProvider.findFreePort();
-        @SuppressWarnings("serial")
+        
         // This queue denies any received connection, and immediately closes the server socket 
 		BlockingQueue<AcceptedSocket> queue = new ArrayBlockingQueue<AcceptedSocket>(10) {
 

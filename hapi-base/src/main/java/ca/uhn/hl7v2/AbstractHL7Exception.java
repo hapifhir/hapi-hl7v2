@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.util.Terser;
  *
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractHL7Exception extends Exception {
 
     private Location location;

@@ -56,15 +56,12 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-public abstract class AbstractSegment extends AbstractStructure implements
-		Segment {
+public abstract class AbstractSegment extends AbstractStructure implements Segment {
 
 	/**
 	 * Do not use
 	 */
 	static final String ERROR_MSH_1_OR_2_NOT_SET = "Can not invoke parse(String) on a segment if the encoding characters (MSH-1 and MSH-2) are not already correctly set on the message";
-
-	private static final long serialVersionUID = -6686329916234746948L;
 	
 	private final List<List<Type>> fields;
 	private final List<Class<? extends Type>> types;
@@ -130,10 +127,7 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	 */
 	public Type[] getField(int number) throws HL7Exception {
 		List<Type> retVal = getFieldAsList(number);
-		return retVal.toArray(new Type[0]); // note: fields are
-														// numbered from 1 from
-														// the user's
-														// perspective
+		return retVal.toArray(new Type[0]); // note: fields are numbered from 1 from the user's perspective
 	}
 
 	/**
@@ -233,16 +227,27 @@ public abstract class AbstractSegment extends AbstractStructure implements
 	}
 
 	/**
-	 * Returns a specific repetition of field with concrete type at the specified index
+	 * Returns a specific repetition of field with concrete type at the specified index.
+	 * To be deprecated in favor of {@link #getTypedField(int, int, Class)}
+	 *
+	 * @deprecated use {@link #getTypedField(int, int, Class)}
 	 */
 	protected <T extends Type> T getTypedField(int number, int rep) {
 		try {
-			@SuppressWarnings("unchecked") T retVal = (T)getField(number, rep);
-			return retVal;
+			return (T)getField(number, rep);
         } catch (ClassCastException | HL7Exception cce) {
             log.error("Unexpected problem obtaining field value.  This is a bug.", cce);
             throw new RuntimeException(cce);
         }
+	}
+
+	protected <T extends Type> T getTypedField(int number, int rep, Class<T> type) {
+		try {
+			return type.cast(getField(number, rep));
+		} catch (ClassCastException | HL7Exception cce) {
+			log.error("Unexpected problem obtaining field value.  This is a bug.", cce);
+			throw new RuntimeException(cce);
+		}
 	}
 	
 	/**

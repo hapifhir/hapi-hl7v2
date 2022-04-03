@@ -121,7 +121,7 @@ class Responder {
 	/**
 	 * Test code.
 	 */
-	@SuppressWarnings({ "unused", "resource" })
+	@SuppressWarnings({ "unused"})
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			System.err.println("Usage: DefaultApplication message_file");

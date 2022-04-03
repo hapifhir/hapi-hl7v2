@@ -73,7 +73,7 @@ import ca.uhn.hl7v2.model.*;
     #else
       #set ($rept = "")
     #end
- * <li>${velocityCount}: ${segment.name} (${segment.description}) <b>$reqd $rept</b> $associatedStructures</li>
+ * <li>${foreach.count}: ${segment.name} (${segment.description}) <b>$reqd $rept</b> $associatedStructures</li>
 #end
  * </ul>
  */
@@ -139,7 +139,6 @@ public class $message extends $baseClass  {
        return "${specVersion}";
     }
 
-
 #foreach ( $segment in $segments )
 
 #if ( $segment.getAssociatedStructures().size() > 0 )
@@ -162,7 +161,6 @@ $associatedStructures
     public $segment.name get${segment.indexName}() { 
        return getTyped("${segment.indexName}", ${segment.name}.class);
     }
-
 
 #if ($segment.repeating)
     /**
@@ -216,7 +214,6 @@ $associatedStructures
        super.insertRepetition( "${segment.indexName}", structure, rep);
     }
 
-
     /**
      * <p>
      * Inserts a specific repetition of ${segment.indexName} (${segment.description})
@@ -228,7 +225,6 @@ $associatedStructures
     public ${segment.name} insert${segment.indexName}(int rep) throws HL7Exception { 
        return (${segment.name})super.insertRepetition("${segment.indexName}", rep);
     }
-
 
     /**
      * <p>
@@ -243,8 +239,6 @@ $associatedStructures
     }
 
 #end
-
 #end
-
 }
 

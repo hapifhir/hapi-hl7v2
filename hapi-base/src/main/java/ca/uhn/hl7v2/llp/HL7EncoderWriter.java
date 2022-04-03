@@ -65,7 +65,7 @@ abstract class HL7EncoderWriter<T extends MllpEncoder> implements HL7Writer {
     /**
      * Creates a HL7EncoderWriter, specifying the underlying output stream.
      */
-    public HL7EncoderWriter(OutputStream out) throws IOException {
+    public HL7EncoderWriter(OutputStream out) {
         setOutputStream(out);
         encoder = initEncoder();
     }

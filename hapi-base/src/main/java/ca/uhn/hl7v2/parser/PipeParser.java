@@ -27,6 +27,20 @@
 
 package ca.uhn.hl7v2.parser;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.ErrorCode;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.model.*;
+import ca.uhn.hl7v2.util.ReflectionUtil;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,30 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import ca.uhn.hl7v2.validation.ValidationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.ErrorCode;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.model.AbstractSuperMessage;
-import ca.uhn.hl7v2.model.DoNotCacheStructure;
-import ca.uhn.hl7v2.model.Group;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.Primitive;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.Structure;
-import ca.uhn.hl7v2.model.SuperStructure;
-import ca.uhn.hl7v2.model.Type;
-import ca.uhn.hl7v2.model.Varies;
-import ca.uhn.hl7v2.util.ReflectionUtil;
-import ca.uhn.hl7v2.util.Terser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 
 /**
  * An implementation of Parser that supports traditionally encoded (ie delimited
@@ -76,7 +66,7 @@ public class PipeParser extends Parser {
 	 */
 	final static String SEGMENT_DELIMITER = "\r";
 
-	private final HashMap<Class<? extends Message>, HashMap<String, StructureDefinition>> myStructureDefinitions = new HashMap<>();
+	private final Map<Class<? extends Message>, Map<String, StructureDefinition>> myStructureDefinitions = new HashMap<>();
 
 	/**
 	 * System property key. If value is "true", legacy mode will default to true
@@ -244,7 +234,7 @@ public class PipeParser extends Parser {
 	private IStructureDefinition getStructureDefinition(Message theMessage) throws HL7Exception {
 
 		Class<? extends Message> clazz = theMessage.getClass();
-		HashMap<String, StructureDefinition> definitions = myStructureDefinitions.get(clazz);
+		Map<String, StructureDefinition> definitions = myStructureDefinitions.get(clazz);
 
 		StructureDefinition retVal;
 		if (definitions != null) {
@@ -412,11 +402,7 @@ public class PipeParser extends Parser {
 	 *            segment name
 	 */
 	private static boolean isDelimDefSegment(String theSegmentName) {
-		boolean is = false;
-		if (theSegmentName.equals("MSH") || theSegmentName.equals("FHS") || theSegmentName.equals("BHS")) {
-			is = true;
-		}
-		return is;
+		return theSegmentName.equals("MSH") || theSegmentName.equals("FHS") || theSegmentName.equals("BHS");
 	}
 
 	/**
@@ -454,7 +440,7 @@ public class PipeParser extends Parser {
      * @return split string
 	 */
 	public static String[] split(String composite, String delim) {
-		ArrayList<String> components = new ArrayList<>();
+		List<String> components = new ArrayList<>();
 
 		// defend against evil nulls
 		if (composite == null)
@@ -476,12 +462,7 @@ public class PipeParser extends Parser {
 			}
 		}
 
-		String[] ret = new String[components.size()];
-		for (int i = 0; i < components.size(); i++) {
-			ret[i] = components.get(i);
-		}
-
-		return ret;
+		return components.toArray(new String[0]);
 	}
 
 	/**
@@ -561,35 +542,24 @@ public class PipeParser extends Parser {
 	}
 
 	private static String encodePrimitive(Primitive p, Escaping escaping, EncodingCharacters encodingChars) {
-		String val = (p).getValue();
-		if (val == null) {
-			val = "";
-		} else {
-			val = escaping.escape(val, encodingChars);
-		}
-		return val;
+		String val = p.getValue();
+		return val == null ? "" : escaping.escape(val, encodingChars);
 	}
 
 	/**
-	 * Removes unecessary delimiters from the end of a field or segment. This
+	 * Removes unnecessary delimiters from the end of a field or segment. This
 	 * seems to be more convenient than checking to see if they are needed while
 	 * we are building the encoded string.
 	 */
 	private static String stripExtraDelimiters(String in, char delim) {
-		char[] chars = in.toCharArray();
-
-		// search from back end for first occurance of non-delimiter ...
-		int c = chars.length - 1;
+		// search from back end for first occurrence of non-delimiter ...
+		int c = in.length() - 1;
 		boolean found = false;
 		while (c >= 0 && !found) {
-			if (chars[c--] != delim)
+			if (in.charAt(c--) != delim)
 				found = true;
 		}
-
-		String ret = "";
-		if (found)
-			ret = String.valueOf(chars, 0, c + 2);
-		return ret;
+		return found ? in.substring(0, c + 2) : "";
 	}
 
 	/**
@@ -625,8 +595,7 @@ public class PipeParser extends Parser {
 		if (fieldSepString == null)
 			throw new HL7Exception("Can't encode message: MSH-1 (field separator) is missing");
 
-		char fieldSep = '|';
-		if (fieldSepString.length() > 0) fieldSep = fieldSepString.charAt(0);
+		char fieldSep = fieldSepString.length() > 0 ? fieldSepString.charAt(0) : '|';
 
 		EncodingCharacters en = getValidEncodingCharacters(fieldSep, msh);
 
@@ -746,7 +715,8 @@ public class PipeParser extends Parser {
 
 		}
 
-		if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment && haveEncounteredContent && parserConfiguration.isEncodeEmptyMandatorySegments()) {
+		if (firstMandatorySegmentName != null && !haveHadMandatorySegment && !haveHadSegmentBeforeMandatorySegment &&
+				haveEncounteredContent && parserConfiguration.isEncodeEmptyMandatorySegments()) {
 			return firstMandatorySegmentName.substring(0, 3) + encodingChars.getFieldSeparator() + SEGMENT_DELIMITER + result;
 		} else {
 			return result.toString();
@@ -790,13 +760,10 @@ public class PipeParser extends Parser {
 
 		// loop through fields; for every field delimit any repetitions and add
 		// field delimiter after ...
-		int numFields = source.numFields();
-
-		int forceUpToFieldNum = 0;
-		if (parserConfig != null && currentTerserPath != null) {
-			forceUpToFieldNum = parserConfig.determineForcedFieldNumForTerserPath(currentTerserPath);
-		}
-		numFields = Math.max(numFields, forceUpToFieldNum);
+		int forceUpToFieldNum = parserConfig != null && currentTerserPath != null ?
+				parserConfig.determineForcedFieldNumForTerserPath(currentTerserPath) :
+				0;
+		int numFields = Math.max(source.numFields(), forceUpToFieldNum);
 
 		for (int i = startAt; i <= numFields; i++) {
 
@@ -843,14 +810,8 @@ public class PipeParser extends Parser {
 		return retVal;
 	}
 
-	private static int countInstancesOf(String theString, char theCharToSearchFor) {
-		int retVal = 0;
-		for (int i = 0; i < theString.length(); i++) {
-			if (theString.charAt(i) == theCharToSearchFor) {
-				retVal++;
-			}
-		}
-		return retVal;
+	private static long countInstancesOf(String theString, char theCharToSearchFor) {
+		return theString.chars().filter(ch -> ch == theCharToSearchFor).count();
 	}
 
 	/**
@@ -950,7 +911,7 @@ public class PipeParser extends Parser {
 	/**
 	 * For response messages, returns the value of MSA-2 (the message ID of the
 	 * message sent by the sending system). This value may be needed prior to
-	 * main message parsing, so that (particularly in a multi-threaded scenario)
+	 * main message parsing, so that (particularly in a multithreaded scenario)
 	 * the message can be routed to the thread that sent the request. We need
 	 * this information first so that any parse exceptions are thrown to the
 	 * correct thread. Returns null if MSA-2 can not be found (e.g. if the

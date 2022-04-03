@@ -54,7 +54,7 @@ import ca.uhn.hl7v2.validation.impl.RuleSupport;
  *
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class RuleTypeBuilder<S extends RuleTypeBuilder<S, T>, T extends Rule<?>> extends
         BuilderSupport {
 

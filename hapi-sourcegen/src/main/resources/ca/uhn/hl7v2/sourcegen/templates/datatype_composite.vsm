@@ -68,7 +68,7 @@ public class ${datatypeName} extends AbstractComposite {
     private void init() {
         data = new Type[${components.size()}];    
 #foreach ( $component in $components)
-#set ( $idx = ${velocityCount} - 1 )
+#set ( $idx = ${foreach.count} - 1 )
 #if (${component.idType})
         data[${idx}] = new ${component.type}(getMessage(), ${component.table});
 #else
@@ -102,9 +102,9 @@ public class ${datatypeName} extends AbstractComposite {
 
 
 #foreach ( $component in $components )
-#set ( $idx = ${velocityCount} - 1 )
+#set ( $idx = ${foreach.count} - 1 )
     /**
-     * Returns ${component.name} (component ${velocityCount}).  This is a convenience method that saves you from 
+     * Returns ${component.name} (component ${foreach.count}).  This is a convenience method that saves you from
      * casting and handling an exception.
      */
     public ${component.type} get${component.accessorName}() {
@@ -113,7 +113,7 @@ public class ${datatypeName} extends AbstractComposite {
 
     
     /**
-     * Returns ${component.name} (component ${velocityCount}).  This is a convenience method that saves you from 
+     * Returns ${component.name} (component ${foreach.count}).  This is a convenience method that saves you from
      * casting and handling an exception.
      */
     public ${component.type} get${component.alternateAccessorName}() {

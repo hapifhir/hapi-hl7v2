@@ -27,13 +27,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
@@ -43,17 +36,25 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.util.ArrayUtil;
 import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.StringUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * A default implementation of Message. 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractMessage extends AbstractGroup implements Message {
 
 	private static final Pattern ourVersionPattern = Pattern.compile("\\.(v2[0-9][0-9]?)\\.");
@@ -254,10 +255,11 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 		}
 		
 		if (out instanceof GenericMessage) {
-			if (!ArrayUtil.contains(out.getNames(), "MSA")) {
+            List<String> names = Arrays.asList(out.getNames());
+			if (!names.contains("MSA")) {
 				out.addNonstandardSegment("MSA");
 			}
-			if (!ArrayUtil.contains(out.getNames(), "ERR")) {
+			if (!names.contains("ERR")) {
 				out.addNonstandardSegment("ERR");
 			}
 		}

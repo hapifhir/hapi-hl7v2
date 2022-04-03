@@ -28,25 +28,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.mvnplugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.type.filter.AssignableTypeFilter;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericComposite;
@@ -59,6 +40,24 @@ import ca.uhn.hl7v2.sourcegen.MessageGenerator;
 import ca.uhn.hl7v2.sourcegen.SegmentDef;
 import ca.uhn.hl7v2.sourcegen.StructureDef;
 import ca.uhn.hl7v2.util.ReflectionUtil;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.type.filter.AssignableTypeFilter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Maven Plugin Mojo for generating HAPI HL7 message/segment/etc source files

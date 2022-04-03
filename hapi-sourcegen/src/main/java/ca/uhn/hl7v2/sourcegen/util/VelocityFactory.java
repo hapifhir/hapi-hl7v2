@@ -6,7 +6,6 @@ package ca.uhn.hl7v2.sourcegen.util;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.springframework.ui.velocity.CommonsLoggingLogSystem;
 
 
 /**
@@ -34,10 +33,8 @@ public class VelocityFactory
     * @param theTemplate
     *                The template
     * @return A template engine
-    * @throws Exception
-    *                If velocity fails to initialize
     */
-   public static Template getClasspathTemplateInstance(String theTemplate) throws Exception {
+   public static Template getClasspathTemplateInstance(String theTemplate) {
       VelocityEngine engine = getEngineInstance();
       return engine.getTemplate(theTemplate);
    }
@@ -49,14 +46,11 @@ public class VelocityFactory
    public static VelocityEngine getEngineInstance() {
       VelocityEngine engine = new VelocityEngine();
 //      RuntimeConstants.RESOURCE_MANAGER_CLASS
-      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-      engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ResourceLoader.class
-            .getName());
-      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLoggingLogSystem.class.getName());
+      engine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
+      engine.setProperty(RuntimeConstants.RESOURCE_LOADER + ".classpath.class", ResourceLoader.class.getName());
       engine.setProperty(RuntimeConstants.VM_LIBRARY, "");
       engine.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, Boolean.TRUE);
       engine.init();
-      engine.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, Boolean.TRUE);
       return engine;
    }
 

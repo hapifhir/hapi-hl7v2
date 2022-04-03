@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * 
  * @deprecated use {@link ca.uhn.hl7v2.validation.builder.BuilderSupport#matches(String)} instead
  */
-@SuppressWarnings("serial")
+
 public class RegexPrimitiveRule extends AbstractPrimitiveTypeRule {
 
 	private final Pattern myPattern;

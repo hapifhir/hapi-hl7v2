@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
 
+import java.util.Arrays;
+
 
 public abstract class AbstractComposite extends AbstractType implements
 		Composite {
@@ -46,15 +48,12 @@ public abstract class AbstractComposite extends AbstractType implements
 	@Override
 	public void clear() {
 		super.clear();
-		for (Type component : getComponents()) {
-			component.clear();
-		}
+		Arrays.stream(getComponents()).forEach(Type::clear);
 	}
 
 	protected <T extends Type> T getTyped(int idx, Class<T> type) {
 		try {
-			@SuppressWarnings("unchecked") T ret = (T)getComponent(idx);
-			return ret;
+			return type.cast(getComponent(idx));
 		} catch (HL7Exception e) {
 	         log.error("Unexpected problem accessing known data type component - this is a bug. Class is " + getClass().getName(), e);
 	         throw new RuntimeException(e);

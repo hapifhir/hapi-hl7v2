@@ -30,7 +30,7 @@ package ca.uhn.hl7v2.validation.builder;
  *
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class DelegatingValidationRuleBuilder extends ValidationRuleBuilder {
 
 	private final ValidationRuleBuilder delegate;

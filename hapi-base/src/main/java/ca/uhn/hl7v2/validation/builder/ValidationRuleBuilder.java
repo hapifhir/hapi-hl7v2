@@ -38,7 +38,7 @@ import ca.uhn.hl7v2.validation.impl.RuleBinding;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class ValidationRuleBuilder extends RuleTypeBuilder<ValidationRuleBuilder, Rule<?>> {
 
 	protected ValidationRuleBuilder() {

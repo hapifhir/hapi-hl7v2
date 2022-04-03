@@ -8,8 +8,13 @@
     WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
     specific language governing rights and limitations under the License.
 
+    The Original Code is ""  Description:
+    ""
+
     The Initial Developer of the Original Code is University Health Network. Copyright (C)
     2001.  All Rights Reserved.
+
+    Contributor(s): ______________________________________.
 
     Alternatively, the contents of this file may be used under the terms of the
     GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
@@ -21,31 +26,15 @@
     this file under either the MPL or the GPL.
 
 -->
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
-<log4j:configuration>
-    
-    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%5p [%t] - %m%n"/>
-        </layout>
-    </appender>
-    
-    <!--
-    Note: Uncomment the following appender to increase the
-    logging verbosity to DEBUG level, which will give more
-    information about what HoH is doing internally. You
-    may further increase by changing DEBUG to TRACE to
-    see even more detail.   
-    -->
-    <!-- 
-    <logger name="ca.uhn.hl7v2.hoh" additivity="false">
-    	<level value="DEBUG"></level>
-    	<appender-ref ref="stdout"/>
-    </logger>
-    -->
-     
-    <root>
-        <priority value="INFO"></priority>
-        <appender-ref ref="stdout"/>
-    </root>
-</log4j:configuration>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT">
+            <PatternLayout pattern="%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -26,22 +26,25 @@
 
 package ca.uhn.hl7v2.sourcegen;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import com.sun.xml.xsom.*;
-import com.sun.xml.xsom.parser.XSOMParser;
+import com.sun.xml.xsom.XSAttGroupDecl;
+import com.sun.xml.xsom.XSAttributeUse;
+import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSParticle;
+import com.sun.xml.xsom.XSSchema;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Create HAPI datatype model classes from XML Schema files. Download the files from
@@ -52,119 +55,93 @@ import org.apache.velocity.context.Context;
  * This is an attempt to remove the need to have the HL7 database around because the
  * schema files can be downloaded by any who has access to the HL7 standards.
  */
-public class XsdDataTypeGenerator {
+public class XsdDataTypeGenerator extends AbstractXsdGenerator {
 
-    private static final String[] PRIMITIVES = {"FT", "GTS", "NM", "SI", "ST", "TN",  "TX"};
+    private static final Logger LOG = LoggerFactory.getLogger(XsdDataTypeGenerator.class);
+    private static final String[] PRIMITIVES = {"FT", "GTS", "NM", "SI", "ST", "TN", "TX"};
     private static final String[] EXCLUDE_COMPOSITES = {"TX_CHALLENGE", "escapeType", "varies"};
 
-    public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
-
-    private final String templatePackage;
-    private final String targetDirectory;
-
-    public XsdDataTypeGenerator(String dir, String templatePackage) throws IOException {
-        File f = new File(dir);
-        if (!f.isDirectory())
-            throw new IOException("Can't create file in " +
-                    dir + " - it is not a directory.");
-        this.targetDirectory = dir;
-        this.templatePackage = templatePackage.replace(".", "/");
+    public XsdDataTypeGenerator(String templatePackage, String targetDirectory) {
+        super(templatePackage, targetDirectory);
     }
 
-    public void parse(Version version) throws Exception {
-        XSOMParser parser = new XSOMParser();
-        String dir = String.format("/hl7v2xsd/%s/datatypes.xsd", version.getVersion());
-        URL url = getClass().getResource(dir);
-        parser.parse(url);
-        XSSchemaSet result = parser.getResult();
-        Iterator<XSSchema> iter = result.iterateSchema();
-        while (iter.hasNext()) {
-            XSSchema schema = iter.next();
-            if (URN_HL7_ORG_V2XML.equals(schema.getTargetNamespace())) {
-                parsePrimitives(schema, version);
-                parseComposites(schema, version);
-            }
-        }
+
+    @Override
+    protected void doParse(XSSchema schema, Version version) {
+        parsePrimitives(schema, version);
+        parseComposites(schema, version);
     }
 
-    private void parsePrimitives(XSSchema schema, Version version) throws Exception {
-        List<DatatypeDef> primitiveTypes = new ArrayList<>();
-        Iterator<XSType> types = schema.iterateTypes();
+    private void parsePrimitives(XSSchema schema, Version version) {
+        List<DatatypeDef> primitiveTypes = asStream(schema.iterateTypes())
+                .filter(type -> Arrays.binarySearch(PRIMITIVES, type.getName()) >= 0)
+                // TODO description of data type?
+                .map(type -> new DatatypeDef(type.getName(), type.getName()))
+                .collect(Collectors.toList());
+        writeDatatype("/datatype_primitive.vsm", version, primitiveTypes);
+    }
 
-        while (types.hasNext()) {
-            XSType type = types.next();
-            String dataTypeName = type.getName();
-            if (Arrays.binarySearch(PRIMITIVES, dataTypeName) >= 0)
-                primitiveTypes.add(new DatatypeDef(dataTypeName, dataTypeName));
+    private void parseComposites(XSSchema schema, Version version) {
+        List<DatatypeDef> compositeTypes = asStream(schema.iterateComplexTypes())
+                .filter(type -> isRealComposite(type.getName()))
+                .map(this::makeComplexDataType)
+                .collect(Collectors.toList());
+
+        writeDatatype("/datatype_composite.vsm", version, compositeTypes);
+    }
+
+    private DatatypeDef makeComplexDataType(XSComplexType complexType) {
+        // TODO description for complexTypes?
+        DatatypeDef compositeType = new DatatypeDef(complexType.getName(), complexType.getName());
+        // Extract list of components from the composite type
+        XSParticle[] children = complexType
+                .getContentType()
+                .asParticle()
+                .getTerm()
+                .asModelGroup()
+                .getChildren();
+        // Iterate over all components
+        for (int i = 0; i < children.length; i++) {
+            XSAttGroupDecl attrGroup = children[i]
+                    .getTerm()
+                    .asElementDecl()
+                    .getType()
+                    .asComplexType()
+                    .getAttGroups().iterator().next();
+            String componentType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+            String componentDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
+            XSAttributeUse componentTable = attrGroup.getAttributeUse("", "Table");
+            int table = componentTable != null ?
+                    Integer.parseInt(componentTable.getFixedValue().toString().substring(3)) :
+                    0;
+            compositeType.addSubcomponentDef(
+                    new DatatypeComponentDef(
+                            complexType.getName(),
+                            i,
+                            fixTypeName(complexType.getName(), componentType),
+                            componentDescription,
+                            table));
         }
+        return compositeType;
+    }
 
-        Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/datatype_primitive.vsm");
-        String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
-        String normalBasePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+    private void writeDatatype(String x, Version version, List<DatatypeDef> primitiveTypes) {
+        Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + x);
+
+        String basePackageName, normalBasePackageName;
+        try {
+            basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+            normalBasePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+        } catch (HL7Exception e) {
+            throw new RuntimeException(e);
+        }
 
         for (DatatypeDef def : primitiveTypes) {
-            String source = make(template, basePackageName, normalBasePackageName, def, version.getVersion());
+            String source = makeDatatype(template, basePackageName, normalBasePackageName, def, version.getVersion());
             if (source != null) {
-                writeFile(source, def, version);
-            }
-        }
-    }
-
-    private void parseComposites(XSSchema schema, Version version) throws Exception {
-        List<DatatypeDef> compositeTypes = new ArrayList<>();
-        Iterator<XSComplexType> types = schema.iterateComplexTypes();
-        while (types.hasNext()) {
-            XSComplexType complexType = types.next();
-            String dataTypeName = complexType.getName();
-
-            // Omit CE_X types
-            if (dataTypeName.startsWith("CE_")) dataTypeName = "CE";
-
-            if (isRealComposite(dataTypeName)) {
-                DatatypeDef compositeType = new DatatypeDef(dataTypeName, dataTypeName);
-                // Extract list of components from the composite type
-                XSParticle[] children = complexType
-                        .getContentType()
-                        .asParticle()
-                        .getTerm()
-                        .asModelGroup()
-                        .getChildren();
-                // Iterate over all components
-                for (int i = 0; i < children.length; i++) {
-                    XSAttGroupDecl attrGroup = children[i]
-                            .getTerm()
-                            .asElementDecl()
-                            .getType()
-                            .asComplexType()
-                            .getAttGroups().iterator().next();
-                    String componentType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
-                    String componentDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
-                    XSAttributeUse componentTable = attrGroup.getAttributeUse("", "Table");
-                    int table = 0;
-                    if (componentTable != null)
-                        table = Integer.parseInt(componentTable.getFixedValue().toString().substring(3));
-
-                    compositeType.addSubcomponentDef(
-                            new DatatypeComponentDef(
-                                    dataTypeName,
-                                    i,
-                                    fixTypeName(dataTypeName, componentType),
-                                    componentDescription,
-                                    table));
-                }
-                compositeTypes.add(compositeType);
-            }
-
-        }
-
-        Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/datatype_composite.vsm");
-        String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
-        String normalBasePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
-
-        for (DatatypeDef def : compositeTypes) {
-            String source = make(template, basePackageName, normalBasePackageName, def, version.getVersion());
-            if (source != null) {
-                writeFile(source, def, version);
+                String dirName = String.format("model/%s/datatype", version.getPackageVersion());
+                String fileName = String.format("%s.java", def.getType());
+                writeFile(source, dirName, fileName);
             }
         }
     }
@@ -182,29 +159,13 @@ public class XsdDataTypeGenerator {
         return dataTypeName;
     }
 
-    private boolean isRealComposite(String dataTypeName) {
+    private static boolean isRealComposite(String dataTypeName) {
         return Arrays.binarySearch(PRIMITIVES, dataTypeName) < 0 &&
                 Arrays.binarySearch(EXCLUDE_COMPOSITES, dataTypeName) < 0 &&
                 dataTypeName.indexOf('.') < 0;
     }
 
-    private void writeFile(String source, DatatypeDef def, Version version) throws IOException {
-        // TODO must be more robust
-        String dirName = String.format("%s/ca/uhn/hl7v2/model/%s/datatype/", targetDirectory, version.getPackageVersion());
-        File dir = new File(dirName);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        String targetFile = String.format("%s/%s.java", dirName, def.getType());
-
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), StandardCharsets.UTF_8))) {
-            writer.write(source);
-            writer.flush();
-        }
-    }
-
-    private String make(Template template, String basePackageName, String normalBasePackageName,
-                        DatatypeDef def, String version) {
+    private static String makeDatatype(Template template, String basePackageName, String normalBasePackageName, DatatypeDef def, String version) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("datatype", def);
@@ -219,18 +180,10 @@ public class XsdDataTypeGenerator {
         return out.toString();
     }
 
-
-    public static void main(String... args) {
-        try {
-            XsdDataTypeGenerator xdtg = new XsdDataTypeGenerator("C:/temp", "/ca.uhn.hl7v2.sourcegen.templates");
-            long start = System.currentTimeMillis();
-            for (Version version : Version.values()) {
-                System.out.println("Creating data types for " + version);
-                xdtg.parse(version);
-            }
-            System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void generateDataTypes(String templatePackage, String sourceDirectory, String targetDirectory, String version) throws Exception {
+        XsdDataTypeGenerator xdtg = new XsdDataTypeGenerator(templatePackage, targetDirectory);
+        LOG.info("Creating data types for {}", version);
+        xdtg.parse(Version.versionOf(version), sourceDirectory, "segments.xsd");
     }
+
 }

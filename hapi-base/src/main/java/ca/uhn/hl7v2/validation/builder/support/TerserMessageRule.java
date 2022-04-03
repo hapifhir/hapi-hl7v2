@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.validation.builder.PredicateMessageRule;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class TerserMessageRule extends PredicateMessageRule {
 
     /**

@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.validation.builder.support.DefaultValidationWithoutTNBuilder
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class DefaultValidationWithoutTN extends ValidationContextImpl {
 
 	public DefaultValidationWithoutTN() {

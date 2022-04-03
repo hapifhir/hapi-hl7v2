@@ -66,7 +66,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * @author Nico Vannieuwenhuyze
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class XMLSchemaRule extends AbstractEncodingRule {
 
 	private static final String SECTION_REFERENCE = "http://www.hl7.org/Special/committees/xml/drafts/v2xml.html";

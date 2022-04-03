@@ -36,7 +36,7 @@ import ca.uhn.hl7v2.Severity;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class ValidationException extends AbstractHL7Exception {
 
 	public ValidationException() {

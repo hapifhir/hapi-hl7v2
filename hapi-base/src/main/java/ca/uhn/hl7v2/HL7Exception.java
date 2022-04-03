@@ -34,7 +34,7 @@ package ca.uhn.hl7v2;
  * 
  * @author Bryan Tripp (bryan_tripp@sourceforge.net)
  */
-@SuppressWarnings("serial")
+
 public class HL7Exception extends AbstractHL7Exception {
 
 	/** Original mode: Application Accept - Enhanced mode: Application acknowledgment: Accept

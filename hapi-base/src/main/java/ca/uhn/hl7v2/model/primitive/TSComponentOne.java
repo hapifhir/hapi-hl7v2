@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.model.Message;
  * @author <a href="mailto:bryan.tripp@uhn.on.ca">Bryan Tripp</a>
  * @version $Revision: 1.2 $ updated on $Date: 2011-02-21 17:55:08 $ by $Author: jamesagnew $
  */
-@SuppressWarnings("serial")
+
 public abstract class TSComponentOne extends AbstractPrimitive {
 
     private CommonTS myDetail;

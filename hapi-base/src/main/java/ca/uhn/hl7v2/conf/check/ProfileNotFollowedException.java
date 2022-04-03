@@ -4,7 +4,6 @@ package ca.uhn.hl7v2.conf.check;
  * An exception indicating that some message contents don't reflect a static profile.   
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
 public class ProfileNotFollowedException extends ca.uhn.hl7v2.HL7Exception {
     
     /**

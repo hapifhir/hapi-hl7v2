@@ -4,7 +4,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.*;
 
 /**
- * Tools for copying data recurvisely from one message element into another.  Currently only Types are 
+ * Tools for copying data recursively from one message element into another.  Currently, only Types are
  * supported.  
  * @author Bryan Tripp
  */

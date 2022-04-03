@@ -51,7 +51,7 @@ public class GroupDef implements StructureDef {
     private final HashMap<String, String> existingNames;
     private String myIndexName;
 	private List<String> associatedStructures;
-    
+    private boolean choice;
     
     /** Creates new GroupDef */
     public GroupDef(String messageName, String groupName, boolean required, boolean repeating, String description) {
@@ -126,7 +126,7 @@ public class GroupDef implements StructureDef {
         }
         return ret;
     }
-    
+
 
     /**
      * Returns true if this structure is required in the Group.  
@@ -142,6 +142,7 @@ public class GroupDef implements StructureDef {
     public boolean isRepeating() {
         return this.repeating;
     }
+
 
     /** 
      * Returns the name by which a particular structure can be accessed (eg for use 
@@ -231,9 +232,13 @@ public class GroupDef implements StructureDef {
 	}
 
 	public boolean isChoice() {
-		return false;
-	}    
-	
+		return choice;
+	}
+
+    public void setChoice(boolean choice) {
+        this.choice = choice;
+    }
+
     /**
 	 * @return the associatedStructures
 	 */

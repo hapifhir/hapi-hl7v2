@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.validation.impl.AbstractPrimitiveTypeRule;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class PredicatePrimitiveTypeRule extends AbstractPrimitiveTypeRule implements
 		PredicateRuleSupport<String> {
  

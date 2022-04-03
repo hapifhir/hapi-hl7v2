@@ -35,7 +35,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class DefaultValidationWithoutTNBuilder extends ValidationRuleBuilder {
 
 	/**

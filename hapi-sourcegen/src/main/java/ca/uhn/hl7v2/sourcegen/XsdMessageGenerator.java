@@ -26,21 +26,30 @@
 
 package ca.uhn.hl7v2.sourcegen;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import com.sun.xml.xsom.*;
-import com.sun.xml.xsom.parser.XSOMParser;
+import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSElementDecl;
+import com.sun.xml.xsom.XSModelGroup;
+import com.sun.xml.xsom.XSModelGroupDecl;
+import com.sun.xml.xsom.XSParticle;
+import com.sun.xml.xsom.XSSchema;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.ANY_HL7_SEGMENT;
+import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.HXX;
 
 /**
  * Create HAPI message classes from XML Schema files. Download the files from
@@ -51,193 +60,181 @@ import org.slf4j.LoggerFactory;
  * This is an attempt to remove the need to have the HL7 database around because the
  * schema files can be downloaded by any who has access to the HL7 standards.
  */
-public class XsdMessageGenerator {
+public class XsdMessageGenerator extends AbstractXsdGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsdMessageGenerator.class);
-    public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
 
-    private final String templatePackage;
-    private final String targetDirectory;
-    private Template messageTemplate;
-    private Template groupTemplate;
+    private final Template messageTemplate;
+    private final Template groupTemplate;
 
-
-    public XsdMessageGenerator(String dir, String templatePackage) throws IOException {
-        File f = new File(dir);
-        if (!f.isDirectory())
-            throw new IOException("Can't create file in " + dir + " - it is not a directory.");
-        this.targetDirectory = dir;
-        this.templatePackage = templatePackage.replace(".", "/");
+    public XsdMessageGenerator(String templatePackage, String targetDirectory) {
+        super(templatePackage, targetDirectory);
+        this.messageTemplate = VelocityFactory.getClasspathTemplateInstance(this.templatePackage + "/messages.vsm");
+        this.groupTemplate = VelocityFactory.getClasspathTemplateInstance(this.templatePackage + "/group.vsm");
     }
 
-    public void parse(Version version) throws Exception {
-        messageTemplate = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/messages.vsm");
-        groupTemplate = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/group.vsm");
-        XSOMParser parser = new XSOMParser();
-        String dir = String.format("/hl7v2xsd/%s/messages.xsd", version.getVersion());
-        URL url = getClass().getResource(dir);
-        parser.setErrorHandler(new SimpleErrorHandler());
-        parser.parse(url);
-        XSSchemaSet result = parser.getResult();
-        Iterator<XSSchema> iter = result.iterateSchema();
-        while (iter.hasNext()) {
-            XSSchema schema = iter.next();
-            if (URN_HL7_ORG_V2XML.equals(schema.getTargetNamespace())) {
-                parseMessages(schema, version);
-            }
-        }
+    @Override
+    protected void doParse(XSSchema schema, Version version) {
+        parseMessages(schema, version);
     }
-
 
     /**
      * Message (Structures) and Groups are both contained within the message structure files included from
      * messages.xsd, and although they are structured very similarly they e.g. inherit from different base
      * classes.
-     *
-     * @param schema
-     * @param version
-     * @throws Exception
      */
-    private void parseMessages(XSSchema schema, Version version) throws Exception {
-
-        String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
-
+    private void parseMessages(XSSchema schema, Version version) {
         XSModelGroupDecl allMessages = schema.getModelGroupDecl("ALLMESSAGES.CONTENT");
         XSParticle[] messages = allMessages.getModelGroup().getChildren();
-        for (XSParticle message : messages) {
-            XSElementDecl messageElement = message.getTerm().asElementDecl();
-            GroupDef messageDef = parseGroupOrMessage(messageElement.getName(), message, true, version, basePackageName, new HashMap<>());
-            String messageClass = makeMessage(messageDef, basePackageName, version.getVersion(), null);
-            writeFile(messageClass, "message", messageElement.getName(), version);
-        }
+        Arrays.stream(messages).forEach(message -> parseMessage(message, version));
     }
 
-    private GroupDef parseGroupOrMessage(String messageName, XSParticle groupParticle,
-                                             boolean isMessage, Version version,
-                                             String basePackageName,
-                                             Map<String, StructureDef> structures) throws Exception {
-        XSElementDecl groupDecl = groupParticle.getTerm().asElementDecl();
-        XSComplexType complexType = groupDecl.getType().asComplexType();
-        // Find the structures of the group
-        XSParticle[] children = complexType
-                .getContentType()
-                .asParticle()
-                .getTerm()
-                .asModelGroup()
-                .getChildren();
-        LOG.debug("found {}, having {} children", groupDecl.getName(), children.length);
+    private void parseMessage(XSParticle message, Version version) {
+        String messageName = message.getTerm().asElementDecl().getName();
+        parseGroupOrMessage(messageName, message, version, new HashMap<>(), groupDef -> writeMessageFile(version, messageName, groupDef));
+    }
 
-        GroupDef def = new GroupDef(
+    private GroupDef parseGroupOrMessage(String messageName,
+                                         XSParticle groupParticle,
+                                         Version version,
+                                         Map<String, StructureDef> structures,
+                                         Consumer<GroupDef> classWriter) {
+        String groupName = groupParticle.getTerm().asElementDecl().getName();
+        XSModelGroup modelGroup = getModelGroup(groupParticle);
+        LOG.debug("Generating {}, having {} children", groupName, modelGroup.getSize());
+
+        String effectiveGroupName = messageName.equals(groupName) ?
+                messageName :
+                groupName.substring(messageName.length() + 1);
+        GroupDef currentGroupDef = new GroupDef(
                 messageName,
-                // chop off message name from beginning of group
-                messageName.equals(groupDecl.getName()) ?
-                        messageName :
-                        groupDecl.getName().substring(messageName.length() + 1),
+                effectiveGroupName,
                 groupParticle.getMinOccurs().intValue() > 0,
                 groupParticle.isRepeated(),
+                // TODO description is missing in XSD, but this was done like this in DB-based generation, too
                 "a Group object");
-        structures.put(groupDecl.getName(), def);
+        currentGroupDef.setChoice(modelGroup.getCompositor() == XSModelGroup.Compositor.CHOICE);
+        if (!currentGroupDef.isChoice()) {
+            structures.put(groupName, currentGroupDef);
+        }
 
         // Collect the substructures of the group
-        for (XSParticle child : children) {
-            XSElementDecl childDecl = child.getTerm().asElementDecl();
+        for (XSParticle child : modelGroup.getChildren()) {
+            String childName = child.getTerm().asElementDecl().getName();
+            if (childName.startsWith(messageName)) {
 
-            // The type starts with the message structure name, if the structure is a group,
-            if (childDecl.getName().startsWith(messageName)) {
-
-                // Groups can be recursive, so watch out!
-                if (structures.containsKey(childDecl.getName())) {
-                    LOG.debug("{} has already been seen here", childDecl.getName());
-                    def.addStructure(structures.get(childDecl.getName()));
+                // The type starts with the message structure name if the structure is a group
+                // Groups can be recursive, only parse them the first time
+                if (structures.containsKey(childName)) {
+                    currentGroupDef.addStructure(structures.get(childName));
                 } else {
-                    def.addStructure(parseGroupOrMessage(messageName, child, false, version, basePackageName, structures));
+                    GroupDef childGroupDef = parseGroupOrMessage(messageName, child, version, structures, def -> writeGroupFile(version, def.getName(), def));
+                    // Choice groups are flattened into the current group
+                    if (childGroupDef.isChoice()) {
+                        Arrays.stream(childGroupDef.getStructures()).forEach(currentGroupDef::addStructure);
+                    } else {
+                        currentGroupDef.addStructure(childGroupDef);
+                    }
                 }
+
             } else {
-                // the structure is a segment
-                def.addStructure(new SegmentDef(childDecl.getName(),
+                // otherwise the structure is a segment
+                SegmentDef segmentDef = new SegmentDef(fixSegmentName(childName),
                         null,
                         child.getMinOccurs().intValue() > 0,
                         child.isRepeated(),
-                        false,
-                        // need to add better description here, but nothing is in XSD!
-                        childDecl.getName()));
+                        currentGroupDef.isChoice(),
+                        // TODO description is missing in XSD
+                        childName);
+                currentGroupDef.addStructure(segmentDef);
             }
         }
 
-        if (!isMessage) {
-            String groupClass = makeGroup(def, basePackageName, version.getVersion());
-            writeFile(groupClass, "groups", def.getName(), version);
+        // Don't write CHOICE groups, children will be flattened into parent
+        if (!currentGroupDef.isChoice()) {
+            classWriter.accept(currentGroupDef);
         }
-        return def;
+        return currentGroupDef;
     }
 
-    private void writeFile(String source, String type, String name, Version version) throws IOException {
-        // TODO must be more robust
-        String dirName = String.format("%s/ca/uhn/hl7v2/model/%s/%s/", targetDirectory, version.getPackageVersion(), type);
-        File dir = new File(dirName);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        String targetFile = String.format("%s/%s.java", dirName, name);
+    private XSModelGroup getModelGroup(XSParticle xsParticle) {
+        XSElementDecl groupDecl = xsParticle.getTerm().asElementDecl();
+        XSComplexType complexType = groupDecl.getType().asComplexType();
+        // Find the kind of the group
+        return complexType
+                .getContentType()
+                .asParticle()
+                .getTerm()
+                .asModelGroup();
+    }
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), StandardCharsets.UTF_8))) {
-            writer.write(source);
-            writer.flush();
+    private String fixSegmentName(String name) {
+        return ANY_HL7_SEGMENT.equals(name) ? HXX : name;
+    }
+
+    private void writeMessageFile(Version version, String className, GroupDef messageDef) {
+        try {
+            String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+            String messageClassContent = makeMessage(messageTemplate, messageDef, basePackageName, version.getVersion(), null);
+            String dirName = String.format("model/%s/message", version.getPackageVersion());
+            String fileName = String.format("%s.java", className);
+            writeFile(messageClassContent, dirName, fileName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private String makeMessage(GroupDef def, String normalBasePackageName,
-                        String version, List<String> structureNameToChildNames) {
+    private void writeGroupFile(Version version, String className, GroupDef groupDef) {
+        try {
+            String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+            String groupClassContent = makeGroup(groupTemplate, groupDef, basePackageName, version.getVersion());
+            String dirName = String.format("model/%s/group/", version.getPackageVersion());
+            String fileName = String.format("%s.java", className);
+            writeFile(groupClassContent, dirName, fileName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String makeMessage(Template template, GroupDef def, String normalBasePackageName,
+                               String version, List<String> structureNameToChildNames) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("message", def.getRawGroupName());
         ctx.put("specVersion", version);
-        ctx.put("chapter", ""); // missing in XSDs
+        ctx.put("chapter", ""); // TODO missing in XSDs
         ctx.put("haveGroups", hasGroups(def));
         ctx.put("basePackageName", normalBasePackageName);
         ctx.put("segments", Arrays.asList(def.getStructures()));
         ctx.put("structureNameToChildNames", structureNameToChildNames);
         ctx.put("HASH", "#");
 
-        messageTemplate.merge(ctx, out);
+        template.merge(ctx, out);
         return out.toString();
     }
 
-    private String makeGroup(GroupDef def, String normalBasePackageName, String version) {
+    private String makeGroup(Template template, GroupDef def, String normalBasePackageName, String version) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("groupName", def.getName());
         ctx.put("specVersion", version);
-        ctx.put("typeDescription", "a Group object");
+        ctx.put("chapter", "");  // TODO missing in XSDs
+        ctx.put("typeDescription", def.getDescription());
         ctx.put("basePackageName", normalBasePackageName);
         ctx.put("groups", Arrays.asList(def.getStructures()));
-        ctx.put("chapter", "");
 
-        groupTemplate.merge(ctx, out);
+        template.merge(ctx, out);
         return out.toString();
     }
 
-
     private static boolean hasGroups(GroupDef def) {
-        for (StructureDef structure : def.getStructures()) {
-            if (structure.isGroup()) return true;
-        }
-        return false;
+        return Arrays.stream(def.getStructures()).anyMatch(StructureDef::isGroup);
     }
 
-    public static void main(String... args) {
-        try {
-            XsdMessageGenerator xdtg = new XsdMessageGenerator("C:/temp", "/ca.uhn.hl7v2.sourcegen.templates");
-            long start = System.currentTimeMillis();
-//            for (Version version : Version.values()) {
-//                System.out.println("Creating messages and groups for " + version);
-//                xdtg.parse(version);
-//            }
-            xdtg.parse(Version.V25);
-            System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void generateMessagesAndGroups(String templatePackage, String sourceDirectory, String targetDirectory, String version) throws Exception {
+        XsdMessageGenerator xmg = new XsdMessageGenerator(templatePackage, targetDirectory);
+        LOG.info("Creating messages and groups for {}", version);
+        xmg.parse(Version.versionOf(version), sourceDirectory, "messages.xsd");
     }
 
 

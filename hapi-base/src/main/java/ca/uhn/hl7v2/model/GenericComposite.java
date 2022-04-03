@@ -10,7 +10,7 @@ import java.util.List;
  * used to store unrecognized message constituents.  
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class GenericComposite extends AbstractComposite {
     
     private final List<Type> components;

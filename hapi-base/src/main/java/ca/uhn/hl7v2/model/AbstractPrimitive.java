@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  *    
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractPrimitive extends AbstractType implements Primitive {
     
     /**
@@ -91,8 +91,7 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
                 Collection<PrimitiveTypeRule> rules = context.getPrimitiveRules(version, getName(), this); 
         
                 for (PrimitiveTypeRule rule : rules) {
-                    theValue = rule.correct(theValue);
-                    ValidationException[] ve = rule.apply(theValue);
+                    ValidationException[] ve = rule.apply(rule.correct(theValue));
                     if (ve.length > 0) {
                         throw new DataTypeException(ve[0]);
                     }
@@ -100,7 +99,7 @@ public abstract class AbstractPrimitive extends AbstractType implements Primitiv
             }
         }
         
-        myValue = theValue;
+        this.myValue = theValue;
     }
 
     

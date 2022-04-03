@@ -31,7 +31,7 @@ import ca.uhn.hl7v2.Severity;
 import ca.uhn.hl7v2.validation.Rule;
 import ca.uhn.hl7v2.validation.ValidationException;
 
-@SuppressWarnings("serial")
+
 public abstract class RuleSupport<T> implements Rule<T> {
 
 	private static final ValidationException[] PASSED = new ValidationException[0];

@@ -20,7 +20,7 @@ public class BuilderSupportTest {
 	private static final String TEST1 = "TEST";
 	private static final String TEST2 = "TESTTEST";
 
-	@SuppressWarnings("serial")
+	
 	private static final BuilderSupport b = new BuilderSupport() {
 	};
 

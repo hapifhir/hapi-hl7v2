@@ -14,7 +14,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public abstract class GenericMessage extends AbstractMessage {
     
 	private static final Logger log = LoggerFactory.getLogger(GenericMessage.class);

@@ -43,6 +43,7 @@ public class SegmentElement {
 	public String opt;
 	public String rep;
 	public int repetitions;
+	public boolean withdrawn;
 	public int table;
 	public String tableNamespace;
 	public String type;
@@ -136,6 +137,10 @@ public class SegmentElement {
 
 	public boolean isRequired() {
 		return "R".equalsIgnoreCase(opt);
+	}
+
+	public boolean isWithdrawn() {
+		return withdrawn;
 	}
 
 	/**

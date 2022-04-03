@@ -19,7 +19,7 @@ import java.util.Arrays;
  * Since we're extending an existing HL7 message type, we just extend from the
  * model class representing that type
  */
-@SuppressWarnings("serial")
+
 public class ZDT_A01 extends ADT_A01 {
 
    /**

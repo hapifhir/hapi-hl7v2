@@ -8,7 +8,7 @@ package ca.uhn.hl7v2.conf;
  * 
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class ProfileException extends Exception {
     
     /**

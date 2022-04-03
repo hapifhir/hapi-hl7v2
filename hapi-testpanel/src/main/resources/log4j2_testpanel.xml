@@ -6,23 +6,21 @@
 	of the GPL are applicable instead of those above. If you wish to allow use of your version of this file only under the terms of the GPL and not to allow others to use your version of this file under the 
 	MPL, indicate your decision by deleting the provisions above and replace them with the notice and other provisions required by the GPL License. If you do not delete the provisions above, a recipient may 
 	use your version of this file under either the MPL or the GPL. -->
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
-<log4j:configuration>
-	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n" />
-		</layout>
-	</appender>
-	<appender name="file" class="org.apache.log4j.FileAppender">
-		<param name="File" value="${tespanel.log.dir}/testpanel.log" />
-		<param name="Append" value="false" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n" />
-		</layout>
-	</appender>
-	<root>
-		<priority value="info"></priority>
-		<appender-ref ref="stdout" />
-		<appender-ref ref="file" />
-	</root>
-</log4j:configuration>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT">
+            <PatternLayout pattern="%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n"/>
+        </Console>
+        <File name="File" fileName="${testpanel.log.dir}/testpanel.log">
+            <PatternLayout>
+                <pattern>%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

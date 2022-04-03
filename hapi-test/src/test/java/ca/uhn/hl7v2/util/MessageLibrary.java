@@ -60,7 +60,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
  * 
  * @author Leslie Mann
  */
-@SuppressWarnings("serial")
+
 public class MessageLibrary extends ArrayList<LibraryEntry> {
 	
 	private static final Logger ourLog = LoggerFactory.getLogger(MessageLibrary.class);

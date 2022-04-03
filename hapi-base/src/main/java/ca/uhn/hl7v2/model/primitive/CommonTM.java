@@ -73,7 +73,7 @@ import ca.uhn.hl7v2.model.DataTypeUtil;
  * @author Neal Acharya
  */
 
-@SuppressWarnings("serial")
+
 public class CommonTM implements Serializable {
     
 	/**

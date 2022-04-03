@@ -33,6 +33,7 @@ import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.Parser;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A static helper class that allows to obtain unmodifiable message wrappers, i.e. all modification to these wrappers
@@ -101,8 +102,8 @@ public final class Unmodifiable {
     private static <T extends Structure> T unmodifiableStructure(T structure) {
         if (isUnmodifiable(structure)) return structure;
         if (structure instanceof Message) return (T) new UnmodifiableMessage((Message) structure);
-        if (structure instanceof Group) return (T) new UnmodifiableGroup((Group) structure);
-        return (T) new UnmodifiableSegment((Segment) structure);
+        if (structure instanceof Group) return (T) new UnmodifiableGroup<>((Group) structure);
+        return (T) new UnmodifiableSegment<>((Segment) structure);
     }
 
     @SuppressWarnings("unchecked")
@@ -110,7 +111,6 @@ public final class Unmodifiable {
         return isUnmodifiable(visitor) ? visitor : (T) new UnmodifiableMessageVisitor(visitor);
     }
 
-    @SuppressWarnings("unchecked")
     private static ExtraComponents unmodifiableExtraComponents(ExtraComponents ec) {
         return isUnmodifiable(ec) ? ec : new UnmodifiableExtraComponents(ec);
     }
@@ -143,14 +143,14 @@ public final class Unmodifiable {
          * delegate. Otherwise a number of iterators and finders would
          * not work properly
          *
-         * @param o
-         * @return
+         * @param o other object
+         * @return true on equality, false otherwise
          */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o instanceof Delegating) {
-                Delegating that = (Delegating) o;
+                Delegating<?> that = (Delegating<?>) o;
                 return delegate.equals(that.delegate);
             }
             if (o.getClass().isAssignableFrom(delegate.getClass())) {
@@ -224,9 +224,9 @@ public final class Unmodifiable {
             Type[] types = getDelegate().getField(number);
             Type[] unmodifiableTypes = new Type[types.length];
             if (types.length > 0) {
-                for (int i = 0; i < types.length; i++) {
-                    unmodifiableTypes[i] = unmodifiableType(types[i]);
-                }
+                unmodifiableTypes = Arrays.stream(types)
+                        .map(Unmodifiable::unmodifiableType)
+                        .toArray(Type[]::new);
             }
             return unmodifiableTypes;
         }
@@ -274,9 +274,9 @@ public final class Unmodifiable {
             Structure[] structures = getDelegate().getAll(name);
             Structure[] unmodifiableStructures = new Structure[structures.length];
             if (structures.length > 0) {
-                for (int i = 0; i < structures.length; i++) {
-                    unmodifiableStructures[i] = unmodifiableStructure(structures[i]);
-                }
+                unmodifiableStructures = Arrays.stream(structures)
+                        .map(Unmodifiable::unmodifiableStructure)
+                        .toArray(Structure[]::new);
             }
             return unmodifiableStructures;
         }
@@ -451,9 +451,9 @@ public final class Unmodifiable {
             Type[] types = getDelegate().getComponents();
             Type[] unmodifiableTypes = new Type[types.length];
             if (types.length > 0) {
-                for (int i = 0; i < types.length; i++) {
-                    unmodifiableTypes[i] = unmodifiableType(types[i]);
-                }
+                unmodifiableTypes = Arrays.stream(types)
+                        .map(Unmodifiable::unmodifiableType)
+                        .toArray(Type[]::new);
             }
             return unmodifiableTypes;
         }

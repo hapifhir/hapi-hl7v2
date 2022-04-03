@@ -107,7 +107,7 @@ import java.util.GregorianCalendar;
  * @author Neal Acharya
  */
 
-@SuppressWarnings("serial")
+
 public class CommonTS implements Serializable {
 
     private CommonDT dt;

@@ -1,16 +1,5 @@
 package ca.uhn.hl7v2.validation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
@@ -22,6 +11,16 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for MessageValidator.
@@ -36,7 +35,7 @@ public class MessageValidatorTest extends MockitoTest {
     private MessageValidator myFailingValidator;
     private MessageValidator myNonFailingValidator;
 
-    @SuppressWarnings("serial")
+    
 	@Before
     public void setUp() {
 //        ValidationContextImpl context = new ValidationContextImpl();

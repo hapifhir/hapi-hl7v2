@@ -43,7 +43,7 @@ import ca.uhn.hl7v2.validation.impl.AbstractMessageRule;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class OnlyKnownSegmentsRule extends AbstractMessageRule {
 
 	public static final MessageRule ONLY_KNOWN_SEGMENTS = new OnlyKnownSegmentsRule();

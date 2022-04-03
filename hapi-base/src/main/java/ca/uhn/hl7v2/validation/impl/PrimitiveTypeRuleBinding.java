@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.PrimitiveTypeRule;
  * @author Christian Ohr
  * 
  */
-@SuppressWarnings("serial")
+
 public class PrimitiveTypeRuleBinding extends RuleBinding<PrimitiveTypeRule> {
 
 	public PrimitiveTypeRuleBinding(String theVersion, String theScope, PrimitiveTypeRule theRule) {

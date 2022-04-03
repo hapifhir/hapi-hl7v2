@@ -50,7 +50,7 @@ import ca.uhn.hl7v2.parser.ParserConfiguration;
  * @author Bryan Tripp (bryan_tripp@users.sourceforge.net)
  * @author Andy Pardue
  */
-@SuppressWarnings("serial")
+
 public class Varies implements Variable {
 
     /**

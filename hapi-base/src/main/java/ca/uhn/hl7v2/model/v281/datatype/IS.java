@@ -73,6 +73,6 @@ public class IS extends ca.uhn.hl7v2.model.primitive.IS {
      * @return "2.5"
      */
     public String getVersion() {
-        return "2.6";
+        return "2.8.1";
     }
 }

@@ -34,7 +34,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  *
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public abstract class AbstractMessageRule extends RuleSupport<Message> implements MessageRule {
 
 	public ValidationException[] test(Message msg) {

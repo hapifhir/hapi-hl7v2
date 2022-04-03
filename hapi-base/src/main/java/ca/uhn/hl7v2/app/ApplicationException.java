@@ -32,7 +32,7 @@ package ca.uhn.hl7v2.app;
  * Application.  
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class ApplicationException extends Exception {
 
     /**

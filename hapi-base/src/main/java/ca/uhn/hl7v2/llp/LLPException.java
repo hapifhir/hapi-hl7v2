@@ -33,7 +33,7 @@ package ca.uhn.hl7v2.llp;
  * various protocols.  
  * @author  Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class LLPException extends Exception {
 
     /**

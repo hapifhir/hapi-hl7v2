@@ -21,12 +21,6 @@
 			<artifactId>hapi-base</artifactId>
 			<version>${hapi.version}</version>
 			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

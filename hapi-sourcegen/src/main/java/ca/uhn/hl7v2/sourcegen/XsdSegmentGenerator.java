@@ -26,24 +26,25 @@
 
 package ca.uhn.hl7v2.sourcegen;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.sourcegen.util.VelocityFactory;
-import com.sun.xml.xsom.*;
-import com.sun.xml.xsom.parser.XSOMParser;
+import com.sun.xml.xsom.XSAttGroupDecl;
+import com.sun.xml.xsom.XSAttributeUse;
+import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSParticle;
+import com.sun.xml.xsom.XSSchema;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Create HAPI segment model classes from XML Schema files. Download the files from
@@ -54,151 +55,135 @@ import org.slf4j.LoggerFactory;
  * This is an attempt to remove the need to have the HL7 database around because the
  * schema files can be downloaded by any who has access to the HL7 standards.
  */
-public class XsdSegmentGenerator {
+public class XsdSegmentGenerator extends AbstractXsdGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsdSegmentGenerator.class);
-    private static final String[] EXCLUDE_SEGMENTS = {"anyHL7Segment", "anyZSegment"};
+    static final String ANY_HL7_SEGMENT = "anyHL7Segment";
+    static final String ANY_Z_SEGMENT = "anyZSegment";
+    static final String HXX = "Hxx";
+    private static final String[] EXCLUDE_SEGMENTS = {ANY_HL7_SEGMENT, ANY_Z_SEGMENT};
 
-    public static final String URN_HL7_ORG_V2XML = "urn:hl7-org:v2xml";
-
-    private final String templatePackage;
-    private final String targetDirectory;
-
-    public XsdSegmentGenerator(String dir, String templatePackage) throws IOException {
-        File f = new File(dir);
-        if (!f.isDirectory())
-            throw new IOException("Can't create file in " + dir + " - it is not a directory.");
-        this.targetDirectory = dir;
-        this.templatePackage = templatePackage.replace(".", "/");
+    public XsdSegmentGenerator(String templatePackage, String targetDirectory) {
+        super(templatePackage, targetDirectory);
     }
 
-    public void parse(Version version) throws Exception {
-        XSOMParser parser = new XSOMParser();
-        String dir = String.format("/hl7v2xsd/%s/segments.xsd", version.getVersion());
-        URL url = getClass().getResource(dir);
-        parser.parse(url);
-        XSSchemaSet result = parser.getResult();
-        Iterator<XSSchema> iter = result.iterateSchema();
-        while (iter.hasNext()) {
-            XSSchema schema = iter.next();
-            if (URN_HL7_ORG_V2XML.equals(schema.getTargetNamespace())) {
-                parseSegments(schema, version);
-            }
-        }
+    @Override
+    protected void doParse(XSSchema schema, Version version) {
+        parseSegments(schema, version);
     }
 
-    //<xsd:complexType name="PD1.CONTENT">
-    //<xsd:sequence>
-    //<xsd:any namespace="##other" processContents="lax" minOccurs="0"/>
-    //</xsd:sequence>
-    //</xsd:complexType>
-    //<xsd:element name="PD1" type="PD1.CONTENT"/>
-
-    private void parseSegments(XSSchema schema, Version version) throws Exception {
+    private void parseSegments(XSSchema schema, Version version) {
 
         Template template = VelocityFactory.getClasspathTemplateInstance(templatePackage + "/segment.vsm");
-        String basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
-        String[] datatypePackages = { basePackageName + "datatype" };
-
-        Iterator<XSElementDecl> segmentDecls = schema.iterateElementDecls();
-        while (segmentDecls.hasNext()) {
-            XSElementDecl segmentDecl = segmentDecls.next();
-            String segmentName = segmentDecl.getName();
-            if (isRealSegment(segmentName)) {
-
-                List<SegmentElement> segmentsElements = new ArrayList<>();
-                XSComplexType complexType = segmentDecl.getType().asComplexType();
-                // Find and iterate over the fields of the segment
-                XSParticle[] children = complexType
-                        .getContentType()
-                        .asParticle()
-                        .getTerm()
-                        .asModelGroup()
-                        .getChildren();
-                LOG.debug("Creating segment {}, having {} children", segmentName, children.length);
-                for (int i = 0; i < children.length; i++) {
-                    // Navigate to the attributes
-                    if (!children[i].getTerm().isWildcard()) {
-                        XSAttGroupDecl attrGroup = children[i]
-                                .getTerm()
-                                .asElementDecl()
-                                .getType()
-                                .asComplexType()
-                                .getAttGroups().iterator().next();
-                        LOG.debug("Field {}", attrGroup.getName());
-                        String fieldType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
-                        String fieldDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
-                        XSAttributeUse fieldLength = attrGroup.getAttributeUse("", "maxLength");
-                        int maxLength = 0;
-                        if (fieldLength != null)
-                            maxLength = Integer.parseInt(fieldLength.getFixedValue().toString());
-                        XSAttributeUse fieldTable = attrGroup.getAttributeUse("", "Table");
-                        int table = 0;
-                        if (fieldTable != null)
-                            table = Integer.parseInt(fieldTable.getFixedValue().toString().substring(3));
-                        SegmentElement se = new SegmentElement(segmentName, version.getVersion(), i);
-                        se.field = i;
-                        if (children[i].getMaxOccurs().intValue() == XSParticle.UNBOUNDED) {
-                            se.rep = "Y";
-                            se.repetitions = 0;
-                        } else {
-                            se.rep = "N";
-                            se.repetitions = 1;
-                        }
-                        se.opt = children[i].getMinOccurs().intValue() > 0 ? "R" : "O";
-                        se.desc = fieldDescription;
-                        se.table = table;
-                        se.type = fieldType;
-                        fixType(i + 1, version, se);
-                        se.length = maxLength;
-                        segmentsElements.add(se);
-                    }
-                }
-                // need to add better segement description here, but nothing in XSD!
-                writeSegment(template, basePackageName, datatypePackages,
-                        segmentName, segmentName, version, segmentsElements);
-            }
-
+        String basePackageName;
+        try {
+            basePackageName = DefaultModelClassFactory.getVersionPackageName(version.getVersion());
+        } catch (HL7Exception e) {
+            throw new RuntimeException(e);
         }
+        String[] datatypePackages = {basePackageName + "datatype"};
 
+        asStream(schema.iterateElementDecls())
+                .filter(segmentDecl -> isRealSegment(segmentDecl.getName()))
+                .forEach(segmentDecl -> {
+                    List<SegmentElement> segmentsElements = new ArrayList<>();
+                    XSComplexType complexType = segmentDecl.getType().asComplexType();
+                    // Find and iterate over the fields of the segment
+                    XSParticle[] children = complexType
+                            .getContentType()
+                            .asParticle()
+                            .getTerm()
+                            .asModelGroup()
+                            .getChildren();
+                    LOG.debug("Creating segment {}, having {} children", segmentDecl.getName(), children.length);
+                    for (int i = 0; i < children.length; i++) {
+                        // Navigate to the attributes
+                        if (!children[i].getTerm().isWildcard()) {
+                            XSAttGroupDecl attrGroup = children[i]
+                                    .getTerm()
+                                    .asElementDecl()
+                                    .getType()
+                                    .asComplexType()
+                                    .getAttGroups().iterator().next();
+                            LOG.debug("Field {}", attrGroup.getName());
+
+                            SegmentElement se = new SegmentElement(fixSegmentName(segmentDecl.getName()), version.getVersion(), i);
+                            se.field = i;
+                            if (children[i].getMaxOccurs().intValue() == XSParticle.UNBOUNDED) {
+                                se.rep = "Y";
+                                se.repetitions = 0;
+                            } else {
+                                se.rep = "N";
+                                se.repetitions = 1;
+                            }
+                            se.opt = children[i].getMinOccurs().intValue() > 0 ? "R" : "O";
+                            se.withdrawn = children[i].getMaxOccurs().intValue() == 0;
+                            se.desc = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
+                            XSAttributeUse fieldTable = attrGroup.getAttributeUse("", "Table");
+                            se.table = fieldTable != null ? Integer.parseInt(fieldTable.getFixedValue().toString().substring(3)) : 0;
+                            se.type = se.withdrawn ? "NULLDT" : attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+                            XSAttributeUse fieldLength = attrGroup.getAttributeUse("", "maxLength");
+                            se.length = fieldLength != null ? Integer.parseInt(fieldLength.getFixedValue().toString()) : 0;
+                            segmentsElements.add(fixSegmentElement(i + 1, version, se));
+                        }
+                    }
+                    // Custom extension: get segment description from LongName attribute of segment, if available
+                    String segmentDescription = segmentDecl.getName();
+                    if (!complexType.getAttGroups().isEmpty()) {
+                        XSAttGroupDecl attrGroup = complexType.getAttGroups().iterator().next();
+                        segmentDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
+                    }
+
+                    writeSegment(template, basePackageName, datatypePackages,
+                            segmentDecl.getName(), segmentDescription, version, segmentsElements);
+
+                });
+
+    }
+
+    private String fixSegmentName(String name) {
+        return "CON".equals(name) ? "CON_" : name;
     }
 
     private void writeSegment(Template template, String basePackageName, String[] datatypePackages,
                               String segmentName, String segmentDescription, Version version,
-                              List<SegmentElement> segmentsElements) throws Exception {
-        String source = make(template, basePackageName, datatypePackages,
+                              List<SegmentElement> segmentsElements) {
+        String source = makeSegment(template, basePackageName, datatypePackages,
                 segmentName, segmentDescription, version.getVersion(), segmentsElements);
         if (source != null) {
-            writeFile(source, segmentName, version);
+            String dirName = String.format("model/%s/segment", version.getPackageVersion());
+            String fileName = String.format("%s.java", segmentName);
+            try {
+                writeFile(source, dirName, fileName);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     /**
      * This method can be used to circumvent errors in the XSDs without the need to
-     * modify the XDS.
-     *
-     * @param index
-     * @param version
-     * @param se
+     * modify the XSD.
      */
-    private static void fixType(int index, Version version, SegmentElement se) {
+    private static SegmentElement fixSegmentElement(int index, Version version, SegmentElement se) {
         // Null/withdrawn
         if (se.type.equals("NUL") || se.type.equals("-")) {
             se.type = "NULLDT";
 
-        // 3454369
+            // 3454369
         } else if (version == Version.V23 && se.type.equals("MRG") && index == 7) {
             se.type = "XPN";
 
-        // https://sourceforge.net/p/hl7api/bugs/95/
+            // https://sourceforge.net/p/hl7api/bugs/95/
         } else if (version == Version.V23 && se.type.equals("ORC") && index == 14) {
             se.type = "XTN";
 
-        // 2864817
+            // 2864817
         } else if (version == Version.V23 && se.type.equals("PID") && index == 5) {
             se.rep = "Y";
             se.repetitions = -1;
         }
+        return se;
     }
 
     private boolean isRealSegment(String dataTypeName) {
@@ -206,23 +191,8 @@ public class XsdSegmentGenerator {
                 dataTypeName.indexOf('.') < 0;
     }
 
-    private void writeFile(String source, String segmentName, Version version) throws IOException {
-        // TODO must be more robust
-        String dirName = String.format("%s/ca/uhn/hl7v2/model/%s/segment/", targetDirectory, version.getPackageVersion());
-        File dir = new File(dirName);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        String targetFile = String.format("%s/%s.java", dirName, segmentName);
-
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(targetFile, false), StandardCharsets.UTF_8))) {
-            writer.write(source);
-            writer.flush();
-        }
-    }
-
-    private String make(Template template, String normalBasePackageName, String[] datatypePackages,
-                        String segmentName, String description, String version, List<SegmentElement> elements) {
+    private String makeSegment(Template template, String normalBasePackageName, String[] datatypePackages,
+                               String segmentName, String description, String version, List<SegmentElement> elements) {
         StringWriter out = new StringWriter();
         Context ctx = new VelocityContext();
         ctx.put("segmentName", segmentName);
@@ -236,20 +206,10 @@ public class XsdSegmentGenerator {
         return out.toString();
     }
 
-
-    public static void main(String... args) {
-        try {
-            XsdSegmentGenerator xdtg = new XsdSegmentGenerator("C:/temp", "/ca.uhn.hl7v2.sourcegen.templates");
-            long start = System.currentTimeMillis();
-//            for (Version version : Version.values()) {
-//                System.out.println("Creating segments for " + version);
-//                xdtg.parse(version);
-//            }
-            xdtg.parse(Version.V25);
-            System.out.println("Done in " + (System.currentTimeMillis() - start) + " ms.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void generateSegments(String templatePackage, String sourceDirectory, String targetDirectory, String version) throws Exception {
+        XsdSegmentGenerator xsg = new XsdSegmentGenerator(templatePackage, targetDirectory);
+        LOG.info("Creating segments for {}", version);
+        xsg.parse(Version.versionOf(version), sourceDirectory, "segments.xsd");
     }
 
 }

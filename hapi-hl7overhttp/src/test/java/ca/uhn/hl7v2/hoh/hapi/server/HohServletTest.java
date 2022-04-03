@@ -1,22 +1,5 @@
 package ca.uhn.hl7v2.hoh.hapi.server;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
@@ -33,6 +16,20 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class HohServletTest {
 
@@ -62,7 +59,9 @@ public class HohServletTest {
 	private void startServer(HohServlet theServlet) throws Exception {
 		myPort = RandomServerPortProvider.findFreePort();
 		myServer = new Server(myPort);
-		Context context = new Context(myServer, "/", Context.SESSIONS);
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		myServer.setHandler(context);
+		context.setContextPath("/");
 		context.addServlet(new ServletHolder(theServlet), "/*");
 
 		myServer.start();

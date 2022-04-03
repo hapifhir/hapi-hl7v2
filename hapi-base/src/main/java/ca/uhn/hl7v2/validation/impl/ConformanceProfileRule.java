@@ -54,7 +54,7 @@ import ca.uhn.hl7v2.validation.ValidationException;
  * @author Bryan Tripp
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:40 $ by $Author: jamesagnew $
  */
-@SuppressWarnings("serial")
+
 public class ConformanceProfileRule extends AbstractMessageRule {
 
     private static final Logger log = LoggerFactory.getLogger(ConformanceProfileRule.class);

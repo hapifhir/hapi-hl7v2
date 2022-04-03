@@ -41,7 +41,7 @@ import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class NoValidation extends ValidationContextImpl {
 
 	public NoValidation() {

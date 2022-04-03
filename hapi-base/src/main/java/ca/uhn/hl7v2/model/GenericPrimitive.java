@@ -6,7 +6,7 @@ package ca.uhn.hl7v2.model;
  * used to store unrecognized message constituents.  
  * @author Bryan Tripp
  */
-@SuppressWarnings("serial")
+
 public class GenericPrimitive extends AbstractPrimitive implements Primitive {
 
     /**

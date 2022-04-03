@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * @author Bryan Tripp
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class ValidationContextImpl implements ValidationContext, Serializable {
 
 	private final List<RuleBinding<PrimitiveTypeRule>> myPrimitiveRuleBindings;

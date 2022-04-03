@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * 
  * @author Christian Ohr
  */
-@SuppressWarnings("serial")
+
 public class CustomMessageValidation {
 
 	/**

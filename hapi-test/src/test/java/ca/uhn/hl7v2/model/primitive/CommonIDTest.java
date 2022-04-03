@@ -77,7 +77,7 @@ public class CommonIDTest {
 	 /**
 	  * Test for default constructor
 	  */
-	@SuppressWarnings("serial")
+	
     @Test
 	 public void testConstructor() {
 	    ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {
@@ -119,7 +119,7 @@ public class CommonIDTest {
 	/**
 	 * Testing ability to return the code value
 	 */
-	@SuppressWarnings("serial")
+	
     @Test
 	public void testGetValue() throws DataTypeException {
 		ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {
@@ -131,7 +131,7 @@ public class CommonIDTest {
 	/**
 	 * Testing ability to return the number of the HL7 code table
 	 */
-	@SuppressWarnings("serial")
+	
     @Test
 	public void testGetTable() throws DataTypeException {
 		ID commonID = new ID(new GenericMessage.V25(new DefaultModelClassFactory()), 5) {

@@ -24,7 +24,7 @@ import ca.uhn.hl7v2.HL7Exception;
 
 public class XML
 {
-	@SuppressWarnings("serial")
+	
 	protected static class StopParsingException extends SAXException
 	{
 		public StopParsingException() 

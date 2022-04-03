@@ -469,7 +469,6 @@ public class ProfileParser {
 			// File f = new
 			// File("C:\\Documents and Settings\\bryan\\hapilocal\\hapi\\ca\\uhn\\hl7v2\\conf\\parser\\example_ack.xml");
 			File f = new File(args[0]);
-			@SuppressWarnings("resource")
 			BufferedReader in = new BufferedReader(new FileReader(f));
 			char[] cbuf = new char[(int) f.length()];
 			in.read(cbuf, 0, (int) f.length());

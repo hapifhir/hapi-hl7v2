@@ -18,7 +18,7 @@ package ca.uhn.hl7v2.validation.impl;
  * 
  * @deprecated use {@link ca.uhn.hl7v2.validation.builder.BuilderSupport#withdrawn()} instead
  */
-@SuppressWarnings("serial")
+
 public class WithdrawnDatatypeRule extends SizeRule {
 
 	/**

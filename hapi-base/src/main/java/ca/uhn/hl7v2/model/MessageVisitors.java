@@ -84,7 +84,7 @@ public final class MessageVisitors {
         }
 
         @Override
-        public final boolean start(Composite type, Location location) {
+        public boolean start(Composite type, Location location) {
             return false;
         }
 
@@ -121,7 +121,7 @@ public final class MessageVisitors {
         }
 
         @Override
-        public final boolean start(Composite type, Location location) throws HL7Exception {
+        public boolean start(Composite type, Location location) throws HL7Exception {
             return !type.isEmpty() && super.start(type, location);
         }
 

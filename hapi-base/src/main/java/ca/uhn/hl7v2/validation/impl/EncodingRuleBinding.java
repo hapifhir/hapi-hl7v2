@@ -37,7 +37,7 @@ import ca.uhn.hl7v2.validation.EncodingRule;
  * @author Christian Ohr
  * 
  */
-@SuppressWarnings("serial")
+
 public class EncodingRuleBinding extends RuleBinding<EncodingRule> {
 
 	public EncodingRuleBinding(String theVersion, String theScope, EncodingRule theRule) {

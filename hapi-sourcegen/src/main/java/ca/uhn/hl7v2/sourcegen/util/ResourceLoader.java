@@ -1,11 +1,15 @@
 package ca.uhn.hl7v2.sourcegen.util;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public class ResourceLoader extends ClasspathResourceLoader {
+
 
 	/*
 	 * (non-Javadoc)
@@ -14,9 +18,8 @@ public class ResourceLoader extends ClasspathResourceLoader {
 	 * getResourceStream(java.lang.String)
 	 */
 	@Override
-	public InputStream getResourceStream(String theArg0) throws ResourceNotFoundException {
-		System.out.println("** Trying to load: " + theArg0);
-		
+	public Reader getResourceReader(String theArg0, String encoding) throws ResourceNotFoundException {
+
 		InputStream resourceStream = ResourceLoader.class.getResourceAsStream(theArg0);
 		if (resourceStream == null) {
 			resourceStream = ResourceLoader.class.getResourceAsStream("/" + theArg0);
@@ -25,7 +28,11 @@ public class ResourceLoader extends ClasspathResourceLoader {
 			throw new ResourceNotFoundException("Can not find: " + theArg0);
 		}
 
-		return resourceStream;
+		try {
+			return new InputStreamReader(resourceStream, encoding);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/*
@@ -44,7 +51,7 @@ public class ResourceLoader extends ClasspathResourceLoader {
 	}
 	
 	public static void main(String[] args) {
-		new ResourceLoader().getResourceStream("ca/uhn/hl7v2/sourcegen/templates/group.vsm");
+		new ResourceLoader().getResourceReader("ca/uhn/hl7v2/sourcegen/templates/group.vsm", "UTF-8");
 	}
 
 }
