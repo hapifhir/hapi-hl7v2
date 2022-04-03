@@ -68,19 +68,18 @@
 			<plugin>
 				<groupId>ca.uhn.hapi</groupId>
 				<artifactId>hapi-sourcegen</artifactId>
+				<version>${hapi.version}</version>
 				<executions>
 					<execution>
 						<id>${gen.version}</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>sourcegen</goal>
+							<goal>xsdsourcegen</goal>
 						</goals>
 						<inherited>true</inherited>
 						<configuration>
 							<version>${gen.version}</version>
-							<jdbcUrl>${sourcegen.jdbcUrl}</jdbcUrl>
-							<jdbcUser>${sourcegen.jdbcUser.old}</jdbcUser>
-							<jdbcPassword>${sourcegen.jdbcPassword.old}</jdbcPassword>
+							<password>${xsd.password}</password>
 							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
 							<targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
 						</configuration>
