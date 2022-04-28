@@ -42,10 +42,10 @@ public class XsdSourceGenerator {
     /**
      * Generates source code for all data types, segments, groups, and messages.
      */
-    public static void makeAll(String templatePackage, String targetSourceDirectory, String targetResourceDirectory, String version, char[] pwd) throws HL7Exception {
+    public static void makeAll(String templatePackage, String sourceDirectory, String targetSourceDirectory, String targetResourceDirectory, String version, char[] pwd) throws HL7Exception {
         String unpackFolder = null;
         try {
-            unpackFolder = unpack(version, pwd);
+            unpackFolder = unpack(sourceDirectory, version, pwd);
             XsdEventMapGenerator.generateEventMap(unpackFolder, targetResourceDirectory, version);
             XsdMessageGenerator.generateMessagesAndGroups(templatePackage, unpackFolder, targetSourceDirectory, version);
             XsdSegmentGenerator.generateSegments(templatePackage, unpackFolder, targetSourceDirectory, version);
@@ -59,8 +59,8 @@ public class XsdSourceGenerator {
         }
     }
 
-    private static String unpack(String version, char[] pwd) throws Exception {
-        File zipFile = new File(version + ".zip");
+    private static String unpack(String sourceDirectory, String version, char[] pwd) throws Exception {
+        File zipFile = new File(sourceDirectory, version + ".zip");
         LOG.debug("Unpacking {}", zipFile.getAbsolutePath());
         ZipFile zip = new ZipFile(zipFile, pwd);
         String tmpDir = System.getProperty("java.io.tmpdir");

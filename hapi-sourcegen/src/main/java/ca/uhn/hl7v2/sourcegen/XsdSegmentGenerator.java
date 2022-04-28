@@ -61,6 +61,7 @@ public class XsdSegmentGenerator extends AbstractXsdGenerator {
     static final String ANY_HL7_SEGMENT = "anyHL7Segment";
     static final String ANY_Z_SEGMENT = "anyZSegment";
     static final String HXX = "Hxx";
+    static final String ZXX = "Zxx";
     private static final String[] EXCLUDE_SEGMENTS = {ANY_HL7_SEGMENT, ANY_Z_SEGMENT};
 
     public XsdSegmentGenerator(String templatePackage, String targetDirectory) {
@@ -99,11 +100,12 @@ public class XsdSegmentGenerator extends AbstractXsdGenerator {
                     for (int i = 0; i < children.length; i++) {
                         // Navigate to the attributes
                         if (!children[i].getTerm().isWildcard()) {
-                            XSAttGroupDecl attrGroup = children[i]
+                            XSComplexType type = children[i]
                                     .getTerm()
                                     .asElementDecl()
                                     .getType()
-                                    .asComplexType()
+                                    .asComplexType();
+                            XSAttGroupDecl attrGroup = type
                                     .getAttGroups().iterator().next();
                             LOG.debug("Field {}", attrGroup.getName());
 
@@ -121,7 +123,9 @@ public class XsdSegmentGenerator extends AbstractXsdGenerator {
                             se.desc = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
                             XSAttributeUse fieldTable = attrGroup.getAttributeUse("", "Table");
                             se.table = fieldTable != null ? Integer.parseInt(fieldTable.getFixedValue().toString().substring(3)) : 0;
-                            se.type = se.withdrawn ? "NULLDT" : attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+                            // se.type = se.withdrawn ? "NULLDT" : attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+                            se.type = se.withdrawn ? "NULLDT" : type.getBaseType().getName();
+                            if ("*".equals(se.type)) se.type = "Varies";
                             XSAttributeUse fieldLength = attrGroup.getAttributeUse("", "maxLength");
                             se.length = fieldLength != null ? Integer.parseInt(fieldLength.getFixedValue().toString()) : 0;
                             segmentsElements.add(fixSegmentElement(i + 1, version, se));

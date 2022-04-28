@@ -81,6 +81,7 @@
 						<configuration>
 							<version>${gen.version}</version>
 							<password>${xsd.password}</password>
+							<sourceDirectory>${basedir}</sourceDirectory>
 							<targetDirectory>${basedir}/target/generated-sources/sourcegen</targetDirectory>
 							<targetResourceDirectory>${basedir}/target/generated-sources/resourcegen</targetResourceDirectory>
 						</configuration>

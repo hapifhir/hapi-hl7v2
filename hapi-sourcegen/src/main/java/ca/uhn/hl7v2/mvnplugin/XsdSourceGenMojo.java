@@ -58,6 +58,13 @@ public class XsdSourceGenMojo extends AbstractMojo {
      */
     private MavenProject project;
 
+    /**
+     * The source directory for the schema files
+     *
+     * @parameter
+     * @required
+     */
+    private String sourceDirectory;
 
     /**
      * The target directory for the generated source
@@ -139,6 +146,10 @@ public class XsdSourceGenMojo extends AbstractMojo {
             System.setProperty("force.group", "false");
         }
 
+        if (password == null) {
+            throw new MojoExecutionException("Failed to build source because schema file password has not been set");
+        }
+
         if (new File(targetDirectory).exists()) {
             getLog().warn("Already exists version " + version + ", skipping!");
         } else if (!alreadyMade.contains(version)) {
@@ -150,7 +161,7 @@ public class XsdSourceGenMojo extends AbstractMojo {
 
             try {
                 String targetDir = structuresAsResources ? targetResourceDirectory : targetDirectory;
-                XsdSourceGenerator.makeAll(templatePackage, targetDir, targetResourceDirectory, version, password.toCharArray());
+                XsdSourceGenerator.makeAll(templatePackage, sourceDirectory, targetDir, targetResourceDirectory, version, password.toCharArray());
             } catch (Exception e) {
                 throw new MojoExecutionException("Failed to build source ", e);
             }

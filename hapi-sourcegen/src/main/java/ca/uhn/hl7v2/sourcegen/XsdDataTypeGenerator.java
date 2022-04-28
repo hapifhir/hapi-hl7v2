@@ -102,13 +102,14 @@ public class XsdDataTypeGenerator extends AbstractXsdGenerator {
                 .getChildren();
         // Iterate over all components
         for (int i = 0; i < children.length; i++) {
-            XSAttGroupDecl attrGroup = children[i]
+            XSComplexType type = children[i]
                     .getTerm()
                     .asElementDecl()
                     .getType()
-                    .asComplexType()
-                    .getAttGroups().iterator().next();
-            String componentType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+                    .asComplexType();
+            XSAttGroupDecl attrGroup = type.getAttGroups().iterator().next();
+            // String componentType = attrGroup.getAttributeUse("", "Type").getFixedValue().toString();
+            String componentType = type.getBaseType().getName();
             String componentDescription = attrGroup.getAttributeUse("", "LongName").getFixedValue().toString();
             XSAttributeUse componentTable = attrGroup.getAttributeUse("", "Table");
             int table = componentTable != null ?

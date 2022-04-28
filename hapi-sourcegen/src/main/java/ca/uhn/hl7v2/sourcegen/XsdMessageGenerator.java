@@ -49,7 +49,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.ANY_HL7_SEGMENT;
-import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.HXX;
+import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.ANY_Z_SEGMENT;
+import static ca.uhn.hl7v2.sourcegen.XsdSegmentGenerator.ZXX;
 
 /**
  * Create HAPI message classes from XML Schema files. Download the files from
@@ -169,7 +170,9 @@ public class XsdMessageGenerator extends AbstractXsdGenerator {
     }
 
     private String fixSegmentName(String name) {
-        return ANY_HL7_SEGMENT.equals(name) ? HXX : name;
+        if (ANY_HL7_SEGMENT.equals(name)) return ZXX;
+        if (ANY_Z_SEGMENT.equals(name)) return ZXX;
+        return name;
     }
 
     private void writeMessageFile(Version version, String className, GroupDef messageDef) {
