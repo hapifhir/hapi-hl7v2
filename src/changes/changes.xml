@@ -6,6 +6,11 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="change" dev="James Agnew">
+				As of HAPI 2.4, support for JDK 1.4 and JDK 1.5 has been withdrawn. It is
+				no longer feasible to produce these binaries, as the retrotranslator plugin
+				we had been using to produce them will not work on recent JDKs.
+			</action>
 			<action type="fix" dev="Christian Ohr" issue="35">
 				The Connection interface now extends Closeable. As a consequence, the close()
 				method now throws IOException. Thanks to hauntingEcho for the proposal.
