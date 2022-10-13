@@ -706,7 +706,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		// Prepopulate the "send to interface" combo to the last value it had
 		if (StringUtils.isNotBlank(myMessage.getLastSendToInterfaceId())) {
 			for (int i = 0; i < myOutboundInterfaceComboModelShadow.size(); i++) {
-				if (myOutboundInterfaceComboModelShadow.get(i).getId().equals(myMessage.getLastSendToInterfaceId())) {
+				if (myOutboundInterfaceComboModelShadow != null && myMessage != null &&	
+						myOutboundInterfaceComboModelShadow.get(i)!= null  &&
+						myOutboundInterfaceComboModelShadow.get(i).getId().equals(myMessage.getLastSendToInterfaceId())) {
 					myOutboundInterfaceCombo.setSelectedIndex(i);
 					break;
 				}

@@ -860,7 +860,8 @@ public class Prefs {
 	}
 
 	public static File getTestpanelHomeDirectory() {
-		File userHome = new File(System.getProperty("user.home"));
+		//File userHome = new File(System.getProperty("user.home"));
+		File userHome = new File("C:\\Users\\Marcia Carneiro");
 		File testPanelHome = new File(userHome, "HapiTestPanel");
 		return testPanelHome;
 	}
