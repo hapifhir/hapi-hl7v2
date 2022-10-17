@@ -193,7 +193,7 @@ public class Controller {
 			col.setValidationContext(new DefaultValidation());
 
 			Class<? extends Message> messageClass = mcf.getMessageClass(theStructure, theVersion, true);
-			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.newInstance();
+			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.getDeclaredConstructor().newInstance();
 			message.initQuickstart(theType, theTrigger, "T");
 
 			GenericParser p = new GenericParser();
