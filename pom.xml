@@ -159,7 +159,7 @@
 		<pluginRepository>
 			<id>codehaus</id>
 			<name>Codehaus Repo</name>
-			<url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+			<url>https://repo1.maven.org/maven2/org/codehaus/mojo</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>mc-release</id>
