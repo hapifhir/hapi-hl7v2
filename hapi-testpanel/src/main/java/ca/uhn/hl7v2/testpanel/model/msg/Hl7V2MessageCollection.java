@@ -673,12 +673,15 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		Hl7V2EncodingTypeEnum oldEncodingValue = myEncoding;
 		if (myEncoding != theEncoding) {
 			myEncoding = theEncoding;
-
 			switch (myEncoding) {
 			case ER_7:
 				myParser.setPipeParserAsPrimary();
 				break;
 			case XML:
+				myParser.setXMLParserAsPrimary();
+				break;
+				
+			case TABLE_VIEW:
 				myParser.setXMLParserAsPrimary();
 				break;
 			}

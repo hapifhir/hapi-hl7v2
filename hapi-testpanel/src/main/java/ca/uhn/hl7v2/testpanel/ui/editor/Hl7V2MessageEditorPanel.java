@@ -103,6 +103,28 @@ import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 
+
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.AttributedString;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+
 public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyable {
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
 	private static final String NO_CONNECTIONS = "No Connections";
@@ -148,6 +170,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private PropertyChangeListener myRangeListener;
 	private JRadioButton myRdbtnEr7;
 	private JRadioButton myRdbtnXml;
+	private JRadioButton myRdbtnTableView;
 	private PropertyChangeListener mySelectedPathListener;
 	private JButton mySendButton;
 	private JSplitPane mysplitPane;
@@ -254,8 +277,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myRdbtnXml = new JRadioButton("XML");
 		myRdbtnXml.setMargin(new Insets(1, 5, 0, 1));
 		toolBar.add(myRdbtnXml);
+				
+		myRdbtnTableView = new JRadioButton("View as Table");
+		myRdbtnTableView.setMargin(new Insets(1, 5, 0, 1));
+		toolBar.add(myRdbtnTableView);
 		encGrp.add(myRdbtnEr7);
 		encGrp.add(myRdbtnXml);
+		encGrp.add(myRdbtnTableView);
 
 		treeContainerPanel = new JPanel();
 		mysplitPane.setLeftComponent(treeContainerPanel);
@@ -728,6 +756,15 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				myMessage.setEncoding(Hl7V2EncodingTypeEnum.XML);
 			}
 		});
+		
+		
+		myRdbtnTableView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent theE) {
+				removeHighlights();
+				myMessage.setEncoding(Hl7V2EncodingTypeEnum.TABLE_VIEW);
+			}
+		});
+
 
 		try {
 			myDisableCaretUpdateHandling = true;
@@ -864,12 +901,19 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	private void updateEncodingButtons() {
 		switch (myMessage.getEncoding()) {
+		case TABLE_VIEW:
+				myRdbtnXml.setSelected(false);
+				myRdbtnEr7.setSelected(false);
+				myRdbtnTableView.setSelected(true);				
+				
 			case XML:
 				myRdbtnXml.setSelected(true);
 				myRdbtnEr7.setSelected(false);
+				myRdbtnTableView.setSelected(false);
 				break;
-			case ER_7:
-				myRdbtnXml.setSelected(false);
+			case ER_7:				
+				myRdbtnXml.setSelected(false);				
+				myRdbtnTableView.setSelected(false);	
 				myRdbtnEr7.setSelected(true);
 		}
 	}
@@ -887,9 +931,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
 			myMessageEditor.setContentType("text/xml");
-		} else {
+		} else if(myMessage.getEncoding() == Hl7V2EncodingTypeEnum.ER_7) {
 			myMessageEditor.setContentType("text/er7");
 			sourceMessage = sourceMessage.replace('\r', '\n');
+		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.TABLE_VIEW) {
+			myMessageEditor.setContentType("text/html");
+			myMessageEditor.disable();
 		}
 
 		myMessageEditor.setText(sourceMessage);
@@ -897,6 +944,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessageEditor.getDocument().addDocumentListener(myDocumentListener);
 
 		final int verticalValue = Math.min(initialVerticalValue, vsb.getMaximum());
+		
+		
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1052,5 +1101,88 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	public Frame getWindow() {
 		return myController.getWindow();
 	}
+	
+	private String ConvertMessageToHtml( String xml) {
+		
+		
+		
+		 StringBuilder html = new StringBuilder("<html><body><table align='center' " +
+			       "border='1' class='xmlTable'>\r\n");
+			    try
+			    {
+			    	Document document = convertStringToDocument(xml);
+			    	Element rootElement = document.getDocumentElement();
+			    	
+			    	NodeList nodes = rootElement.getChildNodes();
+					for (int i = 0; i < nodes.getLength(); i++) 					
+			        {
+						//String elementName = ;
+					Node node =	nodes.item(i);
+			            if (nodes.item(i).hasChildNodes())
+			            {
+			            	String elename = "";
+			                html.append("<tr>");
+
+			                elename = node.getNodeName();
+
+			                if (nodes.item(i).hasAttributes())
+			                {
+			                	ArrayList<Element>  attribs = (ArrayList<Element>) node.getAttributes();
+			                	for (int j = 0; j < attribs.size(); j++) {
+			                		 elename = (elename 
+		                                        + ( "\n" 
+		                                        + (attribs.get(j).getTagName() + ("=" + attribs.get(j).getNodeValue()))));
+			                	}
+			                }
+
+			                html.append("<td>" + elename + "</td>");
+			                html.append("<td>" + node.getNodeValue() + "</td>");
+			                html.append("</tr>");
+			            }
+			            else
+			            {
+			            	String elename = "";
+			                html.append("<tr>");
+
+			                elename = node.getNodeName();
+
+			                if (node.hasAttributes())
+			                {
+			                	ArrayList<Element>  attribs = (ArrayList<Element>) node.getAttributes();
+			                	for (int j = 0; j < attribs.size(); j++) {
+			                        elename += "\n" + attribs.get(j).getTagName() + "=" + attribs.get(j).getNodeValue();
+			                	}
+			                }
+
+			                html.append("<td>" + elename + "</td>");
+			                html.append("<td>" + ConvertMessageToHtml(node.toString()) + "</td>");
+			                html.append("</tr>");
+			            }
+			        }
+
+			        html.append("</table>");
+			        html.append("</body></html>");
+			    }
+			    catch (Exception e)
+			    {
+			        return xml;
+			    }
+			    
+			    return html.toString();
+	}
+	
+	private Document convertStringToDocument(String xmlStr) {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
+        DocumentBuilder builder;  
+        try  
+        {   
+        	builder = factory.newDocumentBuilder();  
+            Document doc = builder.parse(xmlStr); 
+            return doc;
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        } 
+        return null;
+    }
 
 }

@@ -86,6 +86,7 @@
 		<restriction base="string">
 			<enumeration value="ER7"></enumeration>
 			<enumeration value="XML"></enumeration>
+			<enumeration value="TABLE_VIEW"></enumeration>
 		</restriction>
 	</simpleType>
 
