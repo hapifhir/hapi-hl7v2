@@ -31,6 +31,9 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
+import java.util.List;
+import java.util.Map;
+
 import ca.uhn.hl7v2.HL7Exception;
 
 /**
@@ -55,6 +58,9 @@ public interface Group extends Structure {
    */
   Structure[] getAll(String name) throws HL7Exception;
 
+  
+  Map<String, List<Structure>> getAllStructure() throws HL7Exception;
+  
   /**
    * Returns the named structure.  If this Structure is repeating then the first 
    * repetition is returned.  Creates the Structure if necessary.

@@ -47,7 +47,12 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -79,10 +84,26 @@ import jsyntaxpane.DefaultSyntaxKit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.mortbay.xml.XmlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Location;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.conf.ProfileException;
+import ca.uhn.hl7v2.model.AbstractPrimitive;
+import ca.uhn.hl7v2.model.AbstractSegment;
+import ca.uhn.hl7v2.model.GenericMessage;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.parser.DefaultXMLParser;
+import ca.uhn.hl7v2.parser.GenericModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.controller.Prefs;
 import ca.uhn.hl7v2.testpanel.model.conf.ProfileFileList;
@@ -90,6 +111,8 @@ import ca.uhn.hl7v2.testpanel.model.conf.ProfileGroup;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnection;
 import ca.uhn.hl7v2.testpanel.model.conn.OutboundConnectionList;
 import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageCollection;
+import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageEr7;
+import ca.uhn.hl7v2.testpanel.model.msg.Hl7V2MessageXml;
 import ca.uhn.hl7v2.testpanel.ui.ActivityTable;
 import ca.uhn.hl7v2.testpanel.ui.BaseMainPanel;
 import ca.uhn.hl7v2.testpanel.ui.Er7SyntaxKit;
@@ -103,13 +126,15 @@ import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.xsd.Hl7V2EncodingTypeEnum;
 import ca.uhn.hl7v2.validation.impl.DefaultValidation;
 
-
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.AttributedString;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -123,7 +148,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
+import org.xml.sax.SAXException;
 
 public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyable {
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
@@ -142,7 +167,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private boolean myDontRespondToSourceMessageChanges;
@@ -244,7 +269,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessageEditor.setSelectedTextColor(Color.black);
 
 		myMessageEditor.setCaret(new EditorCaret());
-		
+
 		myMessageScrollPane = new JScrollPane(myMessageEditor);
 		messageEditorContainerPanel.add(myMessageScrollPane);
 
@@ -260,7 +285,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				theController.setMessageEditorInFollowMode(myFollowToggle.isSelected());
 			}
 		});
-		myFollowToggle.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/updown.png")));
+		myFollowToggle.setIcon(
+				new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/updown.png")));
 		myFollowToggle.setSelected(theController.isMessageEditorInFollowMode());
 		toolBar.add(myFollowToggle);
 
@@ -277,7 +303,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myRdbtnXml = new JRadioButton("XML");
 		myRdbtnXml.setMargin(new Insets(1, 5, 0, 1));
 		toolBar.add(myRdbtnXml);
-				
+
 		myRdbtnTableView = new JRadioButton("View as Table");
 		myRdbtnTableView.setMargin(new Insets(1, 5, 0, 1));
 		toolBar.add(myRdbtnTableView);
@@ -289,7 +315,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mysplitPane.setLeftComponent(treeContainerPanel);
 		treeContainerPanel.setLayout(new BorderLayout(0, 0));
 
-		mySpinnerIconOn = new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/spinner.gif"));
+		mySpinnerIconOn = new ImageIcon(
+				Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/spinner.gif"));
 		mySpinnerIconOff = new ImageIcon();
 
 		myTreePanel = new Hl7V2MessageTree(theController);
@@ -300,7 +327,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				mySpinner.setIcon(mySpinnerIconOn);
 				mySpinnerIconOn.setImageObserver(mySpinner);
 			}
-
 
 			public void finishedWorking(String theStatus) {
 				mySpinner.setText(theStatus);
@@ -343,7 +369,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 		});
 		collapseAllButton.setToolTipText("Collapse All");
-		collapseAllButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/collapse_all.png")));
+		collapseAllButton.setIcon(new ImageIcon(
+				Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/collapse_all.png")));
 		mytoolBar_1.add(collapseAllButton);
 
 		expandAllButton = new JButton();
@@ -355,7 +382,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 		});
 		expandAllButton.setToolTipText("Expand All");
-		expandAllButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/expand_all.png")));
+		expandAllButton.setIcon(new ImageIcon(
+				Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/expand_all.png")));
 		mytoolBar_1.add(expandAllButton);
 
 		myhorizontalGlue = Box.createHorizontalGlue();
@@ -396,7 +424,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				// int selectedIndex =
 				// myOutboundInterfaceComboModel.getIndexOf(myOutboundInterfaceComboModel.getSelectedItem());
 				int selectedIndex = myOutboundInterfaceCombo.getSelectedIndex();
-				OutboundConnection connection = myController.getOutboundConnectionList().getConnections().get(selectedIndex);
+				OutboundConnection connection = myController.getOutboundConnectionList().getConnections()
+						.get(selectedIndex);
 				activateSendingActivityTabForConnection(connection);
 				myController.sendMessages(connection, myMessage, mySendingActivityTable.provideTransmissionCallback());
 			}
@@ -412,7 +441,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		mySendOptionsButton.setBorderPainted(false);
 		final HoverButtonMouseAdapter sendOptionsHoverAdaptor = new HoverButtonMouseAdapter(mySendOptionsButton);
 		mySendOptionsButton.addMouseListener(sendOptionsHoverAdaptor);
-		mySendOptionsButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/sendoptions.png")));
+		mySendOptionsButton.setIcon(new ImageIcon(
+				Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/sendoptions.png")));
 		mytoolBar.add(mySendOptionsButton);
 		mySendOptionsButton.addActionListener(new ActionListener() {
 
@@ -422,14 +452,16 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 					mySendOptionsPopupDialog = null;
 					return;
 				}
-				mySendOptionsPopupDialog = new SendOptionsPopupDialog(Hl7V2MessageEditorPanel.this, myMessage, mySendOptionsButton, sendOptionsHoverAdaptor);
+				mySendOptionsPopupDialog = new SendOptionsPopupDialog(Hl7V2MessageEditorPanel.this, myMessage,
+						mySendOptionsButton, sendOptionsHoverAdaptor);
 				Point los = mySendOptionsButton.getLocationOnScreen();
 				mySendOptionsPopupDialog.setLocation(los.x, los.y + mySendOptionsButton.getHeight());
 				mySendOptionsPopupDialog.setVisible(true);
 			}
 		});
 
-		mySendButton.setIcon(new ImageIcon(Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
+		mySendButton.setIcon(new ImageIcon(
+				Hl7V2MessageEditorPanel.class.getResource("/ca/uhn/hl7v2/testpanel/images/button_execute.png")));
 		mytoolBar.add(mySendButton);
 
 		myhorizontalStrut_1 = Box.createHorizontalStrut(20);
@@ -456,7 +488,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 					} else if (myProfileCombobox.getSelectedIndex() == 1) {
 						myMessage.setValidationContext(new DefaultValidation());
 					} else if (myProfileCombobox.getSelectedIndex() > 0) {
-						ProfileGroup profile = myProfileComboboxModel.myProfileGroups.get(myProfileCombobox.getSelectedIndex());
+						ProfileGroup profile = myProfileComboboxModel.myProfileGroups
+								.get(myProfileCombobox.getSelectedIndex());
 						myMessage.setRuntimeProfile(profile);
 
 						// } else if (myProfileCombobox.getSelectedItem() ==
@@ -553,7 +586,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
-
 	public void destroy() {
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.SOURCE_MESSAGE_PROPERTY, myMessageListeneer);
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.PROP_HIGHLITED_RANGE, myRangeListener);
@@ -561,12 +593,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myMessage.removePropertyChangeListener(Hl7V2MessageCollection.PROP_SAVE_FILENAME, myWindowTitleListener);
 
 		myTreePanel.destroy();
-		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST, myOutboundConnectionsListener);
+		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST,
+				myOutboundConnectionsListener);
 
 		myTablesComboModel.destroy();
 		unregisterProfileNamesListeners();
 	}
-
 
 	private void initLocal() {
 
@@ -576,7 +608,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				ourLog.info("Document change: " + theE);
 				handleChange(theE);
 			}
-
 
 			private void handleChange(DocumentEvent theE) {
 				myDontRespondToSourceMessageChanges = true;
@@ -594,12 +625,10 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				}
 			}
 
-
 			public void insertUpdate(DocumentEvent theE) {
 				ourLog.info("Document insert: " + theE);
 				handleChange(theE);
 			}
-
 
 			public void removeUpdate(DocumentEvent theE) {
 				ourLog.info("Document removed: " + theE);
@@ -617,7 +646,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 						public void run() {
 							myMessage.setHighlitedPathBasedOnRange(new Range(theE.getDot(), theE.getMark()));
 							myTreePanel.repaint();
-						}});
+						}
+					});
 				}
 			}
 		});
@@ -629,7 +659,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				updateOutboundConnectionsBox();
 			}
 		};
-		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST, myOutboundConnectionsListener);
+		myController.getOutboundConnectionList().addPropertyChangeListener(OutboundConnectionList.PROP_LIST,
+				myOutboundConnectionsListener);
 
 		myOutboundInterfaceCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
@@ -668,7 +699,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
-
 	private void registerProfileNamesListeners() {
 		unregisterProfileNamesListeners();
 		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
@@ -676,13 +706,11 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		}
 	}
 
-
 	private void unregisterProfileNamesListeners() {
 		for (ProfileGroup next : myController.getProfileFileList().getProfiles()) {
 			next.removePropertyChangeListener(ProfileGroup.PROP_NAME, myProfilesNamesListener);
 		}
 	}
-
 
 	private void updateSendButton() {
 		String selected = (String) myOutboundInterfaceCombo.getSelectedItem();
@@ -701,7 +729,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 					myOutboundInterfaceCombo.setSelectedIndex(myOutboundInterfaceComboModel.getSize() - 2);
 				}
 
-
 				public void cancel(OutboundConnection theArg) {
 					myOutboundInterfaceCombo.setSelectedIndex(0);
 				}
@@ -712,17 +739,16 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		if (myMessage != null) {
 			int selectedIndex = myOutboundInterfaceCombo.getSelectedIndex();
-			OutboundConnection connection = myController.getOutboundConnectionList().getConnections().get(selectedIndex);
+			OutboundConnection connection = myController.getOutboundConnectionList().getConnections()
+					.get(selectedIndex);
 			myMessage.setLastSendToInterfaceId(connection.getId());
 		}
 
 		mySendButton.setEnabled(true);
 	}
 
-
 	/**
-	 * @param theMessage
-	 *            the message to set
+	 * @param theMessage the message to set
 	 */
 	public void setMessage(Hl7V2MessageCollection theMessage) {
 		Validate.isTrue(myMessage == null);
@@ -734,9 +760,9 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		// Prepopulate the "send to interface" combo to the last value it had
 		if (StringUtils.isNotBlank(myMessage.getLastSendToInterfaceId())) {
 			for (int i = 0; i < myOutboundInterfaceComboModelShadow.size(); i++) {
-				if (myOutboundInterfaceComboModelShadow != null && myMessage != null &&	
-						myOutboundInterfaceComboModelShadow.get(i)!= null  &&
-						myOutboundInterfaceComboModelShadow.get(i).getId().equals(myMessage.getLastSendToInterfaceId())) {
+				if (myOutboundInterfaceComboModelShadow != null && myMessage != null
+						&& myOutboundInterfaceComboModelShadow.get(i) != null && myOutboundInterfaceComboModelShadow
+								.get(i).getId().equals(myMessage.getLastSendToInterfaceId())) {
 					myOutboundInterfaceCombo.setSelectedIndex(i);
 					break;
 				}
@@ -756,15 +782,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				myMessage.setEncoding(Hl7V2EncodingTypeEnum.XML);
 			}
 		});
-		
-		
+
 		myRdbtnTableView.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
 				removeHighlights();
 				myMessage.setEncoding(Hl7V2EncodingTypeEnum.TABLE_VIEW);
 			}
 		});
-
 
 		try {
 			myDisableCaretUpdateHandling = true;
@@ -858,7 +882,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	}
 
-
 	private void removeHighlights() {
 		Highlighter hilite = myMessageEditor.getHighlighter();
 		Highlighter.Highlight[] hilites = hilite.getHighlights();
@@ -866,7 +889,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			hilite.removeHighlight(hilites[i]);
 		}
 	}
-
 
 	// Removes all but the 2 most recent highlights - the last tag pair
 	// selected.
@@ -877,7 +899,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			hilite.removeHighlight(hilites[i]);
 		}
 	}
-
 
 	private void updateWindowTitle() {
 		StringBuilder b = new StringBuilder();
@@ -898,27 +919,24 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		setWindowTitle(b.toString());
 	}
 
-
 	private void updateEncodingButtons() {
 		switch (myMessage.getEncoding()) {
 		case TABLE_VIEW:
-				myRdbtnXml.setSelected(false);
-				myRdbtnEr7.setSelected(false);
-				myRdbtnTableView.setSelected(true);				
-				
-			case XML:
-				myRdbtnXml.setSelected(true);
-				myRdbtnEr7.setSelected(false);
-				myRdbtnTableView.setSelected(false);
-				break;
-			case ER_7:				
-				myRdbtnXml.setSelected(false);				
-				myRdbtnTableView.setSelected(false);	
-				myRdbtnEr7.setSelected(true);
+			myRdbtnXml.setSelected(false);
+			myRdbtnEr7.setSelected(false);
+			myRdbtnTableView.setSelected(true);
+
+		case XML:
+			myRdbtnXml.setSelected(true);
+			myRdbtnEr7.setSelected(false);
+			myRdbtnTableView.setSelected(false);
+			break;
+		case ER_7:
+			myRdbtnXml.setSelected(false);
+			myRdbtnTableView.setSelected(false);
+			myRdbtnEr7.setSelected(true);
 		}
 	}
-
-	
 
 	private void updateMessageEditor() {
 
@@ -931,21 +949,19 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 		if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
 			myMessageEditor.setContentType("text/xml");
-		} else if(myMessage.getEncoding() == Hl7V2EncodingTypeEnum.ER_7) {
+		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.ER_7) {
 			myMessageEditor.setContentType("text/er7");
 			sourceMessage = sourceMessage.replace('\r', '\n');
 		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.TABLE_VIEW) {
+
+			sourceMessage = ConvertMessageToHtml(sourceMessage.trim().replaceAll("((\r\n)|\r)|(\n)", "\n"), myMessage);
 			myMessageEditor.setContentType("text/html");
 			myMessageEditor.disable();
 		}
 
 		myMessageEditor.setText(sourceMessage);
-
 		myMessageEditor.getDocument().addDocumentListener(myDocumentListener);
-
 		final int verticalValue = Math.min(initialVerticalValue, vsb.getMaximum());
-		
-		
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -955,7 +971,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		});
 
 	}
-
 
 	private void updateOutboundConnectionsBox() {
 		int currentSelection = myOutboundInterfaceCombo.getSelectedIndex();
@@ -995,7 +1010,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		// private static final String APPLY_CONFORMANCE_PROFILE =
 		// "Apply Conformance Profile...";
 		private ArrayList<ProfileGroup> myProfileGroups;
-
 
 		public void update() {
 			myHandlingProfileComboboxChange = true;
@@ -1050,7 +1064,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		private static final String POPULATED = "Populated";
 		private static final String SUPPORTED = "Supported";
 
-
 		public ShowComboModel() {
 			addElement(POPULATED);
 			addElement(ALL);
@@ -1058,23 +1071,22 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			addElement(SUPPORTED);
 
 			switch (myMessage.getEditorShowMode()) {
-				case ALL:
-					setSelectedItem(ALL);
-					break;
-				case ERROR:
-					setSelectedItem(ERRORS);
-					break;
-				case POPULATED:
-					setSelectedItem(POPULATED);
-					break;
-				case SUPPORTED:
-					setSelectedItem(SUPPORTED);
-					break;
+			case ALL:
+				setSelectedItem(ALL);
+				break;
+			case ERROR:
+				setSelectedItem(ERRORS);
+				break;
+			case POPULATED:
+				setSelectedItem(POPULATED);
+				break;
+			case SUPPORTED:
+				setSelectedItem(SUPPORTED);
+				break;
 			}
 
 			myShowCombo.addActionListener(this);
 		}
-
 
 		public void actionPerformed(ActionEvent theE) {
 			String value = (String) myShowCombo.getSelectedItem();
@@ -1092,7 +1104,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		}
 	}
 
-
 	private void activateSendingActivityTabForConnection(OutboundConnection theConnection) {
 		mySendingActivityTable.setConnection(theConnection, false);
 		myTopTabBar.setSelectedComponent(mySendingActivityTable);
@@ -1101,88 +1112,125 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	public Frame getWindow() {
 		return myController.getWindow();
 	}
-	
-	private String ConvertMessageToHtml( String xml) {
-		
-		
-		
-		 StringBuilder html = new StringBuilder("<html><body><table align='center' " +
-			       "border='1' class='xmlTable'>\r\n");
-			    try
-			    {
-			    	Document document = convertStringToDocument(xml);
-			    	Element rootElement = document.getDocumentElement();
-			    	
-			    	NodeList nodes = rootElement.getChildNodes();
-					for (int i = 0; i < nodes.getLength(); i++) 					
-			        {
-						//String elementName = ;
-					Node node =	nodes.item(i);
-			            if (nodes.item(i).hasChildNodes())
-			            {
-			            	String elename = "";
-			                html.append("<tr>");
 
-			                elename = node.getNodeName();
+	private String ConvertMessageToHtml(String xml, Hl7V2MessageCollection theMessage) {
 
-			                if (nodes.item(i).hasAttributes())
-			                {
-			                	ArrayList<Element>  attribs = (ArrayList<Element>) node.getAttributes();
-			                	for (int j = 0; j < attribs.size(); j++) {
-			                		 elename = (elename 
-		                                        + ( "\n" 
-		                                        + (attribs.get(j).getTagName() + ("=" + attribs.get(j).getNodeValue()))));
-			                	}
-			                }
+		StringBuilder html = new StringBuilder(
+				"<html><body><table align='center' " + "border='1' class='xmlTable'>\r\n");
+		try {
 
-			                html.append("<td>" + elename + "</td>");
-			                html.append("<td>" + node.getNodeValue() + "</td>");
-			                html.append("</tr>");
-			            }
-			            else
-			            {
-			            	String elename = "";
-			                html.append("<tr>");
+			Message message = (Message) ((Hl7V2MessageXml) theMessage.getMessages().get(1)).getParsedMessage();
+			Map<String, List<Structure>> map = message.getAllStructure();
 
-			                elename = node.getNodeName();
+			Iterator<Entry<String, List<Structure>>> itr = map.entrySet().iterator();
 
-			                if (node.hasAttributes())
-			                {
-			                	ArrayList<Element>  attribs = (ArrayList<Element>) node.getAttributes();
-			                	for (int j = 0; j < attribs.size(); j++) {
-			                        elename += "\n" + attribs.get(j).getTagName() + "=" + attribs.get(j).getNodeValue();
-			                	}
-			                }
+			while (itr.hasNext()) {
+				Entry<String, List<Structure>> entry = itr.next();
+				// System.out.println("Key = " + entry.getKey() + ", Value = " +
+				// entry.getValue());
 
-			                html.append("<td>" + elename + "</td>");
-			                html.append("<td>" + ConvertMessageToHtml(node.toString()) + "</td>");
-			                html.append("</tr>");
-			            }
-			        }
+				if (entry.getValue().size() > 0) {
+					
+					for (Structure item : entry.getValue()) {
+						int index = 1;
+						
+						for (List<Type> types : ((AbstractSegment) item).getAllFields()) {
+							
+							for (Type type : types) {
+						//for (int i = 0; i < ((AbstractSegment) item).getAllFields().size(); i++) {
+						//	System.out.println(((AbstractSegment) item).getField(index)[i].getName());
+						//	System.out.println(((AbstractPrimitive) ((AbstractSegment) item).getField(index)[i]).getValue());
+							
+							
+								System.out.println(type.getName());
+								System.out.println(type.toString());
+							}
+							
+							index++;
+						}
+						
+					}
 
-			        html.append("</table>");
-			        html.append("</body></html>");
-			    }
-			    catch (Exception e)
-			    {
-			        return xml;
-			    }
-			    
-			    return html.toString();
+				}
+			}
+
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = dbf.newDocumentBuilder();
+
+			Document document = builder.parse(new InputSource(xml));
+
+			Element rootElement = document.getDocumentElement();
+
+			NodeList nodes = rootElement.getChildNodes();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				// String elementName = ;
+				Node node = nodes.item(i);
+				if (nodes.item(i).hasChildNodes()) {
+					String elename = "";
+					html.append("<tr>");
+
+					elename = node.getNodeName();
+
+					if (nodes.item(i).hasAttributes()) {
+						ArrayList<Element> attribs = (ArrayList<Element>) node.getAttributes();
+						for (int j = 0; j < attribs.size(); j++) {
+							elename = (elename
+									+ ("\n" + (attribs.get(j).getTagName() + ("=" + attribs.get(j).getNodeValue()))));
+						}
+					}
+
+					html.append("<td>" + elename + "</td>");
+					html.append("<td>" + node.getNodeValue() + "</td>");
+					html.append("</tr>");
+				} else {
+					String elename = "";
+					html.append("<tr>");
+
+					elename = node.getNodeName();
+
+					if (node.hasAttributes()) {
+						ArrayList<Element> attribs = (ArrayList<Element>) node.getAttributes();
+						for (int j = 0; j < attribs.size(); j++) {
+							elename += "\n" + attribs.get(j).getTagName() + "=" + attribs.get(j).getNodeValue();
+						}
+					}
+
+					html.append("<td>" + elename + "</td>");
+					html.append("<td>" + node.getNodeValue() + "</td>");
+					html.append("</tr>");
+				}
+			}
+
+			html.append("</table>");
+			html.append("</body></html>");
+		} catch (Exception e) {
+			return xml;
+		}
+
+		return html.toString();
 	}
-	
-	private Document convertStringToDocument(String xmlStr) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
-        DocumentBuilder builder;  
-        try  
-        {   
-        	builder = factory.newDocumentBuilder();  
-            Document doc = builder.parse(xmlStr); 
-            return doc;
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        } 
-        return null;
-    }
+
+	private GenericMessage convertStringToDocument(String xmlStr, Hl7V2MessageCollection theMessage) {
+		// DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+		try {
+			HapiContext context = new DefaultHapiContext();
+			context.setModelClassFactory(new GenericModelClassFactory());
+			GenericMessage message = (GenericMessage) context.getPipeParser().parse(xmlStr);
+
+			// optional, but recommended
+			// process XML securely, avoid attacks like XML External Entities (XXE)
+			// dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+			// DocumentBuilder builder = dbf.newDocumentBuilder();
+
+			// Document doc = builder.parse(new InputSource(new XMLString));
+
+			return message;
+
+		} catch (HL7Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

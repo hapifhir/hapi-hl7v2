@@ -135,6 +135,11 @@ public abstract class AbstractSegment extends AbstractStructure implements
 														// the user's
 														// perspective
 	}
+	
+	public List<List<Type>> getAllFields() throws HL7Exception {
+		
+		return fields;
+	}
 
 	/**
 	 * @see ca.uhn.hl7v2.model.Segment#isEmpty()

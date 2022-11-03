@@ -682,7 +682,8 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 				break;
 				
 			case TABLE_VIEW:
-				myParser.setXMLParserAsPrimary();
+				SetEncodingForTABLEVIEW(oldEncodingValue,theEncoding );
+				
 				break;
 			}
 
@@ -722,6 +723,15 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 			}
 
 			firePropertyChange(PROP_ENCODING, oldEncodingValue, myEncoding);
+		}
+	}
+	
+	private void SetEncodingForTABLEVIEW(Hl7V2EncodingTypeEnum oldEncodingValue, Hl7V2EncodingTypeEnum theEncoding) {
+		
+		if(oldEncodingValue == Hl7V2EncodingTypeEnum.XML || theEncoding == Hl7V2EncodingTypeEnum.XML ) {
+			myParser.setXMLParserAsPrimary();
+		}else {
+			myParser.setPipeParserAsPrimary();
 		}
 	}
 

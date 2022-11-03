@@ -33,6 +33,8 @@ import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.parser.Parser;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A static helper class that allows to obtain unmodifiable message wrappers, i.e. all modification to these wrappers
@@ -263,6 +265,12 @@ public final class Unmodifiable {
         public void parse(String string) {
             throw new UnsupportedOperationException("This segment is unmodifiable");
         }
+
+		@Override
+		public List<List<Type>> getAllFields() throws HL7Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     private static class UnmodifiableGroup<S extends Group> extends UnmodifiableStructure<S> implements Group {
@@ -329,6 +337,12 @@ public final class Unmodifiable {
         public String addNonstandardSegment(String name, int theIndex) {
             throw new UnsupportedOperationException("This group is unmodifiable");
         }
+
+		@Override
+		public Map<String, List<Structure>> getAllStructure() throws HL7Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     private static class UnmodifiableMessage extends UnmodifiableGroup<Message> implements Message {
