@@ -1130,107 +1130,44 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				// entry.getValue());
 
 				if (entry.getValue().size() > 0) {
+									
+					html.append("<tr>");
+					html.append("<td>" + entry.getKey() + "</td>");
 					
 					for (Structure item : entry.getValue()) {
-						int index = 1;
+						
 						
 						for (List<Type> types : ((AbstractSegment) item).getAllFields()) {
-							
+							//String	elename = ("\n" + (((AbstractSegment) item).getName() + ("=" + ((AbstractSegment) item).getName())));
 							for (Type type : types) {
-						//for (int i = 0; i < ((AbstractSegment) item).getAllFields().size(); i++) {
-						//	System.out.println(((AbstractSegment) item).getField(index)[i].getName());
-						//	System.out.println(((AbstractPrimitive) ((AbstractSegment) item).getField(index)[i]).getValue());
-							
-							
+								//String	elename = ("\n" + (type.getName() + ("=" + type.toString())));
+								String	elename = ("\n" + (type.getName()));
 								System.out.println(type.getName());
 								System.out.println(type.toString());
+								
+								html.append("<td>" + elename + "</td>");
+								html.append("<td>" + type.toString() + "</td>");
+								html.append("</tr>");
 							}
 							
-							index++;
+							
 						}
 						
 					}
+					html.append("</tr>");
 
 				}
 			}
-
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = dbf.newDocumentBuilder();
-
-			Document document = builder.parse(new InputSource(xml));
-
-			Element rootElement = document.getDocumentElement();
-
-			NodeList nodes = rootElement.getChildNodes();
-			for (int i = 0; i < nodes.getLength(); i++) {
-				// String elementName = ;
-				Node node = nodes.item(i);
-				if (nodes.item(i).hasChildNodes()) {
-					String elename = "";
-					html.append("<tr>");
-
-					elename = node.getNodeName();
-
-					if (nodes.item(i).hasAttributes()) {
-						ArrayList<Element> attribs = (ArrayList<Element>) node.getAttributes();
-						for (int j = 0; j < attribs.size(); j++) {
-							elename = (elename
-									+ ("\n" + (attribs.get(j).getTagName() + ("=" + attribs.get(j).getNodeValue()))));
-						}
-					}
-
-					html.append("<td>" + elename + "</td>");
-					html.append("<td>" + node.getNodeValue() + "</td>");
-					html.append("</tr>");
-				} else {
-					String elename = "";
-					html.append("<tr>");
-
-					elename = node.getNodeName();
-
-					if (node.hasAttributes()) {
-						ArrayList<Element> attribs = (ArrayList<Element>) node.getAttributes();
-						for (int j = 0; j < attribs.size(); j++) {
-							elename += "\n" + attribs.get(j).getTagName() + "=" + attribs.get(j).getNodeValue();
-						}
-					}
-
-					html.append("<td>" + elename + "</td>");
-					html.append("<td>" + node.getNodeValue() + "</td>");
-					html.append("</tr>");
-				}
-			}
+		
 
 			html.append("</table>");
 			html.append("</body></html>");
 		} catch (Exception e) {
 			return xml;
 		}
-
+		System.out.println(html.toString());
 		return html.toString();
 	}
-
-	private GenericMessage convertStringToDocument(String xmlStr, Hl7V2MessageCollection theMessage) {
-		// DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-		try {
-			HapiContext context = new DefaultHapiContext();
-			context.setModelClassFactory(new GenericModelClassFactory());
-			GenericMessage message = (GenericMessage) context.getPipeParser().parse(xmlStr);
-
-			// optional, but recommended
-			// process XML securely, avoid attacks like XML External Entities (XXE)
-			// dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-			// DocumentBuilder builder = dbf.newDocumentBuilder();
-
-			// Document doc = builder.parse(new InputSource(new XMLString));
-
-			return message;
-
-		} catch (HL7Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
 
 }
