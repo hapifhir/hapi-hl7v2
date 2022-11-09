@@ -454,16 +454,17 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				}
 
 				Type[] reps = messParent.getField(i);
+				
 				boolean repeating = messParent.getMaxCardinality(i) != 1;
 				boolean required = messParent.isRequired(i);
 				String name = i <= names.length ? names[i - 1] : "Unknown";
-
+			
 				for (int j = 0; j < reps.length; j++) {
 
 					// String field = PipeParser.encode(reps[j], encChars);
 
 					Type type = reps[j];
-					String parentName = messParent.getName() + "-" + (i);
+					String parentName = messParent.getName() + "-" + (i) + " " + name ;
 
 					StringBuilder b = new StringBuilder();
 					b.append(theTerserPath);

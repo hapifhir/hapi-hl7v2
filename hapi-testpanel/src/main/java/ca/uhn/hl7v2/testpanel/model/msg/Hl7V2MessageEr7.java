@@ -45,6 +45,7 @@ import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.EncodingCharacters;
+import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.testpanel.util.CharCountingStringIteratorDecorator;
 import ca.uhn.hl7v2.testpanel.util.Range;
 import ca.uhn.hl7v2.testpanel.util.SegmentAndComponentPath;
@@ -73,6 +74,19 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 		switch (theEncoding) {
 		case ER_7:
 			return this;
+			//comment to delete
+		case TABLE_VIEW:
+			Hl7V2MessageEr7 retVal1 = new Hl7V2MessageEr7();
+			try {
+				PipeParser pipeParser = new PipeParser();
+				String encode = pipeParser.encode(getParsedMessage());
+				retVal1.setSourceMessage(encode);
+			} catch (PropertyVetoException e) {
+				ourLog.error("Failed to create XML message", e);
+			} catch (HL7Exception e) {
+				ourLog.error("Failed to create XML message", e);
+			}
+			return retVal1; 
 		case XML:
 		default:
 			Hl7V2MessageXml retVal = new Hl7V2MessageXml();

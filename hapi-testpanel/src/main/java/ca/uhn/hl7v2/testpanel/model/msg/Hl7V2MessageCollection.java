@@ -682,8 +682,9 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 				break;
 				
 			case TABLE_VIEW:
-				SetEncodingForTABLEVIEW(oldEncodingValue,theEncoding );
-				
+				//comment to delete
+				//SetEncodingForTABLEVIEW(oldEncodingValue,theEncoding );
+				myParser.setPipeParserAsPrimary();
 				break;
 			}
 

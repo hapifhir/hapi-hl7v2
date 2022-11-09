@@ -49,6 +49,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -953,12 +954,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			myMessageEditor.setContentType("text/er7");
 			sourceMessage = sourceMessage.replace('\r', '\n');
 		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.TABLE_VIEW) {
-
+			
 			sourceMessage = ConvertMessageToHtml(sourceMessage.trim().replaceAll("((\r\n)|\r)|(\n)", "\n"), myMessage);
+
 			myMessageEditor.setContentType("text/html");
 			myMessageEditor.disable();
 		}
-
 		myMessageEditor.setText(sourceMessage);
 		myMessageEditor.getDocument().addDocumentListener(myDocumentListener);
 		final int verticalValue = Math.min(initialVerticalValue, vsb.getMaximum());
@@ -971,6 +972,8 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		});
 
 	}
+	
+
 
 	private void updateOutboundConnectionsBox() {
 		int currentSelection = myOutboundInterfaceCombo.getSelectedIndex();
@@ -1115,46 +1118,48 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 
 	private String ConvertMessageToHtml(String xml, Hl7V2MessageCollection theMessage) {
 
+		
 		StringBuilder html = new StringBuilder(
 				"<html><body><table align='center' " + "border='1' class='xmlTable'>\r\n");
 		try {
 
-			Message message = (Message) ((Hl7V2MessageXml) theMessage.getMessages().get(1)).getParsedMessage();
+			Message message = (Message) ((Hl7V2MessageEr7) theMessage.getMessages().get(0)).getParsedMessage();
 			Map<String, List<Structure>> map = message.getAllStructure();
 
 			Iterator<Entry<String, List<Structure>>> itr = map.entrySet().iterator();
 
 			while (itr.hasNext()) {
 				Entry<String, List<Structure>> entry = itr.next();
-				// System.out.println("Key = " + entry.getKey() + ", Value = " +
-				// entry.getValue());
 
 				if (entry.getValue().size() > 0) {
-									
-					html.append("<tr>");
-					html.append("<td>" + entry.getKey() + "</td>");
 					
 					for (Structure item : entry.getValue()) {
+						int i=1;				
+						html.append("<tr>");
+						String segName=entry.getKey();
+						html.append("<td>" + entry.getKey() + "</td>");
+						html.append("<tr>");
 						
 						
 						for (List<Type> types : ((AbstractSegment) item).getAllFields()) {
 							//String	elename = ("\n" + (((AbstractSegment) item).getName() + ("=" + ((AbstractSegment) item).getName())));
+							
+							
 							for (Type type : types) {
-								//String	elename = ("\n" + (type.getName() + ("=" + type.toString())));
 								String	elename = ("\n" + (type.getName()));
 								System.out.println(type.getName());
 								System.out.println(type.toString());
-								
-								html.append("<td>" + elename + "</td>");
+								html.append("<tr>");
+								html.append("<td>" + segName +"-" + i + "</td>");
 								html.append("<td>" + type.toString() + "</td>");
 								html.append("</tr>");
 							}
-							
+							i++;
 							
 						}
 						
 					}
-					html.append("</tr>");
+
 
 				}
 			}
@@ -1169,5 +1174,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		return html.toString();
 	}
 	
+	
+
 
 }
