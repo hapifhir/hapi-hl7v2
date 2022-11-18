@@ -39,7 +39,7 @@
 		        and a corresponding public key in a truststore. 			        
 		    </p>
 		    <p>
-		        <a href="generating_keys.html">See here</a> for information on
+		        <a href="generating_selfsigned_keys.html">See here</a> for information on
 		        creating these stores.
 		    </p>
 			    
