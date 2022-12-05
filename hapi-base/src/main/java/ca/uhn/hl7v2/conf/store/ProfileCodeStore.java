@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -47,7 +50,9 @@ public class ProfileCodeStore extends AbstractCodeStore {
             if (uri == null) {
                 throw new ProfileException("The input url parameter cannot be null");
             }
-            XMLReader reader = XMLReaderFactory.createXMLReader();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            SAXParser parser = parserFactory.newSAXParser();
+            XMLReader reader = parser.getXMLReader();
             reader.setContentHandler(new ProfileCodeStoreHandler());
             reader.parse(uri);
         } catch (IOException e) {

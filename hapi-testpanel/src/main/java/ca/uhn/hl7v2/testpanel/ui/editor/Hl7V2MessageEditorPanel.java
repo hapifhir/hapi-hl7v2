@@ -95,10 +95,13 @@ import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Location;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.conf.ProfileException;
+import ca.uhn.hl7v2.model.AbstractGroup;
 import ca.uhn.hl7v2.model.AbstractPrimitive;
 import ca.uhn.hl7v2.model.AbstractSegment;
+import ca.uhn.hl7v2.model.AbstractStructure;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.parser.DefaultXMLParser;
@@ -151,6 +154,18 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * @author Marcia Carneiro
+ *
+ */
+/**
+ * @author Marcia Carneiro
+ *
+ */
+/**
+ * @author Marcia Carneiro
+ *
+ */
 public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyable {
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
 	private static final String NO_CONNECTIONS = "No Connections";
@@ -1119,62 +1134,273 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 	private String ConvertMessageToHtml(String xml, Hl7V2MessageCollection theMessage) {
 
 		
-		StringBuilder html = new StringBuilder(
-				"<html><body><table align='center' " + "border='1' class='xmlTable'>\r\n");
+		StringBuilder html = new StringBuilder("<html><body>\r\n");
 		try {
-
-			Message message = (Message) ((Hl7V2MessageEr7) theMessage.getMessages().get(0)).getParsedMessage();
+			int index=getFirstMessage(theMessage);
+			Message message = (Message) ((Hl7V2MessageEr7) theMessage.getMessages().get(index)).getParsedMessage();
 			Map<String, List<Structure>> map = message.getAllStructure();
+			String version=message.getMessage().getVersion();
 
 			Iterator<Entry<String, List<Structure>>> itr = map.entrySet().iterator();
-
+			List<Segment> segs=new ArrayList<>();
 			while (itr.hasNext()) {
 				Entry<String, List<Structure>> entry = itr.next();
 
 				if (entry.getValue().size() > 0) {
 					
 					for (Structure item : entry.getValue()) {
-						int i=1;				
-						html.append("<tr>");
-						String segName=entry.getKey();
-						html.append("<td>" + entry.getKey() + "</td>");
-						html.append("<tr>");
-						
-						
-						for (List<Type> types : ((AbstractSegment) item).getAllFields()) {
-							//String	elename = ("\n" + (((AbstractSegment) item).getName() + ("=" + ((AbstractSegment) item).getName())));
-							
-							
-							for (Type type : types) {
-								String	elename = ("\n" + (type.getName()));
-								System.out.println(type.getName());
-								System.out.println(type.toString());
-								html.append("<tr>");
-								html.append("<td>" + segName +"-" + i + "</td>");
-								html.append("<td>" + type.toString() + "</td>");
-								html.append("</tr>");
-							}
-							i++;
-							
-						}
-						
+						String segName;
+						Structure subItem= item;
+						getSegments(item, segs);
+		
 					}
-
 
 				}
 			}
-		
+			
+			//Create Table header
+			html.append("<table align='left' " + "border: 1px solid"+" class='headerTable' border-collapse: collapse>\n" + "<caption> <b>Header</b> </caption>"+"<tr>\n"+ "<th>Field Name</th>\n" + "<th>Value</th>\n" + " </tr>\n");
+		for(Segment subItem: segs) {
+			String name=subItem.getName();
 
-			html.append("</table>");
+			if(name.equals("MSH") ) {
+				 headerTable(html, subItem.getName(),version, subItem);
+				}
+		}
+
+			html.append("</table>\n"+ "<br>");//table header
+			//Table about patient
+			html.append("<table align='left' " + "border: 1px solid"+" class='patTable'  border-collapse: collapse >\n" + "<caption> <b> Patient </b> </caption>"+"<tr>\n"+ "<th>Field Name</th>\n" + "<th>Value</th>\n" + " </tr>\n" );
+			for(Segment subItem: segs) {
+				String name=subItem.getName();
+
+				if(name.equals("PID") ) {
+					patientTable(html, subItem.getName(),version, subItem);
+					}
+			}
+			html.append("</table>\n"+ "<br>");//table patient
+			
+			//Table about examination
+			html.append("<table align='left' " + "border: 1px solid"+" class='examTable' border-collapse: collapse>\n" + "<caption> <b>Examination </b> </caption>"+"<tr>\n"+ "<th>Field Name</th>\n" + "<th>Value</th>\n" + " </tr>\n");
+			for(Segment subItem: segs) {
+				String name=subItem.getName();
+	
+				if(name.equals("OBR") || name.equals("ZDS") ||name.equals("ORC") || name.equals("ZEI")) {
+					examTable(html, subItem.getName(),version, subItem);
+					}
+			}
+
+			html.append("</table>\n"+ "<br>");//table request
+			
+			//Create Table request
+			html.append("<table align='left' " + "border: 1px solid"+" class='reqTable' border-collapse: collapse>\n" + "<caption> <b>Request</b> </caption>"+"<tr>\n"+ "<th>Field Name</th>\n" + "<th>Value</th>\n" + " </tr>\n");
+		for(Segment subItem: segs) {
+			String name=subItem.getName();
+
+			if(name.equals("OBR") || name.equals("OBX") ||name.equals("ORC") || name.equals("PV1")) {
+				requestTable(html, subItem.getName(),version, subItem);
+				}
+		}
+
+			html.append("</table>\n"+ "<br>");//table request
+			
+			
 			html.append("</body></html>");
 		} catch (Exception e) {
 			return xml;
 		}
-		System.out.println(html.toString());
+
 		return html.toString();
+	}
+
+	
+	void getSegments(Structure group, List<Segment> segs) throws HL7Exception {
+		
+		if(group instanceof Segment) {
+			segs.add((Segment)group);
+
+		}
+		else {
+			AbstractGroup absgroup=(AbstractGroup)group;
+			String[] names=absgroup.getNames();
+
+			for(String name : names) {
+					for(Structure elem : absgroup.getAll(name)) {
+						getSegments(elem, segs);
+					}
+			}
+		}
+		
+		
+	}
+	
+	int getFirstMessage(Hl7V2MessageCollection theMessage) {
+		int index=0;
+		String myClass;
+		
+	for(Range msg : theMessage.getMessageRanges()) {
+		
+		myClass=theMessage.getMessages().get(index).getParsedMessage().getClass().toString();
+		if(myClass.contains("ca.uhn.hl7v2.model."))
+			return index;
+		else
+			index++;
+		
+	}
+				
+		return index;
 	}
 	
 	
+	
+ /**	
+  * Creates html table with some rows of message HL7 fields associated with request/order
+  * @param html
+  * @param name of the segment
+  * @param HL7 message version 
+  * @param Structure (segment)
+  * @return html StringBuilder
+  * @throws HL7Exception
+  */
+	private  StringBuilder requestTable(StringBuilder html, String segName, String version, Structure subItem) throws HL7Exception {
 
+		AbstractSegment seg = (AbstractSegment) subItem;
+		int[] val= {};
+		List<List<Type>> fields=seg.getAllFields();
+		String[] fieldNames=seg.getNames();
+		int[] obr= {3,13,16,5,31};
+		int[] obx= {2,5,7,16,20};
+		int[] orc= {12};
+		int[] pv1= {8};
 
+	
+		if(segName.equals("OBR"))
+			val=obr;
+		if(segName.equals("OBX"))
+			val=obx;
+		if(segName.equals("ORC"))
+			val=orc;
+		if(segName.equals("PV1"))
+			val=pv1;
+		
+			for(int i : val) {		
+				if(i <= fieldNames.length && !fields.get(i-1).isEmpty()) {
+
+					html.append("<tr border:1px solid>");
+					html.append("<td border:1px solid>" + fieldNames[i-1] + "</td>");
+					html.append("<td border:1px solid>" + fields.get(i-1).toString() + "</td>"); //valor do campo
+					html.append("</tr>\n"); 
+					
+				}
+			}
+
+		return html;
+	}
+	
+	/**	
+	  * Creates html table with some rows of message HL7 fields associated with patient
+	  * @param html
+	  * @param name of the segment
+	  * @param HL7 message version 
+	  * @param Structure (segment)
+	  * @return html StringBuilder
+	  * @throws HL7Exception
+	  */
+	private  StringBuilder patientTable(StringBuilder html, String segName, String version, Structure subItem) throws HL7Exception {
+
+		AbstractSegment seg = (AbstractSegment) subItem;
+		List<List<Type>> fields=seg.getAllFields();
+		String[] fieldNames=seg.getNames();
+		int[] pid= {2,5,7,8,29,30};
+		
+		
+			for(int i : pid) {		
+				if(i <= fieldNames.length && !fields.get(i-1).isEmpty()) {
+
+					html.append("<tr border:1px solid black>");
+					html.append("<td border:1px solid black>" + fieldNames[i-1] + "</td>");
+					html.append("<td border:1px solid black>" + fields.get(i-1).toString() + "</td>"); //valor do campo
+					html.append("</tr>"); 
+				
+				}
+			}
+
+		return html;
+	}
+	
+	/**	
+	  * Creates html table with some rows of message HL7 fields associated with examination
+	  * @param html
+	  * @param name of the segment
+	  * @param HL7 message version 
+	  * @param Structure (segment)
+	  * @return html StringBuilder
+	  * @throws HL7Exception
+	  */
+	private  StringBuilder examTable(StringBuilder html, String segName, String version, Structure subItem) throws HL7Exception {
+
+		int[] val= {};
+		AbstractSegment seg = (AbstractSegment) subItem;
+		List<List<Type>> fields=seg.getAllFields();
+		String[] fieldNames=seg.getNames();
+		int[] obr= {19,4,21,27,20,32,24,15,28};
+		int[] zds= {1};
+		int[] orc= {5,};
+		int[] zei= {7,8};
+
+	
+		if(segName.equals("OBR"))
+			val=obr;
+		if(segName.equals("ZEI"))
+			val=zei;
+		if(segName.equals("ORC"))
+			val=orc;
+		if(segName.equals("ZDS"))
+			val=zds;
+		
+		
+			for(int i : val) {		
+				if(i <= fieldNames.length && !fields.get(i-1).isEmpty()) {
+
+					html.append("<tr border:1px solid black>");
+					html.append("<td border:1px solid black>" + fieldNames[i-1] + "</td>");
+					html.append("<td border:1px solid black>" + fields.get(i-1).toString() + "</td>"); //valor do campo
+					html.append("</tr>"); 
+				
+				}
+			}
+
+		return html;
+	}
+	
+	/**	
+	  * Creates html table with some rows of message HL7 fields associated with header 
+	  * @param html
+	  * @param name of the segment
+	  * @param HL7 message version 
+	  * @param Structure (segment)
+	  * @return html StringBuilder
+	  * @throws HL7Exception
+	  */
+	private  StringBuilder headerTable(StringBuilder html, String segName, String version, Structure subItem) throws HL7Exception {
+
+		AbstractSegment seg = (AbstractSegment) subItem;
+		List<List<Type>> fields=seg.getAllFields();
+		String[] fieldNames=seg.getNames();
+		int[] msh= {3,4,5,6,7,9,10,12};
+		
+		
+			for(int i : msh) {		
+				if(i <= fieldNames.length && !fields.get(i-1).isEmpty()) {
+
+					html.append("<tr border:1px solid black>");
+					html.append("<td border:1px solid black>" + fieldNames[i-1] + "</td>");
+					html.append("<td border:1px solid black>" + fields.get(i-1).toString() + "</td>"); //valor do campo
+					html.append("</tr>"); 
+				
+				}
+			}
+
+		return html;
+	}
 }

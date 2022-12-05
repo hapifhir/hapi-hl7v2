@@ -44,12 +44,12 @@ public class ConformanceComposite extends AbstractType implements Composite, Con
 
 	private List<Type> myChildren = new ArrayList<Type>();
 	private List<String> myName = new ArrayList<String>();
-	private AbstractComponent myConfDefinition;
+	private AbstractComponent<?> myConfDefinition;
 
 	/**
 	 * Constructor
 	 */
-	public ConformanceComposite(ConformanceMessage theMessage, AbstractComponent theConfDefinition) {
+	public ConformanceComposite(ConformanceMessage theMessage, AbstractComponent<?> theConfDefinition) {
 		super(theMessage);
 		
 		myConfDefinition = theConfDefinition;
@@ -58,7 +58,7 @@ public class ConformanceComposite extends AbstractType implements Composite, Con
 	/**
 	 * @return the confDefinition
 	 */
-	public AbstractComponent getConfDefinition() {
+	public AbstractComponent<?> getConfDefinition() {
 		return myConfDefinition;
 	}
 

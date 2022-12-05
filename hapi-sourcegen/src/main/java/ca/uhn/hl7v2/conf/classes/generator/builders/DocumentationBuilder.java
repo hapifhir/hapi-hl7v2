@@ -241,7 +241,7 @@ public final class DocumentationBuilder {
 	 */
 	public void decoratePrimitive(
 		GeneratedPrimitive genClass,
-		AbstractComponent ac) {
+		AbstractComponent<?> ac) {
 		genClass.addClassComment(
 			"This represents a constrained "
 				+ ac.getName()

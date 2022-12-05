@@ -145,7 +145,11 @@ public class ConformanceEditorPanel {
 
 	private void addTable() {
 		Object selectedObject = getSelectedFileOrTable();
-
+//comment to delete
+		TableFile test = new TableFile();
+		System.out.println("test file to test" + test.toString());
+		
+		
 		TableFile file;
 		if (selectedObject instanceof TableFile) {
 			file = (TableFile) selectedObject;
@@ -759,7 +763,7 @@ public class ConformanceEditorPanel {
 		myTableFilesTreeModel.nodeStructureChanged(myTableFilesTreeRoot);
 	}
 
-	private void updateProfileTree(Object theSelectedObject) {
+	private void updateProfileTree(Object theSelectedObject) {	
 
 		List<ProfileGroup> profileFiles = myController.getProfileFileList().getProfiles();
 		int row = 0;
