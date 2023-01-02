@@ -74,7 +74,6 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 		switch (theEncoding) {
 		case ER_7:
 			return this;
-			//comment to delete
 		case TABLE_VIEW:
 			Hl7V2MessageEr7 retVal1 = new Hl7V2MessageEr7();
 			try {
@@ -82,9 +81,9 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 				String encode = pipeParser.encode(getParsedMessage());
 				retVal1.setSourceMessage(encode);
 			} catch (PropertyVetoException e) {
-				ourLog.error("Failed to create XML message", e);
+				ourLog.error("Failed to create Table view", e);
 			} catch (HL7Exception e) {
-				ourLog.error("Failed to create XML message", e);
+				ourLog.error("Failed to create Table view", e);
 			}
 			return retVal1; 
 		case XML:

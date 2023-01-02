@@ -42,6 +42,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
@@ -58,6 +60,7 @@ import javax.swing.table.TableModel;
 import javax.swing.tree.AbstractLayoutCache;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -259,6 +262,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		if (myMessages != null) {
 			try {
 				addChildren(myMessages.getMessages(), myTop, "");
+
 			} catch (InterruptedException e) {
 				ourLog.info("Interrupted during an update loop, going to schedule another pass");
 				myUpdaterThread.scheduleUpdate();
@@ -454,7 +458,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 				}
 
 				Type[] reps = messParent.getField(i);
-				
+
 				boolean repeating = messParent.getMaxCardinality(i) != 1;
 				boolean required = messParent.isRequired(i);
 				String name = i <= names.length ? names[i - 1] : "Unknown";
@@ -791,7 +795,15 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		} else if (lead instanceof TreeNodeType) {
 			TreeNodeType type = (TreeNodeType) lead;
-			myMessages.setHighlitedRangeBasedOnField(type.getSegmentAndComponentPath());
+			//comment to delete
+			Pattern p = Pattern.compile(".*\\((.*)\\).*");
+			Matcher m = p.matcher(type.getTerserPath());
+			if(m.find()) {
+				SegmentAndComponentPath typeLeaf= new SegmentAndComponentPath(type.mySegment, type.myComponentPath, Integer.parseInt(m.group(1)));
+				myMessages.setHighlitedRangeBasedOnField(typeLeaf);
+			}else {
+				myMessages.setHighlitedRangeBasedOnField(type.getSegmentAndComponentPath());
+			}
 		} else {
 			myMessages.clearHighlight();
 		}
@@ -1144,6 +1156,7 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		 * @return the errorDescription
 		 */
 		public String getErrorDescription() {
+			
 			if (myErrorDescription == null && myValidationExceptions.size() > 0) {
 				StringBuilder b = new StringBuilder();
 				b.append("<html><ul>");
@@ -1321,21 +1334,58 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		}
 
 		public final void validate() throws InterruptedException, InvocationTargetException {
-			for (int i = 0; i < getChildCount(); i++) {
-				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
 
+			for (int i = 0; i < getChildCount(); i++) {
+				//comment to delete
+				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
 				if (next.isHasContent()) {
 					next.validate();
 				}
 
 				ShowEnum showMode = myMessages.getEditorShowMode();
-				if ((next.getErrorDescription() == null && showMode == ShowEnum.ERROR) || (next.isHasContent() == false && showMode == ShowEnum.POPULATED) || (next.isSupported() == false && next.getErrorDescription() == null && showMode == ShowEnum.SUPPORTED)) {
+
+				if ((next.getErrorDescription() == null && showMode == ShowEnum.ERROR )) {
+					final int index = i;
+					//comment to delete
+					boolean isMSG=false;
+					if(next.toString() != null) {
+						if(next.toString().contains("Hl7V2Message"))
+							isMSG=true;
+						
+					}
+					if( (next.getChildCount()==0 || (next.getClass().toString().contains("Primitive")) ||next.isHasContent()==false) && isMSG== false)
+						i--;
+					//else
+					//	i++;
+						//if((next.toString().contains("segment")))
+							
+
+					EventQueue.invokeAndWait(new Runnable() {
+
+						public void run() {
+							boolean isMSG=false;
+							if(next.toString() != null) {
+								if(next.toString().contains("Hl7V2Message"))
+									isMSG=true;
+								
+							}
+
+							if( (next.getChildCount()==0 || (next.getClass().toString().contains("Primitive")) ||next.isHasContent()==false) && isMSG== false) {
+								remove(index);
+							}
+						}
+					} );
+
+					continue;
+				}
+				
+				if((next.isHasContent() == false && showMode == ShowEnum.POPULATED) || (next.isSupported() == false && next.getErrorDescription() == null && showMode == ShowEnum.SUPPORTED)) {
 					final int index = i;
 					EventQueue.invokeAndWait(new Runnable() {
 						public void run() {
-							remove(index);
+								remove(index);
 						}
-					});
+					} );
 					i--;
 					continue;
 				}
@@ -1630,7 +1680,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			Primitive primitive = getPrimitive();
 			if (myMessages != null) {
 				if (myMessages.getRuntimeProfile() != null) {
-
 					// If we're using a conformance profile, also
 					// use datatype validation as well
 					String version = primitive.getMessage().getVersion();
@@ -1650,7 +1699,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					for (PrimitiveTypeRule primitiveTypeRule : rules) {
 						boolean test = primitiveTypeRule.test(primitive.getValue());
 						if (!test) {
-							// setErrorDescription(primitiveTypeRule.getDescription());
 							addValidationExceptions(new HL7Exception(primitiveTypeRule.getDescription()));
 						}
 					}
