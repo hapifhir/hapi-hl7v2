@@ -208,9 +208,10 @@ public class Controller {
 				col.setEncoding(Hl7V2EncodingTypeEnum.XML);
 				msg = new Hl7V2MessageXml();
 				msg.setSourceMessage(p.encode(message));
-			}else {
+			}			
+			else {
 				p.setPipeParserAsPrimary();
-				col.setEncoding(Hl7V2EncodingTypeEnum.TABLE_VIEW);
+				col.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
 				msg = new Hl7V2MessageEr7();
 				msg.setSourceMessage(p.encode(message));
 			}

@@ -784,8 +784,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 				}
 			}
 		}
-
-		updateEncodingButtons();
+		
 		myRdbtnEr7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent theE) {
 				removeHighlights();
@@ -799,12 +798,14 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 			}
 		});
 
-		myRdbtnTableView.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent theE) {
-				removeHighlights();
-				myMessage.setEncoding(Hl7V2EncodingTypeEnum.TABLE_VIEW);
-			}
-		});
+		
+		  myRdbtnTableView.addActionListener(new ActionListener() { 
+			 public void actionPerformed(ActionEvent theE) { 
+				 removeHighlights();
+				 myMessage.setEncoding(Hl7V2EncodingTypeEnum.ER_7); 
+				 } 
+			 });
+		 
 
 		try {
 			myDisableCaretUpdateHandling = true;
@@ -935,24 +936,6 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		setWindowTitle(b.toString());
 	}
 
-	private void updateEncodingButtons() {
-		switch (myMessage.getEncoding()) {
-		case TABLE_VIEW:
-			myRdbtnXml.setSelected(false);
-			myRdbtnEr7.setSelected(false);
-			myRdbtnTableView.setSelected(true);
-
-		case XML:
-			myRdbtnXml.setSelected(true);
-			myRdbtnEr7.setSelected(false);
-			myRdbtnTableView.setSelected(false);
-			break;
-		case ER_7:
-			myRdbtnXml.setSelected(false);
-			myRdbtnTableView.setSelected(false);
-			myRdbtnEr7.setSelected(true);
-		}
-	}
 
 	private void updateMessageEditor() {
 
@@ -960,16 +943,18 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		int initialVerticalValue = vsb.getValue();
 
 		myMessageEditor.getDocument().removeDocumentListener(myDocumentListener);
-
+		
 		String sourceMessage = myMessage.getSourceMessage();
+		
 
 		if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.XML) {
 			myMessageEditor.setContentType("text/xml");
 		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.ER_7) {
 			myMessageEditor.setContentType("text/er7");
 			sourceMessage = sourceMessage.replace('\r', '\n');
-		} else if (myMessage.getEncoding() == Hl7V2EncodingTypeEnum.TABLE_VIEW) {
-			
+		} 
+		
+		 if (myRdbtnTableView.isSelected()) {			
 			sourceMessage = ConvertMessageToHtml(sourceMessage.trim().replaceAll("((\r\n)|\r)|(\n)", "\n"), myMessage);
 
 			myMessageEditor.setContentType("text/html");
@@ -977,11 +962,13 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		}
 		myMessageEditor.setText(sourceMessage);
 		myMessageEditor.getDocument().addDocumentListener(myDocumentListener);
+		myMessageEditor.repaint();
 		final int verticalValue = Math.min(initialVerticalValue, vsb.getMaximum());
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// myMessageEditor.setFont(Prefs.getHl7EditorFont());
+				myMessageEditor.repaint();
 				vsb.setValue(verticalValue);
 			}
 		});

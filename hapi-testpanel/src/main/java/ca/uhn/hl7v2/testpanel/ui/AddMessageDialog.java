@@ -240,13 +240,12 @@ public class AddMessageDialog extends JDialog {
 							String type = fullTypeBits[0];
 							String trigger = fullTypeBits[1];
 							//comment to delete
-							Hl7V2EncodingTypeEnum encoding;
+							Hl7V2EncodingTypeEnum encoding = Hl7V2EncodingTypeEnum.ER_7;
 							if(myXmLRadio.isSelected())
 								encoding= Hl7V2EncodingTypeEnum.XML;
 							if(myEr7Radio.isSelected())
 								encoding=Hl7V2EncodingTypeEnum.ER_7 ;
-							else
-								encoding=Hl7V2EncodingTypeEnum.TABLE_VIEW;
+							
 							
 							myController.addMessage(version, type, trigger, structure, encoding);
 						} finally {

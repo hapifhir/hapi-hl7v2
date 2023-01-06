@@ -73,9 +73,20 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 	public Hl7V2MessageBase asEncoding(Hl7V2EncodingTypeEnum theEncoding) {
 		switch (theEncoding) {
 		case ER_7:
-			return this;
-			//comment to delete
-		case TABLE_VIEW:
+			return this;			
+		case XML:		
+			Hl7V2MessageXml retVal = new Hl7V2MessageXml();
+			try {
+				retVal.setSourceMessage(new DefaultXMLParser().encode(getParsedMessage()));
+			} catch (PropertyVetoException e) {
+				ourLog.error("Failed to create XML message", e);
+			} catch (HL7Exception e) {
+				ourLog.error("Failed to create XML message", e);
+			}
+
+			return retVal;
+			
+		default:
 			Hl7V2MessageEr7 retVal1 = new Hl7V2MessageEr7();
 			try {
 				PipeParser pipeParser = new PipeParser();
@@ -87,18 +98,6 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 				ourLog.error("Failed to create XML message", e);
 			}
 			return retVal1; 
-		case XML:
-		default:
-			Hl7V2MessageXml retVal = new Hl7V2MessageXml();
-			try {
-				retVal.setSourceMessage(new DefaultXMLParser().encode(getParsedMessage()));
-			} catch (PropertyVetoException e) {
-				ourLog.error("Failed to create XML message", e);
-			} catch (HL7Exception e) {
-				ourLog.error("Failed to create XML message", e);
-			}
-
-			return retVal;
 		}
 
 	}
