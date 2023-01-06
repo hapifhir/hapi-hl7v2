@@ -195,7 +195,6 @@ public class Controller {
 			Class<? extends Message> messageClass = mcf.getMessageClass(theStructure, theVersion, true);
 			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.getDeclaredConstructor().newInstance();
 			message.initQuickstart(theType, theTrigger, "T");
-//comment to delete
 			GenericParser p = new GenericParser();
 			Hl7V2MessageBase msg;
 			if (theEncoding == Hl7V2EncodingTypeEnum.ER_7) {

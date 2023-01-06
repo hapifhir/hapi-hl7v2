@@ -98,6 +98,7 @@ public class Hl7V2MessageEr7 extends Hl7V2MessageBase {
 				ourLog.error("Failed to create XML message", e);
 			}
 			return retVal1; 
+
 		}
 
 	}
