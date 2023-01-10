@@ -154,18 +154,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-/**
- * @author Marcia Carneiro
- *
- */
-/**
- * @author Marcia Carneiro
- *
- */
-/**
- * @author Marcia Carneiro
- *
- */
+
 public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyable {
 	private static final String CREATE_NEW_CONNECTION = "Create New Connection...";
 	private static final String NO_CONNECTIONS = "No Connections";

@@ -795,7 +795,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		} else if (lead instanceof TreeNodeType) {
 			TreeNodeType type = (TreeNodeType) lead;
-			//comment to delete
 			Pattern p = Pattern.compile(".*\\((.*)\\).*");
 			Matcher m = p.matcher(type.getTerserPath());
 			if(m.find()) {
@@ -1336,7 +1335,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 		public final void validate() throws InterruptedException, InvocationTargetException {
 
 			for (int i = 0; i < getChildCount(); i++) {
-				//comment to delete
 				TreeNodeBase next = (TreeNodeBase) getChildAt(i);
 				if (next.isHasContent()) {
 					next.validate();
@@ -1346,7 +1344,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 
 				if ((next.getErrorDescription() == null && showMode == ShowEnum.ERROR )) {
 					final int index = i;
-					//comment to delete
 					boolean isMSG=false;
 					if(next.toString() != null) {
 						if(next.toString().contains("Hl7V2Message"))
@@ -1355,9 +1352,6 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 					}
 					if( (next.getChildCount()==0 || (next.getClass().toString().contains("Primitive")) ||next.isHasContent()==false) && isMSG== false)
 						i--;
-					//else
-					//	i++;
-						//if((next.toString().contains("segment")))
 							
 
 					EventQueue.invokeAndWait(new Runnable() {
