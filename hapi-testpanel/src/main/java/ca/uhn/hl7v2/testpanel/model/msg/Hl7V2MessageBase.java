@@ -441,15 +441,15 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 					if (componentPathIndex == 0) {
 						char repSep =enc.getRepetitionSeparator();
 						for (int i = 1; i <= theRepNum; i++) { 
-							int nextFieldSep=theSourceMessage.indexOf(enc.getFieldSeparator(), currentRange.getStart()); //comment to delete
+							int nextFieldSep=theSourceMessage.indexOf(enc.getFieldSeparator(), currentRange.getStart()); 
 							int repIndex = theSourceMessage.indexOf(repSep, currentRange.getStart());
 							
-							if (repIndex == -1 || repIndex > nextFieldSep) {//comment to delete
+							if (repIndex == -1 || repIndex > nextFieldSep) {
 								if (i == theRepNum) {
 									currentRange = new Range(currentRange.getStart(), nextSeparatorIndex);
 								} else {
 									//return new Range(currentRange.getEnd(), currentRange.getEnd());
-									currentRange = new Range(currentRange.getStart(), nextFieldSep != -1 ? nextFieldSep : currentRange.getEnd() );//comment to delete
+									currentRange = new Range(currentRange.getStart(), nextFieldSep != -1 ? nextFieldSep : currentRange.getEnd() );
 								}
 							} else if (i == theRepNum) {
 								currentRange = new Range(currentRange.getStart(), repIndex);
