@@ -217,7 +217,6 @@ public class AddMessageDialog extends JDialog {
 				}
 				{
 					myXmLRadio = new JRadioButton("XML");
-					//comment to delete
 					myXmLRadio.setSelected(true);
 					encodingButtonGroup.add(myXmLRadio);
 					panel_1.add(myXmLRadio);
@@ -239,7 +238,7 @@ public class AddMessageDialog extends JDialog {
 							String[] fullTypeBits = fullType.split("\\^");
 							String type = fullTypeBits[0];
 							String trigger = fullTypeBits[1];
-							//comment to delete
+							
 							Hl7V2EncodingTypeEnum encoding = Hl7V2EncodingTypeEnum.ER_7;
 							if(myXmLRadio.isSelected())
 								encoding= Hl7V2EncodingTypeEnum.XML;

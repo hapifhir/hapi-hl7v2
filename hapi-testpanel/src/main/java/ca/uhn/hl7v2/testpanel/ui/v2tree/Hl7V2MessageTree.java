@@ -766,6 +766,10 @@ public class Hl7V2MessageTree extends Outline implements IDestroyable {
 			}
 		}
 	}
+	/**
+	 * Compares the instance of selected message components and based on that will highlight them
+	 * @param theNewIndex
+	 */
 
 	private void handleNewSelectedIndex(int theNewIndex) {
 		if (mySelectionHandlingDisabled) {

@@ -145,12 +145,8 @@ public class ConformanceEditorPanel {
 
 	private void addTable() {
 		Object selectedObject = getSelectedFileOrTable();
-//comment to delete
-		TableFile test = new TableFile();
-		System.out.println("test file to test" + test.toString());
-		
-		
 		TableFile file;
+		
 		if (selectedObject instanceof TableFile) {
 			file = (TableFile) selectedObject;
 		} else if (selectedObject instanceof Table) {

@@ -145,7 +145,7 @@ public class AboutDialog extends JDialog {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						try {
-							open(new URI("http://hl7api.sourceforge.net/newtestpanel.html"));
+							open(new URI("https://hapifhir.github.io/hapi-hl7v2/"));
 						} catch (URISyntaxException e1) {
 							ourLog.error("Failed to create hyperlink", e1);
 						}

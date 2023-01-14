@@ -1107,6 +1107,12 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		return myController.getWindow();
 	}
 
+	/**
+	 * Creates html elements to add tables in View as Table
+	 * @param xml
+	 * @param theMessage
+	 * @return html code in a string format
+	 */
 	private String ConvertMessageToHtml(String xml, Hl7V2MessageCollection theMessage) {
 
 		

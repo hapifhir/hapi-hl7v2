@@ -384,6 +384,15 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		}
 	}
 
+	/**
+	 * 
+	 * @param theField
+	 * @param theRepNum
+	 * @param theSegmentRange
+	 * @param theSourceMessage
+	 * @param theParsedMessage
+	 * @return Range of highlighted path, selected by user 
+	 */
 	static Range findFieldRange(List<Integer> theField, int theRepNum, Range theSegmentRange, String theSourceMessage, Message theParsedMessage) {
 		EncodingCharacters enc;
 		try {
