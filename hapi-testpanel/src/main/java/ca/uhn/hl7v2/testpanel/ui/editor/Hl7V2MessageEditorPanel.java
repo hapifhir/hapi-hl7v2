@@ -304,6 +304,7 @@ public class Hl7V2MessageEditorPanel extends BaseMainPanel implements IDestroyab
 		myRdbtnEr7 = new JRadioButton("ER7");
 		myRdbtnEr7.setMargin(new Insets(1, 2, 0, 1));
 		toolBar.add(myRdbtnEr7);
+		myRdbtnEr7.setSelected(true);
 
 		myRdbtnXml = new JRadioButton("XML");
 		myRdbtnXml.setMargin(new Insets(1, 5, 0, 1));
