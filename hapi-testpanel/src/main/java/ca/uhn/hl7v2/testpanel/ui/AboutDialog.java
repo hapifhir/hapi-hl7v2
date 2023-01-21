@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -80,7 +81,7 @@ public class AboutDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AboutDialog() {
-		setBounds(100, 100, 901, 767);
+		setBounds(100, 100,  583, 553);
 		getContentPane().setLayout(new BorderLayout());
 		mycontentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(mycontentPanel, BorderLayout.CENTER);
@@ -144,11 +145,18 @@ public class AboutDialog extends JDialog {
 				lblLearnMore.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						try {
-							open(new URI("https://hapifhir.github.io/hapi-hl7v2/"));
-						} catch (URISyntaxException e1) {
-							ourLog.error("Failed to create hyperlink", e1);
-						}
+	
+							//open(new URI("https://hapifhir.github.io/hapi-hl7v2/"));
+							if (Desktop.isDesktopSupported()) {
+							    try {
+							        ClassLoader classLoader = getClass().getClassLoader();
+							        File myFile = new File(AboutDialog.class.getResource("/ca/uhn/hl7v2/testpanel/images/Help_HAPI.pdf").getFile());
+							        Desktop.getDesktop().open(myFile);
+							} catch (IOException ex) {
+							    //Control the exception
+							}
+							}
+						
 					}
 				});
 				lblLearnMore.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -210,8 +218,15 @@ public class AboutDialog extends JDialog {
 				panel.add(verticalGlue, gbc_verticalGlue);
 			}
 			{
-				createUIFAQ(panel); 
+				JLabel lblNewLabel_2 = new JLabel("");
+				lblNewLabel_2.setIcon(new ImageIcon(AboutDialog.class.getResource("/ca/uhn/hl7v2/testpanel/images/dogs_waiting_175.jpg")));
+				GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+				gbc_lblNewLabel_2.gridwidth = 2;
+				gbc_lblNewLabel_2.gridx = 0;
+				gbc_lblNewLabel_2.gridy = 7;
+				panel.add(lblNewLabel_2, gbc_lblNewLabel_2);
 			}
+			
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -231,233 +246,6 @@ public class AboutDialog extends JDialog {
 			}
 		}
 	}
-	
-	   private static void createUIFAQ(JPanel panel){  
-		      JEditorPane jEditorPane = new JEditorPane();
-		      jEditorPane.setEditable(false);		
-		      jEditorPane.setContentType("text/html");
-				         
-		       String faq = ""
-		       		+ ""
-		       		+ ""
-		       		+ "<!DOCTYPE html>"
-		       		+ "<html>"
-		       		+ "<head>"
-		       		+ "<style>"
-		       		+ "body{"
-		       		+ "    font-family: 'Work Sans', sans-serif;"
-		       		+ "}"
-		       		+ ".faq-heading{"
-		       		+ "    border-bottom: #777;"
-		       		+ "    padding: 20px 60px;"
-		       		+ "}"
-		       		+ ".faq-container{"
-		       		+ "display: flex;"
-		       		+ "justify-content: center;"
-		       		+ "flex-direction: column;"
-		       		+ "}"
-		       		+ ".hr-line{"
-		       		+ "  width: 100%;"
-		       		+ "  margin: auto;"
-		       		+ "  "
-		       		+ "}"
-		       		+ "/* Style the buttons that are used to open and close the faq-page body */"
-		       		+ ".faq-page {"
-		       		+ "    /* background-color: #eee; */"
-		       		+ "    color: #444;"
-		       		+ "    cursor: pointer;"
-		       		+ "    padding: 30px 20px;"
-		       		+ "    width: 100%;"
-		       		+ "    border: none;"
-		       		+ "    outline: none;"
-		       		+ "    transition: 0.4s;"
-		       		+ "    margin: auto;"
-		       		+ "}"
-		       		+ ".faq-body{"
-		       		+ "    margin: auto;"
-		       		+ "    /* text-align: center; */"
-		       		+ "   width: 100%; "
-		       		+ "   padding: auto;"
-		       		+ "   "
-		       		+ "}"
-		       		+ "/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */"
-		       		+ ".active,"
-		       		+ ".faq-page:hover {"
-		       		+ "    background-color: #F9F9F9;"
-		       		+ "}"
-		       		+ "/* Style the faq-page panel. Note: hidden by default */"
-		       		+ ".faq-body {"
-		       		+ "    padding: 0 18px;"
-		       		+ "    background-color: white;"
-		       		+ "    display: none;"
-		       		+ "    overflow: hidden;"
-		       		+ "}"
-		       		+ ".faq-page:after {"
-		       		+ "    content: '\\02795';"
-		       		+ "    /* Unicode character for \"plus\" sign (+) */"
-		       		+ "    font-size: 13px;"
-		       		+ "    color: #777;"
-		       		+ "    float: right;"
-		       		+ "    margin-left: 5px;"
-		       		+ "}"
-		       		+ ".active:after {"
-		       		+ "    content: \"\\2796\";"
-		       		+ "    /* Unicode character for \"minus\" sign (-) */"
-		       		+ "}"
-		       		+ "</style>"
-		       		+ ""
-		       		+ " <script type=\"text/javascript\">"
-		       		+ " "
-		       		+ " if(window.attachEvent) {"
-		       		+ "    window.attachEvent('onload', loadInit);"
-		       		+ "} else {"
-		       		+ "    if(window.onload) {"
-		       		+ "        var curronload = window.onload;"
-		       		+ "        var newonload = function(evt) {"
-		       		+ "            curronload(evt);"
-		       		+ "            loadInit(evt);"
-		       		+ "        };"
-		       		+ "        window.onload = newonload;"
-		       		+ "    } else {"
-		       		+ "        window.onload = loadInit;"
-		       		+ "    }"
-		       		+ "}"
-		       		+ "  function loadInit() {"
-		       		+ "		var faq = document.getElementsByClassName(\"faq-page\");"
-		       		+ "		var i;"
-		       		+ "		for (i = 0; i < faq.length; i++) {"
-		       		+ "			faq[i].addEventListener(\"click\", function () {"
-		       		+ "				/* Toggle between adding and removing the \"active\" class,"
-		       		+ "				to highlight the button that controls the panel */"
-		       		+ "				this.classList.toggle(\"active\");"
-		       		+ "				/* Toggle between hiding and showing the active panel */"
-		       		+ "				var body = this.nextElementSibling;"
-		       		+ "				if (body.style.display === \"block\") {"
-		       		+ "					body.style.display = \"none\";"
-		       		+ "				} else {"
-		       		+ "					body.style.display = \"block\";"
-		       		+ "				}"
-		       		+ "			});"
-		       		+ "	}"
-		       		+ "}"
-		       		+ "  </script>"
-		       		+ "</head>"
-		       		+ "<body>"
-		       		+ "    <main>"
-		       		+ "        <h1 class=\"faq-heading\">FAQ'S</h1>"
-		       		+ "        <section class=\"faq-container\">"
-		       		+ "            <div class=\"faq-one\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "                <h1 class=\"faq-page\">What is HAPI TestPanel</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>The HAPI TestPanel is a full featured HL7 message editor, transmitter and receiver. This software is still an alpha release, so please use it with caution!"
-		       		+ "					TestPanel is free software, distributed under the MPL/GPL. TestPanel is also a demonstration of the many features of HAPI, the best HL7 programming API available for Java.</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "            <hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-two\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "                <h1 class=\"faq-page\">Message Validation</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body\">"
-		       		+ "                   <div class=\"faq-body active\">"
-		       		+ "                    <p>By default, TestPanel uses HAPI's built in validation, known as DefaultValidation . The validation performs basic data type checks, such as making sure that NM datatype fields do not contain text, TS datatype fields contain valid dates, etc."
-		       		+ "					To enable or disable this feature, click on the \"Validate\" selector, and choose either \"No Profile/Validation\" or \"Default HAPI Validation\". When validation is enabled, you will see any errors in the column to the left of the value column. "
-		       		+ "					You can test this out by enabling validation and changing the MSH-7 (Timestamp) value so that it contains letters within the timestamp. Hovering over the red \"X\" will give more information about what is wrong."
-		       		+ "					</p>"
-		       		+ "                </div>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "            <hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-three\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "				<h1 class=\"faq-page \">Conformance Profiles</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>TestPanel supports validating messages using HL7 Conformance Profiles. Conformance profiles are special XML-based files which constrain the standard HL7 message definitions, allowing you to specify maximum field lengths, required cardinalities, etc."
-		       		+ "					Conformance profiles are generally created using a tool called Message Workbench (MWB)."
-		       		+ "					To create a conformance profile, use the MWB tool to create your profile, and then select \"Export XML Profile\" from the File menu to create an XML version which can be loaded into TestPanel.</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "			<hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-three\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "				<h1 class=\"faq-page \">Creating a Profile Group</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>TestPanel arranges profiles in what it calls a \"Profile Group\". A profile group is a collection of one or more conformance profiles. Within a profile group, each profile is marked as applying to specific message types, so that for instance you could create a profile group with one profile for ADT^A01 messages and another profile for ORU^R01."
-		       		+ "						To create a profile group, choose \"Profiles and Tables...\" from the Conformance menu. This opens the profiles dialog."
-		       		+ "						Click on \"New Profile Group\" to create a new profile group."
-		       		+ "						Select the newly created group, and click on \"Add Profile\" to add a conformance profile to the group. The allows you to select an XML based conformance profile, and then assign it to one or more message types."
-		       		+ "						To apply your new profile group to a message (or a collection of messages), open the messages in the main message editor, and choose your new profile group from the \"Validate\" picker, near the top right of the window."
-		       		+ "						If there are any problems with your message, you will now see them highlighted. Try removing values, or putting in very long values to see new problems. If you can't see any errors, you might want to make sure that your profile group matches the message type of the message you are using. (e.g. ADT^A04 vs. ADT^A01)"
-		       		+ "					</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "			<hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-three\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "				<h1 class=\"faq-page \">Tables</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>TestPanel also allows you to define tables from which coded values are drawn. Tables are stored in table files, and a table file contains one ore more tables."
-		       		+ "					To create a table file, choose \"Profiles and Tables...\" from the Conformance menu, and navigate to the Tables tab. Click on \"Add File\" and create a new file."
-		       		+ "					Now, create a new table. HL7 tables are generally represented by four digits. For example, component 1 of a CE such as MSH-3 \"Sending Application\" is table 0300. To create a validation table, add the prefix HL7, as shown in the screenshot."
-		       		+ "					Once you have created your tables, return to the Profiles tab, and assign your table file to the Profile Group by clicking on the word \"None\" with the small circle next to it."
-		       		+ "					</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "			<hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-three\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "				<h1 class=\"faq-page \">File Diff</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>The HL7 v2 File Diff can be used to compare two files, each containing raw HL7 messages, for differences."
-		       		+ "					Each message is parsed, and the parsed message is then compared at a segment-by-segment and field-by-field level. This means that messages are compared to see if they are semantically identical as opposed to performing a rigid byte level comparison."
-		       		+ "					This means for example that the following segments are considered identical:"
-		       		+ "					PID|||7000135^^^UHN|||||"
-		       		+ "					PID|||7000135^^^UHN"
-		       		+ "					</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "			<hr class=\"hr-line\">"
-		       		+ "            <div class=\"faq-three\">"
-		       		+ "                <!-- faq question -->"
-		       		+ "				<h1 class=\"faq-page\">Using the HL7 v2 File Diff</h1>"
-		       		+ "                <!-- faq answer -->"
-		       		+ "                <div class=\"faq-body active\">"
-		       		+ "                    <p>To access the file diff, start the Test Panel, and choose \"HL7 v2 File Diff\" from the tools menu. This will bring up the diff dialog. In this dialog, two files (file 1, and file 2) must be selected. These files must contain raw HL7 messages. Note that any lines beginning with hash (#) will be treated as comments and ignored."
-		       		+ "					When both files have been selected, you may click on the \"begin\" button to start comparing. Any differences which are found will be highlighted."
-		       		+ "					</p>"
-		       		+ "                </div>"
-		       		+ "            </div>"
-		       		+ "        </section>"
-		       		+ "    </main>"
-		       		+ "   </body>"
-		       		+ "</html>"
-		       		+ "";  
-		         
-		         
-		    
-		    
-		         
-		        jEditorPane.setContentType("text/html");
-		        jEditorPane.setText(faq);
-		      
-		      JScrollPane jScrollPane = new JScrollPane(jEditorPane);
-		      jScrollPane.setPreferredSize(new Dimension(580,400));      
-
-		      GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
-				gbc_lblNewLabel_3.gridwidth = 2;
-				gbc_lblNewLabel_3.gridx = 0;
-				gbc_lblNewLabel_3.gridy = 7;
-		      
-		      panel.add(jScrollPane,gbc_lblNewLabel_3);
-		     
-		    
-		}
 
 	private static void open(URI uri) {
 		if (Desktop.isDesktopSupported()) {
