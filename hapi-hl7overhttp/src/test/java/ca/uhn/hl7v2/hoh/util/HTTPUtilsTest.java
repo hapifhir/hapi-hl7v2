@@ -5,11 +5,6 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import ca.uhn.hl7v2.hoh.util.HTTPUtils;
 
 import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 import org.junit.Test;
@@ -42,8 +37,4 @@ public class HTTPUtilsTest {
                 "\"/><h1>HTTP 400 - Bad Request</h1><p>Failed to verify message signature</p><p style=\"font-size: 0.7em; color: #606060;\">HAPI (HL7 over HTTP) version 2.4-SNAPSHOT</p></body></html>";
         assertEquals(expected, actual);
     }
-
-
-
-
 }
