@@ -33,7 +33,7 @@ public class HTTPUtils {
 	public static void write400BadRequest(OutputStream theOutputStream, String theMessage, boolean theWriteHeaders) throws IOException {
 		StringBuilder b = new StringBuilder();
 		if (theWriteHeaders) {
-			b.append("HTTP/1.1 401 Unauthorized\r\n");
+			b.append("HTTP/1.1 400 Bad Request\r\n");
 			b.append("Content-Type: text/html; charset=ISO-8859-1\r\n");
 			b.append("\r\n");
 		}
@@ -59,7 +59,7 @@ public class HTTPUtils {
 	public static void write400SignatureVerificationFailed(OutputStream theOutputStream, boolean theWriteHeaders) throws IOException {
 		StringBuilder b = new StringBuilder();
 		if (theWriteHeaders) {
-			b.append("HTTP/1.1 401 Unauthorized\r\n");
+			b.append("HTTP/1.1 400 Bad Request\r\n");
 			b.append("Content-Type: text/html; charset=ISO-8859-1\r\n");
 			b.append("\r\n");
 		}
