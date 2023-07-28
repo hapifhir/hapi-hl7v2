@@ -27,6 +27,8 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.model;
 
+import java.util.List;
+
 import ca.uhn.hl7v2.HL7Exception;
 
 /**
@@ -52,6 +54,8 @@ public interface Segment extends Structure {
      * @throws HL7Exception if field index is out of range.
      */
     Type[] getField(int number) throws HL7Exception;
+    
+    List<List<Type>> getAllFields() throws HL7Exception;
 
     /**
      * Returns a specific repetition of field at the specified index.  If there exist

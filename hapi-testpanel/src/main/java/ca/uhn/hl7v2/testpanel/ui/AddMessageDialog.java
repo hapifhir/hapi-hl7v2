@@ -70,6 +70,7 @@ public class AddMessageDialog extends JDialog {
 	private JList myVersionList;
 	private JList myMessageTypeList;
 	private JRadioButton myEr7Radio;
+	private JRadioButton myXmLRadio;
 	private final ButtonGroup encodingButtonGroup = new ButtonGroup();
 	private String myCurrentSelectedVersion;
 	private DefaultListModel myMessageTypeListModel;
@@ -94,6 +95,7 @@ public class AddMessageDialog extends JDialog {
 	 */
 	public AddMessageDialog(Controller theController) {
 		myController = theController;
+
 
 		setMinimumSize(new Dimension(450, 400));
 		setPreferredSize(new Dimension(450, 400));
@@ -214,9 +216,10 @@ public class AddMessageDialog extends JDialog {
 					panel_1.add(myEr7Radio);
 				}
 				{
-					JRadioButton myXmlRadio = new JRadioButton("XML");
-					encodingButtonGroup.add(myXmlRadio);
-					panel_1.add(myXmlRadio);
+					myXmLRadio = new JRadioButton("XML");
+					myXmLRadio.setSelected(true);
+					encodingButtonGroup.add(myXmLRadio);
+					panel_1.add(myXmLRadio);
 				}
 			}
 		}
@@ -236,7 +239,13 @@ public class AddMessageDialog extends JDialog {
 							String type = fullTypeBits[0];
 							String trigger = fullTypeBits[1];
 							
-							Hl7V2EncodingTypeEnum encoding = myEr7Radio.isSelected() ? Hl7V2EncodingTypeEnum.ER_7 : Hl7V2EncodingTypeEnum.XML;
+							Hl7V2EncodingTypeEnum encoding = Hl7V2EncodingTypeEnum.ER_7;
+							if(myXmLRadio.isSelected())
+								encoding= Hl7V2EncodingTypeEnum.XML;
+							if(myEr7Radio.isSelected())
+								encoding=Hl7V2EncodingTypeEnum.ER_7 ;
+							
+							
 							myController.addMessage(version, type, trigger, structure, encoding);
 						} finally {
 							setVisible(false);

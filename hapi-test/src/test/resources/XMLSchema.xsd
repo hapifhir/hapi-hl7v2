@@ -66,7 +66,8 @@
         <!ATTLIST xsd:union id ID #IMPLIED>
         ]>
 <xsd:schema targetNamespace="http://www.w3.org/2001/XMLSchema" blockDefault="#all" elementFormDefault="qualified" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xml:lang="EN"
-	xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty">
+	xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<xsd:annotation>
 		<xsd:documentation>
 			Part 1 version: Id: structures.xsd,v 1.2 2004/01/15 11:34:25 ht Exp
@@ -174,31 +175,36 @@
 	</xsd:group>
 
 	<xsd:simpleType name="formChoice">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+		</xsd:annotation>
 		<xsd:restriction base="xsd:NMTOKEN">
 			<xsd:enumeration value="qualified" />
 			<xsd:enumeration value="unqualified" />
 		</xsd:restriction>
+
+	</xsd:simpleType>
+
+	<xsd:simpleType name="reducedDerivationControl">
 		<xsd:annotation>
 			<xsd:documentation>
 				A utility type, not for public use</xsd:documentation>
 		</xsd:annotation>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="reducedDerivationControl">
-
 		<xsd:restriction base="xsd:derivationControl">
 			<xsd:enumeration value="extension" />
 			<xsd:enumeration value="restriction" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-		</xsd:annotation>
+
 	</xsd:simpleType>
 
 	<xsd:simpleType name="derivationSet">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+			<xsd:documentation>
+				#all or (possibly empty) subset of {extension, restriction}</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:token">
@@ -209,30 +215,28 @@
 				<xsd:list itemType="xsd:reducedDerivationControl" />
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-			<xsd:documentation>
-				#all or (possibly empty) subset of {extension, restriction}</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="typeDerivationControl">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+		</xsd:annotation>
 		<xsd:restriction base="xsd:derivationControl">
 			<xsd:enumeration value="extension" />
 			<xsd:enumeration value="restriction" />
 			<xsd:enumeration value="list" />
 			<xsd:enumeration value="union" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="fullDerivationSet">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+			<xsd:documentation>
+				#all or (possibly empty) subset of {extension, restriction, list, union}</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:token">
@@ -243,12 +247,6 @@
 				<xsd:list itemType="xsd:typeDerivationControl" />
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-			<xsd:documentation>
-				#all or (possibly empty) subset of {extension, restriction, list, union}</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:element name="schema" id="schema">
@@ -343,7 +341,10 @@
 	</xsd:element>
 
 	<xsd:simpleType name="allNNI">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				for maxOccurs</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union memberTypes="xsd:nonNegativeInteger">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:NMTOKEN">
@@ -351,10 +352,6 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				for maxOccurs</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:attributeGroup name="occurs">
@@ -711,7 +708,13 @@
 
 
 	<xsd:simpleType name="blockSet">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+			<xsd:documentation>
+				#all or (possibly empty) subset of {substitution, extension,
+				restriction}</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:token">
@@ -730,13 +733,6 @@
 				</xsd:list>
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-			<xsd:documentation>
-				#all or (possibly empty) subset of {substitution, extension,
-				restriction}</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:complexType name="element" abstract="true">
@@ -1099,7 +1095,10 @@
 	</xsd:annotation>
 
 	<xsd:simpleType name="namespaceList">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:token">
@@ -1122,10 +1121,6 @@
 				</xsd:list>
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:element name="attribute" type="xsd:topLevelAttribute" id="attribute">
@@ -1381,14 +1376,13 @@
 	</xsd:element>
 
 	<xsd:simpleType name="public">
-
-		<xsd:restriction base="xsd:token" />
 		<xsd:annotation>
 			<xsd:documentation>
 				A utility type, not for public use</xsd:documentation>
 			<xsd:documentation>
 				A public identifier, per ISO 8879</xsd:documentation>
 		</xsd:annotation>
+		<xsd:restriction base="xsd:token" />
 	</xsd:simpleType>
 
 	<xsd:element name="appinfo" id="appinfo">
@@ -1507,10 +1501,6 @@
 	</xsd:annotation>
 
 	<xsd:simpleType name="string" id="string">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="preserve" id="string.preserve" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1526,13 +1516,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#string" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="preserve" id="string.preserve" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="boolean" id="boolean">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="boolean.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1544,13 +1533,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#boolean" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="boolean.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="float" id="float">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="float.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1567,13 +1555,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#float" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="float.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="double" id="double">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="double.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1590,13 +1577,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#double" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="double.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="decimal" id="decimal">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="decimal.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="totalDigits" />
@@ -1615,13 +1601,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#decimal" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="decimal.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="duration" id="duration">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="duration.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1638,13 +1623,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#duration" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="duration.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="dateTime" id="dateTime">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="dateTime.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1661,13 +1645,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#dateTime" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="dateTime.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="time" id="time">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="time.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1684,13 +1667,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#time" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="time.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="date" id="date">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="date.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1707,13 +1689,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#date" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="date.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="gYearMonth" id="gYearMonth">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="gYearMonth.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1730,13 +1711,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#gYearMonth" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="gYearMonth.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="gYear" id="gYear">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="gYear.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1753,13 +1733,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#gYear" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="gYear.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="gMonthDay" id="gMonthDay">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="gMonthDay.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1776,13 +1755,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#gMonthDay" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="gMonthDay.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="gDay" id="gDay">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="gDay.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1799,13 +1777,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#gDay" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="gDay.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="gMonth" id="gMonth">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="gMonth.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="pattern" />
@@ -1822,13 +1799,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#gMonth" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="gMonth.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="hexBinary" id="hexBinary">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="hexBinary.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1844,13 +1820,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#binary" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="hexBinary.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="base64Binary" id="base64Binary">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="base64Binary.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1866,13 +1841,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#base64Binary" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="base64Binary.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="anyURI" id="anyURI">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="anyURI.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1888,13 +1862,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#anyURI" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="anyURI.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="QName" id="QName">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="QName.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1910,13 +1883,12 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#QName" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="QName.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="NOTATION" id="NOTATION">
-
-		<xsd:restriction base="xsd:anySimpleType">
-			<xsd:whiteSpace value="collapse" fixed="true" id="NOTATION.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -1939,6 +1911,9 @@
 				schema.
 			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:restriction base="xsd:anySimpleType">
+			<xsd:whiteSpace value="collapse" fixed="true" id="NOTATION.whiteSpace" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:annotation>
@@ -1948,27 +1923,29 @@
 	</xsd:annotation>
 
 	<xsd:simpleType name="normalizedString" id="normalizedString">
-
-		<xsd:restriction base="xsd:string">
-			<xsd:whiteSpace value="replace" id="normalizedString.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#normalizedString" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:whiteSpace value="replace" id="normalizedString.whiteSpace" />
+		</xsd:restriction>
+
 	</xsd:simpleType>
 
 	<xsd:simpleType name="token" id="token">
-
-		<xsd:restriction base="xsd:normalizedString">
-			<xsd:whiteSpace value="collapse" id="token.whiteSpace" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#token" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:whiteSpace value="collapse" id="token.whiteSpace" />
+		</xsd:restriction>
+
 	</xsd:simpleType>
 
 	<xsd:simpleType name="language" id="language">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#language" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:token">
 			<xsd:pattern value="[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*" id="language.pattern">
 				<xsd:annotation>
@@ -1979,19 +1956,10 @@
 				</xsd:annotation>
 			</xsd:pattern>
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#language" />
-		</xsd:annotation>
+
 	</xsd:simpleType>
 
 	<xsd:simpleType name="IDREFS" id="IDREFS">
-
-		<xsd:restriction>
-			<xsd:simpleType>
-				<xsd:list itemType="xsd:IDREF" />
-			</xsd:simpleType>
-			<xsd:minLength value="1" id="IDREFS.minLength" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -2007,16 +1975,16 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#IDREFS" />
 		</xsd:annotation>
+		<xsd:restriction>
+			<xsd:simpleType>
+				<xsd:list itemType="xsd:IDREF" />
+			</xsd:simpleType>
+			<xsd:minLength value="1" id="IDREFS.minLength" />
+		</xsd:restriction>
+
 	</xsd:simpleType>
 
 	<xsd:simpleType name="ENTITIES" id="ENTITIES">
-
-		<xsd:restriction>
-			<xsd:simpleType>
-				<xsd:list itemType="xsd:ENTITY" />
-			</xsd:simpleType>
-			<xsd:minLength value="1" id="ENTITIES.minLength" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -2032,10 +2000,18 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#ENTITIES" />
 		</xsd:annotation>
+		<xsd:restriction>
+			<xsd:simpleType>
+				<xsd:list itemType="xsd:ENTITY" />
+			</xsd:simpleType>
+			<xsd:minLength value="1" id="ENTITIES.minLength" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="NMTOKEN" id="NMTOKEN">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#NMTOKEN" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:token">
 			<xsd:pattern value="\c+" id="NMTOKEN.pattern">
 				<xsd:annotation>
@@ -2045,19 +2021,9 @@
 				</xsd:annotation>
 			</xsd:pattern>
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#NMTOKEN" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="NMTOKENS" id="NMTOKENS">
-
-		<xsd:restriction>
-			<xsd:simpleType>
-				<xsd:list itemType="xsd:NMTOKEN" />
-			</xsd:simpleType>
-			<xsd:minLength value="1" id="NMTOKENS.minLength" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasFacet name="length" />
@@ -2073,10 +2039,18 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#NMTOKENS" />
 		</xsd:annotation>
+		<xsd:restriction>
+			<xsd:simpleType>
+				<xsd:list itemType="xsd:NMTOKEN" />
+			</xsd:simpleType>
+			<xsd:minLength value="1" id="NMTOKENS.minLength" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="Name" id="Name">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#Name" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:token">
 			<xsd:pattern value="\i\c*" id="Name.pattern">
 				<xsd:annotation>
@@ -2086,13 +2060,12 @@
 				</xsd:annotation>
 			</xsd:pattern>
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#Name" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="NCName" id="NCName">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#NCName" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:Name">
 			<xsd:pattern value="[\i-[:]][\c-[:]]*" id="NCName.pattern">
 				<xsd:annotation>
@@ -2102,72 +2075,58 @@
 				</xsd:annotation>
 			</xsd:pattern>
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#NCName" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="ID" id="ID">
-
-		<xsd:restriction base="xsd:NCName" />
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#ID" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:NCName" />
 	</xsd:simpleType>
 
 	<xsd:simpleType name="IDREF" id="IDREF">
-
-		<xsd:restriction base="xsd:NCName" />
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#IDREF" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:NCName" />
 	</xsd:simpleType>
 
 	<xsd:simpleType name="ENTITY" id="ENTITY">
-
-		<xsd:restriction base="xsd:NCName" />
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#ENTITY" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:NCName" />
 	</xsd:simpleType>
 
 	<xsd:simpleType name="integer" id="integer">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#integer" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:decimal">
 			<xsd:fractionDigits value="0" fixed="true" id="integer.fractionDigits" />
 			<xsd:pattern value="[\-+]?[0-9]+" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#integer" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="nonPositiveInteger" id="nonPositiveInteger">
-
-		<xsd:restriction base="xsd:integer">
-			<xsd:maxInclusive value="0" id="nonPositiveInteger.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#nonPositiveInteger" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:integer">
+			<xsd:maxInclusive value="0" id="nonPositiveInteger.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="negativeInteger" id="negativeInteger">
-
-		<xsd:restriction base="xsd:nonPositiveInteger">
-			<xsd:maxInclusive value="-1" id="negativeInteger.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#negativeInteger" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:nonPositiveInteger">
+			<xsd:maxInclusive value="-1" id="negativeInteger.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="long" id="long">
-
-		<xsd:restriction base="xsd:integer">
-			<xsd:minInclusive value="-9223372036854775808" id="long.minInclusive" />
-			<xsd:maxInclusive value="9223372036854775807" id="long.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasProperty name="bounded" value="true" />
@@ -2175,56 +2134,52 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#long" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="-9223372036854775808" id="long.minInclusive" />
+			<xsd:maxInclusive value="9223372036854775807" id="long.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="int" id="int">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#int" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:long">
 			<xsd:minInclusive value="-2147483648" id="int.minInclusive" />
 			<xsd:maxInclusive value="2147483647" id="int.maxInclusive" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#int" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="short" id="short">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#short" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:int">
 			<xsd:minInclusive value="-32768" id="short.minInclusive" />
 			<xsd:maxInclusive value="32767" id="short.maxInclusive" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#short" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="byte" id="byte">
-
+		<xsd:annotation>
+			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#byte" />
+		</xsd:annotation>
 		<xsd:restriction base="xsd:short">
 			<xsd:minInclusive value="-128" id="byte.minInclusive" />
 			<xsd:maxInclusive value="127" id="byte.maxInclusive" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#byte" />
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="nonNegativeInteger" id="nonNegativeInteger">
-
-		<xsd:restriction base="xsd:integer">
-			<xsd:minInclusive value="0" id="nonNegativeInteger.minInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" id="nonNegativeInteger.minInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="unsignedLong" id="unsignedLong">
-
-		<xsd:restriction base="xsd:nonNegativeInteger">
-			<xsd:maxInclusive value="18446744073709551615" id="unsignedLong.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:appinfo>
 				<hfp:hasProperty name="bounded" value="true" />
@@ -2232,50 +2187,52 @@
 			</xsd:appinfo>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#unsignedLong" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:nonNegativeInteger">
+			<xsd:maxInclusive value="18446744073709551615" id="unsignedLong.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="unsignedInt" id="unsignedInt">
-
-		<xsd:restriction base="xsd:unsignedLong">
-			<xsd:maxInclusive value="4294967295" id="unsignedInt.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#unsignedInt" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:unsignedLong">
+			<xsd:maxInclusive value="4294967295" id="unsignedInt.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="unsignedShort" id="unsignedShort">
-
-		<xsd:restriction base="xsd:unsignedInt">
-			<xsd:maxInclusive value="65535" id="unsignedShort.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#unsignedShort" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:unsignedInt">
+			<xsd:maxInclusive value="65535" id="unsignedShort.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="unsignedByte" id="unsignedByte">
-
-		<xsd:restriction base="xsd:unsignedShort">
-			<xsd:maxInclusive value="255" id="unsignedByte.maxInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#unsignedByte" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:unsignedShort">
+			<xsd:maxInclusive value="255" id="unsignedByte.maxInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="positiveInteger" id="positiveInteger">
-
-		<xsd:restriction base="xsd:nonNegativeInteger">
-			<xsd:minInclusive value="1" id="positiveInteger.minInclusive" />
-		</xsd:restriction>
 		<xsd:annotation>
 			<xsd:documentation source="http://www.w3.org/TR/xmlschema-2/#positiveInteger" />
 		</xsd:annotation>
+		<xsd:restriction base="xsd:nonNegativeInteger">
+			<xsd:minInclusive value="1" id="positiveInteger.minInclusive" />
+		</xsd:restriction>
 	</xsd:simpleType>
 
 	<xsd:simpleType name="derivationControl">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+		</xsd:annotation>
 		<xsd:restriction base="xsd:NMTOKEN">
 			<xsd:enumeration value="substitution" />
 			<xsd:enumeration value="extension" />
@@ -2283,10 +2240,6 @@
 			<xsd:enumeration value="list" />
 			<xsd:enumeration value="union" />
 		</xsd:restriction>
-		<xsd:annotation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:group name="simpleDerivation">
@@ -2302,7 +2255,13 @@
 	</xsd:group>
 
 	<xsd:simpleType name="simpleDerivationSet">
-
+		<xsd:annotation>
+			<xsd:documentation>
+				#all or (possibly empty) subset of {restriction, union, list}
+			</xsd:documentation>
+			<xsd:documentation>
+				A utility type, not for public use</xsd:documentation>
+		</xsd:annotation>
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:token">
@@ -2321,13 +2280,6 @@
 				</xsd:list>
 			</xsd:simpleType>
 		</xsd:union>
-		<xsd:annotation>
-			<xsd:documentation>
-				#all or (possibly empty) subset of {restriction, union, list}
-			</xsd:documentation>
-			<xsd:documentation>
-				A utility type, not for public use</xsd:documentation>
-		</xsd:annotation>
 	</xsd:simpleType>
 
 	<xsd:complexType name="simpleType" abstract="true">

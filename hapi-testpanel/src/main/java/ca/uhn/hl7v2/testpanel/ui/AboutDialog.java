@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,8 +48,10 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -77,7 +81,7 @@ public class AboutDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AboutDialog() {
-		setBounds(100, 100, 583, 553);
+		setBounds(100, 100,  583, 553);
 		getContentPane().setLayout(new BorderLayout());
 		mycontentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(mycontentPanel, BorderLayout.CENTER);
@@ -141,11 +145,18 @@ public class AboutDialog extends JDialog {
 				lblLearnMore.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						try {
-							open(new URI("http://hl7api.sourceforge.net/newtestpanel.html"));
-						} catch (URISyntaxException e1) {
-							ourLog.error("Failed to create hyperlink", e1);
-						}
+	
+							//open(new URI("https://hapifhir.github.io/hapi-hl7v2/"));
+							if (Desktop.isDesktopSupported()) {
+							    try {
+							        ClassLoader classLoader = getClass().getClassLoader();
+							        File myFile = new File(AboutDialog.class.getResource("/ca/uhn/hl7v2/testpanel/images/Help_HAPI.pdf").getFile());
+							        Desktop.getDesktop().open(myFile);
+							} catch (IOException ex) {
+							    //Control the exception
+							}
+							}
+						
 					}
 				});
 				lblLearnMore.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -215,6 +226,7 @@ public class AboutDialog extends JDialog {
 				gbc_lblNewLabel_2.gridy = 7;
 				panel.add(lblNewLabel_2, gbc_lblNewLabel_2);
 			}
+			
 		}
 		{
 			JPanel buttonPane = new JPanel();

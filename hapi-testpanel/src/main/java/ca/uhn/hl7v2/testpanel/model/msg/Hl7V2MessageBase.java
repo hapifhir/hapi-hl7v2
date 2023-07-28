@@ -384,6 +384,15 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 		}
 	}
 
+	/**
+	 * 
+	 * @param theField
+	 * @param theRepNum
+	 * @param theSegmentRange
+	 * @param theSourceMessage
+	 * @param theParsedMessage
+	 * @return Range of highlighted path, selected by user 
+	 */
 	static Range findFieldRange(List<Integer> theField, int theRepNum, Range theSegmentRange, String theSourceMessage, Message theParsedMessage) {
 		EncodingCharacters enc;
 		try {
@@ -404,6 +413,14 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 				sep = enc.getFieldSeparator();
 				if (!theSegmentRange.applyTo(theSourceMessage).startsWith("MSH")) {
 					offset++;
+				}
+				if(theSegmentRange.applyTo(theSourceMessage).startsWith("MSH") ) {
+					if(theField.get(0)==1) {
+						return currentRange = new Range(3,4);
+					}
+					if(theField.get(0)==2) {
+						return currentRange = new Range(4,theSourceMessage.indexOf(enc.getFieldSeparator(), 4));
+					}
 				}
 				break;
 			case 1:
@@ -431,16 +448,17 @@ public abstract class Hl7V2MessageBase extends AbstractMessage<Message> {
 				} else {
 
 					if (componentPathIndex == 0) {
-						char repSep = enc.getRepetitionSeparator();
-						for (int i = 1; i <= theRepNum; i++) {
+						char repSep =enc.getRepetitionSeparator();
+						for (int i = 1; i <= theRepNum; i++) { 
+							int nextFieldSep=theSourceMessage.indexOf(enc.getFieldSeparator(), currentRange.getStart()); 
 							int repIndex = theSourceMessage.indexOf(repSep, currentRange.getStart());
-							if (repIndex == -1) {
+							
+							if (repIndex == -1 || repIndex > nextFieldSep) {
 								if (i == theRepNum) {
 									currentRange = new Range(currentRange.getStart(), nextSeparatorIndex);
 								} else {
-									// rep is beyond what the message actually
-									// has.. this probably shouldn't happen
-									return new Range(currentRange.getEnd(), currentRange.getEnd());
+									//return new Range(currentRange.getEnd(), currentRange.getEnd());
+									currentRange = new Range(currentRange.getStart(), nextFieldSep != -1 ? nextFieldSep : currentRange.getEnd() );
 								}
 							} else if (i == theRepNum) {
 								currentRange = new Range(currentRange.getStart(), repIndex);

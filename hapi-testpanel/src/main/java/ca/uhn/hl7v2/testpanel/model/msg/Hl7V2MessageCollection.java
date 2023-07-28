@@ -671,16 +671,15 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 		Validate.notNull(theEncoding);
 
 		Hl7V2EncodingTypeEnum oldEncodingValue = myEncoding;
-		if (myEncoding != theEncoding) {
+		//if (myEncoding != theEncoding) {
 			myEncoding = theEncoding;
-
 			switch (myEncoding) {
 			case ER_7:
 				myParser.setPipeParserAsPrimary();
 				break;
 			case XML:
 				myParser.setXMLParserAsPrimary();
-				break;
+				break;						
 			}
 
 			StringBuilder b = new StringBuilder();
@@ -712,15 +711,16 @@ public class Hl7V2MessageCollection extends AbstractModelClass {
 
 			String oldValue = mySourceMessage;
 			mySourceMessage = b.toString();
-			firePropertyChange(SOURCE_MESSAGE_PROPERTY, oldValue, mySourceMessage);
+			firePropertyChange(SOURCE_MESSAGE_PROPERTY, "oldValue", mySourceMessage);
 
 			if (StringUtils.equals(oldValue, mySourceMessage) == false) {
 				setSaved(false);
 			}
 
 			firePropertyChange(PROP_ENCODING, oldEncodingValue, myEncoding);
-		}
+		//}
 	}
+		
 
 	public void setHighlitedPathBasedOnRange(Range theRange) {
 

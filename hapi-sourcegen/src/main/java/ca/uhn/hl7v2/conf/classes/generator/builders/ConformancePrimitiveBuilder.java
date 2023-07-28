@@ -59,7 +59,7 @@ public class ConformancePrimitiveBuilder {
    /** This method will build a primitive conformance class (ST, NM, etc) which is
     * a Component or Subcomponent. 
     */
-   public void buildClass(ca.uhn.hl7v2.conf.spec.message.AbstractComponent primitive, int profileType) {
+   public void buildClass(ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> primitive, int profileType) {
       GeneratedPrimitive genClass = new GeneratedPrimitive();
       ProfileName profileName = new ProfileName(primitive.getName(), profileType);
 

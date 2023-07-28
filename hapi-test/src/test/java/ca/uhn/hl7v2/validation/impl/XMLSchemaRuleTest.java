@@ -74,11 +74,11 @@ public class XMLSchemaRuleTest {
 
 	@Test
 	public void testDynamicNotFound() {
-		String msg = getMessage3(); // unknown location, override with locations property
+		String msg = getMessage3();  //unknown location, override with locations property
 		ValidationException[] errors = rule.test(msg);
 		assertEquals(Arrays.asList(errors).toString(), 1, errors.length);
 		assertTrue(errors[0].getMessage().contains("MSA.XXXXXXXX"));
-	}
+	} 
 
 	// TODO add tests using dynamic location detection, missing schema files etc.
 

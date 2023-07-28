@@ -193,9 +193,8 @@ public class Controller {
 			col.setValidationContext(new DefaultValidation());
 
 			Class<? extends Message> messageClass = mcf.getMessageClass(theStructure, theVersion, true);
-			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.newInstance();
+			ca.uhn.hl7v2.model.AbstractMessage message = (ca.uhn.hl7v2.model.AbstractMessage) messageClass.getDeclaredConstructor().newInstance();
 			message.initQuickstart(theType, theTrigger, "T");
-
 			GenericParser p = new GenericParser();
 			Hl7V2MessageBase msg;
 			if (theEncoding == Hl7V2EncodingTypeEnum.ER_7) {
@@ -203,10 +202,16 @@ public class Controller {
 				col.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
 				msg = new Hl7V2MessageEr7();
 				msg.setSourceMessage(p.encode(message));
-			} else {
+			} if (theEncoding == Hl7V2EncodingTypeEnum.XML){
 				p.setXMLParserAsPrimary();
 				col.setEncoding(Hl7V2EncodingTypeEnum.XML);
 				msg = new Hl7V2MessageXml();
+				msg.setSourceMessage(p.encode(message));
+			}			
+			else {
+				p.setPipeParserAsPrimary();
+				col.setEncoding(Hl7V2EncodingTypeEnum.ER_7);
+				msg = new Hl7V2MessageEr7();
 				msg.setSourceMessage(p.encode(message));
 			}
 

@@ -436,6 +436,15 @@ public abstract class AbstractGroup extends AbstractStructure implements Group {
         }
         return list.toArray(new Structure[0]);
     }
+    
+    public Map<String, List<Structure>> getAllStructure() throws HL7Exception {
+    	Map<String, List<Structure>> map = this.structures;
+        if (map == null) {
+            throw new HL7Exception("The structure does not exist");
+        }
+        return map;
+    }
+
 
     /**
      * Returns a list containing all existing repetitions of the structure identified by name

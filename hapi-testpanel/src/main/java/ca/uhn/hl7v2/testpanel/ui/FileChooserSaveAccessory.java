@@ -153,7 +153,7 @@ public class FileChooserSaveAccessory extends JPanel {
 
 		List<String> charSets = new ArrayList<String>(Charset.availableCharsets().keySet());
 		Collections.sort(charSets);
-		ComboBoxModel charsetModel = new DefaultComboBoxModel(charSets.toArray(new String[0]));
+		ComboBoxModel<?> charsetModel = new DefaultComboBoxModel(charSets.toArray(new String[0]));
 		myCharsetCombo.setModel(charsetModel);
 		Charset openOrSaveCharset = Prefs.getInstance().getOpenOrSaveCharset();
 		myCharsetCombo.setSelectedItem(openOrSaveCharset.name());

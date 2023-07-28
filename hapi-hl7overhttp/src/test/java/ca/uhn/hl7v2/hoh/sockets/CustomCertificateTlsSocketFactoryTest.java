@@ -61,7 +61,7 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 		CustomCertificateTlsSocketFactory goodClient = new CustomCertificateTlsSocketFactory();
 		goodClient.setKeystoreFilename("src/test/resources/truststore.jks");
-		// goodClient.setKeystorePassphrase("changeit");
+		 goodClient.setKeystorePassphrase("changeit");
 		Socket client = goodClient.createClientSocket();
 		client.connect(new InetSocketAddress("localhost", myPort));
 

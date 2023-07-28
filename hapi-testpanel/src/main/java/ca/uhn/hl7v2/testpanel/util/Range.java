@@ -63,7 +63,8 @@ public class Range {
 
 	public String applyTo(String theMessage) {
 		int end = myEnd;
-		if (theMessage.length() < myEnd) {
+
+if (theMessage.length() < myEnd) {
 			end = theMessage.length();
 		}
 		return theMessage.substring(myStart, end);

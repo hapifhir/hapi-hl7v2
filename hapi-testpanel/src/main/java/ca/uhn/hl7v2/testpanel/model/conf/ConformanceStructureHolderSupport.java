@@ -240,4 +240,10 @@ public class ConformanceStructureHolderSupport implements ConformanceStructureHo
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public Map<String, List<Structure>> getAllStructure() throws HL7Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

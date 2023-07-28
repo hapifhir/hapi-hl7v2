@@ -13,7 +13,7 @@
 		<repository>
 			<id>netbeans</id>
 			<name>NetBeans Platform Maven Repository</name>
-			<url>http://bits.netbeans.org/maven2/</url>
+			<url>https://netbeans.apidesign.org/maven2/</url>
 		</repository>
 		<!-- For JSyntaxPane -->
 		<repository>
@@ -51,26 +51,53 @@
 		<dependency>
 			<groupId>org.netbeans.api</groupId>
 			<artifactId>org-netbeans-swing-outline</artifactId>
-			<version>RELEASE73</version>
+			<version>RELEASE90</version>
 		</dependency>
 		<dependency>
 			<groupId>org.netbeans.api</groupId>
 			<artifactId>org-netbeans-swing-outline</artifactId>
-			<version>RELEASE73</version>
+			<version>RELEASE90</version>
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
 		<!-- We're using a customized version of JSyntaxPane. See http://code.google.com/p/jsyntaxpane/issues/detail?id=180 -->
 		<dependency>
-			<artifactId>jsyntaxpane</artifactId>
-			<groupId>jsyntaxpane</groupId>
-			<version>0.9.6-hapi2</version>
+			 <groupId>de.sciss</groupId>
+		    <artifactId>jsyntaxpane</artifactId>
+		    <version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
 		</dependency>
+		<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.0-b170201.1204</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+<dependency>
+    <groupId>javax.activation</groupId>
+    <artifactId>activation</artifactId>
+    <version>1.1</version>
+</dependency>
+
+<!-- API, java.xml.bind module -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- Runtime, com.sun.xml.bind module -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
@@ -180,8 +207,8 @@
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
-			<plugin>
-				<groupId>com.sun.tools.xjc.maven2</groupId>
+		<plugin>
+			 <groupId>com.sun.tools.xjc.maven2</groupId>
 				<artifactId>maven-jaxb-plugin</artifactId>
 				<version>1.1.1</version>
 				<executions>
@@ -201,19 +228,24 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
+<!--
 				<groupId>de.jflex.maven.plugin</groupId>
 				<artifactId>maven-jflex-plugin</artifactId>
-				<!--version>0.2</version -->
+				<version>0.2</version>
+				-->
+				<groupId>de.jflex</groupId>
+				<artifactId>maven-jflex-plugin</artifactId>
+				<version>0.3</version>
 				<executions>
 					<execution>
 						<goals>
@@ -296,6 +328,7 @@
 								<configuration>
 									<archive>
 										<manifest>
+											<addClasspath>true</addClasspath>
 											<mainClass>ca.uhn.hl7v2.testpanel.App</mainClass>
 										</manifest>
 									</archive>
@@ -317,7 +350,7 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>					
 				</plugins>
 			</build>
 		</profile>

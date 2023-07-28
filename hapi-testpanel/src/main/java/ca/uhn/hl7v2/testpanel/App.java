@@ -68,7 +68,7 @@ public class App {
 			try {
 				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.OSXInitializer");
 				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
+				runMethod.invoke(clazz.getDeclaredConstructor().newInstance(), myController);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -79,7 +79,8 @@ public class App {
 			try {
 				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.WindowsInitializer");
 				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
+			//	runMethod.invoke(clazz.newInstance(), myController);
+				runMethod.invoke(clazz.getDeclaredConstructor().newInstance(), myController);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -90,7 +91,7 @@ public class App {
 			try {
 				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.LinuxInitializer");
 				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
+				runMethod.invoke(clazz.getDeclaredConstructor().newInstance(), myController);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

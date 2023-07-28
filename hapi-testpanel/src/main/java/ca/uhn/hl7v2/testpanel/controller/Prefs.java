@@ -385,14 +385,16 @@ public class Prefs {
 	public List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
 		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
 		List<XmlFormat> savedVals = myRecentMessageXmlFiles;
-		for (XmlFormat string : savedVals) {
-			try {
-				Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
-				if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
-					retVal.add(nextMsg);
+		if(savedVals != null) {
+			for (XmlFormat string : savedVals) {
+				try {
+					Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
+					if (StringUtils.isNotBlank(nextMsg.getSaveFileName())) {
+						retVal.add(nextMsg);
+					}
+				} catch (Exception e) {
+					ourLog.error("Failed to restore profile", e);
 				}
-			} catch (Exception e) {
-				ourLog.error("Failed to restore profile", e);
 			}
 		}
 		return retVal;
@@ -860,12 +862,12 @@ public class Prefs {
 	}
 
 	public static File getTestpanelHomeDirectory() {
-		File userHome = new File(System.getProperty("user.home"));
+		File userHome = new File(System.getProperty("user.home"));		
 		File testPanelHome = new File(userHome, "HapiTestPanel");
 		return testPanelHome;
 	}
 
-	// @XmlType()
+	// @XmlType()h
 	// @XmlAccessorType(XmlAccessType.FIELD)
 	// public static class OpenImportedProfileGroupFile {
 	//

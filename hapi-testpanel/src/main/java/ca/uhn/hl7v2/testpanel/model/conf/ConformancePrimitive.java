@@ -36,9 +36,9 @@ public class ConformancePrimitive extends AbstractPrimitive implements Primitive
 		return (ConformanceMessage) super.getMessage();
 	}
 
-	private AbstractComponent myConfDefinition;
+	private AbstractComponent<?> myConfDefinition;
 
-	public ConformancePrimitive(ConformanceMessage theMessage, AbstractComponent theConfDefinition) {
+	public ConformancePrimitive(ConformanceMessage theMessage, AbstractComponent<?> theConfDefinition) {
 		super(theMessage);
 		
 		myConfDefinition = theConfDefinition;
@@ -47,7 +47,7 @@ public class ConformancePrimitive extends AbstractPrimitive implements Primitive
 	/**
 	 * @return the confDefinition
 	 */
-	public AbstractComponent getConfDefinition() {
+	public AbstractComponent<?> getConfDefinition() {
 		return myConfDefinition;
 	}
 

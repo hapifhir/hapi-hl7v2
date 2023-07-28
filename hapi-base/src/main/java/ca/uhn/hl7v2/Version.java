@@ -141,6 +141,11 @@ public enum Version {
 		return versions.toArray(new Version[0]);
 	}
 
+	/**
+	 * 
+	 * @return name of the $package.model.$version
+	 */
+	
 	public String modelPackageName() {
         String classname = getClass().getName();
         String p = classname.substring(0, classname.lastIndexOf("."));
