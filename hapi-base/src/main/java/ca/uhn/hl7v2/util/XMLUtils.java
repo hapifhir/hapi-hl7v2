@@ -25,10 +25,10 @@ this file under either the MPL or the GPL.
  */
 package ca.uhn.hl7v2.util;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.DOMImplementation;
@@ -37,11 +37,17 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSParser;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class XMLUtils {
+    private static final Logger ourLog = LoggerFactory.getLogger(XMLUtils.class);
 
     private static DOMImplementation IMPL;
 
@@ -59,42 +65,49 @@ public class XMLUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getDOMImplUncached() {
+    public static Document parse(String s) {
+        return parseDocument(new InputSource(new StringReader(s)), false);
+    }
+
+    public static Document parse(String s, boolean validateIfSchema) {
+        return parseDocument(new InputSource(new StringReader(s)), validateIfSchema);
+    }
+
+    public static Document parse(InputStream s, boolean validateIfSchema) {
+        return parseDocument(new InputSource(s), validateIfSchema);
+    }
+
+    public static Document parseDocument(InputSource theInputSource, boolean theValidating) {
+        DocumentBuilder builder;
         try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            return (T) registry.getDOMImplementation("LS 3.0");
-        } catch (Exception e) {
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            docBuilderFactory.setNamespaceAware(true);
+            docBuilderFactory.setXIncludeAware(false);
+            docBuilderFactory.setExpandEntityReferences(false);
+            docBuilderFactory.setValidating(theValidating);
+            try {
+                docBuilderFactory.setFeature(
+                        "http://apache.org/xml/features/disallow-doctype-decl", false);
+                docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+                docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            } catch (Exception e) {
+                ourLog.warn("Failed to set feature on XML parser: " + e.toString());
+            }
+
+            builder = docBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            return builder.parse(theInputSource);
+        } catch (SAXException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Document parse(String s) {
-        return parse(s, false);
-    }
-
-    public static Document parse(String s, boolean validateIfSchema) {
-        DOMImplementationLS impl = getDOMImpl();
-        LSInput input = impl.createLSInput();
-        input.setStringData(s);
-        return parse(input, validateIfSchema);
-    }
-
-    public static Document parse(InputStream s, boolean validateIfSchema) {
-        DOMImplementationLS impl = getDOMImpl();
-        LSInput input = impl.createLSInput();
-        input.setByteStream(s);
-        return parse(input, validateIfSchema);
-    }
-
-    private static Document parse(LSInput input, boolean validateIfSchema) {
-        DOMImplementationLS impl = getDOMImpl();
-        LSParser parser = impl.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, null);
-        DOMConfiguration config = parser.getDomConfig();
-        config.setParameter("element-content-whitespace", false);
-        config.setParameter("namespaces", true);
-        config.setParameter("validate-if-schema", validateIfSchema);
-        return parser.parse(input);
-    }
 
     public static void validate(Document d, String schema, DOMErrorHandler handler) {
         DOMConfiguration config = d.getDomConfig();

@@ -36,11 +36,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * JUnit test harmess for ConnectionHub connecting to a SimpleServer
@@ -96,7 +92,7 @@ public class ConnectionHubTest extends MockitoTest {
 		HapiContext context = new DefaultHapiContext();
 		context.setValidationContext(ValidationContextFactory.noValidation());
 
-		SocketFactory socketFactory = mock(SocketFactory.class);
+		SocketFactory socketFactory = mock(SocketFactory.class, withSettings().verboseLogging());
 		context.setSocketFactory(socketFactory);
 		when(socketFactory.createTlsSocket()).thenReturn(
 				javax.net.SocketFactory.getDefault().createSocket());

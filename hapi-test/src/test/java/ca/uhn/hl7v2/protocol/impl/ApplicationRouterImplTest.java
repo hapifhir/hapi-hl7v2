@@ -26,6 +26,7 @@ import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.protocol.Transportable;
 import ca.uhn.hl7v2.util.Terser;
+import org.mockito.MockSettings;
 
 /**
  * Unit tests for <code>ApplicationRouterImpl</code>.
@@ -74,17 +75,17 @@ public class ApplicationRouterImplTest {
     @Test
     public void testExceptionHandlerWorksCorrectlyWithInvalidMessage() throws HL7Exception {
 
-        ReceivingApplicationExceptionHandler handler = mock(ReceivingApplicationExceptionHandler.class);
+        ReceivingApplicationExceptionHandler handler = mock(ReceivingApplicationExceptionHandler.class, withSettings().verboseLogging());
 
         String msg = "BAD MESSAGE";
         String respMsg = "BAD RESPONSE MESSAGE";
 
-        when(handler.processException(eq(msg), any(Map.class), any(String.class), any(Exception.class))).thenReturn(respMsg);
+        when(handler.processException(eq(msg), any(), any(), any())).thenReturn(respMsg);
 
         myRouter.setExceptionHandler(handler);
         myRouter.processMessage(new TransportableImpl(msg));
 
-        verify(handler).processException(eq(msg), any(Map.class), any(String.class), any(Exception.class));
+        verify(handler).processException(eq(msg), any(), any(), any());
     }
 
     @Test

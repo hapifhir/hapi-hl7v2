@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
+<ADT_A01 xmlns="urn:hl7-org:v2xml">
+    <MSH>
+        <MSH.1>|</MSH.1>
+        <MSH.2>^~\&amp;</MSH.2>
+        <MSH.9>
+            <MSG.1>ADT</MSG.1>
+            <MSG.2>A01</MSG.2>
+            <MSG.3>ADT_A01</MSG.3>
+        </MSH.9>
+        <MSH.11>
+            <PT.1>P</PT.1>
+        </MSH.11>
+        <MSH.10>&xxe;</MSH.10>
+        <MSH.12>
+            <VID.1>2.5</VID.1>
+        </MSH.12>
+    </MSH>
+</ADT_A01>

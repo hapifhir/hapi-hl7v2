@@ -12,16 +12,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 // import hapi.on.olis.erp_z99.message.ERP_R09;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.GenericMessage;
 import ca.uhn.hl7v2.util.Hl7InputStreamMessageIterator;
+import ca.uhn.hl7v2.util.XMLUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,6 +37,14 @@ import ca.uhn.hl7v2.model.v25.message.OMD_O03;
 import ca.uhn.hl7v2.model.v25.message.ORU_R01;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 import ca.uhn.hl7v2.util.Terser;
+import org.w3c.dom.Node;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * JUnit test harness for XMLParser
@@ -465,6 +471,20 @@ public class XMLParserTest {
 			Message outmsg = xp.parseDocument(dom, msg.getVersion());
 			outmsg.printStructure();
 		}
+	}
+
+	@Test
+	public void testParseRejextXxe() throws Exception {
+		String msg = loadFile("/ca/uhn/hl7v2/parser/xml-with-xxe.xml");
+
+		XMLParser p = DefaultXMLParser.getInstanceWithNoValidation();
+		ADT_A01 a01 = (ADT_A01) p.parse(msg);
+
+		ST msh10MessageControlID = a01.getMSH().getMsh10_MessageControlID();
+		String value = msh10MessageControlID.getValue();
+		ourLog.info("Encoded: {}", value);
+		assertEquals("", value);
+
 	}
 
 	@Test
