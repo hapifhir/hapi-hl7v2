@@ -6,6 +6,12 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="fix" dev="James Agnew">
+				The XML parser was vulnerable to XXE injections (meaning that the XML
+				parser could be coerced into inadvertently loading the contents of files
+				on the local filesystem). It is highly recommended to upgrade to this
+				release in order to mitigate this issue.
+			</action>
 			<action type="change" dev="James Agnew">
 				As of HAPI 2.4, support for JDK 1.4 and JDK 1.5 has been withdrawn. It is
 				no longer feasible to produce these binaries, as the retrotranslator plugin

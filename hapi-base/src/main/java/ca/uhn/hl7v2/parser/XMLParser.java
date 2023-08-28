@@ -509,7 +509,7 @@ public abstract class XMLParser extends Parser {
 						compNum = Integer.parseInt(localName.substring(dotIndex + 1)) - 1;
 					} else {
 						log.debug(
-								"Datatype element {} doesn't have a valid numbered name, usgin default index of {}",
+								"Datatype element {} doesn't have a valid numbered name, using default index of {}",
 								datatypeElement.getLocalName(), compNum);
 					}
 					Type nextComponent = datatypeObject.getComponent(compNum);
