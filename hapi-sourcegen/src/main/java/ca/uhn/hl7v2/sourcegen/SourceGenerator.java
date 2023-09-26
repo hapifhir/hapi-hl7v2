@@ -61,7 +61,7 @@ public class SourceGenerator {
         }*/
         
         try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            //Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
             MessageGenerator.makeAll(baseDirectory, version, failOnError, theTemplatePackage, theFileExt);
             SegmentGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);
             DataTypeGenerator.makeAll(baseDirectory, version, theTemplatePackage, theFileExt);

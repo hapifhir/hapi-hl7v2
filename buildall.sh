@@ -6,7 +6,7 @@ set -e
 mvn -P ALLMODULES,ACCESS clean
 
 cd hapi-base
-mvn -P ALLMODULES,ACCESS clean install
+mvn -e -P ALLMODULES,ACCESS clean install
 cd ..
 
 cd hapi-sourcegen

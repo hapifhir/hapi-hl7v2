@@ -300,6 +300,7 @@
 								<item>scmVersion</item>
 								<item>timestamp</item>
 							</items>
+							<revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
 						</configuration>
 					</execution>
 					<execution>
@@ -658,7 +659,7 @@
 
 		<!-- Build-time Maven plugin versions -->
 		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
-		<maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
+		<maven.buildnumber.plugin.version>3.1.0</maven.buildnumber.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.cobertura.plugin.version>2.7</maven.cobertura.plugin.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
@@ -965,6 +966,23 @@
 				<sourcegen.jdbcUrl.new>jdbc:mysql://localhost:3306/hl7v65</sourcegen.jdbcUrl.new>
 				<sourcegen.jdbcUser.new>hl7</sourcegen.jdbcUser.new>
 				<sourcegen.jdbcPassword.new>hl7</sourcegen.jdbcPassword.new>
+			</properties>
+		</profile>
+		<profile>
+			<id>UCANACCESS</id>
+			<properties>
+				<sourcegen.jdbcUrl.old>jdbc:ucanaccess:///home/james/git/hapi-hl7v2/hapi-db/hl7db.mdb;memory=false</sourcegen.jdbcUrl.old>
+				<sourcegen.jdbcUser.old />
+				<sourcegen.jdbcPassword.old />
+				<sourcegen.jdbcUrl.new>jdbc:ucanaccess:///home/james/git/hapi-hl7v2/hapi-db/hl7_65.mdb;memory=false</sourcegen.jdbcUrl.new>
+				<sourcegen.jdbcUser.new />
+				<sourcegen.jdbcPassword.new />
+				<sourcegen.jdbcUrl.27>jdbc:ucanaccess:///home/james/git/hapi-hl7v2/hapi-db/hl7_v27_v271.mdb;memory=false</sourcegen.jdbcUrl.27>
+				<sourcegen.jdbcUser.27 />
+				<sourcegen.jdbcPassword.27 />
+				<sourcegen.jdbcUrl.28>jdbc:ucanaccess:///home/james/git/hapi-hl7v2/hapi-db/hl7_v28_v281.mdb;memory=false</sourcegen.jdbcUrl.28>
+				<sourcegen.jdbcUser.28 />
+				<sourcegen.jdbcPassword.28 />
 			</properties>
 		</profile>
 		<profile>

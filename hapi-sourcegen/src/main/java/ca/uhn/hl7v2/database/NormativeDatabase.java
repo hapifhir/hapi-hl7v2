@@ -104,7 +104,10 @@ public class NormativeDatabase
      * available.
      */
     public synchronized Connection getConnection() throws SQLException {
-    	if (checkedOut != null) {
+    	if (connection != null) {
+            return connection;
+        }
+        if (checkedOut != null) {
     		throw checkedOut;
     	}
 
