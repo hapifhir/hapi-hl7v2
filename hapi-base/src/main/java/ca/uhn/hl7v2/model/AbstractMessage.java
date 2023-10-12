@@ -420,6 +420,15 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         return visitor.end(this);
     }
 
+    /**
+     * Creates a copy of <code>this</code> {@link AbstractMessage} by recursively looping over each
+     * {@link Structure} (i.e. {@link AbstractGroup} or {@link AbstractSegment}). When an
+     * {@link AbstractSegment} is found, its contents are encoded and parsed into the copied
+     * {@link AbstractMessage}
+     *
+     * @return A copy of <code>this</code> {@link AbstractMessage}
+     * @throws HL7Exception If an error occurs while the message is being copied
+     */
     public AbstractMessage copy() throws HL7Exception{
         AbstractMessage clonedMessage = ReflectionUtil.instantiateMessage(this.getClass(), this.getModelClassFactory());
         clonedMessage.setParser(this.getParser());
