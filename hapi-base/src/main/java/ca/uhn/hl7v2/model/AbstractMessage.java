@@ -420,5 +420,64 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         return visitor.end(this);
     }
 
+    /**
+     * Creates a copy of <code>this</code> {@link AbstractMessage} by recursively looping over each
+     * {@link Structure} (i.e. {@link AbstractGroup} or {@link AbstractSegment}). When an
+     * {@link AbstractSegment} is found, its contents are encoded and parsed into the copied
+     * {@link AbstractMessage}
+     *
+     * @return A copy of <code>this</code> {@link AbstractMessage}
+     * @throws HL7Exception If an error occurs while the message is being copied
+     */
+    public AbstractMessage copy() throws HL7Exception{
+        AbstractMessage clonedMessage = ReflectionUtil.instantiateMessage(this.getClass(), this.getModelClassFactory());
+        clonedMessage.setParser(this.getParser());
+
+        copyParserRequiredMshFields(this, clonedMessage);
+        copyGroup(this, clonedMessage);
+        return clonedMessage;
+    }
+
+    private void copyParserRequiredMshFields(AbstractMessage theSource, AbstractMessage theTarget) throws HL7Exception {
+        String mshField = "MSH";
+        AbstractSegment sourceMsh = (AbstractSegment) theSource.get(mshField);
+        AbstractSegment targetMsh = (AbstractSegment) theTarget.get(mshField);
+
+        String msh1 = Terser.get(sourceMsh, 1, 0, 1, 1);
+        Terser.set(targetMsh, 1, 0, 1, 1, msh1);
+
+        String msh2 = Terser.get(sourceMsh, 2, 0, 1, 1);
+        Terser.set(targetMsh, 2, 0, 1, 1, msh2);
+    }
+
+    private void copyGroup(AbstractGroup theSource, AbstractGroup theTarget) throws HL7Exception {
+        String[] sourceNames = theSource.getNames();
+
+        for (String sourceName : sourceNames) {
+
+            Structure[] sourceStructures = theSource.getAll(sourceName);
+            for (int i = 0; i < sourceStructures.length; i++) {
+
+                Structure sourceStructure = sourceStructures[i];
+
+                if (sourceStructure instanceof AbstractGroup) {
+                    Structure targetGroup = theTarget.get(sourceName, i);
+                    copyGroup((AbstractGroup)sourceStructure, (AbstractGroup)targetGroup);
+
+                } else if (sourceStructure instanceof AbstractSegment) {
+
+                    boolean isNonStandardSegment = theSource.getNonStandardNames().contains(sourceName);
+                    if (isNonStandardSegment) {
+                        theTarget.addNonstandardSegment(sourceName);
+                    }
+
+                    AbstractSegment sourceSegment = (AbstractSegment) sourceStructure;
+                    AbstractSegment targetSegment = (AbstractSegment) theTarget.get(sourceName, i);
+                    String segmentContents = sourceSegment.encode();
+                    targetSegment.parse(segmentContents);
+                }
+            }
+        }
+    }
 
 }
