@@ -28,6 +28,7 @@ this file under either the MPL or the GPL.
 package ca.uhn.hl7v2.model;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -468,7 +469,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
 
                     boolean isNonStandardSegment = theSource.getNonStandardNames().contains(sourceName);
                     if (isNonStandardSegment) {
-                        theTarget.addNonstandardSegment(sourceName);
+                        insertNonStandardSegment(theSource, theTarget, sourceName);
                     }
 
                     AbstractSegment sourceSegment = (AbstractSegment) sourceStructure;
@@ -480,4 +481,17 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
         }
     }
 
+    private void insertNonStandardSegment(AbstractGroup theSource, AbstractGroup theTarget, String theNonStandardSegmentName) throws HL7Exception {
+        String[] sourceNames = theSource.getNames();
+        int sourceIndex = Arrays.asList(sourceNames).indexOf(theNonStandardSegmentName);
+
+        String[] targetNames = theTarget.getNames();
+        boolean shouldInsertAtEnd = sourceIndex >= targetNames.length;
+
+        if (shouldInsertAtEnd) {
+            theTarget.addNonstandardSegment(theNonStandardSegmentName);
+        } else {
+            theTarget.addNonstandardSegment(theNonStandardSegmentName, sourceIndex);
+        }
+    }
 }

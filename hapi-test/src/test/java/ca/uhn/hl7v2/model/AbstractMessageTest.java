@@ -274,6 +274,8 @@ public class AbstractMessageTest {
 
         addNonStandardSegment(ras, "ZZZ", "ZZZ|Some ZZZ value 1");
 
+        addNonStandardSegment(ras, "ABC", "ABC|Some ABC value", 4);
+
         return ras;
     }
 
@@ -288,7 +290,11 @@ public class AbstractMessageTest {
     }
 
     private void addNonStandardSegment(AbstractGroup theAbstractGroup, String theSegmentName, String theSegmentValue) throws HL7Exception {
-        String addedSegment = theAbstractGroup.addNonstandardSegment(theSegmentName);
+        addNonStandardSegment(theAbstractGroup, theSegmentName, theSegmentValue, null);
+    }
+
+    private void addNonStandardSegment(AbstractGroup theAbstractGroup, String theSegmentName, String theSegmentValue, Integer theIndex) throws HL7Exception {
+        String addedSegment = theIndex == null ? theAbstractGroup.addNonstandardSegment(theSegmentName) : theAbstractGroup.addNonstandardSegment(theSegmentName, theIndex);
         Segment nonStandardSegment = (Segment) theAbstractGroup.get(addedSegment);
         nonStandardSegment.parse(theSegmentValue);
     }

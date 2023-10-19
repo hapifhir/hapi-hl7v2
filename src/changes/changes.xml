@@ -6,6 +6,15 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="fix" dev="Nathan Doef">
+				Fix an issue with the AbstractMessage#copy() method where non-standard
+		                segments were not being added at the same position as the original message.
+		    	</action>
+	    		<action type="add" dev="Nathan Doef">
+		                Add a new copy() method to AbstractMessage that recursively loops over
+		                every Structure and parses / encodes the contents of each AbstractSegment
+		                into the copied message.
+		    	</action>
 			<action type="fix" dev="James Agnew">
 				The XML parser was vulnerable to XXE injections (meaning that the XML
 				parser could be coerced into inadvertently loading the contents of files
