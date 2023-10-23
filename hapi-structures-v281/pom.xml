@@ -66,6 +66,7 @@
 					</dependency>-->
 				</dependencies>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>ca.uhn.hapi</groupId>
 				<artifactId>hapi-sourcegen</artifactId>
@@ -88,6 +89,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>

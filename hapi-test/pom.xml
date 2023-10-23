@@ -84,7 +84,12 @@
             <artifactId>hapi-structures-v281</artifactId>
             <version>${hapi.version.structures}</version>
         </dependency>
-		<!-- 
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-superstructures</artifactId>
+            <version>${hapi.version.structures}</version>
+        </dependency>
+		<!--
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v21</artifactId>

@@ -178,8 +178,27 @@
 	</dependencies>
 
 	<modules>
-		<!--<module>hapi-confgen-archetype</module> -->
-		<!--<module>HapiOpenesbEncoder</module> -->
+		<module>hapi-bom</module>
+		<module>hapi-base</module>
+		<module>hapi-sourcegen</module>
+		<module>hapi-structures-v21</module>
+		<module>hapi-structures-v22</module>
+		<module>hapi-structures-v23</module>
+		<module>hapi-structures-v231</module>
+		<!--<module>hapi-structures-v231-alternatenames</module>-->
+		<module>hapi-structures-v24</module>
+		<module>hapi-structures-v25</module>
+		<module>hapi-structures-v251</module>
+		<module>hapi-structures-v26</module>
+		<module>hapi-structures-v27</module>
+		<!--<module>hapi-structures-v271</module>-->
+		<module>hapi-structures-v28</module>
+		<module>hapi-structures-v281</module>
+		<module>hapi-structures-superstructures</module>
+		<module>hapi-hl7overhttp</module>
+		<module>hapi-examples</module>
+		<module>hapi-testpanel</module>
+		<module>hapi-dist</module>
 	</modules>
 
 	<distributionManagement>
@@ -633,10 +652,10 @@
 		<root.basedir>${basedir}</root.basedir>
 
 		<!-- HAPI Versions -->
-		<hapi.version>2.4-SNAPSHOT</hapi.version>
-		<hapi.version.structures>2.3</hapi.version.structures>
+		<hapi.version>${project.version}</hapi.version>
+		<hapi.version.structures>${project.version}</hapi.version.structures>
 		<hapi.version.stable>2.2</hapi.version.stable>
-		<hapi.version.testpanel>2.0.1</hapi.version.testpanel>
+		<hapi.version.testpanel>${project.version}</hapi.version.testpanel>
 
 		<!-- Dependency versions -->
 		<bouncycastle.version>1.46</bouncycastle.version>
@@ -850,25 +869,6 @@
 				</plugins>
 			</build>
 			<modules>
-				<module>hapi-bom</module>
-				<module>hapi-base</module>
-				<module>hapi-sourcegen</module>
-				<module>hapi-structures-v21</module>
-				<module>hapi-structures-v22</module>
-				<module>hapi-structures-v23</module>
-				<module>hapi-structures-v231</module>
-				<module>hapi-structures-v231-alternatenames</module>
-				<module>hapi-structures-v24</module>
-				<module>hapi-structures-v25</module>
-				<module>hapi-structures-v251</module>
-				<module>hapi-structures-v26</module>
-            	<module>hapi-structures-v27</module>
-				<!--<module>hapi-structures-v271</module>-->
-           	    <module>hapi-structures-v28</module>
-                <module>hapi-structures-v281</module>
-				<module>hapi-hl7overhttp</module>
-				<module>hapi-examples</module>
-				<module>hapi-dist</module>
 			</modules>
 		</profile>
 		<profile>

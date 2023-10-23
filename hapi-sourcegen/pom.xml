@@ -23,7 +23,14 @@
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-base</artifactId>
 			<version>${hapi.version}</version>
-		</dependency>		
+		</dependency>
+
+		<!-- FIXME: remove -->
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v21</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>

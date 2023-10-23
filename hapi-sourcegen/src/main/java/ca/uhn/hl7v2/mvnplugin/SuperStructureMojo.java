@@ -123,6 +123,7 @@ public class SuperStructureMojo extends AbstractMojo {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void execute() throws MojoFailureException {
 
 		if (skip) {
@@ -231,7 +232,7 @@ public class SuperStructureMojo extends AbstractMojo {
 		private Map<String, List<String>> myStructureNameToChildNames;
 	}
 
-	private ListOfStructureDefsAndMapOfStructreNames mergeGroups(List<? extends Group> theGroupsToMerge, List<Message> theAssociatedStructures) throws HL7Exception {
+	private ListOfStructureDefsAndMapOfStructreNames mergeGroups(List<? extends Group> theGroupsToMerge, List<Message> theAssociatedStructures) throws HL7Exception, MojoFailureException {
 		ArrayList<StructureDef> retValStructureDefs = new ArrayList<>();
 
 		List<List<String>> allNameLists = new ArrayList<>();
@@ -288,6 +289,14 @@ public class SuperStructureMojo extends AbstractMojo {
 				idx++;
 			}
 
+			Version versionEnum = Version.versionOf(version);
+			if (versionEnum == null) {
+				throw new MojoFailureException("Invalid version: " + version);
+			}
+			Map<String, String> eventMapForVersion = new DefaultModelClassFactory().getEventMapForVersion(versionEnum);
+			if (eventMapForVersion == null) {
+				throw new MojoFailureException("No event map for version: " + version);
+			}
 			if (!group) {
 				SegmentDef seg = new SegmentDef(nextStructureName.substring(0, 3), "", required, repeating, choice, "");
 				retValStructureDefs.add(seg);
@@ -299,7 +308,7 @@ public class SuperStructureMojo extends AbstractMojo {
 				 */
 				for (Message next : associatedChildStructures) {
 					seg.addAssociatedStructure(next.getName());
-					Map<String, String> evtMap = new TreeMap<>(new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version)));
+					Map<String, String> evtMap = new TreeMap<>(eventMapForVersion);
 					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 						String value = nextEntry.getValue();
 						String name = next.getName();
@@ -325,7 +334,7 @@ public class SuperStructureMojo extends AbstractMojo {
 			 * "ADT_A01", "ADT_A04")
 			 */
 			for (Message next : associatedChildStructures) {
-				Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
+				Map<String, String> evtMap = eventMapForVersion;
 				for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 					if (nextEntry.getValue().equals(next.getName())) {
 						grp.addAssociatedStructure(nextEntry.getKey());
@@ -439,7 +448,7 @@ public class SuperStructureMojo extends AbstractMojo {
 
 		m.targetDirectory = "target/merge";
 		m.targetStructureName = "ADT_AXX";
-		m.version = "2.3.1";
+		m.version = "2.1";
 		m.execute();
 	}
 
