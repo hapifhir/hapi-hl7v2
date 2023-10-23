@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>DefaultXMLParser xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/ca/uhn/hl7v2/parser/DefaultXMLParser.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment">The contents of this file are subject to the Mozilla Public License Version 1.1</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment">(the "License"); you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment">You may obtain a copy of the License at <a href="http://www.mozilla.org/MPL/" target="alexandria_uri">http://www.mozilla.org/MPL/</a></em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment">Software distributed under the License is distributed on an "AS IS" basis,</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment">WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment">specific language governing rights and limitations under the License.</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment">The Initial Developer of the Original Code is University Health Network. Copyright (C)</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment">2001.  All Rights Reserved.</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment">Contributor(s): ______________________________________.</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment">Alternatively, the contents of this file may be used under the terms of the</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment">GNU General Public License (the  �GPL�), in which case the provisions of the GPL are</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment">applicable instead of those above.  If you wish to allow use of your version of this</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment">file only under the terms of the GPL and not to allow others to use your version</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment">of this file under the MPL, indicate your decision by deleting  the provisions above</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment">and replace  them with the notice and other provisions required by the GPL License.</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment">If you do not delete the provisions above, a recipient may use your version of</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment">this file under either the MPL or the GPL.</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_javadoccomment">*/</em>
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.parser;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.io.FileReader;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.util.HashSet;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.Set;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.DefaultHapiContext;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.GenericMessage;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.DOMException;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Element;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Node;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.NodeList;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HL7Exception;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HapiContext;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Group;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Message;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Segment;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Structure;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.util.XMLUtils;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.validation.impl.NoValidation;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;A default XMLParser.  This class assigns segment elements (in an XML-encoded message) </em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment"> * to Segment objects (in a Message object) using the name of a segment and the names </em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> * of any groups in which the segment is nested.  The names of group classes must correspond</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment"> * to the names of group elements (they must be identical except that a dot in the element </em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment"> * name, following the message name, is replaced with an underscore, in order to consitute a </em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment"> * valid class name). &lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;At the time of writing, the group names in the XML spec are changing.  Many of the group </em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment"> * names have been automatically generated based on the group contents.  However, these automatic </em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment"> * names are gradually being replaced with manually assigned names.  This process is expected to </em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment"> * be complete by November 2002.  As a result, mismatches are likely.  Messages could be  </em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment"> * transformed prior to parsing (using XSLT) as a work-around.  Alternatively the group class names </em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment"> * could be changed to reflect updates in the XML spec.  Ultimately, HAPI group classes will be </em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment"> * changed to correspond with the official group names, once these are all assigned.  &lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment"> * @see ParserConfiguration for configuration options which may affect parser encoding and decoding behaviour</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment"> * @author Bryan Tripp</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DefaultXMLParser" href="../../../../ca/uhn/hl7v2/parser/DefaultXMLParser.html#DefaultXMLParser">DefaultXMLParser</a> <strong class="jxr_keyword">extends</strong> <a name="XMLParser" href="../../../../ca/uhn/hl7v2/parser/XMLParser.html#XMLParser">XMLParser</a> {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger log = LoggerFactory.getLogger(DefaultXMLParser.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Set&lt;String&gt; ourForceGroupNames;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">static</strong> {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      	ourForceGroupNames = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      	ourForceGroupNames.add(<span class="jxr_string">"DIET"</span>);
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> <a name="DefaultXMLParser" href="../../../../ca/uhn/hl7v2/parser/DefaultXMLParser.html#DefaultXMLParser">DefaultXMLParser</a>() {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      	<strong class="jxr_keyword">super</strong>();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">public</strong> <a name="DefaultXMLParser" href="../../../../ca/uhn/hl7v2/parser/DefaultXMLParser.html#DefaultXMLParser">DefaultXMLParser</a>(<a name="HapiContext" href="../../../../ca/uhn/hl7v2/HapiContext.html#HapiContext">HapiContext</a> context) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  		<strong class="jxr_keyword">super</strong>(context);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  	}
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  	<em class="jxr_javadoccomment">/** </em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * Creates a new instance of DefaultXMLParser </em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     *  </em>
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     * @param theFactory custom factory to use for model class lookup </em>
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">public</strong> <a name="DefaultXMLParser" href="../../../../ca/uhn/hl7v2/parser/DefaultXMLParser.html#DefaultXMLParser">DefaultXMLParser</a>(<a name="ModelClassFactory" href="../../../../ca/uhn/hl7v2/parser/ModelClassFactory.html#ModelClassFactory">ModelClassFactory</a> theFactory) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      	<strong class="jxr_keyword">super</strong>(theFactory);
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      }
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">     * &lt;p&gt;Creates an XML Document that corresponds to the given Message object. &lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> <em class="jxr_javadoccomment">     * &lt;p&gt;If you are implementing this method, you should create an XML Document, and insert XML Elements</em>
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> <em class="jxr_javadoccomment">     * into it that correspond to the groups and segments that belong to the message type that your subclass</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> <em class="jxr_javadoccomment">     * of XMLParser supports.  Then, for each segment in the message, call the method</em>
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">     * &lt;code&gt;encode(Segment segmentObject, Element segmentElement)&lt;/code&gt; using the Element for</em>
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">     * that segment and the corresponding Segment object from the given Message.&lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">public</strong> Document encodeDocument(<a name="Message" href="../../../../ca/uhn/hl7v2/model/Message.html#Message">Message</a> source) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         String messageClassName = source.getClass().getName();
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         String messageName = messageClassName.substring(messageClassName.lastIndexOf('.') + 1);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         <em class="jxr_comment">// Handle GenericMessages which will have an errant $ in their class name.</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">if</strong> (source instanceof <a name="GenericMessage" href="../../../../ca/uhn/hl7v2/model/GenericMessage.html#GenericMessage">GenericMessage</a>) {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             messageName = messageName.replaceAll(<span class="jxr_string">"&#92;&#92;$"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>             Document doc = XMLUtils.emptyDocument(messageName);
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>             encode(source, doc.getDocumentElement());
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>             <strong class="jxr_keyword">return</strong> doc;
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         } <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a>(
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>                 <span class="jxr_string">"Can't create XML document - "</span> + e.getClass().getName(), e);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         }
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>     }
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     * Copies data from a group object into the corresponding group element, creating any </em>
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     * necessary child nodes.  </em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> encode(<a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a> groupObject, Element groupElement) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         String[] childNames = groupObject.getNames();
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         String messageName = groupObject.getMessage().getName();
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         	<strong class="jxr_keyword">for</strong> (String name : childNames) {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <a name="Structure" href="../../../../ca/uhn/hl7v2/model/Structure.html#Structure">Structure</a>[] reps = groupObject.getAll(name);
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                 <strong class="jxr_keyword">for</strong> (<a name="Structure" href="../../../../ca/uhn/hl7v2/model/Structure.html#Structure">Structure</a> rep : reps) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>                     String elementName = makeGroupElementName(messageName, name);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 					Element childElement;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> 					<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> 						childElement = groupElement.getOwnerDocument().createElementNS(NS, elementName);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 			        } <strong class="jxr_keyword">catch</strong> (DOMException e) {
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> 			            <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a>(
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> 			                <span class="jxr_string">"Can't encode element "</span> + elementName + <span class="jxr_string">" in group "</span> + groupObject.getClass().getName(), e);
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 			        }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>                     groupElement.appendChild(childElement);
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>                     <strong class="jxr_keyword">if</strong> (rep instanceof <a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a>) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>                         encode((<a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a>) rep, childElement);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>                     }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>                     <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (rep instanceof <a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>                         encode((<a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>) rep, childElement);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>                     }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 				}
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             }
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         } <strong class="jxr_keyword">catch</strong> (DOMException e) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a>(
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 <span class="jxr_string">"Can't encode group "</span> + groupObject.getClass().getName(), e);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         }
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_javadoccomment">     * &lt;p&gt;Creates and populates a Message object from an XML Document that contains an XML-encoded HL7 message.&lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     * &lt;p&gt;The easiest way to implement this method for a particular message structure is as follows:</em>
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     * &lt;ol&gt;&lt;li&gt;Create an instance of the Message type you are going to handle with your subclass</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">     * of XMLParser&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     * &lt;li&gt;Go through the given Document and find the Elements that represent the top level of</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">     * each message segment. &lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">     * &lt;li&gt;For each of these segments, call &lt;code&gt;parse(Segment segmentObject, Element segmentElement)&lt;/code&gt;,</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">     * providing the appropriate Segment from your Message object, and the corresponding Element.&lt;/li&gt;&lt;/ol&gt;</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">     * At the end of this process, your Message object should be populated with data from the XML</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> <em class="jxr_javadoccomment">     * Document.&lt;/p&gt;</em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> <em class="jxr_javadoccomment">     * @throws HL7Exception if the message is not correctly formatted.</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">     * @throws EncodingNotSupportedException if the message encoded</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">     *     is not supported by this parser.</em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">public</strong> <a name="Message" href="../../../../ca/uhn/hl7v2/model/Message.html#Message">Message</a> parseDocument(Document xmlMessage, String version) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> 
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         assertNamespaceURI(xmlMessage.getDocumentElement().getNamespaceURI());
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <a name="Message" href="../../../../ca/uhn/hl7v2/model/Message.html#Message">Message</a> message = instantiateMessage(xmlMessage.getDocumentElement().getLocalName(), version, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     	<em class="jxr_comment">// Set parser before parsing the contents actually starts in order to respect</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <em class="jxr_comment">// the settings of the HapiContext</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         message.setParser(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         parse(message, xmlMessage.getDocumentElement());
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">return</strong> message;
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     }
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">     * Populates the given group object with data from the given group element, ignoring </em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * any unrecognized nodes.  </em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> parse(<a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a> groupObject, Element groupElement) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>         String[] childNames = groupObject.getNames();
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>         String messageName = groupObject.getMessage().getName();
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         NodeList allChildNodes = groupElement.getChildNodes();
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         List&lt;String&gt; unparsedElementList = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; allChildNodes.getLength(); i++) {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>             Node node = allChildNodes.item(i);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             String name = node.getLocalName();
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>             <strong class="jxr_keyword">if</strong> (node.getNodeType() == Node.ELEMENT_NODE &amp;&amp; !unparsedElementList.contains(name)) {
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 assertNamespaceURI(node.getNamespaceURI());
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>                 unparsedElementList.add(name);                
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>             }
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         <em class="jxr_comment">//we're not too fussy about order here (all occurrences get parsed as repetitions) ... </em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">for</strong> (String nextChildName : childNames) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>             String childName = nextChildName;
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>             <strong class="jxr_keyword">if</strong>(groupObject.isGroup(nextChildName)) {
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>             	childName = makeGroupElementName(groupObject.getMessage().getName(), nextChildName);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>             }
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> 			unparsedElementList.remove(childName);
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>             
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>             <em class="jxr_comment">// 4 char segment names are second occurrences of a segment within a single message</em>
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             <em class="jxr_comment">// structure. e.g. the second PID segment in an A17 patient swap message is known</em>
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             <em class="jxr_comment">// to hapi's code represenation as PID2</em>
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>             <strong class="jxr_keyword">if</strong> (nextChildName.length() == 4 &amp;&amp; Character.isDigit(nextChildName.charAt(3))) {
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>             	log.trace(<span class="jxr_string">"Skipping rep segment: {}"</span>, nextChildName);
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             } <strong class="jxr_keyword">else</strong> {   
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             	parseReps(groupElement, groupObject, messageName, nextChildName, nextChildName);
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>             }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>         }
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>         
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">for</strong> (String segName : unparsedElementList) {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>             String segIndexName = groupObject.addNonstandardSegment(segName);
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>             parseReps(groupElement, groupObject, messageName, segName, segIndexName);
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>         }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>     }
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>     
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>     <em class="jxr_comment">//param childIndexName may have an integer on the end if &gt;1 sibling with same name (e.g. NTE2) </em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> parseReps(Element groupElement, <a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a> groupObject, 
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>             String messageName, String childName, String childIndexName) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>     	String groupName = makeGroupElementName(messageName, childName);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>         List&lt;Element&gt; reps = getChildElementsByTagName(groupElement, groupName);
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         log.trace(<span class="jxr_string">"# of elements matching {}: {}"</span>, groupName, reps.size());
+<a class="jxr_linenumber" name="L239" href="#L239">239</a> 
+<a class="jxr_linenumber" name="L240" href="#L240">240</a> 		<strong class="jxr_keyword">if</strong> (groupObject.isRepeating(childIndexName)) {
+<a class="jxr_linenumber" name="L241" href="#L241">241</a> 			<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; reps.size(); i++) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> 				parseRep(reps.get(i), groupObject.get(childIndexName, i));
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 			}        			        
+<a class="jxr_linenumber" name="L244" href="#L244">244</a> 		} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> 			<strong class="jxr_keyword">if</strong> (reps.size() &gt; 0) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 				parseRep(reps.get(0), groupObject.get(childIndexName, 0));				
+<a class="jxr_linenumber" name="L247" href="#L247">247</a> 			}
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> 
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_comment">//			if (reps.size() &gt; 1) {			</em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_comment">//				String newIndexName = groupObject.addNonstandardSegment(childName);			</em>
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> <em class="jxr_comment">//				for (int i = 1; i &lt; reps.size(); i++) {</em>
+<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_comment">//					parseRep((Element) reps.get(i), groupObject.get(newIndexName, i-1));</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_comment">//				}        			        			</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_comment">//			}</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> 			<strong class="jxr_keyword">if</strong> (reps.size() &gt; 1) {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> 				String newIndexName;
+<a class="jxr_linenumber" name="L257" href="#L257">257</a> 				<strong class="jxr_keyword">int</strong> i=1;
+<a class="jxr_linenumber" name="L258" href="#L258">258</a> 				<strong class="jxr_keyword">try</strong>	{
+<a class="jxr_linenumber" name="L259" href="#L259">259</a> 					<strong class="jxr_keyword">for</strong> (i = 1; i &lt; reps.size(); i++) {
+<a class="jxr_linenumber" name="L260" href="#L260">260</a> 						newIndexName = childName+(i+1);
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> 						Structure st = groupObject.get(newIndexName);
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> 						parseRep(reps.get(i), st);
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> 					}
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> 				} <strong class="jxr_keyword">catch</strong>(Throwable t) {
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> 					log.info(<span class="jxr_string">"Issue Parsing: "</span> + t);
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> 					newIndexName = groupObject.addNonstandardSegment(childName);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a> 					<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = i; j &lt; reps.size(); j++) {
+<a class="jxr_linenumber" name="L268" href="#L268">268</a> 						parseRep(reps.get(j), groupObject.get(newIndexName, j-i));
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> 					}
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> 				}
+<a class="jxr_linenumber" name="L271" href="#L271">271</a> 			}
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> 			
+<a class="jxr_linenumber" name="L273" href="#L273">273</a> 		}
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>     }
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>     
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> parseRep(Element theElem, <a name="Structure" href="../../../../ca/uhn/hl7v2/model/Structure.html#Structure">Structure</a> theObj) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> 		<strong class="jxr_keyword">if</strong> (theObj instanceof <a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a>) {
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> 			parse((<a name="Group" href="../../../../ca/uhn/hl7v2/model/Group.html#Group">Group</a>) theObj, theElem);
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> 		}
+<a class="jxr_linenumber" name="L280" href="#L280">280</a> 		<strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (theObj instanceof <a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> 			parse((<a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>) theObj, theElem);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> 		}                
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> 		log.trace(<span class="jxr_string">"Parsed element: {}"</span>, theElem.getNodeName());    	
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>     }
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>     
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>     <em class="jxr_comment">//includes direct children only</em>
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     <strong class="jxr_keyword">private</strong> List&lt;Element&gt; getChildElementsByTagName(Element theElement, String theName) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>     	List&lt;Element&gt; result = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(10);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>     	NodeList children = theElement.getChildNodes();
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>     	
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>     	<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; children.getLength(); i++) {
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>     		Node child = children.item(i);
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     		<strong class="jxr_keyword">if</strong> (child.getNodeType() == Node.ELEMENT_NODE &amp;&amp; child.getLocalName().equals(theName)) {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>                 assertNamespaceURI(child.getNamespaceURI());
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>     			result.add((Element)child);
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>     		}
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>     	}
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>     	
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>     	<strong class="jxr_keyword">return</strong> result; 
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     }
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>     
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     <em class="jxr_javadoccomment">/** </em>
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     * Given the name of a group element in an XML message, returns the corresponding </em>
+<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * group class name.  This name is identical except in order to be a valid class </em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     * name, the dot character immediately following the message name is replaced with </em>
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * an underscore.  For example, there is a group element called ADT_A01.INSURANCE and the </em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     * corresponding group Class is called ADT_A01_INSURANCE. </em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_comment">//    protected static String makeGroupClassName(String elementName) {</em>
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_comment">//        return elementName.replace('.', '_');</em>
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> <em class="jxr_comment">//    }</em>
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <em class="jxr_javadoccomment">/** </em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> <em class="jxr_javadoccomment">     * Given the name of a message and a Group class, returns the corresponding group element name in an </em>
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> <em class="jxr_javadoccomment">     * XML-encoded message.  This is the message name and group name separated by a dot. For example, </em>
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">     * ADT_A01.INSURANCE.</em>
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * If it looks like a segment name (i.e. has 3 characters), no change is made. </em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String makeGroupElementName(String messageName, String className) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         String ret;
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">if</strong> (className.length() &gt; 4 || ourForceGroupNames.contains(className)) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             ret = messageName +
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                     '.' +
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>                     className;
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (className.length() == 4) {
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>             <em class="jxr_comment">// It is not clear why this case is needed.. We should figure out</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         	<em class="jxr_comment">// why it was added, since removing it or optimizing its use would</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>         	<em class="jxr_comment">// prevent the need for "ourForGroupNames" above</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         	ret = className.substring(0,3);
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>             ret = className;
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         }
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>         
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <strong class="jxr_keyword">return</strong> ret;
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>     }
+<a class="jxr_linenumber" name="L338" href="#L338">338</a> 
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>     <em class="jxr_javadoccomment">/** Test harness */</em>
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) {
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         <strong class="jxr_keyword">if</strong> (args.length != 1) {
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>             System.out.println(<span class="jxr_string">"Usage: DefaultXMLParser pipe_encoded_file"</span>);
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>             System.exit(1);
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>         }
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>         <em class="jxr_comment">//read and parse message from file </em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>             File messageFile = <strong class="jxr_keyword">new</strong> File(args[0]);
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>             <strong class="jxr_keyword">long</strong> fileLength = messageFile.length();
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>             FileReader r = <strong class="jxr_keyword">new</strong> FileReader(messageFile);
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>             <strong class="jxr_keyword">char</strong>[] cbuf = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">char</strong>[(<strong class="jxr_keyword">int</strong>) fileLength];
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>             System.out.println(<span class="jxr_string">"Reading message file ... "</span> + r.read(cbuf) + <span class="jxr_string">" of "</span> + fileLength + <span class="jxr_string">" chars"</span>);
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>             r.close();
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>             String messString = String.valueOf(cbuf);
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>             <a name="Parser" href="../../../../ca/uhn/hl7v2/parser/Parser.html#Parser">Parser</a> inParser = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>             <a name="Parser" href="../../../../ca/uhn/hl7v2/parser/Parser.html#Parser">Parser</a> outParser = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>             <a name="PipeParser" href="../../../../ca/uhn/hl7v2/parse<a name="PipeParser" href="../../../../ca/uhn/hl7v2/parser/PipeParser.html#PipeParser">PipeParser</a>er.html#PipeParser">PipeParser</a> pp = <strong class="jxr_keyword">new</strong> <a name="PipeParser" href="../../../../ca/uhn/hl7v2/parser/PipeParser.html#PipeParser">PipeParser</a>();
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>             ca.uhn.hl7v2.parser.XMLParser xp = <strong class="jxr_keyword">new</strong> <a name="DefaultXMLParser" href="../../../../ca/uhn/hl7v2/parser/DefaultXMLParser.html#DefaultXMLParser">DefaultXMLParser</a>();
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>             System.out.println(<span class="jxr_string">"Encoding: "</span> + pp.getEncoding(messString));
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>             <strong class="jxr_keyword">if</strong> (pp.getEncoding(messString) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 inParser = pp;
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                 outParser = xp;
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>             }
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>             <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (xp.getEncoding(messString) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 inParser = xp;
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>                 outParser = pp;
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>             }
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> 
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>             <a name="Message" href="../../../../ca/uhn/hl7v2/model/Message.html#Message">Message</a> mess = inParser.parse(messString);
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>             System.out.println(<span class="jxr_string">"Got message of type "</span> + mess.getClass().getName());
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> 
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>             String otherEncoding = outParser.encode(mess);
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>             System.out.println(otherEncoding);
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         }
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>             e.printStackTrace();
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>         }
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>     }
+<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L383" href="#L383">383</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L384" href="#L384">384</a> 	@Override
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> parse(<a name="Message" href="../../../../ca/uhn/hl7v2/model/Message.html#Message">Message</a> theMessage, String theString) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L386" href="#L386">386</a> 	   theMessage.setParser(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L387" href="#L387">387</a> 		Document doc = parseStringIntoDocument(theString);
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         parse(theMessage, doc.getDocumentElement());
+<a class="jxr_linenumber" name="L389" href="#L389">389</a> 
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         applySuperStructureName(theMessage);
+<a class="jxr_linenumber" name="L391" href="#L391">391</a> 	}
+<a class="jxr_linenumber" name="L392" href="#L392">392</a> 
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> <em class="jxr_javadoccomment">     * Convenience factory method which returns an instance that has a </em>
+<a class="jxr_linenumber" name="L395" href="#L395">395</a> <em class="jxr_javadoccomment">     * {@link NoValidation NoValidation validation context}. </em>
+<a class="jxr_linenumber" name="L396" href="#L396">396</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="XMLParser" href="../../../../ca/uhn/hl7v2/parser/XMLParser.html#XMLParser">XMLParser</a> getInstanceWithNoValidation() {
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>         <a name="HapiContext" href="../../../../ca/uhn/hl7v2/HapiContext.html#HapiContext">HapiContext</a> context = <strong class="jxr_keyword">new</strong> <a name="DefaultHapiContext" href="../../../../ca/uhn/hl7v2/DefaultHapiContext.html#DefaultHapiContext">DefaultHapiContext</a>(ValidationContextFactory.noValidation());
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">return</strong> context.getXMLParser();
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>     }
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> 
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> 
+<a class="jxr_linenumber" name="L403" href="#L403">403</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2001&#x2013;2023 <a href="http://www.uhn.ca">University Health Network</a>. All rights reserved.</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

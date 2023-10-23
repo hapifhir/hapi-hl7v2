@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is a dummy tables-only spec that includes all HL7 tables for version 2.4 --> 
+
+<Specification>
+
+
+<hl7tables>
+	<hl7table id="0001" name="Administrative sex" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="A" description="Ambiguous" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="F" description="Female" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="M" description="Male" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="N" description="Not applicable" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="O" description="Other" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="U" description="Unknown" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0003" name="Event type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="A01" description="ADT/ACK - Admit/visit notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="A02" description="ADT/ACK - Transfer a patient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="A03" description="ADT/ACK -  Discharge/end visit" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="A04" description="ADT/ACK -  Register a patient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="A05" description="ADT/ACK -  Pre-admit a patient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="A06" description="ADT/ACK -  Change an outpatient to an inpatient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="A07" description="ADT/ACK -  Change an inpatient to an outpatient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="A08" description="ADT/ACK -  Update patient information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="A09" description="ADT/ACK -  Patient departing - tracking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="A10" description="ADT/ACK -  Patient arriving - tracking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="A11" description="ADT/ACK -  Cancel admit/visit notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="A12" description="ADT/ACK -  Cancel transfer" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="A13" description="ADT/ACK -  Cancel discharge/end visit" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="A14" description="ADT/ACK -  Pending admit" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="A15" description="ADT/ACK -  Pending transfer" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="A16" description="ADT/ACK -  Pending discharge" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="A17" description="ADT/ACK -  Swap patients" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="A18" description="ADT/ACK -  Merge patient information (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="A19" description="QRY/ADR -  Patient query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="A20" description="ADT/ACK -  Bed status update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="A21" description="ADT/ACK -  Patient goes on a &quot;leave of absence&quot;" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="A22" description="ADT/ACK -  Patient returns from a &quot;leave of absence&quot;" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="A23" description="ADT/ACK -  Delete a patient record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="A24" description="ADT/ACK -  Link patient information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="A25" description="ADT/ACK -  Cancel pending discharge" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="A26" description="ADT/ACK -  Cancel pending transfer" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="A27" description="ADT/ACK -  Cancel pending admit" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="A28" description="ADT/ACK -  Add person information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="A29" description="ADT/ACK -  Delete person information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="A30" description="ADT/ACK -  Merge person information (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="A31" description="ADT/ACK -  Update person information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="A32" description="ADT/ACK -  Cancel patient arriving - tracking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="A33" description="ADT/ACK -  Cancel patient departing - tracking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="A34" description="ADT/ACK -  Merge patient information - patient ID only (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="A35" description="ADT/ACK -  Merge patient information - account number only (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="A36" description="ADT/ACK -  Merge patient information - patient ID and account number (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="A37" description="ADT/ACK -  Unlink patient information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="A38" description="ADT/ACK - Cancel pre-admit" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="A39" description="ADT/ACK - Merge person - patient ID (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="A40" description="ADT/ACK - Merge patient - patient identifier list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="A41" description="ADT/ACK - Merge account - patient account number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="A42" description="ADT/ACK - Merge visit - visit number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="A43" description="ADT/ACK - Move patient information - patient identifier list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="A44" description="ADT/ACK - Move account information - patient account number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="A45" description="ADT/ACK - Move visit information - visit number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="A46" description="ADT/ACK - Change patient ID (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="A47" description="ADT/ACK - Change patient identifier list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="48" code="A48" description="ADT/ACK - Change alternate patient ID (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="49" code="A49" description="ADT/ACK - Change patient account number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="50" code="A50" description="ADT/ACK - Change visit number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="51" code="A51" description="ADT/ACK - Change alternate visit ID" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="52" code="A52" description="ADT/ACK - Cancel leave of absence for a patient" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="53" code="A53" description="ADT/ACK - Cancel patient returns from a leave of absence" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="54" code="A54" description="ADT/ACK - Change attending doctor" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="55" code="A55" description="ADT/ACK - Cancel change attending doctor" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="56" code="A60" description="ADT/ACK -  Update allergy information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="57" code="A61" description="ADT/ACK - Change consulting doctor" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="58" code="A62" description="ADT/ACK - Cancel change consulting doctor" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="59" code="B01" description="PMU/ACK - Add personnel record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="60" code="B02" description="PMU/ACK - Update personnel record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="61" code="B03" description="PMU/ACK - Delete personnel re cord" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="62" code="B04" description="PMU/ACK - Active practicing person" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="63" code="B05" description="PMU/ACK - Deactivate practicing person" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="64" code="B06" description="PMU/ACK - Terminate practicing person" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="65" code="C01" description="CRM - Register a patient on a clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="66" code="C02" description="CRM - Cancel a patient registration on clinical trial (for clerical mistakes only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="67" code="C03" description="CRM - Correct/update registration information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="68" code="C04" description="CRM - Patient has gone off a clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="69" code="C05" description="CRM - Patient enters phase of clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="70" code="C06" description="CRM - Cancel patient entering a phase (clerical mistake)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="71" code="C07" description="CRM - Correct/update phase information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="72" code="C08" description="CRM - Patient has gone off phase of clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="73" code="C09" description="CSU - Automated time intervals for reporting, like monthly" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="74" code="C10" description="CSU - Patient completes the clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="75" code="C11" description="CSU - Patient completes a phase of the clinical trial" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="76" code="C12" description="CSU - Update/correction of patient order/result information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="77" code="I01" description="RQI/RPI - Request for insurance information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="78" code="I02" description="RQI/RPL - Request/receipt of patient selection display list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="79" code="I03" description="RQI/RPR - Request/receipt of patient selection list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="80" code="I04" description="RQD/RPI - Request for patient demographic data" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="81" code="I05" description="RQC/RCI - Request for patient clinical information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="82" code="I06" description="RQC/RCL - Request/receipt of clinical data listing" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="83" code="I07" description="PIN/ACK - Unsolicited insurance information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="84" code="I08" description="RQA/RPA - Request for treatment authorization information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="85" code="I09" description="RQA/RPA - Request for modification to an authorization" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="86" code="I10" description="RQA/RPA - Request for resubmission of an authorization" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="87" code="I11" description="RQA/RPA - Request for cancellation of an authorization" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="88" code="I12" description="REF/RRI -  Patient referral" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="89" code="I13" description="REF/RRI - Modify patient referral" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="90" code="I14" description="REF/RRI - Cancel patient referral" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="91" code="I15" description="REF/RRI - Request patient referral status" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="92" code="J01" description="QCN/ACK - Cancel query/acknowledge message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="93" code="J02" description="QSX/ACK - Cancel subscription/acknowledge message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="94" code="K1" description="RDY - Display response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="95" code="K11" description="RSP - Segment pattern response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="96" code="K13" description="RTB - Tabular response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="97" code="K21" description="RSP - Get person demographics response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="98" code="K22" description="RSP - Find candidates response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="99" code="K23" description="RSP - Get corresponding identifiers response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="100" code="K24" description="RSP - Allocate identifiers response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="101" code="K25" description="RSP - Personnel Information by Segment Response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="102" code="M01" description="MFN/MFK - Master file not otherwise specified (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="103" code="M02" description="MFN/MFK - Master file - staff practitioner" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="104" code="M03" description="MFN/MFK - Master file - test/observation (for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="105" code="M04" description="MFN/MFK - Master files charge description" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="106" code="M05" description="MFN/MFK - Patient location master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="107" code="M06" description="MFN/MFK - Clinical study with phases and schedules master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="108" code="M07" description="MFN/MFK - Clinical study without phases but with schedules master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="109" code="M08" description="MFN/MFK - Test/observation (numeric) master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="110" code="M09" description="MFN/MFK - Test/observation (categorical) master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="111" code="M10" description="MFN/MFK - Test /observation batteries master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="112" code="M11" description="MFN/MFK - Test/calculated observations master file" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="113" code="M12" description="MFN/MFK - Master file notification message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="114" code="N01" description="NMQ/NMR - Application management query message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="115" code="N02" description="NMD/ACK - Application management data message (unsolicited)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="116" code="O01" description="ORM - Order message (also RDE, RDS, RGV, RAS)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="117" code="O02" description="ORR - Order response (also RRE, RRD, RRG, RRA)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="118" code="O03" description="OMD - Diet order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="119" code="O04" description="ORD - Diet order acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="120" code="O05" description="OMS - Stock requisition order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="121" code="O06" description="ORS - Stock requisition acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="122" code="O07" description="OMN - Non-stock requisition order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="123" code="O08" description="ORN - Non-stock requisition acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="124" code="O09" description="OMP - Pharmacy/treatment order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="125" code="O10" description="ORP - Pharmacy/treatment order acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="126" code="O11" description="RDE - Pharmacy/treatment encoded order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="127" code="O12" description="RRE - Pharmacy/treatment encoded order acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="128" code="O13" description="RDS - Pharmacy/treatment dispense" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="129" code="O14" description="RRD - Pharmacy/treatment dispense acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="130" code="O15" description="RGV - Pharmacy/treatment give" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="131" code="O16" description="RRG - Pharmacy/treatment give acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="132" code="O17" description="RAS - Pharmacy/treatment administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="133" code="O18" description="RRA - Pharmacy/treatment administration acknowledgement" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="134" code="O19" description="OMG - General clinical order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="135" code="O20" description="ORG/ORL - General clinical order response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="136" code="O21" description="OML - Laboratory order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="137" code="O22" description="ORL - General laboratory order response message to any OML" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="138" code="P01" description="BAR/ACK - Add patient accounts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="139" code="P02" description="BAR/ACK - Purge patient accounts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="140" code="P03" description="DFT/ACK - Post detail financial transaction" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="141" code="P04" description="QRY/DSP - Generate bill and A/R statements" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="142" code="P05" description="BAR/ACK - Update account" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="143" code="P06" description="BAR/ACK - End account" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="144" code="P07" description="PEX - Unsolicited initial individual product experience report" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="145" code="P08" description="PEX - Unsolicited update individual product experience report" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="146" code="P09" description="SUR - Summary product experience report" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="147" code="P10" description="BAR/ACK -Transmit  Ambulatory Payment  Classification(APC)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="148" code="PC1" description="PPR - PC/ problem add" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="149" code="PC2" description="PPR - PC/ problem update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="150" code="PC3" description="PPR - PC/ problem delete" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="151" code="PC4" description="QRY - PC/ problem query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="152" code="PC5" description="PRR - PC/ problem response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="153" code="PC6" description="PGL - PC/ goal add" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="154" code="PC7" description="PGL - PC/ goal update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="155" code="PC8" description="PGL - PC/ goal delete" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="156" code="PC9" description="QRY - PC/ goal query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="157" code="PCA" description="PPV - PC/ goal response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="158" code="PCB" description="PPP - PC/ pathway (problem-oriented) add" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="159" code="PCC" description="PPP - PC/ pathway (problem-oriented) update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="160" code="PCD" description="PPP - PC/ pathway (problem-oriented) delete" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="161" code="PCE" description="QRY - PC/ pathway (problem-oriented) query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="162" code="PCF" description="PTR - PC/ pathway (problem-oriented) query response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="163" code="PCG" description="PPG - PC/ pathway (goal-oriented) add" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="164" code="PCH" description="PPG - PC/ pathway (goal-oriented) update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="165" code="PCJ" description="PPG - PC/ pathway (goal-oriented) delete" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="166" code="PCK" description="QRY - PC/ pathway (goal-oriented) query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="167" code="PCL" description="PPT - PC/ pathway (goal-oriented) query response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="168" code="Q01" description="QRY/DSR - Query sent for immediate response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="169" code="Q02" description="QRY/QCK - Query sent for deferred response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="170" code="Q03" description="DSR/ACK - Deferred response to a query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="171" code="Q04" description="EQQ - Embedded query language query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="172" code="Q05" description="UDM/ACK - Unsolicited display update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="173" code="Q06" description="OSQ/OSR - Query for order status" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="174" code="Q07" description="VQQ - Virtual table query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="175" code="Q08" description="SPQ - Stored procedure request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="176" code="Q09" description="RQQ - event replay query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="177" code="Q16" description="QSB - Create subscription" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="178" code="Q17" description="QVR - Query for previous events" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="179" code="Q21" description="QBP - Get person demographics" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="180" code="Q22" description="QBP - Find candidates" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="181" code="Q23" description="QBP - Get corresponding identifiers" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="182" code="Q24" description="QBP - Allocate identifiers" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="183" code="Q25" description="QBP - Personnel Information by Segment Query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="184" code="Q26" description="ROR - Pharmacy/treatment order response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="185" code="Q27" description="RAR - Pharmacy/treatment administration information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="186" code="Q28" description="RDR - Pharmacy/treatment dispense information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="187" code="Q29" description="RER- Pharmacy/treatment encoded order information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="188" code="Q30" description="RGR - Pharmacy/treatment dose information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="189" code="QNC" description="Varies - Query cancellation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="190" code="R01" description="ORU/ACK - Unsolicited transmission of an observation message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="191" code="R02" description="QRY - Query for results of observation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="192" code="R03" description="QRY/DSR Display-oriented results, query/unsol. update (for backward compatibility only) (Replaced by Q05)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="193" code="R04" description="ORF - Response to query; transmission of requested observation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="194" code="R07" description="EDR - Enhanced Display Response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="195" code="R08" description="TBR - Tabular Data Response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="196" code="R09" description="ERP - Event Replay Response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="197" code="R21" description="OUL - Unsolicited laboratory observation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="198" code="ROR" description="ROR - Pharmacy prescription order query response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="199" code="S01" description="SRM/SRR - Request new appointment booking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="200" code="S02" description="SRM/SRR - Request appointment rescheduling" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="201" code="S03" description="SRM/SRR - Request appointment modification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="202" code="S04" description="SRM/SRR - Request appointment cancellation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="203" code="S05" description="SRM/SRR - Request appointment discontinuation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="204" code="S06" description="SRM/SRR - Request appointment deletion" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="205" code="S07" description="SRM/SRR - Request addition of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="206" code="S08" description="SRM/SRR - Request modification of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="207" code="S09" description="SRM/SRR - Request cancellation of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="208" code="S10" description="SRM/SRR - Request discontinuation of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="209" code="S11" description="SRM/SRR - Request deletion of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="210" code="S12" description="SIU/ACK - Notification of new appointment booking" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="211" code="S13" description="SIU/ACK - Notification of appointment rescheduling" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="212" code="S14" description="SIU/ACK - Notification of appointment modification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="213" code="S15" description="SIU/ACK - Notification of appointment cancellation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="214" code="S16" description="SIU/ACK - Notification of appointment discontinuation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="215" code="S17" description="SIU/ACK - Notification of appointment deletion" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="216" code="S18" description="SIU/ACK - Notification of addition of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="217" code="S19" description="SIU/ACK - Notification of modification of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="218" code="S20" description="SIU/ACK - Notification of cancellation of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="219" code="S21" description="SIU/ACK - Notification of discontinuation of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="220" code="S22" description="SIU/ACK - Notification of deletion of service/resource on appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="221" code="S23" description="SIU/ACK - Notification of blocked schedule time slot(s)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="222" code="S24" description="SIU/ACK - Notification of opened (&quot;unblocked&quot;) schedule time slot(s)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="223" code="S25" description="SQM/SQR - Schedule query message and response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="224" code="S26" description="SIU/ACK Notification that patient did not show up for schedule appointment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="225" code="T01" description="MDM/ACK - Original document notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="226" code="T02" description="MDM/ACK - Original document notification and content" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="227" code="T03" description="MDM/ACK - Document status change notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="228" code="T04" description="MDM/ACK - Document status change notification and content" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="229" code="T05" description="MDM/ACK - Document addendum notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="230" code="T06" description="MDM/ACK - Document addendum notification and content" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="231" code="T07" description="MDM/ACK - Document edit notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="232" code="T08" description="MDM/ACK - Document edit notification and content" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="233" code="T09" description="MDM/ACK - Document replacement notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="234" code="T10" description="MDM/ACK - Document replacement notification and content" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="235" code="T11" description="MDM/ACK - Document cancel notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="236" code="T12" description="QRY/DOC - Document query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="237" code="U01" description="ESU/ACK - Automated equipment status update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="238" code="U02" description="ESR/ACK - Automated equipment status request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="239" code="U03" description="SSU/ACK - Specimen status update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="240" code="U04" description="SSR/ACK - specimen status request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="241" code="U05" description="INU/ACK  - Automated equipment inventory update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="242" code="U06" description="INR/ACK - Automated equipment inventory request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="243" code="U07" description="EAC/ACK - Automated equipment command" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="244" code="U08" description="EAR/ACK - Automated equipment response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="245" code="U09" description="EAN/ACK - Automated equipment notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="246" code="U10" description="TCU/ACK - Automated equipment test code settings update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="247" code="U11" description="TCR/ACK - Automated equipment test code settings request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="248" code="U12" description="LSU/ACK - Automated equipment log/service update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="249" code="U13" description="LSR/ACK - Automated equipment log/service request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="250" code="V01" description="VXQ - Query for vaccination record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="251" code="V02" description="VXX - Response to vaccination query returning multiple PID matches" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="252" code="V03" description="VXR - Vaccination record response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="253" code="V04" description="VXU - Unsolicited vaccination record update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="254" code="Varies" description="MFQ/MFR - Master files query (use event same as asking for e.g., M05 - location)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="255" code="W01" description="ORU - Waveform result, unsolicited transmission of requested information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="256" code="W02" description="QRF - Waveform result, response to query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0061" name="Check digit scheme" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ISO" description="ISO 7064: 1983" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="M10" description="Mod 10 algorithm" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="M11" description="Mod 11 algorithm" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="NPI" description="Check digit algorithm in the US National Provider Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0076" name="Message type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ACK" description="General acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="ADR" description="ADT response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="ADT" description="ADT message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="BAR" description="Add/change billing account" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="CRM" description="Clinical study registration message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="CSU" description="Unsolicited study data message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="DFT" description="Detail financial transactions" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="DOC" description="Document response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="DSR" description="Display response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="EAC" description="Automated equipment command message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="EAN" description="Automated equipment notification message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="EAR" description="Automated equipment response message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="EDR" description="Enhanced display response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="EQQ" description="Embedded query language query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="ERP" description="Event replay response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="ESR" description="Automated equipment status update acknowledgement message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="ESU" description="Automated equipment status update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="INR" description="Automated equipment inventory request message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="INU" description="Automated equipment inventory update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="LSR" description="Automated equipment log/service request message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="LSU" description="Automated equipment log/service update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="MCF" description="Delayed Acknowledgement (Retained for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="MDM" description="Medical document management" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="MFD" description="Master files delayed application acknowledgment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="MFK" description="Master files application acknowledgment" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="MFN" description="Master files notification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="MFQ" description="Master files query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="MFR" description="Master files response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="NMD" description="Application management data message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="NMQ" description="Application management query message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="NMR" description="Application management response message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="OMD" description="Dietary order" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="OMG" description="General clinical order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="OML" description="Laboratory order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="OMN" description="Non-stock requisition order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="OMP" description="Pharmacy/treatment order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="OMP" description="Pharmacy/treatment order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="OMS" description="Stock requisition order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="ORD" description="Dietary order - General order acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="ORF" description="Query for results of observation" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="ORG" description="General clinical order acknowledgement message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="ORL" description="Laboratory acknowledgement message (unsolicited)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="ORN" description="Non-stock requisition - General order acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="ORP" description="Pharmacy/treatment order acknowledgement message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="ORR" description="General order response message response to any ORM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="ORS" description="Stock requisition - General order acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="ORU" description="Unsolicited transmission of an observation message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="48" code="OSQ" description="Query response for order status" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="49" code="OSQ" description="Query response for order status" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="50" code="OUL" description="Unsolicited laboratory observation message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="51" code="PEX" description="Product experience message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="52" code="PGL" description="Patient goal message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="53" code="PIN" description="Patient insurance information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="54" code="PMU" description="Add personnel record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="55" code="PPG" description="Patient pathway message (goal-oriented)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="56" code="PPP" description="Patient pathway message (problem-oriented)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="57" code="PPR" description="Patient problem message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="58" code="PPT" description="Patient pathway goal-oriented response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="59" code="PPV" description="Patient goal response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="60" code="PRR" description="Patient problem response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="61" code="PTR" description="Patient pathway problem-oriented response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="62" code="QBP" description="Query by parameter" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="63" code="QCK" description="Deferred query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="64" code="QCN" description="Cancel query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="65" code="QRY" description="Query, original mode" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="66" code="QSB" description="Create subscription" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="67" code="QSX" description="Cancel subscription/acknowledge message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="68" code="QVR" description="Query for previous events" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="69" code="RAR" description="Pharmacy/treatment administration information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="70" code="RAS" description="Pharmacy/treatment administration message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="71" code="RCI" description="Return clinical information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="72" code="RCL" description="Return clinical list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="73" code="RDE" description="Pharmacy/treatment encoded order message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="74" code="RDR" description="Pharmacy/treatment dispense information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="75" code="RDS" description="Pharmacy/treatment dispense message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="76" code="RDY" description="Display based response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="77" code="REF" description="Patient referral" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="78" code="RER" description="Pharmacy/treatment encoded order information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="79" code="RGR" description="Pharmacy/treatment dose information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="80" code="RGV" description="Pharmacy/treatment give message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="81" code="ROR" description="Pharmacy/treatment order response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="82" code="RPA" description="Return patient authorization" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="83" code="RPI" description="Return patient information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="84" code="RPL" description="Return patient display list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="85" code="RPR" description="Return patient list" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="86" code="RQA" description="Request patient authorization" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="87" code="RQC" description="Request clinical information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="88" code="RQI" description="Request patient information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="89" code="RQP" description="Request patient demographics" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="90" code="RQQ" description="Event replay query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="91" code="RRA" description="Pharmacy/treatment administration acknowledgement message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="92" code="RRD" description="Pharmacy/treatment dispense acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="93" code="RRE" description="Pharmacy/treatment encoded order acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="94" code="RRG" description="Pharmacy/treatment give acknowledgment message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="95" code="RRI" description="Return referral information" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="96" code="RSP" description="Segment pattern response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="97" code="RTB" description="Tabular response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="98" code="SIU" description="Schedule information unsolicited" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="99" code="SPQ" description="Stored procedure request" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="100" code="SQM" description="Schedule query message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="101" code="SQR" description="Schedule query response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="102" code="SRM" description="Schedule request message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="103" code="SRR" description="Scheduled request response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="104" code="SSR" description="Specimen status request message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="105" code="SSU" description="Specimen status update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="106" code="SUR" description="Summary product experience report" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="107" code="TBR" description="Tabular data response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="108" code="TCR" description="Automated equipment test code settings request message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="109" code="TCU" description="Automated equipment test code settings update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="110" code="UDM" description="Unsolicited display update message" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="111" code="VQQ" description="Virtual table query" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="112" code="VXQ" description="Query for vaccination record" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="113" code="VXR" description="Vaccination record response" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="114" code="VXU" description="Unsolicited vaccination record update" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="115" code="VXX" description="Response for vaccination query with multiple PID matches" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0103" name="Processing ID" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="D" description="Debugging" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="P" description="Production" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="T" description="Training" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0104" name="Version ID" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="2" description="Release 2.0" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="2.0D" description="Demo 2.0" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="2.1" description="Release 2. 1" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="2.2" description="Release 2.2" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="2.3" description="Release 2.3" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="2.3.1" description="Release 2.3.1" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="2.4" description="Release 2.4" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0190" name="Address type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="B" description="Firm/Business" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="BA" description="Bad address" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="BDL" description="Birth delivery location (address where birth occurred)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="BR" description="Residence  at birth (home address at time of birth)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="C" description="Current Or Temporary" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="F" description="Country Of Origin" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="H" description="Home" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="L" description="Legal Address" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="M" description="Mailing" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="N" description="Birth (nee) (birth address, not otherwise specified)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="O" description="Office" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="P" description="Permanent" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="RH" description="Registry home.  Refers to the information system, typically managed by a public health agency, that stores patient information such as immunization histories or cancer data, regardless of where the patient obtains services." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0200" name="Name type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="A" description="Alias Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="B" description="Name at Birth" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="C" description="Adopted Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="D" description="Display Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="I" description="Licensing Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="L" description="Legal Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="M" description="Maiden Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="N" description="Nickname /&quot;Call me&quot; Name/Street Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="P" description="Name of Partner/Spouse (retained for backward compatibility only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="R" description="Registered Name (animals only)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="S" description="Coded Pseudo-Name to ensure anonymity" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="T" description="Indigenous/Tribal/Community Name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="U" description="Unspecified" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0201" name="Telecommunication use code" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ASN" description="Answering Service Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="BPN" description="Beeper Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="EMR" description="Emergency Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="NET" description="Network (email) Address" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="ORN" description="Other Residence Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="PRN" description="Primary Residence Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="VHN" description="Vacation Home Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="WPN" description="Work Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0202" name="Telecommunication equipment type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="BP" description="Beeper" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="CP" description="Cellular Phone" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="FX" description="Fax" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="Internet" description="Internet Address: Use Only If Telecommunication Use Code Is NET" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="MD" description="Modem" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="PH" description="Telephone" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="X.400" description="X.400 email address: Use Only If Telecommunication Use Code Is NET" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0203" name="Identifier type" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="AM" description="American Express" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="AN" description="Account number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="BA" description="Bank Account Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="BR" description="Birth registry number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="BRN" description="Breed Registry Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="DI" description="Diner&apos;s Club card" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="DL" description="Driver&apos;s license number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="DN" description="Doctor number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="DR" description="Donor Registration Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="DS" description="Discover Card" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="EI" description="Employee number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="EN" description="Employer number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="FI" description="Facility ID" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="GI" description="Guarantor internal identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="GN" description="Guarantor external  identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="GPN" description="Group Number" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="17" code="HC" description="Health Card Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="JHN" description="Jurisdictional health number (Canada)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="LN" description="License number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="LR" description="Local Registry ID" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="MA" description="Medicaid number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="MC" description="Medicare number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="MCN" description="Microchip Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="MR" description="Medical record number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="MS" description="MasterCard" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="NE" description="National employer identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="NH" description="National Health Plan Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="NI" description="National unique individual identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="NNxxx" description="National Person Identifier where the xxx is the ISO table 3166  3-character (alphabetic) country code" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="NPI" description="National provider identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="PEN" description="Pension Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="PI" description="Patient internal identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="PN" description="Person number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="PRN" description="Provider number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="PT" description="Patient external identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="RR" description="Railroad Retirement number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="RRI" description="Regional registry ID" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="SL" description="State license" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="SR" description="State registry ID" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="SS" description="Social Security number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="U" description="Unspecified" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="UPIN" description="Medicare/HCFA&apos;s Universal Physician Identification numbers" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="VN" description="Visit number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="VS" description="VISA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="WC" description="WIC identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="WCN" description="Workers&apos; Comp Number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="XX" description="Organization identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0207" name="Processing mode" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="A" description="Archive" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="I" description="Initial load" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="Not present" description="Not present (the default, meaning current  processing)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="R" description="Restore from archive" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="T" description="Current processing, transmitted at intervals (scheduled or on demand)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0211" name="Alternate character sets" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="8859/1" description="The printable characters from the ISO 8859/1 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="8859/2" description="The printable characters from the ISO 8859/2 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="8859/3" description="The printable characters from the ISO 8859/3 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="8859/4" description="The printable characters from the ISO 8859/4 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="8859/5" description="The printable characters from the ISO 8859/5 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="8859/6" description="The printable characters from the ISO 8859/6 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="8859/7" description="The printable characters from the ISO 8859/7 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="8859/8" description="The printable characters from the ISO 8859/8 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="8859/9" description="The printable characters from the ISO 8859/9 Character set" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="ASCII" description="The printable 7-bit ASCII character set. (This is the default if this field is omitted)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="ISO IR14" description="Code for Information Exchange (one byte)(JIS X 0201-1976).  Note that the code contains a space, i.e. &quot;ISO IR14&quot;." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="ISO IR159" description="Code of the supplementary Japanese Graphic Character set for information interchange (JIS X 0212-1990). Note that the code contains a space, i.e. &quot;ISO IR159&quot;." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="ISO IR87" description="Code for the Japanese Graphic Character set for information interchange (JIS X 0208-1990), Note that the code contains a space, i.e. &quot;ISO IR87&quot;." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="UNICODE" description="The world wide character standard from ISO/IEC 10646-1-19931" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0288" name="Census Tract" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+	</hl7table>
+	<hl7table id="" name="" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+	</hl7table>
+	<hl7table id="0301" name="Universal ID type" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="DNS" description="An Internet dotted name. Either in ASCII or as integers" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="GUID" description="Same as UUID." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="HCD" description="The CEN Healthcare Coding Scheme Designator. (Identifiers used in DICOM follow this assignment scheme.)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="HL7" description="Reserved for future HL7 registration schemes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="ISO" description="An International Standards Organization Object Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="L,M,N" description="These are reserved for locally defined coding schemes." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="Random" description="Usually a base64 encoded string of random bits.   The uniqueness depends on the length of the bits.  Mail systems often generate ASCII string  &quot;unique names,&quot; from a combination of random bits and system names.  Obviously, such identifiers will not be con" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="UUID" description="The DCE Universal Unique Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="x400" description="An X.400 MHS format identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="x500" description="An X.500 directory name" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0354" name="Message structure" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ACK" description="Varies" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="ADR_A19" description="A19" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="ADR_A19" description="A19" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="ADT_A01" description="A01, A04, A08, A13" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="ADT_A02" description="A02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="ADT_A03" description="A03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="ADT_A05" description="A05, A14, A28, A31" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="ADT_A06" description="A06, A07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="ADT_A09" description="A09, A10, A11, A12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="ADT_A15" description="A15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="ADT_A16" description="A16" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="ADT_A17" description="A17" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="ADT_A18" description="A18" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="ADT_A20" description="A20" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="ADT_A21" description="A21" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="ADT_A24" description="A24" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="ADT_A30" description="A30, A34, A35, A36, A46, A47, A48, A49" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="ADT_A37" description="A37" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="ADT_A38" description="A38" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="ADT_A39" description="A39, A40, A41, A42" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="ADT_A43" description="A43, A44" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="ADT_A45" description="A45" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="ADT_A50" description="A50, A51" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="ADT_A52" description="A52, A53, A55" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="ADT_A54" description="A54" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="ADT_A60" description="A60" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="ADT_A61" description="A61, A62" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="BAR_P01" description="P01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="BAR_P02" description="P02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="BAR_P05" description="P05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="BAR_P06" description="P06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="BAR_P10" description="P10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="CRM_C01" description="C01, C02, C03, C04, C05, C06, C07, C08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="CSU_C09" description="C09, C10, C11, C12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="DFT_P03" description="P03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="DOC_T12" description="T12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="DOC_T12" description="T12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="DSR_P04" description="P04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="DSR_Q01" description="Q01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="DSR_Q01" description="Q01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="DSR_Q03" description="Q03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="EAC_U07" description="U07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="EAN_U09" description="U09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="EAR_U08" description="U08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="EDR_R07" description="R07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="EQQ_Q04" description="Q04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="ERP_R09" description="R09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="48" code="ESR_U02" description="U02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="49" code="ESU_U01" description="U01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="50" code="INR_U06" description="U06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="51" code="INU_U05" description="U05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="52" code="LSU_U12" description="U12, U13" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="53" code="MDM_T01" description="T01, T03, T05, T07, T09, T11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="54" code="MDM_T02" description="T02, T04, T06, T08, T10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="55" code="MFD_MFA" description="MFA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="56" code="MFK_M01" description="M01, M02, M03, M04, M05, M06, M07, M08, M09, M10, M11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="57" code="MFN_M01" description="M01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="58" code="MFN_M02" description="M02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="59" code="MFN_M03" description="M03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="60" code="MFN_M04" description="M04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="61" code="MFN_M05" description="M05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="62" code="MFN_M06" description="M06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="63" code="MFN_M07" description="M07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="64" code="MFN_M08" description="M08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="65" code="MFN_M09" description="M09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="66" code="MFN_M10" description="M10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="67" code="MFN_M11" description="M11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="68" code="MFN_M12" description="M12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="69" code="MFQ_M01" description="M01-M06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="70" code="MFQ_M01" description="M01-M06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="71" code="NMD_N02" description="N02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="72" code="NMQ_N01" description="N01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="73" code="NMQ_N01" description="N01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="74" code="OMD_O03" description="O03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="75" code="OMG_O19" description="O19" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="76" code="OML_O21" description="O21" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="77" code="OMN_O07" description="O07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="78" code="OMP_O09" description="O09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="79" code="OMS_O05" description="O05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="80" code="ORD_O04" description="O04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="81" code="ORF_R04" description="R04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="82" code="ORG_O20" description="O20" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="83" code="ORL_O22" description="O22" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="84" code="ORM_O01" description="O01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="85" code="ORN_O08" description="O08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="86" code="ORP_O10" description="O10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="87" code="ORR_O02" description="O02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="88" code="ORS_O06" description="O06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="89" code="ORU_R01" description="R01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="90" code="ORU_W01" description="W01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="91" code="ORU_W01" description="W01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="92" code="OSQ_Q06" description="Q06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="93" code="OSQ_Q06" description="Q06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="94" code="OUL_R21" description="R21" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="95" code="PEX_P07" description="P07, P08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="96" code="PGL_PC6" description="PC6, PC7, PC8" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="97" code="PMU_B01" description="B01, B02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="98" code="PMU_B03" description="B03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="99" code="PMU_B04" description="B04, B05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="100" code="PPG_PCG" description="PCC, PCG, PCH, PCJ" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="101" code="PPP_PCB" description="PCB, PCD" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="102" code="PPR_PC1" description="PC1, PC2, PC3" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="103" code="PPT_PCL" description="PCL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="104" code="PPV_PCA" description="PCA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="105" code="PRR_PC5" description="PC5" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="106" code="PTR_PCF" description="PCF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="107" code="QBP_Q11" description="Q11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="108" code="QBP_Q13" description="Q13" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="109" code="QBP_Q15" description="Q15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="110" code="QBP_Q21" description="Q21, Q22, Q23, Q24, Q25" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="111" code="QCK_Q02" description="Q02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="112" code="QCK_Q02" description="Q02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="113" code="QCN_J01" description="J01, J02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="114" code="QRF_W02" description="W02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="115" code="QRY_PC4" description="PC4, PC9, PCE, PCK" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="116" code="QRY_R02" description="R02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="117" code="QSB_Q16" description="Q16" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="118" code="QVR_Q17" description="Q17" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="119" code="RAR_RAR" description="RAR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="120" code="RAS_O17" description="O17" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="121" code="RCI_I05" description="I05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="122" code="RCL_I06" description="I06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="123" code="RDE_O11" description="O11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="124" code="RDR_RDR" description="RDR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="125" code="RDS_O13" description="O13" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="126" code="RDY_K15" description="K15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="127" code="REF_I12" description="I12, I13, I14, I15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="128" code="REF_I12" description="I12, I13, I14, I15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="129" code="RER_RER" description="RER" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="130" code="RGR_RGR" description="RGR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="131" code="RGV_O15" description="O15" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="132" code="ROR_ROR" description="ROR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="133" code="RPA_I08" description="I08, I09. I10, 1II" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="134" code="RPI_I01" description="I01, I04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="135" code="RPI_I04" description="I04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="136" code="RPI_I04" description="I04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="137" code="RPL_I02" description="I02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="138" code="RPR_I03" description="I03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="139" code="RQA_I08" description="I08, I09, I10, I11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="140" code="RQC_I05" description="I05, I06" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="141" code="RQI_I01" description="I01, I02, I03, I07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="142" code="RQQ_Q09" description="Q09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="143" code="RRA_O02" description="O02 (backwards compatibility)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="144" code="RRA_O02" description="O02 (backwards compatibility)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="145" code="RRA_O18" description="O18" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="146" code="RRD_O14" description="O14" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="147" code="RRE_O12" description="O12" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="148" code="RRG_O16" description="O16" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="149" code="RSP_K11" description="K11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="150" code="RSP_K21" description="K21" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="151" code="RSP_K22" description="K22" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="152" code="RSP_K23" description="K23, K24" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="153" code="RSP_K24" description="K24" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="154" code="RSP_K25" description="K25" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="155" code="RTB_K13" description="K13" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="156" code="SIU_S12" description="S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24, S26" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="157" code="SPQ_Q08" description="Q08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="158" code="SQM_S25" description="S25" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="159" code="SQM_S25" description="S25" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="160" code="SRM_S01" description="S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="161" code="SRM_S01" description="S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="162" code="SSR_U04" description="U04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="163" code="SSU_U03" description="U03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="164" code="SUR_P09" description="P09" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="165" code="TBR_R08" description="R08" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="166" code="TCU_U10" description="U10, U11" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="167" code="UDM_Q05" description="Q05" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="168" code="VQQ_Q07" description="Q07" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="169" code="VXQ_V01" description="V01" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="170" code="VXR_V03" description="V03" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="171" code="VXU_V04" description="V04" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="172" code="VXX_V02" description="V02" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0360" name="Degree" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="AA" description="Associate of Arts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="AAS" description="Associate of Applied Science" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="ABA" description="Associate of Business Administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="AE" description="Associate of Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="AS" description="Associate of Science" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="BA" description="Bachelor of Arts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="BBA" description="Bachelor of Business Administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="BE" description="Bachelor or Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="BFA" description="Bachelor of Fine Arts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="BN" description="Bachelor of Nursing" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="BS" description="Bachelor of Science" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="BSL" description="Bachelor of Science - Law" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="BT" description="Bachelor of Theology" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="CER" description="Certificate" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="DBA" description="Doctor of Business Administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="DED" description="Doctor of Education" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="DIP" description="Diploma" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="DO" description="Doctor of Osteopathy" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="HS" description="High School Graduate" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="JD" description="Juris Doctor" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="MA" description="Master of Arts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="MBA" description="Master of Business Administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="MCE" description="Master of Civil Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="MD" description="Doctor of Medicine" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="MDI" description="Master of Divinity" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="ME" description="Master of Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="MED" description="Master of Education" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="MEE" description="Master of Electrical Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="MFA" description="Master of Fine Arts" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="MME" description="Master of Mechanical Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="MS" description="Master of Science" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="MSL" description="Master of Science - Law" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="MT" description="Master of Theology" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="NG" description="Non-Graduate" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="PharmD" description="Doctor of Pharmacy" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="PHD" description="Doctor of Philosophy" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="PHE" description="Doctor of Engineering" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="PHS" description="Doctor of Science" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="SEC" description="Secretarial Certificate" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="TS" description="Trade School Graduate" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0361" name="Sending/receiving application" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="Cerner" description="Cerner System" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="2" code="Meditech" description="Meditech System" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="3" code="Patient1" description="Patient1" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="4" code="PIMS" description="Pathology Information Management System" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="5" code="PLS" description="Patient Linking Service" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+	</hl7table>
+	<hl7table id="0362" name="Sending/receiving facility" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="CCO" description="Cancer Care Ontario" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="2" code="MSH" description="Mount Sinai Hospital" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="3" code="UHN" description="University Health Network" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+	</hl7table>
+	<hl7table id="0363" name="Assigning authority" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="AUSDVA" description="Australia - Dept. of Veterans Affairs" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="AUSHIC" description="Australia - Health Insurance Commission" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="CANAB" description="Canada - Alberta" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="CANBC" description="Canada - British Columbia" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="CANMB" description="Canada - Manitoba" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="CANNB" description="Canada - New Brunswick" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="CANNF" description="Canada - Newfoundland" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="CANNS" description="Canada - Nova Scotia" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="CANNT" description="Canada - Northwest Territories" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="CANNU" description="Canada - Nanavut" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="CANON" description="Canada - Ontario" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="CANPE" description="Canada - Prince Edward Island" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="CANQC" description="Canada - Quebec" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="CANSK" description="Canada - Saskatchewan" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="CANYT" description="Canada - Yukon Territories" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="CCO" description="Cancer Care Ontario" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="17" code="MSH" description="Mount Sinai Hospital" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="18" code="NLVWS" description="NL - Ministerie van Volksgezondheid, Welzijn en Sport" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="OCRIS" description="Ontario Cancer Registry Information System" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="20" code="UHN" description="University Health Network" displayName="" source="User" usage="Optional" Creator="" Date="26/08/2003" instruction="" />
+		<tableElement order="21" code="USCDC" description="US Center for Disease Control" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="USHCFA" description="US Healthcare Finance Authority" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="USSSA" description="US Social Security Administration" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0396" name="Coding System" codesys="HL7 Defined Codes - HL7nnn" type="USER">
+		<tableElement order="1" code="99zzz or L" description="Local general code (where z is an alphanumeric character)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="ACR" description="American College of Radiology finding codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="ART" description="WHO Adverse Reaction Terms" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="AS4" description="ASTM E1238/ E1467 Universal" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="AS4E" description="AS4 Neurophysiology Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="ATC" description="American Type Culture Collection" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="C4" description="CPT-4" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="C5" description="CPT-5" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="CAS" description="Chemical abstract codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="CD2" description="CDT-2 Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="CDCA" description="CDC Analyte Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="CDCM" description="CDC Methods/Instruments Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="CDS" description="CDC Surveillance" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="CE" description="CEN ECG diagnostic codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="CLP" description="CLIP" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="CPTM" description="CPT Modifier Code" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="CST" description="COSTART" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="CVX" description="CDC Vaccine Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="DCL" description="DICOM Class Label" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="DCM" description="DICOM modality codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="DQL" description="DICOM Query Label" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="E" description="EUCLIDES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="E5" description="Euclides  quantity codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="E6" description="Euclides Lab method codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="E7" description="Euclides Lab equipment codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="ENZC" description="Enzyme Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="FDDC" description="First DataBank Drug Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="FDDX" description="First DataBank Diagnostic Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="FDK" description="FDA K10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="HB" description="HIBCC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="HCPCS" description="HCFA Common Procedure Coding System" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="HHC" description="Home Health Care" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="HI" description="Health Outcomes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="HL7nnnn" description="HL7 Defined Codes where nnnn is the HL7 table number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="HPC" description="HCFA Procedure Codes (HCPCS)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="I10" description="ICD-10" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="I10P" description="ICD-10  Procedure Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="I9" description="ICD9" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="I9C" description="ICD-9CM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="IBT" description="ISBT" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="IC2" description="ICHPPC-2" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="ICDO" description="International Classification of Diseases for Oncology" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="ICS" description="ICCS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="ICSD" description="International Classification of Sleep Disorders" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="ISOnnnn" description="ISO Defined Codes where nnnn is the ISO table number" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="IUPC" description="IUPAC/IFCC Component Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="IUPP" description="IUPAC/IFCC Property Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="48" code="JC8" description="Japanese Chemistry" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="49" code="LB" description="Local billing code" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="50" code="LN" description="Logical Observation Identifier Names and Codes (LOINC(r))" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="51" code="MCD" description="Medicaid" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="52" code="MCR" description="Medicare" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="53" code="MDDX" description="Medispan Diagnostic Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="54" code="MEDC" description="Medical Economics Drug Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="55" code="MEDR" description="Medical Dictionary for Drug Regulatory Affairs (MEDDRA)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="56" code="MEDX" description="Medical Economics Diagnostic Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="57" code="MGPI" description="Medispan GPI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="58" code="MVX" description="CDC Vaccine Manufacturer Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="59" code="NDA" description="NANDA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="60" code="NDC" description="National drug codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="61" code="NIC" description="Nursing Interventions Classification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="62" code="NPI" description="National Provider Identifier" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="63" code="OHA" description="Omaha System" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="64" code="POS" description="POS Codes" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="65" code="RC" description="Read Classification" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="66" code="SDM" description="SNOMED- DICOM Microglossary" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="67" code="SNM" description="Systemized Nomenclature of Medicine (SNOMED)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="68" code="SNM3" description="SNOMED International" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="69" code="SNT" description="SNOMED topology codes (anatomic sites)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="70" code="UC" description="UCDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="71" code="UMD" description="MDNS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="72" code="UML" description="Unified Medical Language" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="73" code="UPC" description="Universal Product Code" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="74" code="UPIN" description="UPIN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="75" code="W1" description="WHO record # drug codes (6 digit)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="76" code="W2" description="WHO record # drug codes (8 digit)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="77" code="W4" description="WHO record # code with ASTM extension" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="78" code="WC" description="WHO ATC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0399" name="Country code" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="ABW" description="ARUBA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="AFG" description="AFGHANISTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="AFT" description="FRENCH SOUTHERN TERRITORIES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="4" code="AGO" description="ANGOLA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="5" code="AIA" description="ANGUILLA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="6" code="ALB" description="ALBANIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="7" code="AND" description="ANDORRA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="8" code="ANT" description="NETHERLANDS ANTILLES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="9" code="ARE" description="UNITED ARAB EMIRATES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="10" code="ARG" description="ARGENTINA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="11" code="ARM" description="ARMENIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="12" code="ASM" description="AMERICAN SAMOA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="13" code="ATA" description="ANTARCTICA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="14" code="ATG" description="ANTIGUA AND BARBUDA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="15" code="AUS" description="AUSTRALIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="16" code="AUT" description="AUSTRIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="17" code="AZE" description="AZERBAIJAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="18" code="BDI" description="BURUNDI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="19" code="BEL" description="BELGIUM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="20" code="BEN" description="BENIN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="21" code="BFA" description="BURKINA FASO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="22" code="BGD" description="BANGLADESH" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="23" code="BGR" description="BULGARIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="24" code="BHR" description="BAHRAIN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="25" code="BHS" description="BAHAMAS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="26" code="BIH" description="BOSNIA AND HERZEGOVINA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="27" code="BLR" description="BELARUS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="28" code="BLZ" description="BELIZE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="29" code="BMU" description="BERMUDA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="30" code="BOL" description="BOLIVIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="31" code="BRA" description="BRAZIL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="32" code="BRB" description="BARBADOS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="33" code="BRN" description="BRUNEI DARUSSALAM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="34" code="BTN" description="BHUTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="35" code="BVT" description="BOUVET ISLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="36" code="BWA" description="BOTSWANA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="37" code="CAF" description="CENTRAL AFRICAN REPUBLIC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="38" code="CAN" description="CANADA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="39" code="CCK" description="COCOS (KEELING) ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="40" code="CHE" description="SWITZERLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="41" code="CHL" description="CHILE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="42" code="CHN" description="CHINA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="43" code="CIV" description="COTE D&apos;VOIRE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="44" code="CMR" description="CAMEROON" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="45" code="COD" description="CONGO, THE DEMOCRATIC REPUBLIC OF THE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="46" code="COG" description="CONGO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="47" code="COK" description="COOK ISLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="48" code="COL" description="COLOMBIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="49" code="COM" description="COMOROS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="50" code="CPV" description="CAPE VERDE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="51" code="CRI" description="COSTA RICA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="52" code="CUB" description="CUBA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="53" code="CXR" description="CHRISTMAS ISLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="54" code="CYM" description="CAYMAN ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="55" code="CYP" description="CYPRUS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="56" code="CZE" description="CZECH REPUBLIC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="57" code="DEU" description="GERMANY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="58" code="DJI" description="DJIBOUTI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="59" code="DMA" description="DOMINICA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="60" code="DNK" description="DENMARK" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="61" code="DOM" description="DOMINICAN REPUBLIC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="62" code="DZA" description="ALGERIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="63" code="ECU" description="ECUADOR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="64" code="EGY" description="EGYPT" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="65" code="ERI" description="ERITREA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="66" code="ESH" description="WESTERN SAHARA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="67" code="ESP" description="SPAIN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="68" code="EST" description="ESTONIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="69" code="ETH" description="ETHIOPIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="70" code="FIN" description="FINLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="71" code="FJI" description="FIJI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="72" code="FLK" description="FALKLAND ISLANDS (MALVINAS)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="73" code="FRA" description="FRANCE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="74" code="FRO" description="FAROE ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="75" code="FSM" description="MICRONESIA, FEDERATED STATES OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="76" code="GAB" description="GABON" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="77" code="GBR" description="UNITED KINGDOM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="78" code="GEO" description="GEORGIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="79" code="GHA" description="GHANA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="80" code="GIB" description="GIBRALTAR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="81" code="GIN" description="GUINEA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="82" code="GLP" description="GUADELOUPE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="83" code="GMB" description="GAMBIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="84" code="GNB" description="GUINEA-BISSAU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="85" code="GNQ" description="EQUATORIAL GUINEA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="86" code="GRC" description="GREECE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="87" code="GRD" description="GRENADA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="88" code="GRL" description="GREENLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="89" code="GTM" description="GUATEMALA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="90" code="GUF" description="FRENCH GUIANA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="91" code="GUM" description="GUAM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="92" code="GUY" description="GUYANA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="93" code="HKG" description="HONG KONG" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="94" code="HMD" description="HEARD ISLAND AND MCDONALD ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="95" code="HND" description="HONDURAS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="96" code="HRV" description="CROATIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="97" code="HTI" description="HAITI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="98" code="HUN" description="HUNGARY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="99" code="IDN" description="INDONESIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="100" code="IND" description="INDIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="101" code="IOT" description="BRITISH INDIAN OCEAN TERRITORY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="102" code="IRL" description="IRELAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="103" code="IRN" description="IRAN, ISLAMIC REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="104" code="IRQ" description="IRAQ" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="105" code="ISL" description="ICELAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="106" code="ISR" description="ISRAEL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="107" code="ITA" description="ITALY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="108" code="JAM" description="JAMAICA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="109" code="JOR" description="JORDAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="110" code="JPN" description="JAPAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="111" code="KAZ" description="KAZAKSTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="112" code="KEN" description="KENYA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="113" code="KGZ" description="KYRGYZSTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="114" code="KHM" description="CAMBODIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="115" code="KIR" description="KIRIBATI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="116" code="KNA" description="SAINT KITTS AND NEVIS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="117" code="KOR" description="KOREA, REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="118" code="KWT" description="KUWAIT" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="119" code="LAO" description="LAO PEOPLE&apos;S DEMOCRATIC REPUBLIC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="120" code="LBN" description="LEBANNON" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="121" code="LBR" description="LIBERIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="122" code="LBY" description="LIBYAN ARAB JAMAHIRIYA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="123" code="LCA" description="SAINT LUCIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="124" code="LIE" description="LIECHTENSTEIN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="125" code="LKA" description="SRI LANKA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="126" code="LSO" description="LESOTHO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="127" code="LTU" description="LITHUANIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="128" code="LUX" description="LUXEMBOURG" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="129" code="LVA" description="LATIVA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="130" code="MAC" description="MACAU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="131" code="MAR" description="MOROCCO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="132" code="MCO" description="MONACO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="133" code="MDA" description="MOLDOVA, REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="134" code="MDG" description="MADAGASCAR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="135" code="MDV" description="MALDIVES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="136" code="MEX" description="MEXICO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="137" code="MHL" description="MARSHALL ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="138" code="MKD" description="MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="139" code="MLI" description="MALI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="140" code="MLT" description="MALTA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="141" code="MMR" description="MYANMAR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="142" code="MNG" description="MONGOLIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="143" code="MNP" description="NORTHERN MARIANA ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="144" code="MOZ" description="MOZAMBIQUE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="145" code="MRT" description="MAURITANIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="146" code="MSR" description="MONTSERRAT" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="147" code="MTQ" description="MARTINIQUE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="148" code="MUS" description="MAURITUS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="149" code="MWI" description="MALAWI" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="150" code="MYS" description="MALAYSIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="151" code="MYT" description="MAYOTTE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="152" code="NAM" description="NAMIBIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="153" code="NCL" description="NEW CALEDONIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="154" code="NER" description="NIGER" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="155" code="NFK" description="NORFOLK ISLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="156" code="NGA" description="NIGERIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="157" code="NIC" description="NICARAGUA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="158" code="NIU" description="NIUE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="159" code="NLD" description="NETHERLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="160" code="NOR" description="NORWAY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="161" code="NPL" description="NEPAL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="162" code="NRU" description="NAURU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="163" code="NZL" description="NEW ZEALAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="164" code="OMN" description="OMAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="165" code="PAK" description="PAKISTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="166" code="PAN" description="PANAMA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="167" code="PCN" description="PITCAIRN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="168" code="PER" description="PERU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="169" code="PHL" description="PHILIPPINES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="170" code="PLW" description="PALAU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="171" code="PNG" description="PAPUA NEW GUINEA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="172" code="POL" description="POLAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="173" code="PRI" description="PUERTO RICO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="174" code="PRK" description="KOREA, DEMOCRATIC PEOPLE&apos;S REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="175" code="PRT" description="PORTUGAL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="176" code="PRY" description="PARAGUAY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="177" code="PYF" description="FRENCH POLYNESIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="178" code="QAT" description="QATAR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="179" code="REU" description="REUNION" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="180" code="ROM" description="ROMANIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="181" code="RUS" description="RUSSIAN FEDERATION" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="182" code="RWA" description="RWANDA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="183" code="SAU" description="SAUDI ARABIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="184" code="SDN" description="SUDAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="185" code="SEN" description="SENEGAL" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="186" code="SGP" description="SINGAPORE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="187" code="SGS" description="SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="188" code="SHN" description="SAINT HELENA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="189" code="SJM" description="SVALBARD AND JAN MAYEN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="190" code="SLB" description="SOLOMON ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="191" code="SLE" description="SIERRA LEONE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="192" code="SLV" description="EL SALVADOR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="193" code="SMR" description="SAN MARINO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="194" code="SOM" description="SOMALIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="195" code="SPM" description="SAINT PIERRE AND MIQUELON" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="196" code="STP" description="SAO TOME AND PRINCIPE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="197" code="SUR" description="SURINAME" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="198" code="SVK" description="SLOVAKIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="199" code="SVN" description="SLOVENIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="200" code="SWE" description="SWEDEN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="201" code="SWZ" description="SWAZILAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="202" code="SYC" description="SEYCHELLES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="203" code="SYR" description="SYRIAN ARAB REPUBLIC" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="204" code="TCA" description="TURKS AND CAICOS ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="205" code="TCD" description="CHAD" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="206" code="TGO" description="TOGO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="207" code="THA" description="THAILAND" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="208" code="TJK" description="TAJIKISTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="209" code="TKL" description="TOKELAU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="210" code="TKM" description="TURKMENISTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="211" code="TMP" description="EAST TIMOR" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="212" code="TON" description="TONGA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="213" code="TTO" description="TRINIDAD AND TOBAGO" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="214" code="TUN" description="TUNISIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="215" code="TUR" description="TURKEY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="216" code="TUV" description="TUVALU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="217" code="TWN" description="TAIWAN, PROVINCE OF CHINA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="218" code="TZA" description="TANZANIA, UNITED REPUBLIC OF" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="219" code="UGA" description="UGANDA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="220" code="UKR" description="UKRAINE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="221" code="UMI" description="UNITED STATES MINOR OUTLYING ISLANDS" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="222" code="URY" description="URUGUAY" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="223" code="USA" description="UNITED STATES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="224" code="UZB" description="UZBEKISTAN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="225" code="VAT" description="HOLY SEE  (VATICAN CITY STATE)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="226" code="VCT" description="SAINT VINCENT AND THE GRENADINES" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="227" code="VEN" description="VENEZUELA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="228" code="VGB" description="VIRGIN ISLANDS, BRITISH" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="229" code="VIR" description="VIRGIN ISLANDS, U.S." displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="230" code="VNM" description="VIET NAM" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="231" code="VUT" description="VANUATU" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="232" code="WLF" description="WALLIS AND FUTUNA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="233" code="WSM" description="SAMOA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="234" code="YEM" description="YEMEN" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="235" code="YUG" description="YUGOSLAVIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="236" code="ZAF" description="SOUTH AFRICA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="237" code="ZMB" description="ZAMBIA" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="238" code="ZWE" description="ZIMBABWE" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="0444" name="Name assembly order" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="F" description="Prefix Family Middle Given Suffix" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="G" description="Prefix Given Middle Family Suffix" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+	<hl7table id="" name="" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+	</hl7table>
+	<hl7table id="0465" name="Name/address representation" codesys="HL7 Defined Codes - HL7nnn" type="HL7">
+		<tableElement order="1" code="A" description="Alphabetic (i.e., Default or some single-byte)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="2" code="I" description="Ideographic (i.e., Kanji)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+		<tableElement order="3" code="P" description="Phonetic (i.e., ASCII, Katakana, Hiragana, etc.)" displayName="" source="HL7" usage="Optional" Creator="" Date="30/12/1899" instruction="" />
+	</hl7table>
+</hl7tables>
+
+</Specification>

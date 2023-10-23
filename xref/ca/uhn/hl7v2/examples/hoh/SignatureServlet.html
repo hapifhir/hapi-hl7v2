@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SignatureServlet xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/ca/uhn/hl7v2/examples/hoh/SignatureServlet.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.examples.hoh;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> javax.servlet.ServletConfig;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> javax.servlet.ServletException;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.hoh.util.KeystoreUtils;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment">//START SNIPPET: servlet </em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="SignatureServlet" href="../../../../../ca/uhn/hl7v2/examples/hoh/SignatureServlet.html#SignatureServlet">SignatureServlet</a> <strong class="jxr_keyword">extends</strong> <a name="HohServlet" href="../../../../../ca/uhn/hl7v2/hoh/hapi/server/HohServlet.html#HohServlet">HohServlet</a> {
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  	@Override
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> init(ServletConfig theConfig) <strong class="jxr_keyword">throws</strong> ServletException {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  		
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  		<em class="jxr_comment">//Create a message signer and pass it to the servlet</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  		BouncyCastleCmsMessageSigner signer = <strong class="jxr_keyword">new</strong> <a name="BouncyCastleCmsMessageSigner" href="../../../../../ca/uhn/hl7v2/hoh/sign/BouncyCastleCmsMessageSigner.html#BouncyCastleCmsMessageSigner">BouncyCastleCmsMessageSigner</a>();
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  			signer.setKeyStore(KeystoreUtils.loadKeystore(<span class="jxr_string">"/path/to/keystore/keystore.jks"</span>, <span class="jxr_string">"store_password"</span>));
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  		} <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> ServletException(e);
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  		}
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  		signer.setKeyAlias(<span class="jxr_string">"keyalias"</span>);
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  		signer.setAliasPassword(<span class="jxr_string">"key_password"</span>);
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  		setSigner(signer);
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  	
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  		<em class="jxr_comment">// ... also provide a message handler ...</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  		
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  	}
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  }
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_comment">//END SNIPPET: servlet </em>
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2001&#x2013;2023 <a href="http://www.uhn.ca">University Health Network</a>. All rights reserved.</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>

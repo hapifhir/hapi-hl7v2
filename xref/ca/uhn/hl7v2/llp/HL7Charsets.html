@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>HL7Charsets xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../apidocs/ca/uhn/hl7v2/llp/HL7Charsets.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> The contents of this file are subject to the Mozilla Public License Version 1.1</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> (the "License"); you may not use this file except in compliance with the License.</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> You may obtain a copy of the License at <a href="http://www.mozilla.org/MPL/" target="alexandria_uri">http://www.mozilla.org/MPL/</a></em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> Software distributed under the License is distributed on an "AS IS" basis,</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> specific language governing rights and limitations under the License.</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> The Original Code is "Table0211.java".  Description:</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> "Content of HL7 table 0211 mapped to Java charsets"</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> The Initial Developer of the Original Code is University Health Network. Copyright (C)</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> 2013.  All Rights Reserved.</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_comment"> Contributor(s): ______________________________________.</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> Alternatively, the contents of this file may be used under the terms of the</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> GNU General Public License (the "GPL"), in which case the provisions of the GPL are</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_comment"> applicable instead of those above.  If you wish to allow use of your version of this</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_comment"> file only under the terms of the GPL and not to allow others to use your version</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_comment"> of this file under the MPL, indicate your decision by deleting  the provisions above</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <em class="jxr_comment"> and replace  them with the notice and other provisions required by the GPL License.</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_comment"> If you do not delete the provisions above, a recipient may use your version of</em>
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_comment"> this file under either the MPL or the GPL.</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.llp;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.nio.charset.Charset;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * HL7 Charsets from Table 0211 mapped to Java charsets</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * @author Christian Ohr</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  enum <a name="HL7Charsets" href="../../../../ca/uhn/hl7v2/llp/HL7Charsets.html#HL7Charsets">HL7Charsets</a> {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      ASCII       (<span class="jxr_string">"ASCII"</span>,           <span class="jxr_string">"US-ASCII"</span>),        <em class="jxr_comment">// ASCII</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      ISO_8859_1  (<span class="jxr_string">"8859/1"</span>,          <span class="jxr_string">"ISO-8859-1"</span>),      <em class="jxr_comment">// Western European Latin 1</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      ISO_8859_2  (<span class="jxr_string">"8859/2"</span>,          <span class="jxr_string">"ISO-8859-2"</span>),      <em class="jxr_comment">// Middle European</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      ISO_8859_3  (<span class="jxr_string">"8859/3"</span>,          <span class="jxr_string">"ISO-8859-3"</span>),      <em class="jxr_comment">// Southern European</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      ISO_8859_4  (<span class="jxr_string">"8859/4"</span>,          <span class="jxr_string">"ISO-8859-4"</span>),      <em class="jxr_comment">// Northern European</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      ISO_8859_5  (<span class="jxr_string">"8859/5"</span>,          <span class="jxr_string">"ISO-8859-5"</span>),      <em class="jxr_comment">// Cyrillic</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      ISO_8859_6  (<span class="jxr_string">"8859/6"</span>,          <span class="jxr_string">"ISO-8859-6"</span>),      <em class="jxr_comment">// Arab</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      ISO_8859_7  (<span class="jxr_string">"8859/7"</span>,          <span class="jxr_string">"ISO-8859-7"</span>),      <em class="jxr_comment">// Greek</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      ISO_8859_8  (<span class="jxr_string">"8859/8"</span>,          <span class="jxr_string">"ISO-8859-8"</span>),      <em class="jxr_comment">// Hebrew</em>
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      ISO_8859_9  (<span class="jxr_string">"8859/9"</span>,          <span class="jxr_string">"ISO-8859-9"</span>),      <em class="jxr_comment">// Turk</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      ISO_8859_15 (<span class="jxr_string">"8859/15"</span>,         <span class="jxr_string">"ISO-8859-15"</span>),     <em class="jxr_comment">// Western European Latin 9</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      ISO_IR_6    (<span class="jxr_string">"ISO IR6"</span>,         <span class="jxr_string">"US-ASCII"</span>),
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      ISO_IR_14   (<span class="jxr_string">"ISO IR14"</span>,        <span class="jxr_string">"JIS_X0201"</span>),       <em class="jxr_comment">// Japanese</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      ISO_IR_87   (<span class="jxr_string">"ISO IR87"</span>,        <span class="jxr_string">"x-JIS0208"</span>),       <em class="jxr_comment">// Japanese Kanji</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      ISO_IR_159  (<span class="jxr_string">"ISO IR159"</span>,       <span class="jxr_string">"JIS_X0212-1990"</span>),  <em class="jxr_comment">// Japanese Kanji</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      GB_18030    (<span class="jxr_string">"GB 18030-2000"</span>,   <span class="jxr_string">"GB18030"</span>),         <em class="jxr_comment">// Chinese</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      KS_X_1001   (<span class="jxr_string">"KS X 1001"</span>,       <span class="jxr_string">"EUC-KR"</span>),          <em class="jxr_comment">// Korean</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      CNS_11643   (<span class="jxr_string">"CNS 11643-1992"</span>,  <span class="jxr_string">"x-EUC-TW"</span>),        <em class="jxr_comment">// Chinese</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      BIG_5       (<span class="jxr_string">"BIG-5"</span>,           <span class="jxr_string">"Big5"</span>),            <em class="jxr_comment">// Chinese/Taiwan</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      UNICODE     (<span class="jxr_string">"UNICODE"</span>,         <span class="jxr_string">"UTF-8"</span>),
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      UTF_8       (<span class="jxr_string">"UNICODE UTF-8"</span>,   <span class="jxr_string">"UTF-8"</span>),
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      UTF_16      (<span class="jxr_string">"UNICODE UTF-16"</span>,  <span class="jxr_string">"UTF-16"</span>),
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      UTF_32      (<span class="jxr_string">"UNICODE UTF-32"</span>,  <span class="jxr_string">"UTF-32"</span>);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String hl7EncodingName;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Charset charset;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <a name="HL7Charsets" href="../../../../ca/uhn/hl7v2/llp/HL7Charsets.html#HL7Charsets">HL7Charsets</a>(String hl7EncodingName, String charset) {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.hl7EncodingName = hl7EncodingName;
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.charset = Charset.forName(charset);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * Returns the Java charset for the HL7 charset name</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     * @param hl7EncodingName</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     * @return Java charset</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     * @throws EncodingNotSupportedException if encoding name is unknown</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Charset getCharsetForHL7Encoding(String hl7EncodingName) <strong class="jxr_keyword">throws</strong> <a name="EncodingNotSupportedException" href="../../../../ca/uhn/hl7v2/parser/EncodingNotSupportedException.html#EncodingNotSupportedException">EncodingNotSupportedException</a> {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">if</strong> (hl7EncodingName == <strong class="jxr_keyword">null</strong> || hl7EncodingName.length() == 0)
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">return</strong> HL7Charsets.ASCII.charset;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">for</strong> (<a name="HL7Charsets" href="../../../../ca/uhn/hl7v2/llp/HL7Charsets.html#HL7Charsets">HL7Charsets</a> encoding : HL7Charsets.values()) {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">if</strong> (hl7EncodingName.equals(encoding.hl7EncodingName))
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                  <strong class="jxr_keyword">return</strong> encoding.charset;
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="EncodingNotSupportedException" href="../../../../ca/uhn/hl7v2/parser/EncodingNotSupportedException.html#EncodingNotSupportedException">EncodingNotSupportedException</a>(hl7EncodingName);
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] params) {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">for</strong> (<a name="HL7Charsets" href="../../../../ca/uhn/hl7v2/llp/HL7Charsets.html#HL7Charsets">HL7Charsets</a> entry : HL7Charsets.values()) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              Charset cs = entry.charset;
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              System.out.print(cs.displayName());
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">for</strong> (String alias : cs.aliases()) {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  System.out.print(<span class="jxr_string">" "</span> + alias);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              }
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              System.out.println();
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          }
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2001&#x2013;2023 <a href="http://www.uhn.ca">University Health Network</a>. All rights reserved.</div>
+<script type="text/javascript">
+                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+                </script>
+                <script type="text/javascript">
+                try {
+                var pageTracker = _gat._getTracker("UA-1395874-1");
+                pageTracker._trackPageview();
+                } catch(err) {}</script>
+                </body >
+</html>
