@@ -61,52 +61,16 @@ public class App {
 		DOMConfigurator.configure(App.class.getClassLoader().getResource("log4j_testpanel.xml"));
 		
 		myController = new Controller();
-		
-		// only do this setup if we know this is a Mac
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Mac OS X")) {
-			try {
-				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.OSXInitializer");
-				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// only do this setup if we know this is Windows
-		if (osName.toLowerCase().contains("win")) {
-			try {
-				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.WindowsInitializer");
-				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// only do this setup if we know this is a Mac
-		if (osName.startsWith("Linux")) {
-			try {
-				Class<?> clazz = Class.forName("ca.uhn.hl7v2.testpanel.LinuxInitializer");
-				Method runMethod = clazz.getMethod("run", Controller.class);
-				runMethod.invoke(clazz.newInstance(), myController);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 
-		EventQueue.invokeLater(new Runnable() {
+		new OSXInitializer().run(myController);
 
-			public void run() {
-				try {
-					myController.start();
-//					window.getFrame().setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		EventQueue.invokeLater(() -> {
+            try {
+                myController.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 		
 	}
 

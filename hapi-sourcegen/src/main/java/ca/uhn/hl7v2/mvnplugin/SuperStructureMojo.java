@@ -41,6 +41,11 @@ import java.util.TreeMap;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -64,65 +69,57 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
  * Maven Plugin Mojo for generating HAPI HL7 message/segment/etc source files
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @goal superstructuregen
- * @phase generate-sources
- * @requiresDependencyResolution runtime
- * @requiresProject
- * @inheritedByDefault false
  */
+@Mojo(name = "superstructuregen",
+		defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+requiresProject = true,
+inheritByDefault = false)
 public class SuperStructureMojo extends AbstractMojo {
 
 	/**
 	 * The maven project.
-	 * 
-	 * @parameter property="project"
-	 * @required
-	 * @readonly
 	 */
+	@Component
 	private MavenProject project;
 
 	/**
 	 * Should build be skipped
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private boolean skip;
 
 	/**
 	 * Structures to merge
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private List<String> structures;
 
 	/**
 	 * The target directory for the generated source
-	 * 
-	 * @parameter
-	 * @required
+
 	 */
+	@Parameter(required = false)
 	private String targetDirectory;
 
 	/**
 	 * The target structure name (e.g "ADT_AXX")
-	 * 
-	 * @parameter
-	 * @required
 	 */
+	@Parameter(required = false)
 	private String targetStructureName;
 
 	private final String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
 	/**
 	 * The version for the generated source
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private String version;
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void execute() throws MojoFailureException {
 
 		if (skip) {
@@ -231,7 +228,7 @@ public class SuperStructureMojo extends AbstractMojo {
 		private Map<String, List<String>> myStructureNameToChildNames;
 	}
 
-	private ListOfStructureDefsAndMapOfStructreNames mergeGroups(List<? extends Group> theGroupsToMerge, List<Message> theAssociatedStructures) throws HL7Exception {
+	private ListOfStructureDefsAndMapOfStructreNames mergeGroups(List<? extends Group> theGroupsToMerge, List<Message> theAssociatedStructures) throws HL7Exception, MojoFailureException {
 		ArrayList<StructureDef> retValStructureDefs = new ArrayList<>();
 
 		List<List<String>> allNameLists = new ArrayList<>();
@@ -288,6 +285,14 @@ public class SuperStructureMojo extends AbstractMojo {
 				idx++;
 			}
 
+			Version versionEnum = Version.versionOf(version);
+			if (versionEnum == null) {
+				throw new MojoFailureException("Invalid version: " + version);
+			}
+			Map<String, String> eventMapForVersion = new DefaultModelClassFactory().getEventMapForVersion(versionEnum);
+			if (eventMapForVersion == null) {
+				throw new MojoFailureException("No event map for version: " + version);
+			}
 			if (!group) {
 				SegmentDef seg = new SegmentDef(nextStructureName.substring(0, 3), "", required, repeating, choice, "");
 				retValStructureDefs.add(seg);
@@ -299,7 +304,7 @@ public class SuperStructureMojo extends AbstractMojo {
 				 */
 				for (Message next : associatedChildStructures) {
 					seg.addAssociatedStructure(next.getName());
-					Map<String, String> evtMap = new TreeMap<>(new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version)));
+					Map<String, String> evtMap = new TreeMap<>(eventMapForVersion);
 					for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 						String value = nextEntry.getValue();
 						String name = next.getName();
@@ -325,7 +330,7 @@ public class SuperStructureMojo extends AbstractMojo {
 			 * "ADT_A01", "ADT_A04")
 			 */
 			for (Message next : associatedChildStructures) {
-				Map<String, String> evtMap = new DefaultModelClassFactory().getEventMapForVersion(Version.versionOf(version));
+				Map<String, String> evtMap = eventMapForVersion;
 				for (Map.Entry<String, String> nextEntry : evtMap.entrySet()) {
 					if (nextEntry.getValue().equals(next.getName())) {
 						grp.addAssociatedStructure(nextEntry.getKey());
@@ -439,7 +444,7 @@ public class SuperStructureMojo extends AbstractMojo {
 
 		m.targetDirectory = "target/merge";
 		m.targetStructureName = "ADT_AXX";
-		m.version = "2.3.1";
+		m.version = "2.1";
 		m.execute();
 	}
 

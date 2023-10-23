@@ -30,5 +30,6 @@
 // Generated on: 2011.12.12 at 09:07:53 PM EST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://hl7api.sourceforge.net/hunit/hunit_tests.xsd", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://hl7api.sourceforge.net/hunit/hunit_tests.xsd", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package ca.uhn.hl7v2.testpanel.model;
+

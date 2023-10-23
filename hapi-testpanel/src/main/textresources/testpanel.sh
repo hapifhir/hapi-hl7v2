@@ -1,3 +1,3 @@
 #!/bin/sh
 
-java -jar hapi-testpanel-${project.version}-jar-with-dependencies.jar
+java -jar hapi-testpanel-jar-with-dependencies.jar

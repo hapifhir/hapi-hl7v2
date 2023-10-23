@@ -6,7 +6,6 @@ package ca.uhn.hl7v2.sourcegen.util;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.springframework.ui.velocity.CommonsLoggingLogSystem;
 
 
 /**
@@ -52,7 +51,6 @@ public class VelocityFactory
       engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
       engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ResourceLoader.class
             .getName());
-      engine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLoggingLogSystem.class.getName());
       engine.setProperty(RuntimeConstants.VM_LIBRARY, "");
       engine.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, Boolean.TRUE);
       engine.init();

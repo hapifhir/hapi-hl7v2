@@ -4,8 +4,6 @@ import jsyntaxpane.lexers.*;
 import jsyntaxpane.Token;
 import jsyntaxpane.TokenType;
 
-@SuppressWarnings("unused")
-
 %%
 
 %public
@@ -38,7 +36,7 @@ import jsyntaxpane.TokenType;
 
 	@Override
     public int yychar() {
-        return yychar;
+        return (int)yychar;
     }
     
 
