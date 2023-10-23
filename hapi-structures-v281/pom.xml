@@ -27,7 +27,6 @@
 		<gen.skip>false</gen.skip>
 		<gen.version>2.8.1</gen.version>
 		<gen.version.short>v281</gen.version.short>
-		<sourcegen.jdbcUrl>${sourcegen.jdbcUrl.28}</sourcegen.jdbcUrl>
 	</properties>
 
 	<build>
@@ -113,12 +112,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-            <resource>
-                <directory>${basedir}/target/generated-sources/resourcegen</directory>
-                <filtering>false</filtering>
-            </resource>
-		</resources>
 	</build>
 
 	<reporting>

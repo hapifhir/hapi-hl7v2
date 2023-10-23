@@ -41,6 +41,11 @@ import java.util.TreeMap;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -64,60 +69,51 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
  * Maven Plugin Mojo for generating HAPI HL7 message/segment/etc source files
  * 
  * @author <a href="mailto:jamesagnew@sourceforge.net">James Agnew</a>
- * @goal superstructuregen
- * @phase generate-sources
- * @requiresDependencyResolution runtime
- * @requiresProject
- * @inheritedByDefault false
  */
+@Mojo(name = "superstructuregen",
+		defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+requiresProject = true,
+inheritByDefault = false)
 public class SuperStructureMojo extends AbstractMojo {
 
 	/**
 	 * The maven project.
-	 * 
-	 * @parameter property="project"
-	 * @required
-	 * @readonly
 	 */
+	@Component
 	private MavenProject project;
 
 	/**
 	 * Should build be skipped
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private boolean skip;
 
 	/**
 	 * Structures to merge
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private List<String> structures;
 
 	/**
 	 * The target directory for the generated source
-	 * 
-	 * @parameter
-	 * @required
+
 	 */
+	@Parameter(required = false)
 	private String targetDirectory;
 
 	/**
 	 * The target structure name (e.g "ADT_AXX")
-	 * 
-	 * @parameter
-	 * @required
 	 */
+	@Parameter(required = false)
 	private String targetStructureName;
 
 	private final String templatePackage = "ca.uhn.hl7v2.sourcegen.templates";
 
 	/**
 	 * The version for the generated source
-	 * 
-	 * @parameter
 	 */
+	@Parameter(required = false)
 	private String version;
 
 	/**

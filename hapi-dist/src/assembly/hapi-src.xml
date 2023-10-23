@@ -6,7 +6,7 @@
     
     <formats>
         <format>zip</format>
-        <format>tar.bz2</format>
+        <format>tar.gz</format>
     </formats>
 
     <fileSets>
@@ -16,7 +16,7 @@
             <includes>
                 <include>hapi-base/target/*-sources.jar</include>
             </includes>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
         </fileSet>
 
         <fileSet>
@@ -24,7 +24,7 @@
             <includes>
                 <include>hapi-structures-v2*/target/*-sources.jar</include>
             </includes>
-            <outputDirectory></outputDirectory>
+            <outputDirectory/>
         </fileSet>
 
     </fileSets>

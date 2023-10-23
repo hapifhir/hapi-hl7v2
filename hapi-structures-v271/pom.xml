@@ -79,12 +79,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-            <resource>
-                <directory>${basedir}/target/generated-sources/resourcegen</directory>
-                <filtering>false</filtering>
-            </resource>
-		</resources>
 	</build>
 
 	<reporting>

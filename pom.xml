@@ -352,8 +352,6 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
 					<!-- <forceJavacCompilerUse>true</forceJavacCompilerUse> <verbose>true</verbose> <fork>true</fork> -->
 					<forceJavacCompilerUse>true</forceJavacCompilerUse>
 					<maxmem>1024m</maxmem>
@@ -643,6 +641,9 @@
 
 
 	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+
 		<!-- For site -->
 		<siteMainDirectory>${user.home}/sites/hapi-hl7v2</siteMainDirectory>
 		<scmPubCheckoutDirectory>${user.home}/sites/scm/hapi-hl7v2</scmPubCheckoutDirectory>

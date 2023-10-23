@@ -6,6 +6,15 @@
 	</properties>
 	<body>
 		<release version="2.4" date="TBD">
+			<action type="fix">
+				Testpanel: Correct a NullPointerException when opening a message from a text file
+			</action>
+			<action type="fix">
+				Testpanel: Prevent a failure to autosave messages when TestPanel is closing if the charset has not been selected
+			</action>
+			<action type="fix">
+				Testpanel: Fix formatting issue when displaying sent/received messages containing HTML fragments
+			</action>
 			<action type="fix" dev="Nathan Doef">
 				Fix an issue with the AbstractMessage#copy() method where non-standard
 		                segments were not being added at the same position as the original message.

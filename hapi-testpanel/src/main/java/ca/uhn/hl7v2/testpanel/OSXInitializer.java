@@ -5,15 +5,15 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
  * specific language governing rights and limitations under the License.
- *
+ * <p>
  * The Original Code is ""  Description:
  * ""
- *
+ * <p>
  * The Initial Developer of the Original Code is University Health Network. Copyright (C)
  * 2001.  All Rights Reserved.
- *
+ * <p>
  * Contributor(s): ______________________________________.
- *
+ * <p>
  * Alternatively, the contents of this file may be used under the terms of the
  * GNU General Public License (the  "GPL"), in which case the provisions of the GPL are
  * applicable instead of those above.  If you wish to allow use of your version of this
@@ -28,24 +28,29 @@ package ca.uhn.hl7v2.testpanel;
 import ca.uhn.hl7v2.testpanel.controller.Controller;
 import ca.uhn.hl7v2.testpanel.ui.ImageFactory;
 
+import java.awt.*;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
+
 /**
  * OSX specific initialization code, refactored into a separate class
  * to avoid dependency problems in non-OSX environments
  */
 public class OSXInitializer {
 
-	public void run(final Controller theController) {
-		com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
-		macApp.setDockIconImage(ImageFactory.getHapi64().getImage());
-//		macApp.setAboutHandler(new com.apple.eawt.AboutHandler() {
-//			public void handleAbout( com.apple.eawt.AppEvent.AboutEvent theArg0) {
-//				theController.showAboutDialog();
-//			}});
-//		macApp.setQuitHandler(new com.apple.eawt.QuitHandler() {
-//
-//			public void handleQuitRequestWith( com.apple.eawt.AppEvent.QuitEvent theArg0,  com.apple.eawt.QuitResponse theArg1) {
-//				theController.close();
-//			}});
-	}
-	
+    public void run(final Controller theController) {
+        if (Taskbar.isTaskbarSupported()) {
+            Taskbar taskbar = Taskbar.getTaskbar();
+            taskbar.setIconImage(ImageFactory.getHapi64().getImage());
+        }
+
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.setAboutHandler(e -> theController.showAboutDialog());
+            desktop.setQuitHandler((e, response) -> theController.close());
+        }
+    }
 }
