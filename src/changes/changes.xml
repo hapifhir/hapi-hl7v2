@@ -5,7 +5,16 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-		<release version="2.4" date="TBD">
+		<release version="2.4" date="2023-10-24">
+			<action type="change" dev="James Agnew">
+				As of HAPI 2.4, HAPI FHIR now requires JDK 11 or newer in order to build or use the library.
+			</action>
+			<action type="fix" dev="James Agnew">
+				The XML parser was vulnerable to XXE injections (meaning that the XML
+				parser could be coerced into inadvertently loading the contents of files
+				on the local filesystem). It is highly recommended to upgrade to this
+				release in order to mitigate this issue.
+			</action>
 			<action type="fix">
 				Testpanel: Correct a NullPointerException when opening a message from a text file
 			</action>
@@ -24,17 +33,6 @@
 		                every Structure and parses / encodes the contents of each AbstractSegment
 		                into the copied message.
 		    	</action>
-			<action type="fix" dev="James Agnew">
-				The XML parser was vulnerable to XXE injections (meaning that the XML
-				parser could be coerced into inadvertently loading the contents of files
-				on the local filesystem). It is highly recommended to upgrade to this
-				release in order to mitigate this issue.
-			</action>
-			<action type="change" dev="James Agnew">
-				As of HAPI 2.4, support for JDK 1.4 and JDK 1.5 has been withdrawn. It is
-				no longer feasible to produce these binaries, as the retrotranslator plugin
-				we had been using to produce them will not work on recent JDKs.
-			</action>
 			<action type="fix" dev="Christian Ohr" issue="35">
 				The Connection interface now extends Closeable. As a consequence, the close()
 				method now throws IOException. Thanks to hauntingEcho for the proposal.
@@ -64,7 +62,7 @@
 				processed, even including unexpected ACK messages. Thanks to
 				Tom Chiverton for the pull request!
 			</action>
-			<actopm type="fix">
+			<action type="fix">
 				A concurrency issue causing an exception when parsing or receiving multiple
 				messages in parallel has been resolved.
 			</action>
