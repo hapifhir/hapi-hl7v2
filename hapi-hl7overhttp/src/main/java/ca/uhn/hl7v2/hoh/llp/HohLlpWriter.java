@@ -64,6 +64,7 @@ class HohLlpWriter implements HL7Writer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void writeMessage(String theRawMessage) throws LLPException, IOException {
 
 		AbstractHl7OverHttpEncoder e;

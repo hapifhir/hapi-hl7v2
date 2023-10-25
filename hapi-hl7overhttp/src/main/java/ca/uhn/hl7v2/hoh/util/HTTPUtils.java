@@ -1,13 +1,12 @@
 package ca.uhn.hl7v2.hoh.util;
 
+import ca.uhn.hl7v2.hoh.util.repackage.Base64;
+import jakarta.servlet.ServletOutputStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
-import javax.servlet.ServletOutputStream;
-
-import ca.uhn.hl7v2.hoh.util.repackage.Base64;
 
 
 public class HTTPUtils {

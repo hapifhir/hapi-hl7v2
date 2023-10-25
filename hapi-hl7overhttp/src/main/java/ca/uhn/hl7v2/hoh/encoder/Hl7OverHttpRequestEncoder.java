@@ -14,6 +14,10 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 	private String myHost;
 	private int myPort;
 
+	public Hl7OverHttpRequestEncoder() {
+		super();
+	}
+
 	public void setHost(String theHost) {
 		myHost = theHost;
 	}

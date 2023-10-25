@@ -10,10 +10,16 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLServerSocket;
 
 import ca.uhn.hl7v2.hoh.util.RandomServerPortProvider;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.security.SslSelectChannelConnector;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -104,13 +110,22 @@ public class CustomCertificateTlsSocketFactoryTest {
 
 		Server s = new Server();
 
-		SslSelectChannelConnector ssl = new SslSelectChannelConnector();
-		ssl.setKeystore("src/test/resources/keystore.jks");
-		ssl.setPassword("changeit");
-		ssl.setKeyPassword("changeit");
-		ssl.setPort(60647);
+		HttpConfiguration https = new HttpConfiguration();
+		https.addCustomizer(new SecureRequestCustomizer());
 
-		s.addConnector(ssl);
+		SslContextFactory.Server ssl = new SslContextFactory.Server();
+		ssl.setKeyStorePath("src/test/resources/keystore.jks");
+		ssl.setKeyStorePassword("changeit");
+		ssl.setKeyManagerPassword("changeit");
+
+		ServerConnector sslConnector = new ServerConnector(s,
+				new SslConnectionFactory(ssl, "http/1.1"),
+				new HttpConnectionFactory(https));
+		sslConnector.setPort(60647);
+		sslConnector.setIdleTimeout(50000);
+
+		s.setConnectors(new Connector[]{ sslConnector });
+
 		s.start();
 	}
 

@@ -12,14 +12,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map.Entry;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.DefaultHapiContext;
@@ -58,6 +58,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		myServer.stop();
 	}
 
+	@Override
 	public boolean authorize(String theUri, String theUsername, String thePassword) {
 		if (myExpectedUsername != null) {
 			if (!StringUtils.equals(myExpectedUri, theUri)) {
@@ -76,7 +77,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 	public void before() throws Exception {
 		myPort = RandomServerPortProvider.findFreePort();
 		myServer = new Server(myPort);
-		Context context = new Context(myServer, "/", Context.SESSIONS);
+		ServletContextHandler context = new ServletContextHandler();
 		HohRawServlet servlet = new HohRawServlet();
 		servlet.setAuthorizationCallback(this);
 		servlet.setMessageHandler(this);
@@ -92,6 +93,7 @@ public class HohRawServletTest implements IAuthorizationServerCallback, IMessage
 		myResponse = null;
 	}
 
+	@Override
 	public IResponseSendable<String> messageReceived(IReceivable<String> theMessage) throws MessageProcessingException {
 
 		myMessage = theMessage.getMessage();
