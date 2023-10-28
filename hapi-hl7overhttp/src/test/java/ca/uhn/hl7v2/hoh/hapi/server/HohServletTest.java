@@ -89,6 +89,7 @@ public class HohServletTest {
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		llp.setHost("localhost");
 		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response;
@@ -116,6 +117,7 @@ public class HohServletTest {
 																										// utf-8
 		myResponse = msg.generateACK(AcknowledgmentCode.AE, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		llp.setHost("localhost");
 		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
@@ -141,6 +143,7 @@ public class HohServletTest {
 																										// utf-8
 		myResponse = msg.generateACK(AcknowledgmentCode.AR, new HL7Exception("dsfasfs"));
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		llp.setHost("localhost");
 		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, PipeParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);
@@ -165,6 +168,7 @@ public class HohServletTest {
 		msg.getPID().getPid5_PatientName(0).getXpn1_FamilyName().getFn1_Surname().setValue("I♥HAPI"); // needs
 																										// utf-8
 		Hl7OverHttpLowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+		llp.setHost("localhost");
 		llp.setPreferredCharset(StandardCharsets.UTF_8);
 		Connection conn = ourConnectionHub.attach("localhost", myPort, DefaultXMLParser.getInstanceWithNoValidation(), llp, false);
 		Message response = conn.getInitiator().sendAndReceive(msg);

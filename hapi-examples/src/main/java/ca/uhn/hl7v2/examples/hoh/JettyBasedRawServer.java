@@ -1,10 +1,9 @@
 package ca.uhn.hl7v2.examples.hoh;
 
-import javax.servlet.Servlet;
-
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
+import jakarta.servlet.Servlet;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
 
 public class JettyBasedRawServer {
 
@@ -20,7 +19,7 @@ int port = 8080;
 
 // Create a Jetty server instance
 Server server = new Server(port);
-Context context = new Context(server, "/Hl7Listener", Context.SESSIONS);
+ServletContextHandler context = new ServletContextHandler("/Hl7Listener");
 Servlet servlet = new ExampleRawHl7OverHttpServlet();
 
 /* 

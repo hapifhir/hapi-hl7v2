@@ -55,8 +55,14 @@ IReceivable<String> response = client.sendAndReceive(sendable);
 	}
 
 // START SNIPPET: llp
+// Create the ConnectionHub
+String host = "localhost";
+int port = 8080;
+boolean tls = false;
+
 Hl7OverHttpLowerLayerProtocol llp;
 llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+llp.setHost(host);
 
 //Create a message signer
 BouncyCastleCmsMessageSigner signer = new BouncyCastleCmsMessageSigner();
@@ -65,10 +71,6 @@ signer.setKeyAlias("keyalias");
 signer.setAliasPassword("key_password");
 llp.setSigner(signer);
 
-// Create the ConnectionHub
-String host = "localhost";
-int port = 8080;
-boolean tls = false;
 
 DefaultHapiContext ctx = new DefaultHapiContext();
 ctx.setLowerLayerProtocol(llp);

@@ -50,10 +50,10 @@ public class Hl7OverHttpRequestEncoder extends AbstractHl7OverHttpEncoder {
 			} else {
 				ourLog.warn("Host has been set, but port has not");
 			}
+			getHeaders().put("Host", hostBuilder.toString());
 		} else {
 			ourLog.warn("Host has not been set");
 		}
-		getHeaders().put("Host", hostBuilder.toString());
 	}
 
 	@Override
