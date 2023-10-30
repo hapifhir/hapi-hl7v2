@@ -1,11 +1,10 @@
 package ca.uhn.hl7v2.examples.hoh;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-
 import ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
 import ca.uhn.hl7v2.hoh.sign.BouncyCastleCmsMessageSigner;
 import ca.uhn.hl7v2.hoh.util.KeystoreUtils;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
 //START SNIPPET: servlet 
 public class SignatureServlet extends HohServlet {

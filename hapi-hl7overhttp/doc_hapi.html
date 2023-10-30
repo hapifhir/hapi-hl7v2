@@ -487,6 +487,7 @@ DefaultHapiContext ctx = new DefaultHapiContext();
 
 // Create an HoH LLP for the context
 LowerLayerProtocol llp = new Hl7OverHttpLowerLayerProtocol(ServerRoleEnum.CLIENT);
+llp.setHost(&quot;localhost&quot;);
 ctx.setLowerLayerProtocol(llp);
 
 // Use the LLP in a HapiContext to get a client connection

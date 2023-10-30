@@ -64,11 +64,16 @@ class HohLlpWriter implements HL7Writer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void writeMessage(String theRawMessage) throws LLPException, IOException {
 
 		AbstractHl7OverHttpEncoder e;
 		if (myProtocol.getRole() == ServerRoleEnum.CLIENT) {
-			e = new Hl7OverHttpRequestEncoder();
+			Hl7OverHttpRequestEncoder encoder = new Hl7OverHttpRequestEncoder();
+			if (myProtocol.getHost() != null) {
+				encoder.setHost(myProtocol.getHost());
+			}
+			e = encoder;
 			if (myProtocol.getAuthorizationClientCallback() != null) {
 				e.setUsername(myProtocol.getAuthorizationClientCallback().provideUsername(myProtocol.getUriPath()));
 				e.setPassword(myProtocol.getAuthorizationClientCallback().providePassword(myProtocol.getUriPath()));

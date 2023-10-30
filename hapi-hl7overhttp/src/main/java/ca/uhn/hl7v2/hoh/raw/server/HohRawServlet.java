@@ -5,10 +5,6 @@ import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.IAuthorizationServerCallback;
 import ca.uhn.hl7v2.hoh.api.IMessageHandler;
@@ -21,6 +17,9 @@ import ca.uhn.hl7v2.hoh.raw.api.RawReceivable;
 import ca.uhn.hl7v2.hoh.sign.ISigner;
 import ca.uhn.hl7v2.hoh.sign.SignatureVerificationException;
 import ca.uhn.hl7v2.hoh.util.HTTPUtils;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class HohRawServlet extends HttpServlet {
 

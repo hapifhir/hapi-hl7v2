@@ -3,13 +3,12 @@ package ca.uhn.hl7v2.examples.hoh;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.hoh.hapi.server.HohServlet;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
+import jakarta.servlet.ServletConfig;
 
 /**
  * Example servlet implementation which receives HL7 messages
@@ -44,6 +43,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 		 * @param theMetadata A map containing additional information about
 		 *                    the message, where it came from, etc.  
 		 */
+		@Override
 		public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 			System.out.println("Received message:\n" + theMessage.encode());
 
@@ -73,6 +73,7 @@ public class ExampleHl7OverHttpServletWithOneApplication extends HohServlet {
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public boolean canProcess(Message theMessage) {
 			return true;
 		}
