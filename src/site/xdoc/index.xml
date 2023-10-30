@@ -89,11 +89,16 @@
 
 		</section>
 
-		<section name="HAPI HL7v2 2.4 Released - Oct 23, 2023">
+		<section name="HAPI HL7v2 2.4 and 2.5 Released - Oct 30, 2023">
 
 			<p>
 				Over five years since the last release, we are pleased to announce
-				availability of HAPI HL7v2 2.4. This release includes the following changes:
+				availability of HAPI HL7v2 2.4 and HAPI HL7v2 2.5.
+				These releases are being produced on the same day with one difference:
+				Version 2.4 uses the legacy javax.servlet package in the hapi-hl7overhttp
+				module, whereversion 2.5 uses the new jakarta.servlet package in this module.
+				There are no other material differences between the two versions.
+				These releases include the following changes:
 			</p>
 			<ul>
 				<li>
@@ -116,6 +121,11 @@
 					VM has finally stopped working). If you are interested in helping to modernize
 					the structures generator, please get in touch!
 				</li>
+				<li>
+					Check the the <a href="changes-report.html">Changelog</a> for a complete list
+					of changes.
+				</li>
+
 			</ul>
 
 		</section>

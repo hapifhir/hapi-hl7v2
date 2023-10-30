@@ -5,9 +5,16 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
-		<release version="2.4" date="2023-10-24">
+		<release version="2.5" date="2023-10-30">
 			<action type="change" dev="James Agnew">
-				As of HAPI 2.4, HAPI FHIR now requires JDK 11 or newer in order to build or use the library.
+				HAPI HL7v2 2.5 is identical to HAPI FHIR 2.4, but uses the jakarta.servlet
+				packages instead of the javax.servlet packages. All versions of HAPI HL7v2 going
+				forward will contain this change.
+			</action>
+		</release>
+		<release version="2.4" date="2023-10-30">
+			<action type="change" dev="James Agnew">
+				As of HAPI HL7v2 2.4, HAPI FHIR now requires JDK 11 or newer in order to build or use the library.
 			</action>
 			<action type="fix" dev="James Agnew">
 				The XML parser was vulnerable to XXE injections (meaning that the XML
