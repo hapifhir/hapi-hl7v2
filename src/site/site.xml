@@ -85,7 +85,6 @@
 			<item name="Unit Test Report" href="surefire-report.html" />
 			<item name="Source Tag List" href="taglist.html" />
 			<item name="Cobertura" href="cobertura/index.html" />
-			<item name="FindBugs" href="findbugs.html" />
 			<item name="License" href="license.html" />
 		</menu>
 

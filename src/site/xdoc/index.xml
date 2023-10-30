@@ -89,6 +89,47 @@
 
 		</section>
 
+		<section name="HAPI HL7v2 2.4 and 2.5 Released - Oct 30, 2023">
+
+			<p>
+				Over five years since the last release, we are pleased to announce
+				availability of HAPI HL7v2 2.4 and HAPI HL7v2 2.5.
+				These releases are being produced on the same day with one difference:
+				Version 2.4 uses the legacy javax.servlet package in the hapi-hl7overhttp
+				module, whereversion 2.5 uses the new jakarta.servlet package in this module.
+				There are no other material differences between the two versions.
+				These releases include the following changes:
+			</p>
+			<ul>
+				<li>
+					This release <a href="https://github.com/hapifhir/hapi-hl7v2/pull/98/files">addresses</a> a
+					security vulnerability in the XML parser used to parse XML-based HL7 v2.x messages.
+				</li>
+				<li>
+					JDK 11+ is now required in order to use or build this library.
+				</li>
+				<li>
+					The Testpanel application can now be run on modern JDKs (the
+					previous version failed to start on JDK 9+ due to a Java module
+					issue).
+				</li>
+				<li>
+					The module that has historically been used to generate the "HL7 structures"
+					source files has been retired, and the generated structures are now checked
+					in to the source repository. Unfortunately the generator is not sustainable
+					in its current form (it required a Windows XP VM in order to run, and that
+					VM has finally stopped working). If you are interested in helping to modernize
+					the structures generator, please get in touch!
+				</li>
+				<li>
+					Check the the <a href="changes-report.html">Changelog</a> for a complete list
+					of changes.
+				</li>
+
+			</ul>
+
+		</section>
+
 		<section name="HAPI HL7v2 2.3 Released - Jun 23, 2017">
 			
 			<p>
