@@ -1,119 +1,108 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>CustomModelClasses xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
 </head>
 <body>
 <div id="overview"><a href="../../../../../apidocs/ca/uhn/hl7v2/examples/CustomModelClasses.html">View Javadoc</a></div><pre>
-
-<a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * To change this template, choose Tools | Templates</em>
-<a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> * and open the template in the editor.</em>
-<a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> */</em>
-<a class="jxr_linenumber" name="5" href="#5">5</a>   
-<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.examples;
-<a class="jxr_linenumber" name="7" href="#7">7</a>   
-<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.DefaultHapiContext;
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HL7Exception;
-<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HapiContext;
-<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.examples.custommodel.v25.message.ZDT_A01;
-<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Segment;
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.v25.message.ADT_A01;
-<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.CustomModelClassFactory;
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.ModelClassFactory;
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.Parser;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  
-<a class="jxr_linenumber" name="19" href="#19">19</a>  
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * Example using custom model classes</em>
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../ca/uhn/hl7v2/examples/CustomModelClasses.html">CustomModelClasses</a> {
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> HL7Exception {
-<a class="jxr_linenumber" name="26" href="#26">26</a>  
-<a class="jxr_linenumber" name="27" href="#27">27</a>          <em class="jxr_comment">// Suppose we need to parse a message that has some local customization</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>          <em class="jxr_comment">// or quirk. The most common example is Z-segments in messages, but we</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>          <em class="jxr_comment">// could even be talking about completely non conformant structures.</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>  
-<a class="jxr_linenumber" name="31" href="#31">31</a>          <em class="jxr_comment">// For this example, let's imagine an application that has a custom</em>
-<a class="jxr_linenumber" name="32" href="#32">32</a>          <em class="jxr_comment">// patient segment called ZPI after the PID segment in an ADT^A01 message.</em>
-<a class="jxr_linenumber" name="33" href="#33">33</a>          <em class="jxr_comment">// This ZPI segment has two fields:</em>
-<a class="jxr_linenumber" name="34" href="#34">34</a>          <em class="jxr_comment">//   1 - a repeating ST called "Pet Name"</em>
-<a class="jxr_linenumber" name="35" href="#35">35</a>          <em class="jxr_comment">//   2 - a non repeating NM called "shoe size"</em>
-<a class="jxr_linenumber" name="36" href="#36">36</a>  
-<a class="jxr_linenumber" name="37" href="#37">37</a>          <em class="jxr_comment">// Here's an example message</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>  		String messageText = <span class="jxr_string">"MSH|^~&#92;&#92;&amp;|IRIS|SANTER|AMB_R|SANTER|200803051508||ADT^A01|263206|P|2.5\r"</span>
-<a class="jxr_linenumber" name="39" href="#39">39</a>  				+ <span class="jxr_string">"EVN||200803051509||||200803031508\r"</span>
-<a class="jxr_linenumber" name="40" href="#40">40</a>  				+ <span class="jxr_string">"PID|||5520255^^^PK^PK~ZZZZZZ83M64Z148R^^^CF^CF~ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103^99991231~^^^^TEAM||ZZZ^ZZZ||19830824|F||||||||||||||||||||||N\r"</span>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  				+ <span class="jxr_string">"ZPI|Fido~Fred|13\r"</span>
-<a class="jxr_linenumber" name="42" href="#42">42</a>  				+ <span class="jxr_string">"PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&amp;LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&amp;LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r"</span>
-<a class="jxr_linenumber" name="43" href="#43">43</a>  				+ <span class="jxr_string">"PR1|1||1111^Mastoplastica|Protesi|20090224|02|"</span>;
-<a class="jxr_linenumber" name="44" href="#44">44</a>  
-<a class="jxr_linenumber" name="45" href="#45">45</a>          <em class="jxr_comment">// HAPI will still parse this message fine</em>
-<a class="jxr_linenumber" name="46" href="#46">46</a>  		HapiContext context = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/DefaultHapiContext.html">DefaultHapiContext</a>();
-<a class="jxr_linenumber" name="47" href="#47">47</a>  		Parser parser = context.getPipeParser();
-<a class="jxr_linenumber" name="48" href="#48">48</a>          ADT_A01 message = (ADT_A01) parser.parse(messageText);
-<a class="jxr_linenumber" name="49" href="#49">49</a>          
-<a class="jxr_linenumber" name="50" href="#50">50</a>          <em class="jxr_comment">// If we want to access the data in the ZPI segment, it's pretty easy</em>
-<a class="jxr_linenumber" name="51" href="#51">51</a>          <a href="../../../../ca/uhn/hl7v2/model/Segment.html">Segment</a> zpiGenericSegment = (Segment) message.get(<span class="jxr_string">"ZPI"</span>);
-<a class="jxr_linenumber" name="52" href="#52">52</a>  
-<a class="jxr_linenumber" name="53" href="#53">53</a>          String firstPetName  = zpiGenericSegment.getField(1, 0).encode();
-<a class="jxr_linenumber" name="54" href="#54">54</a>          String secondPetName = zpiGenericSegment.getField(1, 1).encode();
-<a class="jxr_linenumber" name="55" href="#55">55</a>          System.out.println(firstPetName); <em class="jxr_comment">// Fido</em>
-<a class="jxr_linenumber" name="56" href="#56">56</a>          System.out.println(secondPetName); <em class="jxr_comment">// Fred</em>
-<a class="jxr_linenumber" name="57" href="#57">57</a>  
-<a class="jxr_linenumber" name="58" href="#58">58</a>          String shoeSize = zpiGenericSegment.getField(2, 0).encode();
-<a class="jxr_linenumber" name="59" href="#59">59</a>          System.out.println(shoeSize); <em class="jxr_comment">// 13</em>
-<a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>  
-<a class="jxr_linenumber" name="62" href="#62">62</a>          <em class="jxr_comment">// Now, suppose our message is actually called ZDT^A01, and we plan on</em>
-<a class="jxr_linenumber" name="63" href="#63">63</a>          <em class="jxr_comment">// using it frequently, so we want to explicitly define a class to</em>
-<a class="jxr_linenumber" name="64" href="#64">64</a>          <em class="jxr_comment">// handle it. That can be done as well.</em>
-<a class="jxr_linenumber" name="65" href="#65">65</a>  
-<a class="jxr_linenumber" name="66" href="#66">66</a>          <em class="jxr_comment">// Here is a segment class we have created (click to view):</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>          <a href="../../../../ca/uhn/hl7v2/examples/custommodel/v25/segment/ZPI.html">ZPI</a> zpi;
-<a class="jxr_linenumber" name="68" href="#68">68</a>  
-<a class="jxr_linenumber" name="69" href="#69">69</a>          <em class="jxr_comment">// Here is a message class we have created (click to view):</em>
-<a class="jxr_linenumber" name="70" href="#70">70</a>          <a href="../../../../ca/uhn/hl7v2/examples/custommodel/v25/message/ZDT_A01.html">ZDT_A01</a> zdtA01;
-<a class="jxr_linenumber" name="71" href="#71">71</a>  
-<a class="jxr_linenumber" name="72" href="#72">72</a>          <em class="jxr_comment">// These classes are both in the package ca.uhn.hl7v2.examples.custommodel.[version].[type]</em>
-<a class="jxr_linenumber" name="73" href="#73">73</a>          <em class="jxr_comment">// We associated the HapiContext with a custom model class factory to use it</em>
-<a class="jxr_linenumber" name="74" href="#74">74</a>          <a href="../../../../ca/uhn/hl7v2/parser/ModelClassFactory.html">ModelClassFactory</a> cmf = <strong class="jxr_keyword">new</strong> <a href="../../../../ca/uhn/hl7v2/parser/CustomModelClassFactory.html">CustomModelClassFactory</a>(<span class="jxr_string">"ca.uhn.hl7v2.examples.custommodel"</span>);
-<a class="jxr_linenumber" name="75" href="#75">75</a>          context.setModelClassFactory(cmf);
-<a class="jxr_linenumber" name="76" href="#76">76</a>  
-<a class="jxr_linenumber" name="77" href="#77">77</a>          <em class="jxr_comment">// The resulting message will be an instance of our custom type (this time, MSH-9 says ZDT^A01)</em>
-<a class="jxr_linenumber" name="78" href="#78">78</a>  		messageText = <span class="jxr_string">"MSH|^~&#92;&#92;&amp;|IRIS|SANTER|AMB_R|SANTER|200803051508||ZDT^A01|263206|P|2.5\r"</span>
-<a class="jxr_linenumber" name="79" href="#79">79</a>  				+ <span class="jxr_string">"EVN||200803051509||||200803031508\r"</span>
-<a class="jxr_linenumber" name="80" href="#80">80</a>  				+ <span class="jxr_string">"PID|||5520255^^^PK^PK~ZZZZZZ83M64Z148R^^^CF^CF~ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103^99991231~^^^^TEAM||ZZZ^ZZZ||19830824|F||||||||||||||||||||||N\r"</span>
-<a class="jxr_linenumber" name="81" href="#81">81</a>  				+ <span class="jxr_string">"ZPI|Fido~Fred|13\r"</span>
-<a class="jxr_linenumber" name="82" href="#82">82</a>  				+ <span class="jxr_string">"PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&amp;LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&amp;LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r"</span>
-<a class="jxr_linenumber" name="83" href="#83">83</a>  				+ <span class="jxr_string">"PR1|1||1111^Mastoplastica|Protesi|20090224|02|"</span>;
-<a class="jxr_linenumber" name="84" href="#84">84</a>          zdtA01 = (ZDT_A01) parser.parse(messageText);
-<a class="jxr_linenumber" name="85" href="#85">85</a>  
-<a class="jxr_linenumber" name="86" href="#86">86</a>          <em class="jxr_comment">// Now we have easy access to our new segment and fields</em>
-<a class="jxr_linenumber" name="87" href="#87">87</a>          zpi = zdtA01.getZPI();
-<a class="jxr_linenumber" name="88" href="#88">88</a>  
-<a class="jxr_linenumber" name="89" href="#89">89</a>          System.out.println(zpi.getPetName()[0].encode()); <em class="jxr_comment">// Fido</em>
-<a class="jxr_linenumber" name="90" href="#90">90</a>          System.out.println(zpi.getPetName()[1].encode()); <em class="jxr_comment">// Fred</em>
-<a class="jxr_linenumber" name="91" href="#91">91</a>          System.out.println(zpi.getShoeSize().encode()); <em class="jxr_comment">// 13</em>
-<a class="jxr_linenumber" name="92" href="#92">92</a>  
-<a class="jxr_linenumber" name="93" href="#93">93</a>      }
-<a class="jxr_linenumber" name="94" href="#94">94</a>  
-<a class="jxr_linenumber" name="95" href="#95">95</a>  }
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * To change this template, choose Tools | Templates</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * and open the template in the editor.</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">package</strong> ca.uhn.hl7v2.examples;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.DefaultHapiContext;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HL7Exception;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.HapiContext;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.examples.custommodel.v25.message.ZDT_A01;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.examples.custommodel.v25.segment.ZPI;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.Segment;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.model.v25.message.ADT_A01;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.CustomModelClassFactory;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.ModelClassFactory;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> ca.uhn.hl7v2.parser.Parser;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> * Example using custom model classes</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="CustomModelClasses" href="../../../../ca/uhn/hl7v2/examples/CustomModelClasses.html#CustomModelClasses">CustomModelClasses</a> {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> <a name="HL7Exception" href="../../../../ca/uhn/hl7v2/HL7Exception.html#HL7Exception">HL7Exception</a> {
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>          <em class="jxr_comment">// Suppose we need to parse a message that has some local customization</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          <em class="jxr_comment">// or quirk. The most common example is Z-segments in messages, but we</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>          <em class="jxr_comment">// could even be talking about completely non conformant structures.</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          <em class="jxr_comment">// For this example, let's imagine an application that has a custom</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>          <em class="jxr_comment">// patient segment called ZPI after the PID segment in an ADT^A01 message.</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>          <em class="jxr_comment">// This ZPI segment has two fields:</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>          <em class="jxr_comment">//   1 - a repeating ST called "Pet Name"</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          <em class="jxr_comment">//   2 - a non repeating NM called "shoe size"</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>          <em class="jxr_comment">// Here's an example message</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  		String messageText = <span class="jxr_string">"MSH|^~&#92;&#92;&amp;|IRIS|SANTER|AMB_R|SANTER|200803051508||ADT^A01|263206|P|2.5\r"</span>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  				+ <span class="jxr_string">"EVN||200803051509||||200803031508\r"</span>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  				+ <span class="jxr_string">"PID|||5520255^^^PK^PK~ZZZZZZ83M64Z148R^^^CF^CF~ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103^99991231~^^^^TEAM||ZZZ^ZZZ||19830824|F||||||||||||||||||||||N\r"</span>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  				+ <span class="jxr_string">"ZPI|Fido~Fred|13\r"</span>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  				+ <span class="jxr_string">"PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&amp;LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&amp;LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r"</span>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  				+ <span class="jxr_string">"PR1|1||1111^Mastoplastica|Protesi|20090224|02|"</span>;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <em class="jxr_comment">// HAPI will still parse this message fine</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  		HapiContext context = <strong class="jxr_keyword">new</strong> <a name="DefaultHapiContext" href="../../../../ca/uhn/hl7v2/DefaultHapiContext.html#DefaultHapiContext">DefaultHapiContext</a>();
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  		Parser parser = context.getPipeParser();
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <a name="ADT_A01" h<a name="ADT_A01" href="../../../../ca/uhn/hl7v2/model/v25/message/ADT_A01.html#ADT_A01">ADT_A01</a>/../../../ca/uhn/hl7v2/model/v25/message/ADT_A01.html#ADT_A01">ADT_A01</a> message = (<a name="ADT_A01" href="../../../../ca/uhn/hl7v2/model/v25/message/ADT_A01.html#ADT_A01">ADT_A01</a>) parser.parse(messageText);
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <em class="jxr_comment">// If we want to access the data in the ZPI segment, it's pretty easy</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <a name="Segment" href="../..<a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a> zpiGenericSegment = (<a name="Segment" href="../../../../ca/uhn/hl7v2/model/Segment.html#Segment">Segment</a>) message.get(<span class="jxr_string">"ZPI"</span>);
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>          String firstPetName  = zpiGenericSegment.getField(1, 0).encode();
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          String secondPetName = zpiGenericSegment.getField(1, 1).encode();
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          System.out.println(firstPetName); <em class="jxr_comment">// Fido</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          System.out.println(secondPetName); <em class="jxr_comment">// Fred</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          String shoeSize = zpiGenericSegment.getField(2, 0).encode();
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          System.out.println(shoeSize); <em class="jxr_comment">// 13</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>          <em class="jxr_comment">// Now, suppose our message is actually called ZDT^A01, and we plan on</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <em class="jxr_comment">// using it frequently, so we want to explicitly define a class to</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <em class="jxr_comment">// handle it. That can be done as well.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <em class="jxr_comment">// Here is a segment class we have created (click to view):</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <a name="ZPI" href="../../../../ca/uhn/hl7v2/examples/custommodel/v25/segment/ZPI.html#ZPI">ZPI</a> zpi;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          <em class="jxr_comment">// Here is a message class we have created (click to view):</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <a name="ZDT_A01" href="../../../../ca/uhn/hl7v2/examples/custommodel/v25/message/ZDT_A01.html#ZDT_A01">ZDT_A01</a> zdtA01;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <em class="jxr_comment">// These classes are both in the package ca.uhn.hl7v2.examples.custommodel.[version].[type]</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <em class="jxr_comment">// We associated the HapiContext with a custom model class factory to use it</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <a name="ModelClassFactory" href="../../../../ca/uhn/hl7v2/parser/ModelClassFactory.html#ModelClassFactory">ModelClassFactory</a> cmf = <strong class="jxr_keyword">new</strong> <a name="CustomModelClassFactory" href="../../../../ca/uhn/hl7v2/parser/CustomModelClassFactory.html#CustomModelClassFactory">CustomModelClassFactory</a>(<span class="jxr_string">"ca.uhn.hl7v2.examples.custommodel"</span>);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          context.setModelClassFactory(cmf);
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          <em class="jxr_comment">// The resulting message will be an instance of our custom type (this time, MSH-9 says ZDT^A01)</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  		messageText = <span class="jxr_string">"MSH|^~&#92;&#92;&amp;|IRIS|SANTER|AMB_R|SANTER|200803051508||ZDT^A01|263206|P|2.5\r"</span>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  				+ <span class="jxr_string">"EVN||200803051509||||200803031508\r"</span>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  				+ <span class="jxr_string">"PID|||5520255^^^PK^PK~ZZZZZZ83M64Z148R^^^CF^CF~ZZZZZZ83M64Z148R^^^SSN^SSN^^20070103^99991231~^^^^TEAM||ZZZ^ZZZ||19830824|F||||||||||||||||||||||N\r"</span>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  				+ <span class="jxr_string">"ZPI|Fido~Fred|13\r"</span>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  				+ <span class="jxr_string">"PV1||I|6402DH^^^^^^^^MED. 1 - ONCOLOGIA^^OSPEDALE MAGGIORE DI LODI&amp;LODI|||^^^^^^^^^^OSPEDALE MAGGIORE DI LODI&amp;LODI|13936^TEST^TEST||||||||||5068^TEST2^TEST2||2008003369||||||||||||||||||||||||||200803031508\r"</span>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  				+ <span class="jxr_string">"PR1|1||1111^Mastoplastica|Protesi|20090224|02|"</span>;
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          zdtA01 = (<a name="ZDT_A01" href="../../../../ca/uhn/hl7v2/examples/custommodel/v25/message/ZDT_A01.html#ZDT_A01">ZDT_A01</a>) parser.parse(messageText);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <em class="jxr_comment">// Now we have easy access to our new segment and fields</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          zpi = zdtA01.getZPI();
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          System.out.println(zpi.getPetName()[0].encode()); <em class="jxr_comment">// Fido</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          System.out.println(zpi.getPetName()[1].encode()); <em class="jxr_comment">// Fred</em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          System.out.println(zpi.getShoeSize().encode()); <em class="jxr_comment">// 13</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  }
 </pre>
-<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div>
-                <script type="text/javascript">
-                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-                </script>
-                <script type="text/javascript">
-                try {
-                var pageTracker = _gat._getTracker("UA-1395874-1");
-                pageTracker._trackPageview();
-                } catch(err) {}</script>
-                </body >
-                
+<hr/>
+<div id="footer">Copyright &#169; 2001&#x2013;2023 <a href="http://www.uhn.ca">University Health Network</a>. All rights reserved.</div>
+</body>
 </html>
