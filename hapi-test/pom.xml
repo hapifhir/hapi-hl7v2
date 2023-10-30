@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>hapi</artifactId>
 		<groupId>ca.uhn.hapi</groupId>
-		<version>2.4-SNAPSHOT</version>
+		<version>2.4</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -446,90 +446,5 @@
 			</resource>
 		</resources>
 	</build>
-
-	<reporting>
-		<plugins>
-			<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>${maven.surefire.plugin.version}</version>
-				<reportSets>
-					<reportSet>
-						<id>failsafe</id>
-						<reports>
-							<report>failsafe-report-only</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			 -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>${maven.cobertura.plugin.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
-
-	<profiles>
-		<profile>
-			<id>SITE</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<!-- 
-							<execution>
-								<id>copy_sources</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<target>
-										<echo>Copying sources</echo>
-										<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
-											<fileset dir="${basedir}/../hapi-base/src/main/java">
-												<include name="**/*.*" />
-											</fileset>
-										</copy>
-										<echo>Copying resources</echo>
-										<copy todir="${basedir}/target/generated-sources/confgen" preservelastmodified="true">
-											<fileset dir="${basedir}/../hapi-base/src/main/resources">
-												<include name="**/*.*" />
-											</fileset>
-										</copy>
-										<echo>Done copying</echo>
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							-->
-							<execution>
-								<id>site</id>
-								<phase>post-site</phase>
-								<configuration>
-									<tasks>
-										<echo message="Copying site resources" />
-										<copy todir="${basedir}/../target/site/cobertura">
-											<fileset dir="${basedir}/target/site/cobertura">
-												<include name="**/*" />
-											</fileset>
-										</copy>
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-	</profiles>
 
 </project>
