@@ -5,6 +5,13 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+		<release version="2.4.1" date="2023-11-01">
+			<action type="fix" dev="Emre Dincturk">
+				SimpleServer now waits for its server socket to be closed when stopAndWait is called.
+				This makes it easier for consumers of SimpleServer to reuse the port after stopping the server
+				without implementing a wait for the port to be released themselves.
+			</action>
+		</release>
 		<release version="2.5" date="2023-10-30">
 			<action type="change" dev="James Agnew">
 				HAPI HL7v2 2.5 is identical to HAPI FHIR 2.4, but uses the jakarta.servlet
