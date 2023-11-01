@@ -11,9 +11,6 @@
 		<!-- The body of the document contains a number of sections -->
 		<section name="Welcome">
 			<p>
-			    SOCIALPLUGINSHEREAPI
-			</p>
-			<p>
 				This is the home page for the HAPI project.
 				HAPI (HL7 application
 				programming interface;
@@ -87,6 +84,13 @@
 				</tr>
 			</table>
 
+		</section>
+
+		<section name="HAPI HL7v2 2.4.1 and 2.5.1 Released - Nov 1, 2023">
+			<p>
+				A last minute bug found in HAPI FHIR 2.4 and 2.5 was discovered and fixed, so
+				two new releases have been produced.
+			</p>
 		</section>
 
 		<section name="HAPI HL7v2 2.4 and 2.5 Released - Oct 30, 2023">
