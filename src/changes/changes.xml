@@ -16,6 +16,11 @@
 			<action type="change" dev="James Agnew">
 				As of HAPI HL7v2 2.4, HAPI FHIR now requires JDK 11 or newer in order to build or use the library.
 			</action>
+			<action type="change" dev="Emre Dincturk">
+				SimpleServer now waits for its server socket to be closed when stopping. This makes it easier for
+				consumers of SimpleServer to reuse the port after stopping the server
+				without implementing a wait for the port to be released themselves.
+			</action>
 			<action type="fix" dev="James Agnew">
 				The XML parser was vulnerable to XXE injections (meaning that the XML
 				parser could be coerced into inadvertently loading the contents of files
