@@ -23,7 +23,6 @@
 			<action type="change" dev="James Agnew">
 				As of HAPI HL7v2 2.4, HAPI FHIR now requires JDK 11 or newer in order to build or use the library.
 			</action>
-
 			<action type="fix" dev="James Agnew">
 				The XML parser was vulnerable to XXE injections (meaning that the XML
 				parser could be coerced into inadvertently loading the contents of files
