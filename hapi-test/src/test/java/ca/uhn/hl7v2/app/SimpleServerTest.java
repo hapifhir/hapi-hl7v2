@@ -2,13 +2,14 @@ package ca.uhn.hl7v2.app;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -207,7 +208,6 @@ public class SimpleServerTest implements ConnectionListener {
 
 	}
 
-	@SuppressWarnings("resource")
 	@Test
 	public void testShutdownCleanly() throws InterruptedException, IOException {
 
@@ -217,13 +217,21 @@ public class SimpleServerTest implements ConnectionListener {
 
 		Thread.sleep(1000);
 
-		Socket s = new Socket();
-		s.connect(new InetSocketAddress("127.0.0.1", port));
+		try (Socket s = new Socket(); Socket s2 = new Socket()) {
+			s.connect(new InetSocketAddress("127.0.0.1", port));
 
-		assertTrue(s.isConnected());
+			assertTrue(s.isConnected());
 
-		ss.stopAndWait();
+			ss.stopAndWait();
 
+			//ensure that port is released and new connections are refused after ss.stopAndWait is called
+			try {
+				s2.connect(new InetSocketAddress("127.0.0.1", port));
+				fail("Expected the connection to be refused after server is stopped but it did not");
+			} catch (ConnectException exception) {
+				assertFalse(s2.isConnected());
+			}
+		}
 	}
 
 	@Test
