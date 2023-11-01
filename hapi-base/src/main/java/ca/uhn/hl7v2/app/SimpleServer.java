@@ -215,7 +215,10 @@ public class SimpleServer extends HL7Service {
 	@Override
 	protected void afterTermination() {
 		super.afterTermination();
-		acceptor.stop();
+		// use stopAndWait (instead of stop) to ensure port is released when this function returns,
+		// so that components using this server class can reuse the port without having to add
+		// logic to wait for port to be released
+		acceptor.stopAndWait();
 	}
 
 	/**
