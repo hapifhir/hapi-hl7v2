@@ -140,7 +140,7 @@ public class ApplicationRouterImpl implements ApplicationRouter {
             Terser inTerser = new Terser(incomingMessageObject);
             theMetadata.put(MetadataKeys.IN_MESSAGE_CONTROL_ID, inTerser.get("/.MSH-10"));
 
-        } catch (HL7Exception e) {
+        } catch (Exception e) {
             log.debug("Exception parsing incoming message", e);
             try {
                 outgoingMessageString = logAndMakeErrorMessage(e, myParser.getCriticalResponseData(incomingMessageString), myParser, myParser.getEncoding(incomingMessageString));
