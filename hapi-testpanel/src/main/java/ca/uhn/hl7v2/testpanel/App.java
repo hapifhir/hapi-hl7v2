@@ -62,8 +62,10 @@ public class App {
 		
 		myController = new Controller();
 
-		new OSXInitializer().run(myController);
-
+		if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+			new OSXInitializer().run(myController);
+		}
+		
 		EventQueue.invokeLater(() -> {
             try {
                 myController.start();
