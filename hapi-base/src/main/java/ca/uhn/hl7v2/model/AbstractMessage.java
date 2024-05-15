@@ -27,14 +27,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
@@ -49,6 +41,15 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.StringUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A default implementation of Message. 
@@ -431,12 +432,7 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * @throws HL7Exception If an error occurs while the message is being copied
      */
     public AbstractMessage copy() throws HL7Exception{
-        AbstractMessage clonedMessage = ReflectionUtil.instantiateMessage(this.getClass(), this.getModelClassFactory());
-        clonedMessage.setParser(this.getParser());
-
-        copyParserRequiredMshFields(this, clonedMessage);
-        copyGroup(this, clonedMessage);
-        return clonedMessage;
+        return SerializationUtils.clone(this);
     }
 
     private void copyParserRequiredMshFields(AbstractMessage theSource, AbstractMessage theTarget) throws HL7Exception {
