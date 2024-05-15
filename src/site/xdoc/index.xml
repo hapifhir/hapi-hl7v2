@@ -86,6 +86,13 @@
 
 		</section>
 
+		<section name="HAPI HL7v2 2.5.2 Released - May 15, 2024">
+			<p>
+				AbstractMessage.copy() changed Z segments within the message. This has been corrected
+				so the copy() method now returns an identical copy of the original message.
+			</p>
+		</section>
+
 		<section name="HAPI HL7v2 2.4.1 and 2.5.1 Released - Nov 1, 2023">
 			<p>
 				A last minute bug found in HAPI FHIR 2.4 and 2.5 was discovered and fixed, so
