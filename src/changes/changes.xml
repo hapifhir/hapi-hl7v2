@@ -5,6 +5,12 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+		<release version="2.5.2" date="2024-05-16">
+			<action type="fix" dev="Ken Stevens">
+				AbstractMessage.copy() changed Z segments within the message. This has been corrected
+				so the copy() method now returns an identical copy of the original message.
+			</action>
+		</release>
 		<release version="2.5.1" date="2023-11-01">
 			<action type="fix" dev="Emre Dincturk">
 				SimpleServer now waits for its server socket to be closed when stopAndWait is called.

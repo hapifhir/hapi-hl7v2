@@ -1,34 +1,27 @@
 package ca.uhn.hl7v2.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
-import java.io.IOException;
-
+import ca.uhn.hl7v2.*;
+import ca.uhn.hl7v2.model.v22.message.ADT_A01;
+import ca.uhn.hl7v2.model.v22.segment.MSA;
 import ca.uhn.hl7v2.model.v25.group.RAS_O17_ADMINISTRATION;
 import ca.uhn.hl7v2.model.v25.group.RAS_O17_ORDER;
 import ca.uhn.hl7v2.model.v25.message.RAS_O17;
-import ca.uhn.hl7v2.model.v25.segment.MSH;
-import ca.uhn.hl7v2.model.v25.segment.ORC;
-import ca.uhn.hl7v2.model.v25.segment.PID;
-import ca.uhn.hl7v2.model.v25.segment.PV1;
-import ca.uhn.hl7v2.model.v25.segment.RXA;
-import org.junit.Assert;
-import org.junit.Test;
-
-import ca.uhn.hl7v2.AcknowledgmentCode;
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.Version;
-import ca.uhn.hl7v2.model.v22.message.ADT_A01;
-import ca.uhn.hl7v2.model.v22.segment.MSA;
+import ca.uhn.hl7v2.model.v25.segment.*;
 import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * JUnit test cases for AbstractMessage
@@ -36,6 +29,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
  * @author bryan
  */
 public class AbstractMessageTest {
+	private static final Logger ourLog = LoggerFactory.getLogger(AbstractMessageTest.class);
 
 	@Test
 	public void testGetVersion() {
@@ -203,9 +197,10 @@ public class AbstractMessageTest {
 	}
 
     @Test
-    public void testCopy_bothOriginalAndClonedContentsAreIdentical() throws HL7Exception {
+    public void testCopy_bothOriginalAndClonedContentsAreIdentical_sourceBuilder() throws HL7Exception {
         Message orginalMessage = createMessage();
         String originalMessageContents = orginalMessage.encode();
+
         Message copiedMessage = ((AbstractMessage)orginalMessage).copy();
         String copiedMessageContents = copiedMessage.encode();
 
@@ -213,6 +208,30 @@ public class AbstractMessageTest {
         assertEquals(originalMessageContents, copiedMessageContents);
         assertEquals(orginalMessage.printStructure(), copiedMessage.printStructure());
     }
+
+	@Test
+	public void testCopy_bothOriginalAndClonedContentsAreIdentical_sourceString() throws HL7Exception {
+		String message = "MSH|^~\\&|||||||RAS^O17^RAS_O17|00001||2.5\r" +
+				"PID|||7000135^^^http://acme.org/mrns^MR~01238638267^^^http://acme.org/secondaryIds^SB||Smith^John^Q^Jr^^^L\r" +
+				"PV1||I|Acme Hospital\\F\\3rd Floor Room 124\r" +
+				"ABC|Some ABC value\r" +
+				"ORC|NW|0001\\F\\http://acme.org/medorders\r" +
+				"RXA||1|20171209071055-0100||0001\\F\\Tylenol\\F\\http://acme.org/meds|10|mg^milligrams^http://unitsofmeasure.org||^Tylenol note 1~^Tylenol note 2\r" +
+				"RXA||2|20171209071055-0200||0002\\F\\Advil\\F\\http://acme.org/meds|20|mg^milligrams^http://unitsofmeasure.org||^Advil note\r" +
+				"ZZZ|Some ZZZ value 1\r" +
+				"ZXC|Some ZXC value 1\r" +
+				"ZXC|Some ZXC value 2";
+
+		Message orginalMessage = new PipeParser().parse(message);
+		String originalMessageContents = orginalMessage.encode();
+
+		Message copiedMessage = ((AbstractMessage)orginalMessage).copy();
+		String copiedMessageContents = copiedMessage.encode();
+
+		assertEquals(orginalMessage.getClass(), copiedMessage.getClass());
+		assertEquals(originalMessageContents, copiedMessageContents);
+		assertEquals(orginalMessage.printStructure(), copiedMessage.printStructure());
+	}
 
     @Test
     public void testCopy_originalAndClonedAreNotTheSameObject() throws HL7Exception {

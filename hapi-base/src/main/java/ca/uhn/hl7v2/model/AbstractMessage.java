@@ -27,14 +27,6 @@ this file under either the MPL or the GPL.
 
 package ca.uhn.hl7v2.model;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.Location;
@@ -49,6 +41,14 @@ import ca.uhn.hl7v2.util.ReflectionUtil;
 import ca.uhn.hl7v2.util.StringUtil;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.ValidationContext;
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A default implementation of Message. 
@@ -431,67 +431,6 @@ public abstract class AbstractMessage extends AbstractGroup implements Message {
      * @throws HL7Exception If an error occurs while the message is being copied
      */
     public AbstractMessage copy() throws HL7Exception{
-        AbstractMessage clonedMessage = ReflectionUtil.instantiateMessage(this.getClass(), this.getModelClassFactory());
-        clonedMessage.setParser(this.getParser());
-
-        copyParserRequiredMshFields(this, clonedMessage);
-        copyGroup(this, clonedMessage);
-        return clonedMessage;
-    }
-
-    private void copyParserRequiredMshFields(AbstractMessage theSource, AbstractMessage theTarget) throws HL7Exception {
-        String mshField = "MSH";
-        AbstractSegment sourceMsh = (AbstractSegment) theSource.get(mshField);
-        AbstractSegment targetMsh = (AbstractSegment) theTarget.get(mshField);
-
-        String msh1 = Terser.get(sourceMsh, 1, 0, 1, 1);
-        Terser.set(targetMsh, 1, 0, 1, 1, msh1);
-
-        String msh2 = Terser.get(sourceMsh, 2, 0, 1, 1);
-        Terser.set(targetMsh, 2, 0, 1, 1, msh2);
-    }
-
-    private void copyGroup(AbstractGroup theSource, AbstractGroup theTarget) throws HL7Exception {
-        String[] sourceNames = theSource.getNames();
-
-        for (String sourceName : sourceNames) {
-
-            Structure[] sourceStructures = theSource.getAll(sourceName);
-            for (int i = 0; i < sourceStructures.length; i++) {
-
-                Structure sourceStructure = sourceStructures[i];
-
-                if (sourceStructure instanceof AbstractGroup) {
-                    Structure targetGroup = theTarget.get(sourceName, i);
-                    copyGroup((AbstractGroup)sourceStructure, (AbstractGroup)targetGroup);
-
-                } else if (sourceStructure instanceof AbstractSegment) {
-
-                    boolean isNonStandardSegment = theSource.getNonStandardNames().contains(sourceName);
-                    if (isNonStandardSegment) {
-                        insertNonStandardSegment(theSource, theTarget, sourceName);
-                    }
-
-                    AbstractSegment sourceSegment = (AbstractSegment) sourceStructure;
-                    AbstractSegment targetSegment = (AbstractSegment) theTarget.get(sourceName, i);
-                    String segmentContents = sourceSegment.encode();
-                    targetSegment.parse(segmentContents);
-                }
-            }
-        }
-    }
-
-    private void insertNonStandardSegment(AbstractGroup theSource, AbstractGroup theTarget, String theNonStandardSegmentName) throws HL7Exception {
-        String[] sourceNames = theSource.getNames();
-        int sourceIndex = Arrays.asList(sourceNames).indexOf(theNonStandardSegmentName);
-
-        String[] targetNames = theTarget.getNames();
-        boolean shouldInsertAtEnd = sourceIndex >= targetNames.length;
-
-        if (shouldInsertAtEnd) {
-            theTarget.addNonstandardSegment(theNonStandardSegmentName);
-        } else {
-            theTarget.addNonstandardSegment(theNonStandardSegmentName, sourceIndex);
-        }
+        return SerializationUtils.clone(this);
     }
 }
