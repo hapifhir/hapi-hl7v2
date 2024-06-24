@@ -14,14 +14,12 @@ buildscript {
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'com.jfrog.artifactory' version "4.13.0"
 }
 
 
 allprojects {
     group = 'nz.co.comrad.hapi-hl7v2'
     version = '2.4.1-SNAPSHOT'
-    apply plugin: "com.jfrog.artifactory"
 }
 
 
@@ -56,20 +54,15 @@ subprojects {
                 from components.java
             }
         }
-    }
 
-    artifactory {
-        contextUrl = ARTIFACTORY_URL
-        publish {
-            repository {
-                repoKey = "libs-snapshot-local" // Use this one for publishing snapshots
-                username = ARTIFACTORY_USERNAME
-                password = ARTIFACTORY_PASSWORD
-            }
-            defaults {
-                publications('mavenJava')
-                publishArtifacts = true
-                publishPom = true
+        repositories {
+            maven {
+                // Credentials in ~/.gradle/gradle.properties
+                credentials {
+                    username = nexusUser
+                    password = nexusPassword
+                }
+                url = "$nexusServer/repository/maven-releases"
             }
         }
     }
