@@ -273,7 +273,7 @@ public abstract class AbstractHl7OverHttpDecoder extends AbstractHl7OverHttp {
 				int totalRead = 0;
 				myLastStartedReading = System.currentTimeMillis();
 				do {
-					int nextRead = Math.min(nextSizeInt, byteBuffer.length);
+					int nextRead = Math.min(nextSizeInt - totalRead, byteBuffer.length);
 					int bytesRead = theInputStream.read(byteBuffer, 0, nextRead);
 					if (bytesRead == -1) {
 						ourLog.debug("Exception in readBytesChunked(InputStream): Reached EOF. Buffer has {} bytes", bos.size());
