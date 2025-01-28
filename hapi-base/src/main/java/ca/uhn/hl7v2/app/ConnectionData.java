@@ -42,23 +42,37 @@ class ConnectionData {
 	private final LowerLayerProtocol protocol;
 	private SocketFactory socketFactory;
     private final boolean lazy;
+	private final Integer connectionTimeout;
 
 	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol) {
-		this(host, port, parser, protocol, false);
+		this(host, port, parser, protocol, false, null);
 	}
 
-	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol,
-			boolean tls) {
-		this(host, port, 0, parser, protocol, tls);
+	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol, Integer connectionTimeout) {
+		this(host, port, parser, protocol, false, connectionTimeout);
 	}
 
-	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
-			LowerLayerProtocol protocol, boolean tls) {
-		this(host, outboundPort, inboundPort, parser, protocol, tls, null, false);
+	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol, boolean tls) {
+		this(host, port, 0, parser, protocol, tls, null);
 	}
 
-	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser,
-			LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory, boolean lazy) {
+	public ConnectionData(String host, int port, Parser parser, LowerLayerProtocol protocol, boolean tls, Integer connectionTimeout) {
+		this(host, port, 0, parser, protocol, tls, connectionTimeout);
+	}
+
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol protocol, boolean tls) {
+		this(host, outboundPort, inboundPort, parser, protocol, tls, null, false, null);
+	}
+
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol protocol, boolean tls, Integer connectionTimeout) {
+		this(host, outboundPort, inboundPort, parser, protocol, tls, null, false, connectionTimeout);
+	}
+
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory, boolean lazy) {
+		this(host, outboundPort, inboundPort, parser, protocol, tls, socketFactory,lazy, null);
+	}
+
+	public ConnectionData(String host, int outboundPort, int inboundPort, Parser parser, LowerLayerProtocol protocol, boolean tls, SocketFactory socketFactory, boolean lazy, Integer connectionTimeout) {
 		this.host = host;
 		this.port = outboundPort;
 		this.port2 = inboundPort;
@@ -66,8 +80,13 @@ class ConnectionData {
 		this.protocol = protocol;
 		this.tls = tls;
 		this.socketFactory = socketFactory;
+		this.connectionTimeout = connectionTimeout;
 		if (this.socketFactory == null) {
-			this.socketFactory = new StandardSocketFactory();
+			StandardSocketFactory sf = new StandardSocketFactory();
+			if (this.connectionTimeout != null) {
+				sf.setAcceptedSocketTimeout(this.connectionTimeout);
+			}
+			this.socketFactory = sf;
 		}
         this.lazy = lazy;
 	}
@@ -106,6 +125,10 @@ class ConnectionData {
 
 	public void setSocketFactory(SocketFactory theSocketFactory) {
 		socketFactory = theSocketFactory;
+	}
+
+	public Integer getConnectionTimeout() {
+		return connectionTimeout;
 	}
 
 	@Override

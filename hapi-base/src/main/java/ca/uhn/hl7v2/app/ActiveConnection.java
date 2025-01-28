@@ -287,4 +287,8 @@ public class ActiveConnection implements Connection {
 		return acceptAll;
 	}
 
+	// visibleForTesting
+	public List<Socket> getSockets() {
+		return sockets;
+	}
 }
