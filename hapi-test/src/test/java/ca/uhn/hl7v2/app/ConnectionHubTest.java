@@ -6,6 +6,7 @@ import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.MockitoTest;
 import ca.uhn.hl7v2.concurrent.DefaultExecutorService;
 import ca.uhn.hl7v2.llp.LLPException;
+import ca.uhn.hl7v2.llp.MinLowerLayerProtocol;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.ACK;
 import ca.uhn.hl7v2.model.v25.message.ADT_A45;
@@ -13,6 +14,7 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.util.RandomServerPortProvider;
 import ca.uhn.hl7v2.util.SocketFactory;
+import ca.uhn.hl7v2.util.StandardSocketFactory;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,20 +24,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static ca.uhn.hl7v2.app.TestUtils.fill;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -123,6 +123,52 @@ public class ConnectionHubTest extends MockitoTest {
 		verify(socketFactory, times(1)).createSocket();
 		verifyNoMoreInteractions(socketFactory);
 
+	}
+
+	@Test
+	public void testConnectWithTimeout_WithoutSocketFactory_appliesTimeout() throws Exception {
+		int configuredTimeout = 1_385;
+
+		ConnectionData connData = new ConnectionData("localhost", port1, parser, new MinLowerLayerProtocol(), configuredTimeout);
+		try (Connection conn = ConnectionFactory.open(connData, Executors.newSingleThreadExecutor())) {
+			validateTimeout(conn, configuredTimeout);
+		}
+	}
+
+	@Test
+	public void testConnectWithTimeout_UsingSocketFactory_appliesTimeout() throws Exception {
+		int configuredTimeout = 1_385;
+
+		StandardSocketFactory socketFactory = new StandardSocketFactory();
+		socketFactory.setAcceptedSocketTimeout(configuredTimeout);
+
+		ConnectionData connData = new ConnectionData("localhost", port1, 0, parser, new MinLowerLayerProtocol(), false, socketFactory, false);
+		try (Connection conn = ConnectionFactory.open(connData, Executors.newSingleThreadExecutor())) {
+			validateTimeout(conn, configuredTimeout);
+		}
+	}
+
+	@Test
+	public void testAttachRespectsConfiguredTimeout() throws Exception {
+		int configuredTimeout = 1_385;
+
+		ConnectionHub hub = ConnectionHub.getNewInstance(context);
+
+		ConnectionData connData = new ConnectionData("localhost", port1, parser, new MinLowerLayerProtocol(), configuredTimeout);
+
+		try (Connection conn = hub.attach(connData)) {
+			validateTimeout(conn, configuredTimeout);
+		}
+	}
+
+	void validateTimeout(Connection conn, int expectedTimeout) throws SocketException {
+		assertNotNull(conn);
+		assertTrue(conn instanceof ActiveConnection);
+		ActiveConnection activeConnection = (ActiveConnection) conn;
+		assertNotNull(activeConnection.getSockets());
+		assertEquals(1, activeConnection.getSockets().size());
+		Socket socket = activeConnection.getSockets().get(0);
+		assertEquals(expectedTimeout, socket.getSoTimeout());
 	}
 
 	/**

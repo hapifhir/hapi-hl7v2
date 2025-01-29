@@ -38,6 +38,7 @@ public class StandardSocketFactory implements SocketFactory {
 		Socket retVal = javax.net.SocketFactory.getDefault().createSocket();
 		retVal.setKeepAlive(true);
 		retVal.setTcpNoDelay(true);
+		retVal.setSoTimeout(myAcceptedSocketTimeout);
 		return retVal;
 	}
 
@@ -48,6 +49,7 @@ public class StandardSocketFactory implements SocketFactory {
 		Socket retVal = javax.net.ssl.SSLSocketFactory.getDefault().createSocket();
 		retVal.setKeepAlive(true);
 		retVal.setTcpNoDelay(true);
+		retVal.setSoTimeout(myAcceptedSocketTimeout);
 		return retVal;
 	}
 
