@@ -126,7 +126,7 @@ public class ConnectionHubTest extends MockitoTest {
 	}
 
 	@Test
-	public void testConnectWithTimeout_WithoutSocketFactory() throws Exception {
+	public void testConnectWithTimeout_WithoutSocketFactory_appliesTimeout() throws Exception {
 		int configuredTimeout = 1_385;
 
 		ConnectionData connData = new ConnectionData("localhost", port1, parser, new MinLowerLayerProtocol(), configuredTimeout);
@@ -136,7 +136,7 @@ public class ConnectionHubTest extends MockitoTest {
 	}
 
 	@Test
-	public void testConnectWithTimeout_UsingSocketFactory() throws Exception {
+	public void testConnectWithTimeout_UsingSocketFactory_appliesTimeout() throws Exception {
 		int configuredTimeout = 1_385;
 
 		StandardSocketFactory socketFactory = new StandardSocketFactory();
@@ -170,29 +170,6 @@ public class ConnectionHubTest extends MockitoTest {
 		Socket socket = activeConnection.getSockets().get(0);
 		assertEquals(expectedTimeout, socket.getSoTimeout());
 	}
-
-
-//
-//
-//
-//		StandardSocketFactory socketFactory = new StandardSocketFactory();
-//		socketFactory.setAcceptedSocketTimeout(configuredTimeout);
-//        try (Socket socket = socketFactory.createSocket()) {
-//			assertEquals(configuredTimeout, socket.getSoTimeout());
-//        }
-
-//        context.setSocketFactory(socketFactory);
-//		HapiContext context = new DefaultHapiContext();
-//		context.setValidationContext(ValidationContextFactory.noValidation());
-//        try (Connection conn = context.newClient("localhost", port1, false); conn) {
-//            assertNotNull(conn);
-//			assertTrue(conn instanceof ActiveConnection);
-//			ActiveConnection activeConnection = (ActiveConnection) conn;
-//			assertNotNull(activeConnection.getSockets());
-//			assertEquals(1, activeConnection.getSockets().size());
-//			Socket socket = activeConnection.getSockets().get(0);
-//			assertEquals(configuredTimeout, socket.getSoTimeout());
-//        }
 
 	/**
 	 * 
