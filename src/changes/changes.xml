@@ -5,6 +5,12 @@
 		<title>HAPI</title>
 	</properties>
 	<body>
+		<release version="2.6.0" date="2025-02-04">
+			<action type="fix" dev="Ken Stevens">
+				It is now possible to explicitly specify a socket connect timeout on newly created client
+				sockets.
+			</action>
+		</release>
 		<release version="2.5.2" date="2024-05-16">
 			<action type="fix" dev="Ken Stevens">
 				AbstractMessage.copy() changed Z segments within the message. This has been corrected
