@@ -40,7 +40,7 @@ public class ZPI extends AbstractSegment {
         	 * the ZPI segment.
         	 * 
         	 * See here for information on the arguments to this method:
-        	 * http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractSegment.html#add%28java.lang.Class,%20boolean,%20int,%20int,%20java.lang.Object[],%20java.lang.String%29
+        	 * https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/AbstractSegment.html#add%28java.lang.Class,%20boolean,%20int,%20int,%20java.lang.Object[],%20java.lang.String%29
         	 */
         	add(ST.class, true, 0, 100, new Object[]{ getMessage() }, "Pet Name(s)");
         	add(NM.class, false, 1, 4, new Object[]{ getMessage() }, "Shoe Size");

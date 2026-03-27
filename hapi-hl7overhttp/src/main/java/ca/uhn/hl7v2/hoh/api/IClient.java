@@ -117,8 +117,8 @@ public interface IClient {
 	 * @param theSigner
 	 *            If provided, sets the Signature Profile signer implementation
 	 *            to use. See <a href=
-	 *            "http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.html#SIGNATURE_PROFILE"
-	 *            >http://hl7api.sourceforge.net/hapi-hl7overhttp/specification.
+	 *            "https://hapifhir.github.io/hapi-hl7v2/hapi-hl7overhttp/signature.html"
+	 *            >https://hapifhir.github.io/hapi-hl7v2/hapi-hl7overhttp/specification.
 	 *            html#SIGNATURE_PROFILE</a>
 	 */
 	void setSigner(ISigner theSigner);

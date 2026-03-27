@@ -122,7 +122,7 @@ public class HandlingMultipleVersions {
          * The second technique is to use the Terser. The Terser allows you
          * to access field values using a path-like notation. For more information
          * on the Terser, see the example here:
-         * http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html
+         * https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/ExampleUseTerser.html
          */
 
         // This time we just use a normal ModelClassFactory, which means we will be

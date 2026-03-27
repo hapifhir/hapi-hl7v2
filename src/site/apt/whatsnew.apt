@@ -23,7 +23,7 @@ Version 1.1
 
   HAPI now includes a Maven Plugin which can be used to translate an HL7 Conformance Profile into a 
   set of HAPI structure objects representing Message/Group/Segment types. See the
-  {{{http://hl7api.sourceforge.net/conformance.html}conformance}} page
+  {{{https://hapifhir.github.io/hapi-hl7v2/conformance.html}conformance}} page
   for more information.  
   
   
@@ -78,7 +78,7 @@ Version 1.1
   
 ** Application Exception Handlers
   
-  Application instances may now declare an {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ApplicationExceptionHandler.html}additional interface}} which allows them to process
+  Application instances may now declare an {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/ApplicationExceptionHandler.html}additional interface}} which allows them to process
   exceptions and optionally override the system generated response message. (Thanks to Gabriel Landais) 
   
 +----------------+  

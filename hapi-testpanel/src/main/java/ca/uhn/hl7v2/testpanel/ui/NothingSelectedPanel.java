@@ -115,7 +115,7 @@ public class NothingSelectedPanel extends BaseMainPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					Desktop.getDesktop().browse(new URI("http://hl7api.sourceforge.net/license.html"));
+					Desktop.getDesktop().browse(new URI("https://hapifhir.github.io/hapi-hl7v2/license.html"));
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} catch (URISyntaxException e1) {

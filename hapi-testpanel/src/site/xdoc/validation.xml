@@ -23,7 +23,7 @@
 
 			<p>
 				By default, TestPanel uses HAPI's built in validation, known as
-				<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html">DefaultValidation</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html">DefaultValidation</a>
 				.
 				The validation performs basic data type checks, such as making sure that NM datatype
 				fields do not contain text, TS datatype fields contain valid dates, etc.
@@ -49,8 +49,8 @@
 				</p>
 			
 				<p>
-					Conformance profiles are generally created using a tool called Message Workbench (MWB),
-					which is <a href="https://sl.infoway-inforoute.ca/content/disppage.asp?cw_page=infostand_hl7can_software_e">available here</a>.
+					Conformance profiles are generally created using a tool called Messaging Workbench (MWB),
+					which is <a href="http://www.hl7.org/documentcenter/public/wg/ictc/MWB%20Release%206.8.zip">available here</a>.
 				</p>
 
 				<p>

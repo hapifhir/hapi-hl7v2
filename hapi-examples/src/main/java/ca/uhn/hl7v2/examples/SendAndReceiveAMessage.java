@@ -170,7 +170,7 @@ public class SendAndReceiveAMessage {
        * the same connection, even with a long delay between messages.
        * 
        * See
-       * http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendLotsOfMessages.html 
+       * https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendLotsOfMessages.html 
        * for an example of this.
        */
       connection.close();

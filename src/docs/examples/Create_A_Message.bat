@@ -1,7 +1,7 @@
 rem *******************************************
 rem * This batch file runs example code
 rem *
-rem * For more info, see: http://hl7api.sourceforge.net/devbyexample.html
+rem * For more info, see: https://hapifhir.github.io/hapi-hl7v2/devbyexample.html
 rem ******************************************* 
 
 setlocal ENABLEDELAYEDEXPANSION

@@ -328,7 +328,7 @@
             	process unknown versions of HL7 (e.g. 2.99) if configured to allow this.
             	See
             	<![CDATA[
-            	<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/GenericModelClassFactory.html">GenericModelClassFactory</a>
+            	<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/parser/GenericModelClassFactory.html">GenericModelClassFactory</a>
             	]]>
             	for more information.
             </action>
@@ -428,7 +428,7 @@
         			</li>
         			<li>
         				When GenericParser parses a message, the 
-						<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#getParser()">Parser</a>
+						<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Message.html#getParser()">Parser</a>
         				instance associated with the message is set appropriately to either the
         				Pipe Parser or the XML Parser. This means that calls to
         				generateAck().encode()
@@ -448,11 +448,11 @@
             	that was parsed by an XML parser (for instance on an ST, or another datatype).
             </action>			
             <action type="fix" dev="James Agnew" issue="3558687">
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a>]]>
+            	<![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a>]]>
             	and
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html">SimpleServer</a>]]>
+            	<![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html">SimpleServer</a>]]>
             	now each accept a custom
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/SocketFactory.html">socket factory</a>]]>
+            	<![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/SocketFactory.html">socket factory</a>]]>
             	instance, which can be used to allow custom configuration on sockets,
             	or special TLS configurations. This checkin also corrects an issue where the
             	"tls" parameter on ConnectionHub was not honoured.       	
@@ -468,7 +468,7 @@
             </action>
         	<action type="add" dev="James Agnew" issue="166" system="newbugs">
             	<![CDATA[
-            	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml%28%29">AbstractTextPrimitive#getValueAsHtml()</a>
+            	<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml%28%29">AbstractTextPrimitive#getValueAsHtml()</a>
             	]]>
             	now properly escapes HTML reserved characters:
             	<![CDATA[<br/>
@@ -478,7 +478,7 @@
         	<action type="fix" dev="Christian Ohr" issue="162" system="newbugs">
 				Fix an issue that prevented the sample code for
             	<![CDATA[
-            	<a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/CustomModelClasses.html">Custom Model Classes</a>
+            	<a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/CustomModelClasses.html">Custom Model Classes</a>
             	]]>
             	from working properly. Thanks to Michael Connor for reporting.
             </action>
@@ -497,7 +497,7 @@
             <action type="fix" dev="James Agnew" issue="134" system="newbugs">
             	Improve error message in
             	<![CDATA[
-            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/llp/ExtendedMinLowerLayerProtocol.html">ExtendedMinLowerLayerProtocol</a>
+            		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/llp/ExtendedMinLowerLayerProtocol.html">ExtendedMinLowerLayerProtocol</a>
             	]]> 
             	when an incoming
             	message can't be processed because it contains an invalid MSH segment.
@@ -506,14 +506,14 @@
             <action type="fix" dev="Nicolas Lefebvre" issue="123" system="newbugs">
 				Allow
 				<![CDATA[
-            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/protocol/ReceivingApplicationExceptionHandler.html">ReceivingApplicationExceptionHandler</a>
+            		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/protocol/ReceivingApplicationExceptionHandler.html">ReceivingApplicationExceptionHandler</a>
             	]]> 
 				to process exceptions even when un-parseable messages are received.				            	
             </action>
             <action type="fix" dev="James Agnew" issue="64" system="newfeatures">
 				New parser configuration option for customizing
 				<![CDATA[
-            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setUnexpectedSegmentBehaviour(ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum)">Unexpected segment (e.g. Z-segment) behaviour</a>
+            		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setUnexpectedSegmentBehaviour(ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum)">Unexpected segment (e.g. Z-segment) behaviour</a>
             	]]> 
 				in terms of where in the structure the segment gets placed. Thanks to Michael Connor for
 				suggesting this!				            	
@@ -532,7 +532,7 @@
             <action type="fix" dev="James Agnew" issue="171" system="newbugs">
             	Introduce new PipeParser
 				<![CDATA[
-            		<a href="http://hl7api.sourceforge.net/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setNonGreedyMode(boolean)">non-greedy mode</a>
+            		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html#setNonGreedyMode(boolean)">non-greedy mode</a>
             	]]> 
             	which can be used to give the parser hints on how to 
             	proceed when the choice of where to put the next
@@ -623,9 +623,9 @@
         		in three ways:
         		<![CDATA[
         			<ul>
-        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX()">OBX getOBX()</a>, which returns the first repetition, creating it if neccesary
-        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX(int)">OBX getOBX(int rep)</a>, which returns a specific repetition
-        				<li><a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBXAll()">List&lt;OBX&gt; getOBXAll()</a>, which returns all repetitions (or an empty list if there are none)
+        				<li><a href="https://hapifhir.github.io/hapi-hl7v2/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX()">OBX getOBX()</a>, which returns the first repetition, creating it if neccesary
+        				<li><a href="https://hapifhir.github.io/hapi-hl7v2/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBX(int)">OBX getOBX(int rep)</a>, which returns a specific repetition
+        				<li><a href="https://hapifhir.github.io/hapi-hl7v2/v26/apidocs/ca/uhn/hl7v2/model/v26/message/ADT_A01.html#getOBXAll()">List&lt;OBX&gt; getOBXAll()</a>, which returns all repetitions (or an empty list if there are none)
         			</ul>
         		]]>
         	</action>
@@ -639,13 +639,13 @@
         		<![CDATA[<br><br>]]>
         		In addition, 
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/llp/MinLowerLayerProtocol.html">MinLowerLayerProtocol</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/llp/MinLowerLayerProtocol.html">MinLowerLayerProtocol</a>
         		]]>
         		has received a new constructor which accepts a CharSet as a parameter, meaning
         		that individual LLP instances may have their CharSet specified, as opposed to
         		using a global
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/llp/MinLLPReader.html#CHARSET_KEY">System Property</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/llp/MinLLPReader.html#CHARSET_KEY">System Property</a>
         		<br><br>
         		]]>
         		Note that a dependency existed in HAPI 2.0-beta1 on XML libraries being
@@ -662,7 +662,7 @@
         	<action type="fix" dev="Christian Ohr / Jason Thompson" issue="3410095">
         		Correct an integer overflow issue when
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#setValue(java.util.Calendar)">CommonTS#setValue(Calendar)</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#setValue(java.util.Calendar)">CommonTS#setValue(Calendar)</a>
         		]]> 
         		is invoked with a calendar containing some high
         		timezone offset values. Thanks to Jason Thompson for reporting and
@@ -670,7 +670,7 @@
         	</action>
         	<action type="fix" dev="James Agnew">
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#getValueAsCalendar()">CommonTS#getValueAsCalendar()</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonTS.html#getValueAsCalendar()">CommonTS#getValueAsCalendar()</a>
         		]]>
         		now sets the TimeZone associated with the returned Calendar object to have a TZ-offset equivalent to the
         		offset provided in the raw HL7 data (e.g. if the value was "201201010800-0400", Calendar.setTimeZone(TimeZone) will be called with
@@ -701,7 +701,7 @@
         	<action type="add" dev="James Agnew">
         		A new configuration bean,
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html">ParserConfiguration</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/parser/ParserConfiguration.html">ParserConfiguration</a>
         		]]>
         		has been added which allows the parser to be configured
         		for specific behaviour.
@@ -713,11 +713,11 @@
         	<action type="add" dev="James Agnew">
         		Add a new method to 
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Hl7InputStreamMessageStringIterator.html">Hl7InputStreamMessageStringIterator</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/Hl7InputStreamMessageStringIterator.html">Hl7InputStreamMessageStringIterator</a>
         		]]>
         		and
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Hl7InputStreamMessageIterator.html">Hl7InputStreamMessageIterator</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/Hl7InputStreamMessageIterator.html">Hl7InputStreamMessageIterator</a>
         		]]>
         		called setIgnoreComments(boolean) which allows the iterator to
         		ignore lines beginning with a hash (#). This allows you to put
@@ -726,7 +726,7 @@
         	<action type="fix" dev="Diederik Muylwyk">
         		Correct two issues with 
         		<![CDATA[
-        		<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
+        		<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
         		]]>
         		This is the method which is used (for example)
         		if parse is called on an ST type. Previously if an escape sequence (e.g. "Snakes \T\ Ladders") was 
@@ -765,13 +765,13 @@
 			<action dev="Neal Acharya" type="add">
 				String structure types (ST, FT, TX) now have a new method
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml()">getValueAsHtml()</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/AbstractTextPrimitive.html#getValueAsHtml()">getValueAsHtml()</a>
 				]]>
 				which converts any HL7 formatting codes (\H\, \.sp 55\, \.ce\, etc.) in the string to their HTML equivalent. This 
 				functionality can also be used to convert any other string containing HL7 formatting codes to the
 				equivalent HTML codes using:
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/FormattedTextEncoder.html">FormattedTextEncoder</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/FormattedTextEncoder.html">FormattedTextEncoder</a>
 				]]>
 			</action>
         	<action dev="James Agnew" type="fix">
@@ -787,27 +787,27 @@
 				Minor API changes:
 				<![CDATA[
 					<ul>
-						<li>Add a new method to Connection, <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/Connection.html#getRemotePort()">getRemotePort</a>, which returns the port number of the remote socket the connection is bound to.</li>
-						<li>Add several new factory methods to <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a> which allow creating a new connection using an instantiated instance of a LowerLayerProtocol implementation instead of just supplying a type to be instantiated by ConnectionHub</li>
-						<li>Add new method to <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html>SimpleServer</a> and <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/TwoPortService.html">TwoPortService</a> called <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/app/concurrent/Service.html#getServiceExitedWithException()">getServiceExitedWithException()</a>. In the event that the service exits unexpectedly, this method allows you to retrieve the exception which caused the failure (e.g. a <a href="<a href="http://docs.oracle.com/javase/6/docs/api/java/net/BindException.html">BindException</a> in the event that the port was already in use by another application).</li>						
-						<li>Modify Conformance Profile <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/conf/check/DefaultValidator.html">DefaultValidator</a> so that it can be used to validate individual parts of a message (e.g. only one segment, group, etc.) and not just the entire message</li>						
+						<li>Add a new method to Connection, <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/Connection.html#getRemotePort()">getRemotePort</a>, which returns the port number of the remote socket the connection is bound to.</li>
+						<li>Add several new factory methods to <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/ConnectionHub.html">ConnectionHub</a> which allow creating a new connection using an instantiated instance of a LowerLayerProtocol implementation instead of just supplying a type to be instantiated by ConnectionHub</li>
+						<li>Add new method to <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/SimpleServer.html>SimpleServer</a> and <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/TwoPortService.html">TwoPortService</a> called <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/app/concurrent/Service.html#getServiceExitedWithException()">getServiceExitedWithException()</a>. In the event that the service exits unexpectedly, this method allows you to retrieve the exception which caused the failure (e.g. a <a href="<a href="http://docs.oracle.com/javase/6/docs/api/java/net/BindException.html">BindException</a> in the event that the port was already in use by another application).</li>
+						<li>Modify Conformance Profile <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/conf/check/DefaultValidator.html">DefaultValidator</a> so that it can be used to validate individual parts of a message (e.g. only one segment, group, etc.) and not just the entire message</li>
 					</ul>
 				]]>
 			</action>
 			<action dev="James Agnew" type="fix">
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#parse(java.lang.String)">Message#parse(java.lang.String)</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Message.html#parse(java.lang.String)">Message#parse(java.lang.String)</a>
 				]]>
 				and
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#encode()">Message#encode()</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Message.html#encode()">Message#encode()</a>
 				]]>
 				now work correctly when the message parser is an XML based parser. Previously
 				these convenience methods only worked for Pipe parsers. 
 			</action>
 			<action dev="Christian Ohr" type="fix" issue="3471571">
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#generateACK()">Message#generateACK()</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Message.html#generateACK()">Message#generateACK()</a>
 				]]>
 				now respects the ModelClassFactory used to build/parse the message from which the ACK is being generated. This means
 				for example that if a CanonicalModelClassFactory is used to construct a message, that same CMCF will be used to
@@ -820,7 +820,7 @@
 			<action dev="James Agnew" type="add">
 				Add a system property to 
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/MessageIDGenerator.html#NEVER_FAIL_PROPERTY">MessageIDGenerator</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/util/MessageIDGenerator.html#NEVER_FAIL_PROPERTY">MessageIDGenerator</a>
 				]]>
 				which prevents it from failing if it is unable to read or write the message file. (Not that this feature
 				sometimes failed to work in 2.0-beta1. This has been corrected.)
@@ -843,7 +843,7 @@
 			<action dev="Christian Ohr" type="fix" issue="2793050">
 				Provide the
 				<![CDATA[
-					<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html>DefaultValidationWithoutTN</a>
+					<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html>DefaultValidationWithoutTN</a>
 				]]>  
 				class for default validation without the TN rule which is specific for U.S. phone numbers.
 				In this context, adding RuleBindings to the ValidationContext has been made type-safe. A minor API
@@ -871,7 +871,7 @@
 			</action>
 			<action dev="Jens Villadsen" type="fix" issue="3520523">
 				<![CDATA[
-				<a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/message/RSP_K21.html">RSP_K21</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/v26/apidocs/ca/uhn/hl7v2/model/v26/message/RSP_K21.html">RSP_K21</a>
 				]]>
 				structure for v2.5.1 and v2.6 now has a repeatable QUERY_RESPONSE group. This 
 				addresses an inconsistency in the HL7 specification for those two versions.
@@ -879,7 +879,7 @@
 			</action>
 			<action dev="Jure Grom" type="fix" issue="3538074">
 				<![CDATA[
-				<a href="http://hl7api.sourceforge.net/v251/apidocs/ca/uhn/hl7v2/model/v251/message/ORL_O34.html">ORL_O34</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/v251/apidocs/ca/uhn/hl7v2/model/v251/message/ORL_O34.html">ORL_O34</a>
 				]]>
 				structure for v2.5.1 has two child structures with the same name (SPECIMEN). The second is now
 				named OBSERVATION_REQUEST_SPECIMEN to prevent a recursive loop when parsing an ORL^O34
@@ -887,7 +887,7 @@
 			</action>
 			<action dev="Eric Poisseau" type="fix" issue="3373654">
 				<![CDATA[
-				<a href="http://hl7api.sourceforge.net/v25/apidocs/ca/uhn/hl7v2/model/v25/message/ORL_O34.html">ORL_O34</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/v25/apidocs/ca/uhn/hl7v2/model/v25/message/ORL_O34.html">ORL_O34</a>
 				]]>
 				structure for v2.5 is missing an outer group called RESPONSE. This group contains only one
 				nested group, so it doesn't do much but its absence could affect XML encoding.
@@ -895,14 +895,14 @@
 			</action>
 			<action dev="Fco. Javier Broullón" type="fix" issue="3454369">
 				<![CDATA[
-				<a href="http://hl7api.sourceforge.net/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/MRG.html">MRG</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/MRG.html">MRG</a>
 				]]>
 				segment for v2.3 should have type XPN in position MRG.7 (Prior Patient Name) instead of type CX.
 				Thanks to Fco. Javier Broullón for reporting.
 			</action>
 			<action dev="Stéphane" type="fix" issue="2864817">
 				<![CDATA[
-				<a href="http://hl7api.sourceforge.net/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/PID.html">PID</a>
+				<a href="https://hapifhir.github.io/hapi-hl7v2/v23/apidocs/ca/uhn/hl7v2/model/v23/segment/PID.html">PID</a>
 				]]>
 				segment for v2.3 should allow repeatable elements in PID-5 (Patient Name).
 				Thanks to Stéphane for reporting.
@@ -937,12 +937,12 @@
             <action type="fix" dev="James Agnew">
             	Fix an issue where calling 
 				<![CDATA[
-    	        	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
+    	        	<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/AbstractPrimitive.html#parse(java.lang.String)">AbstractPrimitive#parse(String)</a>
 				]]>
             	(for example on an ST datatype) 
             	would not clear pre-existing 
 				<![CDATA[
-        	    	<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
+        	    	<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Type.html#getExtraComponents()">extra components</a>
 				]]>
             	if any were defined.
             </action>
@@ -954,7 +954,7 @@
             	beginning to end. 
             	For example, in an ORU^R01 message with a populated OBX segment, but no data
             	in the mandatory OBR segment which begins the ORDER_OBSERVATION group (see 
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/v26/apidocs/ca/uhn/hl7v2/model/v26/group/ORU_R01_ORDER_OBSERVATION.html">reference</a>]]>),
+            	<![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/v26/apidocs/ca/uhn/hl7v2/model/v26/group/ORU_R01_ORDER_OBSERVATION.html">reference</a>]]>),
             	the message would still contain an empty OBR segment when encoded:
 				<![CDATA[
 <pre>
@@ -973,7 +973,7 @@
 				]]>
             </action>
             <action type="add" dev="James Agnew">
-            	<![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Group.html">Group</a>]]>
+            	<![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Group.html">Group</a>]]>
             	interface now has a new method: isGroup(String). This method allows callers to determine
             	if a child structure is a segment or a group. The only provided implementation, AbstractGroup,
             	implements this method, so the API change should not have any effect on users.
@@ -1055,21 +1055,21 @@
             <action type="add">HAPI libraries are now available in the Maven Central Repo. Thanks to Francis De Brabandere for figuring out how to make this happen!</action>
             <action type="fix" dev="Christian Ohr">(Regression in 1.0-beta1) Some structures contained incorrect version information which led to inability to parse Z segments</action>
             <action type="add" dev="James Agnew">Message types now have a convenience method initQuickstart which sets default values to MSH segment (field separator, message type, etc)</action>
-            <action type="add" dev="James Agnew">HAPI now has a Maven plugin which generates Message/Group/Segment struxctures based on an HL7 conformance profile. See the <![CDATA[<a href="http://hl7api.sourceforge.net/conformance.html">conformance</a>]]> page for more information.</action>
+            <action type="add" dev="James Agnew">HAPI now has a Maven plugin which generates Message/Group/Segment struxctures based on an HL7 conformance profile. See the <![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/conformance.html">conformance</a>]]> page for more information.</action>
             <action type="add" due-to="Gabriel Landais" issue="3164756">Allow users of HAPI SimpleServer to create an Application that handles errors. The provided patch adds an interface, which should be implemented by exception aware Applications. The application can then re-dispatch the provided ACK, or a create a completely new message.</action>
             <action type="fix" due-to="Pepe Juarez" issue="3115671">Correct XML encoding of OMD_O03. (OMD_O03.DIET was incorrectly being encoded simply as "DIE")</action>
             <action type="fix" due-to="Karl Weller" issue="3027567">Correct the spelling of the name TIMING in a number of group structures (e.g. OML_O21_TIMING which was previously OML_O21_TIIMING)</action>
             <action type="update" dev="James Agnew">Update structure classes source generator to use an Apache Velocity based template instead of simple hard-coded string concatenation. This will make it much easier to add new features to the structures in the future.</action>
-            <action type="update" dev="James Agnew">Message now has a method <![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Message.html#printStructure%28%29">Message#printStructure()</a>]]>, which returns a useful String for debugging containing a description of the entire structure of the message</action>
+            <action type="update" dev="James Agnew">Message now has a method <![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Message.html#printStructure%28%29">Message#printStructure()</a>]]>, which returns a useful String for debugging containing a description of the entire structure of the message</action>
             <action type="fix" dev="James Agnew">GenericParser ignores custom ModelClassFactory implementations passed into its constructor. Thanks to John R for reporting.</action>
             <action type="fix" due-to="Yildiray Kabak">XML parser now parses subsequent datatype components correctly when a component is missing. E.g. if ED.1 is missing but ED.2 is present: Previously, ED.2 would be parsed as ED.1.</action>
             <action type="fix" due-to="Torsten from Agfa Healthcare" issue="3031998">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
             <action type="fix" due-to="Karl Weller" issue="3027567">Parsing OBX-5 failed when value (as indicated by OBX-2) was a type which requires a table number (IS or ID). HAPI now defaults to table 0.</action>
             <action type="fix" due-to="Kalle Eskola">Add check to ConnectionHub to avoid returning a connection which was explicitly closed. Also update "send and receive" example in documentation to show correct way of discarding a connection using ConnectionHub.</action>
             <action type="add" dev="James Agnew">HAPI now logs the current version as it is being initialized, for troubleshooting purposes.</action>
-            <action type="add" dev="James Agnew">Add getters and setters to DT, TM, and TS data types to get and set values using standard Java Date and Calendar objects. (Examples <![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonDT.html#getValueAsCalendar%28%29">here</a> and <a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonDT.html#setValue%28java.util.Calendar%29">here</a>]]>)</action>
-            <action type="add" dev="James Agnew">Add <![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/parser/PipeParser.html#getInstanceWithNoValidation()">factory method</a>]]> to PipeParser which returns an instance with validation disabled (useful for one-liner parse routines)</action>
-            <action type="add" dev="James Agnew">Add <![CDATA[<a href="http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/model/Varies.html#INVALID_OBX2_TYPE_PROP">system property</a>]]> to allow OBX-2 to contain invalid values and still parse</action>
+            <action type="add" dev="James Agnew">Add getters and setters to DT, TM, and TS data types to get and set values using standard Java Date and Calendar objects. (Examples <![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonDT.html#getValueAsCalendar%28%29">here</a> and <a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/primitive/CommonDT.html#setValue%28java.util.Calendar%29">here</a>]]>)</action>
+            <action type="add" dev="James Agnew">Add <![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/parser/PipeParser.html#getInstanceWithNoValidation()">factory method</a>]]> to PipeParser which returns an instance with validation disabled (useful for one-liner parse routines)</action>
+            <action type="add" dev="James Agnew">Add <![CDATA[<a href="https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/model/Varies.html#INVALID_OBX2_TYPE_PROP">system property</a>]]> to allow OBX-2 to contain invalid values and still parse</action>
         </release>
         <release version="1.0.1" date="2010-05-16"
             description="This release corrects a single issue">

@@ -17,16 +17,16 @@ Validation of HL7 messages
   The HAPI library offers support for validating HL7 messages by definition of rules 
   that check against constraints on primitive type level, message level, and encoded message level. 
   
-  [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/PrimitiveTypeRule.html}PrimitiveTypeRule}}] 
+  [{{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/PrimitiveTypeRule.html}PrimitiveTypeRule}}]
   A validation rule that applies to primitive types like ID, IS, NM. PrimitiveTypeRules
   are enforced every time a primitive value is set. 
 
-  [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/MessageRule.html}MessageRule}}] 
+  [{{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/MessageRule.html}MessageRule}}]
   A validation rule that applies to a fully populated message object.  MessageRules 
   are enforced (depending on runtime configuration) just after an inbound message
   has been parsed, or just before an outbound message is encoded.  
    
- [{{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/EncodingRule.html}EncodingRule}}] 
+ [{{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/EncodingRule.html}EncodingRule}}]
   A validation rule that applies to encoded message strings.  EncodingRules are intended 
   for criteria that are specific to the encoded form of a message, e.g. "no empty tags in an XML message". 
   EncodingRules are enforced (depending on runtime configuration) before an inbound message
@@ -42,14 +42,14 @@ Validation of HL7 messages
   Binding and scope determine which rules are applied to which parts of a certain message.
   
   There is a predefined set of default PrimitiveTypeRules that
-  conform to the HL7 specification for the corresponding types ({{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html}DefaultValidation}}). 
+  conform to the HL7 specification for the corresponding types ({{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidation.html}DefaultValidation}}).
   This set is used when no other rules have been defined. Other predefined sets are
-  {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html}DefaultValidationWithoutTN}} 
-  and {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/impl/NoValidation.html}NoValidation}}.
+  {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/impl/DefaultValidationWithoutTN.html}DefaultValidationWithoutTN}}
+  and {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/impl/NoValidation.html}NoValidation}}.
   
 * ValidationContext
 
-  A {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html}ValidationContext}} 
+  A {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html}ValidationContext}}
   is the place where Rules and RuleBindings are collected. Parsers and
   Message Validators can be configured with a <<<ValidationContext>>> to enforce validation during
   parsing, encoding, or on demand. 
@@ -63,7 +63,7 @@ Validation of HL7 messages
   easy to write and to understand.
   
   As the default rule sets have been re-implemented as well, they serve as a
-  good example. The validation class to be written now extends {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}} instead of
+  good example. The validation class to be written now extends {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}} instead of
   <<<ValidationContext>>>:
   
 +---------------------------------------+
@@ -106,7 +106,7 @@ Validation of HL7 messages
   }
 +---------------------------------------+
   
-  To define a custom rule builder, you extend {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}}
+  To define a custom rule builder, you extend {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/ValidationRuleBuilder.html}ValidationRuleBuilder}}
   or a subclass thereof, and implement the <<<configure>>> method.
    
   <<<DefaultValidationWithoutTNBuilder>>> defines PrimitiveTypeRules that are either valid for all HL7 v2 versions 
@@ -172,7 +172,7 @@ Validation of HL7 messages
 +---------------------------------------+
 
   Alternatively, if you prefer composition over inheritance, 
-  you can simply extend {{{http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/builder/DelegatingValidationRuleBuilder.html}DelegatingValidationRuleBuilder}} :
+  you can simply extend {{{https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/validation/builder/DelegatingValidationRuleBuilder.html}DelegatingValidationRuleBuilder}} :
 
 +---------------------------------------+
   public class MyCustomRuleBuilder extends DelegatingValidationRuleBuilder {

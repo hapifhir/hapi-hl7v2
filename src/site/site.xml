@@ -40,7 +40,7 @@
 		</menu>
 
 		<menu name="Download">
-			<item name="Download Java API" href="https://sourceforge.net/projects/hl7api/files/hl7api/" />
+			<item name="Download Java API" href="https://github.com/hapifhir/hapi-hl7v2/releases" />
 			<item name="Download TestPanel" href="hapi-testpanel/install.html" />
 		</menu>
 

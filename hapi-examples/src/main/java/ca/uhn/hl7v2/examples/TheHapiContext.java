@@ -104,7 +104,7 @@ public class TheHapiContext {
 		/*
 		 * See the rest of the examples for more information on how to 
 		 * use the context:
-		 * http://hl7api.sourceforge.net/devbyexample.html
+		 * https://hapifhir.github.io/hapi-hl7v2/devbyexample.html
 		 */
 
 

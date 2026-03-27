@@ -285,7 +285,7 @@ public interface HapiContext extends Closeable {
      * service instances provided by this interface. Note that the returned service <b>will not
      * be started</b>, and must manually be started using {@link HL7Service#start()} or
      * {@link HL7Service#startAndWait()}
-     * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
+     * @see <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
      * @see #setSocketFactory(SocketFactory)
      */
     HL7Service newServer(int port, boolean tls);
@@ -302,7 +302,7 @@ public interface HapiContext extends Closeable {
     * service instances provided by this interface. Note that the returned service <b>will not
     * be started</b>, and must manually be started using {@link HL7Service#start()} or
     * {@link HL7Service#startAndWait()}
-    * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here<> for an example of how to use this method
+    * @see <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here<> for an example of how to use this method
     * @see #setSocketFactory(SocketFactory)
     */
     HL7Service newServer(int port, boolean tls, boolean acceptAll);
@@ -318,7 +318,7 @@ public interface HapiContext extends Closeable {
      * service instances provided by this interface. Note that the returned service <b>will not
      * be started</b>, and must manually be started using {@link HL7Service#start()} or
      * {@link HL7Service#startAndWait()}
-     * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
+     * @see <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
      * @see #setSocketFactory(SocketFactory)
      */
     HL7Service newServer(int inboundPort, int outboundPort, boolean tls);
@@ -342,7 +342,7 @@ public interface HapiContext extends Closeable {
      * will attempt to connect to the specified address, and will throw an exception
      * if it fails to connect.
      * @throws HL7Exception If the connection can not be initialized for any reason
-     * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
+     * @see <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
      */
     Connection newClient(String host, int port, boolean tls) throws HL7Exception;
 
@@ -361,7 +361,7 @@ public interface HapiContext extends Closeable {
      * @param tls  Whether or not to use SSL/TLS
      * @return Returns a connection which can be used to transmit messages.
      * @throws HL7Exception If the connection can not be initialized for any reason
-     * @see <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
+     * @see <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/SendAndReceiveAMessage.html">here</a> for an example of how to use this method
      */
     Connection newLazyClient(String host, int port, boolean tls) throws HL7Exception;
 

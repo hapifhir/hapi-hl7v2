@@ -46,7 +46,7 @@ It will mess up the indenting in a few spots
 			
 				<p>
 					Generating a conformance profile requires a free tool
-					called Message Workbench. Message Workbench is free, and can be downloaded
+					called Messaging Workbench. Messaging Workbench is free, and can be downloaded
 					from the <a href="http://www.hl7.org/participate/toolsandresources.cfm">HL7 tools page</a>
 					(look for "<b>Messaging Workbench</b>" under "<b>V2 Tools</b>"). Note
 					that this tool is Windows only.  

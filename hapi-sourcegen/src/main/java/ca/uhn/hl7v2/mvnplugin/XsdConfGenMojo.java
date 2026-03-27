@@ -106,7 +106,7 @@ public class XsdConfGenMojo extends AbstractMojo {
 	private String targetDirectory;
 
 	/**
-	 * The Message Workbench tool generally creates segment groups as two level
+	 * The Messaging Workbench tool generally creates segment groups as two level
 	 * structures, with an outer group which has only a single child which is
 	 * the actual group. If this is set to true (which is the default), these
 	 * "bogus" groups are filtered.

@@ -1,7 +1,7 @@
 # *******************************************
 # * This batch file runs example code
 # *
-# * For more info, see: http://hl7api.sourceforge.net/devbyexample.html
+# * For more info, see: https://hapifhir.github.io/hapi-hl7v2/devbyexample.html
 # ******************************************* 
 
 CP="."

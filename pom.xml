@@ -14,7 +14,7 @@
 	<packaging>pom</packaging>
 	<version>2.6.0</version>
 	<name>HAPI - The Open Source Java HL7 Parser and API</name>
-	<url>http://hl7api.sourceforge.net/</url>
+	<url>https://hapifhir.github.io/hapi-hl7v2/</url>
 	<description>
 		HAPI (HL7 application programming interface; pronounced "happy") is an open-source, 
 		object-oriented HL7 2.x parser for Java.  HL7 (http://hl7org)  is a messaging 
@@ -564,8 +564,8 @@
             <replacetoken><![CDATA[SOCIALPLUGINSHEREAPI]]></replacetoken>
             <replacevalue><![CDATA[
                <table cellpadding="0" cellspacing="0" border="0"><tr>
-               <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/"></div></td>
-               <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+               <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="https://hapifhir.github.io/hapi-hl7v2/"></div></td>
+               <td><div class="fb-like" data-href="https://hapifhir.github.io/hapi-hl7v2/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
                </tr></table>
 
                </p><p>
@@ -593,8 +593,8 @@
           <replacetoken><![CDATA[SOCIALPLUGINSHERETP]]></replacetoken>
           <replacevalue><![CDATA[
             <table cellpadding="0" cellspacing="0" border="0"><tr>
-            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html"></div></td>
-            <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="https://hapifhir.github.io/hapi-hl7v2/hapi-testpanel/index.html"></div></td>
+            <td><div class="fb-like" data-href="https://hapifhir.github.io/hapi-hl7v2/hapi-testpanel/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
             </tr></table>
 
             <!-- Place this tag after the last +1 button tag. -->
@@ -622,8 +622,8 @@
           <replacetoken><![CDATA[SOCIALPLUGINSHEREHOH]]></replacetoken>
           <replacevalue><![CDATA[
             <table cellpadding="0" cellspacing="0" border="0"><tr>
-            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html"></div></td>
-            <td><div class="fb-like" data-href="http://hl7api.sourceforge.net/hapi-hl7overhttp/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
+            <td><div class="g-plusone" data-annotation="inline" data-width="300" data-href="https://hapifhir.github.io/hapi-hl7v2/hapi-hl7overhttp/index.html"></div></td>
+            <td><div class="fb-like" data-href="https://hapifhir.github.io/hapi-hl7v2/hapi-hl7overhttp/index.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div></td>
             </tr></table>
 
             <!-- Place this tag after the last +1 button tag. -->

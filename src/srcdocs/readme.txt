@@ -8,10 +8,10 @@ Thanks for downloading HAPI!
     Note that this is not the standard distribution of HAPI! If you are simply looking
     to include HAPI in your application, you probably want the regular binary 
     distribution of HAPI. Please visit our website for more information: 
-        http://hl7api.sourceforge.net
+        https://hapifhir.github.io/hapi-hl7v2/
     
     For information about HAPI's license, please visit 
-        http://hl7api.sourceforge.net/license.html
+        https://hapifhir.github.io/hapi-hl7v2/license.html
     
     This package also contains several libraries which are licensed under other 
     license agreements.
@@ -37,7 +37,7 @@ Building HAPI
 Including HAPI in your application
 
     For information about including HAPI in your application, please visit 
-        http://hl7api.sourceforge.net/using_hapi.html
+        https://hapifhir.github.io/hapi-hl7v2/getting_started.html
     
     Incidentally, we would love to hear success (and non-success) stories!
     
@@ -45,7 +45,7 @@ Including HAPI in your application
 Getting help
 
     HAPI's website has examples covering a number of things you might want to 
-    do using HAPI. See http://hl7api.sourceforge.net/devbyexample.html
+    do using HAPI. See https://hapifhir.github.io/hapi-hl7v2/devbyexample.html
     
     In addition, the HAPI Developer's mailing list is a great place to ask
     questions and look for answers: 

@@ -1,7 +1,7 @@
 rem *******************************************
 rem * This batch file runs the HAPI test panel
 rem *
-rem * For more info, see: http://hl7api.sourceforge.net/testpanel.html
+rem * For more info, see: https://hapifhir.github.io/hapi-hl7v2/hapi-testpanel/index.html
 rem ******************************************* 
 
 setlocal ENABLEDELAYEDEXPANSION

@@ -1,6 +1,6 @@
 Downloading HAPI
 
-  If you aren't using Maven, HAPI can be downloaded at our {{{http://sourceforge.net/projects/hl7api/files/hl7api/}Sourceforge Download Site}}.
+  If you aren't using Maven, HAPI can be downloaded at our {{{https://github.com/hapifhir/hapi-hl7v2/releases}GitHub Release Site}}.
 
 Adding HAPI to your application
 

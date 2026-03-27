@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.model.Type;
  * <p>
  * This can be used to run HAPI without any structure JARs, as the generic MCF
  * has no structure dependencies. See the
- * <a href="http://hl7api.sourceforge.net/xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html">using multiple versions</a>
+ * <a href="https://hapifhir.github.io/hapi-hl7v2/xref/ca/uhn/hl7v2/examples/HandlingMultipleVersions.html">using multiple versions</a>
  * example for more information.
  * </p>
  * 
