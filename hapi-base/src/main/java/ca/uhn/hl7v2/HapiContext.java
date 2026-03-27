@@ -64,7 +64,7 @@ import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
  * <li>{@link ParserConfiguration}: detail configuration for all HL7 parsers
  * <li>{@link ModelClassFactory}: lookup for message model classes during parsing or message
  * creation
- * <li>{@link ValidationContext}: validation rules used during parsing or during a dedcated
+ * <li>{@link ValidationContext}: validation rules used during parsing or during a dedicated
  * validation step
  * <li>{@link ValidationRuleBuilder}: alternative way of providing a ValidationContext
  * <li>{@link ValidationExceptionHandlerFactory}: factory for exception handler used during message validation
@@ -100,6 +100,7 @@ public interface HapiContext extends Closeable {
      * @return a new ConnectionHub instance
      * @deprecated use {@link #newClient(String, int, boolean)}
      */
+    @Deprecated(since="2.2")
     ConnectionHub getConnectionHub();
 
     /**
