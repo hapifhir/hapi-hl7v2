@@ -385,6 +385,9 @@ public class Prefs {
 	public List<Hl7V2MessageCollection> getRecentMessageXmlFiles(ProfileFileList theProfileFileList) {
 		List<Hl7V2MessageCollection> retVal = new ArrayList<Hl7V2MessageCollection>();
 		List<XmlFormat> savedVals = myRecentMessageXmlFiles;
+		if (savedVals == null) {
+			savedVals = new ArrayList<XmlFormat>();
+		}
 		for (XmlFormat string : savedVals) {
 			try {
 				Hl7V2MessageCollection nextMsg = Hl7V2MessageCollection.fromXml(theProfileFileList, string);
