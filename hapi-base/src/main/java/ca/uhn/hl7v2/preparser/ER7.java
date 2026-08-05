@@ -102,16 +102,21 @@ public class ER7 {
 			encodingChars.setRepetitionSeparator(segment.charAt(5));
 			encodingChars.setEscapeCharacter(segment.charAt(6));
 			encodingChars.setSubcomponentSeparator(segment.charAt(7));
+			int fieldSepPos = 8;
+			if (segment.charAt(fieldSepPos) != encodingChars.getFieldSeparator()) {
+				encodingChars.setTruncationCharacter(segment.charAt(fieldSepPos));
+				fieldSepPos = 9;
+			}
 			nodeKey.set(0, 1);
 			handler.putDatum(nodeKey, encodingChars.toString());
 
-			if(segment.charAt(8) == encodingChars.getFieldSeparator()) {	
+      if(segment.charAt(fieldSepPos) == encodingChars.getFieldSeparator()) {
 				ret = true; 
 				// now -- we recurse 
 				// through fields / field-repetitions / components / subcomponents.
 				nodeKey.clear();
 				nodeKey.add(2);
-				parseSegmentGuts(handler, segment.substring(9), nodeKey);
+				parseSegmentGuts(handler, segment.substring(fieldSepPos + 1), nodeKey);
 			}
 		}
 		catch(IndexOutOfBoundsException | NullPointerException ignored) {}
