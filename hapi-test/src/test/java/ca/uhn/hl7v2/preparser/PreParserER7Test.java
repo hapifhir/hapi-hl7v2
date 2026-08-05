@@ -5,7 +5,12 @@ package ca.uhn.hl7v2.preparser;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Unit tests of PreParser with ER7-encoded messages.
@@ -14,9 +19,32 @@ import org.junit.Test;
  * @version $Revision: 1.1 $ updated on $Date: 2007-02-19 02:24:52 $ by $Author:
  *          jamesagnew $
  */
+@RunWith(Parameterized.class)
 public class PreParserER7Test  {
 
-	private static final String myMessage = "MSH|^~\\&|x|x|x|x|199904140038||ADT^A01||P|2.2\r" + "PID|||||Smith&Booth&Jones^X^Y\r" + "NTE|a||one~two~three\r" + "NTE|b||four\r";
+	private final String myMessage;
+
+	public PreParserER7Test(String myMessage) {
+		this.myMessage = myMessage;
+	}
+
+	@Parameterized.Parameters
+	public static Collection<Object[]> parameters() {
+		String messageVariation1 = "MSH|^~\\&|x|x|x|x|199904140038||ADT^A01||P|2.2\r" +
+						"PID|||||Smith&Booth&Jones^X^Y\r" +
+						"NTE|a||one~two~three\r" +
+						"NTE|b||four\r";
+
+		String messageVariation2 = "MSH|^~\\&#|x|x|x|x|199904140038||ADT^A01||P|2.7\r" +
+						"PID|||||Smith&Booth&Jones^X^Y\r" +
+						"NTE|a||one~two~three\r" +
+						"NTE|b||four\r";
+
+		return List.of(new Object[][] {
+						{ messageVariation1 },
+						{ messageVariation2 }
+		});
+	}
 
 	@Test
 	public void testFirstSegmentRep() throws Exception {
