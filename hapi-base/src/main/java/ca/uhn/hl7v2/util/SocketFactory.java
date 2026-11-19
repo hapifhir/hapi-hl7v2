@@ -35,5 +35,19 @@ public interface SocketFactory {
 	 * in order to set configuration settings on the new socket
 	 */
 	void configureNewAcceptedSocket(Socket theSocket) throws SocketException;
+
+	/**
+	 * Returns the timeout in milliseconds that client connections use when a socket created by
+	 * {@link #createSocket()} or {@link #createTlsSocket()} is
+	 * {@link Socket#connect(java.net.SocketAddress, int) connected} to the remote host.
+	 * A value of zero means no timeout: the connect attempt blocks until it succeeds or
+	 * the operating system gives up.
+	 * <p>
+	 * The default implementation returns zero, which keeps the previous behaviour.
+	 * </p>
+	 */
+	default int getConnectTimeout() {
+		return 0;
+	}
 	
 }

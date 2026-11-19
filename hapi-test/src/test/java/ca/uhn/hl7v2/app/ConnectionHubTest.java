@@ -18,14 +18,20 @@ import ca.uhn.hl7v2.util.StandardSocketFactory;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +39,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static ca.uhn.hl7v2.app.TestUtils.fill;
 import static org.junit.Assert.*;
@@ -102,6 +109,7 @@ public class ConnectionHubTest extends MockitoTest {
 		conn.close();
 
 		verify(socketFactory, times(1)).createTlsSocket();
+		verify(socketFactory, times(1)).getConnectTimeout();
 		verifyNoMoreInteractions(socketFactory);
 
 	}
@@ -121,6 +129,7 @@ public class ConnectionHubTest extends MockitoTest {
 		conn.close();
 
 		verify(socketFactory, times(1)).createSocket();
+		verify(socketFactory, times(1)).getConnectTimeout();
 		verifyNoMoreInteractions(socketFactory);
 
 	}
@@ -169,6 +178,184 @@ public class ConnectionHubTest extends MockitoTest {
 		assertEquals(1, activeConnection.getSockets().size());
 		Socket socket = activeConnection.getSockets().get(0);
 		assertEquals(expectedTimeout, socket.getSoTimeout());
+	}
+
+	@Test
+	public void testConnect_ConnectionDataTimeout_isUsedAsConnectTimeout() throws Exception {
+		int configuredTimeout = 1_385;
+		RecordingSocketFactory socketFactory = new RecordingSocketFactory();
+
+		ConnectionData connData = new ConnectionData("localhost", port1, 0, parser, new MinLowerLayerProtocol(), false, socketFactory, false, configuredTimeout);
+		try (Connection conn = hub.attach(connData)) {
+			assertNotNull(conn);
+		}
+
+		assertEquals(Collections.singletonList(configuredTimeout), socketFactory.connectTimeouts);
+	}
+
+	@Test
+	public void testConnect_SocketFactoryConnectTimeout_isUsedAsConnectTimeout() throws Exception {
+		RecordingSocketFactory socketFactory = new RecordingSocketFactory();
+		socketFactory.setConnectTimeout(1_385);
+
+		HapiContext context = new DefaultHapiContext();
+		context.setSocketFactory(socketFactory);
+		try (Connection conn = context.newClient("localhost", port1, false)) {
+			assertNotNull(conn);
+		}
+
+		assertEquals(Collections.singletonList(1_385), socketFactory.connectTimeouts);
+	}
+
+	@Test
+	public void testConnect_ConnectionDataTimeoutAndSocketFactoryTimeout_connectionDataWins() throws Exception {
+		RecordingSocketFactory socketFactory = new RecordingSocketFactory();
+		socketFactory.setConnectTimeout(9_999);
+
+		ConnectionData connData = new ConnectionData("localhost", port1, 0, parser, new MinLowerLayerProtocol(), false, socketFactory, false, 1_385);
+		try (Connection conn = hub.attach(connData)) {
+			assertNotNull(conn);
+		}
+
+		assertEquals(Collections.singletonList(1_385), socketFactory.connectTimeouts);
+	}
+
+	@Test
+	public void testConnect_NoTimeoutConfigured_connectsWithoutTimeout() throws Exception {
+		RecordingSocketFactory socketFactory = new RecordingSocketFactory();
+
+		HapiContext context = new DefaultHapiContext();
+		context.setSocketFactory(socketFactory);
+		try (Connection conn = context.newClient("localhost", port2, false)) {
+			assertNotNull(conn);
+		}
+
+		assertEquals(Collections.singletonList(0), socketFactory.connectTimeouts);
+	}
+
+	@Test(timeout = 30_000)
+	public void testAttach_ConnectionDataTimeout_unresponsivePeer_failsWithinTimeout() throws Exception {
+		try (UnresponsivePeer peer = UnresponsivePeer.start()) {
+			ConnectionData connData = new ConnectionData(peer.getHost(), peer.getPort(), parser, new MinLowerLayerProtocol(), 500);
+			assertConnectTimesOut(() -> ConnectionHub.getNewInstance(context).attach(connData));
+		}
+	}
+
+	@Test(timeout = 30_000)
+	public void testNewClient_SocketFactoryConnectTimeout_unresponsivePeer_failsWithinTimeout() throws Exception {
+		try (UnresponsivePeer peer = UnresponsivePeer.start()) {
+			HapiContext context = new DefaultHapiContext();
+			StandardSocketFactory socketFactory = new StandardSocketFactory();
+			socketFactory.setConnectTimeout(500);
+			context.setSocketFactory(socketFactory);
+			assertConnectTimesOut(() -> context.newClient(peer.getHost(), peer.getPort(), false));
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetConnectTimeout_negative_throws() {
+		new StandardSocketFactory().setConnectTimeout(-1);
+	}
+
+	private static void assertConnectTimesOut(Callable<Connection> connect) throws Exception {
+		long start = System.nanoTime();
+		try {
+			connect.call().close();
+			fail("Expected the connection attempt to time out");
+		} catch (HL7Exception e) {
+			long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+			Throwable cause = e;
+			while (cause != null && !(cause instanceof SocketTimeoutException)) {
+				cause = cause.getCause();
+			}
+			assertNotNull("Expected a SocketTimeoutException in the cause chain of " + e, cause);
+			assertTrue("Connect attempt took " + elapsedMillis + " ms", elapsedMillis < 10_000);
+		}
+	}
+
+	/**
+	 * Socket factory that records the timeout passed to {@link Socket#connect(SocketAddress, int)}
+	 * for every client socket it creates.
+	 */
+	private static class RecordingSocketFactory extends StandardSocketFactory {
+
+		private final List<Integer> connectTimeouts = Collections.synchronizedList(new ArrayList<>());
+
+		@Override
+		public Socket createSocket() {
+			return new Socket() {
+				@Override
+				public void connect(SocketAddress endpoint, int timeout) throws IOException {
+					connectTimeouts.add(timeout);
+					super.connect(endpoint, timeout);
+				}
+			};
+		}
+	}
+
+	/**
+	 * A listening socket whose accept backlog is full and which never accepts. Further connection
+	 * attempts are neither accepted nor refused, as with a firewalled or unresponsive host, without
+	 * depending on the network. If the operating system refuses connections when the backlog is
+	 * full instead of ignoring them, the calling test is skipped.
+	 */
+	private static class UnresponsivePeer implements Closeable {
+
+		private final ServerSocket serverSocket;
+		private final List<Socket> fillers = new ArrayList<>();
+
+		private UnresponsivePeer() throws IOException {
+			serverSocket = javax.net.ServerSocketFactory.getDefault().createServerSocket(0, 1, InetAddress.getLoopbackAddress());
+		}
+
+		static UnresponsivePeer start() throws IOException {
+			UnresponsivePeer peer = new UnresponsivePeer();
+			boolean backlogFull = peer.fillBacklog();
+			if (!backlogFull) {
+				peer.close();
+			}
+			Assume.assumeTrue("OS does not leave connections pending when the backlog is full", backlogFull);
+			return peer;
+		}
+
+		private boolean fillBacklog() throws IOException {
+			for (int i = 0; i < 50; i++) {
+				Socket filler = javax.net.SocketFactory.getDefault().createSocket();
+				try {
+					filler.connect(serverSocket.getLocalSocketAddress(), 200);
+					fillers.add(filler);
+				} catch (SocketTimeoutException e) {
+					closeQuietly(filler);
+					return true;
+				} catch (IOException e) {
+					closeQuietly(filler);
+					return false;
+				}
+			}
+			return false;
+		}
+
+		String getHost() {
+			return serverSocket.getInetAddress().getHostAddress();
+		}
+
+		int getPort() {
+			return serverSocket.getLocalPort();
+		}
+
+		@Override
+		public void close() {
+			fillers.forEach(UnresponsivePeer::closeQuietly);
+			closeQuietly(serverSocket);
+		}
+
+		private static void closeQuietly(Closeable closeable) {
+			try {
+				closeable.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
 	}
 
 	/**
