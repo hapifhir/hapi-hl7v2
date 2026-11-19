@@ -13,6 +13,7 @@ public class StandardSocketFactory implements SocketFactory {
 	public static final int DEFAULT_ACCEPTED_SOCKET_TIMEOUT = 500;
 
 	private int myAcceptedSocketTimeout = DEFAULT_ACCEPTED_SOCKET_TIMEOUT;
+	private int myConnectTimeout = 0;
 
 	/**
 	 * Gets the value for {@link Socket#setSoTimeout(int)} to be set on newly accepted sockets in server applications. Default is {@link #DEFAULT_ACCEPTED_SOCKET_TIMEOUT}
@@ -29,6 +30,28 @@ public class StandardSocketFactory implements SocketFactory {
 			throw new IllegalArgumentException("Timeout can't be negative");
 		}
 		myAcceptedSocketTimeout = theAcceptedSocketTimeout;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * Default is 0 (no timeout).
+	 */
+	@Override
+	public int getConnectTimeout() {
+		return myConnectTimeout;
+	}
+
+	/**
+	 * Sets the timeout in milliseconds used when client connections connect a socket created by
+	 * this factory to the remote host. If the connection is not established within this time,
+	 * the connect attempt fails with a {@link java.net.SocketTimeoutException}. A value of 0
+	 * (the default) means no timeout.
+	 */
+	public void setConnectTimeout(int theConnectTimeout) {
+		if (theConnectTimeout < 0) {
+			throw new IllegalArgumentException("Timeout can't be negative");
+		}
+		myConnectTimeout = theConnectTimeout;
 	}
 
 	/**

@@ -48,16 +48,17 @@ class ConnectionFactory {
     public static Connection openEagerly(ConnectionData connectionData,
                                          ExecutorService executorService) throws Exception {
         Connection connection;
+        int connectTimeout = getConnectTimeout(connectionData);
         if (connectionData.getPort2() == 0) {
             connection = new ActiveConnection(connectionData.getParser(),
                     connectionData.getProtocol(), createSocket(connectionData.getSocketFactory(),
                     connectionData.getHost(), connectionData.getPort(),
-                    connectionData.isTls()), executorService);
+                    connectionData.isTls(), connectTimeout), executorService);
         } else {
             Socket outbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
-                    connectionData.getPort(), connectionData.isTls());
+                    connectionData.getPort(), connectionData.isTls(), connectTimeout);
             Socket inbound = createSocket(connectionData.getSocketFactory(), connectionData.getHost(),
-                    connectionData.getPort2(), connectionData.isTls());
+                    connectionData.getPort2(), connectionData.isTls(), connectTimeout);
             connection = new ActiveConnection(connectionData.getParser(),
                     connectionData.getProtocol(), inbound, outbound,
                     executorService);
@@ -67,14 +68,27 @@ class ConnectionFactory {
     }
 
 
-	private static Socket createSocket(ca.uhn.hl7v2.util.SocketFactory socketFactory, String host, int port, boolean tls) throws IOException {
+	/**
+	 * Returns the connect timeout in milliseconds for a connection: the timeout set on the
+	 * {@link ConnectionData} if there is one, otherwise the one from its socket factory.
+	 * Zero means no timeout.
+	 */
+	private static int getConnectTimeout(ConnectionData connectionData) {
+		Integer connectionTimeout = connectionData.getConnectionTimeout();
+		if (connectionTimeout != null) {
+			return connectionTimeout;
+		}
+		return connectionData.getSocketFactory().getConnectTimeout();
+	}
+
+	private static Socket createSocket(ca.uhn.hl7v2.util.SocketFactory socketFactory, String host, int port, boolean tls, int connectTimeout) throws IOException {
 		Socket socket;
 		if (tls) {
 			socket = socketFactory.createTlsSocket();
 		} else {
 			socket = socketFactory.createSocket();
 		}
-		socket.connect(new InetSocketAddress(host, port));
+		socket.connect(new InetSocketAddress(host, port), connectTimeout);
 		return socket;
 	}
 
