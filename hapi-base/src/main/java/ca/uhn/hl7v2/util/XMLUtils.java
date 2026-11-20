@@ -84,6 +84,10 @@ public class XMLUtils {
             docBuilderFactory.setNamespaceAware(true);
             docBuilderFactory.setXIncludeAware(false);
             docBuilderFactory.setExpandEntityReferences(false);
+            // Deliver CDATA sections as text, merged with adjacent text nodes. DOM consumers
+            // such as XMLParser#parsePrimitive only read text nodes, and the LSParser used
+            // before 2.4 produced the same coalesced text.
+            docBuilderFactory.setCoalescing(true);
             docBuilderFactory.setValidating(theValidating);
             try {
                 docBuilderFactory.setFeature(

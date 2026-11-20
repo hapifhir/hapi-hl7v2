@@ -487,6 +487,49 @@ public class XMLParserTest {
 
 	}
 
+	/**
+	 * See <a href="https://github.com/hapifhir/hapi-hl7v2/issues/151">#151</a>: the contents of a
+	 * CDATA section must be parsed exactly like the same text written without CDATA.
+	 */
+	@Test
+	public void testParseCdataSection_fieldValueIsKept() throws Exception {
+		ADT_A01 a01 = (ADT_A01) new DefaultXMLParser().parse(msh3Message("<![CDATA[SENDAPP]]>"));
+
+		assertEquals("SENDAPP", a01.getMSH().getSendingApplication().getNamespaceID().getValue());
+		assertTrue(new PipeParser().encode(a01).startsWith("MSH|^~\\&|SENDAPP|"));
+	}
+
+	@Test
+	public void testParseTextAndCdataSection_valuesAreJoined() throws Exception {
+		ADT_A01 a01 = (ADT_A01) new DefaultXMLParser().parse(msh3Message("before<![CDATA[middle]]>after"));
+
+		assertEquals("beforemiddleafter", a01.getMSH().getSendingApplication().getNamespaceID().getValue());
+	}
+
+	@Test
+	public void testParseCdataSectionWithMarkupCharacters_valueIsKeptVerbatim() throws Exception {
+		ADT_A01 a01 = (ADT_A01) new DefaultXMLParser().parse(msh3Message("<![CDATA[A&B <C>]]>"));
+
+		assertEquals("A&B <C>", a01.getMSH().getSendingApplication().getNamespaceID().getValue());
+	}
+
+	@Test
+	public void testParseCdataSection_sameResultAsPlainText() throws Exception {
+		String plain = new PipeParser().encode(new DefaultXMLParser().parse(msh3Message("SEND&amp;APP")));
+		String cdata = new PipeParser().encode(new DefaultXMLParser().parse(msh3Message("<![CDATA[SEND&APP]]>")));
+
+		assertEquals(plain, cdata);
+	}
+
+	private static String msh3Message(String theSendingApplication) {
+		return "<ADT_A01 xmlns=\"urn:hl7-org:v2xml\"><MSH>"
+				+ "<MSH.1>|</MSH.1><MSH.2>^~\\&amp;</MSH.2>"
+				+ "<MSH.3><HD.1>" + theSendingApplication + "</HD.1></MSH.3>"
+				+ "<MSH.9><MSG.1>ADT</MSG.1><MSG.2>A01</MSG.2><MSG.3>ADT_A01</MSG.3></MSH.9>"
+				+ "<MSH.10>1</MSH.10><MSH.11><PT.1>P</PT.1></MSH.11><MSH.12><VID.1>2.5</VID.1></MSH.12>"
+				+ "</MSH></ADT_A01>";
+	}
+
 	@Test
 	public void testEncodeGenericMessage() throws Exception {
 		DefaultXMLParser xmlParser = new DefaultXMLParser();
